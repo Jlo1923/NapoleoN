@@ -46,7 +46,7 @@ class LocaleHelper(base: Context?) : ContextWrapper(base) {
             }
         }
 
-        private fun getLanguagePreference(context: Context): String {
+        fun getLanguagePreference(context: Context): String {
             val sharedPreferences =
                 context.getSharedPreferences(SharedPreference.PREF_NAME, Context.MODE_PRIVATE)
 

@@ -8,11 +8,10 @@ import com.naposystems.pepito.model.languageSelection.Language
 
 class LanguageSelectionAdapter(
     private val languages: List<Language>,
-    private val clickListener: LanguageSelectionListener
+    private val clickListener: LanguageSelectionListener,
+    private val languageSelected: String
 ) :
     RecyclerView.Adapter<LanguageSelectionAdapter.LanguageViewHolder>() {
-
-    private var selectedLanguage: Language? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LanguageViewHolder {
         return LanguageViewHolder.from(parent)
@@ -22,15 +21,15 @@ class LanguageSelectionAdapter(
 
     override fun onBindViewHolder(holder: LanguageViewHolder, position: Int) {
         val language = languages[position]
-        holder.bind(clickListener, language, selectedLanguage)
+        holder.bind(clickListener, language, languageSelected)
     }
 
     class LanguageViewHolder private constructor(private val binding: ListItemLanguageSelectionBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(clickListener: LanguageSelectionListener, language: Language, selectedLanguage: Language?) {
+        fun bind(clickListener: LanguageSelectionListener, language: Language, languageSelected: String) {
             binding.language = language
-            binding.radioButtonLanguage.isChecked = language.id == selectedLanguage?.id
+            binding.radioButtonLanguage.isChecked = language.iso == languageSelected
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }
@@ -47,10 +46,5 @@ class LanguageSelectionAdapter(
 
     class LanguageSelectionListener(val clickListener: (language: Language) -> Unit) {
         fun onClick(language: Language) = clickListener(language)
-    }
-
-    fun updateSelectedLanguage(language: Language){
-        selectedLanguage = language
-        notifyDataSetChanged()
     }
 }

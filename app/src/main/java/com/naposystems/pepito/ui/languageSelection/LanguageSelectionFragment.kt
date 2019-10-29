@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.LanguageSelectionFragmentBinding
@@ -60,16 +59,13 @@ class LanguageSelectionFragment : DialogFragment() {
                     viewModel.setSelectedLanguage(it)
                     val languageSelected = it
                     changeLocale(languageSelected)
-                })
+                },
+                LocaleHelper.getLanguagePreference(context!!))
 
         binding.recyclerViewLanguages.adapter = adapter
         binding.buttonCancel.setOnClickListener {
             dismiss()
         }
-
-        viewModel.selectedLanguage.observe(this, Observer {
-            adapter.updateSelectedLanguage(it)
-        })
 
         return binding.root
     }
