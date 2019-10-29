@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NapoleoN</string>
+    <string name="label_register">Registro</string>
+    <string name="label_account_recovery">Recuperación de Cuenta</string>
+    <string name="label_language_selection">Seleccionar Idioma</string>
+    <string name="label_done">Aceptar</string>
+    <string name="label_cancel">Cancelar</string>
 </resources>

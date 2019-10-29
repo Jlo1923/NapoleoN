@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_register">Registrierung</string>
+    <string name="label_account_recovery">Kontowiederherstellung</string>
+    <string name="label_language_selection">Wählen Sie eine Sprache</string>
+    <string name="label_done">Akzeptieren</string>
+    <string name="label_cancel">Abbrechen</string>
+    <string name="app_name">NapoleoN</string>
+</resources>
