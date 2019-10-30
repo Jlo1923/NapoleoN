@@ -33,11 +33,23 @@ class LandingFragment : Fragment() {
             viewModel.onShowLanguageSelectionPressed()
         }
 
-        viewModel.showLanguageSelection.observe(this, Observer {
+        binding.buttonRegister.setOnClickListener {
+            viewModel.onRegisterButtonPressed()
+        }
+
+        viewModel.showLanguageSelection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 viewModel.onLanguageSelectionShowed()
                 this.findNavController()
                     .navigate(LandingFragmentDirections.actionLandingFragmentToLanguageSelectionDialog())
+            }
+        })
+
+        viewModel.openRegister.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                viewModel.onRegisterOpened()
+                this.findNavController()
+                    .navigate(LandingFragmentDirections.actionLandingFragmentToRegisterFragment())
             }
         })
 

@@ -1,0 +1,5 @@
+package com.naposystems.pepito.ui.register
+
+import androidx.lifecycle.ViewModel
+
+class RegisterViewModel : ViewModel()

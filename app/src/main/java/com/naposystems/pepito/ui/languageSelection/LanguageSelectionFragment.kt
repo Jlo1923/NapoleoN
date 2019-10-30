@@ -60,7 +60,8 @@ class LanguageSelectionFragment : DialogFragment() {
                     val languageSelected = it
                     changeLocale(languageSelected)
                 },
-                LocaleHelper.getLanguagePreference(context!!))
+                LocaleHelper.getLanguagePreference(context!!)
+            )
 
         binding.recyclerViewLanguages.adapter = adapter
         binding.buttonCancel.setOnClickListener {

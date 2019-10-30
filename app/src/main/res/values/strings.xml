@@ -1,8 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NapoleoN</string>
+
+    <!-- BEGIN GENERAL LABELS -->
+    <string name="label_done">Aceptar</string>
+    <string name="label_cancel">Cancelar</string>
+    <!-- END GENERAL LABELS -->
+
+    <!-- BEGIN LANDING STRINGS -->
     <string name="label_register">Registro</string>
     <string name="label_account_recovery">Recuperación de Cuenta</string>
     <string name="label_language_selection">Seleccionar Idioma</string>
-    <string name="label_done">Aceptar</string>
-    <string name="label_cancel">Cancelar</string>
+    <string name="label_fill_form_to_create_account">Si deseas crear un nuevo usuario completa el siguiente formulario</string>
+    <string name="hint_required_nickname">Apodo*</string>
+    <string name="name_to_show">Nombre a mostrar</string>
+    <string name="label_terms">Al hacer click en Registro, aceptaras los</string>
+    <string name="label_terms_and_conditions">términos, condiciones y políticas de privacidad.</string>
+    <string name="power_by" translatable="false">Powered by Napoleon Systems</string>
+    <!-- END LANDING STRINGS -->
 </resources>

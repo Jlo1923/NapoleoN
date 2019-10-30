@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NapoleoN</string>
-    <string name="label_account_recovery">Récupération de Compte</string>
-    <string name="label_cancel">Annuler</string>
+
+    <!-- BEGIN GENERAL LABELS -->
     <string name="label_done">Accepter</string>
-    <string name="label_language_selection">Choisir la langue</string>
+    <string name="label_cancel">Annuler</string>
+    <!-- END GENERAL LABELS -->
+
+    <!-- BEGIN LANDING STRINGS -->
     <string name="label_register">Inscription</string>
+    <string name="label_account_recovery">Récupération de Compte</string>
+    <string name="label_language_selection">Choisir la langue</string>
+    <string name="label_fill_form_to_create_account">Si vous voulez créer un nouvel utilisateur, remplissez le formulaire suivant</string>
+    <string name="hint_required_nickname">Apodo</string>
+    <string name="name_to_show">Nombre a mostrar</string>
+    <string name="label_terms">Al hacer click en Registro, aceptaras los</string>
+    <string name="label_terms_and_conditions">términos, condiciones y políticas de privacidad.</string>
+    <!-- END LANDING STRINGS -->
 </resources>

@@ -9,8 +9,13 @@ class LandingViewModel : ViewModel() {
     val showLanguageSelection: LiveData<Boolean>
         get() = _showLanguageSelection
 
+    private val _openRegister = MutableLiveData<Boolean>()
+    val openRegister: LiveData<Boolean>
+        get() = _openRegister
+
     init {
         _showLanguageSelection.value = false
+        _openRegister.value = false
     }
 
     fun onShowLanguageSelectionPressed() {
@@ -19,5 +24,13 @@ class LandingViewModel : ViewModel() {
 
     fun onLanguageSelectionShowed() {
         _showLanguageSelection.value = null
+    }
+
+    fun onRegisterButtonPressed() {
+        _openRegister.value = true
+    }
+
+    fun onRegisterOpened() {
+        _openRegister.value = null
     }
 }
