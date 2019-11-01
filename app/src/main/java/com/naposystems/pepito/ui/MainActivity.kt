@@ -54,11 +54,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        // Allows NavigationUI to support proper up navigation or the drawer layout
-        // drawer menu, depending on the situation
-        return navController.navigateUp(appBarConfiguration)
-    }
+    override fun onSupportNavigateUp() = navController.navigateUp(appBarConfiguration)
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(LocaleHelper.setLocale(newBase))

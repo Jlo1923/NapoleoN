@@ -8,13 +8,22 @@
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
-    <string name="label_register">Register</string>
-    <string name="label_account_recovery">Account Recovery</string>
+    <string name="label_create_account">Create account</string>
+    <string name="label_recover_account">Recover account</string>
     <string name="label_language_selection">Select language</string>
-    <string name="label_fill_form_to_create_account">If you want create a new user complete the following form</string>
-    <string name="hint_required_nickname">Apodo</string>
-    <string name="name_to_show">Nombre a mostrar</string>
-    <string name="label_terms">Al hacer click en Registro, aceptaras los</string>
-    <string name="label_terms_and_conditions">términos, condiciones y políticas de privacidad.</string>
     <!-- END LANDING STRINGS -->
+
+    <!-- BEGIN REGISTER STRINGS -->
+    <string name="label_fill_form_to_create_account">If you want create a new user complete the following form</string>
+    <string name="hint_required_nickname">Nickname*</string>
+    <string name="display_name">Display name</string>
+    <string name="label_terms">By clicking on Register, you accept the</string>
+    <string name="label_terms_and_conditions">terms, conditions and privacy policies.</string>
+    <string name="nickname_required">Nickname is required</string>
+    <string name="at_least_five_characters">At least 5 characters</string>
+    <string name="nickname_cant_contain_white_spaces">Cannot contain blank spaces</string>
+    <string name="cant_contain_special_characters">Cannot contain special characters</string>
+    <string name="welcome">Welcome</string>
+    <string name="recovery_password">Contraseña de recuperación</string>
+    <!-- END REGISTER STRINGS -->
 </resources>

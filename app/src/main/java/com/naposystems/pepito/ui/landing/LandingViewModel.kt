@@ -13,9 +13,14 @@ class LandingViewModel : ViewModel() {
     val openRegister: LiveData<Boolean>
         get() = _openRegister
 
+    private val _openRecoveryAccount = MutableLiveData<Boolean>()
+    val openRecoveryAccount: LiveData<Boolean>
+        get() = _openRecoveryAccount
+
     init {
         _showLanguageSelection.value = false
         _openRegister.value = false
+        _openRecoveryAccount.value = false
     }
 
     fun onShowLanguageSelectionPressed() {
@@ -32,5 +37,13 @@ class LandingViewModel : ViewModel() {
 
     fun onRegisterOpened() {
         _openRegister.value = null
+    }
+
+    fun onRecoveryAccountButtonPressed() {
+        _openRecoveryAccount.value = true
+    }
+
+    fun onRecoveryAccountOpened() {
+        _openRecoveryAccount.value = null
     }
 }

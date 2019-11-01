@@ -8,13 +8,22 @@
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
-    <string name="label_register">Inscription</string>
-    <string name="label_account_recovery">Récupération de Compte</string>
+    <string name="label_create_account">Créer un compte</string>
+    <string name="label_recover_account">Récupérer le compte</string>
     <string name="label_language_selection">Choisir la langue</string>
-    <string name="label_fill_form_to_create_account">Si vous voulez créer un nouvel utilisateur, remplissez le formulaire suivant</string>
-    <string name="hint_required_nickname">Apodo</string>
-    <string name="name_to_show">Nombre a mostrar</string>
-    <string name="label_terms">Al hacer click en Registro, aceptaras los</string>
-    <string name="label_terms_and_conditions">términos, condiciones y políticas de privacidad.</string>
     <!-- END LANDING STRINGS -->
+
+    <!-- BEGIN REGISTER STRINGS -->
+    <string name="label_fill_form_to_create_account">Si vous voulez créer un nouvel utilisateur, remplissez le formulaire suivant</string>
+    <string name="hint_required_nickname">Surnom*</string>
+    <string name="display_name">Nom d\'affichage</string>
+    <string name="label_terms">En cliquant sur Inscription, vous acceptez les</string>
+    <string name="label_terms_and_conditions">termes, conditions et politiques de confidentialité.</string>
+    <string name="nickname_required">Le pseudo est requis</string>
+    <string name="at_least_five_characters">Au moins 5 caractères</string>
+    <string name="nickname_cant_contain_white_spaces">Ne peut pas contenir d\'espaces vides</string>
+    <string name="cant_contain_special_characters">Ne peut pas contenir de caractères spéciaux</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="recovery_password">Contraseña de recuperación</string>
+    <!-- END REGISTER STRINGS -->
 </resources>

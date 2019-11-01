@@ -64,6 +64,8 @@ dependencies {
 
     //Moshi
     implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
     //Lottie

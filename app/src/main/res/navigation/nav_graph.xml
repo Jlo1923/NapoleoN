@@ -33,15 +33,26 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_landingFragment_to_recoveryAccountFragment"
+            app:destination="@id/recoveryAccountFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <dialog
         android:id="@+id/languageSelectionDialog"
-        android:name="com.naposystems.pepito.ui.languageSelection.LanguageSelectionFragment"
+        android:name="com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment"
         android:label="language_selection_dialog" />
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.naposystems.pepito.ui.register.RegisterFragment"
-        android:label="Registro"
+        android:label="@string/label_create_account"
         tools:layout="@layout/register_fragment" />
+    <fragment
+        android:id="@+id/recoveryAccountFragment"
+        android:name="com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment"
+        android:label="@string/label_recover_account"/>
 </navigation>

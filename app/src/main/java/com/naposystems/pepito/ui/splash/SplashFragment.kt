@@ -24,7 +24,7 @@ class SplashFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(this).get(SplashViewModel::class.java)
 
-        viewModel.navigateToLanding.observe(this, Observer {
+        viewModel.navigateToLanding.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLandingFragment())
                 viewModel.doneNavigateToLanding()
@@ -35,7 +35,7 @@ class SplashFragment : Fragment() {
             context?.let {
                 viewModel.onLoadingTimeEnd()
             }
-        }, TimeUnit.SECONDS.toMillis(2))
+        }, TimeUnit.SECONDS.toMillis(5))
 
         return inflater.inflate(R.layout.splash_fragment, container, false)
     }

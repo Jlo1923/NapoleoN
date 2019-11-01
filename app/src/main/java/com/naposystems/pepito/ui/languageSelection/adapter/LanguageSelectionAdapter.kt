@@ -1,9 +1,10 @@
 package com.naposystems.pepito.ui.languageSelection.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.naposystems.pepito.databinding.ListItemLanguageSelectionBinding
+import com.naposystems.pepito.databinding.LanguageSelectionDialogFragmentItemBinding
 import com.naposystems.pepito.model.languageSelection.Language
 
 class LanguageSelectionAdapter(
@@ -24,12 +25,18 @@ class LanguageSelectionAdapter(
         holder.bind(clickListener, language, languageSelected)
     }
 
-    class LanguageViewHolder private constructor(private val binding: ListItemLanguageSelectionBinding) :
+    class LanguageViewHolder private constructor(private val binding: LanguageSelectionDialogFragmentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(clickListener: LanguageSelectionListener, language: Language, languageSelected: String) {
+        fun bind(
+            clickListener: LanguageSelectionListener,
+            language: Language,
+            languageSelected: String
+        ) {
             binding.language = language
-            binding.radioButtonLanguage.isChecked = language.iso == languageSelected
+            if (language.iso == languageSelected) {
+                binding.imageViewSelected.visibility = View.VISIBLE
+            }
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }
@@ -38,7 +45,11 @@ class LanguageSelectionAdapter(
             fun from(parent: ViewGroup): LanguageViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding =
-                    ListItemLanguageSelectionBinding.inflate(layoutInflater, parent, false)
+                    LanguageSelectionDialogFragmentItemBinding.inflate(
+                        layoutInflater,
+                        parent,
+                        false
+                    )
                 return LanguageViewHolder(binding)
             }
         }

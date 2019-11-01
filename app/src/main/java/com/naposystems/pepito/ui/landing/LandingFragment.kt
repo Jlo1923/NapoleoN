@@ -37,6 +37,10 @@ class LandingFragment : Fragment() {
             viewModel.onRegisterButtonPressed()
         }
 
+        binding.buttonRecoveryAccountCuenta.setOnClickListener {
+            viewModel.onRecoveryAccountButtonPressed()
+        }
+
         viewModel.showLanguageSelection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 viewModel.onLanguageSelectionShowed()
@@ -50,6 +54,14 @@ class LandingFragment : Fragment() {
                 viewModel.onRegisterOpened()
                 this.findNavController()
                     .navigate(LandingFragmentDirections.actionLandingFragmentToRegisterFragment())
+            }
+        })
+
+        viewModel.openRecoveryAccount.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                viewModel.onRecoveryAccountOpened()
+                this.findNavController()
+                    .navigate(LandingFragmentDirections.actionLandingFragmentToRecoveryAccountFragment())
             }
         })
 
