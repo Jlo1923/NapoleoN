@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EnterCodeWidget">
+        <attr name="numBoxes" format="integer" />
+        <attr name="isSecureText" format="boolean" />
+    </declare-styleable>
+</resources>

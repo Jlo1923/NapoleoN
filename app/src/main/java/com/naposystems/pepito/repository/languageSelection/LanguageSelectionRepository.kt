@@ -7,8 +7,10 @@ import com.naposystems.pepito.ui.languageSelection.IContractLanguageSelection
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import javax.inject.Inject
 
-class LanguageSelectionRepository(val context: Context) : IContractLanguageSelection.Repository {
+class LanguageSelectionRepository @Inject constructor(private val context: Context) :
+    IContractLanguageSelection.Repository {
 
     override fun getLanguages(): List<Language> {
         val languages = context.resources

@@ -5,6 +5,11 @@
     <!-- BEGIN GENERAL LABELS -->
     <string name="label_done">Accepter</string>
     <string name="label_cancel">Annuler</string>
+    <string name="label_continue">Continuer</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="label_next">Suivant</string>
+    <string name="label_available">Disponible</string>
+    <string name="something_went_wrong">Quelque chose s\'est mal passé, veuillez réessayer</string>
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
@@ -23,7 +28,50 @@
     <string name="at_least_five_characters">Au moins 5 caractères</string>
     <string name="nickname_cant_contain_white_spaces">Ne peut pas contenir d\'espaces vides</string>
     <string name="cant_contain_special_characters">Ne peut pas contenir de caractères spéciaux</string>
-    <string name="welcome">Bienvenue</string>
+    <string name="at_least_one_number">Il doit contenir au moins un numéro</string>
     <string name="recovery_password">Contraseña de recuperación</string>
     <!-- END REGISTER STRINGS -->
+
+    <!-- BEGIN SEND CODE STRINGS -->
+    <string name="welcome_to_napoleon">Bienvenue sur Napoleon Secret Chat</string>
+    <string name="information_text_send_code">Votre vie privée est notre priorité, si vous souhaitez continuer, vous recevrez un code pour activer votre inscription.</string>
+    <string name="send_registration_code">Envoyer le code d\'enregistrement</string>
+    <!-- END SEND CODE STRINGS -->
+
+    <!-- BEGIN ENTER CODE STRINGS -->
+    <string name="enter_code">Entrer le code</string>
+    <string name="didnt_receive_code">Je n\'ai pas reçu le code</string>
+    <string name="code_does_not_match">Le code ne correspond pas, essayez à nouveau</string>
+    <string name="number_of_attempts">Nombre de tentatives: %1$d/%2$d</string>
+    <string name="invalid_code">Code invalide</string>
+    <plurals name="new_attempt_in_x_seconds">
+        <item quantity="one">Nouvelle tentative en: %d seconde</item>
+        <item quantity="other">Nouvelle tentative en: %d secondes</item>
+    </plurals>
+    <!-- END ENTER CODE STRINGS -->
+
+    <!-- BEGIN CREATE ACCOUNT STRINGS -->
+    <string name="nickname_unavailable">Pseudo non disponible</string>
+    <!-- END CREATE ACCOUNT STRINGS -->
+
+    <!-- BEGIN ACCESS PIN -->
+    <string name="access_pin">Broche d\'accès</string>
+    <string name="confirm_access_pin">Confirmer la broche d\'accès</string>
+    <string name="access_pin_required">Le code d\'accès ne peut pas être vide</string>
+    <string name="confirm_pin_access_required">Vous devez confirmer le code d\'accès</string>
+    <string name="access_pin_not_match">La broche d\'accès ne correspond pas</string>
+    <string name="access_pin_length">Au moins 4 caractères</string>
+    <!-- END ACCESS PIN -->
+
+    <!-- BEGIN CHAT MAIN MENU -->
+    <string name="profile">Profil</string>
+    <string name="security_settings">Paramètres de confidentialité</string>
+    <string name="appearance_settings">Paramètres d\'apparence</string>
+    <string name="invite_someone">Inviter quelqu\'un</string>
+    <string name="help">L\'aide</string>
+    <!-- END CHAT MAIN MENU -->
+
+    <!-- BEGIN INBOX -->
+    <string name="inbox">Boîte de réception</string>
+    <!-- END INBOX -->
 </resources>

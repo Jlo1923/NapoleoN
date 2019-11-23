@@ -16,17 +16,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/background_splash" />
+        app:srcCompat="@drawable/bg_mundo" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageView_logo"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:src="@drawable/logo_napoleon"
+        android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.25"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline_top_logo" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_top_logo"
+        app:srcCompat="@drawable/logo_napoleon_app" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_top_logo"

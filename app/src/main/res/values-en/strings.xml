@@ -5,6 +5,11 @@
     <!-- BEGIN GENERAL LABELS -->
     <string name="label_done">Accept</string>
     <string name="label_cancel">Cancel</string>
+    <string name="label_continue">Continue</string>
+    <string name="welcome">Welcome</string>
+    <string name="label_next">Following</string>
+    <string name="label_available">Available</string>
+    <string name="something_went_wrong">Something went wrong, please try again</string>
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
@@ -23,7 +28,50 @@
     <string name="at_least_five_characters">At least 5 characters</string>
     <string name="nickname_cant_contain_white_spaces">Cannot contain blank spaces</string>
     <string name="cant_contain_special_characters">Cannot contain special characters</string>
-    <string name="welcome">Welcome</string>
+    <string name="at_least_one_number">It must contain at least one number</string>
     <string name="recovery_password">Contraseña de recuperación</string>
     <!-- END REGISTER STRINGS -->
+
+    <!-- BEGIN SEND CODE STRINGS -->
+    <string name="welcome_to_napoleon">Welcome to Napoleon Secret Chat</string>
+    <string name="information_text_send_code">Your privacy is our priority, if you wish to continue you will receive a code to activate your registration.</string>
+    <string name="send_registration_code">Send registration code</string>
+    <!-- END SEND CODE STRINGS -->
+
+    <!-- BEGIN ENTER CODE STRINGS -->
+    <string name="enter_code">Enter code</string>
+    <string name="didnt_receive_code">I didn\'t receive the code</string>
+    <string name="code_does_not_match">The code doesn\'t match, try again</string>
+    <string name="number_of_attempts">Number of attemps: %1$d/%2$d</string>
+    <string name="invalid_code">Invalid code</string>
+    <plurals name="new_attempt_in_x_seconds">
+        <item quantity="one">New attempt in: %d second</item>
+        <item quantity="other">New attempt in: %d seconds</item>
+    </plurals>
+    <!-- END ENTER CODE STRINGS -->
+
+    <!-- BEGIN CREATE ACCOUNT STRINGS -->
+    <string name="nickname_unavailable">Nickname unavailable</string>
+    <!-- END CREATE ACCOUNT STRINGS -->
+
+    <!-- BEGIN ACCESS PIN -->
+    <string name="access_pin">Access pin</string>
+    <string name="confirm_access_pin">Confirm access pin</string>
+    <string name="access_pin_required">The access pin can\'t be empty</string>
+    <string name="confirm_pin_access_required">You must confirm the access pin</string>
+    <string name="access_pin_not_match">The access pin does not match</string>
+    <string name="access_pin_length">At least 4 characters</string>
+    <!-- END ACCESS PIN -->
+
+    <!-- BEGIN CHAT MAIN MENU -->
+    <string name="profile">Profile</string>
+    <string name="security_settings">Security settings</string>
+    <string name="appearance_settings">Appearance settings</string>
+    <string name="invite_someone">Invite someone</string>
+    <string name="help">Help</string>
+    <!-- END CHAT MAIN MENU -->
+
+    <!-- BEGIN INBOX -->
+    <string name="inbox">Inbox</string>
+    <!-- END INBOX -->
 </resources>

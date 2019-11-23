@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.ContextWrapper
 import com.naposystems.pepito.model.languageSelection.Language
 import java.util.*
+import javax.inject.Inject
 
 class LocaleHelper(base: Context?) : ContextWrapper(base) {
 
     companion object {
-
 
         fun setLocale(context: Context?): Context {
             return updateResources(context, getLanguagePreference(context!!))
@@ -35,11 +35,11 @@ class LocaleHelper(base: Context?) : ContextWrapper(base) {
 
         private fun setLanguagePreference(context: Context, language: Language) {
             val sharedPreferences =
-                context.getSharedPreferences(SharedPreference.PREF_NAME, Context.MODE_PRIVATE)
+                context.getSharedPreferences(Constants.SharedPreferences.PREF_NAME, Context.MODE_PRIVATE)
 
             with(sharedPreferences!!.edit()) {
                 putString(
-                    SharedPreference.PREF_LANGUAGE_SELECTED,
+                    Constants.SharedPreferences.PREF_LANGUAGE_SELECTED,
                     language.iso
                 )
                 commit()
@@ -48,12 +48,12 @@ class LocaleHelper(base: Context?) : ContextWrapper(base) {
 
         fun getLanguagePreference(context: Context): String {
             val sharedPreferences =
-                context.getSharedPreferences(SharedPreference.PREF_NAME, Context.MODE_PRIVATE)
+                context.getSharedPreferences(Constants.SharedPreferences.PREF_NAME, Context.MODE_PRIVATE)
 
             val defaultLanguage = "en"
 
             return sharedPreferences.getString(
-                SharedPreference.PREF_LANGUAGE_SELECTED,
+                Constants.SharedPreferences.PREF_LANGUAGE_SELECTED,
                 defaultLanguage
             )!!
         }

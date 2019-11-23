@@ -27,19 +27,9 @@ class LandingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProviders.of(this).get(LandingViewModel::class.java)
+
         binding = DataBindingUtil.inflate(inflater, R.layout.landing_fragment, container, false)
-
-        binding.buttonSeleccionIdioma.setOnClickListener {
-            viewModel.onShowLanguageSelectionPressed()
-        }
-
-        binding.buttonRegister.setOnClickListener {
-            viewModel.onRegisterButtonPressed()
-        }
-
-        binding.buttonRecoveryAccountCuenta.setOnClickListener {
-            viewModel.onRecoveryAccountButtonPressed()
-        }
+        binding.viewModel = viewModel
 
         viewModel.showLanguageSelection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -49,11 +39,11 @@ class LandingFragment : Fragment() {
             }
         })
 
-        viewModel.openRegister.observe(viewLifecycleOwner, Observer {
+        viewModel.openSendCode.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                viewModel.onRegisterOpened()
+                viewModel.onSendCodeOpened()
                 this.findNavController()
-                    .navigate(LandingFragmentDirections.actionLandingFragmentToRegisterFragment())
+                    .navigate(LandingFragmentDirections.actionLandingFragmentToSendCodeFragment())
             }
         })
 

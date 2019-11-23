@@ -5,8 +5,19 @@
     <!-- BEGIN GENERAL LABELS -->
     <string name="label_done">Aceptar</string>
     <string name="label_cancel">Cancelar</string>
-    <string name="power_by" translatable="false">Powered by Napoleon Systems</string>
+    <string name="label_continue">Continuar</string>
+    <string name="label_next">Siguiente</string>
+    <string name="label_available">Disponible</string>
+    <string name="label_nickname" translatable="false">\@%1$s</string>
+    <string name="power_by" translatable="false">Powered by</string>
     <string name="welcome">Bienvenido</string>
+    <string name="middle_dash" translatable="false">-</string>
+    <string name="channel_description" translatable="false">Default channel</string>
+    <string name="default_notification_channel_id" translatable="false">123456789</string>
+    <string name="okay" translatable="false">OK</string>
+    <string name="something_went_wrong">Algo ha salido mal, por favor inténtalo nuevamente</string>
+    <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
+    <string name="only_numbers" translatable="false">0123456789</string>
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
@@ -25,8 +36,51 @@
     <string name="at_least_five_characters">Al menos 5 carácteres</string>
     <string name="nickname_cant_contain_white_spaces">No puede contener espacios en blanco</string>
     <string name="cant_contain_special_characters">No puede contener carácteres especiales</string>
+    <string name="at_least_one_number">Debe contener al menos un número</string>
     <string name="recovery_password">Contraseña de recuperación</string>
-    <!-- BEGIN REGISTER STRINGS -->
+    <!-- END REGISTER STRINGS -->
 
+    <!-- BEGIN SEND CODE STRINGS -->
+    <string name="welcome_to_napoleon">Bienvenido a Napoleon Secret Chat</string>
+    <string name="information_text_send_code">Tu privacidad es nuestra prioridad, si deseas continuar recibirás un código para activar tu registro</string>
+    <string name="send_registration_code">Enviar código de registro</string>
+    <!-- END SEND CODE STRINGS -->
+
+    <!-- BEGIN ENTER CODE STRINGS -->
+    <string name="enter_code">Ingresar código</string>
+    <string name="didnt_receive_code">No recibí el código</string>
+    <string name="code_does_not_match">El código no coincide, intenta de nuevo</string>
+    <string name="number_of_attempts">Número de intentos: %1$d/%2$d</string>
+    <string name="invalid_code">Código inválido</string>
+    <plurals name="new_attempt_in_x_seconds">
+        <item quantity="one">Nuevo intento en: %d segundo</item>
+        <item quantity="other">Nuevo intento en: %d segundos</item>
+    </plurals>
+    <!-- END ENTER CODE STRINGS -->
+
+    <!-- BEGIN CREATE ACCOUNT STRINGS -->
+    <string name="nickname_unavailable">Apodo no disponible</string>
+    <!-- END CREATE ACCOUNT STRINGS -->
+
+    <!-- BEGIN ACCESS PIN -->
+    <string name="access_pin">Pin de acceso</string>
+    <string name="confirm_access_pin">Confirmar pin de acceso</string>
+    <string name="access_pin_required">El pin de acceso no puede estar vacío</string>
+    <string name="confirm_pin_access_required">Debes confirmar el pin de acceso</string>
+    <string name="access_pin_not_match">El pin de acceso no coincide</string>
+    <string name="access_pin_length">Al menos 4 carácteres</string>
+    <!-- END ACCESS PIN -->
+
+    <!-- BEGIN CHAT MAIN MENU -->
+    <string name="profile">Perfil</string>
+    <string name="security_settings">Ajustes de privacidad</string>
+    <string name="appearance_settings">Ajustes de apariencia</string>
+    <string name="invite_someone">Invitar a alguien</string>
+    <string name="help">Ayuda</string>
+    <!-- END CHAT MAIN MENU -->
+
+    <!-- BEGIN INBOX -->
+    <string name="inbox">Bandeja de entrada</string>
+    <!-- END INBOX -->
 
 </resources>

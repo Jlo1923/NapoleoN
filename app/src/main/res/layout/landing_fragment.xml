@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.naposystems.pepito.ui.landing.LandingViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/welcome"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
                 app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
             <com.google.android.material.button.MaterialButton
@@ -39,6 +42,7 @@
                 style="@style/AppPrimaryButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onRegisterButtonPressed()}"
                 android:text="@string/label_create_account"
                 app:layout_constraintBottom_toTopOf="@+id/button_recovery_account_cuenta"
                 app:layout_constraintEnd_toEndOf="@+id/button_recovery_account_cuenta"
@@ -51,14 +55,15 @@
                 style="@style/AppOutlinedPrimaryButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onRecoveryAccountButtonPressed()}"
                 android:paddingStart="@dimen/large_padding"
                 android:paddingEnd="@dimen/large_padding"
                 android:text="@string/label_recover_account"
-                app:layout_constraintWidth_percent="0.8"
                 app:layout_constraintBottom_toTopOf="@+id/button_seleccion_idioma"
                 app:layout_constraintEnd_toStartOf="@id/guideline2"
-                app:layout_constraintStart_toStartOf="@id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/button_register" />
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/button_register"
+                app:layout_constraintWidth_percent="@dimen/width_app_button" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_seleccion_idioma"
@@ -66,6 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layoutDirection="rtl"
+                android:onClick="@{() -> viewModel.onShowLanguageSelectionPressed()}"
                 android:text="@string/label_language_selection"
                 app:icon="@drawable/ic_arrow_right_primary_24dp"
                 app:layout_constraintBottom_toTopOf="@+id/guideline4"
@@ -73,7 +79,7 @@
                 app:layout_constraintStart_toStartOf="@+id/button_recovery_account_cuenta" />
 
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
+                android:id="@+id/guideline_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.recoveryAccount.RecoveryAccountFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -12,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
-        android:isScrollContainer="true">
+        android:isScrollContainer="true"
+        tools:context=".ui.recoveryAccount.RecoveryAccountFragment">
 
         <include layout="@layout/background_landing" />
 
@@ -74,7 +74,8 @@
                     android:text="@string/label_recover_account"
                     app:layout_constraintBottom_toTopOf="@+id/guideline4"
                     app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                    app:layout_constraintStart_toStartOf="@+id/guideline1" />
+                    app:layout_constraintStart_toStartOf="@+id/guideline1"
+                    app:layout_constraintWidth_percent="@dimen/width_app_button" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline1"

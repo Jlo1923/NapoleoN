@@ -1,0 +1,32 @@
+package com.naposystems.pepito.di
+
+import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.pepito.ui.register.accessPin.AccessPinFragment
+import com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment
+import com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment
+import com.naposystems.pepito.ui.register.sendCode.SendCodeFragment
+import com.naposystems.pepito.ui.splash.SplashFragment
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
+
+@Module
+abstract class FragmentBindingModule {
+
+    @ContributesAndroidInjector
+    abstract fun bindSplashFragment(): SplashFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindSendCodeFragment(): SendCodeFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindEnterCodeFragment(): EnterCodeFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindLanguageSelectionFragment(): LanguageSelectionDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindValidateNicknameFragment(): ValidateNicknameFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindAccessPinFragment(): AccessPinFragment
+}
