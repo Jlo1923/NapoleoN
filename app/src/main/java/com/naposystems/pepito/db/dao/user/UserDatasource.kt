@@ -7,4 +7,6 @@ interface UserDatasource {
     suspend fun insertUser(user: User)
 
     suspend fun getUser(firebaseId: String): User
+
+    suspend fun updateUser(user: User)
 }

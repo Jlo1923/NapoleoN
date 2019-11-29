@@ -16,6 +16,11 @@ class RoomModule {
     @Singleton
     fun provideRoomDatabase(context: Context): NapoleonRoomDatabase {
         return Room.databaseBuilder(context, NapoleonRoomDatabase::class.java, "napoleon_database")
+            .addMigrations(
+                NapoleonRoomDatabase.MIGRATION_1_2,
+                NapoleonRoomDatabase.MIGRATION_2_3,
+                NapoleonRoomDatabase.MIGRATION_3_4
+            )
             .allowMainThreadQueries()
             .build()
     }

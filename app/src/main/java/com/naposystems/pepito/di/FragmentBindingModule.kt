@@ -1,6 +1,7 @@
 package com.naposystems.pepito.di
 
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.register.accessPin.AccessPinFragment
 import com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment
@@ -29,4 +30,7 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindAccessPinFragment(): AccessPinFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindProfileFragment(): ProfileFragment
 }

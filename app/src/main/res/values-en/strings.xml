@@ -10,6 +10,12 @@
     <string name="label_next">Following</string>
     <string name="label_available">Available</string>
     <string name="something_went_wrong">Something went wrong, please try again</string>
+    <string name="label_name">Name</string>
+    <string name="label_status">Status</string>
+    <string name="label_blocked_contacts">Blocked contacts</string>
+    <string name="label_share_a_state">Share a state</string>
+    <string name="label_edit_photo">Edit photo</string>
+    <string name="label_edit_cover">Edit banner</string>
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
@@ -74,4 +80,15 @@
     <!-- BEGIN INBOX -->
     <string name="inbox">Inbox</string>
     <!-- END INBOX -->
+
+    <!-- BEGIN PROFILE -->
+    <string name="explanation_camera_and_storage_permission">To be able to change the profile and cover photo, allow NapoleoN to access your camera, photos and multimedia content of your device.</string>
+    <!-- END PROFILE -->
+
+    <!-- BEGIN IMAGE SELECTOR -->
+    <string name="change_profile_photo">Change profile photo</string>
+    <string name="change_cover_photo">Change banner photo</string>
+    <string name="take_photo">Take photo</string>
+    <string name="select_photo">Select photo</string>
+    <!-- END IMAGE SELECTOR -->
 </resources>

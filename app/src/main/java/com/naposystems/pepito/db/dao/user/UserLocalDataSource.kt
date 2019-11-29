@@ -12,4 +12,8 @@ class UserLocalDataSource @Inject constructor(private val userDao: UserDao) : Us
     override suspend fun getUser(firebaseId: String): User {
         return userDao.getUser(firebaseId)
     }
+
+    override suspend fun updateUser(user: User) {
+        return userDao.updateUser(user)
+    }
 }

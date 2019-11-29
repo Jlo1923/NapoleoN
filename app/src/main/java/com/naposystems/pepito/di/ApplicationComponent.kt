@@ -22,6 +22,7 @@ import javax.inject.Singleton
         LanguageSelectionModule::class,
         ValidateNicknameModule::class,
         CreateAccountModule::class,
+        ProfileModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {

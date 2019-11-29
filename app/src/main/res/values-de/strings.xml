@@ -10,6 +10,12 @@
     <string name="label_next">Weiter</string>
     <string name="label_available">Verfügbar</string>
     <string name="something_went_wrong">Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
+    <string name="label_name">Vorname</string>
+    <string name="label_status">Zustand</string>
+    <string name="label_blocked_contacts">Blockierte Kontakte</string>
+    <string name="label_share_a_state">Teile einen Staat</string>
+    <string name="label_edit_photo">Foto bearbeiten</string>
+    <string name="label_edit_cover">Banner bearbeiten</string>
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
@@ -74,4 +80,15 @@
     <!-- BEGIN INBOX -->
     <string name="inbox">Posteingang</string>
     <!-- END INBOX -->
+
+    <!-- BEGIN PROFILE -->
+    <string name="explanation_camera_and_storage_permission">Ermöglichen Sie NapoleoN den Zugriff auf Ihre Kamera, Fotos und Multimedia-Inhalte Ihres Geräts, um das Profil und das Titelbild zu ändern.</string>
+    <!-- END PROFILE -->
+
+    <!-- BEGIN IMAGE SELECTOR -->
+    <string name="change_profile_photo">Profilbild ändern</string>
+    <string name="change_cover_photo">Bannerfoto ändern</string>
+    <string name="take_photo">Mach ein Bild</string>
+    <string name="select_photo">Foto auswählen</string>
+    <!-- END IMAGE SELECTOR -->
 </resources>

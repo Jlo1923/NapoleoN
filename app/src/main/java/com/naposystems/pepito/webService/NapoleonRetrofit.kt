@@ -1,6 +1,6 @@
 package com.naposystems.pepito.webService
 
-import com.naposystems.pepito.utility.Constants.BASE_URL
+import com.naposystems.pepito.utility.Constants.NapoleonApi.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit

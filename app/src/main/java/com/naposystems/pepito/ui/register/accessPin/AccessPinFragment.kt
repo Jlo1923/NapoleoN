@@ -89,7 +89,10 @@ class AccessPinFragment : Fragment() {
                     firebaseId,
                     nickname,
                     displayName,
-                    viewModel.accessPin.value!!
+                    viewModel.accessPin.value!!,
+                    "",
+                    "",
+                    ""
                 )
                 viewModel.createUser(user)
             }

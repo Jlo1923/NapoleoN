@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
+import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.register.accessPin.AccessPinViewModel
 import com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameViewModel
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeViewModel
@@ -49,4 +50,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainActivityViewModel::class)
     internal abstract fun bindMainActivityViewModel(viewModel: MainActivityViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProfileViewModel::class)
+    internal abstract fun bindProfileViewModel(viewModel: ProfileViewModel): ViewModel
 }

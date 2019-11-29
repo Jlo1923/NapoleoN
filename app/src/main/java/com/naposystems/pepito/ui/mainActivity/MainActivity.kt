@@ -2,12 +2,13 @@ package com.naposystems.pepito.ui.mainActivity
 
 import android.content.Context
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -15,8 +16,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ActivityMainBinding
@@ -29,7 +32,6 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
-
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
@@ -41,6 +43,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
+
+    private val options by lazy {
+        navOptions {
+            anim {
+                enter = R.anim.slide_in_right
+                exit = R.anim.slide_out_left
+                popEnter = R.anim.slide_in_left
+                popExit = R.anim.slide_out_right
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -126,14 +139,43 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun updateHeaderDrawer(user: User) {
         val headerView = binding.navView.getHeaderView(0)
 
+        val imageViewBackground = headerView.findViewById<ImageView>(R.id.imageView_background)
+        val imageViewAvatar = headerView.findViewById<ImageView>(R.id.imageView_profile_image)
         val textViewDisplayName = headerView.findViewById<TextView>(R.id.textView_user_name)
         val textViewNickname = headerView.findViewById<TextView>(R.id.textView_user_nickname)
+
+        val defaultAvatar = resources.getDrawable(
+            R.drawable.ic_default_avatar,
+            this.theme
+        )
+
+        val defaultHeaderBackground = resources.getDrawable(
+            R.drawable.bg_default_drawer_header,
+            this.theme
+        )
+
+        val imageUrl = user.imageUrl
+
+        Glide.with(this)
+            .load(
+                if (imageUrl.isEmpty()) defaultAvatar else imageUrl
+            )
+            .circleCrop()
+            .into(imageViewAvatar)
+
+        Glide.with(this)
+            .load(if (user.headerUri.isEmpty()) defaultHeaderBackground else Uri.parse(user.headerUri))
+            .into(imageViewBackground)
 
         textViewDisplayName.text = user.displayName
 
         val nickname = getString(R.string.label_nickname, user.nickname)
 
         textViewNickname.text = nickname
+
+        headerView.setOnClickListener {
+            navController.navigate(R.id.profileFragment, null, options)
+        }
     }
 
     private fun hideToolbar() {
@@ -176,7 +218,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-            R.id.profile -> navController.navigate(R.id.profileFragment)
             R.id.security_settings -> navController.navigate(R.id.securitySettingsFragment)
             R.id.appearance_settings -> navController.navigate(R.id.appearanceSettingsFragment)
             R.id.invite_someone -> navController.navigate(R.id.inviteSomeoneFragment)

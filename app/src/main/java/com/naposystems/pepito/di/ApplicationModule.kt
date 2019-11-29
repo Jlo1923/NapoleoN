@@ -2,7 +2,6 @@ package com.naposystems.pepito.di
 
 import android.app.Application
 import android.content.Context
-import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
@@ -12,10 +11,8 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -68,7 +65,7 @@ class ApplicationModule {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(Constants.NapoleonApi.BASE_URL)
             .client(httpClient.build())
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()

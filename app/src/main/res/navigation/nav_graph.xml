@@ -128,7 +128,7 @@
             app:destination="@id/profileFragment" />
         <action
             android:id="@+id/action_homeFragment_to_securitySettingsFragment"
-            app:destination="@id/securitySettingsFragment" />
+            app:destination="@id/securitySettingsFragment"/>
         <action
             android:id="@+id/action_homeFragment_to_appearanceSettingsFragment"
             app:destination="@id/appearanceSettingsFragment" />
@@ -143,7 +143,11 @@
         android:id="@+id/profileFragment"
         android:name="com.naposystems.pepito.ui.profile.ProfileFragment"
         android:label="@string/profile"
-        tools:layout="@layout/profile_fragment" />
+        tools:layout="@layout/profile_fragment">
+        <action
+            android:id="@+id/action_profileFragment_to_imageSelectorBottomSheetFragment"
+            app:destination="@id/imageSelectorBottomSheetFragment" />
+    </fragment>
     <fragment
         android:id="@+id/securitySettingsFragment"
         android:name="com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment"
@@ -164,4 +168,9 @@
         android:name="com.naposystems.pepito.ui.help.HelpFragment"
         android:label="@string/help"
         tools:layout="@layout/help_fragment" />
+    <dialog
+        android:id="@+id/imageSelectorBottomSheetFragment"
+        android:name="com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment"
+        android:label="image_selector_bottom_sheet_fragment"
+        tools:layout="@layout/image_selector_bottom_sheet_fragment" />
 </navigation>

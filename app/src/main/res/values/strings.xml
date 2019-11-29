@@ -18,6 +18,12 @@
     <string name="something_went_wrong">Algo ha salido mal, por favor inténtalo nuevamente</string>
     <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="only_numbers" translatable="false">0123456789</string>
+    <string name="label_name">Nombre</string>
+    <string name="label_status">Estado</string>
+    <string name="label_blocked_contacts">Contactos bloqueados</string>
+    <string name="label_share_a_state">Comparte un estado</string>
+    <string name="label_edit_photo">Editar foto</string>
+    <string name="label_edit_cover">Editar banner</string>
     <!-- END GENERAL LABELS -->
 
     <!-- BEGIN LANDING STRINGS -->
@@ -82,5 +88,16 @@
     <!-- BEGIN INBOX -->
     <string name="inbox">Bandeja de entrada</string>
     <!-- END INBOX -->
+
+    <!-- BEGIN PROFILE -->
+    <string name="explanation_camera_and_storage_permission">Para poder cambiar la foto de perfil y portada, permite que NapoleoN pueda acceder a tu cámara, fotos y contenido multimedia de tu dispositivo.</string>
+    <!-- END PROFILE -->
+
+    <!-- BEGIN IMAGE SELECTOR -->
+    <string name="change_profile_photo">Cambiar foto de perfil</string>
+    <string name="change_cover_photo">Cambiar foto de banner</string>
+    <string name="take_photo">Tomar foto</string>
+    <string name="select_photo">Seleccionar foto</string>
+    <!-- END IMAGE SELECTOR -->
 
 </resources>

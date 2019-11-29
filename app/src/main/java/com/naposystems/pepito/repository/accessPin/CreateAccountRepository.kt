@@ -7,6 +7,7 @@ import com.naposystems.pepito.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.pepito.dto.accessPin.CreateAccountResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.register.accessPin.IContractAccessPin
+import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
@@ -33,27 +34,7 @@ class CreateAccountRepository @Inject constructor(
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        val errorList = ArrayList<String>()
-
-        if (enterCodeError!!.nickname.isNotEmpty()) {
-            for (error in enterCodeError.nickname) {
-                errorList.add(error)
-            }
-        }
-
-        if (enterCodeError.password.isNotEmpty()) {
-            for (error in enterCodeError.password) {
-                errorList.add(error)
-            }
-        }
-
-        if (enterCodeError.firebaseId.isNotEmpty()) {
-            for (error in enterCodeError.firebaseId) {
-                errorList.add(error)
-            }
-        }
-
-        return errorList
+        return WebServiceUtils.get422Errors(enterCodeError!!)
     }
 
     fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {
