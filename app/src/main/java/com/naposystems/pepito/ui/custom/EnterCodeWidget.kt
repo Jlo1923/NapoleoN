@@ -110,7 +110,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
 
         linearTextInputs.apply {
             id = View.generateViewId()
-            setBackgroundColor(resources.getColor(R.color.white, context.theme))
+            setBackgroundColor(resources.getColor(R.color.colorBackground, context.theme))
             orientation = HORIZONTAL
         }
 

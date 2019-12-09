@@ -4,8 +4,8 @@
     <color name="colorPrimaryLight">#ffd74b</color>
     <color name="colorPrimaryDark">#a27800</color>
     <color name="colorSecondary">#cccccc</color>
-    <color name="colorAccentLight">#ffffff</color>
-    <color name="colorAccentDark">#9b9b9b</color>
+    <color name="colorSecondaryLight">#ffffff</color>
+    <color name="colorSecondaryDark">#9b9b9b</color>
     <color name="primaryTextColor">#f2f2f2</color>
     <color name="secondaryTextColor">#4d4d4d</color>
     <color name="linkTextColor">#29ABE2</color>
@@ -16,4 +16,6 @@
     <color name="separator">#E0E0E0</color>
     <color name="green">#00E676</color>
     <color name="colorBackground">#f2f2f2</color>
+    <color name="colorSecondaryBackground">#d8a608</color>
+    <color name="buttonTint">#d8a608</color>
 </resources>

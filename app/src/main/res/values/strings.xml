@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NapoleoN</string>
+    <string name="app_name" translatable="false">NapoleoN</string>
 
-    <!-- BEGIN GENERAL LABELS -->
-    <string name="label_done">Aceptar</string>
-    <string name="label_cancel">Cancelar</string>
-    <string name="label_continue">Continuar</string>
-    <string name="label_next">Siguiente</string>
-    <string name="label_available">Disponible</string>
+    <!-- BEGIN GENERAL LABELS
+    <string name="text_accept">Aceptar</string>
+    <string name="text_cancel">Cancelar</string>
+    <string name="text_continue">Continuar</string>
+    <string name="text_next">Siguiente</string>
     <string name="label_nickname" translatable="false">\@%1$s</string>
     <string name="power_by" translatable="false">Powered by</string>
     <string name="welcome">Bienvenido</string>
@@ -18,21 +17,22 @@
     <string name="something_went_wrong">Algo ha salido mal, por favor inténtalo nuevamente</string>
     <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="only_numbers" translatable="false">0123456789</string>
+    <string name="only_letters" translatable="false">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ abcdefghijklmnñopqrstuvwxyz</string>
     <string name="label_name">Nombre</string>
-    <string name="label_status">Estado</string>
-    <string name="label_blocked_contacts">Contactos bloqueados</string>
+    <string name="text_status">Estado</string>
+    <string name="text_blocked_contacts">Contactos bloqueados</string>
     <string name="label_share_a_state">Comparte un estado</string>
     <string name="label_edit_photo">Editar foto</string>
     <string name="label_edit_cover">Editar banner</string>
-    <!-- END GENERAL LABELS -->
+     END GENERAL LABELS -->
 
-    <!-- BEGIN LANDING STRINGS -->
+    <!-- BEGIN LANDING STRINGS
     <string name="label_create_account">Crear cuenta</string>
     <string name="label_recover_account">Recuperar cuenta</string>
     <string name="label_language_selection">Seleccionar Idioma</string>
-    <!-- END LANDING STRINGS -->
+     END LANDING STRINGS -->
 
-    <!-- BEGIN REGISTER STRINGS -->
+    <!-- BEGIN REGISTER STRINGS
     <string name="label_fill_form_to_create_account">Si deseas crear un nuevo usuario completa el siguiente formulario</string>
     <string name="hint_required_nickname">Apodo*</string>
     <string name="display_name">Nombre a mostrar</string>
@@ -44,15 +44,15 @@
     <string name="cant_contain_special_characters">No puede contener carácteres especiales</string>
     <string name="at_least_one_number">Debe contener al menos un número</string>
     <string name="recovery_password">Contraseña de recuperación</string>
-    <!-- END REGISTER STRINGS -->
+     END REGISTER STRINGS -->
 
-    <!-- BEGIN SEND CODE STRINGS -->
+    <!-- BEGIN SEND CODE STRINGS
     <string name="welcome_to_napoleon">Bienvenido a Napoleon Secret Chat</string>
     <string name="information_text_send_code">Tu privacidad es nuestra prioridad, si deseas continuar recibirás un código para activar tu registro</string>
     <string name="send_registration_code">Enviar código de registro</string>
-    <!-- END SEND CODE STRINGS -->
+     END SEND CODE STRINGS -->
 
-    <!-- BEGIN ENTER CODE STRINGS -->
+    <!-- BEGIN ENTER CODE STRINGS
     <string name="enter_code">Ingresar código</string>
     <string name="didnt_receive_code">No recibí el código</string>
     <string name="code_does_not_match">El código no coincide, intenta de nuevo</string>
@@ -62,42 +62,62 @@
         <item quantity="one">Nuevo intento en: %d segundo</item>
         <item quantity="other">Nuevo intento en: %d segundos</item>
     </plurals>
-    <!-- END ENTER CODE STRINGS -->
+     END ENTER CODE STRINGS -->
 
-    <!-- BEGIN CREATE ACCOUNT STRINGS -->
+    <!-- BEGIN CREATE ACCOUNT STRINGS
     <string name="nickname_unavailable">Apodo no disponible</string>
-    <!-- END CREATE ACCOUNT STRINGS -->
+     END CREATE ACCOUNT STRINGS -->
 
-    <!-- BEGIN ACCESS PIN -->
+    <!-- BEGIN ACCESS PIN
     <string name="access_pin">Pin de acceso</string>
     <string name="confirm_access_pin">Confirmar pin de acceso</string>
     <string name="access_pin_required">El pin de acceso no puede estar vacío</string>
     <string name="confirm_pin_access_required">Debes confirmar el pin de acceso</string>
     <string name="access_pin_not_match">El pin de acceso no coincide</string>
     <string name="access_pin_length">Al menos 4 carácteres</string>
-    <!-- END ACCESS PIN -->
+     END ACCESS PIN -->
 
-    <!-- BEGIN CHAT MAIN MENU -->
+    <!-- BEGIN CHAT MAIN MENU
     <string name="profile">Perfil</string>
     <string name="security_settings">Ajustes de privacidad</string>
     <string name="appearance_settings">Ajustes de apariencia</string>
     <string name="invite_someone">Invitar a alguien</string>
     <string name="help">Ayuda</string>
-    <!-- END CHAT MAIN MENU -->
+     END CHAT MAIN MENU -->
 
-    <!-- BEGIN INBOX -->
-    <string name="inbox">Bandeja de entrada</string>
-    <!-- END INBOX -->
-
-    <!-- BEGIN PROFILE -->
+    <!-- BEGIN PROFILE
     <string name="explanation_camera_and_storage_permission">Para poder cambiar la foto de perfil y portada, permite que NapoleoN pueda acceder a tu cámara, fotos y contenido multimedia de tu dispositivo.</string>
-    <!-- END PROFILE -->
+     END PROFILE -->
 
-    <!-- BEGIN IMAGE SELECTOR -->
+    <!-- BEGIN IMAGE SELECTOR
     <string name="change_profile_photo">Cambiar foto de perfil</string>
     <string name="change_cover_photo">Cambiar foto de banner</string>
     <string name="take_photo">Tomar foto</string>
     <string name="select_photo">Seleccionar foto</string>
-    <!-- END IMAGE SELECTOR -->
+     END IMAGE SELECTOR -->
 
+    <!-- BEGIN STATUS
+    <string name="current_status">Estado actual</string>
+    <string name="text_status_hint">Ingresa un estado</string>
+    <string name="select_a_status">Seleccione un estado</string>
+    <string name="text_status_available">Disponible</string>
+    <string name="text_status_busy">Ocupado</string>
+    <string name="text_status_in_meeting">En reunión</string>
+    <string name="text_status_only_messages">Solo mensajes</string>
+    <string name="text_status_sleeping">Durmiendo</string>
+    <string name="text_status_only_emergency">Solo emergencias</string>
+    <string name="error_getting_local_status">Ha ocurrido un error al obtener los estados, inténtalo nuevamente</string>
+     BEGIN STATUS -->
+
+    <!-- BEGIN BLOCKED CONTACTS
+    <string name="text_blocked_contacts_info">Los contactos en este listado no podrán comunicarse contigo ni acceder a tu perfil.</string>
+     END BLOCKED CONTACTS -->
+
+    <!-- BEGIN APPEARANCE SETTINGS
+    <string name="text_color_scheme">Combinación de colores</string>
+    <string name="text_user_display_format">Formato de visualización de usuario</string>
+    <string name="text_language">Lenguaje</string>
+    <string name="text_light_theme">Tema claro</string>
+    <string name="text_dark_theme">Tema oscuro</string>
+     END APPEARANCE SETTINGS -->
 </resources>

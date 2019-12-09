@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_margin"
             android:layout_marginEnd="@dimen/small_margin"
-            android:text="@string/label_done"
+            android:text="@string/text_accept"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_message" />
 
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
-            android:text="@string/label_cancel"
+            android:text="@string/text_cancel"
             app:layout_constraintEnd_toStartOf="@id/button_accept"
             app:layout_constraintTop_toTopOf="@id/button_accept" />
 

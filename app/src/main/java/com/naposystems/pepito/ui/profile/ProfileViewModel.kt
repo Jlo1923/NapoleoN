@@ -46,6 +46,34 @@ class ProfileViewModel @Inject constructor(
         _localUserUpdated.value = null
     }
 
+    private fun updateUserInfo(
+        updateUserInfoReqDTO: UpdateUserInfoReqDTO,
+        successCallback: () -> Unit,
+        failureCallback: () -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+
+                val response = repository.updateUserInfo(updateUserInfoReqDTO)
+
+                if (response.isSuccessful) {
+                    _userUpdated.value = response.body()
+                    successCallback()
+                } else {
+                    failureCallback()
+                    when (response.code()) {
+                        401, 500 -> _errorUpdatingUser.value = repository.getDefaultError(response)
+                        422 -> _errorUpdatingUser.value = repository.get422Error(response)
+                        else -> _errorUpdatingUser.value = repository.getDefaultError(response)
+                    }
+                }
+            } catch (ex: Exception) {
+                Timber.d(ex)
+                _errorUpdatingUser.value = emptyList()
+            }
+        }
+    }
+
     //region Implementation IContractProfile.ViewModel
     override fun getUser() {
         viewModelScope.launch {
@@ -64,26 +92,15 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    override fun updateUserInfo(updateUserInfoReqDTO: UpdateUserInfoReqDTO) {
-        viewModelScope.launch {
-            try {
+    override fun updateAvatar(updateUserInfoReqDTO: UpdateUserInfoReqDTO) =
+        updateUserInfo(updateUserInfoReqDTO, {}, {})
 
-                val response = repository.updateUserInfo(updateUserInfoReqDTO)
-
-                if (response.isSuccessful) {
-                    _userUpdated.value = response.body()
-                } else {
-                    when (response.code()) {
-                        401, 500 -> _errorUpdatingUser.value = repository.getDefaultError(response)
-                        422 -> _errorUpdatingUser.value = repository.get422Error(response)
-                        else -> _errorUpdatingUser.value = repository.getDefaultError(response)
-                    }
-                }
-            } catch (ex: Exception) {
-                Timber.d(ex)
-                _errorUpdatingUser.value = emptyList()
-            }
-        }
+    override fun updateDisplayName(
+        updateUserInfoReqDTO: UpdateUserInfoReqDTO,
+        successCallback: () -> Unit,
+        failureCallback: () -> Unit
+    ) {
+        updateUserInfo(updateUserInfoReqDTO, successCallback, failureCallback)
     }
 
     override fun updateLocalUser(newUser: User) {

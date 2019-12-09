@@ -51,7 +51,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputLayout_access_pin"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/TextInputLayoutOutlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/small_margin"
@@ -80,7 +80,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/text_input_layout_confirm_access_pin"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/TextInputLayoutOutlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"

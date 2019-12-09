@@ -9,7 +9,15 @@ interface IContractProfile {
 
     interface ViewModel {
         fun getUser()
-        fun updateUserInfo(updateUserInfoReqDTO: UpdateUserInfoReqDTO)
+        fun updateAvatar(
+            updateUserInfoReqDTO: UpdateUserInfoReqDTO)
+
+        fun updateDisplayName(
+            updateUserInfoReqDTO: UpdateUserInfoReqDTO,
+            successCallback: () -> Unit,
+            failureCallback: () -> Unit
+        )
+
         fun updateLocalUser(newUser: User)
     }
 

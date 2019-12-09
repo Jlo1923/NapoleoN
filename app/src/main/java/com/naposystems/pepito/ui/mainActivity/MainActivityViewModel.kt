@@ -22,6 +22,10 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     val errorGettingUser: LiveData<Boolean>
         get() = _errorGettingUser
 
+    private val _theme = MutableLiveData<Int>()
+    val theme: LiveData<Int>
+        get() = _theme
+
     init {
         _user.value = null
         _errorGettingUser.value = false
@@ -39,5 +43,12 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
             }
         }
     }
+
+    override fun getTheme() {
+        viewModelScope.launch {
+            _theme.value = repository.getTheme()
+        }
+    }
+
     //endregion
 }

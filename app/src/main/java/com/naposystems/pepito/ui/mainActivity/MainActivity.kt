@@ -1,6 +1,7 @@
 package com.naposystems.pepito.ui.mainActivity
 
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -61,6 +63,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
+
+        viewModel.getTheme()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         setSupportActionBar(binding.toolbar)
@@ -108,6 +112,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 Utils.showSimpleSnackbar(binding.coordinator, message, 2)
             }
+        })
+
+        viewModel.theme.observe(this, Observer {
+            val theme = when (it) {
+                Constants.ColorScheme.LIGHT_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_NO
+                Constants.ColorScheme.DARK_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_YES
+                else -> AppCompatDelegate.MODE_NIGHT_NO
+            }
+
+            AppCompatDelegate.setDefaultNightMode(theme)
         })
 
         binding.navView.setNavigationItemSelectedListener(this)
@@ -205,6 +219,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.attachBaseContext(LocaleHelper.setLocale(newBase))
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        LocaleHelper.setLocale(this)
+        super.onConfigurationChanged(newConfig)
+    }
+
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -218,12 +237,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-            R.id.security_settings -> navController.navigate(R.id.securitySettingsFragment)
-            R.id.appearance_settings -> navController.navigate(R.id.appearanceSettingsFragment)
-            R.id.invite_someone -> navController.navigate(R.id.inviteSomeoneFragment)
-            R.id.help -> navController.navigate(R.id.helpFragment)
+            R.id.security_settings -> navController.navigate(
+                R.id.securitySettingsFragment,
+                null,
+                options
+            )
+            R.id.appearance_settings -> navController.navigate(
+                R.id.appearanceSettingsFragment,
+                null,
+                options
+            )
+            R.id.invite_someone -> navController.navigate(R.id.inviteSomeoneFragment, null, options)
+            R.id.help -> navController.navigate(R.id.helpFragment, null, options)
         }
 
         return true
+    }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (overrideConfiguration != null) {
+            val uiMode = overrideConfiguration.uiMode
+            overrideConfiguration.setTo(baseContext.resources.configuration)
+            overrideConfiguration.uiMode = uiMode
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
     }
 }

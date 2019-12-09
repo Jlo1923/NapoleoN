@@ -55,10 +55,10 @@ class SharedPreferencesManager(private val context: Context) {
         }
     }
 
-    fun getInt(preferenceName: String, defaultValue: Int): Int {
+    fun getInt(preferenceName: String): Int {
         return sharedPreferences.getInt(
             preferenceName,
-            defaultValue
+            0
         )
     }
 

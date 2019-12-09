@@ -85,13 +85,15 @@ class AccessPinFragment : Fragment() {
                     ""
                 )
 
+                val defaultStatus = context!!.getString(R.string.text_status_available)
+
                 val user = User(
                     firebaseId,
                     nickname,
                     displayName,
                     viewModel.accessPin.value!!,
                     "",
-                    "",
+                    defaultStatus,
                     ""
                 )
                 viewModel.createUser(user)
@@ -114,7 +116,7 @@ class AccessPinFragment : Fragment() {
             if (it == true) {
                 sharedPreferencesManager.putInt(
                     Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
-                    Constants.ACCOUNT_CREATED
+                    Constants.AccountStatus.ACCOUNT_CREATED.id
                 )
                 findNavController()
                     .navigate(AccessPinFragmentDirections.actionAccessPinFragmentToHomeFragment())
@@ -147,13 +149,16 @@ class AccessPinFragment : Fragment() {
                 ""
             )
 
+            val defaultStatus = context!!.getString(R.string.text_status_available)
+
             val createAccountReqDTO = CreateAccountReqDTO(
                 firebaseId,
                 displayName,
                 nickname,
                 languageIso,
                 viewModel.accessPin.value!!,
-                viewModel.confirmAccessPin.value!!
+                viewModel.confirmAccessPin.value!!,
+                defaultStatus
             )
 
             viewModel.createAccount(createAccountReqDTO)

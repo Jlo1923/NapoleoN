@@ -29,12 +29,6 @@ class NicknameInputFilter(pattern: String, listener: OnListener) : InputFilter {
             return ""
         }
 
-        if (source.length > 5) {
-//            mListener.onComplete(true)
-        } else {
-//            mListener.onComplete(false)
-        }
-
         return null
     }
 

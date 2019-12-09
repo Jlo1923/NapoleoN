@@ -128,7 +128,7 @@
             app:destination="@id/profileFragment" />
         <action
             android:id="@+id/action_homeFragment_to_securitySettingsFragment"
-            app:destination="@id/securitySettingsFragment"/>
+            app:destination="@id/securitySettingsFragment" />
         <action
             android:id="@+id/action_homeFragment_to_appearanceSettingsFragment"
             app:destination="@id/appearanceSettingsFragment" />
@@ -147,6 +147,20 @@
         <action
             android:id="@+id/action_profileFragment_to_imageSelectorBottomSheetFragment"
             app:destination="@id/imageSelectorBottomSheetFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_statusFragment"
+            app:destination="@id/statusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_profileFragment_to_blockedContactsFragment"
+            app:destination="@id/blockedContactsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/securitySettingsFragment"
@@ -157,7 +171,17 @@
         android:id="@+id/appearanceSettingsFragment"
         android:name="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment"
         android:label="@string/appearance_settings"
-        tools:layout="@layout/appearance_settings_fragment" />
+        tools:layout="@layout/appearance_settings_fragment">
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_languageSelectionDialog"
+            app:destination="@id/languageSelectionDialog" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_colorSchemeFragment"
+            app:destination="@id/colorSchemeFragment" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_userDisplayFormatDialogFragment"
+            app:destination="@id/userDisplayFormatDialogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/inviteSomeoneFragment"
         android:name="com.naposystems.pepito.ui.inviteSomeone.InviteSomeoneFragment"
@@ -173,4 +197,27 @@
         android:name="com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment"
         android:label="image_selector_bottom_sheet_fragment"
         tools:layout="@layout/image_selector_bottom_sheet_fragment" />
+    <fragment
+        android:id="@+id/statusFragment"
+        android:name="com.naposystems.pepito.ui.status.StatusFragment"
+        android:label="@string/text_status"
+        tools:layout="@layout/status_fragment">
+        <argument
+            android:name="user"
+            app:argType="com.naposystems.pepito.entity.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/blockedContactsFragment"
+        android:name="com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment"
+        android:label="@string/text_blocked_contacts" />
+    <fragment
+        android:id="@+id/colorSchemeFragment"
+        android:name="com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment"
+        android:label="@string/text_color_scheme" />
+    <dialog
+        android:id="@+id/userDisplayFormatDialogFragment"
+        android:name="com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment"
+        android:label="user_display_format_dialog_fragment"
+        tools:layout="@layout/user_display_format_dialog_fragment">
+    </dialog>
 </navigation>

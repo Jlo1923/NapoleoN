@@ -41,10 +41,10 @@ class SplashFragment : Fragment() {
         viewModel.navigateToLanding.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 when (getAccountStatus()) {
-                    Constants.CODE_VALIDATED -> findNavController().navigate(
+                    Constants.AccountStatus.CODE_VALIDATED.id -> findNavController().navigate(
                         SplashFragmentDirections.actionSplashFragmentToRegisterFragment()
                     )
-                    Constants.ACCOUNT_CREATED -> findNavController().navigate(
+                    Constants.AccountStatus.ACCOUNT_CREATED.id -> findNavController().navigate(
                         SplashFragmentDirections.actionSplashFragmentToHomeFragment()
                     )
                     else -> findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLandingFragment())
@@ -58,23 +58,46 @@ class SplashFragment : Fragment() {
             context?.let {
                 viewModel.onLoadingTimeEnd()
             }
-        }, TimeUnit.SECONDS.toMillis(3))
+        }, TimeUnit.SECONDS.toMillis(1))
 
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_LANGUAGE_SELECTED,
             LocaleHelper.getLanguagePreference(context!!)
         )
 
+        setDefaultTheme()
+        setDefaultUserDisplayFormat()
+
         return inflater.inflate(R.layout.splash_fragment, container, false)
     }
 
     private fun getAccountStatus(): Int {
-        val defaultDefaultCode = 0
-
         return sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
-            defaultDefaultCode
+            Constants.SharedPreferences.PREF_ACCOUNT_STATUS
         )
+    }
+
+    private fun setDefaultTheme(){
+        val default = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
+
+        if (default == 0) {
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_COLOR_SCHEME,
+                Constants.ColorScheme.LIGHT_THEME.scheme
+            )
+        }
+    }
+
+    private fun setDefaultUserDisplayFormat(){
+        val default = sharedPreferencesManager
+            .getInt(Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT)
+
+        if (default == 0){
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT,
+                Constants.UserDisplayFormat.NAME_AND_NICKNAME.format
+            )
+        }
     }
 
 }

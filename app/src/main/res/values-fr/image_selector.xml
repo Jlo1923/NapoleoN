@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="change_profile_photo">Changer la photo de profil</string>
+    <string name="change_cover_photo">Changer la photo de la bannière</string>
+    <string name="take_photo">Prendre photo</string>
+    <string name="select_photo">Sélectionnez une photo</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_fill_form_to_create_account">Wenn Sie einen neuen Benutzer erstellen möchten, füllen Sie das folgende Formular aus</string>
+    <string name="hint_required_nickname">Spitzname*</string>
+    <string name="display_name">Anzeigename</string>
+    <string name="label_terms">Mit einem Klick auf Registrierung akzeptieren Sie die</string>
+    <string name="label_terms_and_conditions">Allgemeine Geschäftsbedingungen und Datenschutzbestimmungen.</string>
+    <string name="nickname_required">Spitzname ist erforderlich</string>
+    <string name="at_least_five_characters">Mindestens 5 Zeichen</string>
+    <string name="nickname_cant_contain_white_spaces">Es darf keine Leerzeichen enthalten</string>
+    <string name="cant_contain_special_characters">Darf keine Sonderzeichen enthalten</string>
+    <string name="at_least_one_number">Es muss mindestens eine Zahl enthalten</string>
+    <string name="recovery_password">Contraseña de recuperación</string>
+</resources>

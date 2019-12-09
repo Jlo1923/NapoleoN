@@ -12,17 +12,12 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        AndroidSupportInjectionModule::class,
-        ApplicationModule::class,
-        ViewModelModule::class,
-        FragmentBindingModule::class,
-        ActivityBindingModule::class,
-        SendCodeModule::class,
-        EnterCodeModule::class,
-        LanguageSelectionModule::class,
-        ValidateNicknameModule::class,
-        CreateAccountModule::class,
-        ProfileModule::class,
+        AndroidSupportInjectionModule::class, ApplicationModule::class, ViewModelModule::class,
+        FragmentBindingModule::class, ActivityBindingModule::class, SendCodeModule::class,
+        EnterCodeModule::class, LanguageSelectionModule::class, ValidateNicknameModule::class,
+        CreateAccountModule::class, ProfileModule::class, StatusModule::class,
+        BlockedContactsModule::class, AppearanceSettingsModule::class, ColorSchemeModule::class,
+        UserDisplayFormatModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {

@@ -47,83 +47,87 @@ class HomeFragment : Fragment() {
     }
 
     private fun getChats(): List<Chat> {
+
+        val imageUrl = "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg"
+        val message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+
         val chat1 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Uno",
             "@albertouno",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "08:00 a.m"
         )
 
         val chat2 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Dos",
             "@albertodos",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "09:00 a.m"
         )
 
         val chat3 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Tres",
             "@albertotres",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "10:00 a.m"
         )
 
         val chat4 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Cuatro",
             "@albertocuatro",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "11:00 a.m"
         )
 
         val chat5 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Cinco",
             "@albertocinco",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "12:00 a.m"
         )
 
         val chat6 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Seis",
             "@albertoseis",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "01:00 p.m"
         )
 
         val chat7 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Siete",
             "@albertosiete",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "02:00 p.m"
         )
 
         val chat8 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Ocho",
             "@albertoocho",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "03:00 p.m"
         )
 
         val chat9 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Nueve",
             "@albertonueve",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "04:00 p.m"
         )
 
         val chat10 = Chat(
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg",
+            imageUrl,
             "Alberto Diez",
             "@albertodiez",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            message,
             "05:00 p.m"
         )
 

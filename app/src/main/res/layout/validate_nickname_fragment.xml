@@ -51,9 +51,10 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInputLayout_nickname"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/TextInputLayoutOutlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
                         android:layout_marginBottom="@dimen/small_margin"
                         android:hint="@string/hint_required_nickname"
                         android:nextFocusDown="@id/text_input_layout_display_name"
@@ -74,13 +75,13 @@
                             android:maxLength="@dimen/max_length_nickname"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="@={viewModel.nickName}" />
+                            android:text="@={viewModel.nickName}"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/text_input_layout_display_name"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/TextInputLayoutOutlined"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/small_margin"
@@ -132,7 +133,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:enabled="false"
-                        android:text="@string/label_next"
+                        android:text="@string/text_next"
                         app:layout_constraintBottom_toTopOf="@+id/guideline4"
                         app:layout_constraintEnd_toStartOf="@+id/guideline2"
                         app:layout_constraintStart_toStartOf="@+id/guideline1"

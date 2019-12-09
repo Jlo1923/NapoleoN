@@ -100,7 +100,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
             if (it == true) {
                 sharedPreferencesManager.putInt(
                     Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
-                    Constants.CODE_VALIDATED
+                    Constants.AccountStatus.CODE_VALIDATED.id
                 )
                 findNavController().navigate(
                     EnterCodeFragmentDirections.actionEnterCodeFragmentToRegisterFragment()

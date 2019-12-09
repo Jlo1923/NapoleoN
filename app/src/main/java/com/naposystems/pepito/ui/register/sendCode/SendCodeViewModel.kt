@@ -57,7 +57,10 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
 
                             _webServiceError.value = sendCodeErrorDTO!!.firebaseId[0]
                         }
-                        else -> _webServiceError.value = "Error inesperado jajaja"
+                        else -> {
+                            _webServiceError.value = "Error inesperado"
+                            Timber.e(response.errorBody()!!.string())
+                        }
                     }
                 }
             } catch (e: Exception) {

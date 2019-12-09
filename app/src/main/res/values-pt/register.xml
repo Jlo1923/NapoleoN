@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_fill_form_to_create_account">Se você deseja criar um novo usuário, preencha o seguinte formulário</string>
+    <string name="hint_required_nickname">Apelido*</string>
+    <string name="display_name">Nome de exibição</string>
+    <string name="label_terms">Ao clicar em Registro, você aceita o</string>
+    <string name="label_terms_and_conditions">termos, condições e políticas de privacidade.</string>
+    <string name="nickname_required">O apelido é obrigatório.</string>
+    <string name="at_least_five_characters">Pelo menos 5 caracteres</string>
+    <string name="nickname_cant_contain_white_spaces">Não pode conter espaços em branco</string>
+    <string name="cant_contain_special_characters">Não pode conter caracteres especiais</string>
+    <string name="at_least_one_number">Ele deve conter pelo menos um número</string>
+    <string name="recovery_password">Contraseña de recuperación</string>
+</resources>

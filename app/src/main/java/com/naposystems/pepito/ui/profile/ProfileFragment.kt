@@ -16,12 +16,14 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -32,6 +34,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ProfileFragmentBinding
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.ui.custom.AnimatedVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -64,6 +67,7 @@ class ProfileFragment : Fragment() {
     private lateinit var viewModel: ProfileViewModel
     private lateinit var fileName: String
     private lateinit var subFolder: String
+    private lateinit var animatedEditName: AnimatedVectorView
     private var aspectRatioX: Float = 1f
     private var aspectRatioY: Float = 1f
     private val bitmapMaxWidth = 1000
@@ -83,6 +87,9 @@ class ProfileFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.profile_fragment, container, false
         )
+        binding.lifecycleOwner = this
+
+        animatedEditName = binding.imageButtonNameOptionEndIcon
 
         binding.floatingButtonProfileImage.setOnClickListener {
             subFolder = AVATAR_SUBFOLDER
@@ -99,6 +106,63 @@ class ProfileFragment : Fragment() {
             verifyCameraAndMediaPermission()
         }
 
+        binding.imageButtonNameOptionEndIcon.setOnClickListener {
+            animatedEditName.apply {
+                if (!hasBeenInitialized) {
+                    editToCancel()
+                    binding.editTextDisplayName.apply {
+                        isEnabled = true
+                        isFocusable = true
+                        requestFocus()
+                        setSelection(this.text!!.length)
+                        Utils.openKeyboard(this)
+                    }
+                } else {
+                    cancelToEdit()
+                    binding.editTextDisplayName.apply {
+                        isEnabled = false
+                        isFocusable = false
+                    }
+                }
+            }
+        }
+
+        binding.editTextDisplayName.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                val newDisplayName = view.text.toString()
+
+                animatedEditName.cancelToHourglass()
+
+                binding.editTextDisplayName.apply {
+                    isEnabled = false
+                }
+
+                val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
+                    displayName = newDisplayName
+                )
+
+                viewModel.updateDisplayName(updateUserInfoReqDTO, {
+                    animatedEditName.hourglassToEdit()
+                }, {
+                    animatedEditName.hourglassToCancel()
+                    binding.editTextDisplayName.apply {
+                        isEnabled = true
+                    }
+                })
+                false
+            } else
+                true
+        }
+
+        binding.optionStatus.setOnClickListener(statusClickListener())
+        binding.imageButtonStatusOptionEndIcon.setOnClickListener(statusClickListener())
+
+        binding.optionBlockedContacts.setOnClickListener(blockedContactClickListener())
+        binding.imageButtonBlockedContactsOptionEndIcon.setOnClickListener(
+            blockedContactClickListener()
+        )
+
         return binding.root
     }
 
@@ -108,6 +172,96 @@ class ProfileFragment : Fragment() {
         binding.viewModel = viewModel
 
         viewModelObservers()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_IMAGE_CAPTURE -> {
+                if (resultCode == RESULT_OK) {
+                    cropImage(getCacheImagePath(fileName))
+                }
+            }
+            REQUEST_GALLERY_IMAGE -> {
+                if (resultCode == RESULT_OK) {
+                    val imageUri = data!!.data
+                    cropImage(imageUri!!)
+                }
+            }
+            UCrop.REQUEST_CROP -> {
+                requestCrop(resultCode, data)
+            }
+        }
+    }
+
+    private fun requestCrop(resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK) {
+            val uri = UCrop.getOutput(data!!)
+            try {
+                val bitmap: Bitmap?
+
+                bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val source = ImageDecoder.createSource(context!!.contentResolver, uri!!)
+                    ImageDecoder.decodeBitmap(source)
+                } else {
+                    MediaStore.Images.Media.getBitmap(context!!.contentResolver, uri)
+                }
+
+                when (subFolder) {
+                    AVATAR_SUBFOLDER -> {
+                        val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
+                            avatar = Utils.convertBitmapToBase64(bitmap!!)!!
+                        )
+
+                        showAvatarProgress()
+                        viewModel.updateAvatar(updateUserInfoReqDTO)
+
+                    }
+                    HEADER_SUBFOLDER -> {
+                        val viewModelUser = viewModel.user.value!!
+
+                        val user = User(
+                            viewModelUser.firebaseId,
+                            viewModelUser.nickname,
+                            viewModelUser.displayName,
+                            viewModelUser.accessPin,
+                            viewModelUser.imageUrl,
+                            viewModelUser.status,
+                            uri.toString()
+                        )
+
+                        Glide.with(this)
+                            .load(uri)
+                            .into(binding.imageViewBackground)
+
+                        viewModel.updateLocalUser(user)
+                    }
+                }
+
+                clearCache(context!!)
+            } catch (ex: IOException) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    override fun onDetach() {
+        animatedEditName.clearAnimation()
+        super.onDetach()
+    }
+
+    private fun statusClickListener() = View.OnClickListener {
+        findNavController()
+            .navigate(
+                ProfileFragmentDirections
+                    .actionProfileFragmentToStatusFragment(viewModel.user.value!!)
+            )
+    }
+
+    private fun blockedContactClickListener() = View.OnClickListener {
+        findNavController()
+            .navigate(
+                ProfileFragmentDirections.actionProfileFragmentToBlockedContactsFragment()
+            )
     }
 
     private fun viewModelObservers() {
@@ -136,11 +290,6 @@ class ProfileFragment : Fragment() {
                     it.status,
                     viewModel.user.value!!.headerUri
                 )
-
-                Glide.with(this)
-                    .load(it.avatarUrl)
-                    .circleCrop()
-                    .into(binding.imageViewProfileImage)
 
                 viewModel.updateLocalUser(user)
             }
@@ -274,72 +423,6 @@ class ProfileFragment : Fragment() {
         val name = returnCursor.getString(nameIndex)
         returnCursor.close()
         return name
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_IMAGE_CAPTURE -> {
-                if (resultCode == RESULT_OK) {
-                    cropImage(getCacheImagePath(fileName))
-                }
-            }
-            REQUEST_GALLERY_IMAGE -> {
-                if (resultCode == RESULT_OK) {
-                    val imageUri = data!!.data
-                    cropImage(imageUri!!)
-                }
-            }
-            UCrop.REQUEST_CROP -> {
-                if (resultCode == RESULT_OK) {
-                    val uri = UCrop.getOutput(data!!)
-                    try {
-                        val bitmap: Bitmap?
-
-                        bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            val source = ImageDecoder.createSource(context!!.contentResolver, uri!!)
-                            ImageDecoder.decodeBitmap(source)
-                        } else {
-                            MediaStore.Images.Media.getBitmap(context!!.contentResolver, uri)
-                        }
-
-                        when (subFolder) {
-                            AVATAR_SUBFOLDER -> {
-                                val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
-                                    avatar = Utils.convertBitmapToBase64(bitmap!!)!!
-                                )
-
-                                showAvatarProgress()
-                                viewModel.updateUserInfo(updateUserInfoReqDTO)
-
-                            }
-                            HEADER_SUBFOLDER -> {
-                                val viewModelUser = viewModel.user.value!!
-
-                                val user = User(
-                                    viewModelUser.firebaseId,
-                                    viewModelUser.nickname,
-                                    viewModelUser.displayName,
-                                    viewModelUser.accessPin,
-                                    viewModelUser.imageUrl,
-                                    viewModelUser.status,
-                                    uri.toString()
-                                )
-
-                                Glide.with(this)
-                                    .load(uri)
-                                    .into(binding.imageViewBackground)
-
-                                viewModel.updateLocalUser(user)
-                            }
-                        }
-
-                        clearCache(context!!)
-                    } catch (ex: IOException) {
-                        Timber.e(ex)
-                    }
-                }
-            }
-        }
     }
 
     private fun cropImage(sourceUri: Uri) {
