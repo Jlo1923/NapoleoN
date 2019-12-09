@@ -73,7 +73,7 @@
                 android:layoutDirection="rtl"
                 android:onClick="@{() -> viewModel.onShowLanguageSelectionPressed()}"
                 android:text="@string/label_language_selection"
-                app:icon="@drawable/ic_arrow_right_primary_24dp"
+                app:icon="@drawable/ic_arrow_right_primary"
                 app:iconTint="@color/buttonTint"
                 app:layout_constraintBottom_toTopOf="@+id/guideline4"
                 app:layout_constraintEnd_toEndOf="@+id/button_recovery_account_cuenta"

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_general">GÉNÉRAL</string>
+    <string name="text_default_message_self_destruct_time">Temps d\'autodestruction du message par défaut</string>
+    <string name="text_security">SECURITE</string>
+    <string name="text_edit_access_pin">Modifier le code d\'accès</string>
+    <string name="text_time_to_request_access_pin">Temps de demande de code d\'accès</string>
+    <string name="text_account_recovery_information">Informations de récupération de compte</string>
+</resources>

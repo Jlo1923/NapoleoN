@@ -9,6 +9,8 @@ import com.naposystems.pepito.ui.register.accessPin.AccessPinFragment
 import com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment
 import com.naposystems.pepito.ui.register.sendCode.SendCodeFragment
+import com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment
+import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.splash.SplashFragment
 import com.naposystems.pepito.ui.status.StatusFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
@@ -53,4 +55,10 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindUserDisplayFormatDialogFragment(): UserDisplayFormatDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindSecuritySettingsFragment(): SecuritySettingsFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindSelfDestructTimeDialogFragment(): SelfDestructTimeDialogFragment
 }

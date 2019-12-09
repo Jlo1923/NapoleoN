@@ -67,6 +67,7 @@ class SplashFragment : Fragment() {
 
         setDefaultTheme()
         setDefaultUserDisplayFormat()
+        setDefaultSelfDestructTime()
 
         return inflater.inflate(R.layout.splash_fragment, container, false)
     }
@@ -77,7 +78,7 @@ class SplashFragment : Fragment() {
         )
     }
 
-    private fun setDefaultTheme(){
+    private fun setDefaultTheme() {
         val default = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
 
         if (default == 0) {
@@ -88,14 +89,26 @@ class SplashFragment : Fragment() {
         }
     }
 
-    private fun setDefaultUserDisplayFormat(){
+    private fun setDefaultUserDisplayFormat() {
         val default = sharedPreferencesManager
             .getInt(Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT)
 
-        if (default == 0){
+        if (default == 0) {
             sharedPreferencesManager.putInt(
                 Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT,
                 Constants.UserDisplayFormat.NAME_AND_NICKNAME.format
+            )
+        }
+    }
+
+    private fun setDefaultSelfDestructTime() {
+        val default = sharedPreferencesManager
+            .getInt(Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME)
+
+        if (default == 0) {
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME,
+                Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS.time
             )
         }
     }

@@ -1,19 +1,17 @@
 package com.naposystems.pepito.ui.appearanceSettings
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AppearanceSettingsFragmentBinding
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
-import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatListener
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection

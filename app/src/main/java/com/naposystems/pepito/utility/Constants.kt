@@ -23,10 +23,19 @@ object Constants {
         DARK_THEME(2)
     }
 
-    enum class UserDisplayFormat constructor(val format: Int){
+    enum class UserDisplayFormat constructor(val format: Int) {
         NAME_AND_NICKNAME(1),
         ONLY_NAME(2),
         ONLY_NICKNAME(3)
+    }
+
+    enum class SelfDestructTime constructor(val time: Int) {
+        EVERY_FIVE_MINUTES(1),
+        EVERY_FIFTEEN_MINUTES(2),
+        EVERY_THIRTY_MINUTES(3),
+        EVERY_ONE_HOUR(4),
+        EVERY_SIX_HOURS(5),
+        EVERY_TWENTY_FOUR_HOURS(6)
     }
 
     object SharedPreferences {
@@ -36,6 +45,7 @@ object Constants {
         const val PREF_FIREBASE_ID = "firebase_id"
         const val PREF_COLOR_SCHEME = "color_scheme"
         const val PREF_USER_DISPLAY_FORMAT = "user_display_format"
+        const val PREF_SELF_DESTRUCT_TIME = "self_destruct_time"
     }
 
     object RegularExpressions {

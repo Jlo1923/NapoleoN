@@ -17,7 +17,7 @@ import javax.inject.Singleton
         EnterCodeModule::class, LanguageSelectionModule::class, ValidateNicknameModule::class,
         CreateAccountModule::class, ProfileModule::class, StatusModule::class,
         BlockedContactsModule::class, AppearanceSettingsModule::class, ColorSchemeModule::class,
-        UserDisplayFormatModule::class,
+        UserDisplayFormatModule::class, SelfDestructTime::class, SecuritySettingsModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
