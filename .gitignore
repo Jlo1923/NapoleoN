@@ -238,4 +238,8 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 
+# SONARLINT #
+
+.idea/sonarlint/issuestore
+
 # End of https://www.gitignore.io/api/java,sonar,kotlin,android,androidstudio
