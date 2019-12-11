@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_frequent_questions">Questions fréquentes</string>
+    <string name="text_contact_us">Contactez nous</string>
+    <string name="text_terms_and_conditions">Termes et conditions</string>
+    <string name="text_about">À propos de</string>
+    <string name="text_general_information">Informations générales</string>
+</resources>
