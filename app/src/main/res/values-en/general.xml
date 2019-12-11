@@ -13,4 +13,5 @@
     <string name="label_edit_photo">Edit photo</string>
     <string name="label_edit_cover">Edit banner</string>
     <string name="text_edit">Edit</string>
+    <string name="text_share">Share</string>
 </resources>
