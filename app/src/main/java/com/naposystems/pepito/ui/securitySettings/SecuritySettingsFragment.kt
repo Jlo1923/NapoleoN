@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
@@ -46,6 +47,11 @@ class SecuritySettingsFragment : Fragment() {
         binding.optionMessageSelfDestruct.setOnClickListener(optionMessageClickListener())
         binding.imageButtonMessageOptionEndIcon.setOnClickListener(optionMessageClickListener())
 
+        binding.optionEditAccessPin.setOnClickListener(optionEditAccessPinClickListener())
+        binding.imageButtonEditAccessPinOptionEndIcon.setOnClickListener(
+            optionEditAccessPinClickListener()
+        )
+
         return binding.root
     }
 
@@ -67,6 +73,13 @@ class SecuritySettingsFragment : Fragment() {
             }
         })
         dialog.show(childFragmentManager, "SelfDestructTime")
+    }
+
+    private fun optionEditAccessPinClickListener() = View.OnClickListener {
+        this.findNavController().navigate(
+            SecuritySettingsFragmentDirections
+                .actionSecuritySettingsFragmentToEditAccessPinFragment()
+        )
     }
 
 }

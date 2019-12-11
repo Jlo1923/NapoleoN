@@ -12,4 +12,5 @@
     <string name="label_share_a_state">Share a state</string>
     <string name="label_edit_photo">Edit photo</string>
     <string name="label_edit_cover">Edit banner</string>
+    <string name="text_edit">Edit</string>
 </resources>

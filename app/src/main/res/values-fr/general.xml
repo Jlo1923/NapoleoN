@@ -12,4 +12,5 @@
     <string name="label_share_a_state">Partager un état</string>
     <string name="label_edit_photo">Modifier la photo</string>
     <string name="label_edit_cover">Modifier la bannière</string>
+    <string name="text_edit">Modifier</string>
 </resources>

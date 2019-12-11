@@ -9,4 +9,6 @@ interface UserDatasource {
     suspend fun getUser(firebaseId: String): User
 
     suspend fun updateUser(user: User)
+
+    suspend fun updateAccessPin(newAccessPin: String, firebaseId: String)
 }

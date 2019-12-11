@@ -44,6 +44,7 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
             try {
                 val response = repository.requestCode(sendCodeReqDTO)
 
+                Timber.d(response.toString())
                 if (response.isSuccessful) {
                     _openEnterCode.value = true
                 } else {

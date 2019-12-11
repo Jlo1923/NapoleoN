@@ -166,7 +166,15 @@
         android:id="@+id/securitySettingsFragment"
         android:name="com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment"
         android:label="@string/security_settings"
-        tools:layout="@layout/security_settings_fragment" />
+        tools:layout="@layout/security_settings_fragment">
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_editAccessPinFragment"
+            app:destination="@id/editAccessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/appearanceSettingsFragment"
         android:name="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment"
@@ -218,6 +226,10 @@
         android:id="@+id/userDisplayFormatDialogFragment"
         android:name="com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment"
         android:label="user_display_format_dialog_fragment"
-        tools:layout="@layout/user_display_format_dialog_fragment">
-    </dialog>
+        tools:layout="@layout/user_display_format_dialog_fragment" />
+    <fragment
+        android:id="@+id/editAccessPinFragment"
+        android:name="com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment"
+        android:label="@string/text_edit_access_pin"
+        tools:layout="@layout/edit_access_pin_fragment" />
 </navigation>

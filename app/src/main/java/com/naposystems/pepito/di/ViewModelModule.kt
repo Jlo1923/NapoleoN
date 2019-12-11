@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
+import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
@@ -97,4 +98,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SelfDestructTimeViewModel::class)
     internal abstract fun bindSelfDestructTimeViewModel(viewModel: SelfDestructTimeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditAccessPinViewModel::class)
+    internal abstract fun bindEditAccessPinViewModel(viewModel: EditAccessPinViewModel): ViewModel
 }
