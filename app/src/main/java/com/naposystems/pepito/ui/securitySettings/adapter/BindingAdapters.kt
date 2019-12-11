@@ -34,3 +34,29 @@ fun bindSelfDestructTime(textView: TextView, selfDestructTime: Int) {
 
     textView.text = newSelfDestructTime
 }
+
+@BindingAdapter("timeRequestAccessPin")
+fun bindTimeRequestAccessPin(textView: TextView, time: Int) {
+    val context = textView.context
+
+    val newTime = when (time) {
+        Constants.TimeRequestAccessPin.THIRTY_SECONDS.time ->
+            context.getString(R.string.text_thirty_seconds)
+
+        Constants.TimeRequestAccessPin.ONE_MINUTE.time ->
+            context.getString(R.string.text_one_minute)
+
+        Constants.TimeRequestAccessPin.FIVE_MINUTES.time ->
+            context.getString(R.string.text_five_minutes)
+
+        Constants.TimeRequestAccessPin.FIFTEEN_MINUTES.time ->
+            context.getString(R.string.text_fifteen_minutes)
+
+        Constants.TimeRequestAccessPin.NEVER.time ->
+            context.getString(R.string.text_never)
+
+        else -> context.getString(R.string.text_thirty_seconds)
+    }
+
+    textView.text = newTime
+}

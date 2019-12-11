@@ -13,9 +13,18 @@ class SecuritySettingsViewModel @Inject constructor(
     val selfDestructTime: LiveData<Int>
         get() = _selfDestructTime
 
+    private val _timeRequestAccessPin = MutableLiveData<Int>()
+    val timeRequestAccessPin: LiveData<Int>
+        get() = _timeRequestAccessPin
+
     //region Implementation IContractSecuritySettings.ViewModel
     override fun getSelfDestructTime() {
         _selfDestructTime.value = repository.getSelfDestructTime()
     }
+
+    override fun getTimeRequestAccessPin() {
+        _timeRequestAccessPin.value = repository.getTimeRequestAccessPin()
+    }
+
     //endregion
 }

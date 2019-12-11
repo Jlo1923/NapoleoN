@@ -16,6 +16,7 @@ import com.naposystems.pepito.ui.register.sendCode.SendCodeViewModel
 import com.naposystems.pepito.ui.securitySettings.SecuritySettingsViewModel
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.ui.status.StatusViewModel
+import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.utility.viewModel.ViewModelKey
@@ -103,4 +104,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EditAccessPinViewModel::class)
     internal abstract fun bindEditAccessPinViewModel(viewModel: EditAccessPinViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TimeAccessPinDialogViewModel::class)
+    internal abstract fun bindTimeAccessPinDialogViewModel(viewModel: TimeAccessPinDialogViewModel): ViewModel
 }

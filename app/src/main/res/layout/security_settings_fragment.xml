@@ -167,11 +167,11 @@
             <TextView
                 android:id="@+id/textView_time_request_access_pin"
                 style="@style/OptionValue"
-                android:text="@string/display_name"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/textView_time_title"
                 app:layout_constraintStart_toStartOf="@id/textView_time_title"
                 app:layout_constraintTop_toBottomOf="@id/textView_time_title"
+                app:timeRequestAccessPin="@{viewModel.timeRequestAccessPin}"
                 tools:text="10 min" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

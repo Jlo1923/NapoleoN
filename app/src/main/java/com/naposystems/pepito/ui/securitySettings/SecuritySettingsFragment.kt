@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -52,6 +53,9 @@ class SecuritySettingsFragment : Fragment() {
             optionEditAccessPinClickListener()
         )
 
+        binding.optionTimeRequestAccessPin.setOnClickListener(optionTimeAccessPinClickListener())
+        binding.imageButtonTimeOptionEndIcon.setOnClickListener(optionTimeAccessPinClickListener())
+
         return binding.root
     }
 
@@ -63,6 +67,7 @@ class SecuritySettingsFragment : Fragment() {
         binding.viewModel = viewModel
 
         viewModel.getSelfDestructTime()
+        viewModel.getTimeRequestAccessPin()
     }
 
     private fun optionMessageClickListener() = View.OnClickListener {
@@ -80,6 +85,16 @@ class SecuritySettingsFragment : Fragment() {
             SecuritySettingsFragmentDirections
                 .actionSecuritySettingsFragmentToEditAccessPinFragment()
         )
+    }
+
+    private fun optionTimeAccessPinClickListener() = View.OnClickListener {
+        val dialog = TimeAccessPinDialogFragment()
+        dialog.setListener(object : TimeAccessPinDialogFragment.TimeAccessPinListener {
+            override fun onTimeAccessChange() {
+                viewModel.getTimeRequestAccessPin()
+            }
+        })
+        dialog.show(childFragmentManager, "TimeRequestAccessPin")
     }
 
 }

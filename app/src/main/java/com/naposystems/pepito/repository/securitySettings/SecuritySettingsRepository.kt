@@ -12,4 +12,8 @@ class SecuritySettingsRepository @Inject constructor(
     override fun getSelfDestructTime(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME)
     }
+
+    override fun getTimeRequestAccessPin(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN)
+    }
 }

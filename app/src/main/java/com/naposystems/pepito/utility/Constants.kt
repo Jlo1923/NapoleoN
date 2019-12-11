@@ -5,7 +5,7 @@ object Constants {
 
     object NapoleonApi {
         const val BASE_URL = "http://192.168.0.42:8889/api/"
-//        const val BASE_URL = "http://nn-backend-secret-chatlb-1901064570.us-west-2.elb.amazonaws.com/api/"
+        //        const val BASE_URL = "http://nn-backend-secret-chatlb-1901064570.us-west-2.elb.amazonaws.com/api/"
         const val GENERATE_CODE = "auth/generatecode"
         const val VERIFICATE_CODE = "auth/verificatecode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
@@ -39,6 +39,14 @@ object Constants {
         EVERY_TWENTY_FOUR_HOURS(6)
     }
 
+    enum class TimeRequestAccessPin constructor(val time: Int) {
+        THIRTY_SECONDS(1),
+        ONE_MINUTE(2),
+        FIVE_MINUTES(3),
+        FIFTEEN_MINUTES(4),
+        NEVER(5)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
@@ -47,6 +55,7 @@ object Constants {
         const val PREF_COLOR_SCHEME = "color_scheme"
         const val PREF_USER_DISPLAY_FORMAT = "user_display_format"
         const val PREF_SELF_DESTRUCT_TIME = "self_destruct_time"
+        const val PREF_TIME_REQUEST_ACCESS_PIN = "time_request_access_pin"
     }
 
     object RegularExpressions {

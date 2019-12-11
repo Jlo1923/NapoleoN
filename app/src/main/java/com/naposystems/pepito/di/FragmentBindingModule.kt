@@ -14,6 +14,7 @@ import com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.splash.SplashFragment
 import com.naposystems.pepito.ui.status.StatusFragment
+import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -65,4 +66,7 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindEditAccessPinFragment(): EditAccessPinFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindTimeAccessPinDialogFragment(): TimeAccessPinDialogFragment
 }
