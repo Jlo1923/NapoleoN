@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="enter_code">Ingresar código</string>
+    <string name="didnt_receive_code">No recibí el código</string>
+    <string name="code_does_not_match">El código no coincide, intenta de nuevo</string>
+    <string name="number_of_attempts">Número de intentos: %1$d/%2$d</string>
+    <string name="invalid_code">Código inválido</string>
+    <plurals name="new_attempt_in_x_seconds">
+        <item quantity="one">Nuevo intento en: %d segundo</item>
+        <item quantity="other">Nuevo intento en: %d segundos</item>
+    </plurals>
+</resources>

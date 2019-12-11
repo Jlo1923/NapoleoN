@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_accept">Accepter</string>
+    <string name="text_cancel">Annuler</string>
+    <string name="text_continue">Continuer</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="text_next">Suivant</string>
+    <string name="something_went_wrong">Quelque chose s\'est mal passé, veuillez réessayer</string>
+    <string name="label_name">Nom</string>
+    <string name="text_status">Etat</string>
+    <string name="text_blocked_contacts">Contacts bloqués</string>
+    <string name="label_share_a_state">Partager un état</string>
+    <string name="label_edit_photo">Modifier la photo</string>
+    <string name="label_edit_cover">Modifier la bannière</string>
+    <string name="text_edit">Modifier</string>
+</resources>

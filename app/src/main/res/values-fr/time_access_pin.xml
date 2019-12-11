@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_thirty_seconds">30 secondes</string>
+    <string name="text_one_minute">1 minute</string>
+    <string name="text_five_minutes">5 minutes</string>
+    <string name="text_fifteen_minutes">15 minutes</string>
+    <string name="text_never">Jamais</string>
+    <string name="text_desc_pin_locked_time">La broche d\'accès est demandée après que le temps sélectionné s\'est écoulé, après avoir bloqué l\'application.</string>
+</resources>

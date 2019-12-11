@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_to_napoleon">Welcome to Napoleon Secret Chat</string>
+    <string name="information_text_send_code">Your privacy is our priority, if you wish to continue you will receive a code to activate your registration.</string>
+    <string name="send_registration_code">Send registration code</string>
+</resources>

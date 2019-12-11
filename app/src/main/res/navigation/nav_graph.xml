@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.naposystems.pepito.ui.splash.SplashFragment"
+        android:label="splash_fragment"
+        tools:layout="@layout/splash_fragment">
+        <action
+            android:id="@+id/action_splashFragment_to_landingFragment"
+            app:destination="@id/landingFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/landingFragment"
+        android:name="com.naposystems.pepito.ui.landing.LandingFragment"
+        android:label="landing_fragment"
+        tools:layout="@layout/landing_fragment">
+        <action
+            android:id="@+id/action_landingFragment_to_languageSelectionDialog"
+            app:destination="@id/languageSelectionDialog" />
+        <action
+            android:id="@+id/action_landingFragment_to_recoveryAccountFragment"
+            app:destination="@id/recoveryAccountFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_landingFragment_to_sendCodeFragment"
+            app:destination="@id/sendCodeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/languageSelectionDialog"
+        android:name="com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment"
+        android:label="language_selection_dialog"
+        tools:layout="@layout/language_selection_dialog_fragment" />
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment"
+        android:label="@string/label_create_account"
+        tools:layout="@layout/validate_nickname_fragment">
+        <action
+            android:id="@+id/action_registerFragment_to_accessPinFragment"
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/recoveryAccountFragment"
+        android:name="com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment"
+        android:label="@string/label_recover_account"
+        tools:layout="@layout/recovery_account_fragment" />
+    <fragment
+        android:id="@+id/sendCodeFragment"
+        android:name="com.naposystems.pepito.ui.register.sendCode.SendCodeFragment"
+        android:label="@string/send_registration_code"
+        tools:layout="@layout/send_code_fragment">
+        <action
+            android:id="@+id/action_sendCodeFragment_to_enterCodeFragment"
+            app:destination="@id/enterCodeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterCodeFragment"
+        android:name="com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment"
+        android:label="@string/enter_code"
+        tools:layout="@layout/enter_code_fragment">
+        <action
+            android:id="@+id/action_enterCodeFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/accessPinFragment"
+        android:name="com.naposystems.pepito.ui.register.accessPin.AccessPinFragment"
+        android:label="@string/access_pin"
+        tools:layout="@layout/access_pin_fragment">
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+        <argument
+            android:name="displayName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_accessPinFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.naposystems.pepito.ui.home.HomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/home_fragment">
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_securitySettingsFragment"
+            app:destination="@id/securitySettingsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_appearanceSettingsFragment"
+            app:destination="@id/appearanceSettingsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_inviteSomeoneFragment"
+            app:destination="@id/inviteSomeoneFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_helpFragment"
+            app:destination="@id/helpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.naposystems.pepito.ui.profile.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/profile_fragment">
+        <action
+            android:id="@+id/action_profileFragment_to_imageSelectorBottomSheetFragment"
+            app:destination="@id/imageSelectorBottomSheetFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_statusFragment"
+            app:destination="@id/statusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_profileFragment_to_blockedContactsFragment"
+            app:destination="@id/blockedContactsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/securitySettingsFragment"
+        android:name="com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment"
+        android:label="@string/security_settings"
+        tools:layout="@layout/security_settings_fragment">
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_editAccessPinFragment"
+            app:destination="@id/editAccessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/appearanceSettingsFragment"
+        android:name="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment"
+        android:label="@string/appearance_settings"
+        tools:layout="@layout/appearance_settings_fragment">
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_languageSelectionDialog"
+            app:destination="@id/languageSelectionDialog" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_colorSchemeFragment"
+            app:destination="@id/colorSchemeFragment" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_userDisplayFormatDialogFragment"
+            app:destination="@id/userDisplayFormatDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inviteSomeoneFragment"
+        android:name="com.naposystems.pepito.ui.inviteSomeone.InviteSomeoneFragment"
+        android:label="@string/invite_someone"
+        tools:layout="@layout/invite_someone_fragment" />
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="com.naposystems.pepito.ui.help.HelpFragment"
+        android:label="@string/help"
+        tools:layout="@layout/help_fragment" />
+    <dialog
+        android:id="@+id/imageSelectorBottomSheetFragment"
+        android:name="com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment"
+        android:label="image_selector_bottom_sheet_fragment"
+        tools:layout="@layout/image_selector_bottom_sheet_fragment" />
+    <fragment
+        android:id="@+id/statusFragment"
+        android:name="com.naposystems.pepito.ui.status.StatusFragment"
+        android:label="@string/text_status"
+        tools:layout="@layout/status_fragment">
+        <argument
+            android:name="user"
+            app:argType="com.naposystems.pepito.entity.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/blockedContactsFragment"
+        android:name="com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment"
+        android:label="@string/text_blocked_contacts" />
+    <fragment
+        android:id="@+id/colorSchemeFragment"
+        android:name="com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment"
+        android:label="@string/text_color_scheme" />
+    <dialog
+        android:id="@+id/userDisplayFormatDialogFragment"
+        android:name="com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment"
+        android:label="user_display_format_dialog_fragment"
+        tools:layout="@layout/user_display_format_dialog_fragment" />
+    <fragment
+        android:id="@+id/editAccessPinFragment"
+        android:name="com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment"
+        android:label="@string/text_edit_access_pin"
+        tools:layout="@layout/edit_access_pin_fragment" />
+</navigation>

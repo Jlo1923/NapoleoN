@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_message_self_destruction">Nachricht Selbstzerstörung</string>
+    <string name="text_every_five_minutes">Alle 5 Minuten</string>
+    <string name="text_every_fifteen_minutes">Alle 15 Minuten</string>
+    <string name="text_every_thirty_minutes">Alle 30 Minuten</string>
+    <string name="text_every_one_hour">Alle 1 Stunde</string>
+    <string name="text_every_six_hours">Alle 6 Stunden</string>
+    <string name="text_every_twenty_four_hours">Alle 24 Stunden</string>
+    <string name="text_info_message_self_destruction">In dieser Konversation gesendete und empfangene Nachrichten werden nach der ausgewählten Zeit gelöscht.</string>
+</resources>

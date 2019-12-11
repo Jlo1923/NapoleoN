@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile">Perfil</string>
+    <string name="security_settings">Configurações de privacidade</string>
+    <string name="appearance_settings">Configurações de aparência</string>
+    <string name="invite_someone">Convide alguém</string>
+    <string name="help">Ajuda</string>
+</resources>

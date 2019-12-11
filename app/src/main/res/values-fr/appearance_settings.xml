@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_color_scheme">Jeu de couleurs</string>
+    <string name="text_user_display_format">Format d\'affichage utilisateur</string>
+    <string name="text_language">Langue</string>
+    <string name="text_light_theme">Thème lumière</string>
+    <string name="text_dark_theme">Thème sombre</string>
+    <string name="text_name_and_nickname">Nom et pseudo</string>
+    <string name="text_only_name">Nom seulement</string>
+    <string name="text_only_nickname">Pseudo seulement</string>
+</resources>
