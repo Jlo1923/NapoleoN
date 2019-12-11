@@ -22,4 +22,5 @@
     <string name="label_edit_photo">Editar foto</string>
     <string name="label_edit_cover">Editar banner</string>
     <string name="text_edit">Editar</string>
+    <string name="text_share">Compartir</string>
 </resources>

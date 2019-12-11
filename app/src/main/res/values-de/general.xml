@@ -13,4 +13,5 @@
     <string name="label_edit_photo">Foto bearbeiten</string>
     <string name="label_edit_cover">Banner bearbeiten</string>
     <string name="text_edit">Bearbeiten</string>
+    <string name="text_share">Teilen</string>
 </resources>
