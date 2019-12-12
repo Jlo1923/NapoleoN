@@ -6,4 +6,5 @@
     <string name="text_edit_access_pin">Edit access pin</string>
     <string name="text_time_to_request_access_pin">Time for access pin request</string>
     <string name="text_account_recovery_information">Account recovery information</string>
+    <string name="text_allow_download_attachments">Allow download attachments sent</string>
 </resources>

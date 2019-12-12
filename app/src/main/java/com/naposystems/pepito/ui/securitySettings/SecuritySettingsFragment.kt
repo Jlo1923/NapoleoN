@@ -1,16 +1,14 @@
 package com.naposystems.pepito.ui.securitySettings
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
@@ -56,6 +54,13 @@ class SecuritySettingsFragment : Fragment() {
         binding.optionTimeRequestAccessPin.setOnClickListener(optionTimeAccessPinClickListener())
         binding.imageButtonTimeOptionEndIcon.setOnClickListener(optionTimeAccessPinClickListener())
 
+        binding.optionAllowDownload.setOnClickListener {
+            binding.switchAllowDownload.isChecked = !binding.switchAllowDownload.isChecked
+        }
+        binding.switchAllowDownload.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.updateAllowDownload(isChecked)
+        }
+
         return binding.root
     }
 
@@ -68,6 +73,7 @@ class SecuritySettingsFragment : Fragment() {
 
         viewModel.getSelfDestructTime()
         viewModel.getTimeRequestAccessPin()
+        viewModel.getAllowDownload()
     }
 
     private fun optionMessageClickListener() = View.OnClickListener {

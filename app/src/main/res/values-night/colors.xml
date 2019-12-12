@@ -18,4 +18,8 @@
     <color name="colorBackground">#121212</color>
     <color name="colorSecondaryBackground">#282828</color>
     <color name="buttonTint">#f2f2f2</color>
+    <color name="trackColor">#4Df2f2f2</color>
+    <color name="disabledTrackColor">#4D505564</color>
+    <color name="disabledThumbColor">@color/colorSecondaryDark</color>
+    <color name="sectionColor">#282828</color>
 </resources>

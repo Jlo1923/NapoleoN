@@ -2,8 +2,8 @@ package com.naposystems.pepito.ui.securitySettings.adapter
 
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.naposystems.pepito.R
-import com.naposystems.pepito.ui.selfDestructTime.IContractSelfDestructTime
 import com.naposystems.pepito.utility.Constants
 
 @BindingAdapter("selfDestructTime")
@@ -59,4 +59,14 @@ fun bindTimeRequestAccessPin(textView: TextView, time: Int) {
     }
 
     textView.text = newTime
+}
+
+@BindingAdapter("allowDownload")
+fun bindAllowDownload(switch: SwitchMaterial, state: Int) {
+
+    switch.isChecked = when (state) {
+        Constants.AllowDownloadAttachments.YES.option -> true
+        Constants.AllowDownloadAttachments.NO.option -> false
+        else -> false
+    }
 }

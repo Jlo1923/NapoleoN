@@ -21,7 +21,7 @@
             style="@style/SmallBodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_white_with_separator"
+            android:background="@color/sectionColor"
             android:padding="@dimen/normal_padding"
             android:text="@string/text_general"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,7 +31,7 @@
         <!-- OPTION SELF DESTRUCT TIME -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/option_message_self_destruct"
-            style="@style/Option"
+            style="@style/Option.WithOutLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_general">
@@ -83,7 +83,7 @@
             style="@style/SmallBodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_white_with_separator"
+            android:background="@color/sectionColor"
             android:padding="@dimen/normal_padding"
             android:text="@string/text_security"
             app:layout_constraintEnd_toEndOf="parent"
@@ -209,6 +209,47 @@
                 android:text="@string/text_account_recovery_information"
                 app:layout_constraintEnd_toStartOf="@id/imageButton_account_recovery_option_end_icon"
                 app:layout_constraintStart_toEndOf="@id/imageView_account_recovery_option_start_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- OPTION ALLOW DOWNLOAD ATTACHMENTS -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_allow_download"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/option_account_recovery_information">
+
+            <!-- START ICON -->
+            <ImageView
+                android:id="@+id/imageView_allow_download_option_start_icon"
+                style="@style/OptionStartIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_cloud_download_black" />
+
+            <!-- SWITCH -->
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_allow_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:allowDownload="@{viewModel.allowDownloads}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary"
+                app:thumbTint="@color/thumb_color"
+                app:trackTint="@color/track_color" />
+
+            <!-- OPTION TITLE -->
+            <TextView
+                android:id="@+id/textView_title_allow_download"
+                style="@style/OptionTitle"
+                android:text="@string/text_allow_download_attachments"
+                app:layout_constraintEnd_toStartOf="@id/switch_allow_download"
+                app:layout_constraintStart_toEndOf="@id/imageView_allow_download_option_start_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

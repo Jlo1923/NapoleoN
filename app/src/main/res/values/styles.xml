@@ -146,6 +146,10 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <style name="Option.WithOutLine">
+        <item name="android:background">@color/colorBackground</item>
+    </style>
+
     <style name="OptionTitle" parent="BodyTextView.Bold">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
