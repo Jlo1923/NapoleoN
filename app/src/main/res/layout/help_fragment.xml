@@ -124,33 +124,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- OPTION GENERAL INFORMATION -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/option_general_information"
-            style="@style/Option"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/option_about">
-
-            <!-- OPTION TITLE -->
-            <TextView
-                style="@style/OptionTitle"
-                android:layout_marginStart="0dp"
-                android:text="@string/text_general_information"
-                app:layout_constraintEnd_toStartOf="@id/imageButton_information_option_end_icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <!-- EDIT ICON -->
-            <ImageButton
-                android:id="@+id/imageButton_information_option_end_icon"
-                style="@style/OptionEndIcon"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_arrow_right_primary" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

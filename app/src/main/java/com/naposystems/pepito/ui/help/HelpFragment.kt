@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HelpFragmentBinding
@@ -38,6 +39,9 @@ class HelpFragment : Fragment() {
         binding.optionTermsAndConditions.setOnClickListener(termsAndConditionsClickListener())
         binding.imageButtonTermsOptionEndIcon.setOnClickListener(termsAndConditionsClickListener())
 
+        binding.optionAbout.setOnClickListener(aboutClickListener())
+        binding.imageButtonAboutOptionEndIcon.setOnClickListener(aboutClickListener())
+
         return binding.root
     }
 
@@ -60,6 +64,12 @@ class HelpFragment : Fragment() {
         if (intent.resolveActivity(context!!.packageManager) != null) {
             startActivity(intent)
         }
+    }
+
+    private fun aboutClickListener() = View.OnClickListener {
+        this.findNavController().navigate(
+            HelpFragmentDirections.actionHelpFragmentToAboutFragment()
+        )
     }
 
 }
