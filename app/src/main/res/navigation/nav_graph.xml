@@ -199,7 +199,15 @@
         android:id="@+id/helpFragment"
         android:name="com.naposystems.pepito.ui.help.HelpFragment"
         android:label="@string/help"
-        tools:layout="@layout/help_fragment" />
+        tools:layout="@layout/help_fragment">
+        <action
+            android:id="@+id/action_helpFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <dialog
         android:id="@+id/imageSelectorBottomSheetFragment"
         android:name="com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment"
@@ -232,4 +240,9 @@
         android:name="com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment"
         android:label="@string/text_edit_access_pin"
         tools:layout="@layout/edit_access_pin_fragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.naposystems.pepito.ui.about.AboutFragment"
+        android:label="@string/text_about"
+        tools:layout="@layout/about_fragment" />
 </navigation>
