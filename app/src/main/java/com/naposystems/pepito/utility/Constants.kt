@@ -48,6 +48,11 @@ object Constants {
         NEVER(5)
     }
 
+    enum class AllowDownloadAttachments constructor(val option: Int) {
+        YES(1),
+        NO(2)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
@@ -57,6 +62,7 @@ object Constants {
         const val PREF_USER_DISPLAY_FORMAT = "user_display_format"
         const val PREF_SELF_DESTRUCT_TIME = "self_destruct_time"
         const val PREF_TIME_REQUEST_ACCESS_PIN = "time_request_access_pin"
+        const val PREF_ALLOW_DOWNLOAD_ATTACHMENTS = "allow_download_attachments"
     }
 
     object RegularExpressions {

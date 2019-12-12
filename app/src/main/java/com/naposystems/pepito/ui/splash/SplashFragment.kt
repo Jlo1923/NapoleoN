@@ -1,16 +1,15 @@
 package com.naposystems.pepito.ui.splash
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
@@ -69,6 +68,7 @@ class SplashFragment : Fragment() {
         setDefaultUserDisplayFormat()
         setDefaultSelfDestructTime()
         setDefaultTimeRequestAccessPin()
+        setDefaultAllowDownloadAttachments()
 
         return inflater.inflate(R.layout.splash_fragment, container, false)
     }
@@ -122,6 +122,19 @@ class SplashFragment : Fragment() {
             sharedPreferencesManager.putInt(
                 Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN,
                 Constants.TimeRequestAccessPin.THIRTY_SECONDS.time
+            )
+        }
+    }
+
+    private fun setDefaultAllowDownloadAttachments() {
+        val default = sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS
+        )
+
+        if (default == 0) {
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS,
+                Constants.AllowDownloadAttachments.YES.option
             )
         }
     }

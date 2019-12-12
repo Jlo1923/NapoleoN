@@ -6,10 +6,8 @@ import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.ui.register.enterCode.IContractEnterCode
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
-import com.naposystems.pepito.webService.NapoleonRetrofit
 import com.squareup.moshi.Moshi
 import retrofit2.Response
-import timber.log.Timber
 import javax.inject.Inject
 
 class EnterCodeRepository @Inject constructor(private val napoleonApi: NapoleonApi) :

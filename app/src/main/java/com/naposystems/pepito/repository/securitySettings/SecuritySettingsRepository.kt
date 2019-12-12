@@ -16,4 +16,17 @@ class SecuritySettingsRepository @Inject constructor(
     override fun getTimeRequestAccessPin(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN)
     }
+
+    override fun getAllowDownload(): Int {
+        return sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS
+        )
+    }
+
+    override fun updateAllowDownload(state: Int) {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS,
+            state
+        )
+    }
 }
