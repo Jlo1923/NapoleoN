@@ -117,6 +117,9 @@ dependencies {
 
     //Permissions
     implementation 'com.karumi:dexter:6.0.0'
+
+    //SearchView
+    implementation 'com.github.Ferfalk:SimpleSearchView:0.1.4'
 }
 
 apply plugin: 'com.google.gms.google-services'
