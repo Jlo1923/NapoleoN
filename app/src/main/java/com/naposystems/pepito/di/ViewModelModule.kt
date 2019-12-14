@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
+import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
@@ -109,4 +110,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(TimeAccessPinDialogViewModel::class)
     internal abstract fun bindTimeAccessPinDialogViewModel(viewModel: TimeAccessPinDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactUsViewModel::class)
+    internal abstract fun bindContactUsViewModel(viewModel: ContactUsViewModel): ViewModel
 }

@@ -42,6 +42,9 @@ class HelpFragment : Fragment() {
         binding.optionAbout.setOnClickListener(aboutClickListener())
         binding.imageButtonAboutOptionEndIcon.setOnClickListener(aboutClickListener())
 
+        binding.optionContactUs.setOnClickListener(contactUsClickListener())
+        binding.imageButtonContactOptionEndIcon.setOnClickListener(contactUsClickListener())
+
         return binding.root
     }
 
@@ -69,6 +72,12 @@ class HelpFragment : Fragment() {
     private fun aboutClickListener() = View.OnClickListener {
         this.findNavController().navigate(
             HelpFragmentDirections.actionHelpFragmentToAboutFragment()
+        )
+    }
+
+    private fun contactUsClickListener() = View.OnClickListener {
+        findNavController().navigate(
+            HelpFragmentDirections.actionHelpFragmentToContactUsFragment()
         )
     }
 

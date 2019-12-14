@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_description">Senden Sie uns einen Kommentar, einen Vorschlag oder einen Fehlerbericht über die Anwendung. Für uns ist es sehr wichtig, Ihre Meinung zu wissen. Jeder gesendete Bericht trägt zur Verbesserung der Anwendung bei.</string>
+    <string name="text_report_problem">Ein Problem melden</string>
+    <string name="text_commentary">Kommentar</string>
+    <string name="text_suggestion">Vorschlag</string>
+    <string name="text_message">Nachricht</string>
+    <string name="text_pqrs_create">Ihre Anfrage wurde erfolgreich versendet</string>
+    <string name="text_send">Senden</string>
+</resources>

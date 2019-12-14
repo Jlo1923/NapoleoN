@@ -27,6 +27,18 @@ class Utils {
             inputMethodManager.showSoftInput(textInput, SHOW_IMPLICIT)
         }
 
+        fun hideKeyboard(textInput: TextInputEditText) {
+
+            val context = textInput.context
+
+            val inputManager: InputMethodManager =
+                context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(
+                textInput.windowToken,
+                InputMethodManager.SHOW_FORCED
+            )
+        }
+
         /**
          * Convert dp/dpi to pixel values
          * @param context need to get display metrics

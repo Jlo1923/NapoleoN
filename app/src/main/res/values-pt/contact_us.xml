@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_description">Envie-nos um comentário, uma sugestão ou um relatório de erro sobre o aplicativo. Para nós, é muito importante conhecer a sua opinião. Cada relatório enviado ajuda a melhorar o aplicativo.</string>
+    <string name="text_report_problem">Relatar um problema</string>
+    <string name="text_commentary">Comente</string>
+    <string name="text_suggestion">Sugestão</string>
+    <string name="text_message">Mensagem</string>
+    <string name="text_pqrs_create">Sua solicitação foi enviada com sucesso.</string>
+    <string name="text_send">Enviar</string>
+</resources>

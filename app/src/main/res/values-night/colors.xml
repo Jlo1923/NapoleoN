@@ -22,4 +22,5 @@
     <color name="disabledTrackColor">#4D505564</color>
     <color name="disabledThumbColor">@color/colorSecondaryDark</color>
     <color name="sectionColor">#282828</color>
+    <color name="backgroundSpinnerColor">#282828</color>
 </resources>

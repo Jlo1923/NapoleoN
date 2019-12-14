@@ -13,6 +13,7 @@ object Constants {
         const val CREATE_ACCOUNT = "users"
         const val UPDATE_USER_INFO = "users/updateinfo"
         const val GET_BLOCKED_CONTACTS = "frienship/search/block"
+        const val SEND_PQRS = "pqrs"
     }
 
     enum class AccountStatus constructor(val id: Int) {

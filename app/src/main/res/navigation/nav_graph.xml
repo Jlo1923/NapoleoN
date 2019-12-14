@@ -207,6 +207,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_helpFragment_to_contactUsFragment"
+            app:destination="@id/contactUsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <dialog
         android:id="@+id/imageSelectorBottomSheetFragment"
@@ -245,4 +252,9 @@
         android:name="com.naposystems.pepito.ui.about.AboutFragment"
         android:label="@string/text_about"
         tools:layout="@layout/about_fragment" />
+    <fragment
+        android:id="@+id/contactUsFragment"
+        android:name="com.naposystems.pepito.ui.contactUs.ContactUsFragment"
+        android:label="@string/text_contact_us"
+        tools:layout="@layout/contact_us_fragment" />
 </navigation>
