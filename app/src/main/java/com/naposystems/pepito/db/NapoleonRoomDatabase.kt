@@ -11,7 +11,7 @@ import com.naposystems.pepito.entity.BlockedContact
 import com.naposystems.pepito.entity.Status
 import com.naposystems.pepito.entity.User
 
-@Database(entities = [User::class, Status::class, BlockedContact::class], version = 5)
+@Database(entities = [User::class, Status::class, BlockedContact::class], version = 6)
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
@@ -52,6 +52,12 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                         PRIMARY KEY (`id`)
                         )""".trimIndent()
                 )
+            }
+        }
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE user ADD chat_background TEXT NOT NULL DEFAULT ''")
             }
         }
     }

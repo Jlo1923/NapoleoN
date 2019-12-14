@@ -11,4 +11,6 @@ interface UserDatasource {
     suspend fun updateUser(user: User)
 
     suspend fun updateAccessPin(newAccessPin: String, firebaseId: String)
+
+    suspend fun updateChatBackground(newBackground: String, firebaseId: String)
 }

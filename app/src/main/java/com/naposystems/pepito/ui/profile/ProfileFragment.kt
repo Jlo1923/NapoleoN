@@ -226,7 +226,8 @@ class ProfileFragment : Fragment() {
                             viewModelUser.accessPin,
                             viewModelUser.imageUrl,
                             viewModelUser.status,
-                            uri.toString()
+                            uri.toString(),
+                            viewModelUser.chatBackground
                         )
 
                         Glide.with(this)
@@ -288,7 +289,8 @@ class ProfileFragment : Fragment() {
                     viewModel.user.value!!.accessPin,
                     it.avatarUrl,
                     it.status,
-                    viewModel.user.value!!.headerUri
+                    viewModel.user.value!!.headerUri,
+                    viewModel.user.value!!.chatBackground
                 )
 
                 viewModel.updateLocalUser(user)

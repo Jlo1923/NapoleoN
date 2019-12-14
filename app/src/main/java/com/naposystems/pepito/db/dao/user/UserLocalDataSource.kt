@@ -20,4 +20,8 @@ class UserLocalDataSource @Inject constructor(private val userDao: UserDao) : Us
     override suspend fun updateAccessPin(newAccessPin: String, firebaseId: String) {
         return userDao.updateAccessPin(newAccessPin, firebaseId)
     }
+
+    override suspend fun updateChatBackground(newBackground: String, firebaseId: String) {
+        userDao.updateChatBackground(newBackground, firebaseId)
+    }
 }
