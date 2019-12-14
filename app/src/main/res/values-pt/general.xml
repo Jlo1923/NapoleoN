@@ -14,4 +14,6 @@
     <string name="label_edit_cover">Editar banner</string>
     <string name="text_edit">Editar</string>
     <string name="text_share">Compartilhe</string>
+    <string name="text_search">Pesquisar</string>
+    <string name="text_add_contact">Adicionar contato</string>
 </resources>

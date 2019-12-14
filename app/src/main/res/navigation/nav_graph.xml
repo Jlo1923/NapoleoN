@@ -138,6 +138,13 @@
         <action
             android:id="@+id/action_homeFragment_to_helpFragment"
             app:destination="@id/helpFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_contactsFragment"
+            app:destination="@id/contactsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -245,4 +252,9 @@
         android:name="com.naposystems.pepito.ui.about.AboutFragment"
         android:label="@string/text_about"
         tools:layout="@layout/about_fragment" />
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.naposystems.pepito.ui.contacts.ContactsFragment"
+        android:label="@string/text_my_contacts"
+        tools:layout="@layout/contacts_fragment"/>
 </navigation>

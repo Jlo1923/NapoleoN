@@ -1,16 +1,15 @@
 package com.naposystems.pepito.ui.home
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentBinding
-import com.naposystems.pepito.databinding.HomeFragmentItemBinding
 import com.naposystems.pepito.model.home.Chat
 import com.naposystems.pepito.ui.home.adapter.ChatAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
@@ -36,6 +35,12 @@ class HomeFragment : Fragment() {
 
         binding.recyclerViewChats.adapter = adapter
 
+        binding.fabContacts.setOnClickListener {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToContactsFragment()
+            )
+        }
+
         return binding.root
     }
 
@@ -48,8 +53,10 @@ class HomeFragment : Fragment() {
 
     private fun getChats(): List<Chat> {
 
-        val imageUrl = "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg"
-        val message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        val imageUrl =
+            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg"
+        val message =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 
         val chat1 = Chat(
             imageUrl,
