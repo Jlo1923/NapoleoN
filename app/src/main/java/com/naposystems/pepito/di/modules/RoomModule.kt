@@ -15,7 +15,6 @@ import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.entity.Status
 import dagger.Module
 import dagger.Provides
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Singleton
 
@@ -33,7 +32,8 @@ class RoomModule {
                     NapoleonRoomDatabase.MIGRATION_1_2,
                     NapoleonRoomDatabase.MIGRATION_2_3,
                     NapoleonRoomDatabase.MIGRATION_3_4,
-                    NapoleonRoomDatabase.MIGRATION_4_5
+                    NapoleonRoomDatabase.MIGRATION_4_5,
+                    NapoleonRoomDatabase.MIGRATION_5_6
                 )
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
