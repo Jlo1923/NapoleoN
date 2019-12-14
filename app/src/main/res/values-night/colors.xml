@@ -23,4 +23,5 @@
     <color name="disabledThumbColor">@color/colorSecondaryDark</color>
     <color name="sectionColor">#282828</color>
     <color name="backgroundSpinnerColor">#282828</color>
+    <color name="fabIconColor">#121212</color>
 </resources>

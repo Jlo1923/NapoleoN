@@ -8,4 +8,7 @@
     <string name="text_name_and_nickname">Nombre y apodo</string>
     <string name="text_only_name">Solo nombre</string>
     <string name="text_only_nickname">Solo apodo</string>
+    <string name="text_conversation_background">Fondo de conversación</string>
+    <string name="text_updated_successfully">El fondo de conversación ha sido cambiado satisfactoriamente</string>
+    <string name="text_error_updating_conversation_background">Ha ocurrido un error al cambiar el fondo de conversación, por favor inténtalo nuevamente</string>
 </resources>

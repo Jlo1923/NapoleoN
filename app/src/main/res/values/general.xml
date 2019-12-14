@@ -24,4 +24,6 @@
     <string name="text_edit">Editar</string>
     <string name="text_share">Compartir</string>
     <string name="text_napoleon_secret_chat" translatable="false">NapoleoN Secret Chat</string>
+    <string name="text_search">Buscar</string>
+    <string name="text_add_contact">Agregar contacto</string>
 </resources>

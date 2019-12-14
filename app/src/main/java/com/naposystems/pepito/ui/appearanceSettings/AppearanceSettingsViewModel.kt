@@ -1,10 +1,12 @@
 package com.naposystems.pepito.ui.appearanceSettings
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.repository.appearanceSettings.AppearanceSettingsRepository
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 class AppearanceSettingsViewModel @Inject constructor(
@@ -19,9 +21,18 @@ class AppearanceSettingsViewModel @Inject constructor(
     val userDisplayFormat: LiveData<Int>
         get() = _userDisplayFormat
 
+    private val _chatBackgroundUpdated = MutableLiveData<Boolean>()
+    val chatBackgroundUpdated: LiveData<Boolean>
+        get() = _chatBackgroundUpdated
+
     init {
         _colorScheme.value = null
         _userDisplayFormat.value = null
+        _chatBackgroundUpdated.value = null
+    }
+
+    fun resetChatBackgroundUpdated() {
+        _chatBackgroundUpdated.value = null
     }
 
     //region Implementation IContractAppearanceSettings.ViewModel
@@ -31,6 +42,18 @@ class AppearanceSettingsViewModel @Inject constructor(
 
     override fun getUserDisplayFormat() {
         _userDisplayFormat.value = repository.getUserDisplayFormat()
+    }
+
+    override fun updateChatBackground(uri: String) {
+        viewModelScope.launch {
+            try {
+                repository.updateChatBackground(uri)
+                _chatBackgroundUpdated.value = true
+            } catch (e: Exception) {
+                _chatBackgroundUpdated.value = false
+                Timber.e(e)
+            }
+        }
     }
 
     //endregion

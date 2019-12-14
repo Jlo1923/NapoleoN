@@ -20,4 +20,7 @@ interface UserDao {
 
     @Query("UPDATE user SET access_pin=:newAccessPin WHERE firebase_id=:firebaseId")
     suspend fun updateAccessPin(newAccessPin: String, firebaseId: String)
+
+    @Query("UPDATE user SET chat_background=:newBackground WHERE firebase_id=:firebaseId")
+    suspend fun updateChatBackground(newBackground: String, firebaseId: String)
 }

@@ -8,4 +8,7 @@
     <string name="text_name_and_nickname">Nome e apelido</string>
     <string name="text_only_name">Apenas nome</string>
     <string name="text_only_nickname">Somente apelido</string>
+    <string name="text_conversation_background">Contexto da conversa</string>
+    <string name="text_updated_successfully">O plano de fundo da conversa foi alterado com sucesso</string>
+    <string name="text_error_updating_conversation_background">Ocorreu um erro ao alterar o plano de fundo da conversa, tente novamente</string>
 </resources>

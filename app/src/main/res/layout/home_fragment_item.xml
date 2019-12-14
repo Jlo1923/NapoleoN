@@ -60,7 +60,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:text="@{chat.nickname}"
-            android:textColor="@color/primaryTextColor"
+            android:textColor="@color/buttonTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"
