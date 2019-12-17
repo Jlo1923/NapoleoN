@@ -5,15 +5,14 @@ object Constants {
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
 
     object NapoleonApi {
-        const val BASE_URL =
-            "http://nn-backend-secret-chatlb-1192195645.us-west-2.elb.amazonaws.com/api/"
+        const val BASE_URL = "http://192.168.0.15/nn-backend-secret-chat/public/api/"
         const val GENERATE_CODE = "auth/generatecode"
         const val VERIFICATE_CODE = "auth/verificatecode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
         const val CREATE_ACCOUNT = "users"
         const val UPDATE_USER_INFO = "users/updateinfo"
-        const val GET_BLOCKED_CONTACTS = "frienship/search/block"
         const val SEND_PQRS = "pqrs"
+        const val FRIEND_SHIP_SEARCH = "frienship/search/{state}"
     }
 
     enum class AccountStatus constructor(val id: Int) {
@@ -52,6 +51,11 @@ object Constants {
     enum class AllowDownloadAttachments constructor(val option: Int) {
         YES(1),
         NO(2)
+    }
+
+    enum class FriendShipState constructor(val state: String){
+        ACTIVE("active"),
+        BLOCKED("block")
     }
 
     object SharedPreferences {

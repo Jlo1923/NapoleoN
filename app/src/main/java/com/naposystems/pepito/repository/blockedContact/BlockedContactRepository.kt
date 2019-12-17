@@ -4,6 +4,7 @@ import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactsLocalDataSou
 import com.naposystems.pepito.dto.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.entity.BlockedContact
 import com.naposystems.pepito.ui.blockedContacts.IContractBlockedContact
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.webService.NapoleonApi
 import timber.log.Timber
 
@@ -18,7 +19,7 @@ class BlockedContactRepository constructor(
         val localBlockedContacts = blockedContactsLocalDataSource.getBlockedContacts()
 
         try {
-            val response = napoleonApi.getBlockedContacts()
+            val response = napoleonApi.getBlockedContacts(Constants.FriendShipState.BLOCKED.state)
 
             if (response.isSuccessful) {
 

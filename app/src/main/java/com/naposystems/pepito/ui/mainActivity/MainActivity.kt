@@ -93,6 +93,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     showToolbar()
                     enableDrawer()
                 }
+                R.id.conversationFragment -> {
+                    binding.toolbar.title = ""
+                    binding.toolbar.setContentInsetsAbsolute(0, 0)
+                }
                 else -> {
                     showToolbar()
                     disableDrawer()

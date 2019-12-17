@@ -15,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AccessPinFragmentBinding
 import com.naposystems.pepito.dto.accessPin.CreateAccountReqDTO
-import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.utility.*
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -76,26 +75,8 @@ class AccessPinFragment : Fragment() {
         })
 
         viewModel.userCreatedSuccessfully.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-
-                val firebaseId = sharedPreferencesManager.getString(
-                    Constants.SharedPreferences.PREF_FIREBASE_ID,
-                    ""
-                )
-
-                val defaultStatus = context!!.getString(R.string.text_status_available)
-
-                val user = User(
-                    firebaseId,
-                    nickname,
-                    displayName,
-                    viewModel.accessPin.value!!,
-                    "",
-                    defaultStatus,
-                    "",
-                    ""
-                )
-                viewModel.createUser(user)
+            if (it != null) {
+                viewModel.createUser(it)
             }
         })
 

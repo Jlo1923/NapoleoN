@@ -120,6 +120,9 @@ dependencies {
 
     //SearchView
     implementation 'com.github.Ferfalk:SimpleSearchView:0.1.4'
+
+    //Socket-io
+    implementation 'com.github.nkzawa:socket.io-client:0.6.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
