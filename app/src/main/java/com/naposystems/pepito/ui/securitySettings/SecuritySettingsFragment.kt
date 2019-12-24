@@ -61,6 +61,13 @@ class SecuritySettingsFragment : Fragment() {
             viewModel.updateAllowDownload(isChecked)
         }
 
+        binding.optionAccountRecoveryInformation.setOnClickListener(
+            optionRegisterRecoveryAccountClickListener()
+        )
+        binding.imageButtonAccountRecoveryOptionEndIcon.setOnClickListener(
+            optionRegisterRecoveryAccountClickListener()
+        )
+
         return binding.root
     }
 
@@ -103,4 +110,10 @@ class SecuritySettingsFragment : Fragment() {
         dialog.show(childFragmentManager, "TimeRequestAccessPin")
     }
 
+    private fun optionRegisterRecoveryAccountClickListener() = View.OnClickListener {
+        findNavController().navigate(
+            SecuritySettingsFragmentDirections
+                .actionSecuritySettingsFragmentToRecoverAccountFragment()
+        )
+    }
 }

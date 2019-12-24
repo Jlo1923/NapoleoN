@@ -12,6 +12,8 @@ import com.naposystems.pepito.ui.register.accessPin.AccessPinFragment
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment
 import com.naposystems.pepito.ui.register.sendCode.SendCodeFragment
 import com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment
+import com.naposystems.pepito.ui.registerRecoveryAccount.RegisterRecoveryAccountFragment
+import com.naposystems.pepito.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment
 import com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.splash.SplashFragment
@@ -77,4 +79,10 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindContactUsFragment(): ContactUsFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindRegisterRecoveryAccountFragment(): RegisterRecoveryAccountFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindRegisterRecoveryAccountQuestionFragment(): RegisterRecoveryAccountQuestionFragment
 }

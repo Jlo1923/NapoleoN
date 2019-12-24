@@ -144,7 +144,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -177,6 +177,13 @@
         <action
             android:id="@+id/action_securitySettingsFragment_to_editAccessPinFragment"
             app:destination="@id/editAccessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_recoverAccountFragment"
+            app:destination="@id/recoverAccountFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -220,7 +227,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <dialog
         android:id="@+id/imageSelectorBottomSheetFragment"
@@ -263,10 +270,28 @@
         android:id="@+id/contactsFragment"
         android:name="com.naposystems.pepito.ui.contacts.ContactsFragment"
         android:label="@string/text_my_contacts"
-        tools:layout="@layout/contacts_fragment"/>
+        tools:layout="@layout/contacts_fragment" />
     <fragment
         android:id="@+id/contactUsFragment"
         android:name="com.naposystems.pepito.ui.contactUs.ContactUsFragment"
         android:label="@string/text_contact_us"
         tools:layout="@layout/contact_us_fragment" />
+    <fragment
+        android:id="@+id/recoverAccountFragment"
+        android:name="com.naposystems.pepito.ui.registerRecoveryAccount.RegisterRecoveryAccountFragment"
+        android:label="@string/text_account_recovery_information"
+        tools:layout="@layout/register_recovery_account">
+        <action
+            android:id="@+id/action_recoverAccountFragment_to_registerRecoveryAccountQuestionFragment"
+            app:destination="@id/registerRecoveryAccountQuestionFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerRecoveryAccountQuestionFragment"
+        android:name="com.naposystems.pepito.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment"
+        android:label="@string/text_account_recovery_information"
+        tools:layout="@layout/register_recovery_account_question_fragment" />
 </navigation>

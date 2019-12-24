@@ -11,12 +11,16 @@ import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
+import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
+import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeResDTO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_BLOCKED_CONTACTS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_USER_INFO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
@@ -48,4 +52,11 @@ interface NapoleonApi {
 
     @POST(SEND_PQRS)
     suspend fun sendPqrs(@Body contactUsReqDTO: ContactUsReqDTO): Response<ContactUsResDTO>
+
+    @GET(GET_QUESTIONS)
+    suspend fun getQuestions(): Response<List<RegisterRecoveryAccountQuestionResDTO>>
+
+    @POST(SEND_QUESTIONS)
+    suspend fun sendRecoveryQuestions(@Body registerRecoveryAccountReqDTO: RegisterRecoveryAccountReqDTO): Response<Any>
+
 }
