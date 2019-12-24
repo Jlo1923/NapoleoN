@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_count_questions">Question De Sécurité %1$d/%2$d</string>
+    <string name="text_answer">Répondre</string>
+    <string name="text_add_question">Ajouter une autre question</string>
+    <string name="text_security_questions">Choisissez une question</string>
+    <string name="text_select_question">Vous devez sélectionner une question</string>
+    <string name="text_title_register_questions">L\'option Récupérer un compte vous aidera à récupérer votre pseudo, vos contacts et vos préférences. N\'oubliez pas qu\'une réponse difficile est la clé de votre confidentialité et de votre sécurité</string>
+    <string name="text_description_cancel">Aucune information ne sera enregistrée pour la récupération du compte. Êtes-vous sûr de vouloir partir?</string>
+    <string name="text_title_cancel">Se déconnecter?</string>
+    <string name="text_successful_message">Informations enregistrées avec succès</string>
+    <string name="text_error_message">Erreur lors de l\'enregistrement des informations</string>
+</resources>

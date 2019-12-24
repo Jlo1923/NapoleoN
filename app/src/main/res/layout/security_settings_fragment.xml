@@ -31,7 +31,7 @@
         <!-- OPTION SELF DESTRUCT TIME -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/option_message_self_destruct"
-            style="@style/Option.WithOutLine"
+            style="@style/Option"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_general">
@@ -129,7 +129,7 @@
         <!-- OPTION ALLOW DOWNLOAD ATTACHMENTS -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/option_allow_download"
-            style="@style/Option"
+            style="@style/Option.WithOutLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/option_time_request_access_pin">
