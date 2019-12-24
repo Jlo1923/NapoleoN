@@ -54,7 +54,8 @@ class ContactsAdapter constructor(private val clickListener: ContactClickListene
         }
     }
 
-    class ContactClickListener(val clickListener: (item: Contact) -> Unit) {
-        fun onClick(item: Contact) = clickListener(item)
+    interface ContactClickListener {
+        fun onClick(item: Contact)
+        fun onMoreClick(item: Contact)
     }
 }

@@ -5,15 +5,17 @@ object Constants {
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
 
     object NapoleonApi {
-        const val BASE_URL =
-            "http://nn-backend-secret-chatlb-1192195645.us-west-2.elb.amazonaws.com/api/"
+        const val BASE_URL = "http://192.168.0.15/nn-backend-secret-chat/public/api/"
+        const val SOCKET_BASE_URL = "http://192.168.0.15:6001"
         const val GENERATE_CODE = "auth/generatecode"
         const val VERIFICATE_CODE = "auth/verificatecode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
         const val CREATE_ACCOUNT = "users"
         const val UPDATE_USER_INFO = "users/updateinfo"
-        const val GET_BLOCKED_CONTACTS = "frienship/search/block"
         const val SEND_PQRS = "pqrs"
+        const val FRIEND_SHIP_SEARCH = "frienship/search/{state}"
+        const val SEND_MESSAGE = "messages"
+        const val GET_MESSAGES = "messages/{contact_id}"
     }
 
     enum class AccountStatus constructor(val id: Int) {
@@ -54,6 +56,16 @@ object Constants {
         NO(2)
     }
 
+    enum class FriendShipState constructor(val state: String) {
+        ACTIVE("active"),
+        BLOCKED("block")
+    }
+
+    enum class IsMine constructor(val value: Int) {
+        YES(1),
+        NO(0)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
@@ -64,6 +76,7 @@ object Constants {
         const val PREF_SELF_DESTRUCT_TIME = "self_destruct_time"
         const val PREF_TIME_REQUEST_ACCESS_PIN = "time_request_access_pin"
         const val PREF_ALLOW_DOWNLOAD_ATTACHMENTS = "allow_download_attachments"
+        const val PREF_SOCKET_ID = "socket_id"
     }
 
     object RegularExpressions {

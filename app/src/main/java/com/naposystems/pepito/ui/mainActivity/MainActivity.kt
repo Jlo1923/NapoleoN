@@ -93,6 +93,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     showToolbar()
                     enableDrawer()
                 }
+                R.id.conversationFragment -> {
+                    binding.toolbar.title = ""
+                    binding.toolbar.setContentInsetsAbsolute(0, 0)
+                    binding.toolbar.elevation = 0f
+                    binding.toolbar.setBackgroundColor(
+                        resources.getColor(
+                            R.color.flatActionBarColor,
+                            this.theme
+                        )
+                    )
+                }
                 else -> {
                     showToolbar()
                     disableDrawer()
@@ -205,6 +216,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun showToolbar() {
         binding.toolbar.apply {
             visibility = View.VISIBLE
+            elevation = Utils.dpToPx(context!!, 4f).toFloat()
         }
     }
 

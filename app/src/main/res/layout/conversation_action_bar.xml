@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="com.naposystems.pepito.entity.Contact" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:elevation="@dimen/elevation"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="0dp"
+        tools:background="@color/colorPrimary">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_arrow_back_white" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView_avatar"
+            android:layout_width="50dp"
+            android:layout_height="?android:attr/actionBarSize"
+            android:paddingTop="@dimen/small_padding"
+            android:paddingBottom="@dimen/small_padding"
+            app:avatar="@{contact.imageUrl}"
+            tools:src="@drawable/ic_spanish_flag" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_user_display_name"
+                style="@style/SmallBodyTextView.WhiteBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@{contact.displayName}"
+                tools:text="Giussep Ricardo Cachaya" />
+
+            <TextView
+                android:id="@+id/textView_user_nickname"
+                style="@style/MinorBodyTextView.White"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                app:nickname="@{contact.nickname}"
+                tools:text="\@giussepr" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

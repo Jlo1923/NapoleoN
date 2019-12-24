@@ -35,7 +35,7 @@
         android:paddingStart="@dimen/large_padding"
         android:paddingTop="@dimen/normal_padding"
         android:paddingEnd="0dp"
-        android:paddingBottom="@dimen/minor_padding"
+        android:paddingBottom="@dimen/x_small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

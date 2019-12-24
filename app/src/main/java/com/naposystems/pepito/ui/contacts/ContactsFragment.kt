@@ -10,8 +10,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactsFragmentBinding
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -62,8 +64,19 @@ class ContactsFragment : Fragment() {
         viewModel.getContacts()
 
         viewModel.contacts.observe(this, Observer {
-            adapter.submitList(it)
+            if (it.isNotEmpty()) {
+                adapter.submitList(it)
+                if (binding.viewSwitcher.nextView == binding.swipeRefresh) {
+                    binding.viewSwitcher.showNext()
+                }
+            }
         })
+
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.viewSwitcher.showPrevious()
+            viewModel.getContacts()
+            binding.swipeRefresh.isRefreshing = false
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,8 +90,16 @@ class ContactsFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        adapter = ContactsAdapter(ContactsAdapter.ContactClickListener {
-            Toast.makeText(context!!, "Has seleccionado ${it.nickname}", Toast.LENGTH_SHORT).show()
+        adapter = ContactsAdapter(object : ContactsAdapter.ContactClickListener {
+            override fun onClick(item: Contact) {
+                findNavController().navigate(
+                    ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
+                )
+            }
+
+            override fun onMoreClick(item: Contact) {
+                Toast.makeText(context!!, "Has presionado more", Toast.LENGTH_SHORT).show()
+            }
         })
 
         binding.recyclerViewContacts.adapter = adapter
