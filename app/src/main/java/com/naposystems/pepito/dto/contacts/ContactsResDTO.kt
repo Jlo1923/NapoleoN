@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ContactsResDTO(
-    @Json(name = "id") val int: Int,
+    @Json(name = "id") val id: Int,
     @Json(name = "nick") val nickname: String,
     @Json(name = "names") val displayName: String,
     @Json(name = "my_status") val status: String,
@@ -21,6 +21,7 @@ data class ContactsResDTO(
             for (resContact in contactsResDTO) {
 
                 val contact = Contact(
+                    resContact.id,
                     resContact.avatar,
                     resContact.nickname,
                     resContact.displayName,

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_call">Llamar</string>
-    <string name="text_video_call">Videollamada</string>
-    <string name="text_schedule">Programar</string>
-    <string name="text_see_contact">Ver contacto</string>
-    <string name="text_block_contact">Bloquear contacto</string>
-    <string name="text_mute_conversation">Silenciar conversación</string>
-    <string name="text_delete_conversation">Eliminar conversación</string>
+    <string name="text_call">Chiamata</string>
+    <string name="text_video_call">Videochiamata</string>
+    <string name="text_schedule">Programma</string>
+    <string name="text_see_contact">Vedi contatto</string>
+    <string name="text_block_contact">Blocca contatto</string>
+    <string name="text_mute_conversation">Conversazione muta</string>
+    <string name="text_delete_conversation">Elimina la conversazione</string>
+    <string name="text_write_message">Scrivi un messaggio</string>
 </resources>

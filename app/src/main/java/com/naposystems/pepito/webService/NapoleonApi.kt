@@ -6,6 +6,8 @@ import com.naposystems.pepito.dto.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.dto.contactUs.ContactUsReqDTO
 import com.naposystems.pepito.dto.contactUs.ContactUsResDTO
 import com.naposystems.pepito.dto.contacts.ContactsResDTO
+import com.naposystems.pepito.dto.conversation.message.ConversationReqDTO
+import com.naposystems.pepito.dto.conversation.message.ConversationResDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
@@ -17,6 +19,8 @@ import com.naposystems.pepito.dto.validateNickname.ValidateNicknameResDTO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_MESSAGES
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_USER_INFO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
@@ -49,4 +53,10 @@ interface NapoleonApi {
 
     @GET(FRIEND_SHIP_SEARCH)
     suspend fun getFriendShipSearch(@Path("state") state: String): Response<List<ContactsResDTO>>
+
+    @POST(SEND_MESSAGE)
+    suspend fun sendMessage(@Body conversationReqDTO: ConversationReqDTO): Response<ConversationResDTO>
+
+    @GET(GET_MESSAGES)
+    suspend fun getMessages(@Path("contact_id") contactId: Int): Response<List<ConversationResDTO>>
 }

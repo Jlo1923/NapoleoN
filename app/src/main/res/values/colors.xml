@@ -24,4 +24,7 @@
     <color name="sectionColor">#E6E6E6</color>
     <color name="backgroundSpinnerColor">#f2f2f2</color>
     <color name="fabIconColor">#f2f2f2</color>
+    <color name="flatActionBarColor">#d8a608</color>
+    <color name="colorTextMyMessage">#f2f2f2</color>
+    <color name="colorTextIncomingMessage">#4d4d4d</color>
 </resources>

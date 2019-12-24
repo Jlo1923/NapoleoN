@@ -7,6 +7,7 @@ import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
 import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
+import com.naposystems.pepito.ui.conversation.ConversationViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
@@ -121,4 +122,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ContactUsViewModel::class)
     internal abstract fun bindContactUsViewModel(viewModel: ContactUsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConversationViewModel::class)
+    internal abstract fun bindConversationViewModel(viewModel: ConversationViewModel): ViewModel
 }

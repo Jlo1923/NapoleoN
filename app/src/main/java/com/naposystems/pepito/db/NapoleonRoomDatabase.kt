@@ -5,13 +5,18 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactDao
+import com.naposystems.pepito.db.dao.conversation.ConversationDao
 import com.naposystems.pepito.db.dao.status.StatusDao
 import com.naposystems.pepito.db.dao.user.UserDao
 import com.naposystems.pepito.entity.BlockedContact
+import com.naposystems.pepito.entity.Conversation
 import com.naposystems.pepito.entity.Status
 import com.naposystems.pepito.entity.User
 
-@Database(entities = [User::class, Status::class, BlockedContact::class], version = 6)
+@Database(
+    entities = [User::class, Status::class, BlockedContact::class, Conversation::class],
+    version = 9
+)
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
@@ -19,6 +24,8 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
     abstract fun statusDao(): StatusDao
 
     abstract fun blockedContactDao(): BlockedContactDao
+
+    abstract fun conversationDao(): ConversationDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -58,6 +65,35 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
         val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE user ADD chat_background TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE `conversation` (
+                        `id` TEXT NOT NULL,
+                        `body` TEXT NOT NULL,
+                        `type` TEXT NOT NULL,
+                        `user_destination` INTEGER NOT NULL,
+                        `user_addressee` INTEGER NOT NULL,
+                        `updated_at` INTEGER NOT NULL,
+                        `created_at` INTEGER NOT NULL,
+                        PRIMARY KEY (`id`)
+                        )""".trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE conversation ADD is_mine INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE conversation ADD channel_name TEXT NOT NULL DEFAULT ''")
             }
         }
     }
