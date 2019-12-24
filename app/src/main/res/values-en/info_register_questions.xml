@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_info_register_account">To the registrar / edit account recovery information, you must add a minimum of 3 and a maximum of 5 questions, which will be displayed at the time of recovering your password</string>
+    <string name="text_title_info">Important</string>
+</resources>

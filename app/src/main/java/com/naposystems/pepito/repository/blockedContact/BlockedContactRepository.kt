@@ -14,7 +14,7 @@ class BlockedContactRepository constructor(
 ) : IContractBlockedContact.Repository {
 
     override suspend fun getBlockedContacts(): List<BlockedContact> {
-        val blockedContacts: MutableList<BlockedContact> = arrayListOf()
+            val blockedContacts: MutableList<BlockedContact> = arrayListOf()
 
         val localBlockedContacts = blockedContactsLocalDataSource.getBlockedContacts()
 

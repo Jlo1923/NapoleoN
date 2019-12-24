@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_recovery_account_false">Você não possui informações registradas para recuperação da conta.</string>
+    <string name="text_recovery_account_ok">Você já registrou as informações para recuperação da conta. A edição descartará as informações anteriores.</string>
+    <string name="text_register">Registre-se</string>
+</resources>

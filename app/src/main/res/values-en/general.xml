@@ -4,7 +4,7 @@
     <string name="text_cancel">Cancel</string>
     <string name="text_continue">Continue</string>
     <string name="welcome">Welcome</string>
-    <string name="text_next">Following</string>
+    <string name="text_next">Next</string>
     <string name="something_went_wrong">Something went wrong, please try again</string>
     <string name="label_name">Name</string>
     <string name="text_status">Status</string>
@@ -16,4 +16,5 @@
     <string name="text_share">Share</string>
     <string name="text_search">Search</string>
     <string name="text_add_contact">Add contact</string>
+    <string name="text_finish">Finish</string>
 </resources>

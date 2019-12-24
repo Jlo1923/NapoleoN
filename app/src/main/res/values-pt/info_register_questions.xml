@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_info_register_account">Para o registrador / editar as informações de recuperação da conta, você deve adicionar no mínimo 3 e no máximo 5 perguntas, que serão exibidas no momento da recuperação de sua senha</string>
+    <string name="text_title_info">Importante</string>
+</resources>
