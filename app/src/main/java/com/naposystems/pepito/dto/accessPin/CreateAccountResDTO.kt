@@ -1,5 +1,6 @@
 package com.naposystems.pepito.dto.accessPin
 
+import com.naposystems.pepito.entity.User
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -10,4 +11,25 @@ data class CreateAccountResDTO(
     @Json(name = "language_iso") val languageIso: String = "",
     @Json(name = "id") val id: Int,
     @Json(name = "my_status") val status: String = ""
-)
+) {
+    companion object {
+        fun toUserModel(
+            createAccountResDTO: CreateAccountResDTO,
+            firebaseId: String,
+            accessPin: String,
+            status: String
+        ): User {
+            return User(
+                firebaseId,
+                createAccountResDTO.id,
+                createAccountResDTO.nickname,
+                createAccountResDTO.name,
+                accessPin,
+                "",
+                status,
+                "",
+                ""
+            )
+        }
+    }
+}

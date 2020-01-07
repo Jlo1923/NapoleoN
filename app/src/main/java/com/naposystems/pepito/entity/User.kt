@@ -10,6 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "user")
 data class User(
     @PrimaryKey @ColumnInfo(name = "firebase_id") val firebaseId: String,
+    @ColumnInfo(name = "id") val id: Int,
     @ColumnInfo(name = "nickname") val nickname: String,
     @ColumnInfo(name = "display_name") var displayName: String,
     @ColumnInfo(name = "access_pin") val accessPin: String,

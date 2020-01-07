@@ -15,6 +15,9 @@ buildscript {
         stetho_version = "1.5.1"
         room_version = "2.2.2"
         glide_version = "4.10.0"
+        rxkotlin_version = "2.4.0"
+        rxandroid_version = "2.1.1"
+        paging_version = "2.1.1"
     }
 
     repositories {

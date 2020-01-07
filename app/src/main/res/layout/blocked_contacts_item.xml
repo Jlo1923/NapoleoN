@@ -51,7 +51,7 @@
             style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/minor_margin"
+            android:layout_marginTop="@dimen/x_small_margin"
             android:ellipsize="end"
             android:lines="1"
             app:nickname="@{contact.nickname}"

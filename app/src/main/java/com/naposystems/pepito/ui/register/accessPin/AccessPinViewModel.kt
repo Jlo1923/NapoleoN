@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.R
 import com.naposystems.pepito.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.pepito.dto.accessPin.CreateAccountResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.repository.accessPin.CreateAccountRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 class AccessPinViewModel @Inject constructor(
@@ -31,8 +31,8 @@ class AccessPinViewModel @Inject constructor(
     val userCreationError: LiveData<String>
         get() = _userCreationError
 
-    private val _userCreatedSuccessfully = MutableLiveData<Boolean>()
-    val userCreatedSuccessfully: LiveData<Boolean>
+    private val _userCreatedSuccessfully = MutableLiveData<User>()
+    val userCreatedSuccessfully: LiveData<User>
         get() = _userCreatedSuccessfully
 
     private val _userCreatedLocallySuccessfully = MutableLiveData<Boolean>()
@@ -67,7 +67,13 @@ class AccessPinViewModel @Inject constructor(
                 val response = repository.createAccount(createAccountReqDTO)
 
                 if (response.isSuccessful) {
-                    _userCreatedSuccessfully.value = true
+                    _userCreatedSuccessfully.value =
+                        CreateAccountResDTO.toUserModel(
+                            response.body()!!,
+                            createAccountReqDTO.firebaseId,
+                            createAccountReqDTO.accessPin,
+                            createAccountReqDTO.status
+                        )
                 } else {
                     when (response.code()) {
                         422 -> _webServiceError.value = repository.get422Error(response)

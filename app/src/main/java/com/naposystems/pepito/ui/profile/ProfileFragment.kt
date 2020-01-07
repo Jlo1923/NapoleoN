@@ -221,6 +221,7 @@ class ProfileFragment : Fragment() {
 
                         val user = User(
                             viewModelUser.firebaseId,
+                            viewModelUser.id,
                             viewModelUser.nickname,
                             viewModelUser.displayName,
                             viewModelUser.accessPin,
@@ -282,15 +283,18 @@ class ProfileFragment : Fragment() {
 
                 hideAvatarProgressBar()
 
+                val viewModelUser = viewModel.user.value!!
+
                 val user = User(
-                    viewModel.user.value!!.firebaseId,
+                    viewModelUser.firebaseId,
+                    viewModelUser.id,
                     it.nickname,
                     it.displayName,
-                    viewModel.user.value!!.accessPin,
+                    viewModelUser.accessPin,
                     it.avatarUrl,
                     it.status,
-                    viewModel.user.value!!.headerUri,
-                    viewModel.user.value!!.chatBackground
+                    viewModelUser.headerUri,
+                    viewModelUser.chatBackground
                 )
 
                 viewModel.updateLocalUser(user)

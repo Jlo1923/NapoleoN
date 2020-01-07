@@ -1,28 +1,34 @@
 package com.naposystems.pepito.repository.contacts
 
-import android.content.Context
-import com.naposystems.pepito.R
+import com.naposystems.pepito.dto.contacts.ContactsResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contacts.IContractContacts
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.webService.NapoleonApi
+import timber.log.Timber
 import javax.inject.Inject
 
-class ContactsRepository @Inject constructor(private val context: Context) :
+class ContactsRepository @Inject constructor(private val napoleonApi: NapoleonApi) :
     IContractContacts.Repository {
 
     override suspend fun getContacts(): List<Contact> {
-        val contacts = context.resources
-            .openRawResource(R.raw.contacts)
-            .bufferedReader()
-            .use { it.readLine() }
+        val contacts: MutableList<Contact> = arrayListOf()
 
-        val moshi = Moshi.Builder().build()
+        try {
+            val response =
+                napoleonApi.getFriendShipSearch(Constants.FriendShipState.ACTIVE.state)
 
-        val listType = Types.newParameterizedType(List::class.java, Contact::class.java)
-        val adapter: JsonAdapter<List<Contact>> = moshi.adapter(listType)
+            if (response.isSuccessful) {
 
-        return adapter.fromJson(contacts)!!
+                contacts.addAll(ContactsResDTO.toEntityList(response.body()!!))
+
+            } else {
+                Timber.e(response.errorBody()!!.string())
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+
+        return contacts
     }
 }

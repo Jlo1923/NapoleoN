@@ -7,6 +7,8 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
+import com.naposystems.pepito.webService.SocketService
+import com.naposystems.pepito.webService.service.IContractSocketService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -34,11 +36,10 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(
+    fun provideHttpClient(
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
-    ): NapoleonApi {
-
+    ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
 
         httpClient.addNetworkInterceptor(StethoInterceptor())
@@ -50,15 +51,27 @@ class ApplicationModule {
                 ""
             )
 
+            val socketId = sharedPreferencesManager.getString(
+                Constants.SharedPreferences.PREF_SOCKET_ID,
+                ""
+            )
+
             val request: Request = original.newBuilder()
                 .header("languageIso", LocaleHelper.getLanguagePreference(context))
                 .header("X-API-Key", firebaseInstanceId)
+                .header("X-Socket-ID", socketId)
                 .method(original.method(), original.body())
                 .build()
 
             chain.proceed(request)
         }
 
+        return httpClient.build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(httpClient: OkHttpClient): NapoleonApi {
 
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
@@ -66,10 +79,16 @@ class ApplicationModule {
 
         val retrofit = Retrofit.Builder()
             .baseUrl(Constants.NapoleonApi.BASE_URL)
-            .client(httpClient.build())
+            .client(httpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 
         return retrofit.create(NapoleonApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSocketClient(sharedPreferencesManager: SharedPreferencesManager): IContractSocketService {
+        return SocketService(sharedPreferencesManager)
     }
 }

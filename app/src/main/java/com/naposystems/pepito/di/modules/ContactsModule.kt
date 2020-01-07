@@ -1,8 +1,8 @@
 package com.naposystems.pepito.di.modules
 
-import android.content.Context
 import com.naposystems.pepito.repository.contacts.ContactsRepository
 import com.naposystems.pepito.ui.contacts.IContractContacts
+import com.naposystems.pepito.webService.NapoleonApi
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -12,7 +12,7 @@ class ContactsModule {
 
     @Provides
     @Singleton
-    fun provideRepository(context: Context): IContractContacts.Repository {
-        return ContactsRepository(context)
+    fun provideRepository(napoleonApi: NapoleonApi): IContractContacts.Repository {
+        return ContactsRepository(napoleonApi)
     }
 }

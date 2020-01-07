@@ -8,6 +8,9 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.db.NapoleonRoomDatabase
 import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactDao
 import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactsLocalDataSource
+import com.naposystems.pepito.db.dao.conversation.ConversationDao
+import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
+import com.naposystems.pepito.db.dao.conversation.ConversationLocalDataSource
 import com.naposystems.pepito.db.dao.status.StatusDao
 import com.naposystems.pepito.db.dao.status.StatusLocalDataSource
 import com.naposystems.pepito.db.dao.user.UserDao
@@ -33,7 +36,10 @@ class RoomModule {
                     NapoleonRoomDatabase.MIGRATION_2_3,
                     NapoleonRoomDatabase.MIGRATION_3_4,
                     NapoleonRoomDatabase.MIGRATION_4_5,
-                    NapoleonRoomDatabase.MIGRATION_5_6
+                    NapoleonRoomDatabase.MIGRATION_5_6,
+                    NapoleonRoomDatabase.MIGRATION_6_7,
+                    NapoleonRoomDatabase.MIGRATION_7_8,
+                    NapoleonRoomDatabase.MIGRATION_8_9
                 )
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -93,5 +99,17 @@ class RoomModule {
     @Singleton
     fun provideBlockedContactsLocalDataSource(blockedContactDao: BlockedContactDao): BlockedContactsLocalDataSource {
         return BlockedContactsLocalDataSource(blockedContactDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConversationDao(napoleonRoomDatabase: NapoleonRoomDatabase): ConversationDao {
+        return napoleonRoomDatabase.conversationDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideConversationLocalDataSource(conversationDao: ConversationDao): ConversationDataSource {
+        return ConversationLocalDataSource(conversationDao)
     }
 }

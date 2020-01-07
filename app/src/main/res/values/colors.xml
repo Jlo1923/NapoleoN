@@ -13,7 +13,7 @@
     <color name="black">#000000</color>
     <color name="black_40">#66000000</color>
     <color name="colorError">#EF5350</color>
-    <color name="separator">#E0E0E0</color>
+    <color name="separator">#CCCCCC</color>
     <color name="green">#00E676</color>
     <color name="colorBackground">#f2f2f2</color>
     <color name="colorSecondaryBackground">#d8a608</color>
@@ -24,4 +24,7 @@
     <color name="sectionColor">#E6E6E6</color>
     <color name="backgroundSpinnerColor">#f2f2f2</color>
     <color name="fabIconColor">#f2f2f2</color>
+    <color name="flatActionBarColor">#d8a608</color>
+    <color name="colorTextMyMessage">#f2f2f2</color>
+    <color name="colorTextIncomingMessage">#4d4d4d</color>
 </resources>
