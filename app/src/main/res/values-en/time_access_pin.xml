@@ -2,8 +2,9 @@
 <resources>
     <string name="text_thirty_seconds">30 seconds</string>
     <string name="text_one_minute">1 minute</string>
+    <string name="text_two_minutes">2 minutes</string>
     <string name="text_five_minutes">5 minutes</string>
-    <string name="text_fifteen_minutes">15 minutes</string>
-    <string name="text_never">Never</string>
+    <string name="text_immediately">Immediately</string>
     <string name="text_desc_pin_locked_time">The access pin is requested after the selected time has elapsed, after blocking the app.</string>
+    <string name="text_ten_seconds">10 seconds</string>
 </resources>

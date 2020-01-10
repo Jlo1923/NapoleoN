@@ -9,6 +9,7 @@ import com.naposystems.pepito.ui.conversation.ConversationFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
+import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment
 import com.naposystems.pepito.ui.register.accessPin.AccessPinFragment
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment
 import com.naposystems.pepito.ui.register.sendCode.SendCodeFragment
@@ -89,4 +90,7 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindRegisterRecoveryAccountQuestionFragment(): RegisterRecoveryAccountQuestionFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindRecoveryAccountFragment(): RecoveryAccountFragment
 }

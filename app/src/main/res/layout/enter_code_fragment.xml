@@ -27,7 +27,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/guideline_end"
                 app:layout_constraintTop_toTopOf="@id/guideline_top"
-                tools:text="@string/number_of_attempts" />
+                tools:text="@string/text_number_attempts" />
 
             <com.naposystems.pepito.ui.custom.EnterCodeWidget
                 android:id="@+id/enter_code_widget"
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/large_margin"
                 android:enabled="false"
-                android:text="@string/didnt_receive_code"
+                android:text="@string/text_dont_receive_code"
                 app:layout_constraintEnd_toStartOf="@+id/guideline_end"
                 app:layout_constraintStart_toStartOf="@+id/guideline_start"
                 app:layout_constraintTop_toBottomOf="@+id/textView_new_attempt_in" />

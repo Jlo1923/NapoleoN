@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         viewModel.errorGettingUser.observe(this, Observer {
             if (it == true) {
-                val message = getString(R.string.something_went_wrong)
+                val message = getString(R.string.text_fail)
 
                 Utils.showSimpleSnackbar(binding.coordinator, message, 2)
             }

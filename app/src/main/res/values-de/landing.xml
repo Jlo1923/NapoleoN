@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="label_create_account">Konto erstellen</string>
-    <string name="label_recover_account">Konto wiederherstellen</string>
-    <string name="label_language_selection">Wählen Sie eine Sprache</string>
+    <string name="text_create_account">Konto erstellen</string>
+    <string name="text_recover_account">Konto wiederherstellen</string>
+    <string name="text_select_language">Wählen Sie eine Sprache</string>
 </resources>

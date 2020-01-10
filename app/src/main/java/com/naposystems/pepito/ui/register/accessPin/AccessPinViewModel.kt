@@ -82,7 +82,7 @@ class AccessPinViewModel @Inject constructor(
                 }
             } catch (ex: Exception) {
                 Timber.d(ex)
-                val error = context.getString(R.string.something_went_wrong)
+                val error = context.getString(R.string.text_fail)
                 _webServiceError.value = arrayListOf(error)
             }
         }
@@ -95,7 +95,7 @@ class AccessPinViewModel @Inject constructor(
                 _userCreatedLocallySuccessfully.value = true
             } catch (ex: Exception) {
                 Timber.d(ex)
-                val error = context.getString(R.string.something_went_wrong)
+                val error = context.getString(R.string.text_fail)
                 _userCreationError.value = error
             }
         }

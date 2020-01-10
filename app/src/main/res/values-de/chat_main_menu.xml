@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="profile">Profil</string>
-    <string name="security_settings">Datenschutzeinstellungen</string>
-    <string name="appearance_settings">Darstellungseinstellungen</string>
-    <string name="invite_someone">Jemanden einladen</string>
-    <string name="help">Hilfe</string>
+    <string name="text_profile_title">Profil</string>
+    <string name="text_security_settings_title">Sicherheitseinstellungen</string>
+    <string name="text_appearance_settings_title">Darstellungseinstellungen</string>
+    <string name="text_invite_someone_title">Jemanden einladen</string>
+    <string name="text_help_title">Hilfe</string>
 </resources>

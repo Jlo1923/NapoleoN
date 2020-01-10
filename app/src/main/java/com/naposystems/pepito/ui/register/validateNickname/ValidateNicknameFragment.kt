@@ -116,7 +116,7 @@ class ValidateNicknameFragment : Fragment() {
                     itsNicknameAvailable = false
                     binding.buttonNext.isEnabled = false
                     resetDrawableTextInput(binding.textInputEditTextNickname)
-                    binding.textInputLayoutNickname.error = getString(R.string.nickname_unavailable)
+                    binding.textInputLayoutNickname.error = getString(R.string.text_nickname_unavailable)
                 }
             }
         })

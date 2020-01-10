@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="label_fill_form_to_create_account">Si vous voulez créer un nouvel utilisateur, remplissez le formulaire suivant</string>
-    <string name="hint_required_nickname">Surnom*</string>
-    <string name="display_name">Nom d\'affichage</string>
-    <string name="label_terms">En cliquant sur Inscription, vous acceptez les</string>
-    <string name="label_terms_and_conditions">termes, conditions et politiques de confidentialité.</string>
-    <string name="nickname_required">Le pseudo est requis</string>
-    <string name="at_least_five_characters">Au moins 5 caractères</string>
-    <string name="nickname_cant_contain_white_spaces">Ne peut pas contenir d\'espaces vides</string>
-    <string name="cant_contain_special_characters">Ne peut pas contenir de caractères spéciaux</string>
-    <string name="at_least_one_number">Il doit contenir au moins un numéro</string>
-    <string name="recovery_password">Contraseña de recuperación</string>
+    <string name="text_nickname">Surnom*</string>
+    <string name="text_display_name">Nom d\'affichage</string>
+    <string name="text_terms_and_conditions_line_one">En cliquant sur Inscription, vous acceptez les</string>
+    <string name="text_terms_and_conditions_line_two">termes, conditions et politiques de confidentialité.</string>
+    <string name="text_nickname_required">Le pseudo est requis</string>
+    <string name="text_nickname_not_contain_enough_char">Le surnom doit contenir au moins 5 caractères</string>
+    <string name="text_nickname_must_not_contain_space">Ne peut pas contenir d\'espaces vides</string>
+    <string name="text_cant_contain_special_characters">Ne peut pas contenir de caractères spéciaux</string>
+    <string name="text_nickname_contain_at_least_one_number">Il doit contenir au moins un numéro</string>
 </resources>

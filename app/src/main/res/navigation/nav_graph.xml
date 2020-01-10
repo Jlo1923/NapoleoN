@@ -62,7 +62,7 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment"
-        android:label="@string/label_create_account"
+        android:label="@string/text_create_account"
         tools:layout="@layout/validate_nickname_fragment">
         <action
             android:id="@+id/action_registerFragment_to_accessPinFragment"
@@ -75,12 +75,20 @@
     <fragment
         android:id="@+id/recoveryAccountFragment"
         android:name="com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment"
-        android:label="@string/label_recover_account"
-        tools:layout="@layout/recovery_account_fragment" />
+        android:label="@string/text_recover_account"
+        tools:layout="@layout/recovery_account_fragment">
+        <action
+            android:id="@+id/action_recoveryAccountFragment_to_recoveryAccountQuestionsFragment"
+            app:destination="@id/recoveryAccountQuestionsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/sendCodeFragment"
         android:name="com.naposystems.pepito.ui.register.sendCode.SendCodeFragment"
-        android:label="@string/send_registration_code"
+        android:label="@string/text_send_register_code"
         tools:layout="@layout/send_code_fragment">
         <action
             android:id="@+id/action_sendCodeFragment_to_enterCodeFragment"
@@ -93,7 +101,7 @@
     <fragment
         android:id="@+id/enterCodeFragment"
         android:name="com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment"
-        android:label="@string/enter_code"
+        android:label="@string/text_insert_code"
         tools:layout="@layout/enter_code_fragment">
         <action
             android:id="@+id/action_enterCodeFragment_to_registerFragment"
@@ -106,7 +114,7 @@
     <fragment
         android:id="@+id/accessPinFragment"
         android:name="com.naposystems.pepito.ui.register.accessPin.AccessPinFragment"
-        android:label="@string/access_pin"
+        android:label="@string/text_access_pin"
         tools:layout="@layout/access_pin_fragment">
         <argument
             android:name="nickname"
@@ -149,7 +157,7 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.naposystems.pepito.ui.profile.ProfileFragment"
-        android:label="@string/profile"
+        android:label="@string/text_profile_title"
         tools:layout="@layout/profile_fragment">
         <action
             android:id="@+id/action_profileFragment_to_imageSelectorBottomSheetFragment"
@@ -172,7 +180,7 @@
     <fragment
         android:id="@+id/securitySettingsFragment"
         android:name="com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment"
-        android:label="@string/security_settings"
+        android:label="@string/text_security_settings_title"
         tools:layout="@layout/security_settings_fragment">
         <action
             android:id="@+id/action_securitySettingsFragment_to_editAccessPinFragment"
@@ -192,7 +200,7 @@
     <fragment
         android:id="@+id/appearanceSettingsFragment"
         android:name="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment"
-        android:label="@string/appearance_settings"
+        android:label="@string/text_appearance_settings_title"
         tools:layout="@layout/appearance_settings_fragment">
         <action
             android:id="@+id/action_appearanceSettingsFragment_to_languageSelectionDialog"
@@ -207,12 +215,12 @@
     <fragment
         android:id="@+id/inviteSomeoneFragment"
         android:name="com.naposystems.pepito.ui.inviteSomeone.InviteSomeoneFragment"
-        android:label="@string/invite_someone"
+        android:label="@string/text_invite_someone_title"
         tools:layout="@layout/invite_someone_fragment" />
     <fragment
         android:id="@+id/helpFragment"
         android:name="com.naposystems.pepito.ui.help.HelpFragment"
-        android:label="@string/help"
+        android:label="@string/text_help_title"
         tools:layout="@layout/help_fragment">
         <action
             android:id="@+id/action_helpFragment_to_aboutFragment"
@@ -310,5 +318,14 @@
         <argument
             android:name="contact"
             app:argType="com.naposystems.pepito.entity.Contact" />
+    </fragment>
+    <fragment
+        android:id="@+id/recoveryAccountQuestionsFragment"
+        android:name="com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment"
+        android:label="@string/text_recover_account"
+        tools:layout="@layout/recovery_account_questions_fragment">
+        <argument
+            android:name="questions"
+            app:argType="com.naposystems.pepito.model.recoveryAccount.ListRecoveryQuestions" />
     </fragment>
 </navigation>

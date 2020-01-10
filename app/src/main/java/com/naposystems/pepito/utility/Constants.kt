@@ -5,12 +5,10 @@ object Constants {
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
 
     object NapoleonApi {
-        const val BASE_URL = "http://192.168.0.15/nn-backend-secret-chat/public/api/"
-        const val SOCKET_BASE_URL = "http://192.168.0.15:6001"
-        //        const val BASE_URL =
-//            "http://nn-backend-secret-chatlb-1192195645.us-west-2.elb.amazonaws.com/api/"
-        const val GENERATE_CODE = "auth/generatecode"
-        const val VERIFICATE_CODE = "auth/verificatecode"
+        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
+        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
+        const val GENERATE_CODE = "auth/sendverificationcode"
+        const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
         const val CREATE_ACCOUNT = "users"
         const val UPDATE_USER_INFO = "users/updateinfo"
@@ -20,6 +18,7 @@ object Constants {
         const val GET_MESSAGES = "messages/{contact_id}"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
+        const val GET_RECOVERY_QUESTIONS = "inforecovery/returnquestion"
     }
 
     enum class AccountStatus constructor(val id: Int) {
@@ -48,11 +47,12 @@ object Constants {
     }
 
     enum class TimeRequestAccessPin constructor(val time: Int) {
-        THIRTY_SECONDS(1),
-        ONE_MINUTE(2),
-        FIVE_MINUTES(3),
-        FIFTEEN_MINUTES(4),
-        NEVER(5)
+        TEN_SECONDS(1),
+        THIRTY_SECONDS(2),
+        ONE_MINUTE(3),
+        TWO_MINUTES(4),
+        FIVE_MINUTES(5),
+        IMMEDIATELY(6)
     }
 
     enum class AllowDownloadAttachments constructor(val option: Int) {

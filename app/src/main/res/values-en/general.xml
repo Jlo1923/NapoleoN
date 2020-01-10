@@ -3,13 +3,12 @@
     <string name="text_accept">Accept</string>
     <string name="text_cancel">Cancel</string>
     <string name="text_continue">Continue</string>
-    <string name="welcome">Welcome</string>
+    <string name="text_welcome">Welcome</string>
     <string name="text_next">Next</string>
-    <string name="something_went_wrong">Something went wrong, please try again</string>
-    <string name="label_name">Name</string>
+    <string name="text_fail">Something went wrong, please try again</string>
+    <string name="text_name">Name</string>
     <string name="text_status">Status</string>
     <string name="text_blocked_contacts">Blocked contacts</string>
-    <string name="label_share_a_state">Share a state</string>
     <string name="label_edit_photo">Edit photo</string>
     <string name="label_edit_cover">Edit banner</string>
     <string name="text_edit">Edit</string>
@@ -17,4 +16,7 @@
     <string name="text_search">Search</string>
     <string name="text_add_contact">Add contact</string>
     <string name="text_finish">Finish</string>
+    <string name="text_error_connection">There is no Internet conection. Try again later</string>
+    <string name="text_register">Register</string>
+    <string name="text_answer">Answer</string>
 </resources>

@@ -20,6 +20,7 @@ import javax.inject.Singleton
         UserDisplayFormatModule::class, SelfDestructTime::class, SecuritySettingsModule::class,
         EditAccessPinModule::class, TimeAccessPin::class, ContactsModule::class,
         ContactUsModule::class, ConversationModule::class, RegisterRecoveryAccountModule::class,
+        RecoveryAccountModule::class,
         RegisterRecoveryAccountQuestionModule::class, RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
