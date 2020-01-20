@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="text_recovery_account_false">Vous n\'avez aucune information enregistrée pour la récupération de compte.</string>
-    <string name="text_recovery_account_ok">Vous avez déjà enregistré des informations pour la récupération de compte, la modification supprimera les informations précédentes.</string>
-</resources>

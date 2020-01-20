@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="text_info_register_account">Zu den Registrierungs- / Bearbeitungsinformationen für die Kontowiederherstellung müssen Sie mindestens 3 und höchstens 5 Fragen hinzufügen, die zum Zeitpunkt der Wiederherstellung Ihres Kennworts angezeigt werden</string>
-    <string name="text_title_info">Wichtig</string>
-</resources>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="text_btn_recovery">Erholen</string>
-    <string name="text_count_questions_recovery_account">Frage %1$d / %2$d</string>
-    <string name="text_description_recovery">Ihre Kontakte warten auf Sie, bringen Sie sie zurück. Stellen Sie schnell und sicher Ihre Kontakte, Einstellungen und vorherigen Spitznamen wieder her, indem Sie die Sicherheitsfragen richtig beantworten</string>
-    <string name="text_recovery_success">Ihr Konto wurde wiederhergestellt, jetzt können Sie privat und sicher mit Ihren Kontakten chatten.</string>
-    <string name="text_title_success">Kontowiederherstellung</string>
-</resources>

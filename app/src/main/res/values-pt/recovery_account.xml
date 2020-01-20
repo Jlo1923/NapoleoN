@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="text_btn_recovery">Recuperar</string>
-    <string name="text_count_questions_recovery_account">Pergunta %1$d / %2$d</string>
-    <string name="text_description_recovery">Seus contatos estão esperando por você, traga-os de volta. Recupere seus contatos, preferências e apelidos anteriores com rapidez e segurança, respondendo corretamente a perguntas de segurança</string>
-    <string name="text_recovery_success">Sua conta foi recuperada, agora você pode conversar de forma privada e segura com seus contatos.</string>
-    <string name="text_title_success">Recuperação de Conta</string>
-</resources>

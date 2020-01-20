@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="text_change_profile_photo">Profilbild ändern</string>
-    <string name="text_change_cover_photo">Titelbild ändern</string>
-    <string name="text_take_photo">Mach ein Bild</string>
-    <string name="text_select_photo">Foto auswählen</string>
-</resources>
