@@ -2,10 +2,12 @@ package com.naposystems.pepito.dto.conversation.message
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.util.ArrayList
 
 @JsonClass(generateAdapter = true)
 data class ConversationReqDTO(
-    @Json(name = "user_destination") val userDestination: Int,
-    @Json(name = "type") val type: String,
-    @Json(name = "body") val body: String
+    @Json(name = "user_receiver") val userDestination: Int,
+    @Json(name = "quoted") val quoted: String,
+    @Json(name = "body") val body: String,
+    @Json(name = "attachments") val attachments: List<ConversationAttachmentReqDTO> = ArrayList()
 )

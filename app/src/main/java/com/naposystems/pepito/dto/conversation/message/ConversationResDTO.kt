@@ -1,6 +1,6 @@
 package com.naposystems.pepito.dto.conversation.message
 
-import com.naposystems.pepito.entity.Conversation
+import com.naposystems.pepito.entity.conversation.Conversation
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -8,11 +8,12 @@ import com.squareup.moshi.JsonClass
 data class ConversationResDTO(
     @Json(name = "id") val id: String,
     @Json(name = "body") val body: String,
-    @Json(name = "type") val type: String,
-    @Json(name = "user_destination") val userDestination: Int,
-    @Json(name = "user_addressee") val userAddressee: Int,
+    @Json(name = "quoted") val quoted: String,
+    @Json(name = "user_receiver") val userDestination: Int,
+    @Json(name = "user_sender") val userAddressee: Int,
     @Json(name = "updated_at") val updatedAt: String,
-    @Json(name = "created_at") val createdAt: String
+    @Json(name = "created_at") val createdAt: String,
+    @Json(name = "attachments") var conversationAttachments: List<ConversationAttachmentResDTO> = ArrayList()
 ) {
     companion object {
 
@@ -29,7 +30,7 @@ data class ConversationResDTO(
                         0,
                         conversationRes.id,
                         conversationRes.body,
-                        conversationRes.type,
+                        conversationRes.quoted,
                         conversationRes.userDestination,
                         conversationRes.userAddressee,
                         conversationRes.updatedAt,
@@ -54,7 +55,7 @@ data class ConversationResDTO(
                 conversationId,
                 conversationResDTO.id,
                 conversationResDTO.body,
-                conversationResDTO.type,
+                conversationResDTO.quoted,
                 conversationResDTO.userDestination,
                 conversationResDTO.userAddressee,
                 conversationResDTO.updatedAt,

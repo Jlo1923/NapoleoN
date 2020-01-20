@@ -1,9 +1,9 @@
 package com.naposystems.pepito.repository.conversation
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
+import com.naposystems.pepito.db.dao.conversationAttachment.ConversationAttachmentDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.conversation.message.Conversation422DTO
 import com.naposystems.pepito.dto.conversation.message.ConversationErrorDTO
@@ -13,8 +13,10 @@ import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.Conversation
+import com.naposystems.pepito.entity.conversation.Conversation
+import com.naposystems.pepito.entity.conversation.ConversationAttachment
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.entity.conversation.ConversationAndAttachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -23,7 +25,6 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.service.IContractSocketService
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.coroutineScope
-import org.json.JSONObject
 import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
@@ -32,6 +33,7 @@ class ConversationRepository @Inject constructor(
     private val socketService: IContractSocketService,
     private val userLocalDataSource: UserLocalDataSource,
     private val conversationLocalDataSource: ConversationDataSource,
+    private val conversationAttachmentLocalDataSource: ConversationAttachmentDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
 ) :
@@ -103,7 +105,7 @@ class ConversationRepository @Inject constructor(
     override fun getLocalMessages(
         channelName: String,
         pageSize: Int
-    ): LiveData<PagedList<Conversation>> {
+    ): LiveData<PagedList<ConversationAndAttachment>> {
         return conversationLocalDataSource.getMessages(channelName, pageSize)
     }
 
@@ -150,6 +152,14 @@ class ConversationRepository @Inject constructor(
 
     override fun updateConversation(conversation: Conversation) {
         conversationLocalDataSource.updateConversation(conversation)
+    }
+
+    override fun insertConversationAttachment(listAttachment: List<ConversationAttachment>): List<Long> {
+        return conversationAttachmentLocalDataSource.insertConversationAttachment(listAttachment)
+    }
+
+    override fun updateConversationAttachments(listAttachment: List<ConversationAttachment>) {
+        conversationAttachmentLocalDataSource.updateConversationAttachments(listAttachment)
     }
 
     override fun get422Error(response: Response<ConversationResDTO>): ArrayList<String> {

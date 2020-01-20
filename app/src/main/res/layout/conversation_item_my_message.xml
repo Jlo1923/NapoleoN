@@ -7,7 +7,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.Conversation" />
+            type="com.naposystems.pepito.entity.conversation.ConversationAndAttachment" />
 
         <variable
             name="clickListener"
@@ -35,24 +35,36 @@
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintWidth_percent="0.7">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_attachment"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:src="@drawable/a1" />
+
             <TextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{conversation.body}"
+                android:text="@{conversation.conversation.body}"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@tools:sample/lorem" />
+                app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
+                tools:text="@tools:sample/lorem/random" />
 
             <TextView
                 style="@style/MyMessageDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
-                app:messageDate="@{conversation.createdAt}"
+                app:messageDate="@{conversation.conversation.createdAt}"
                 tools:text="10:34" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

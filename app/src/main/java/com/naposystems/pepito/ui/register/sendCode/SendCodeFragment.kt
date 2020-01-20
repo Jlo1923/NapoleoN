@@ -64,8 +64,7 @@ class SendCodeFragment : Fragment() {
                 .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
 
             val sendCodeReqDTO = SendCodeReqDTO(
-                firebaseId,
-                LocaleHelper.getLanguagePreference(context!!)
+                firebaseId
             )
             viewModel.onSendCodePressed(sendCodeReqDTO)
         }

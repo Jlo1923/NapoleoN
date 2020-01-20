@@ -44,6 +44,15 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
 }
 
 dependencies {
@@ -81,7 +90,7 @@ dependencies {
     implementation "com.airbnb.android:lottie:$lottieVersion"
 
     //Firebase Cloud Messaging
-    implementation 'com.google.firebase:firebase-messaging:20.0.1'
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
 
     //Timber Logging
     implementation 'com.jakewharton.timber:timber:4.7.1'

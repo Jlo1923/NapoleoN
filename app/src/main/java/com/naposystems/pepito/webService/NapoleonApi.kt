@@ -61,7 +61,6 @@ interface NapoleonApi {
     @POST(SEND_QUESTIONS)
     suspend fun sendRecoveryQuestions(@Body registerRecoveryAccountReqDTO: RegisterRecoveryAccountReqDTO): Response<Any>
 
-
     @GET(FRIEND_SHIP_SEARCH)
     suspend fun getFriendShipSearch(@Path("state") state: String): Response<List<ContactsResDTO>>
 

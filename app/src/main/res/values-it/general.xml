@@ -17,4 +17,9 @@
     <string name="text_search">Cerca</string>
     <string name="text_add_contact">Aggiungi contatto</string>
     <string name="text_finish">Finalizza</string>
+    <string name="text_gallery">Galleria</string>
+    <string name="text_camera">Fotocamera</string>
+    <string name="text_location">Posizione</string>
+    <string name="text_audio">Audio</string>
+    <string name="text_document">Documento</string>
 </resources>

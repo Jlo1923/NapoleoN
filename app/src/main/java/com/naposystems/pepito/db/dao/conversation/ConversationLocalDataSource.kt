@@ -3,7 +3,8 @@ package com.naposystems.pepito.db.dao.conversation
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.naposystems.pepito.entity.Conversation
+import com.naposystems.pepito.entity.conversation.Conversation
+import com.naposystems.pepito.entity.conversation.ConversationAndAttachment
 import javax.inject.Inject
 
 class ConversationLocalDataSource @Inject constructor(
@@ -13,7 +14,7 @@ class ConversationLocalDataSource @Inject constructor(
     override fun getMessages(
         channelName: String,
         pageSize: Int
-    ): LiveData<PagedList<Conversation>> {
+    ): LiveData<PagedList<ConversationAndAttachment>> {
 
         val pagedListConfig = PagedList.Config.Builder()
             .setEnablePlaceholders(true)
@@ -21,7 +22,7 @@ class ConversationLocalDataSource @Inject constructor(
             .setPageSize(10 * 2)
             .build()
 
-        val dataSourceFactory = conversationDao.getMessages(channelName)
+        val dataSourceFactory = conversationDao.getMessagesAndAttachments(channelName)
 
         return LivePagedListBuilder(
             dataSourceFactory, pagedListConfig

@@ -28,6 +28,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AppearanceSettingsFragmentBinding
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
+import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.pepito.utility.LocaleHelper
@@ -124,10 +125,8 @@ class AppearanceSettingsFragment : Fragment() {
     }
 
     private fun languageClickListener() = View.OnClickListener {
-        findNavController().navigate(
-            AppearanceSettingsFragmentDirections
-                .actionAppearanceSettingsFragmentToLanguageSelectionDialog()
-        )
+        val languageSelectionDialog = LanguageSelectionDialogFragment()
+        languageSelectionDialog.show(childFragmentManager, "LanguageSelection")
     }
 
     private fun userDisplayFormatClickListener() = View.OnClickListener {

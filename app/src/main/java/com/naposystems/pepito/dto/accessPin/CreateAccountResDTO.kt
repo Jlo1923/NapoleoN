@@ -6,9 +6,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class CreateAccountResDTO(
-    @Json(name = "names") val name: String,
+    @Json(name = "fullname") val fullName: String,
     @Json(name = "nick") val nickname: String,
-    @Json(name = "language_iso") val languageIso: String = "",
     @Json(name = "id") val id: Int,
     @Json(name = "my_status") val status: String = ""
 ) {
@@ -23,7 +22,7 @@ data class CreateAccountResDTO(
                 firebaseId,
                 createAccountResDTO.id,
                 createAccountResDTO.nickname,
-                createAccountResDTO.name,
+                createAccountResDTO.fullName,
                 accessPin,
                 "",
                 status,

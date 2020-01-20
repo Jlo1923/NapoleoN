@@ -5,19 +5,19 @@ object Constants {
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
 
     object NapoleonApi {
-        const val BASE_URL = "http://192.168.0.15/nn-backend-secret-chat/public/api/"
-        const val SOCKET_BASE_URL = "http://192.168.0.15:6001"
+        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
+        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
         //        const val BASE_URL =
 //            "http://nn-backend-secret-chatlb-1192195645.us-west-2.elb.amazonaws.com/api/"
-        const val GENERATE_CODE = "auth/generatecode"
-        const val VERIFICATE_CODE = "auth/verificatecode"
+        const val GENERATE_CODE = "auth/sendverificationcode"
+        const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
         const val CREATE_ACCOUNT = "users"
-        const val UPDATE_USER_INFO = "users/updateinfo"
+        const val UPDATE_USER_INFO = "users/update"
         const val SEND_PQRS = "pqrs"
-        const val FRIEND_SHIP_SEARCH = "frienship/search/{state}"
+        const val FRIEND_SHIP_SEARCH = "friendship/search/{state}"
         const val SEND_MESSAGE = "messages"
-        const val GET_MESSAGES = "messages/{contact_id}"
+        const val GET_MESSAGES = "messages/getmessagesbyfriendship/{contact_id}"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
     }
@@ -73,6 +73,15 @@ object Constants {
     enum class IsMine constructor(val value: Int) {
         YES(1),
         NO(0)
+    }
+
+    enum class ConversationAttachmentType(val type: String) {
+        IMAGE("image"),
+        AUDIO("audio"),
+        VIDEO("video"),
+        WORD("word"),
+        EXCEL("excel"),
+        PDF("pdf")
     }
 
     object SharedPreferences {

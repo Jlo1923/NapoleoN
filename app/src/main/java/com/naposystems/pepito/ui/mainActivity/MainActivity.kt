@@ -84,8 +84,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (destination.id) {
                 R.id.splashFragment,
                 R.id.landingFragment,
-                R.id.languageSelectionDialog,
-                R.id.registerFragment -> {
+                R.id.registerFragment,
+                R.id.previewImageSendFragment -> {
                     hideToolbar()
                     disableDrawer()
                 }
@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     enableDrawer()
                 }
                 R.id.conversationFragment -> {
+                    showToolbar()
                     binding.toolbar.title = ""
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f

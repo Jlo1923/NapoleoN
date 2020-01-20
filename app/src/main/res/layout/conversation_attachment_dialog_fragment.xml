@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".ui.attachment.AttachmentDialogFragment">
+
+        <View
+            android:id="@+id/view_indicator"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:background="@drawable/bg_bottom_sheet_indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
+
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:columnCount="3"
+            android:paddingStart="@dimen/normal_padding"
+            android:paddingTop="@dimen/normal_padding"
+            android:paddingEnd="0dp"
+            android:paddingBottom="@dimen/small_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_indicator">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_gallery"
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/normal_padding">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_gallery"
+                        style="@style/ImageViewAttachment"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_attachment_gallery" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:text="@string/text_gallery"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_gallery" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/normal_padding">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_camera"
+                        style="@style/ImageViewAttachment"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_attachment_camera" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:text="@string/text_camera"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_camera" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/normal_padding">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_location"
+                        style="@style/ImageViewAttachment"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_attachment_location" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:text="@string/text_location"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_location" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/normal_padding">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_audio"
+                        style="@style/ImageViewAttachment"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_attachment_audio" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:text="@string/text_audio"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_audio" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/normal_padding">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_document"
+                        style="@style/ImageViewAttachment"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_attachment_document" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:text="@string/text_document"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_document" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageView_close"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/ic_arrow_down_black" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

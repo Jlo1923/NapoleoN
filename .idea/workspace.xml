@@ -6,174 +6,92 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="verbose" />
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="error" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
+    <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ee743b59-7480-4cbc-a53c-03f690c629c6" name="Default Changelist" comment="Merge branch 'development' of https://bitbucket.org/napoleonsecretchat/nuevo-napoleon-secret-chat-android into development&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/NapoleoN.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/com.naposystems.pepito.db.NapoleonRoomDatabase/6.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/com.naposystems.pepito.db.NapoleonRoomDatabase/7.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/com.naposystems.pepito.db.NapoleonRoomDatabase/8.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas/com.naposystems.pepito.db.NapoleonRoomDatabase/9.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDao.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDataSource.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ConversationModule.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/RegisterRecoveryAccountModule.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/RegisterRecoveryAccountQuestionModule.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/contacts/ContactsError.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/contacts/ContactsResDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/Conversation422DTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationErrorDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationReqDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationResDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/socket/AuthReqDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/socket/HeadersReqDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/socket/SocketReqDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/registerRecoveryAccountQuestion/getQuestions/RegisterRecoveryAccountQuestionErrorDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/registerRecoveryAccountQuestion/getQuestions/RegisterRecoveryAccountQuestionResDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/registerRecoveryAccountQuestion/sendAnswers/RegisterRecoveryAccount422DTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/registerRecoveryAccountQuestion/sendAnswers/RegisterRecoveryAccountAnswerReqDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/registerRecoveryAccountQuestion/sendAnswers/RegisterRecoveryAccountError.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/registerRecoveryAccountQuestion/sendAnswers/RegisterRecoveryAccountReqDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Conversation.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Questions.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/RecoveryAnswer.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/reactive/RxBus.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/reactive/RxEvent.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/conversation/ConversationRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/registerRecoveryAccount/RegisterRecoveryAccountRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/registerRecoveryAccountQuestion/RegisterRecoveryAccountQuestionRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/BindingAdapter.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/ConversationAdapter.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/deleteQuestions/DeleteQuestionsDialogFragment.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/deleteQuestions/DeleteQuestionsDialogViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/generalDialog/GeneralDialogFragment.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/generalDialog/GeneralDialogViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/infoAlert/InfoAlertFragment.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/infoAlert/InfoAlertViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/registerRecoveryAccount/IContractRegisterRecoveryAccount.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/registerRecoveryAccount/RegisterRecoveryAccountFragment.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/registerRecoveryAccount/RegisterRecoveryAccountViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/registerRecoveryAccountQuestion/IContractRegisterRecoveryAccountQuestion.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/registerRecoveryAccountQuestion/RegisterRecoveryAccountQuestionFragment.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/registerRecoveryAccountQuestion/RegisterRecoveryAccountQuestionViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/SocketService.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/service/IContractSocketService.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/image_register_recovery_account.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/image_register_recovery_account.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/image_register_recovery_account.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/arrow_spinner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_incoming_message.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_incoming_message_rounded.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_my_message.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_my_message_rounded.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_white_with_top_separator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/border_spinner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_add_primary.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_arrow_back_white.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_arrow_drop_down_black.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_block_white.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_delete_black.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_insert_emoticon_black.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_notifications_off_black.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_phone_white.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_send_black.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_video_cam_white.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_action_bar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_fragment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_incoming_message.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_my_message.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/delete_questions_dialog_fragment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/general_dialog_fragment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/info_alert_fragment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/register_recovery_account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/register_recovery_account_question_fragment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/register_recovery_account_question_item.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/test_spinner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_conversation.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-de/conversation.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-de/info_register_questions.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-de/invite_someone.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-de/recover_account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-de/register_recovery_account_question.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-en/conversation.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-en/info_register_questions.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-en/recover_account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-en/register_recovery_account_question.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-fr/conversation.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-fr/info_register_questions.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-fr/recover_account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-fr/register_recovery_account_question.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-it/conversation.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-it/info_register_questions.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-it/recover_account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-it/register_recovery_account_question.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-pt/conversation.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-pt/info_register_questions.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-pt/recover_account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values-pt/register_recovery_account_question.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values/conversation.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values/info_register_questions.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values/recover_account.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values/register_recovery_account_question.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="3702cded-4829-45f9-b749-eef89a125a86" name="Default Changelist" comment="NS-542">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentDao.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentDataSource.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentLocalDataSource.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentReqDTO.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentResDTO.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAndAttachment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAttachment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/attachment/AttachmentDialogFragment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/FabSend.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/inputPanel/IContractInputPanel.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/inputPanel/InputPanelWidget.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/IContractPreviewImageSend.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/PreviewImageSendFragment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/SharePreviewImageSendViewModel.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/a1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/a2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/anim_mic_send.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/anim_send_mic.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_input_panel.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_arrow_down_black.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_attachment_audio.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_attachment_black.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_attachment_camera.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_attachment_document.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_attachment_gallery.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_attachment_location.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_attachment_dialog_fragment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/preview_image_send_fragment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NapoleoN.iml" beforeDir="false" afterPath="$PROJECT_DIR$/NapoleoN.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/app/NapoleonApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/app/NapoleonApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/NapoleonRoomDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/NapoleonRoomDatabase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ApplicationComponent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ApplicationComponent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ApplicationModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ApplicationModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDao.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDao.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDataSource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDataSource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/FragmentBindingModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/FragmentBindingModule.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ViewModelModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ViewModelModule.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ContactsModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ContactsModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ConversationModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ConversationModule.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/RoomModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/RoomModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/accessPin/CreateAccount422DTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/accessPin/CreateAccount422DTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/accessPin/CreateAccountReqDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/accessPin/CreateAccountReqDTO.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/accessPin/CreateAccountResDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/accessPin/CreateAccountResDTO.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Contact.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Contact.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/User.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/User.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/blockedContact/BlockedContactRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/blockedContact/BlockedContactRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/contacts/ContactsRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/contacts/ContactsRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/contacts/ContactsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/contacts/ContactsFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/contacts/adapter/ContactsAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/contacts/adapter/ContactsAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/contacts/ContactsResDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/contacts/ContactsResDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationReqDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationReqDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationResDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationResDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/profile/UpdateUserInfoReqDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/profile/UpdateUserInfoReqDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/profile/UpdateUserInfoResDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/profile/UpdateUserInfoResDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/sendCode/SendCodeReqDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/sendCode/SendCodeReqDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Conversation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/Conversation.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/conversation/ConversationRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/conversation/ConversationRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/appearanceSettings/AppearanceSettingsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/appearanceSettings/AppearanceSettingsFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/ConversationAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/ConversationAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/landing/LandingFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/landing/LandingFragment.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/mainActivity/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/mainActivity/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/profile/ProfileFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/profile/ProfileFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/register/accessPin/AccessPinFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/register/accessPin/AccessPinFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/register/accessPin/AccessPinViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/register/accessPin/AccessPinViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/securitySettings/SecuritySettingsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/securitySettings/SecuritySettingsFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/register/sendCode/SendCodeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/register/sendCode/SendCodeFragment.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Constants.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/SnackbarUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/SnackbarUtils.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Utils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Utils.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/NapoleonApi.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/NapoleonApi.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/bg_bottom_sheet_indicator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/bg_bottom_sheet_indicator.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_schedule_white.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_schedule_white.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/blocked_contacts_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/blocked_contacts_item.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/contact_us_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/contact_us_fragment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/contacts_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/contacts_fragment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/contacts_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/contacts_item.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_permission_dialog.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_permission_dialog.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/home_fragment_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/home_fragment_item.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/profile_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/profile_fragment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/security_settings_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/security_settings_fragment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/splash_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/splash_fragment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_camera_primary.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_camera_primary.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/conversation_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_fragment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_incoming_message.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_incoming_message.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_my_message.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_my_message.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/navigation/nav_graph.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/navigation/nav_graph.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-de/general.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-de/general.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-en/general.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-en/general.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-fr/general.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-fr/general.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-it/general.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-it/general.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-pt/general.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-pt/general.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/general.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/general.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/xml/file_paths.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/xml/file_paths.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -200,74 +118,104 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <file pinned="true" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/Conversation.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2542">
-              <caret line="10" column="26" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="26" />
+            <state relative-caret-position="567">
+              <caret line="24" selection-start-line="24" selection-end-line="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAttachment.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="19" column="40" selection-start-line="19" selection-start-column="40" selection-end-line="19" selection-end-column="40" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAndAttachment.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="243">
+              <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+              <folding>
+                <element signature="e#52#111#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="351">
+              <caret line="64" lean-forward="true" selection-start-line="64" selection-end-line="64" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-de/strings.xml">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/PreviewImageSendFragment.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1344" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-en/strings.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2542" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-fr/strings.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1848" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-it/strings.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2542" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-pt/strings.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="9" column="46" lean-forward="true" selection-start-line="9" selection-start-column="46" selection-end-line="9" selection-end-column="46" />
+            <state relative-caret-position="321">
+              <caret line="60" selection-start-line="60" selection-end-line="60" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/general.xml">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/inputPanel/InputPanelWidget.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="10" column="84" lean-forward="true" selection-start-line="10" selection-start-column="84" selection-end-line="10" selection-end-column="84" />
+            <state relative-caret-position="182">
+              <caret line="222" selection-start-line="222" selection-end-line="222" />
+              <folding>
+                <element signature="e#53#578#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-en/general.xml">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/preview_image_send_fragment.xml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="820">
+              <caret line="36" column="42" selection-start-line="36" selection-start-column="42" selection-end-line="36" selection-end-column="42" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-fr/general.xml">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/SharePreviewImageSendViewModel.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="363">
+              <caret line="29" column="14" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="14" />
+              <folding>
+                <element signature="e#52#191#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="true" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3518">
+              <caret line="188" selection-start-line="188" selection-end-line="188" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values-it/general.xml">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="359">
+              <caret line="34" column="24" selection-start-line="34" selection-start-column="24" selection-end-line="34" selection-end-column="24" />
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -275,106 +223,123 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Interface" />
         <option value="layoutResourceFile" />
         <option value="RecyclerViewListAdapter" />
+        <option value="Class" />
         <option value="resourceFile" />
-        <option value="Kotlin File" />
         <option value="Kotlin Class" />
+        <option value="Kotlin Interface" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>TextInputLayout</find>
-      <find>FloatingAction</find>
-      <find>moshi =</find>
-      <find>private val userLocalDataSource</find>
-      <find>get422</find>
-      <find>ListAdapter</find>
-      <find>listAdapter</find>
-      <find>submi</find>
-      <find>update</find>
-      <find>Incomming</find>
-      <find>colorIncomingMessage</find>
-      <find>No conectó al socket</find>
       <find>toLive</find>
       <find>StatusFragmentArgs</find>
-      <find>conversation</find>
       <find>updated_at</find>
       <find>Date</find>
+      <find>ImageButton</find>
+      <find>500</find>
+      <find>context</find>
+      <find>LanguageSelection</find>
+      <find>languagesele</find>
+      <find>subFolder</find>
+      <find>user</find>
+      <find>path</find>
+      <find>conversation</find>
+      <find>&lt;ImageButton</find>
+      <find>newInstance(</find>
+      <find>compressFileName</find>
+      <find>Bitmap</find>
+      <find>navArgs</find>
+      <find>autoGenerate</find>
+      <find>data class</find>
+      <find>Glide</find>
+      <find>co_id</find>
+      <find>conversation_id</find>
+      <find>getAttachmentsByMessageId</find>
+      <find>Conversation</find>
+      <find>layout_constraintHeight_percent</find>
+      <find>file</find>
+      <find>fileName</find>
+      <find>_compress.jpg</find>
+      <find>lifecycleowner</find>
     </findStrings>
     <replaceStrings>
       <replace />
       <replace>Incoming</replace>
+      <replace>300</replace>
+      <replace>ConversationAndAttachment</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation</dir>
       <dir>$PROJECT_DIR$/app/sampledata</dir>
+      <dir>$PROJECT_DIR$/app</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/ricardo/NS-542" />
+        <entry key="$PROJECT_DIR$" value="development" />
       </map>
     </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/register/sendCode/SendCodeViewModel.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/SocketReqDTO.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/reactive/RxBus.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/Conversation422DTO.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/ConversationErrorDTO.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/splash/SplashFragment.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ApplicationModule.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ConversationModule.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/ConversationReqDTO.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/ConversationResDTO.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Constants.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/getMessage/ConversationGetMessageResDTO.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/NapoleonApi.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/NapoleonRoomDatabase.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/RoomModule.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_incomming_message.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/reactive/RxEvent.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/service/IContractSocketService.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/app/NapoleonApplication.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/mainActivity/MainActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/bg_my_message.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/bg_incoming_message.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/bg_rounded_my_message.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/BindingAdapterrrr.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/bg_my_message_rounded.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/drawable/bg_incoming_message_rounded.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/SocketService.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/conversation_attachment_dialog_fragment.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/landing/LandingFragment.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/appearanceSettings/AppearanceSettingsFragment.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/xml/file_paths.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/profile/ProfileFragment.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ClassExample.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/drawable/anim_mic_send.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/drawable/anim_send_mic.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/FabSend.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/conversation_fragment.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" />
-        <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/mainActivity/MainActivity.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/res/drawable/bg_edittex_input_panel.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/inputPanel/InputPanelWidget.kt" />
+        <option value="$PROJECT_DIR$/app/build/generated/source/navigation-args/debug/com/naposystems/pepito/ui/conversation/ConversationFragmentDirections.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/res/navigation/nav_graph.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/preview_image_send_fragment.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Utils.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Constants.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationDataSource.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/RoomModule.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentDTO.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ConversationModule.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/IContractPreviewImageSend.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/ConversationAttachment.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Conversation.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationResDTO.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/NapoleonRoomDatabase.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAndAttachment.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDataSource.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDao.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationResDTO.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/ConversationDate.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/ConversationItemType.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Conversation.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/ConversationGrouper.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/ConversationAdapter.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_my_message.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_incoming_message.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/BindingAdapter.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentReqDTO.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentDao.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAttachment.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/conversation/ConversationRepository.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/general.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentDataSource.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentLocalDataSource.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentResDTO.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/conversation_item_my_message.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/ConversationAdapter.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/FragmentBindingModule.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ViewModelModule.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/SharePreviewImageSendViewModel.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/PreviewImageSendFragment.kt" />
       </list>
     </option>
   </component>
@@ -395,6 +360,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -405,21 +372,26 @@
             <path>
               <item name="NapoleoN" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
             </path>
             <path>
               <item name="NapoleoN" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="values" type="ddeffd01:AndroidResFolderTypeNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="pepito" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="NapoleoN" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="pepito" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="di" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -427,21 +399,24 @@
     <property name="DEBUGGABLE_PROCESS" value="com.naposystems.pepito" />
     <property name="DEBUGGER_ID" value="Auto" />
     <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="KPS7N18419007998" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2019-12-24T15:08:49.345Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-01-17T18:56:30.460Z" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHOW_ALL_PROCESSES" value="false" />
     <property name="android.project.structure.last.selected" value="SDK Location" />
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
-    <property name="last_opened_file_path" value="/media/giussepr/Nuevo vol/AndroidStudioProjects/Pixabay" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res/drawable" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Descargas" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.folding" />
   </component>
   <component name="RecentsManager">
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
       <recent name="com.naposystems.pepito.reactive" />
     </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="com.naposystems.pepito.entity.conversation" />
+      <recent name="com.naposystems.pepito.ui.custom.inputPanel" />
       <recent name="com.naposystems.pepito.dto.conversation.sendMessage" />
       <recent name="com.naposystems.pepito.dto.conversation.socket" />
     </key>
@@ -529,7 +504,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="ee743b59-7480-4cbc-a53c-03f690c629c6" name="Default Changelist" comment="" />
+      <changelist id="3702cded-4829-45f9-b749-eef89a125a86" name="Default Changelist" comment="NS-542" />
       <created>1576621020938</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -550,8 +525,8 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.17982924" />
-      <window_info id="Structure" order="2" side_tool="true" />
+      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49611542" visible="true" weight="0.20170757" />
+      <window_info id="Structure" order="2" sideWeight="0.50388455" side_tool="true" weight="0.14994664" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
       <window_info id="Resources Explorer" order="5" />
@@ -560,21 +535,21 @@
       <window_info id="Build Variants" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="0" />
       <window_info anchor="bottom" id="TODO" order="1" />
-      <window_info anchor="bottom" id="Terminal" order="2" weight="0.32963374" />
+      <window_info anchor="bottom" id="Terminal" order="2" weight="0.3018868" />
       <window_info anchor="bottom" id="Event Log" order="3" sideWeight="0.50053364" side_tool="true" weight="0.51498336" />
-      <window_info anchor="bottom" id="Run" order="4" weight="0.5460599" />
-      <window_info anchor="bottom" id="Android Profiler" order="5" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Debug" order="6" sideWeight="0.4994664" weight="0.39400667" />
-      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.4994664" weight="0.48501664" />
-      <window_info anchor="bottom" id="Find" order="8" weight="0.32963374" />
-      <window_info anchor="bottom" id="Logcat" order="9" weight="0.40843508" />
+      <window_info anchor="bottom" id="Run" order="4" weight="0.54495007" />
+      <window_info anchor="bottom" id="Android Profiler" order="5" />
+      <window_info anchor="bottom" id="Debug" order="6" sideWeight="0.4994664" weight="0.34628192" />
+      <window_info anchor="bottom" id="Build" order="7" sideWeight="0.4994664" weight="0.4073252" />
+      <window_info anchor="bottom" id="Find" order="8" weight="0.48279688" />
+      <window_info anchor="bottom" id="Logcat" order="9" weight="0.809101" />
       <window_info anchor="right" id="Capture Analysis" order="0" />
       <window_info anchor="right" id="Theme Preview" order="1" />
       <window_info anchor="right" id="Assistant" order="2" weight="0.24226254" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
-      <window_info anchor="right" id="Device File Explorer" order="4" side_tool="true" weight="0.32977587" />
+      <window_info anchor="right" id="Device File Explorer" order="4" sideWeight="0.5016648" side_tool="true" weight="0.33831376" />
       <window_info anchor="right" id="Gradle" order="5" />
-      <window_info anchor="right" id="Preview" order="6" weight="0.32977587" />
+      <window_info anchor="right" id="Preview" order="6" sideWeight="0.49833518" weight="0.32977587" />
     </layout>
     <layout-to-restore>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
@@ -632,243 +607,397 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt</url>
-          <line>191</line>
+          <line>455</line>
           <properties />
-          <option name="timeStamp" value="33" />
+          <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt</url>
-          <line>31</line>
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/PreviewImageSendFragment.kt</url>
+          <line>54</line>
           <properties />
-          <option name="timeStamp" value="35" />
+          <option name="timeStamp" value="44" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt</url>
-          <line>113</line>
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/PreviewImageSendFragment.kt</url>
+          <line>60</line>
           <properties />
-          <option name="timeStamp" value="36" />
+          <option name="timeStamp" value="65" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/BindingAdapter.kt</url>
-          <line>13</line>
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt</url>
+          <line>124</line>
           <properties />
-          <option name="timeStamp" value="37" />
+          <option name="timeStamp" value="66" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt</url>
+          <line>188</line>
+          <properties />
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt</url>
+          <line>178</line>
+          <properties />
+          <option name="timeStamp" value="68" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/mainActivity/MainActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="88" column="33" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-night/colors.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="28" column="41" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/bg_my_message.xml" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/bg_incoming_message.xml" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/bg_incoming_message_rounded.xml" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/bg_my_message_rounded.xml" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/conversation_fragment.xml" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-extensions/2.1.0/84e54bd949cf1843ddddfe3e005b4d3a1649d562/lifecycle-extensions-2.1.0-sources.jar!/androidx/lifecycle/ViewModelProviders.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="286">
-          <caret line="11" column="45" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
+          <caret line="68" column="36" selection-start-line="68" selection-start-column="36" selection-end-line="68" selection-end-column="36" />
+          <folding>
+            <element signature="e#2410#2411#0" expanded="true" />
+            <element signature="e#2451#2452#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/edit_access_pin_fragment.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-      <provider editor-type-id="android-designer2" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Utils.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="19" column="32" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
+        <state relative-caret-position="510">
+          <caret line="129" lean-forward="true" selection-start-line="129" selection-end-line="129" />
+          <folding>
+            <element signature="e#40#902#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.paging/paging-common/2.1.1/eaf97f79899daafe56afd2d4d89c14c29f1f7db1/paging-common-2.1.1-sources.jar!/androidx/paging/DataSource.java">
+    <entry file="file://$PROJECT_DIR$/app/build/generated/source/kaptKotlin/debug/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentJsonAdapter.kt" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Constants.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="119" column="38" selection-start-line="119" selection-start-column="38" selection-end-line="119" selection-end-column="38" />
+        <state relative-caret-position="482">
+          <caret line="78" selection-start-line="78" selection-end-line="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.room/room-common/2.2.3/924310c61a30c7a167a22f636331556bc654ec94/room-common-2.2.3-sources.jar!/androidx/room/ColumnInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="32" column="33" lean-forward="true" selection-start-line="32" selection-start-column="33" selection-end-line="32" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationDataSource.kt" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationReqDTO.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="11" column="68" selection-start-line="11" selection-start-column="68" selection-end-line="11" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build/tmp/kapt3/stubs/debug/com/naposystems/pepito/entity/ConversationAttachment.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/ConversationModule.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="30" column="40" selection-start-line="30" selection-start-column="40" selection-end-line="30" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3752">
-          <caret line="134" column="54" selection-start-line="134" selection-start-column="54" selection-end-line="134" selection-end-column="54" />
+        <state relative-caret-position="-2835" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/IContractPreviewImageSend.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" column="31" selection-start-line="8" selection-start-column="31" selection-end-line="8" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/schemas/com.naposystems.pepito.db.NapoleonRoomDatabase/9.json" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/contacts/ContactsFragment.kt">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/4.10.0/86a6148dad2f92ba909b1208269b178627ce7eff/glide-4.10.0-sources.jar!/com/bumptech/glide/RequestManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="90" selection-start-line="90" selection-end-line="90" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3164">
-          <caret line="113" column="44" selection-start-line="113" selection-start-column="17" selection-end-line="113" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/SocketService.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/webService/NapoleonApi.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="664">
-          <caret line="60" column="16" selection-start-line="60" selection-start-column="16" selection-end-line="60" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.room/room-common/2.2.2/924310c61a30c7a167a22f636331556bc654ec94/room-common-2.2.2-sources.jar!/androidx/room/Update.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="76" column="18" selection-start-line="76" selection-start-column="18" selection-end-line="76" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Android/Sdk/sources/android-29/java/util/Date.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="904" column="16" selection-start-line="904" selection-start-column="16" selection-end-line="904" selection-end-column="16" />
+        <state relative-caret-position="286">
+          <caret line="474" column="38" selection-start-line="474" selection-start-column="34" selection-end-line="474" selection-end-column="38" />
           <folding>
-            <element signature="e#7860#7861#0" expanded="true" />
-            <element signature="e#7891#7892#0" expanded="true" />
-            <element signature="e#33969#33970#0" expanded="true" />
-            <element signature="e#34019#34020#0" expanded="true" />
-            <element signature="e#39716#39717#0" expanded="true" />
-            <element signature="e#39752#39753#0" expanded="true" />
+            <element signature="e#17779#17780#0" expanded="true" />
+            <element signature="e#17818#17819#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/Constants.kt">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.paging/paging-common/2.1.1/eaf97f79899daafe56afd2d4d89c14c29f1f7db1/paging-common-2.1.1-sources.jar!/androidx/paging/DataSource.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="64" column="8" selection-start-line="64" selection-start-column="8" selection-end-line="64" selection-end-column="8" />
+        <state relative-caret-position="529">
+          <caret line="152" column="58" selection-start-line="152" selection-start-column="58" selection-end-line="152" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build/tmp/kapt3/stubs/debug/com/naposystems/pepito/entity/Conversation.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationResDTO.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="7" column="14" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/FabSend.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1782">
+          <caret line="71" column="32" selection-start-line="71" selection-start-column="32" selection-end-line="71" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/conversation_fragment.xml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2538">
+          <caret line="132" column="46" selection-start-line="132" selection-start-column="46" selection-end-line="132" selection-end-column="46" />
+          <folding>
+            <element signature="e#4455#6766#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/profile/ProfileFragment.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5076">
+          <caret line="232" column="32" selection-start-line="232" selection-start-column="32" selection-end-line="232" selection-end-column="32" />
+          <folding>
+            <element signature="e#43#1891#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build/tmp/kapt3/stubs/debug/com/naposystems/pepito/entity/conversation/ConversationAndAttachment.java" />
+    <entry file="file://$PROJECT_DIR$/app/build/tmp/kapt3/stubs/debug/com/naposystems/pepito/db/dao/conversation/ConversationDao.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/modules/RoomModule.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="127" column="108" selection-start-line="127" selection-start-column="108" selection-end-line="127" selection-end-column="108" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.room/room-common/2.2.3/924310c61a30c7a167a22f636331556bc654ec94/room-common-2.2.3-sources.jar!/androidx/room/Relation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="86" column="28" selection-start-line="86" selection-start-column="17" selection-end-line="86" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/user/UserLocalDataSource.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="12" column="42" selection-start-line="12" selection-start-column="42" selection-end-line="12" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/NapoleonRoomDatabase.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDataSource.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="8" selection-start-line="9" selection-start-column="8" selection-end-line="9" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="24" column="58" selection-start-line="24" selection-start-column="58" selection-end-line="24" selection-end-column="58" />
         </state>
       </provider>
     </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.paging/paging-runtime/2.1.1/4c20b8557af92cebc4990dad77b6710bbee58607/paging-runtime-2.1.1-sources.jar!/androidx/paging/PagedListAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="286">
-          <caret line="162" column="16" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="16" />
+          <caret line="186" column="16" selection-start-line="186" selection-start-column="16" selection-end-line="186" selection-end-column="16" />
           <folding>
-            <element signature="e#7171#7172#0" expanded="true" />
-            <element signature="e#7216#7217#0" expanded="true" />
+            <element signature="e#8177#8178#0" expanded="true" />
+            <element signature="e#8225#8226#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/ConversationGrouper.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/ConversationDate.kt" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.3.0/23a4e24d487cf4838494193e8bbf52f332006557/kotlinx-coroutines-core-1.3.0-sources.jar!/jvmMain/CoroutineContext.kt">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/conversation_item_incoming_message.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
+        <state relative-caret-position="108">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.3.0/23a4e24d487cf4838494193e8bbf52f332006557/kotlinx-coroutines-core-1.3.0-sources.jar!/commonMain/Dispatched.kt">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentReqDTO.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="241" selection-start-line="241" selection-end-line="241" />
+        <state relative-caret-position="216">
+          <caret line="10" column="1" lean-forward="true" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/ConversationAdapter.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/conversation_item_incoming_message.xml" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/conversation_item_my_message.xml" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/Conversation.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/BindingAdapter.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/conversation/ConversationRepository.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDataSource.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDao.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationResDTO.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationLocalDataSource.kt" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/accessPin/CreateAccountRepository.kt">
+    <entry file="file://$PROJECT_DIR$/app/build/tmp/kapt3/stubs/debug/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentDao.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversation/ConversationDao.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="18" column="3" lean-forward="true" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
+        <state relative-caret-position="432">
+          <caret line="16" column="11" selection-start-line="16" selection-start-column="11" selection-end-line="16" selection-end-column="11" />
+          <folding>
+            <element signature="e#52#332#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-de/general.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentDataSource.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="8" column="28" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="28" />
+        <state relative-caret-position="162">
+          <caret line="6" column="93" selection-start-line="6" selection-start-column="93" selection-end-line="6" selection-end-column="93" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-en/general.xml">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentLocalDataSource.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="10" column="58" selection-start-line="10" selection-start-column="58" selection-end-line="10" selection-end-column="58" />
+        </state>
+      </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-fr/general.xml">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/db/dao/conversationAttachment/ConversationAttachmentDao.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="8" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
+        </state>
+      </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-it/general.xml">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/dto/conversation/message/ConversationAttachmentResDTO.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="15" column="22" selection-start-line="15" selection-start-column="22" selection-end-line="15" selection-end-column="22" />
+        </state>
+      </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/general.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/conversation_item_my_message.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
-          <caret line="10" column="84" lean-forward="true" selection-start-line="10" selection-start-column="84" selection-end-line="10" selection-end-column="84" />
+          <caret line="44" column="57" lean-forward="true" selection-start-line="44" selection-start-column="57" selection-end-line="44" selection-end-column="57" />
+          <folding>
+            <element signature="e#1196#1220#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/adapter/ConversationAdapter.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2542">
-          <caret line="10" column="26" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="26" />
+        <state relative-caret-position="186">
+          <caret line="98" selection-start-line="98" selection-end-line="98" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-de/strings.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/Conversation.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1344" />
+        <state relative-caret-position="567">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-en/strings.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAttachment.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2542" />
+        <state relative-caret-position="405">
+          <caret line="19" column="40" selection-start-line="19" selection-start-column="40" selection-end-line="19" selection-end-column="40" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-fr/strings.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/FragmentBindingModule.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1848" />
+        <state relative-caret-position="1890">
+          <caret line="93" column="31" selection-start-line="93" selection-start-column="31" selection-end-line="93" selection-end-column="31" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-it/strings.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/utility/viewModel/ViewModelFactory.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2542" />
+        <state relative-caret-position="135">
+          <caret line="12" column="6" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values-pt/strings.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/repository/conversation/ConversationRepository.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="9" column="46" lean-forward="true" selection-start-line="9" selection-start-column="46" selection-end-line="9" selection-end-column="46" />
+        <state relative-caret-position="3618">
+          <caret line="161" selection-start-line="161" selection-end-line="161" />
+          <folding>
+            <element signature="e#56#1657#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/di/ViewModelModule.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="146" column="86" selection-start-line="146" selection-start-column="86" selection-end-line="146" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/entity/conversation/ConversationAndAttachment.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+          <folding>
+            <element signature="e#52#111#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/preview_image_send_fragment.xml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="820">
+          <caret line="36" column="42" selection-start-line="36" selection-start-column="42" selection-end-line="36" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/IContractConversation.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="34" column="24" selection-start-line="34" selection-start-column="24" selection-end-line="34" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationViewModel.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3518">
+          <caret line="188" selection-start-line="188" selection-end-line="188" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/SharePreviewImageSendViewModel.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="363">
+          <caret line="29" column="14" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="14" />
+          <folding>
+            <element signature="e#52#191#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/custom/inputPanel/InputPanelWidget.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="222" selection-start-line="222" selection-end-line="222" />
+          <folding>
+            <element signature="e#53#578#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/previewImageSend/PreviewImageSendFragment.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="60" selection-start-line="60" selection-end-line="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/naposystems/pepito/ui/conversation/ConversationFragment.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="64" lean-forward="true" selection-start-line="64" selection-end-line="64" />
         </state>
       </provider>
     </entry>

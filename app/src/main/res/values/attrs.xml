@@ -4,4 +4,15 @@
         <attr name="numBoxes" format="integer" />
         <attr name="isSecureText" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="InputPanelWidget">
+        <attr name="showEmojiIcon" format="boolean" />
+        <attr name="showCameraIcon" format="boolean" />
+        <attr name="showAttachmentIcon" format="boolean" />
+        <attr name="showOnlySendIcon" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="FabIconSend">
+        <attr name="showOnlySendIcon1" format="boolean"/>
+    </declare-styleable>
 </resources>

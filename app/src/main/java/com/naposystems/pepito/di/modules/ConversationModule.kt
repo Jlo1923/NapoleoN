@@ -1,6 +1,7 @@
 package com.naposystems.pepito.di.modules
 
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
+import com.naposystems.pepito.db.dao.conversationAttachment.ConversationAttachmentDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.conversation.ConversationRepository
 import com.naposystems.pepito.ui.conversation.IContractConversation
@@ -20,6 +21,7 @@ class ConversationModule {
         socketService: IContractSocketService,
         userLocalDataSource: UserLocalDataSource,
         conversationLocalDataSource: ConversationDataSource,
+        conversationAttachmentDataSource: ConversationAttachmentDataSource,
         sharedPreferencesManager: SharedPreferencesManager,
         napoleonApi: NapoleonApi
     ): IContractConversation.Repository {
@@ -27,6 +29,7 @@ class ConversationModule {
             socketService,
             userLocalDataSource,
             conversationLocalDataSource,
+            conversationAttachmentDataSource,
             sharedPreferencesManager,
             napoleonApi
         )
