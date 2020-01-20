@@ -26,6 +26,10 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     val theme: LiveData<Int>
         get() = _theme
 
+    private val _accountStatus = MutableLiveData<Int>()
+    val accountStatus: LiveData<Int>
+        get() = _accountStatus
+
     init {
         _user.value = null
         _errorGettingUser.value = false
@@ -47,6 +51,12 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     override fun getTheme() {
         viewModelScope.launch {
             _theme.value = repository.getTheme()
+        }
+    }
+
+    override fun getAccountStatus() {
+        viewModelScope.launch {
+            _accountStatus.value = repository.getAccountStatus()
         }
     }
 

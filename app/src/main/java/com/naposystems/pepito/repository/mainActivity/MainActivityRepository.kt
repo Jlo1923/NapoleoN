@@ -20,4 +20,8 @@ class MainActivityRepository @Inject constructor(
     override suspend fun getTheme(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
     }
+
+    override suspend fun getAccountStatus(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_ACCOUNT_STATUS)
+    }
 }

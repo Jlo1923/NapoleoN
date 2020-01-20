@@ -8,9 +8,11 @@ import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
+import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 
@@ -69,6 +71,21 @@ class Utils {
             val outputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
             return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+        }
+
+        fun generalDialog(
+            title: String,
+            message: String,
+            childFragmentManager: FragmentManager,
+            actionAccept: () -> Unit
+        ) {
+            val dialog = GeneralDialogFragment.newInstance(title, message)
+            dialog.setListener(object : GeneralDialogFragment.OnGeneralDialog {
+                override fun onAccept() {
+                    actionAccept()
+                }
+            })
+            dialog.show(childFragmentManager, "GeneralDialog")
         }
     }
 }

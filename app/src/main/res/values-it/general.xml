@@ -19,4 +19,5 @@
     <string name="text_error_connection">Non c\'è connessione a Internet. Riprova più tardi</string>
     <string name="text_register">Record</string>
     <string name="text_answer">risposta</string>
+    <string name="text_error">Error</string>
 </resources>

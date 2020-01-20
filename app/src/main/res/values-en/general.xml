@@ -19,4 +19,5 @@
     <string name="text_error_connection">There is no Internet conection. Try again later</string>
     <string name="text_register">Register</string>
     <string name="text_answer">Answer</string>
+    <string name="text_error">Error</string>
 </resources>

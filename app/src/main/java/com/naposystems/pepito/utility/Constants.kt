@@ -18,12 +18,14 @@ object Constants {
         const val GET_MESSAGES = "messages/{contact_id}"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
-        const val GET_RECOVERY_QUESTIONS = "inforecovery/returnquestion"
+        const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
+        const val SEND_ANSWERS = "inforecovery/validateanswers"
     }
 
     enum class AccountStatus constructor(val id: Int) {
         CODE_VALIDATED(1),
-        ACCOUNT_CREATED(2)
+        ACCOUNT_CREATED(2),
+        ACCOUNT_RECOVERED(3)
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
@@ -60,9 +62,13 @@ object Constants {
         NO(2)
     }
 
-    enum class RecoveryQuestionsSaved constructor(val option: Int) {
-        YES(1),
-        NO(2)
+    enum class RecoveryQuestionsSaved constructor(val id: Int) {
+        SAVED_QUESTIONS(1)
+    }
+
+    enum class TypeDialog constructor(val option: Int) {
+        ALERT(1),
+        INFO(2)
     }
 
     enum class FriendShipState constructor(val state: String) {

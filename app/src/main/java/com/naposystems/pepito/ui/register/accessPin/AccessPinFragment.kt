@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.register.accessPin
 
+import android.app.ActionBar
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,9 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.appbar.MaterialToolbar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AccessPinFragmentBinding
 import com.naposystems.pepito.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.*
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -34,8 +37,11 @@ class AccessPinFragment : Fragment() {
     private lateinit var binding: AccessPinFragmentBinding
     private lateinit var nickname: String
     private lateinit var displayName: String
+    private var recoveredAccount: Boolean = false
     private lateinit var snackbarUtils: SnackbarUtils
     private val args: AccessPinFragmentArgs by navArgs()
+
+    private lateinit var firebaseId: String
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -58,8 +64,12 @@ class AccessPinFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        firebaseId = viewModel.getFirebaseId()
+
+        //Asignación de argumentos pasados por navigate
         nickname = args.nickname
         displayName = args.displayName
+        recoveredAccount = args.isRecoveredAccount
 
         binding.buttonRegister.setOnClickListener {
             validateAccessPin()
@@ -94,10 +104,7 @@ class AccessPinFragment : Fragment() {
 
         viewModel.openHomeFragment.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                sharedPreferencesManager.putInt(
-                    Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
-                    Constants.AccountStatus.ACCOUNT_CREATED.id
-                )
+                viewModel.createdUserPref()
                 findNavController()
                     .navigate(AccessPinFragmentDirections.actionAccessPinFragmentToHomeFragment())
                 viewModel.onOpenedHomeFragment()
@@ -119,32 +126,40 @@ class AccessPinFragment : Fragment() {
         if (itsAccessPinOk && itsConfirmAccessPinOk) {
             binding.viewSwitcher.showNext()
 
-            val firebaseId = sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_FIREBASE_ID,
-                ""
-            )
+            if (recoveredAccount) {
+                updateAccessPin()
+            } else {
+                createAccount()
+            }
 
-            val languageIso = sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_LANGUAGE_SELECTED,
-                ""
-            )
-
-            val defaultStatus = context!!.getString(R.string.text_status_available)
-
-            val createAccountReqDTO = CreateAccountReqDTO(
-                firebaseId,
-                displayName,
-                nickname,
-                languageIso,
-                viewModel.accessPin.value!!,
-                viewModel.confirmAccessPin.value!!,
-                defaultStatus
-            )
-
-            viewModel.createAccount(createAccountReqDTO)
         } else {
             enableAllWidgets()
         }
+    }
+
+    private fun createAccount() {
+        val languageIso = viewModel.getLanguage()
+
+        val defaultStatus = context!!.getString(R.string.text_status_available)
+
+        val createAccountReqDTO = CreateAccountReqDTO(
+            firebaseId,
+            displayName,
+            nickname,
+            languageIso,
+            viewModel.accessPin.value!!,
+            viewModel.confirmAccessPin.value!!,
+            defaultStatus
+        )
+
+        viewModel.createAccount(createAccountReqDTO)
+    }
+
+    private fun updateAccessPin() {
+        viewModel.updateAccessPin(
+            binding.textInputEditTextAccessPin.text.toString(),
+            firebaseId
+        )
     }
 
     private fun disableAllWidgets() {

@@ -113,7 +113,7 @@ class SecuritySettingsFragment : Fragment() {
     private fun optionRegisterRecoveryAccountClickListener() = View.OnClickListener {
         findNavController().navigate(
             SecuritySettingsFragmentDirections
-                .actionSecuritySettingsFragmentToRecoverAccountFragment()
+                .actionSecuritySettingsFragmentToRegisterRecoveryAccountFragment()
         )
     }
 }

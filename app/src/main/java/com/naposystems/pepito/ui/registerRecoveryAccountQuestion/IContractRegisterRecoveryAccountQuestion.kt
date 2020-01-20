@@ -15,9 +15,9 @@ interface IContractRegisterRecoveryAccountQuestion {
 
     interface Repository {
         suspend fun getQuestions(): Response<List<RegisterRecoveryAccountQuestionResDTO>>
-        fun getError(response: ResponseBody): ArrayList<String>
         suspend fun sendRecoveryAnswers(registerRecoveryAccountReqDTO: RegisterRecoveryAccountReqDTO): Response<Any>
+        fun registeredQuestionsPref()
         fun get422Error(response:ResponseBody) :ArrayList<String>
-        fun registeredQuestions()
+        fun getError(response: ResponseBody): ArrayList<String>
     }
 }

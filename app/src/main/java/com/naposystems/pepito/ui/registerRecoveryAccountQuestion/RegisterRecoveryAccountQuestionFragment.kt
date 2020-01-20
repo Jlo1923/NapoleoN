@@ -12,11 +12,9 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RegisterRecoveryAccountQuestionFragmentBinding
 import com.naposystems.pepito.entity.Questions
@@ -85,6 +83,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
                 //Nothing
             }
         })
+
 
         binding.buttonAddQuestion.setOnClickListener(nextStep(1))
 
@@ -155,7 +154,9 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         val selectedIdQuestion = binding.spinnerQuestions.selectedItemId
         val selectedQuestion = binding.spinnerQuestions.selectedItem
 
+        //El valor por defecto es 0, por ello se valida que sea diferente de 0
         if (selectedIdQuestion.toInt() != 0) {
+
             if (selectedQuestion is Questions) {
                 val recoveryAnswer = RecoveryAnswer(
                     selectedQuestion.id,
@@ -163,7 +164,9 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
                 )
                 viewModel.addRecoveryAnswer(recoveryAnswer)
 
+                //Bandera para modificar el boton siguiente
                 if (countAnswer > 3) maxAnswer = this.countAnswer
+
                 if (countAnswer in 3..4) {
                     binding.buttonAddQuestion.isVisible = true
                     binding.buttonNext.setText(R.string.text_finish)
@@ -189,9 +192,6 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
 
     private fun infoQuestions() {
         val dialog = InfoAlertFragment()
-//        dialog.setListener(object : InfoAlertFragment.InfoAlertListener {
-//
-//        })
         dialog.show(childFragmentManager, "InfoQuestions")
     }
 

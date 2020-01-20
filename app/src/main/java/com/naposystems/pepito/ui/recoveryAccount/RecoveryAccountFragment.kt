@@ -1,25 +1,25 @@
 package com.naposystems.pepito.ui.recoveryAccount
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.HasDefaultViewModelProviderFactory
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RecoveryAccountFragmentBinding
 import com.naposystems.pepito.model.recoveryAccount.ListRecoveryQuestions
+import com.naposystems.pepito.model.recoveryAccount.RecoveryQuestions
+import com.naposystems.pepito.utility.SnackbarUtils
+import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.recovery_account_fragment.*
 import javax.inject.Inject
 
 class RecoveryAccountFragment : Fragment() {
@@ -32,6 +32,8 @@ class RecoveryAccountFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var binding: RecoveryAccountFragmentBinding
     private lateinit var viewModel: RecoveryAccountViewModel
+
+    private lateinit var snackbarUtils: SnackbarUtils
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -49,7 +51,7 @@ class RecoveryAccountFragment : Fragment() {
 
         binding.textInputEditTextNickname.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.buttonRecoverAccount.isEnabled = s!!.length >= 4
+                binding.buttonRecoveryAccount.isEnabled = s!!.length >= 4
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -61,8 +63,9 @@ class RecoveryAccountFragment : Fragment() {
             }
         })
 
-        binding.buttonRecoverAccount.setOnClickListener {
-            viewModel.sendNickname(binding.textInputEditTextNickname.toString())
+        binding.buttonRecoveryAccount.setOnClickListener {
+            Utils.hideKeyboard(binding.textInputEditTextNickname)
+            viewModel.sendNickname(binding.textInputEditTextNickname.text.toString())
         }
 
         return binding.root
@@ -73,7 +76,8 @@ class RecoveryAccountFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(RecoveryAccountViewModel::class.java)
 
-        viewModel.recoveryQuestions.observe(this, Observer {
+
+        viewModel.recoveryQuestions.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
 
                 val listRecoveryQuestions = ListRecoveryQuestions()
@@ -85,14 +89,19 @@ class RecoveryAccountFragment : Fragment() {
                 findNavController().navigate(
                     RecoveryAccountFragmentDirections
                         .actionRecoveryAccountFragmentToRecoveryAccountQuestionsFragment(
-                            listRecoveryQuestions
+                            listRecoveryQuestions,
+                            binding.textInputEditTextNickname.text.toString()
                         )
                 )
+                viewModel.resetRecoveryQuestions()
             } else {
                 //Snackbar
             }
         })
 
+        viewModel.recoveryQuestionsCreatingError.observe(viewLifecycleOwner, Observer {
+            snackbarUtils = SnackbarUtils(binding.coordinator, it)
+            snackbarUtils.showSnackbar()
+        })
     }
-
 }

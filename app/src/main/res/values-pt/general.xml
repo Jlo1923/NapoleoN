@@ -19,4 +19,5 @@
     <string name="text_error_connection">Não há conexão com a internet. Tente novamente mais tarde</string>
     <string name="text_register">Registre-se</string>
     <string name="text_answer">Resposta</string>
+    <string name="text_error">Error</string>
 </resources>

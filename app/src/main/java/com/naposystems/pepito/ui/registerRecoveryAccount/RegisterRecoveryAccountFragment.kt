@@ -10,13 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RegisterRecoveryAccountBinding
-import com.naposystems.pepito.ui.deleteQuestions.DeleteQuestionsDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -55,28 +53,10 @@ class RegisterRecoveryAccountFragment : Fragment() {
         }
 
         binding.buttonRegister.setOnClickListener {
-//            verificar el edit
-//            if (viewModel.flagRecoveryQuestions.value == 1) {
-//                val dialog = DeleteQuestionsDialogFragment()
-//                dialog.setListener(object : DeleteQuestionsDialogFragment.DeleteQuestionsListener {
-//                    override fun onDeleteQuestionsChange() {
-//                        findNavController().navigate(
-//                            RegisterRecoveryAccountFragmentDirections
-//                                .actionRecoverAccountFragmentToRegisterRecoveryAccountQuestionFragment()
-//                        )
-//                    }
-//                })
-//                dialog.show(childFragmentManager, "DeleteQuestions")
-//            } else {
-//                findNavController().navigate(
-//                    RegisterRecoveryAccountFragmentDirections
-//                        .actionRecoverAccountFragmentToRegisterRecoveryAccountQuestionFragment()
-//                )
-//            }
 
             findNavController().navigate(
                 RegisterRecoveryAccountFragmentDirections
-                    .actionRecoverAccountFragmentToRegisterRecoveryAccountQuestionFragment()
+                    .actionRegisterRecoveryAccountFragmentToRegisterRecoveryAccountQuestionFragment()
             )
         }
 
@@ -88,9 +68,9 @@ class RegisterRecoveryAccountFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(RegisterRecoveryAccountViewModel::class.java)
 
-        viewModel.getFlagRecoveryQuestions()
-        viewModel.flagRecoveryQuestions.observe(viewLifecycleOwner, Observer {
-            if (it == 1) {
+        viewModel.getRecoveryQuestionsPref()
+        viewModel.recoveryQuestionsPref.observe(viewLifecycleOwner, Observer {
+            if (it == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
                 binding.textViewDescription.setText(R.string.text_recovery_account_ok)
                 binding.buttonRegister.setText(R.string.text_edit)
             }

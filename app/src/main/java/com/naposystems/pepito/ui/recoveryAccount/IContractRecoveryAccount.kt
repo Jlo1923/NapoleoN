@@ -7,6 +7,7 @@ import retrofit2.Response
 interface IContractRecoveryAccount {
     interface ViewModel {
         fun sendNickname(nickname: String)
+        fun resetRecoveryQuestions()
     }
 
     interface Repository {

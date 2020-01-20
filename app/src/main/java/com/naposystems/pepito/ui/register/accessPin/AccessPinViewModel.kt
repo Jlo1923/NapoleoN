@@ -60,6 +60,18 @@ class AccessPinViewModel @Inject constructor(
         _openHomeFragment.value = null
     }
 
+    override fun getFirebaseId(): String {
+        return repository.getFirebaseId()
+    }
+
+    override fun getLanguage(): String {
+        return repository.getLanguage()
+    }
+
+    override fun createdUserPref() {
+        repository.createdUserPref()
+    }
+
     //region Implementation IContractAccessPin.ViewModel
     override fun createAccount(createAccountReqDTO: CreateAccountReqDTO) {
         viewModelScope.launch {
@@ -92,6 +104,19 @@ class AccessPinViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.createUser(user)
+                _userCreatedLocallySuccessfully.value = true
+            } catch (ex: Exception) {
+                Timber.d(ex)
+                val error = context.getString(R.string.text_fail)
+                _userCreationError.value = error
+            }
+        }
+    }
+
+    override fun updateAccessPin(newAccessPin: String, firebaseId: String) {
+        viewModelScope.launch {
+            try {
+                repository.updateAccessPin(newAccessPin, firebaseId)
                 _userCreatedLocallySuccessfully.value = true
             } catch (ex: Exception) {
                 Timber.d(ex)

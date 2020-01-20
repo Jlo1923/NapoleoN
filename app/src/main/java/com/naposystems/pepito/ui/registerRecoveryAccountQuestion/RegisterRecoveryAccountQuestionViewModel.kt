@@ -15,7 +15,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
-    private val  context: Context,
+    private val context: Context,
     private val repository: IContractRegisterRecoveryAccountQuestion.Repository
 ) : ViewModel(), IContractRegisterRecoveryAccountQuestion.ViewModel {
 
@@ -92,12 +92,10 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
 
                     val selectQuestion = context.getString(R.string.text_security_questions)
 
-                    mutableList.add(0, Questions(0,
-                        selectQuestion))
+                    mutableList.add(0, Questions(0, selectQuestion))
 
                     _questions.value = mutableList
 
-                    repository.registeredQuestions()
                 } else {
                     _webServiceError.value = repository.getError(response.errorBody()!!)
                 }
@@ -111,12 +109,15 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val recoveryAnswers = RegisterRecoveryAccountReqDTO(
-                    RecoveryAnswer.toListRegisterRecoveryAccountAnswerReqDTO(_recoveryAnswers.value!!)
+                    RecoveryAnswer.toListRegisterRecoveryAccountAnswerReqDTO(
+                        _recoveryAnswers.value!!
+                    )
                 )
                 val response = repository.sendRecoveryAnswers(recoveryAnswers)
 
                 if (response.isSuccessful) {
                     _recoveryQuestionsSavedSuccessfully.value = true
+                    repository.registeredQuestionsPref()
                 } else {
                     when (response.code()) {
                         422 -> {

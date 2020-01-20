@@ -22,6 +22,10 @@ class RecoveryAccountViewModel @Inject constructor(
     val recoveryQuestionsCreatingError: LiveData<List<String>>
         get() = _recoveryQuestionsCreatingError
 
+    init {
+        _recoveryQuestions.value = emptyList()
+    }
+
     override fun sendNickname(nickname: String) {
         viewModelScope.launch {
             try {
@@ -43,5 +47,9 @@ class RecoveryAccountViewModel @Inject constructor(
                 Timber.d(e)
             }
         }
+    }
+
+    override fun resetRecoveryQuestions() {
+        _recoveryQuestions.value = emptyList()
     }
 }

@@ -19,4 +19,5 @@
     <string name="text_error_connection">Il n\'y a pas de connexion Internet. Réessayez plus tard</string>
     <string name="text_register">S\'inscrire</string>
     <string name="text_answer">Répondre</string>
+    <string name="text_error">Error</string>
 </resources>

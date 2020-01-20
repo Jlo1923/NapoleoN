@@ -85,7 +85,8 @@ class ValidateNicknameFragment : Fragment() {
                         ValidateNicknameFragmentDirections
                             .actionRegisterFragmentToAccessPinFragment(
                                 viewModel.nickName.value!!,
-                                viewModel.displayName.value!!
+                                viewModel.displayName.value!!,
+                                false
                             )
                     )
             }

@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
+    private var isRecoveredAccount: Int = 0
 
     private val options by lazy {
         navOptions {
@@ -64,6 +65,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
 
+        viewModel.getAccountStatus()
+
+        viewModel.accountStatus.observe(this, Observer {
+            isRecoveredAccount = it
+        })
+
         viewModel.getTheme()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
@@ -80,7 +87,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
 
+        //Traer Preferencia
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            viewModel.getAccountStatus()
             when (destination.id) {
                 R.id.splashFragment,
                 R.id.landingFragment,
@@ -103,6 +113,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             this.theme
                         )
                     )
+                }
+                R.id.accessPinFragment -> {
+                    if (isRecoveredAccount == Constants.AccountStatus.ACCOUNT_RECOVERED.id){
+                        hideToolbar()
+                        disableDrawer()
+                    } else {
+                        showToolbar()
+                    }
                 }
                 else -> {
                     showToolbar()

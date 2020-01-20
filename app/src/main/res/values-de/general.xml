@@ -19,4 +19,5 @@
     <string name="text_error_connection">Es besteht keine Internetverbindung. Versuchen Sie es später noch einmal</string>
     <string name="text_register">Registrieren Sie sich</string>
     <string name="text_answer">Antwort</string>
+    <string name="text_error">Error</string>
 </resources>

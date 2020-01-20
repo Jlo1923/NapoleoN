@@ -30,4 +30,5 @@
     <string name="text_register">Registrar</string>
     <string name="text_finish">Finalizar</string>
     <string name="text_answer">Respuesta</string>
+    <string name="text_error">Error</string>
 </resources>

@@ -11,16 +11,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
+import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashFragment : Fragment() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SplashViewModel
+    private lateinit var user:User
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
@@ -35,7 +40,8 @@ class SplashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModel = ViewModelProviders.of(this).get(SplashViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(SplashViewModel::class.java)
 
         viewModel.navigateToLanding.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -46,6 +52,19 @@ class SplashFragment : Fragment() {
                     Constants.AccountStatus.ACCOUNT_CREATED.id -> findNavController().navigate(
                         SplashFragmentDirections.actionSplashFragmentToHomeFragment()
                     )
+                    Constants.AccountStatus.ACCOUNT_RECOVERED.id -> {
+                        viewModel.getUser()
+                        viewModel.user.observe(viewLifecycleOwner, Observer {
+                            user = it
+                        })
+                        findNavController().navigate(
+                            SplashFragmentDirections.actionSplashFragmentToAccessPinFragment(
+                                user.nickname,
+                                user.displayName,
+                                true
+                            )
+                        )
+                    }
                     else -> findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLandingFragment())
                 }
 

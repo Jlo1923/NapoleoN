@@ -53,10 +53,10 @@ class RegisterRecoveryAccountQuestionRepository @Inject constructor(
         return napoleonApi.sendRecoveryQuestions(registerRecoveryAccountReqDTO)
     }
 
-    override fun registeredQuestions() {
+    override fun registeredQuestionsPref() {
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED,
-            Constants.RecoveryQuestionsSaved.YES.option
+            Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id
         )
     }
 }
