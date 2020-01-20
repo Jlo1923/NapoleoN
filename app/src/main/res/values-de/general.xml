@@ -20,4 +20,9 @@
     <string name="text_register">Registrieren Sie sich</string>
     <string name="text_answer">Antwort</string>
     <string name="text_error">Error</string>
+    <string name="text_gallery">Galerie</string>
+    <string name="text_camera">Kamera</string>
+    <string name="text_location">Standort</string>
+    <string name="text_audio">Audio</string>
+    <string name="text_document">Dokument</string>
 </resources>

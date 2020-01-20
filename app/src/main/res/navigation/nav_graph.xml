@@ -31,16 +31,17 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashFragment_to_accessPinFragment"
-            app:destination="@id/accessPinFragment" />
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/landingFragment"
         android:name="com.naposystems.pepito.ui.landing.LandingFragment"
         android:label="landing_fragment"
         tools:layout="@layout/landing_fragment">
-        <action
-            android:id="@+id/action_landingFragment_to_languageSelectionDialog"
-            app:destination="@id/languageSelectionDialog" />
         <action
             android:id="@+id/action_landingFragment_to_sendCodeFragment"
             app:destination="@id/sendCodeFragment"
@@ -50,14 +51,13 @@
             app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_landingFragment_to_recoveryAccountFragment"
-            app:destination="@id/recoveryAccountFragment" />
+            app:destination="@id/recoveryAccountFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
-    <dialog
-        android:id="@+id/languageSelectionDialog"
-        android:name="com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment"
-        android:label="language_selection_dialog"
-        tools:layout="@layout/language_selection_dialog_fragment" />
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment"
@@ -192,9 +192,6 @@
         android:label="@string/text_appearance_settings_title"
         tools:layout="@layout/appearance_settings_fragment">
         <action
-            android:id="@+id/action_appearanceSettingsFragment_to_languageSelectionDialog"
-            app:destination="@id/languageSelectionDialog" />
-        <action
             android:id="@+id/action_appearanceSettingsFragment_to_colorSchemeFragment"
             app:destination="@id/colorSchemeFragment" />
         <action
@@ -307,6 +304,9 @@
         <argument
             android:name="contact"
             app:argType="com.naposystems.pepito.entity.Contact" />
+        <action
+            android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
+            app:destination="@id/previewImageSendFragment" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
@@ -330,5 +330,22 @@
         <action
             android:id="@+id/action_recoveryAccountQuestionsFragment_to_accessPinFragment"
             app:destination="@id/accessPinFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
+            app:destination="@id/previewImageSendFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewImageSendFragment"
+        android:name="com.naposystems.pepito.ui.previewImageSend.PreviewImageSendFragment"
+        android:label="preview_image_send_fragment"
+        tools:layout="@layout/preview_image_send_fragment">
+
+        <argument
+            android:name="bitmap"
+            app:argType="android.graphics.Bitmap" />
     </fragment>
 </navigation>

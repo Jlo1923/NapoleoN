@@ -155,6 +155,11 @@
         <item name="errorIconTint">@color/colorError</item>
     </style>
 
+    <style name="EditTextInputPanel" parent="Widget.AppCompat.EditText">
+        <item name="hintTextColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
     <style name="OptionEndIcon">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
@@ -219,6 +224,33 @@
         <item name="android:layout_height">24dp</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="CardViewAttachmentItem">
+        <item name="android:selectable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_marginEnd">@dimen/normal_margin</item>
+        <item name="android:layout_marginBottom">@dimen/normal_margin</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="ImageViewAttachment">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="TextViewAttachment" parent="BodyTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
 </resources>

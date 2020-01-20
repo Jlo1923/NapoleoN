@@ -2,5 +2,11 @@
 <paths>
     <external-cache-path
         name="avatar"
-        path="/" />
+        path="avatars/" />
+    <external-cache-path
+        name="header"
+        path="headers/" />
+    <external-cache-path
+        name="conversation"
+        path="conversations/" />
 </paths>

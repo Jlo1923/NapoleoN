@@ -8,6 +8,7 @@ import com.naposystems.pepito.ui.contacts.ContactsFragment
 import com.naposystems.pepito.ui.conversation.ConversationFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.pepito.ui.previewImageSend.PreviewImageSendFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment
@@ -91,6 +92,9 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindRegisterRecoveryAccountQuestionFragment(): RegisterRecoveryAccountQuestionFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindPreviewImageSendFragment(): PreviewImageSendFragment
 
     @ContributesAndroidInjector
     abstract fun bindRecoveryAccountFragment(): RecoveryAccountFragment

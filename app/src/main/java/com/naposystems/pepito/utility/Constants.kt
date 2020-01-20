@@ -13,9 +13,9 @@ object Constants {
         const val CREATE_ACCOUNT = "users"
         const val UPDATE_USER_INFO = "users/updateinfo"
         const val SEND_PQRS = "pqrs"
-        const val FRIEND_SHIP_SEARCH = "frienship/search/{state}"
+        const val FRIEND_SHIP_SEARCH = "friendship/search/{state}"
         const val SEND_MESSAGE = "messages"
-        const val GET_MESSAGES = "messages/{contact_id}"
+        const val GET_MESSAGES = "messages/getmessagesbyfriendship/{contact_id}"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
         const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
@@ -79,6 +79,15 @@ object Constants {
     enum class IsMine constructor(val value: Int) {
         YES(1),
         NO(0)
+    }
+
+    enum class ConversationAttachmentType(val type: String) {
+        IMAGE("image"),
+        AUDIO("audio"),
+        VIDEO("video"),
+        WORD("word"),
+        EXCEL("excel"),
+        PDF("pdf")
     }
 
     object SharedPreferences {

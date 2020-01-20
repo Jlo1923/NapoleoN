@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class UpdateUserInfoReqDTO(
-    @Json(name = "names") val displayName: String = "",
+    @Json(name = "fullname") val displayName: String = "",
     @Json(name = "avatar") val avatar: String = "",
     @Json(name = "language_iso") val languageIso: String = "",
     @Json(name = "firebase_id") val firebaseId: String = "",

@@ -2,19 +2,26 @@ package com.naposystems.pepito.utility
 
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.Settings
 import android.util.Base64
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
+import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
 import java.io.ByteArrayOutputStream
+import java.io.File
 import kotlin.math.roundToInt
+import android.graphics.BitmapFactory
 
 
 class Utils {
@@ -71,6 +78,60 @@ class Utils {
             val outputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
             return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+        }
+
+        fun showDialogToInformPermission(
+            context: Context,
+            fragmentManager: FragmentManager,
+            icon: Int,
+            message: Int,
+            accept: () -> Unit,
+            cancel: () -> Unit
+        ) {
+
+            val dialog = PermissionDialogFragment.newInstance(
+                icon,
+                context.resources.getString(message)
+            )
+            dialog.setListener(object : PermissionDialogFragment.OnDialogListener {
+                override fun onAcceptPressed() {
+                    accept()
+                }
+
+                override fun onCancelPressed() {
+                    cancel()
+                }
+            })
+            dialog.show(fragmentManager, "Test")
+        }
+
+        fun openSetting(context: Context) {
+            val intent = Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", context.packageName, null)
+            )
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+
+        fun getCacheImagePath(context: Context, fileName: String, subFolder: String): Uri {
+            val path = File(context.externalCacheDir!!, subFolder)
+            if (!path.exists())
+                path.mkdirs()
+            val image = File(path, fileName)
+            return FileProvider.getUriForFile(context, "com.naposystems.pepito.provider", image)
+        }
+
+        fun bitmapToBase64(bitmap: Bitmap): String {
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+            val byteArray = byteArrayOutputStream.toByteArray()
+            return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        }
+
+        fun base64ToBitmap(b64: String): Bitmap {
+            val imageAsBytes = Base64.decode(b64.toByteArray(), Base64.DEFAULT)
+            return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.size)
         }
 
         fun generalDialog(

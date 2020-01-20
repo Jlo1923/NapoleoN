@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.LandingFragmentBinding
+import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
 
 class LandingFragment : Fragment() {
 
@@ -34,8 +35,8 @@ class LandingFragment : Fragment() {
         viewModel.showLanguageSelection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 viewModel.onLanguageSelectionShowed()
-                this.findNavController()
-                    .navigate(LandingFragmentDirections.actionLandingFragmentToLanguageSelectionDialog())
+                val languageSelectionDialog = LanguageSelectionDialogFragment()
+                languageSelectionDialog.show(childFragmentManager, "LanguageSelection")
             }
         })
 

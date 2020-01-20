@@ -8,7 +8,6 @@ import com.squareup.moshi.JsonClass
 data class CreateAccountResDTO(
     @Json(name = "fullname") val fullName: String,
     @Json(name = "nick") val nickname: String,
-    @Json(name = "language_iso") val languageIso: String = "",
     @Json(name = "id") val id: Int,
     @Json(name = "my_status") val status: String = ""
 ) {

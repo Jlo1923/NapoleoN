@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +38,6 @@ import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
-import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
@@ -54,8 +52,8 @@ class ProfileFragment : Fragment() {
         fun newInstance() = ProfileFragment()
         const val REQUEST_IMAGE_CAPTURE = 1
         const val REQUEST_GALLERY_IMAGE = 2
-        const val AVATAR_SUBFOLDER = "avatar"
-        const val HEADER_SUBFOLDER = "header"
+        const val AVATAR_SUBFOLDER = "avatars"
+        const val HEADER_SUBFOLDER = "headers"
     }
 
     @Inject
@@ -178,7 +176,7 @@ class ProfileFragment : Fragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
-                    cropImage(getCacheImagePath(fileName))
+                    cropImage(Utils.getCacheImagePath(context!!, fileName, subFolder))
                 }
             }
             REQUEST_GALLERY_IMAGE -> {
@@ -323,10 +321,12 @@ class ProfileFragment : Fragment() {
                     }
 
                     if (report.isAnyPermissionPermanentlyDenied) {
-                        showDialogToInformPermission(
+                        Utils.showDialogToInformPermission(
+                            context!!,
+                            childFragmentManager,
                             R.drawable.ic_camera_primary,
                             R.string.explanation_camera_and_storage_permission,
-                            { openSetting() },
+                            { Utils.openSetting(context!!) },
                             {}
                         )
                     }
@@ -336,7 +336,9 @@ class ProfileFragment : Fragment() {
                     permissions: MutableList<PermissionRequest>?,
                     token: PermissionToken?
                 ) {
-                    showDialogToInformPermission(
+                    Utils.showDialogToInformPermission(
+                        context!!,
+                        childFragmentManager,
                         R.drawable.ic_camera_primary,
                         R.string.explanation_camera_and_storage_permission,
                         { token!!.continuePermissionRequest() },
@@ -344,15 +346,6 @@ class ProfileFragment : Fragment() {
                     )
                 }
             }).check()
-    }
-
-    private fun openSetting() {
-        val intent = Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", context!!.packageName, null)
-        )
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
     }
 
     private fun openImageSelectorBottomSheet() {
@@ -371,7 +364,7 @@ class ProfileFragment : Fragment() {
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
                     MediaStore.EXTRA_OUTPUT,
-                    getCacheImagePath(fileName)
+                    Utils.getCacheImagePath(context!!, fileName, subFolder)
                 )
                 if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
@@ -387,37 +380,6 @@ class ProfileFragment : Fragment() {
             }
         })
         dialog.show(childFragmentManager, "BottomSheetOptions")
-    }
-
-    private fun getCacheImagePath(fileName: String): Uri {
-        val path = File(activity!!.externalCacheDir!!.absolutePath, subFolder)
-        if (!path.exists())
-            path.mkdirs()
-        val image = File(path, fileName)
-        return getUriForFile(context!!, context!!.packageName + ".provider", image)
-    }
-
-    private fun showDialogToInformPermission(
-        icon: Int,
-        message: Int,
-        accept: () -> Unit,
-        cancel: () -> Unit
-    ) {
-
-        val dialog = PermissionDialogFragment.newInstance(
-            icon,
-            context!!.resources.getString(message)
-        )
-        dialog.setListener(object : PermissionDialogFragment.OnDialogListener {
-            override fun onAcceptPressed() {
-                accept()
-            }
-
-            override fun onCancelPressed() {
-                cancel()
-            }
-        })
-        dialog.show(childFragmentManager, "Test")
     }
 
     private fun queryName(resolver: ContentResolver, uri: Uri): String {

@@ -88,7 +88,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <com.google.android.material.textfield.TextInputLayout
+                <!--<com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayout_message"
                     style="@style/TextInputLayoutOutlined"
                     android:layout_width="0dp"
@@ -98,10 +98,12 @@
                     android:layout_marginEnd="@dimen/small_margin"
                     android:layout_marginBottom="@dimen/normal_margin"
                     android:hint="@string/text_write_message"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/inputPanel"
                     app:layout_constraintEnd_toStartOf="@id/button_send"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:passwordToggleEnabled="true"
+                    app:startIconCheckable="true"
                     app:startIconDrawable="@drawable/ic_insert_emoticon_black">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -117,14 +119,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/small_margin"
-                    android:layout_marginBottom="@dimen/normal_margin"
                     android:backgroundTint="@color/buttonTint"
                     app:borderWidth="0dp"
                     app:fabCustomSize="@dimen/conversation_fab_size"
+                    app:layout_constraintBottom_toBottomOf="@id/textInputLayout_message"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textInputLayout_message"
+                    app:srcCompat="@drawable/ic_send_black"
+                    app:tint="@color/fabIconColor" />-->
+
+                <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget
+                    android:id="@+id/inputPanel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/ic_send_black"
-                    app:tint="@color/fabIconColor" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

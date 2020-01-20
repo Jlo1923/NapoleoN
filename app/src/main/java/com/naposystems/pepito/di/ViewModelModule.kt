@@ -11,6 +11,7 @@ import com.naposystems.pepito.ui.conversation.ConversationViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
+import com.naposystems.pepito.ui.previewImageSend.SharePreviewImageSendViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -147,6 +148,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(RegisterRecoveryAccountQuestionViewModel::class)
     internal abstract fun bindRegisterRecoveryAccountQuestionViewModel(viewModel: RegisterRecoveryAccountQuestionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SharePreviewImageSendViewModel::class)
+    internal abstract fun bindSharePreviewImageSendViewModel(viewModel: SharePreviewImageSendViewModel): ViewModel
 
     @Binds
     @IntoMap
