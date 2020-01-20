@@ -305,7 +305,7 @@
             android:name="contact"
             app:argType="com.naposystems.pepito.entity.Contact" />
         <action
-            android:id="@+id/action_conversationFragment_to_previewImageSendFragment2"
+            android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
             app:destination="@id/previewImageSendFragment" />
     </fragment>
     <fragment
