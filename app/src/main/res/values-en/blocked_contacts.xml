@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_blocked_contacts_info">The contacts in this list will not be able to communicate with you or access your profile.</string>
+</resources>

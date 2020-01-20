@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.help.HelpFragment">
+
+        <!-- OPTION CONTACT US -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_contact_us"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:text="@string/text_contact_us"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_contact_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_contact_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- OPTION FREQUENT QUESTIONS -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_frequent_questions"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/option_contact_us">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:text="@string/text_frequent_questions"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_frequent_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_frequent_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- OPTION TERMS AND CONDITIONS -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_terms_and_conditions"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/option_frequent_questions">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:text="@string/text_terms_and_conditions"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_terms_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_terms_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- OPTION ABOUT -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_about"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/option_terms_and_conditions">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:text="@string/text_about"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_about_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_about_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

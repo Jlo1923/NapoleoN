@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.appearanceSettings.AppearanceSettingsFragment">
+
+            <!-- OPTION COLOR COMBINATION -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_color_scheme"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_with_separator"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="@dimen/normal_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- GO ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_color_option_end_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/colorSecondaryDark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_right_black" />
+
+                <!-- LABEL COLOR COMBINATION -->
+                <TextView
+                    android:id="@+id/textView_label_color"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="@string/text_color_scheme"
+                    app:layout_constraintBottom_toTopOf="@id/textView_color_selected"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_color_option_end_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- COLOR SCHEME SELECTED -->
+                <TextView
+                    android:id="@+id/textView_color_selected"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:enabled="true"
+                    android:maxLength="@dimen/max_length_status"
+                    android:padding="0dp"
+                    android:singleLine="true"
+                    app:colorScheme="@{viewModel.colorScheme}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/textView_label_color"
+                    app:layout_constraintStart_toStartOf="@id/textView_label_color"
+                    app:layout_constraintTop_toBottomOf="@id/textView_label_color"
+                    tools:text="Tema claro" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- OPTION USER DISPLAY FORMAT -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_display_format"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_with_separator"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="@dimen/normal_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/option_color_scheme">
+
+                <!-- GO ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_user_display_option_end_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/colorSecondaryDark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_right_black" />
+
+                <!-- LABEL COLOR COMBINATION -->
+                <TextView
+                    android:id="@+id/textView_user_display_color"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="@string/text_user_display_format"
+                    app:layout_constraintBottom_toTopOf="@id/textView_user_display_selected"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_user_display_option_end_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- COLOR SCHEME SELECTED -->
+                <TextView
+                    android:id="@+id/textView_user_display_selected"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:enabled="true"
+                    android:maxLength="@dimen/max_length_status"
+                    android:padding="0dp"
+                    android:singleLine="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/textView_user_display_color"
+                    app:layout_constraintStart_toStartOf="@id/textView_user_display_color"
+                    app:layout_constraintTop_toBottomOf="@id/textView_user_display_color"
+                    app:userDisplayFormat="@{viewModel.userDisplayFormat}"
+                    tools:text="Nombre y usuario" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- OPTION LANGUAGE -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_language"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_with_separator"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="@dimen/normal_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/option_display_format">
+
+                <!-- GO ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_language_option_end_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/colorSecondaryDark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_right_black" />
+
+                <!-- LABEL COLOR COMBINATION -->
+                <TextView
+                    android:id="@+id/textView_language_color"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="@string/text_language"
+                    app:layout_constraintBottom_toTopOf="@id/textView_language_selected"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_language_option_end_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- COLOR SCHEME SELECTED -->
+                <TextView
+                    android:id="@+id/textView_language_selected"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:enabled="true"
+                    android:maxLength="@dimen/max_length_status"
+                    android:padding="0dp"
+                    android:singleLine="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/textView_language_color"
+                    app:layout_constraintStart_toStartOf="@id/textView_language_color"
+                    app:layout_constraintTop_toBottomOf="@id/textView_language_color"
+                    tools:text="Español" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- OPTION CHAT BACKGROUND -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_chat_background"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_with_separator"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="@dimen/normal_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/option_language">
+
+                <!-- GO ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_chat_background_option_end_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/colorSecondaryDark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_right_black" />
+
+                <!-- LABEL COLOR COMBINATION -->
+                <TextView
+                    android:id="@+id/textView_chat_background"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="@string/text_conversation_background"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_chat_background_option_end_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

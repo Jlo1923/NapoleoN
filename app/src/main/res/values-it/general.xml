@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_accept">Accettare</string>
+    <string name="text_cancel">Cancellare</string>
+    <string name="text_continue">Continuare</string>
+    <string name="text_welcome">Benvenuto</string>
+    <string name="text_next">Seguente</string>
+    <string name="text_fail">Qualcosa è andato storto, per favore riprova</string>
+    <string name="text_name">Nome</string>
+    <string name="text_status">Stato</string>
+    <string name="text_blocked_contacts">Contatti bloccati</string>
+    <string name="label_edit_photo">Modifica foto</string>
+    <string name="label_edit_cover">Modifica banner</string>
+    <string name="text_edit">Modifica</string>
+    <string name="text_share">Quota</string>
+    <string name="text_search">Cerca</string>
+    <string name="text_add_contact">Aggiungi contatto</string>
+    <string name="text_finish">Finalizza</string>
+    <string name="text_error_connection">Non c\'è connessione a Internet. Riprova più tardi</string>
+    <string name="text_register">Record</string>
+    <string name="text_answer">risposta</string>
+    <string name="text_error">Error</string>
+</resources>

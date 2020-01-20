@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_blocked_contacts_info">Los contactos en este listado no podrán comunicarse contigo ni acceder a tu perfil.</string>
+</resources>

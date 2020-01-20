@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#d8a608</color>
+    <color name="colorPrimaryLight">#ffd74b</color>
+    <color name="colorPrimaryDark">#a27800</color>
+    <color name="colorSecondary">#cccccc</color>
+    <color name="colorSecondaryLight">#ffffff</color>
+    <color name="colorSecondaryDark">#9b9b9b</color>
+    <color name="primaryTextColor">#f2f2f2</color>
+    <color name="secondaryTextColor">#4d4d4d</color>
+    <color name="linkTextColor">#29ABE2</color>
+    <color name="white">#f2f2f2</color>
+    <color name="black">#000000</color>
+    <color name="black_40">#66000000</color>
+    <color name="colorError">#EF5350</color>
+    <color name="separator">#CCCCCC</color>
+    <color name="green">#00E676</color>
+    <color name="colorBackground">#f2f2f2</color>
+    <color name="colorSecondaryBackground">#d8a608</color>
+    <color name="buttonTint">#d8a608</color>
+    <color name="trackColor">#4Dd8a608</color>
+    <color name="disabledTrackColor">@color/colorSecondaryDark</color>
+    <color name="disabledThumbColor">@color/white</color>
+    <color name="sectionColor">#E6E6E6</color>
+    <color name="backgroundSpinnerColor">#f2f2f2</color>
+    <color name="fabIconColor">#f2f2f2</color>
+    <color name="flatActionBarColor">#d8a608</color>
+    <color name="colorTextMyMessage">#f2f2f2</color>
+    <color name="colorTextIncomingMessage">#4d4d4d</color>
+</resources>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.pepito.ui.blockedContacts.adapter.BlockedContactsAdapter.BlockedContactSelectionListener" />
+
+        <variable
+            name="contact"
+            type="com.naposystems.pepito.entity.BlockedContact" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_home_item"
+        android:padding="@dimen/normal_padding">
+
+        <ImageView
+            android:id="@+id/imageView_user_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:avatar="@{contact.imageUrl}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/textView_user_name"
+            style="@style/BodyTextView.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@{contact.displayName}"
+            app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
+            app:layout_constraintEnd_toStartOf="@id/button_more"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/imageView_user_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/textView_user_nickname"
+            style="@style/BodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x_small_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            app:nickname="@{contact.nickname}"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/button_more"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            tools:text="@tools:sample/first_names" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_more"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:onClick="@{() -> clickListener.onClick(contact)}"
+            android:tint="@color/colorSecondaryDark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more_vert_black" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

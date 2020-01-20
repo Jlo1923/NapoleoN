@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_accept">Akzeptieren</string>
+    <string name="text_cancel">Abbrechen</string>
+    <string name="text_continue">Weiter</string>
+    <string name="text_welcome">Herzlich willkommen</string>
+    <string name="text_next">Weiter</string>
+    <string name="text_fail">Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
+    <string name="text_name">Vorname</string>
+    <string name="text_status">Zustand</string>
+    <string name="text_blocked_contacts">Blockierte Kontakte</string>
+    <string name="label_edit_photo">Foto bearbeiten</string>
+    <string name="label_edit_cover">Banner bearbeiten</string>
+    <string name="text_edit">Bearbeiten</string>
+    <string name="text_share">Teilen</string>
+    <string name="text_search">Suche</string>
+    <string name="text_add_contact">Kontakt hinzufügen</string>
+    <string name="text_finish">Fertig</string>
+    <string name="text_error_connection">Es besteht keine Internetverbindung. Versuchen Sie es später noch einmal</string>
+    <string name="text_register">Registrieren Sie sich</string>
+    <string name="text_answer">Antwort</string>
+    <string name="text_error">Error</string>
+</resources>

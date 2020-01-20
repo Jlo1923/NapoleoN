@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_count_questions">Domanda di sicurezza %1$d/%2$d</string>
+    <string name="text_add_question">Aggiungi un\'altra domanda</string>
+    <string name="text_security_questions">Scegli una domanda</string>
+    <string name="text_select_question">Devi selezionare una domanda</string>
+    <string name="text_title_register_questions">L\'opzione Ripristina account ti aiuterà a recuperare nickname, contatti e preferenze. Ricorda che una risposta difficile è la chiave per la tua privacy e sicurezza</string>
+    <string name="text_description_cancel">Nessuna informazione verrà registrata per il recupero dell\'account. Sei sicuro di voler partire?</string>
+    <string name="text_title_cancel">Disconnettersi?</string>
+    <string name="text_successful_message">Informazioni registrate correttamente</string>
+    <string name="text_error_message">Errore durante la registrazione delle informazioni</string>
+</resources>

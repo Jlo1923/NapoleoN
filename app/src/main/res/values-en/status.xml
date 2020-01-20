@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_current_status">Current status</string>
+    <string name="text_status_hint">Insert status</string>
+    <string name="text_select_a_status">Select a status</string>
+    <string name="text_status_available">Available</string>
+    <string name="text_status_busy">Busy</string>
+    <string name="text_status_in_meeting">In meeting</string>
+    <string name="text_status_only_messages">Only messages</string>
+    <string name="text_status_sleeping">Sleeping</string>
+    <string name="text_status_only_emergency">Only emergency</string>
+    <string name="text_error_getting_local_status">An error occurred while getting the states, try again</string>
+</resources>

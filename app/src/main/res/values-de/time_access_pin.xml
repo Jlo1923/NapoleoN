@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_thirty_seconds">30 Sekunden</string>
+    <string name="text_one_minute">1 Minute</string>
+    <string name="text_two_minutes">2 Minuten</string>
+    <string name="text_five_minutes">5 Minuten</string>
+    <string name="text_immediately">Sofort</string>
+    <string name="text_desc_pin_locked_time">Die Zugangsnummer wird nach Ablauf der eingestellten Zeit nach Sperrung der App abgefragt.</string>
+    <string name="text_ten_seconds">10 Sekunden</string>
+</resources>
