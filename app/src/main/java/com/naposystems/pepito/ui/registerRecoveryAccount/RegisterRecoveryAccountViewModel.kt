@@ -10,16 +10,16 @@ class RegisterRecoveryAccountViewModel @Inject constructor(
     private val repository: RegisterRecoveryAccountRepository
 ) : ViewModel(), IContractRegisterRecoveryAccount.ViewModel {
 
-    private val _flagRecoveryQuestions = MutableLiveData<Int>()
-    val flagRecoveryQuestions: LiveData<Int>
-        get() = _flagRecoveryQuestions
+    private val _recoveryQuestionsPref = MutableLiveData<Int>()
+    val recoveryQuestionsPref: LiveData<Int>
+        get() = _recoveryQuestionsPref
 
     init {
-        _flagRecoveryQuestions.value = null
+        _recoveryQuestionsPref.value = null
     }
 
-    override fun getFlagRecoveryQuestions() {
-        _flagRecoveryQuestions.value = repository.getFlagRecoveryQuestions()
+    override fun getRecoveryQuestionsPref() {
+        _recoveryQuestionsPref.value = repository.getRecoveryQuestionsPref()
     }
 
 

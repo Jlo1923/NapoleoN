@@ -1,4 +1,4 @@
-package com.naposystems.pepito.ui.conversation.adapter;
+package com.naposystems.pepito.ui.conversation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

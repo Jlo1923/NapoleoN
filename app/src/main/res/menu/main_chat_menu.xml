@@ -9,20 +9,20 @@
     <item
         android:id="@+id/security_settings"
         android:icon="@drawable/ic_settings_black"
-        android:title="@string/security_settings" />
+        android:title="@string/text_security_settings_title" />
 
     <item
         android:id="@+id/appearance_settings"
         android:icon="@drawable/ic_palette_black"
-        android:title="@string/appearance_settings" />
+        android:title="@string/text_appearance_settings_title" />
 
     <item
         android:id="@+id/invite_someone"
         android:icon="@drawable/ic_people_black"
-        android:title="@string/invite_someone" />
+        android:title="@string/text_invite_someone_title" />
 
     <item
         android:id="@+id/help"
         android:icon="@drawable/ic_help_black"
-        android:title="@string/help" />
+        android:title="@string/text_help_title" />
 </menu>

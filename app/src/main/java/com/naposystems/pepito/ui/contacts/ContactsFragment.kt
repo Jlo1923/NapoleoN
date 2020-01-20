@@ -63,7 +63,7 @@ class ContactsFragment : Fragment() {
 
         viewModel.getContacts()
 
-        viewModel.contacts.observe(this, Observer {
+        viewModel.contacts.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 adapter.submitList(it)
                 if (binding.viewSwitcher.nextView == binding.swipeRefresh) {

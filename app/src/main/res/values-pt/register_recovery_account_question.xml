@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_count_questions">Pergunta de segurança %1$d/%2$d</string>
-    <string name="text_answer">Resposta</string>
     <string name="text_add_question">Adicionar outra pergunta</string>
     <string name="text_security_questions">Escolha uma pergunta</string>
     <string name="text_select_question">Você deve selecionar uma perguntaa</string>

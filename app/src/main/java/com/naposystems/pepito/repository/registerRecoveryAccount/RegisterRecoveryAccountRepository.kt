@@ -9,7 +9,7 @@ class RegisterRecoveryAccountRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractRegisterRecoveryAccount.Repository {
 
-    override fun getFlagRecoveryQuestions(): Int {
+    override fun getRecoveryQuestionsPref(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED)
     }
 }

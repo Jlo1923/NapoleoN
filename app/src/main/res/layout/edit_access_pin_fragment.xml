@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/normal_margin"
                     android:layout_marginBottom="@dimen/normal_margin"
-                    android:hint="@string/confirm_access_pin"
+                    android:hint="@string/text_confirm_access_pin"
                     app:errorEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/viewSwitcher"
                     app:layout_constraintEnd_toEndOf="@+id/textInputLayout_access_pin"

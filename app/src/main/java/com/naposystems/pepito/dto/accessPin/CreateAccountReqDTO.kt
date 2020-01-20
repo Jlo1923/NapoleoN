@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class CreateAccountReqDTO(
     @Json(name = "firebase_id") val firebaseId: String,
-    @Json(name = "names") val name: String,
+    @Json(name = "fullname") val fullName: String,
     @Json(name = "nick") val nickname: String,
     @Json(name = "language_iso") val languageIso: String,
     @Json(name = "password") val accessPin: String,

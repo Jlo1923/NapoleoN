@@ -20,29 +20,29 @@ class FieldsValidator {
             textInputLayout.error = null
 
             if (nickname.isEmpty()) {
-                textInputLayout.error = context.getString(R.string.nickname_required)
+                textInputLayout.error = context.getString(R.string.text_nickname_required)
                 return false
             }
 
             if (nickname.length < 5) {
-                textInputLayout.error = context.getString(R.string.at_least_five_characters)
+                textInputLayout.error = context.getString(R.string.text_nickname_not_contain_enough_char)
                 return false
             }
 
             if (textContainWitheSpaces(nickname)) {
                 textInputLayout.error =
-                    context.getString(R.string.nickname_cant_contain_white_spaces)
+                    context.getString(R.string.text_nickname_must_not_contain_space)
                 return false
             }
 
             if (textContainSpecialCharacters(nickname)) {
                 textInputLayout.error =
-                    context.getString(R.string.cant_contain_special_characters)
+                    context.getString(R.string.text_cant_contain_special_characters)
                 return false
             }
 
             if (!textContainNumber(nickname)) {
-                textInputLayout.error = context.getString(R.string.at_least_one_number)
+                textInputLayout.error = context.getString(R.string.text_nickname_contain_at_least_one_number)
                 return false
             }
 
@@ -57,13 +57,13 @@ class FieldsValidator {
 
             if (displayName.isNotEmpty()) {
                 if (displayName.length < 5) {
-                    textInputLayout.error = context.getString(R.string.at_least_five_characters)
+                    textInputLayout.error = context.getString(R.string.text_nickname_not_contain_enough_char)
                     return false
                 }
 
                 if (textContainWitheSpaces(displayName) && textContainSpecialCharacters(displayName)) {
                     textInputLayout.error =
-                        context.getString(R.string.cant_contain_special_characters)
+                        context.getString(R.string.text_cant_contain_special_characters)
                     return false
                 }
             }
@@ -78,18 +78,18 @@ class FieldsValidator {
             textInputLayout.error = null
 
             if (acessPin.isEmpty()) {
-                textInputLayout.error = context.getString(R.string.access_pin_required)
+                textInputLayout.error = context.getString(R.string.text_access_pin_required)
                 return false
             }
 
             if (acessPin.length < 4) {
-                textInputLayout.error = context.getString(R.string.access_pin_length)
+                textInputLayout.error = context.getString(R.string.text_access_pin_length)
                 return false
             }
 
             if (textContainSpecialCharacters(acessPin)) {
                 textInputLayout.error =
-                    context.getString(R.string.cant_contain_special_characters)
+                    context.getString(R.string.text_cant_contain_special_characters)
                 return false
             }
             return true
@@ -102,23 +102,23 @@ class FieldsValidator {
             textInputLayout.error = null
 
             if (confirmAccessPin.isEmpty()) {
-                textInputLayout.error = context.getString(R.string.confirm_pin_access_required)
+                textInputLayout.error = context.getString(R.string.text_confirm_pin_access_required)
                 return false
             }
 
             if (confirmAccessPin.length < 4) {
-                textInputLayout.error = context.getString(R.string.access_pin_length)
+                textInputLayout.error = context.getString(R.string.text_access_pin_length)
                 return false
             }
 
             if (textContainSpecialCharacters(confirmAccessPin)) {
                 textInputLayout.error =
-                    context.getString(R.string.cant_contain_special_characters)
+                    context.getString(R.string.text_cant_contain_special_characters)
                 return false
             }
 
             if (accessPin != confirmAccessPin) {
-                textInputLayout.error = context.getString(R.string.access_pin_not_match)
+                textInputLayout.error = context.getString(R.string.text_access_pin_not_match)
                 return false
             }
             return true

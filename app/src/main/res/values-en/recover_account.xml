@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="text_recovery_account_false">You have no registered information for account recovery.</string>
-    <string name="text_recovery_account_ok">You have already registered information for account recovery, editing will discard previous information.</string>
-    <string name="text_register">Register</string>
-</resources>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="enter_code">Code eingeben</string>
-    <string name="didnt_receive_code">Ich habe den Code nicht erhalten</string>
-    <string name="code_does_not_match">Der Code stimmt nicht überein. Versuchen Sie es erneut</string>
-    <string name="number_of_attempts">Anzahl der Versuche: %1$d/%2$d</string>
-    <string name="invalid_code">Ungültiger code</string>
-    <plurals name="new_attempt_in_x_seconds">
+    <string name="text_insert_code">Code eingeben</string>
+    <string name="text_dont_receive_code">Ich habe den Code nicht erhalten</string>
+    <string name="text_message_code_fail">Der Code stimmt nicht überein. Versuchen Sie es erneut</string>
+    <string name="text_number_attempts">Anzahl der Versuche: %1$d/%2$d</string>
+    <string name="text_invalid_code">Ungültiger code</string>
+    <plurals name="text_new_attempt_in_x_seconds">
         <item quantity="one">Neuer Versuch in: %d Sekunde</item>
         <item quantity="other">Neuer Versuch in: %d Sekunden</item>
     </plurals>

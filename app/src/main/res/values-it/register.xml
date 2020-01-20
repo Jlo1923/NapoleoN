@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="label_fill_form_to_create_account">Se vuoi creare un nuovo utente compila il seguente modulo</string>
-    <string name="hint_required_nickname">Soprannome*</string>
-    <string name="display_name">Nome visualizzato</string>
-    <string name="label_terms">Facendo clic su Registrazione, si accetta il</string>
-    <string name="label_terms_and_conditions">termini, condizioni e politiche sulla privacy.</string>
-    <string name="nickname_required">Il soprannome è obbligatorio.</string>
-    <string name="at_least_five_characters">Almeno 5 caratteri</string>
-    <string name="nickname_cant_contain_white_spaces">Non può contenere spazi vuoti</string>
-    <string name="cant_contain_special_characters">Non può contenere caratteri speciali</string>
-    <string name="at_least_one_number">Deve contenere almeno un numero</string>
-    <string name="recovery_password">Contraseña de recuperación</string>
+    <string name="text_nickname">Soprannome*</string>
+    <string name="text_display_name">Nome visualizzato</string>
+    <string name="text_terms_and_conditions_line_one">Facendo clic su Registrazione, si accetta il</string>
+    <string name="text_terms_and_conditions_line_two">termini, condizioni e politiche sulla privacy.</string>
+    <string name="text_nickname_required">Il soprannome è obbligatorio.</string>
+    <string name="text_nickname_not_contain_enough_char">Il nickname deve contenere almeno 5 caratteri</string>
+    <string name="text_nickname_must_not_contain_space">Non può contenere spazi vuoti</string>
+    <string name="text_cant_contain_special_characters">Non può contenere caratteri speciali</string>
+    <string name="text_nickname_contain_at_least_one_number">Deve contenere almeno un numero</string>
 </resources>

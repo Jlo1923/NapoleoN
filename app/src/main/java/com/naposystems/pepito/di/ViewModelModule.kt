@@ -5,13 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
-import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
+import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.conversation.ConversationViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
+import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
+import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
 import com.naposystems.pepito.ui.register.accessPin.AccessPinViewModel
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeViewModel
 import com.naposystems.pepito.ui.register.sendCode.SendCodeViewModel
@@ -20,6 +22,7 @@ import com.naposystems.pepito.ui.registerRecoveryAccount.RegisterRecoveryAccount
 import com.naposystems.pepito.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionViewModel
 import com.naposystems.pepito.ui.securitySettings.SecuritySettingsViewModel
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
+import com.naposystems.pepito.ui.splash.SplashViewModel
 import com.naposystems.pepito.ui.status.StatusViewModel
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewModel
@@ -54,6 +57,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ValidateNicknameViewModel::class)
     internal abstract fun bindValidateNicknameViewModel(viewModel: ValidateNicknameViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SplashViewModel::class)
+    internal abstract fun binSplashViewModel(viewModel: SplashViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -139,4 +147,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(RegisterRecoveryAccountQuestionViewModel::class)
     internal abstract fun bindRegisterRecoveryAccountQuestionViewModel(viewModel: RegisterRecoveryAccountQuestionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecoveryAccountViewModel::class)
+    internal abstract fun binRecoveryAccountViewModel(viewModel: RecoveryAccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecoveryAccountQuestionsViewModel::class)
+    internal abstract fun binRecoveryAccountQuestionsViewModel(viewModel: RecoveryAccountQuestionsViewModel): ViewModel
 }

@@ -85,7 +85,8 @@ class ValidateNicknameFragment : Fragment() {
                         ValidateNicknameFragmentDirections
                             .actionRegisterFragmentToAccessPinFragment(
                                 viewModel.nickName.value!!,
-                                viewModel.displayName.value!!
+                                viewModel.displayName.value!!,
+                                false
                             )
                     )
             }
@@ -116,7 +117,7 @@ class ValidateNicknameFragment : Fragment() {
                     itsNicknameAvailable = false
                     binding.buttonNext.isEnabled = false
                     resetDrawableTextInput(binding.textInputEditTextNickname)
-                    binding.textInputLayoutNickname.error = getString(R.string.nickname_unavailable)
+                    binding.textInputLayoutNickname.error = getString(R.string.text_nickname_unavailable)
                 }
             }
         })
