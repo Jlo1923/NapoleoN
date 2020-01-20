@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="text_thirty_seconds">30 segundos</string>
     <string name="text_one_minute">1 minuto</string>
+    <string name="text_two_minutes">2 minutos</string>
     <string name="text_five_minutes">5 minutos</string>
-    <string name="text_fifteen_minutes">15 minutos</string>
-    <string name="text_never">Nunca</string>
+    <string name="text_immediately">Inmediatamente</string>
     <string name="text_desc_pin_locked_time">Se solicita el pin de acceso despues de transcurrido el tiempo seleccionado, despues de bloquear la app.</string>
+    <string name="text_ten_seconds">10 Segundos</string>
 </resources>

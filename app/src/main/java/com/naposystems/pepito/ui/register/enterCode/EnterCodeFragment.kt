@@ -64,7 +64,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
 
         viewModel.attempts.observe(viewLifecycleOwner, Observer {
             binding.textViewAttempts.apply {
-                text = resources.getString(R.string.number_of_attempts, it, MAX_ATTEMPTS)
+                text = resources.getString(R.string.text_number_attempts, it, MAX_ATTEMPTS)
                 visibility = if (it >= 1) View.VISIBLE else View.GONE
             }
             if (it == MAX_ATTEMPTS) {
@@ -171,7 +171,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
 
     private fun timerToEnableWidgets() {
         binding.textViewNewAttemptIn.text = resources.getQuantityString(
-            R.plurals.new_attempt_in_x_seconds,
+            R.plurals.text_new_attempt_in_x_seconds,
             NEW_ATTEMPT_IN.toInt(),
             NEW_ATTEMPT_IN
         )
@@ -189,7 +189,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
                     val untilFinished: Int = (millisUntilFinished / 1000).toInt() + 1
 
                     binding.textViewNewAttemptIn.text = resources.getQuantityString(
-                        R.plurals.new_attempt_in_x_seconds,
+                        R.plurals.text_new_attempt_in_x_seconds,
                         untilFinished,
                         untilFinished
                     )

@@ -13,14 +13,16 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AndroidSupportInjectionModule::class, ApplicationModule::class, ViewModelModule::class,
-        FragmentBindingModule::class, ActivityBindingModule::class, SendCodeModule::class,
-        EnterCodeModule::class, LanguageSelectionModule::class, ValidateNicknameModule::class,
-        CreateAccountModule::class, ProfileModule::class, StatusModule::class,
-        BlockedContactsModule::class, AppearanceSettingsModule::class, ColorSchemeModule::class,
-        UserDisplayFormatModule::class, SelfDestructTime::class, SecuritySettingsModule::class,
-        EditAccessPinModule::class, TimeAccessPin::class, ContactsModule::class,
-        ContactUsModule::class, ConversationModule::class, RegisterRecoveryAccountModule::class,
-        RegisterRecoveryAccountQuestionModule::class, RoomModule::class]
+        FragmentBindingModule::class, ActivityBindingModule::class, SplashModule::class,
+        SendCodeModule::class, EnterCodeModule::class, LanguageSelectionModule::class,
+        ValidateNicknameModule::class, CreateAccountModule::class, ProfileModule::class,
+        StatusModule::class, BlockedContactsModule::class, AppearanceSettingsModule::class,
+        ColorSchemeModule::class, UserDisplayFormatModule::class, SelfDestructTime::class,
+        SecuritySettingsModule::class, EditAccessPinModule::class, TimeAccessPin::class,
+        ContactsModule::class, ContactUsModule::class, ConversationModule::class,
+        RegisterRecoveryAccountModule::class, RecoveryAccountModule::class,
+        RecoveryAccountQuestionsModule::class, RegisterRecoveryAccountQuestionModule::class,
+        RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="access_pin">Broche d\'accès</string>
-    <string name="confirm_access_pin">Confirmer la broche d\'accès</string>
-    <string name="access_pin_required">Le code d\'accès ne peut pas être vide</string>
-    <string name="confirm_pin_access_required">Vous devez confirmer le code d\'accès</string>
-    <string name="access_pin_not_match">La broche d\'accès ne correspond pas</string>
-    <string name="access_pin_length">Au moins 4 caractères</string>
+    <string name="text_access_pin">Broche d\'accès</string>
+    <string name="text_confirm_access_pin">Confirmer la broche d\'accès</string>
+    <string name="text_access_pin_required">Le code d\'accès ne peut pas être vide</string>
+    <string name="text_confirm_pin_access_required">Vous devez confirmer le code d\'accès</string>
+    <string name="text_access_pin_not_match">La broche d\'accès ne correspond pas</string>
+    <string name="text_access_pin_length">La broche d\'accès doit contenir 4 chiffres</string>
 </resources>

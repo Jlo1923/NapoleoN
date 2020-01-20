@@ -204,7 +204,7 @@ class ConversationViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Timber.d(e)
-                val error = context.getString(R.string.something_went_wrong)
+                val error = context.getString(R.string.text_fail)
                 _webServiceError.value = arrayListOf(error)
             }
         }

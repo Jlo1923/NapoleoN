@@ -7,24 +7,25 @@ object Constants {
     object NapoleonApi {
         const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
         const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
-        //        const val BASE_URL =
-//            "http://nn-backend-secret-chatlb-1192195645.us-west-2.elb.amazonaws.com/api/"
         const val GENERATE_CODE = "auth/sendverificationcode"
         const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
         const val CREATE_ACCOUNT = "users"
-        const val UPDATE_USER_INFO = "users/update"
+        const val UPDATE_USER_INFO = "users/updateinfo"
         const val SEND_PQRS = "pqrs"
         const val FRIEND_SHIP_SEARCH = "friendship/search/{state}"
         const val SEND_MESSAGE = "messages"
         const val GET_MESSAGES = "messages/getmessagesbyfriendship/{contact_id}"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
+        const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
+        const val SEND_ANSWERS = "inforecovery/validateanswers"
     }
 
     enum class AccountStatus constructor(val id: Int) {
         CODE_VALIDATED(1),
-        ACCOUNT_CREATED(2)
+        ACCOUNT_CREATED(2),
+        ACCOUNT_RECOVERED(3)
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
@@ -48,11 +49,12 @@ object Constants {
     }
 
     enum class TimeRequestAccessPin constructor(val time: Int) {
-        THIRTY_SECONDS(1),
-        ONE_MINUTE(2),
-        FIVE_MINUTES(3),
-        FIFTEEN_MINUTES(4),
-        NEVER(5)
+        TEN_SECONDS(1),
+        THIRTY_SECONDS(2),
+        ONE_MINUTE(3),
+        TWO_MINUTES(4),
+        FIVE_MINUTES(5),
+        IMMEDIATELY(6)
     }
 
     enum class AllowDownloadAttachments constructor(val option: Int) {
@@ -60,9 +62,13 @@ object Constants {
         NO(2)
     }
 
-    enum class RecoveryQuestionsSaved constructor(val option: Int) {
-        YES(1),
-        NO(2)
+    enum class RecoveryQuestionsSaved constructor(val id: Int) {
+        SAVED_QUESTIONS(1)
+    }
+
+    enum class TypeDialog constructor(val option: Int) {
+        ALERT(1),
+        INFO(2)
     }
 
     enum class FriendShipState constructor(val state: String) {

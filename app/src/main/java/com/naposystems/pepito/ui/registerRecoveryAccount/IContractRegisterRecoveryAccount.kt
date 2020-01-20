@@ -4,10 +4,10 @@ import retrofit2.Response
 
 interface IContractRegisterRecoveryAccount {
     interface ViewModel {
-        fun getFlagRecoveryQuestions()
+        fun getRecoveryQuestionsPref()
     }
 
     interface Repository {
-        fun getFlagRecoveryQuestions(): Int
+        fun getRecoveryQuestionsPref(): Int
     }
 }

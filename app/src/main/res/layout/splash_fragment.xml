@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/small_margin"
         android:paddingBottom="@dimen/x_small_padding"
-        android:text="@string/power_by"
+        android:text="@string/text_power_by"
         app:layout_constraintBottom_toBottomOf="@id/imageView_logo_horizontal"
         app:layout_constraintEnd_toStartOf="@+id/imageView_logo_horizontal"
         app:layout_constraintHorizontal_chainStyle="packed"

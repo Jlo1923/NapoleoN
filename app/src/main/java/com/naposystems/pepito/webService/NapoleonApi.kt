@@ -12,6 +12,10 @@ import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
+import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountReqDTO
+import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountResDTO
+import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountQuestionsReqDTO
+import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountQuestionsResDTO
 import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
 import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeReqDTO
@@ -24,6 +28,8 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_MESSAGES
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_USER_INFO
@@ -69,4 +75,10 @@ interface NapoleonApi {
 
     @GET(GET_MESSAGES)
     suspend fun getMessages(@Path("contact_id") contactId: Int): Response<List<ConversationResDTO>>
+
+    @GET(GET_RECOVERY_QUESTIONS)
+    suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<List<RecoveryAccountResDTO>>
+
+    @POST(SEND_ANSWERS)
+    suspend fun sendAnswers(@Body recoveryAccountQuestionsReqDTO: RecoveryAccountQuestionsReqDTO): Response<RecoveryAccountQuestionsResDTO>
 }

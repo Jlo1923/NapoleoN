@@ -51,6 +51,7 @@ captures/
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
+.idea/*
 NapoleoN.iml
 # Android Studio 3 in .gitignore file.
 .idea/caches

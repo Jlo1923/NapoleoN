@@ -164,7 +164,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
      */
     private fun createTextViewError(context: Context) {
         textViewError.apply {
-            text = context.getString(R.string.code_does_not_match)
+            text = context.getString(R.string.text_message_code_fail)
             textAlignment = View.TEXT_ALIGNMENT_CENTER
             visibility = View.GONE
         }

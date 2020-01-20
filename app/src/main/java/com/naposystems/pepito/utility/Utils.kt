@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
+import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
 import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.roundToInt
@@ -131,6 +132,21 @@ class Utils {
         fun base64ToBitmap(b64: String): Bitmap {
             val imageAsBytes = Base64.decode(b64.toByteArray(), Base64.DEFAULT)
             return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.size)
+        }
+
+        fun generalDialog(
+            title: String,
+            message: String,
+            childFragmentManager: FragmentManager,
+            actionAccept: () -> Unit
+        ) {
+            val dialog = GeneralDialogFragment.newInstance(title, message)
+            dialog.setListener(object : GeneralDialogFragment.OnGeneralDialog {
+                override fun onAccept() {
+                    actionAccept()
+                }
+            })
+            dialog.show(childFragmentManager, "GeneralDialog")
         }
     }
 }

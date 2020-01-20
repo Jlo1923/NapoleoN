@@ -22,13 +22,13 @@
             android:paddingTop="@dimen/normal_padding"
             android:paddingEnd="@dimen/large_padding"
             android:paddingBottom="@dimen/normal_padding"
-            android:text="Title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Título"/>
 
         <TextView
-            android:id="@+id/textView_info"
+            android:id="@+id/textView_message"
             style="@style/SmallBodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -38,7 +38,8 @@
             android:text="Description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_title" />
+            app:layout_constraintTop_toBottomOf="@id/textView_title"
+            tools:text="Descripción"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_accept"
@@ -49,7 +50,7 @@
             android:layout_marginEnd="@dimen/small_margin"
             android:text="@string/text_accept"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_info" />
+            app:layout_constraintTop_toBottomOf="@id/textView_message" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_cancel"
@@ -58,6 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
             android:text="@string/text_cancel"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/button_accept"
             app:layout_constraintTop_toTopOf="@id/button_accept" />
 

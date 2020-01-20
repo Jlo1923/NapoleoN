@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
@@ -18,7 +17,6 @@ import com.naposystems.pepito.databinding.StatusFragmentBinding
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.status.adapter.StatusAdapter
-import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
@@ -98,7 +96,7 @@ class StatusFragment : Fragment() {
 
         viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                val message = getString(R.string.error_getting_local_status)
+                val message = getString(R.string.text_error_getting_local_status)
 
                 Utils.showSimpleSnackbar(binding.coordinator, message, 3)
             }

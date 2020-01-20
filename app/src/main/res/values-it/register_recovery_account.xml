@@ -2,5 +2,4 @@
 <resources>
     <string name="text_recovery_account_false">Non hai informazioni registrate per il recupero dell\'account.</string>
     <string name="text_recovery_account_ok">Hai già registrato informazioni per il recupero dell\'account, la modifica eliminerà le informazioni precedenti.</string>
-    <string name="text_register">Record</string>
 </resources>

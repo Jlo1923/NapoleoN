@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_color_scheme">Combinación de colores</string>
-    <string name="text_user_display_format">Formato de visualización de usuario</string>
-    <string name="text_language">Lenguaje</string>
+    <string name="text_user_display_format">Formato de nombre de usuario</string>
+    <string name="text_language">Idioma</string>
     <string name="text_light_theme">Tema claro</string>
     <string name="text_dark_theme">Tema oscuro</string>
     <string name="text_name_and_nickname">Nombre y apodo</string>

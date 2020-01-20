@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="label_fill_form_to_create_account">If you want create a new user complete the following form</string>
-    <string name="hint_required_nickname">Nickname*</string>
-    <string name="display_name">Display name</string>
-    <string name="label_terms">By clicking on Register, you accept the</string>
-    <string name="label_terms_and_conditions">terms, conditions and privacy policies.</string>
-    <string name="nickname_required">Nickname is required</string>
-    <string name="at_least_five_characters">At least 5 characters</string>
-    <string name="nickname_cant_contain_white_spaces">Cannot contain blank spaces</string>
-    <string name="cant_contain_special_characters">Cannot contain special characters</string>
-    <string name="at_least_one_number">It must contain at least one number</string>
-    <string name="recovery_password">Contraseña de recuperación</string>
+    <string name="text_nickname">Nickname*</string>
+    <string name="text_display_name">Display name</string>
+    <string name="text_terms_and_conditions_line_one">By clicking on Register, you accept the</string>
+    <string name="text_terms_and_conditions_line_two">terms, conditions and privacy policies.</string>
+    <string name="text_nickname_required">Nickname is required</string>
+    <string name="text_nickname_not_contain_enough_char">The nickname must contain a minimum of 5 characters</string>
+    <string name="text_nickname_must_not_contain_space">Cannot contain blank spaces</string>
+    <string name="text_cant_contain_special_characters">Cannot contain special characters</string>
+    <string name="text_nickname_contain_at_least_one_number">It must contain at least one number</string>
 </resources>
