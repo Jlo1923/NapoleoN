@@ -40,20 +40,26 @@ fun bindTimeRequestAccessPin(textView: TextView, time: Int) {
     val context = textView.context
 
     val newTime = when (time) {
+        Constants.TimeRequestAccessPin.IMMEDIATELY.time ->
+            context.getString(R.string.text_immediately)
+
         Constants.TimeRequestAccessPin.TEN_SECONDS.time ->
             context.getString(R.string.text_ten_seconds)
 
         Constants.TimeRequestAccessPin.ONE_MINUTE.time ->
             context.getString(R.string.text_one_minute)
 
-        Constants.TimeRequestAccessPin.TWO_MINUTES.time ->
-            context.getString(R.string.text_two_minutes)
-
         Constants.TimeRequestAccessPin.FIVE_MINUTES.time ->
             context.getString(R.string.text_five_minutes)
 
-            Constants.TimeRequestAccessPin.IMMEDIATELY.time ->
-            context.getString(R.string.text_immediately)
+        Constants.TimeRequestAccessPin.ONE_HOUR.time ->
+            context.getString(R.string.text_one_hour)
+
+        Constants.TimeRequestAccessPin.ONE_DAY.time ->
+            context.getString(R.string.text_one_day)
+
+        Constants.TimeRequestAccessPin.NEVER.time ->
+            context.getString(R.string.text_never)
 
         else -> context.getString(R.string.text_thirty_seconds)
     }

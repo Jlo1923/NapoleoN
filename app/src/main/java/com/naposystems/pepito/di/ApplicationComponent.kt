@@ -18,10 +18,11 @@ import javax.inject.Singleton
         ValidateNicknameModule::class, CreateAccountModule::class, ProfileModule::class,
         StatusModule::class, BlockedContactsModule::class, AppearanceSettingsModule::class,
         ColorSchemeModule::class, UserDisplayFormatModule::class, SelfDestructTime::class,
-        SecuritySettingsModule::class, EditAccessPinModule::class, TimeAccessPin::class,
+        SecuritySettingsModule::class, EditAccessPinModule::class, TimeAccessPinModule::class,
         ContactsModule::class, ContactUsModule::class, ConversationModule::class,
         RegisterRecoveryAccountModule::class, RecoveryAccountModule::class,
         RecoveryAccountQuestionsModule::class, RegisterRecoveryAccountQuestionModule::class,
+        ActivateBiometricsModule::class, EnterPinModule::class, UnlockAppTimeModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {

@@ -7,4 +7,5 @@
     <string name="text_time_to_request_access_pin">Hora da solicitação do pino de acesso</string>
     <string name="text_account_recovery_information">Informações de recuperação de conta</string>
     <string name="text_allow_download_attachments">Permitir anexos de download enviados</string>
+    <string name="text_unlock_options">Opciones de desbloqueo</string>
 </resources>

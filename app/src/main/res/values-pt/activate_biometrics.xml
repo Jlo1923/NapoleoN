@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_biometrics_description">Você pode escolher os métodos de desbloqueio para o aplicativo. O PIN sempre será indispensável e você não poderá removê-lo das opções solicitadas.</string>
+    <string name="text_only_pin">PIN</string>
+    <string name="text_pin_and_fingerprint">Pin + impressão digital</string>
+    <string name="text_pin_and_unlock_facial">PIN + Desbloqueio facial</string>
+</resources>

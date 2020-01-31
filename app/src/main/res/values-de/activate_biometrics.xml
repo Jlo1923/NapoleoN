@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_biometrics_description">Sie können die Entsperrungsmethoden für die Anwendung auswählen. Der Pin ist immer unverzichtbar und kann nicht aus den angeforderten Optionen entfernt werden.</string>
+    <string name="text_only_pin">Stift</string>
+    <string name="text_pin_and_fingerprint">PIN + Fingerabdruck</string>
+    <string name="text_pin_and_unlock_facial">PIN + Face entsperren</string>
+</resources>

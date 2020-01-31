@@ -7,6 +7,7 @@ interface IContractSecuritySettings {
         fun getTimeRequestAccessPin()
         fun getAllowDownload()
         fun updateAllowDownload(state: Boolean)
+        fun getBiometricsOption()
     }
 
     interface Repository {
@@ -14,5 +15,6 @@ interface IContractSecuritySettings {
         fun getTimeRequestAccessPin(): Int
         fun getAllowDownload(): Int
         fun updateAllowDownload(state: Int)
+        fun getBiometricsOption(): Int
     }
 }

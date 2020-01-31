@@ -7,12 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
+import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -43,16 +46,9 @@ class SecuritySettingsFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
+        //region GENERAL
         binding.optionMessageSelfDestruct.setOnClickListener(optionMessageClickListener())
         binding.imageButtonMessageOptionEndIcon.setOnClickListener(optionMessageClickListener())
-
-        binding.optionEditAccessPin.setOnClickListener(optionEditAccessPinClickListener())
-        binding.imageButtonEditAccessPinOptionEndIcon.setOnClickListener(
-            optionEditAccessPinClickListener()
-        )
-
-        binding.optionTimeRequestAccessPin.setOnClickListener(optionTimeAccessPinClickListener())
-        binding.imageButtonTimeOptionEndIcon.setOnClickListener(optionTimeAccessPinClickListener())
 
         binding.optionAllowDownload.setOnClickListener {
             binding.switchAllowDownload.isChecked = !binding.switchAllowDownload.isChecked
@@ -61,12 +57,28 @@ class SecuritySettingsFragment : Fragment() {
             viewModel.updateAllowDownload(isChecked)
         }
 
+        //endregion
+
+        //region SECURITY
+        binding.optionEditAccessPin.setOnClickListener(optionEditAccessPinClickListener())
+        binding.imageButtonEditAccessPinOptionEndIcon.setOnClickListener(
+            optionEditAccessPinClickListener()
+        )
+
+        binding.optionBiometrics.setOnClickListener(optionBiometrictsClickListener())
+        binding.imageButtonBiometricsEndIcon.setOnClickListener(optionBiometrictsClickListener())
+
+        binding.optionTimeRequestAccessPin.setOnClickListener(optionTimeAccessPinClickListener())
+        binding.imageButtonTimeOptionEndIcon.setOnClickListener(optionTimeAccessPinClickListener())
+
         binding.optionAccountRecoveryInformation.setOnClickListener(
             optionRegisterRecoveryAccountClickListener()
         )
         binding.imageButtonAccountRecoveryOptionEndIcon.setOnClickListener(
             optionRegisterRecoveryAccountClickListener()
         )
+
+        //endregion
 
         return binding.root
     }
@@ -81,6 +93,13 @@ class SecuritySettingsFragment : Fragment() {
         viewModel.getSelfDestructTime()
         viewModel.getTimeRequestAccessPin()
         viewModel.getAllowDownload()
+        viewModel.getBiometricsOption()
+
+        viewModel.biometricsOption.observe(viewLifecycleOwner, Observer {
+            if (it == Constants.Biometrics.BIOMETRICS_NOT_FOUND.option) {
+                binding.optionBiometrics.visibility = View.GONE
+            }
+        })
     }
 
     private fun optionMessageClickListener() = View.OnClickListener {
@@ -98,6 +117,11 @@ class SecuritySettingsFragment : Fragment() {
             SecuritySettingsFragmentDirections
                 .actionSecuritySettingsFragmentToEditAccessPinFragment()
         )
+    }
+
+    private fun optionBiometrictsClickListener() = View.OnClickListener {
+        val biometricsDialog = ActivateBiometricsDialogFragment()
+        biometricsDialog.show(childFragmentManager, "BiometricsSelection")
     }
 
     private fun optionTimeAccessPinClickListener() = View.OnClickListener {

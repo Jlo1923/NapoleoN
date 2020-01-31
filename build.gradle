@@ -18,6 +18,7 @@ buildscript {
         rxkotlin_version = "2.4.0"
         rxandroid_version = "2.1.1"
         paging_version = "2.1.1"
+        biometric_version = "1.0.1"
     }
 
     repositories {
