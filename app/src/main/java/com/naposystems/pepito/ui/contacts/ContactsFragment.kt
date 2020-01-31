@@ -105,16 +105,16 @@ class ContactsFragment : Fragment() {
 
                 popup.setOnMenuItemClickListener {
                     when (it.itemId) {
-                        R.id.start_chat -> ContactsFragment().showToast(
+                        R.id.start_chat -> showToast(
                             context!!, "Iniciar chat"
                         )
-                        R.id.see_profile -> ContactsFragment().showToast(
+                        R.id.see_profile -> showToast(
                             context!!, "Ver perfil"
                         )
-                        R.id.block_contact -> ContactsFragment().showToast(
+                        R.id.block_contact -> showToast(
                             context!!, "Bloquear contacto"
                         )
-                        R.id.delete_contact -> ContactsFragment().showToast(
+                        R.id.delete_contact -> showToast(
                             context!!, "Eliminar contacto"
                         )
                     }
@@ -129,4 +129,8 @@ class ContactsFragment : Fragment() {
         binding.recyclerViewContacts.adapter = adapter
     }
 
+}
+
+fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
