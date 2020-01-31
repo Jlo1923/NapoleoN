@@ -11,15 +11,24 @@ object Constants {
         const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
         const val CREATE_ACCOUNT = "users"
-        const val UPDATE_USER_INFO = "users/updateinfo"
+        const val UPDATE_USER_INFO = "users/update"
         const val SEND_PQRS = "pqrs"
         const val FRIEND_SHIP_SEARCH = "friendship/search/{state}"
+        const val FRIEND_SHIP_SEARCH_BY_DATE = "friendship/search/{state}"
         const val SEND_MESSAGE = "messages"
-        const val GET_MESSAGES = "messages/getmessagesbyfriendship/{contact_id}"
+        const val GET_MY_MESSAGES = "messages/getmymessages"
+        const val VERIFY_MESSAGES_RECEIVED = "messages/verifymessagesreceived"
+        const val VERIFY_MESSAGES_READ = "messages/verifymessagesreaded"
+        const val SEND_MESSAGES_READ = "messages/sendmessagesreaded"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
         const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
         const val SEND_ANSWERS = "inforecovery/validateanswers"
+        const val SEARCH_USER = "users/search/{nick}"
+        const val SEND_FRIENDSHIP_REQUEST = "friendshiprequest"
+        const val GET_FRIENDSHIP_REQUESTS = "friendshiprequest"
+        const val PUT_FRIENDSHIP_REQUEST = "friendshiprequest/{id}"
+        const val GET_FRIENDSHIP_REQUEST_QUANTITY = "friendshiprequest/countfriendshiprequest"
     }
 
     enum class AccountStatus constructor(val id: Int) {
@@ -81,13 +90,35 @@ object Constants {
         NO(0)
     }
 
-    enum class ConversationAttachmentType(val type: String) {
+    enum class AttachmentType(val type: String) {
         IMAGE("image"),
         AUDIO("audio"),
         VIDEO("video"),
         WORD("word"),
         EXCEL("excel"),
         PDF("pdf")
+    }
+
+    enum class FriendShipRequestType(val type: Int) {
+        TITLE(0),
+        FRIENDSHIP_REQUEST_RECEIVED(1),
+        FRIENDSHIP_REQUEST_OFFER(2)
+    }
+
+    enum class FriendshipRequestPutAction(val action: String) {
+        ACCEPT("accepted"),
+        REFUSE("rejected"),
+        CANCEL("cancel")
+    }
+
+    enum class NotificationType(val type: Int) {
+        NEW_FRIENDSHIP_REQUEST(2)
+    }
+
+    enum class MessageStatus(val status: Int) {
+        SENT(1),
+        UNREAD(2),
+        READED(3)
     }
 
     object SharedPreferences {
@@ -102,6 +133,7 @@ object Constants {
         const val PREF_ALLOW_DOWNLOAD_ATTACHMENTS = "allow_download_attachments"
         const val PREF_SOCKET_ID = "socket_id"
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
+        const val PREF_CONTACTS_UPDATE_DATE = "contacts_update_date"
     }
 
     object RegularExpressions {

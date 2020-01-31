@@ -25,4 +25,7 @@
     <string name="text_location">Emplacement</string>
     <string name="text_audio">Audio</string>
     <string name="text_document">Document</string>
+    <string name="text_add">Ajouter</string>
+    <string name="text_sent">Envoyé</string>
+    <string name="text_refuse">Refuser</string>
 </resources>

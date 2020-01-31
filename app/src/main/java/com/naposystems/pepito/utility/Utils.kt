@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.roundToInt
 import android.graphics.BitmapFactory
+import android.view.View
 
 
 class Utils {
@@ -36,14 +37,14 @@ class Utils {
             inputMethodManager.showSoftInput(textInput, SHOW_IMPLICIT)
         }
 
-        fun hideKeyboard(textInput: TextInputEditText) {
+        fun hideKeyboard(view: View) {
 
-            val context = textInput.context
+            val context = view.context
 
             val inputManager: InputMethodManager =
                 context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputManager.hideSoftInputFromWindow(
-                textInput.windowToken,
+                view.windowToken,
                 InputMethodManager.SHOW_FORCED
             )
         }

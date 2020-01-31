@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -18,6 +19,7 @@ import com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
+
 
 class ContactsFragment : Fragment() {
 
@@ -64,8 +66,8 @@ class ContactsFragment : Fragment() {
         viewModel.getContacts()
 
         viewModel.contacts.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
             if (it.isNotEmpty()) {
-                adapter.submitList(it)
                 if (binding.viewSwitcher.nextView == binding.swipeRefresh) {
                     binding.viewSwitcher.showNext()
                 }
@@ -97,8 +99,30 @@ class ContactsFragment : Fragment() {
                 )
             }
 
-            override fun onMoreClick(item: Contact) {
-                Toast.makeText(context!!, "Has presionado more", Toast.LENGTH_SHORT).show()
+            override fun onMoreClick(item: Contact, view: View) {
+                val popup = PopupMenu(context!!, view)
+                popup.menuInflater.inflate(R.menu.menu_popup_contact, popup.menu)
+
+                popup.setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.start_chat -> ContactsFragment().showToast(
+                            context!!, "Iniciar chat"
+                        )
+                        R.id.see_profile -> ContactsFragment().showToast(
+                            context!!, "Ver perfil"
+                        )
+                        R.id.block_contact -> ContactsFragment().showToast(
+                            context!!, "Bloquear contacto"
+                        )
+                        R.id.delete_contact -> ContactsFragment().showToast(
+                            context!!, "Eliminar contacto"
+                        )
+                    }
+
+                    true
+                }
+
+                popup.show()
             }
         })
 

@@ -23,17 +23,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?android:attr/actionBarSize"
-                    android:background="@color/colorPrimary"
+                <FrameLayout
+                    android:id="@+id/frameLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:elevation="@dimen/elevation"
+                    android:outlineProvider="bounds"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:title="@string/app_name"
-                    app:titleTextColor="@color/white" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?android:attr/actionBarSize"
+                        android:background="@color/colorPrimary"
+                        android:elevation="@dimen/elevation"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:title="@string/app_name"
+                        app:titleTextColor="@color/white" />
+
+                    <com.naposystems.pepito.ui.custom.SearchView
+                        android:id="@+id/searchView"
+                        android:layout_width="match_parent"
+                        android:layout_height="?android:attr/actionBarSize"
+                        android:elevation="5dp"
+                        app:characterCount="4"
+                        app:hint="@string/app_name" />
+
+                </FrameLayout>
 
                 <fragment
                     android:id="@+id/nav_host_fragment"
@@ -44,7 +65,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/toolbar"
+                    app:layout_constraintTop_toBottomOf="@id/frameLayout"
                     app:navGraph="@navigation/nav_graph"
                     tools:context=".ui.mainActivity.MainActivity" />
 

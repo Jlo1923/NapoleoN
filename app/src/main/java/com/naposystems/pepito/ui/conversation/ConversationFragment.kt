@@ -31,8 +31,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
-import com.naposystems.pepito.reactive.RxBus
-import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
@@ -43,8 +41,6 @@ import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import java.io.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -75,7 +71,6 @@ class ConversationFragment : Fragment() {
     private lateinit var fileName: String
     private lateinit var compressFileName: String
     private val args: ConversationFragmentArgs by navArgs()
-    private val disposable: CompositeDisposable = CompositeDisposable()
     private var isEditTextFilled: Boolean = false
     private val subFolder by lazy {
         "conversations/${viewModel.getUser().id}_${args.contact.id}"
@@ -107,22 +102,10 @@ class ConversationFragment : Fragment() {
             binding.textViewUserStatus.isSelected = true
         }, TimeUnit.SECONDS.toMillis(2))
 
-        val disposableNewMessageReceived = RxBus.listen(RxEvent.NewMessageReceivedEvent::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                val jsonObjectData = it.jsonObject.getJSONObject("data")
-
-                val contactId = jsonObjectData.getInt("contact_id")
-
-                viewModel.getRemoteMessages(it.channelName, contactId)
-            }
-
-        disposable.add(disposableNewMessageReceived)
-
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
 
             if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
-                viewModel.saveConversationLocally(
+                viewModel.saveMessageLocally(
                     binding.inputPanel.getEditTex().text.toString(),
                     "",
                     args.contact,
@@ -189,7 +172,7 @@ class ConversationFragment : Fragment() {
             if (it.isNotEmpty()) {
                 val base64 = Utils.bitmapToBase64(file)
 
-                viewModel.saveConversationWithAttachmentLocally(
+                viewModel.saveMessageWithAttachmentLocally(
                     it,
                     "",
                     args.contact,
@@ -201,6 +184,7 @@ class ConversationFragment : Fragment() {
                 with(binding.inputPanel.getEditTex()) {
                     setText("")
                 }
+                shareViewModel.resetMessage()
             }
         })
     }
@@ -210,11 +194,9 @@ class ConversationFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ConversationViewModel::class.java)
 
-        viewModel.subscribeToChannel(args.contact)
+        viewModel.setContact(args.contact)
 
         viewModel.getLocalMessages()
-
-        viewModel.getRemoteMessages(viewModel.channelName.value!!, args.contact.id)
 
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -223,9 +205,11 @@ class ConversationFragment : Fragment() {
             }
         })
 
-        viewModel.conversationMessages.observe(viewLifecycleOwner, Observer { conversationList ->
+        viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
 
             if (conversationList.isNotEmpty()) {
+
+                viewModel.sendMessagesRead()
 
                 /*val mutableList: MutableList<Conversation> = ArrayList()
 
@@ -281,13 +265,6 @@ class ConversationFragment : Fragment() {
         inflater.inflate(R.menu.menu_conversation, menu)
     }
 
-    override fun onDestroy() {
-        disposable.clear()
-        disposable.dispose()
-        viewModel.unSubscribeToChannel(args.contact)
-        super.onDestroy()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
@@ -330,7 +307,7 @@ class ConversationFragment : Fragment() {
 
     private fun setupAdapter() {
         adapter = ConversationAdapter(ConversationAdapter.ConversationClickListener {
-            Toast.makeText(context!!, it.conversation.body, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context!!, it.message.body, Toast.LENGTH_SHORT).show()
         })
 
         layoutManager = LinearLayoutManager(context!!)

@@ -1,0 +1,90 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:name="vector"
+            android:width="24dp"
+            android:height="24dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+            <group
+                android:name="group_add"
+                android:pivotX="12"
+                android:pivotY="12">
+                <path
+                    android:name="add"
+                    android:fillColor="@color/buttonTint"
+                    android:pathData="M5,13 H11 V19 H13 V13 H19 V11 H13 V5 H11 V11 H5Z" />
+            </group>
+            <group
+                android:name="group_check"
+                android:pivotX="12"
+                android:pivotY="12"
+                android:rotation="45"
+                android:scaleX="0"
+                android:scaleY="0">
+                <path
+                    android:name="check"
+                    android:fillColor="@color/green"
+                    android:pathData="M 3 13 L 9 19 L 21 7 L 19 5 L 9 15 L 5 11 Z" />
+            </group>
+        </vector>
+    </aapt:attr>
+    <target android:name="group_add">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="500"
+                    android:interpolator="@android:anim/linear_interpolator"
+                    android:propertyName="rotation"
+                    android:valueFrom="0"
+                    android:valueTo="180"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="500"
+                    android:interpolator="@android:anim/linear_interpolator"
+                    android:propertyName="scaleX"
+                    android:valueFrom="1"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="500"
+                    android:interpolator="@android:anim/linear_interpolator"
+                    android:propertyName="scaleY"
+                    android:valueFrom="1"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="group_check">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleX"
+                    android:startOffset="400"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleY"
+                    android:startOffset="400"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="rotation"
+                    android:startOffset="400"
+                    android:valueFrom="0"
+                    android:valueTo="360"
+                    android:valueType="floatType" />
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>

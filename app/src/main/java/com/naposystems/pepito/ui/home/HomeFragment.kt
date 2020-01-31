@@ -1,18 +1,26 @@
 package com.naposystems.pepito.ui.home
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentBinding
-import com.naposystems.pepito.model.home.Chat
-import com.naposystems.pepito.ui.home.adapter.ChatAdapter
+import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.reactive.RxBus
+import com.naposystems.pepito.reactive.RxEvent
+import com.naposystems.pepito.ui.home.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.viewModel.ViewModelFactory
+import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
 class HomeFragment : Fragment() {
 
@@ -20,18 +28,38 @@ class HomeFragment : Fragment() {
         fun newInstance() = HomeFragment()
     }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var viewModel: HomeViewModel
     private lateinit var binding: HomeFragmentBinding
-    lateinit var adapter: ChatAdapter
+    lateinit var adapter: ConversationAdapter
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
+    private lateinit var textViewBadge: TextView
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
+        setHasOptionsMenu(true)
+
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.home_fragment, container, false)
 
-        adapter = ChatAdapter(getChats())
+        adapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
+            override fun onClick(item: ConversationAndContact) {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)
+                )
+            }
+        })
 
         binding.recyclerViewChats.adapter = adapter
 
@@ -41,127 +69,73 @@ class HomeFragment : Fragment() {
             )
         }
 
+        val disposableNewMessageReceived = RxBus.listen(RxEvent.NewFriendshipRequest::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                viewModel.getFriendshipQuantity()
+            }
+
+        disposable.add(disposableNewMessageReceived)
+
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(HomeViewModel::class.java)
+
+        viewModel.getContactsAndMessages()
+
+        viewModel.getFriendshipQuantity()
+
+        viewModel.subscribeToGeneralSocketChannel()
+
+        viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
+            if (it != -1) {
+                setupBadge(it)
+            }
+        })
+
+        viewModel.conversations.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
 
         (activity as MainActivity).getUser()
     }
 
-    private fun getChats(): List<Chat> {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_inbox, menu)
 
-        val imageUrl =
-            "https://images.vexels.com/media/users/3/145908/preview2/52eabf633ca6414e60a7677b0b917d92-creador-de-avatar-masculino.jpg"
-        val message =
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        val menuItem = menu.findItem(R.id.add_contact)
 
-        val chat1 = Chat(
-            imageUrl,
-            "Alberto Uno",
-            "@albertouno",
-            message,
-            "08:00 a.m"
-        )
+        val actionView = menuItem.actionView
+        textViewBadge = actionView.findViewById(R.id.textView_badge)
 
-        val chat2 = Chat(
-            imageUrl,
-            "Alberto Dos",
-            "@albertodos",
-            message,
-            "09:00 a.m"
-        )
+        actionView.setOnClickListener {
+            onOptionsItemSelected(menuItem)
+        }
 
-        val chat3 = Chat(
-            imageUrl,
-            "Alberto Tres",
-            "@albertotres",
-            message,
-            "10:00 a.m"
-        )
-
-        val chat4 = Chat(
-            imageUrl,
-            "Alberto Cuatro",
-            "@albertocuatro",
-            message,
-            "11:00 a.m"
-        )
-
-        val chat5 = Chat(
-            imageUrl,
-            "Alberto Cinco",
-            "@albertocinco",
-            message,
-            "12:00 a.m"
-        )
-
-        val chat6 = Chat(
-            imageUrl,
-            "Alberto Seis",
-            "@albertoseis",
-            message,
-            "01:00 p.m"
-        )
-
-        val chat7 = Chat(
-            imageUrl,
-            "Alberto Siete",
-            "@albertosiete",
-            message,
-            "02:00 p.m"
-        )
-
-        val chat8 = Chat(
-            imageUrl,
-            "Alberto Ocho",
-            "@albertoocho",
-            message,
-            "03:00 p.m"
-        )
-
-        val chat9 = Chat(
-            imageUrl,
-            "Alberto Nueve",
-            "@albertonueve",
-            message,
-            "04:00 p.m"
-        )
-
-        val chat10 = Chat(
-            imageUrl,
-            "Alberto Diez",
-            "@albertodiez",
-            message,
-            "05:00 p.m"
-        )
-
-        val chatList = ArrayList<Chat>()
-
-        chatList.add(chat1)
-        chatList.add(chat2)
-        chatList.add(chat3)
-        chatList.add(chat4)
-        chatList.add(chat5)
-        chatList.add(chat6)
-        chatList.add(chat7)
-        chatList.add(chat8)
-        chatList.add(chat9)
-        chatList.add(chat10)
-        chatList.add(chat1)
-        chatList.add(chat2)
-        chatList.add(chat3)
-        chatList.add(chat4)
-        chatList.add(chat5)
-        chatList.add(chat6)
-        chatList.add(chat7)
-        chatList.add(chat8)
-        chatList.add(chat9)
-        chatList.add(chat10)
-
-        return chatList
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.add_contact -> {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToAddContactFragment()
+                )
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun setupBadge(friendshipRequestQuantity: Int) {
+        if (friendshipRequestQuantity > 0) {
+            textViewBadge.visibility = View.VISIBLE
+            textViewBadge.text = friendshipRequestQuantity.toString()
+        } else {
+            textViewBadge.visibility = View.GONE
+        }
+    }
 }

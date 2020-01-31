@@ -2,17 +2,19 @@ package com.naposystems.pepito.webService
 
 import com.naposystems.pepito.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.pepito.dto.accessPin.CreateAccountResDTO
-import com.naposystems.pepito.dto.blockedContact.BlockedContactResDTO
+import com.naposystems.pepito.dto.addContact.*
 import com.naposystems.pepito.dto.contactUs.ContactUsReqDTO
 import com.naposystems.pepito.dto.contactUs.ContactUsResDTO
+import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.dto.contacts.ContactsResDTO
-import com.naposystems.pepito.dto.conversation.message.ConversationReqDTO
-import com.naposystems.pepito.dto.conversation.message.ConversationResDTO
+import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
+import com.naposystems.pepito.dto.conversation.message.MessageResDTO
+import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
+import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
-import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountReqDTO
 import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountResDTO
 import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountQuestionsReqDTO
 import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountQuestionsResDTO
@@ -24,17 +26,26 @@ import com.naposystems.pepito.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.pepito.dto.validateNickname.ValidateNicknameResDTO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH
+import com.naposystems.pepito.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH_BY_DATE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
-import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_MESSAGES
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUESTS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUEST_QUANTITY
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_MY_MESSAGES
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_FRIENDSHIP_REQUEST
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEARCH_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQUEST
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_USER_INFO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
+import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_READ
+import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_RECEIVED
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -56,7 +67,10 @@ interface NapoleonApi {
     suspend fun updateUserInfo(@Body updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
 
     @GET(FRIEND_SHIP_SEARCH)
-    suspend fun getBlockedContacts(@Path("state") state: String): Response<List<BlockedContactResDTO>>
+    suspend fun getContactsByState(@Path("state") state: String): Response<ContactsResDTO>
+
+    @GET(FRIEND_SHIP_SEARCH_BY_DATE)
+    suspend fun getContactsByDate(@Path("state") state: String, @Query("date") date: String): Response<ContactsResDTO>
 
     @POST(SEND_PQRS)
     suspend fun sendPqrs(@Body contactUsReqDTO: ContactUsReqDTO): Response<ContactUsResDTO>
@@ -67,18 +81,39 @@ interface NapoleonApi {
     @POST(SEND_QUESTIONS)
     suspend fun sendRecoveryQuestions(@Body registerRecoveryAccountReqDTO: RegisterRecoveryAccountReqDTO): Response<Any>
 
-    @GET(FRIEND_SHIP_SEARCH)
-    suspend fun getFriendShipSearch(@Path("state") state: String): Response<List<ContactsResDTO>>
-
     @POST(SEND_MESSAGE)
-    suspend fun sendMessage(@Body conversationReqDTO: ConversationReqDTO): Response<ConversationResDTO>
+    suspend fun sendMessage(@Body messageReqDTO: MessageReqDTO): Response<MessageResDTO>
 
-    @GET(GET_MESSAGES)
-    suspend fun getMessages(@Path("contact_id") contactId: Int): Response<List<ConversationResDTO>>
+    @GET(GET_MY_MESSAGES)
+    suspend fun getMyMessages(): Response<List<MessageResDTO>>
+
+    @GET(VERIFY_MESSAGES_RECEIVED)
+    suspend fun verifyMessagesReceived(): Response<List<String>>
+
+    @POST(VERIFY_MESSAGES_READ)
+    suspend fun verifyMessagesRead(): Response<List<String>>
+
+    @PUT(SEND_MESSAGES_READ)
+    suspend fun sendMessagesRead(@Body messagesReadReqDTO: MessagesReadReqDTO): Response<List<String>>
 
     @GET(GET_RECOVERY_QUESTIONS)
     suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<List<RecoveryAccountResDTO>>
 
     @POST(SEND_ANSWERS)
     suspend fun sendAnswers(@Body recoveryAccountQuestionsReqDTO: RecoveryAccountQuestionsReqDTO): Response<RecoveryAccountQuestionsResDTO>
+
+    @GET(SEARCH_USER)
+    suspend fun searchUser(@Path("nick") nick: String): Response<List<ContactResDTO>>
+
+    @POST(SEND_FRIENDSHIP_REQUEST)
+    suspend fun sendFriendshipRequest(@Body friendshipRequestReqDTO: FriendshipRequestReqDTO): Response<FriendshipRequestResDTO>
+
+    @GET(GET_FRIENDSHIP_REQUESTS)
+    suspend fun getFriendshipRequests(): Response<FriendshipRequestsResDTO>
+
+    @PUT(PUT_FRIENDSHIP_REQUEST)
+    suspend fun putFriendshipRequest(@Path("id") friendshipRequestId: String, @Body request: FriendshipRequestPutReqDTO): Response<FriendshipRequestPutResDTO>
+
+    @GET(GET_FRIENDSHIP_REQUEST_QUANTITY)
+    suspend fun getFriendshipRequestQuantity(): Response<FriendshipRequestQuantityResDTO>
 }

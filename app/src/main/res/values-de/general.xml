@@ -25,4 +25,7 @@
     <string name="text_location">Standort</string>
     <string name="text_audio">Audio</string>
     <string name="text_document">Dokument</string>
+    <string name="text_add">Hinzufügen</string>
+    <string name="text_sent">Gesendet</string>
+    <string name="text_refuse">Ablehnen</string>
 </resources>

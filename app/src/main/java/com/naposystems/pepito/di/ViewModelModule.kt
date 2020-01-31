@@ -2,6 +2,7 @@ package com.naposystems.pepito.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.naposystems.pepito.ui.addContact.AddContactViewModel
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
@@ -9,6 +10,7 @@ import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
 import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.conversation.ConversationViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
+import com.naposystems.pepito.ui.home.HomeViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
 import com.naposystems.pepito.ui.previewImageSend.SharePreviewImageSendViewModel
@@ -163,4 +165,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(RecoveryAccountQuestionsViewModel::class)
     internal abstract fun binRecoveryAccountQuestionsViewModel(viewModel: RecoveryAccountQuestionsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AddContactViewModel::class)
+    internal abstract fun binAddContactViewModel(viewModel: AddContactViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HomeViewModel::class)
+    internal abstract fun binHomeViewModel(viewModel: HomeViewModel): ViewModel
 }

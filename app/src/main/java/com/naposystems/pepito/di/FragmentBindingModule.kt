@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di
 
+import com.naposystems.pepito.ui.addContact.AddContactFragment
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment
@@ -7,6 +8,7 @@ import com.naposystems.pepito.ui.contactUs.ContactUsFragment
 import com.naposystems.pepito.ui.contacts.ContactsFragment
 import com.naposystems.pepito.ui.conversation.ConversationFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
+import com.naposystems.pepito.ui.home.HomeFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.pepito.ui.previewImageSend.PreviewImageSendFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
@@ -101,4 +103,10 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindRecoveryAccountQuestionsFragment(): RecoveryAccountQuestionsFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindAddContactFragment(): AddContactFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindHomeFragment(): HomeFragment
 }

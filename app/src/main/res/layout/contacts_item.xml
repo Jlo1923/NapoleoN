@@ -17,7 +17,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_home_item">
+        android:background="@drawable/bg_home_item"
+        android:foreground="?attr/selectableItemBackground"
+        android:onClick="@{() -> clickListener.onClick(contact)}">
 
         <ImageView
             android:id="@+id/imageView_user_image"
@@ -32,64 +34,51 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/textView_user_name"
+            style="@style/BodyTextView.Bold"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:onClick="@{() -> clickListener.onClick(contact)}"
-            android:paddingStart="@dimen/normal_padding"
-            android:paddingTop="@dimen/normal_padding"
-            android:paddingBottom="@dimen/normal_padding"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@{contact.displayName}"
+            app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
+            app:layout_constraintEnd_toStartOf="@id/button_more"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/textView_user_nickname"
+            style="@style/BodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x_small_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/buttonTint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/textView_user_name"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            app:nickname="@{contact.nickname}"
+            tools:text="@tools:sample/first_names" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/normal_margin"
+            android:padding="@dimen/x_small_padding"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/colorSecondaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imageView_user_image"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/textView_user_name"
-                style="@style/BodyTextView.Bold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:text="@{contact.displayName}"
-                app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
-                app:layout_constraintEnd_toStartOf="@id/button_more"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@tools:sample/full_names" />
-
-            <TextView
-                android:id="@+id/textView_user_nickname"
-                style="@style/BodyTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x_small_margin"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textColor="@color/buttonTint"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/button_more"
-                app:layout_constraintStart_toStartOf="@id/textView_user_name"
-                app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
-                app:nickname="@{contact.nickname}"
-                tools:text="@tools:sample/first_names" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/button_more"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/normal_margin"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="@{() -> clickListener.onMoreClick(contact)}"
-                android:tint="@color/colorSecondaryDark"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_more_vert_black" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more_vert_black" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

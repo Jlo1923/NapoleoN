@@ -21,8 +21,11 @@
     <string name="text_location">Location</string>
     <string name="text_audio">Audio</string>
     <string name="text_document">Document</string>
-    <string name="text_error_connection">There is no Internet conection. Try again later</string>
+    <string name="text_error_connection">There is no Internet connection. Try again later</string>
     <string name="text_register">Register</string>
     <string name="text_answer">Answer</string>
     <string name="text_error">Error</string>
+    <string name="text_add">Add</string>
+    <string name="text_sent">Sent</string>
+    <string name="text_refuse">Refuse</string>
 </resources>

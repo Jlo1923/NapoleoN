@@ -2,27 +2,25 @@ package com.naposystems.pepito.repository.conversation
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
-import com.naposystems.pepito.db.dao.conversationAttachment.ConversationAttachmentDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
-import com.naposystems.pepito.dto.conversation.message.Conversation422DTO
-import com.naposystems.pepito.dto.conversation.message.ConversationErrorDTO
-import com.naposystems.pepito.dto.conversation.message.ConversationReqDTO
-import com.naposystems.pepito.dto.conversation.message.ConversationResDTO
+import com.naposystems.pepito.dto.conversation.message.*
 import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.conversation.Conversation
-import com.naposystems.pepito.entity.conversation.ConversationAttachment
+import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.entity.message.Attachment
 import com.naposystems.pepito.entity.User
-import com.naposystems.pepito.entity.conversation.ConversationAndAttachment
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
-import com.naposystems.pepito.webService.service.IContractSocketService
+import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.coroutineScope
 import retrofit2.Response
@@ -30,12 +28,13 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ConversationRepository @Inject constructor(
-    private val socketService: IContractSocketService,
+    private val socketService: IContractSocketService.SocketService,
     private val userLocalDataSource: UserLocalDataSource,
-    private val conversationLocalDataSource: ConversationDataSource,
-    private val conversationAttachmentLocalDataSource: ConversationAttachmentDataSource,
+    private val messageLocalDataSource: MessageDataSource,
+    private val attachmentLocalDataSource: AttachmentDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val napoleonApi: NapoleonApi
+    private val napoleonApi: NapoleonApi,
+    private val conversationLocalDataSource: ConversationDataSource
 ) :
     IContractConversation.Repository {
 
@@ -103,76 +102,82 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun getLocalMessages(
-        channelName: String,
-        pageSize: Int
-    ): LiveData<PagedList<ConversationAndAttachment>> {
-        return conversationLocalDataSource.getMessages(channelName, pageSize)
-    }
-
-    override suspend fun getRemoteMessages(
-        user: User,
         contactId: Int,
-        channelName: String
-    ) {
-        try {
-            val response = napoleonApi.getMessages(contactId)
-
-            if (response.isSuccessful) {
-
-                val conversations = ConversationResDTO.toConversationListEntity(
-                    response.body()!!,
-                    Constants.IsMine.NO.value,
-                    channelName
-                )
-
-                conversationLocalDataSource.insertListConversation(conversations)
-            } else {
-                Timber.e(response.errorBody()!!.string())
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
+        pageSize: Int
+    ): LiveData<PagedList<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessages(contactId, pageSize)
     }
 
-    override suspend fun sendMessage(conversationReqDTO: ConversationReqDTO): Response<ConversationResDTO> {
-        return napoleonApi.sendMessage(conversationReqDTO)
+    override suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
+        return napoleonApi.sendMessage(messageReqDTO)
     }
 
     override suspend fun getLocalUser(): User {
         return userLocalDataSource.getUser(firebaseId)
     }
 
-    override fun insertConversation(conversation: Conversation): Long {
-        return conversationLocalDataSource.insertConversation(conversation)
+    override fun insertMessage(message: Message): Long {
+        return messageLocalDataSource.insertMessage(message)
     }
 
-    override fun insertListConversation(conversationList: List<Conversation>) {
-        conversationLocalDataSource.insertListConversation(conversationList)
+    override fun insertListMessage(messageList: List<Message>) {
+        messageLocalDataSource.insertListMessage(messageList)
     }
 
-    override fun updateConversation(conversation: Conversation) {
-        conversationLocalDataSource.updateConversation(conversation)
+    override suspend fun insertConversation(messageResDTO: MessageResDTO) {
+        conversationLocalDataSource.insertConversation(messageResDTO, true, 0)
     }
 
-    override fun insertConversationAttachment(listAttachment: List<ConversationAttachment>): List<Long> {
-        return conversationAttachmentLocalDataSource.insertConversationAttachment(listAttachment)
+    override fun updateMessage(message: Message) {
+        messageLocalDataSource.updateMessage(message)
     }
 
-    override fun updateConversationAttachments(listAttachment: List<ConversationAttachment>) {
-        conversationAttachmentLocalDataSource.updateConversationAttachments(listAttachment)
+    override suspend fun sendMessagesRead(contactId: Int) {
+        val messagesUnread =
+            messageLocalDataSource.getMessagesByStatus(Constants.MessageStatus.UNREAD.status)
+
+        if (messagesUnread.isNotEmpty()) {
+            try {
+
+                val messagesReadReqDTO = MessagesReadReqDTO(
+                    messagesUnread
+                )
+
+                val response = napoleonApi.sendMessagesRead(messagesReadReqDTO)
+
+                if (response.isSuccessful) {
+                    messageLocalDataSource.updateMessageStatus(
+                        response.body()!!,
+                        Constants.MessageStatus.READED.status
+                    )
+
+                    conversationLocalDataSource.updateConversation(contactId)
+                }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
     }
 
-    override fun get422Error(response: Response<ConversationResDTO>): ArrayList<String> {
-        val adapter = moshi.adapter(Conversation422DTO::class.java)
+    override fun insertAttachment(listAttachment: List<Attachment>): List<Long> {
+        return attachmentLocalDataSource.insertAttachment(listAttachment)
+    }
+
+    override fun updateAttachments(listAttachment: List<Attachment>) {
+        attachmentLocalDataSource.updateAttachments(listAttachment)
+    }
+
+    override fun get422Error(response: Response<MessageResDTO>): ArrayList<String> {
+        val adapter = moshi.adapter(Message422DTO::class.java)
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
 
         return WebServiceUtils.get422Errors(conversationError!!)
     }
 
-    override fun getError(response: Response<ConversationResDTO>): ArrayList<String> {
+    override fun getError(response: Response<MessageResDTO>): ArrayList<String> {
 
-        val adapter = moshi.adapter(ConversationErrorDTO::class.java)
+        val adapter = moshi.adapter(MessageErrorDTO::class.java)
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
 

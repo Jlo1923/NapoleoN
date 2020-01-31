@@ -25,7 +25,7 @@ class SplashFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SplashViewModel
-    private lateinit var user:User
+    private lateinit var user: User
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager

@@ -36,4 +36,7 @@
     <string name="text_document">Documento</string>
     <string name="text_answer">Respuesta</string>
     <string name="text_error">Error</string>
+    <string name="text_add">Agregar</string>
+    <string name="text_sent">Enviado</string>
+    <string name="text_refuse">Rechazar</string>
 </resources>

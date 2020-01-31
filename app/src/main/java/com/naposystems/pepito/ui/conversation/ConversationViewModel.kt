@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.lifecycle.*
 import androidx.paging.PagedList
 import com.naposystems.pepito.R
-import com.naposystems.pepito.dto.conversation.message.ConversationAttachmentResDTO
-import com.naposystems.pepito.dto.conversation.message.ConversationReqDTO
-import com.naposystems.pepito.dto.conversation.message.ConversationResDTO
+import com.naposystems.pepito.dto.conversation.message.AttachmentResDTO
+import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
+import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.conversation.Conversation
-import com.naposystems.pepito.entity.conversation.ConversationAttachment
+import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.entity.message.Attachment
 import com.naposystems.pepito.entity.User
-import com.naposystems.pepito.entity.conversation.ConversationAndAttachment
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -24,18 +24,15 @@ class ConversationViewModel @Inject constructor(
 ) : ViewModel(), IContractConversation.ViewModel {
 
     private lateinit var user: User
+    private lateinit var contact: Contact
 
     private val _webServiceError = MutableLiveData<List<String>>()
     val webServiceError: LiveData<List<String>>
         get() = _webServiceError
 
-    private lateinit var _conversationMessages: LiveData<PagedList<ConversationAndAttachment>>
-    val conversationMessages: LiveData<PagedList<ConversationAndAttachment>>
-        get() = _conversationMessages
-
-    private val _channelName = MutableLiveData<String>()
-    val channelName: LiveData<String>
-        get() = _channelName
+    private lateinit var _messageMessages: LiveData<PagedList<MessageAndAttachment>>
+    val messageMessages: LiveData<PagedList<MessageAndAttachment>>
+        get() = _messageMessages
 
     init {
         _webServiceError.value = ArrayList()
@@ -46,54 +43,41 @@ class ConversationViewModel @Inject constructor(
 
     override fun getUser() = user
 
-    override fun subscribeToChannel(userToChat: Contact) {
-        viewModelScope.launch {
-            _channelName.value = repository.subscribeToChannel(userToChat)
-        }
-    }
-
-    override fun unSubscribeToChannel(userToChat: Contact) {
-        repository.unSubscribeToChannel(userToChat, channelName.value!!)
+    override fun setContact(contact: Contact) {
+        this.contact = contact
     }
 
     override fun getLocalMessages() {
         viewModelScope.launch {
             user = repository.getLocalUser()
-            _conversationMessages = repository.getLocalMessages(_channelName.value!!, 10)
+            _messageMessages = repository.getLocalMessages(contact.id, 10)
         }
     }
 
-    override fun getRemoteMessages(channelName: String, contactId: Int) {
-        viewModelScope.launch {
-            repository.getRemoteMessages(user, contactId, channelName)
-        }
-    }
-
-    override fun saveConversationLocally(
+    override fun saveMessageLocally(
         body: String,
         quoted: String,
         contact: Contact,
         isMine: Int
     ) {
         viewModelScope.launch {
-            val conversation = Conversation(
+            val message = Message(
                 0,
                 "",
                 body,
                 quoted,
                 contact.id,
-                user.id,
-                "",
-                "",
+                0,
+                0,
                 isMine,
-                _channelName.value!!
+                Constants.MessageStatus.SENT.status
             )
 
 
-            val conversationId = repository.insertConversation(conversation).toInt()
+            val messageId = repository.insertMessage(message).toInt()
 
-            val conversationReqDTO =
-                ConversationReqDTO(
+            val messageReqDTO =
+                MessageReqDTO(
                     contact.id,
                     quoted,
                     body,
@@ -101,15 +85,15 @@ class ConversationViewModel @Inject constructor(
                 )
 
             sendMessage(
-                conversationId,
-                conversationReqDTO,
+                messageId,
+                messageReqDTO,
                 isMine,
                 emptyList()
             )
         }
     }
 
-    override fun saveConversationWithAttachmentLocally(
+    override fun saveMessageWithAttachmentLocally(
         body: String,
         quoted: String,
         contact: Contact,
@@ -118,49 +102,48 @@ class ConversationViewModel @Inject constructor(
         uri: String
     ) {
         viewModelScope.launch {
-            val conversation = Conversation(
+            val message = Message(
                 0,
                 "",
                 body,
                 quoted,
                 contact.id,
-                user.id,
-                "",
-                "",
+                0,
+                0,
                 isMine,
-                _channelName.value!!
+                Constants.MessageStatus.SENT.status
             )
 
 
-            val conversationId = repository.insertConversation(conversation).toInt()
+            val messageId = repository.insertMessage(message).toInt()
 
-            val attachment = ConversationAttachment(
+            val attachment = Attachment(
                 0,
-                conversationId,
+                messageId,
                 "",
                 "",
-                Constants.ConversationAttachmentType.IMAGE.type,
+                Constants.AttachmentType.IMAGE.type,
                 "",
                 uri
             )
-            val listAttachment: MutableList<ConversationAttachment> = ArrayList()
+            val listAttachment: MutableList<Attachment> = ArrayList()
             listAttachment.add(attachment)
 
-            val listAttachmentId = repository.insertConversationAttachment(listAttachment)
+            val listAttachmentId = repository.insertAttachment(listAttachment)
 
             attachment.body = base64
 
-            val conversationReqDTO =
-                ConversationReqDTO(
+            val messageReqDTO =
+                MessageReqDTO(
                     contact.id,
                     quoted,
                     body,
-                    ConversationAttachment.toListConversationAttachmentDTO(listAttachment)
+                    Attachment.toListAttachmentDTO(listAttachment)
                 )
 
             sendMessage(
-                conversationId,
-                conversationReqDTO,
+                messageId,
+                messageReqDTO,
                 isMine,
                 listAttachmentId
             )
@@ -168,34 +151,35 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun sendMessage(
-        conversationId: Int,
-        conversationReqDTO: ConversationReqDTO,
+        messageId: Int,
+        messageReqDTO: MessageReqDTO,
         isMine: Int,
         listAttachmentsId: List<Long>
     ) {
         viewModelScope.launch {
             try {
-                val response = repository.sendMessage(conversationReqDTO)
+                val response = repository.sendMessage(messageReqDTO)
 
                 if (response.isSuccessful) {
                     Timber.d("Message send successFully")
-                    val conversationEntity = ConversationResDTO.toConversationEntity(
-                        conversationId,
+                    val messageEntity = MessageResDTO.toMessageEntity(
+                        messageId,
                         response.body()!!,
-                        isMine,
-                        _channelName.value!!
+                        isMine
                     )
-                    repository.updateConversation(conversationEntity)
+                    repository.updateMessage(messageEntity)
 
                     if (listAttachmentsId.isNotEmpty()) {
-                        repository.updateConversationAttachments(
-                            ConversationAttachmentResDTO.toListConversationAttachment(
-                                response.body()!!.conversationAttachments,
-                                conversationId,
+                        repository.updateAttachments(
+                            AttachmentResDTO.toListConversationAttachment(
+                                response.body()!!.attachments,
+                                messageId,
                                 listAttachmentsId
                             )
                         )
                     }
+
+                    repository.insertConversation(response.body()!!)
                 } else {
                     when (response.code()) {
                         422 -> _webServiceError.value = repository.get422Error(response)
@@ -207,6 +191,12 @@ class ConversationViewModel @Inject constructor(
                 val error = context.getString(R.string.text_fail)
                 _webServiceError.value = arrayListOf(error)
             }
+        }
+    }
+
+    override fun sendMessagesRead() {
+        viewModelScope.launch {
+            repository.sendMessagesRead(contact.id)
         }
     }
 

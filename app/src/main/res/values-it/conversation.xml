@@ -8,4 +8,7 @@
     <string name="text_mute_conversation">Conversazione muta</string>
     <string name="text_delete_conversation">Elimina la conversazione</string>
     <string name="text_write_message">Scrivi un messaggio</string>
+    <string name="text_start_chat">Comincia chat</string>
+    <string name="text_view_profile">Vedi profilo</string>
+    <string name="text_delete_contact">Elimina contatto</string>
 </resources>

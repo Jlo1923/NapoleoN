@@ -6,21 +6,27 @@
     <data>
 
         <variable
-            name="chat"
-            type="com.naposystems.pepito.model.home.Chat" />
+            name="clickListener"
+            type="com.naposystems.pepito.ui.home.adapter.ConversationAdapter.ClickListener" />
+
+        <variable
+            name="conversation"
+            type="com.naposystems.pepito.entity.conversation.ConversationAndContact" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_home_item"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
         android:padding="@dimen/normal_padding">
 
         <ImageView
             android:id="@+id/imageView_user_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:avatar="@{chat.imageUrl}"
+            app:avatar="@{conversation.contact.imageUrl}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -31,10 +37,23 @@
             style="@style/SmallBodyTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{chat.date}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:messageHour="@{conversation.conversation.createdAt}"
             tools:text="8:15 a.m" />
+
+        <TextView
+            android:id="@+id/textView_unread_messages"
+            style="@style/MinorBodyTextView.White"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/bg_unread_messages"
+            android:gravity="center"
+            android:textColor="@color/colorTextMyMessage"
+            app:layout_constraintBottom_toBottomOf="@id/textView_message"
+            app:layout_constraintEnd_toEndOf="@id/textView_hora"
+            app:unreadMessages="@{conversation.conversation.unReads}"
+            tools:text="99" />
 
         <TextView
             android:id="@+id/textView_user_name"
@@ -44,7 +63,7 @@
             android:layout_marginStart="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"
-            android:text="@{chat.fullName}"
+            android:text="@{conversation.contact.displayName}"
             app:layout_constraintEnd_toStartOf="@id/textView_hora"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/imageView_user_image"
@@ -59,7 +78,7 @@
             android:layout_marginTop="@dimen/x_small_margin"
             android:ellipsize="end"
             android:lines="1"
-            android:text="@{chat.nickname}"
+            app:nickname="@{conversation.contact.nickname}"
             android:textColor="@color/buttonTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -68,14 +87,16 @@
             tools:text="@tools:sample/first_names" />
 
         <TextView
+            android:id="@+id/textView_message"
             style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x_small_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"
-            android:text="@{chat.message}"
-            app:layout_constraintEnd_toStartOf="@id/textView_hora"
+            android:text="@{conversation.conversation.message}"
+            app:layout_constraintEnd_toStartOf="@id/textView_unread_messages"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"
             app:layout_constraintTop_toBottomOf="@id/textView_user_nickname"
             tools:text="@tools:sample/lorem/random" />
