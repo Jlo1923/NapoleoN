@@ -143,8 +143,8 @@ dependencies {
     //Pagination
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
-    //SearchView
-    implementation 'com.github.Ferfalk:SimpleSearchView:0.1.4'
+    //Biometric Prompt
+    implementation "androidx.biometric:biometric:$biometric_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

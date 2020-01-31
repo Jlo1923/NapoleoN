@@ -22,6 +22,10 @@ class SecuritySettingsViewModel @Inject constructor(
     val allowDownloads: LiveData<Int>
         get() = _allowDownloads
 
+    private val _biometricsOption = MutableLiveData<Int>()
+    val biometricsOption: LiveData<Int>
+        get() = _biometricsOption
+
     //region Implementation IContractSecuritySettings.ViewModel
     override fun getSelfDestructTime() {
         _selfDestructTime.value = repository.getSelfDestructTime()
@@ -41,6 +45,10 @@ class SecuritySettingsViewModel @Inject constructor(
 
         repository.updateAllowDownload(newState)
         _allowDownloads.value = newState
+    }
+
+    override fun getBiometricsOption() {
+        _biometricsOption.value = repository.getBiometricsOption()
     }
 
     //endregion

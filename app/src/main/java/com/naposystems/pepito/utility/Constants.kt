@@ -31,15 +31,22 @@ object Constants {
         const val GET_FRIENDSHIP_REQUEST_QUANTITY = "friendshiprequest/countfriendshiprequest"
     }
 
+    enum class ColorScheme constructor(val scheme: Int) {
+        LIGHT_THEME(1),
+        DARK_THEME(2)
+    }
+
     enum class AccountStatus constructor(val id: Int) {
         CODE_VALIDATED(1),
         ACCOUNT_CREATED(2),
         ACCOUNT_RECOVERED(3)
     }
 
-    enum class ColorScheme constructor(val scheme: Int) {
-        LIGHT_THEME(1),
-        DARK_THEME(2)
+    enum class Biometrics constructor(val option: Int) {
+        WITHOUT_BIOMETRICS(1),
+        UNLOCK_WITH_FINGERPRINT(2),
+        UNLOCK_WITH_FACEID(3),
+        BIOMETRICS_NOT_FOUND(4)
     }
 
     enum class UserDisplayFormat constructor(val format: Int) {
@@ -58,12 +65,40 @@ object Constants {
     }
 
     enum class TimeRequestAccessPin constructor(val time: Int) {
-        TEN_SECONDS(1),
-        THIRTY_SECONDS(2),
-        ONE_MINUTE(3),
-        TWO_MINUTES(4),
-        FIVE_MINUTES(5),
-        IMMEDIATELY(6)
+        IMMEDIATELY(1),
+        TEN_SECONDS(10000),
+        THIRTY_SECONDS(30000),
+        ONE_MINUTE(60000),
+        FIVE_MINUTES(300000),
+        ONE_HOUR(3600000),
+        ONE_DAY(86400000),
+        NEVER(-1)
+    }
+
+    enum class LockTypeApp constructor(val type: Int) {
+        LOCK_FOR_TIME_REQUEST_PIN(1),
+        LOCK_APP_FOR_ATTEMPTS(2),
+        FOREVER_UNLOCK(3)
+    }
+
+    enum class LockStatus constructor(val state: Int) {
+        LOCK(1),
+        UNLOCK(2)
+    }
+
+    enum class TotalAttempts constructor(val attempts: Int) {
+        ATTEMPTS_ONE(1),
+        ATTEMPTS_TWO(2),
+        ATTEMPTS_THREE(3),
+        ATTEMPTS_FOUR(4)
+    }
+
+    enum class TimeUnlockApp constructor(val time: Long) {
+        THIRTY_SECONDS(30000),
+        FIVE_MINUTES(300000),
+        TWENTY_MINUTES(1200000),
+        ONE_HOUR(3600000),
+        ONE_DAY(86400000)
     }
 
     enum class AllowDownloadAttachments constructor(val option: Int) {
@@ -134,6 +169,16 @@ object Constants {
         const val PREF_SOCKET_ID = "socket_id"
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
         const val PREF_CONTACTS_UPDATE_DATE = "contacts_update_date"
+
+        //region Lock and Unlock App
+        const val PREF_LOCK_STATUS = "lock_status"
+        const val PREF_TYPE_LOCK_APP = "type_lock_app"
+        const val PREF_BIOMETRICS_OPTION = "option_biometrics"
+        const val PREF_LOCK_TIME_APP = "lock_time_app"
+        const val PREF_UNLOCK_TIME_APP = "unlock_time_app"
+        const val PREF_UNLOCK_ATTEMPTS = "unlock_attempts"
+        const val PREF_UNLOCK_TOTAL_ATTEMPTS = "unlock_total_attempts"
+        //endregion
     }
 
     object RegularExpressions {

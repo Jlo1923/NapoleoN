@@ -28,5 +28,11 @@ class TimeAccessPinDialogViewModel @Inject constructor(
             _timeAccessPin.value = time
         }
     }
+
+    override fun setLockType(type: Int) {
+        viewModelScope.launch {
+            repository.setLockType(type)
+        }
+    }
     //endregion
 }

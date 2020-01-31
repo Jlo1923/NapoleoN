@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_pin_fail">PIN stimmt nicht überein, versuchen Sie es erneut</string>
+    <string name="text_pin_blocked_access">Zugriff gesperrt</string>
+    <string name="text_pin_unlock_time">Zeit freischalten</string>
+    <string name="text_pin_unlock_note">Sie haben die zulässige Anzahl an Versuchen überschritten, sodass wir Ihr Konto für eine Weile gesperrt haben.</string>
+    <string name="text_pin_enter">PIN eingeben</string>
+    <string name="text_title_dialog_biometrics">Bloqueo de la aplicación</string>
+    <string name="text_description_dialog_biometrics">Desbloquee la aplicación ingresando con el biometrico</string>
+</resources>

@@ -62,4 +62,21 @@ class SharedPreferencesManager(private val context: Context) {
         )
     }
 
+    fun putLong(preferenceName: String, data: Long) {
+        with(sharedPreferences.edit()) {
+            putLong(
+                preferenceName,
+                data
+            )
+            commit()
+        }
+    }
+
+    fun getLong(preferenceName: String): Long {
+        return sharedPreferences.getLong(
+            preferenceName,
+            0L
+        )
+    }
+
 }

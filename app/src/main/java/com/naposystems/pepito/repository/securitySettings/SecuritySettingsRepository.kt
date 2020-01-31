@@ -29,4 +29,10 @@ class SecuritySettingsRepository @Inject constructor(
             state
         )
     }
+
+    override fun getBiometricsOption(): Int {
+        return sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION
+        )
+    }
 }

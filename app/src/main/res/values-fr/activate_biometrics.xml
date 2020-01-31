@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_biometrics_description">Vous pouvez choisir les méthodes de déverrouillage pour l\'application. Le Pin sera toujours indispensable et vous ne pourrez pas le supprimer des options demandées.</string>
+    <string name="text_only_pin">Épingle</string>
+    <string name="text_pin_and_fingerprint">Broche + empreinte digitale</string>
+    <string name="text_pin_and_unlock_facial">Pin + Face Unlock</string>
+</resources>

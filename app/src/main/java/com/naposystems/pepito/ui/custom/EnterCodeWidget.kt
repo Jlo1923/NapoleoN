@@ -1,6 +1,9 @@
 package com.naposystems.pepito.ui.custom
 
 import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.InputFilter
 import android.text.InputType
 import android.util.AttributeSet
@@ -8,20 +11,25 @@ import android.view.ContextThemeWrapper
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.Utils
+import timber.log.Timber
+
 
 class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs) {
 
     private var position: Int = 0
     private var numBoxes: Int = 0
     private var isSecureText: Boolean = false
+    private var errorText: String = ""
     private var isErrorShowing: Boolean = false
     private var isTextInputEnabled: Boolean = true
     private val textViews: ArrayList<TextView> = ArrayList()
@@ -54,6 +62,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
                 // Obtenemos los atributos ingresados en el .xml
                 numBoxes = getInt(R.styleable.EnterCodeWidget_numBoxes, 0)
                 isSecureText = getBoolean(R.styleable.EnterCodeWidget_isSecureText, false)
+                errorText = getString(R.styleable.EnterCodeWidget_errorText)!!
 
                 createTextInput()
 
@@ -72,11 +81,14 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
      * Creamos el TextInput que manejara el ingreso del código
      */
     private fun createTextInput() {
+        if (Build.MANUFACTURER == "samsung")
+            textInputCode.inputType = InputType.TYPE_CLASS_PHONE
+        else
+            textInputCode.inputType = InputType.TYPE_CLASS_NUMBER
         textInputCode.apply {
             val fArray = arrayOfNulls<InputFilter>(1)
             fArray[0] = InputFilter.LengthFilter(numBoxes)
 
-            inputType = InputType.TYPE_CLASS_NUMBER
             filters = fArray
             setOnKeyListener(onKeyPressed())
             setOnEditorActionListener { _, actionId, _ ->
@@ -149,6 +161,12 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
                 )
             )
 
+            textView.inputType =
+                if (isSecureText)
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                else
+                    InputType.TYPE_CLASS_NUMBER
+
             textView.setOnClickListener {
                 if (isTextInputEnabled) requestFocusFirst()
             }
@@ -162,9 +180,10 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
     /**
      * Creamos el TextView que mostrará un error
      */
+
     private fun createTextViewError(context: Context) {
         textViewError.apply {
-            text = context.getString(R.string.text_message_code_fail)
+            text = errorText
             textAlignment = View.TEXT_ALIGNMENT_CENTER
             visibility = View.GONE
         }
@@ -224,6 +243,10 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
         changeBackgroundAllTextInputs(R.drawable.bg_enter_code_error)
         invalidate()
         requestLayout()
+        linearTextInputs.startAnimation(
+            AnimationUtils.loadAnimation(context, R.anim.shake)
+        )
+        vibratePhone()
     }
 
     private fun changeBackgroundAllTextInputs(drawable: Int) {
@@ -235,7 +258,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
 
     private fun clearAllTextInputs() {
         for (textInput in textViews) {
-            textInput.text = resources.getString(R.string.middle_dash)
+            textInput.text = ""
         }
         textInputCode.setText("")
         textInputCode.requestFocus()
@@ -246,7 +269,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
 
     private fun onKeyPressed(): (View, Int, KeyEvent) -> Boolean {
         return { _, keyCode, keyEvent ->
-            if (keyEvent.action == KeyEvent.ACTION_DOWN) {
+            if (keyEvent.action == KeyEvent.ACTION_UP) {
                 when (keyCode) {
                     KeyEvent.KEYCODE_DEL -> {
                         mListener.onCodeCompleted(false)
@@ -260,7 +283,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
                         }
                     }
                     else -> {
-                        if (position < 6) {
+                        if (position < numBoxes) {
                             focusAfter(keyCode)
                         }
                     }
@@ -286,9 +309,18 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
 
     private fun focusBefore() {
         position--
-        textViews[position].text = resources.getString(R.string.middle_dash)
+        textViews[position].text = ""
         textViews[position].background =
             resources.getDrawable(R.drawable.bg_enter_code, context!!.theme)
         textInputCode.requestFocus()
+    }
+
+    private fun vibratePhone() {
+        val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(200)
+        }
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_biometrics_description">Puoi scegliere i metodi di sblocco per l\'applicazione. Il Pin sarà sempre indispensabile e non sarai in grado di rimuoverlo dalle opzioni richieste.</string>
+    <string name="text_only_pin">perno</string>
+    <string name="text_pin_and_fingerprint">Pin + impronta digitale</string>
+    <string name="text_pin_and_unlock_facial">Pin + Face Unlock</string>
+</resources>

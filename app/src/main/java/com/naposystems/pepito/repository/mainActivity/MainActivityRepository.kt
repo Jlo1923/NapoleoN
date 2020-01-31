@@ -13,7 +13,9 @@ class MainActivityRepository @Inject constructor(
 ) :
     IContractMainActivity.Repository {
 
-    override suspend fun getUser(firebaseId: String): User {
+    override suspend fun getUser(): User {
+        val firebaseId = sharedPreferencesManager
+            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
         return userLocalDataSource.getUser(firebaseId)
     }
 
@@ -23,5 +25,29 @@ class MainActivityRepository @Inject constructor(
 
     override suspend fun getAccountStatus(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_ACCOUNT_STATUS)
+    }
+
+    override suspend fun getTimeRequestAccessPin(): Int {
+        return sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN
+        )
+    }
+
+    override fun setLockTimeApp(lockTime: Long) {
+        sharedPreferencesManager.putLong(
+            Constants.SharedPreferences.PREF_LOCK_TIME_APP, lockTime
+        )
+    }
+
+    override suspend fun setLockStatus(state: Int) {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_LOCK_STATUS, state
+        )
+    }
+
+    override suspend fun getLockTimeApp(): Long {
+        return sharedPreferencesManager.getLong(
+            Constants.SharedPreferences.PREF_LOCK_TIME_APP
+        )
     }
 }

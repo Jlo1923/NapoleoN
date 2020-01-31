@@ -20,6 +20,26 @@ class SplashViewModel @Inject constructor(
     val user: LiveData<User>
         get() = _user
 
+    private val _typeLock = MutableLiveData<Int>()
+    val typeLock: LiveData<Int>
+        get() = _typeLock
+
+    private val _timeAccessPin = MutableLiveData<Int>()
+    val timeAccessPin: LiveData<Int>
+        get() = _timeAccessPin
+
+    private val _lockTimeApp = MutableLiveData<Long>()
+    val lockTimeApp: LiveData<Long>
+        get() = _lockTimeApp
+
+    private val _lockStatus = MutableLiveData<Int>()
+    val lockStatus: LiveData<Int>
+        get() = _lockStatus
+
+    private val _unlockTimeApp = MutableLiveData<Long>()
+    val unlockTimeApp: LiveData<Long>
+        get() = _unlockTimeApp
+
     fun onLoadingTimeEnd() {
         _navigateToLanding.value = true
     }
@@ -31,6 +51,67 @@ class SplashViewModel @Inject constructor(
     override fun getUser() {
         viewModelScope.launch {
             _user.value = repository.getUser()
+        }
+    }
+
+    override fun getTimeRequestAccessPin() {
+        viewModelScope.launch {
+            _timeAccessPin.value = repository.getTimeRequestAccessPin()
+        }
+    }
+
+    override fun getLockTime() {
+        viewModelScope.launch {
+            _lockTimeApp.value = repository.getLockTime()
+        }
+    }
+
+    override fun getLockStatus() {
+        viewModelScope.launch {
+            _lockStatus.value = repository.getLockStatus()
+        }
+    }
+
+    override fun getLockType() {
+        viewModelScope.launch {
+            _typeLock.value = repository.getLockType()
+        }
+    }
+
+    override fun getUnlockTimeApp() {
+        viewModelScope.launch {
+            _unlockTimeApp.value = repository.getUnlockTimeApp()
+        }
+    }
+
+    override fun getAccountStatus(): Int {
+        var accountStatus = 0
+        viewModelScope.launch {
+            accountStatus = repository.getAccountStatus()
+        }
+        return accountStatus
+    }
+
+    override fun setDefaultPreferences() {
+        viewModelScope.launch {
+            repository.setDefaultTheme()
+            repository.setDefaultUserDisplayFormat()
+            repository.setDefaultSelfDestructTime()
+            repository.setDefaultTimeRequestAccessPin()
+            repository.setDefaultAllowDownloadAttachments()
+            repository.setDefaultLockType()
+        }
+    }
+
+    override fun setDefaultLanguage(language: String) {
+        viewModelScope.launch {
+            repository.setDefaultLanguage(language)
+        }
+    }
+
+    override fun setDefaultBiometricsOption(biometricOption: Int) {
+        viewModelScope.launch {
+            repository.setDefaultBiometricsOption(biometricOption)
         }
     }
 }

@@ -53,12 +53,14 @@ class TimeAccessPinDialogFragment : DialogFragment() {
 
         binding.radioGroupOptions.setOnCheckedChangeListener { _, checkedId ->
             timeAccess = when (checkedId) {
+                R.id.radioButton_immediately -> Constants.TimeRequestAccessPin.IMMEDIATELY.time
                 R.id.radioButton_ten_seconds -> Constants.TimeRequestAccessPin.TEN_SECONDS.time
                 R.id.radioButton_thirty_seconds -> Constants.TimeRequestAccessPin.THIRTY_SECONDS.time
                 R.id.radioButton_one_minute -> Constants.TimeRequestAccessPin.ONE_MINUTE.time
-                R.id.radioButton_two_minutes -> Constants.TimeRequestAccessPin.TWO_MINUTES.time
                 R.id.radioButton_five_minutes -> Constants.TimeRequestAccessPin.FIVE_MINUTES.time
-                else -> Constants.TimeRequestAccessPin.IMMEDIATELY.time
+                R.id.radioButton_one_hour -> Constants.TimeRequestAccessPin.ONE_HOUR.time
+                R.id.radioButton_one_day -> Constants.TimeRequestAccessPin.ONE_DAY.time
+                else -> Constants.TimeRequestAccessPin.NEVER.time
             }
         }
 
@@ -68,6 +70,10 @@ class TimeAccessPinDialogFragment : DialogFragment() {
 
         binding.buttonAccept.setOnClickListener {
             viewModel.setTimeAccessPin(this.timeAccess)
+            if (timeAccess == Constants.TimeRequestAccessPin.NEVER.time)
+                viewModel.setLockType(Constants.LockTypeApp.FOREVER_UNLOCK.type)
+            else
+                viewModel.setLockType(Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type)
             listener.onTimeAccessChange()
             dismiss()
         }
@@ -92,6 +98,9 @@ class TimeAccessPinDialogFragment : DialogFragment() {
         viewModel.timeAccessPin.observe(viewLifecycleOwner, Observer {
             this.timeAccess = it
             when (it) {
+                Constants.TimeRequestAccessPin.IMMEDIATELY.time ->
+                    binding.radioButtonImmediately.isChecked = true
+
                 Constants.TimeRequestAccessPin.TEN_SECONDS.time ->
                     binding.radioButtonTenSeconds.isChecked = true
 
@@ -101,14 +110,17 @@ class TimeAccessPinDialogFragment : DialogFragment() {
                 Constants.TimeRequestAccessPin.ONE_MINUTE.time ->
                     binding.radioButtonOneMinute.isChecked = true
 
-                Constants.TimeRequestAccessPin.TWO_MINUTES.time ->
-                    binding.radioButtonTwoMinutes.isChecked = true
-
                 Constants.TimeRequestAccessPin.FIVE_MINUTES.time ->
                     binding.radioButtonFiveMinutes.isChecked = true
 
-                Constants.TimeRequestAccessPin.IMMEDIATELY.time ->
-                    binding.radioButtonImmediately.isChecked = true
+                Constants.TimeRequestAccessPin.ONE_HOUR.time ->
+                    binding.radioButtonOneHour.isChecked = true
+
+                Constants.TimeRequestAccessPin.ONE_DAY.time ->
+                    binding.radioButtonOneDay.isChecked = true
+
+                Constants.TimeRequestAccessPin.NEVER.time ->
+                    binding.radioButtonNever.isChecked = true
             }
         })
     }
