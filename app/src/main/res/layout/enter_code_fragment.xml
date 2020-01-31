@@ -39,7 +39,8 @@
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
                 app:layout_constraintTop_toBottomOf="@id/textView_attempts"
                 app:layout_constraintTop_toTopOf="@id/guideline_begin_text_inputs"
-                app:numBoxes="6" />
+                app:numBoxes="6"
+                app:errorText="@string/text_message_code_fail"/>
 
             <TextView
                 android:id="@+id/textView_new_attempt_in"

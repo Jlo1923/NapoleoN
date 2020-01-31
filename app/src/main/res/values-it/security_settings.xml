@@ -7,4 +7,5 @@
     <string name="text_time_to_request_access_pin">Tempo per la richiesta del pin di accesso</string>
     <string name="text_account_recovery_information">Informazioni sul recupero dell\'account</string>
     <string name="text_allow_download_attachments">Consenti download allegati inviati</string>
+    <string name="text_unlock_options">Opciones de desbloqueo</string>
 </resources>

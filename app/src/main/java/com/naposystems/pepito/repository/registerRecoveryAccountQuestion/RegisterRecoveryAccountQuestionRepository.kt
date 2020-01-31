@@ -36,16 +36,12 @@ class RegisterRecoveryAccountQuestionRepository @Inject constructor(
     }
 
     override fun getError(response: ResponseBody): ArrayList<String> {
-        val moshi = Moshi.Builder().build()
 
         val adapter = moshi.adapter(RegisterRecoveryAccountQuestionErrorDTO::class.java)
-
         val error = adapter.fromJson(response.string())
-
         val errorList = ArrayList<String>()
 
         errorList.add(error!!.error)
-
         return errorList
     }
 

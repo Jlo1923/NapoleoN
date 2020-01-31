@@ -6,7 +6,6 @@ import com.naposystems.pepito.utility.Constants.SharedPreferences.PREF_FIREBASE_
 import com.naposystems.pepito.utility.NotificationUtils
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import timber.log.Timber
-import javax.inject.Inject
 
 class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -17,6 +16,10 @@ class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        NotificationUtils.createInformativeNotification(this, remoteMessage.data)
+        NotificationUtils.createInformativeNotification(
+            this,
+            remoteMessage.data,
+            remoteMessage.notification
+        )
     }
 }

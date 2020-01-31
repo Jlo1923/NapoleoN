@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
@@ -28,7 +29,6 @@ import com.naposystems.pepito.databinding.ActivityMainBinding
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
-import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -37,15 +37,15 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
-    lateinit var sharedPreferencesManager: SharedPreferencesManager
-    @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
-    private var isRecoveredAccount: Int = 0
+//    private var timeLockApp: Long = 0L
+    private var timeRequestAccessPin: Int = 0
+    private var accountStatus: Int = 0
 
     private val options by lazy {
         navOptions {
@@ -65,13 +65,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
 
+        viewModel.getTheme()
         viewModel.getAccountStatus()
-
         viewModel.accountStatus.observe(this, Observer {
-            isRecoveredAccount = it
+            accountStatus = it
         })
 
-        viewModel.getTheme()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         setSupportActionBar(binding.toolbar)
@@ -84,7 +83,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
 
         NavigationUI.setupActionBarWithNavController(this, navController, binding.drawerLayout)
-
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
 
         //Traer Preferencia
@@ -95,7 +93,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.splashFragment,
                 R.id.landingFragment,
                 R.id.registerFragment,
-                R.id.previewImageSendFragment -> {
+                R.id.previewImageSendFragment,
+                R.id.enterPinFragment,
+                R.id.unlockAppTimeFragment -> {
                     hideToolbar()
                     disableDrawer()
                 }
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     )
                 }
                 R.id.accessPinFragment -> {
-                    if (isRecoveredAccount == Constants.AccountStatus.ACCOUNT_RECOVERED.id){
+                    if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {
                         hideToolbar()
                         disableDrawer()
                     } else {
@@ -154,6 +154,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             AppCompatDelegate.setDefaultNightMode(theme)
         })
 
+        viewModel.timeAccessPin.observe(this, Observer {
+            timeRequestAccessPin = it
+        })
+
+//        viewModel.blockTime.observe(this, Observer {
+//            timeLockApp = it
+//        })
+
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
@@ -175,9 +183,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun getUser() {
-        val firebaseId = sharedPreferencesManager
-            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-        viewModel.getUser(firebaseId)
+        viewModel.getUser()
     }
 
     private fun updateHeaderDrawer(user: User) {
@@ -292,5 +298,52 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             overrideConfiguration.uiMode = uiMode
         }
         super.applyOverrideConfiguration(overrideConfiguration)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        validLockTime()
+        showContent()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.setLockTimeApp()
+        viewModel.getTimeRequestAccessPin()
+        hideContent()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        hideContent()
+    }
+
+    private fun hideContent() {
+        binding.screenSaver.visibility = View.VISIBLE
+        binding.imageViewLogoApp.visibility = View.VISIBLE
+    }
+
+    private fun showContent() {
+        binding.screenSaver.visibility = View.GONE
+        binding.imageViewLogoApp.visibility = View.GONE
+    }
+
+    private fun validLockTime() {
+        when(accountStatus) {
+            Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+                if (timeRequestAccessPin != -1) {
+                    val currentTime = System.currentTimeMillis()
+
+                    if(currentTime >= viewModel.getLockTimeApp()) {
+                        viewModel.setLockStatus(Constants.LockStatus.LOCK.state)
+                        navController.navigate(
+                            R.id.enterPinFragment,
+                            null,
+                            NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
+                        )
+                    }
+                }
+            }
+        }
     }
 }

@@ -7,27 +7,24 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.pepito.R
 import java.util.*
 
 object NotificationUtils {
 
-    fun createInformativeNotification(context: Context, data: Map<String, String>) {
+    fun createInformativeNotification(
+        context: Context,
+        data: Map<String, String>,
+        notification: RemoteMessage.Notification?
+    ) {
 
-        var title = ""
-        var message = ""
+        val title = notification?.title
+        val body = notification?.body
         val channelId = context.getString(R.string.default_notification_channel_id)
         val iconBitmap = BitmapFactory.decodeResource(
             context.resources, R.drawable.ic_notification_icon
         )
-
-        if (data.containsKey("title")) {
-            title = data["title"].toString()
-        }
-
-        if (data.containsKey("body")) {
-            message = data["body"].toString()
-        }
 
         val builder = NotificationCompat.Builder(
             context,
@@ -36,7 +33,7 @@ object NotificationUtils {
             .setLargeIcon(iconBitmap)
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setContentTitle(title)
-            .setContentText(message)
+            .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         createNotificationChannel(context, channelId)

@@ -81,6 +81,10 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="BodyTextView.Tint">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
     <style name="MyMessageTextView" parent="BodyTextView">
         <item name="android:textColor">@color/colorTextMyMessage</item>
     </style>
@@ -143,7 +147,7 @@
         <item name="android:textColor">@color/secondaryTextColor</item>
         <item name="android:textSize">@dimen/text_size_editText_enter_code</item>
         <item name="android:maxLength">1</item>
-        <item name="android:text">@string/middle_dash</item>
+        <item name="android:hint">@string/middle_dash</item>
     </style>
 
     <style name="TextInputLayoutOutlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -251,6 +255,12 @@
         <item name="android:singleLine">true</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="TextViewCountTime">
+        <item name="android:textSize">@dimen/count_time_size</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

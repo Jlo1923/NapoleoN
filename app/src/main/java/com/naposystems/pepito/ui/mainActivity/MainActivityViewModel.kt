@@ -30,16 +30,20 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     val accountStatus: LiveData<Int>
         get() = _accountStatus
 
+    private val _timeAccessPin = MutableLiveData<Int>()
+    val timeAccessPin: LiveData<Int>
+        get() = _timeAccessPin
+
     init {
         _user.value = null
         _errorGettingUser.value = false
     }
 
     //region Implementation IContractMainActivity.ViewModel
-    override fun getUser(firebaseId: String) {
+    override fun getUser() {
         viewModelScope.launch {
             try {
-                val localUser = repository.getUser(firebaseId)
+                val localUser = repository.getUser()
                 _user.value = localUser
             } catch (ex: Exception) {
                 Timber.e(ex)
@@ -60,5 +64,32 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
         }
     }
 
-    //endregion
+    override fun getTimeRequestAccessPin() {
+        viewModelScope.launch {
+            _timeAccessPin.value = repository.getTimeRequestAccessPin()
+        }
+    }
+
+    override fun setLockTimeApp() {
+        viewModelScope.launch {
+            val timeRequestAccessPin = repository.getTimeRequestAccessPin()
+            val currentTime = System.currentTimeMillis()
+            val blockTime = currentTime.plus(timeRequestAccessPin)
+            repository.setLockTimeApp(blockTime)
+        }
+    }
+
+    override fun setLockStatus(state: Int) {
+        viewModelScope.launch {
+            repository.setLockStatus(state)
+        }
+    }
+
+    override fun getLockTimeApp(): Long {
+        var lockTime = 0L
+        viewModelScope.launch {
+            lockTime = repository.getLockTimeApp()
+        }
+        return lockTime
+    }
 }

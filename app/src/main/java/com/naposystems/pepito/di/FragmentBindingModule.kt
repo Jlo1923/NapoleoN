@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di
 
+import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment
@@ -7,6 +8,7 @@ import com.naposystems.pepito.ui.contactUs.ContactUsFragment
 import com.naposystems.pepito.ui.contacts.ContactsFragment
 import com.naposystems.pepito.ui.conversation.ConversationFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
+import com.naposystems.pepito.ui.enterPin.EnterPinFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.pepito.ui.previewImageSend.PreviewImageSendFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
@@ -23,6 +25,7 @@ import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.splash.SplashFragment
 import com.naposystems.pepito.ui.status.StatusFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
+import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -101,4 +104,13 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindRecoveryAccountQuestionsFragment(): RecoveryAccountQuestionsFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindActivateBiometricsFragment(): ActivateBiometricsDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindEnterPinFragment(): EnterPinFragment
+
+    @ContributesAndroidInjector
+    abstract fun binUnlockAppTimeFragment(): UnlockAppTimeFragment
 }

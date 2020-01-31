@@ -142,6 +142,9 @@ dependencies {
 
     //Pagination
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+
+    //Biometric Prompt
+    implementation "androidx.biometric:biometric:$biometric_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
