@@ -93,9 +93,6 @@ class UnlockAppTimeFragment : Fragment() {
             }
 
             override fun onFinish() {
-                Toast.makeText(context, "Terminé", Toast.LENGTH_LONG).show()
-
-
                 //reiniciar preferencias
                 viewModel.setAttempts(0)
                 viewModel.setLockType(Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type)

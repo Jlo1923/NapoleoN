@@ -120,11 +120,6 @@ class SecuritySettingsFragment : Fragment() {
     }
 
     private fun optionBiometrictsClickListener() = View.OnClickListener {
-//        this.findNavController().navigate(
-//            SecuritySettingsFragmentDirections
-//                .actionSecuritySettingsFragmentToActivateBiometricsFragment()
-//        )
-
         val biometricsDialog = ActivateBiometricsDialogFragment()
         biometricsDialog.show(childFragmentManager, "BiometricsSelection")
     }
