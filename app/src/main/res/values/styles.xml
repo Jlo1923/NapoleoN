@@ -103,7 +103,7 @@
     </style>
 
     <style name="BodyTextView.Tint">
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColor">@color/buttonTint</item>
     </style>
 
     <style name="MyMessageTextView" parent="BodyTextView">

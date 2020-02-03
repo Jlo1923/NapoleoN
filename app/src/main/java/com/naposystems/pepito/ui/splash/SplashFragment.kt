@@ -159,20 +159,20 @@ class SplashFragment : Fragment() {
         }
     }
 
-    @SuppressLint("SwitchIntDef")
+
     private fun setDefaultBiometricsOption() {
         val biometricManager = BiometricManager.from(context!!)
 
         when(biometricManager.canAuthenticate()){
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
-                Timber.d("No hay Biometrico en este dispositivo")
                 viewModel.setDefaultBiometricsOption(Constants.Biometrics.BIOMETRICS_NOT_FOUND.option)
             }
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE,
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                Timber.d("No hay biometrico asociado")
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED,
+            BiometricManager.BIOMETRIC_SUCCESS -> {
                 viewModel.setDefaultBiometricsOption(Constants.Biometrics.WITHOUT_BIOMETRICS.option)
             }
+
         }
     }
     //endregion

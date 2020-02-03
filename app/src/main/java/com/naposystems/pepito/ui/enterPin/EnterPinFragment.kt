@@ -34,6 +34,7 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
     private lateinit var viewModel: EnterPinViewModel
     private lateinit var binding: EnterPinFragmentBinding
 
+    private var biometricsOption = 0
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
@@ -65,6 +66,11 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(EnterPinViewModel::class.java)
+
+        viewModel.getBiometricsOption()
+        viewModel.biometricsOption.observe(viewLifecycleOwner, Observer {
+            biometricsOption = it
+        })
 
         viewModel.validPassword.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -137,8 +143,13 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
 
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                showBiometricPrompt()
-                binding.imageButtonFingerprint.visibility = View.VISIBLE
+                if (biometricsOption == Constants.Biometrics.UNLOCK_WITH_FINGERPRINT.option) {
+                    showBiometricPrompt()
+                    binding.imageButtonFingerprint.visibility = View.VISIBLE
+                } else {
+                    binding.imageButtonFingerprint.visibility = View.GONE
+                    binding.enterCodeWidget.requestFocusFirst()
+                }
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE,
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE,
@@ -151,7 +162,6 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
 
     override fun onResume() {
         super.onResume()
-
         validateBiometrics()
     }
 
