@@ -91,7 +91,7 @@
                 android:layout_height="62dp"
                 android:layout_margin="@dimen/normal_margin"
                 android:background="@android:color/transparent"
-                android:tint="@color/colorPrimary"
+                android:tint="@color/buttonTint"
                 android:scaleType="fitCenter"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
                 app:layout_constraintTop_toTopOf="@id/guideline_top"
