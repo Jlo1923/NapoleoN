@@ -320,16 +320,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun hideContent() {
         binding.screenSaver.visibility = View.VISIBLE
-        binding.imageViewLogoApp.visibility = View.VISIBLE
     }
 
     private fun showContent() {
         binding.screenSaver.visibility = View.GONE
-        binding.imageViewLogoApp.visibility = View.GONE
     }
 
     private fun validLockTime() {
-        when(accountStatus) {
+        /*when(accountStatus) {
             Constants.AccountStatus.ACCOUNT_CREATED.id -> {
                 if (timeRequestAccessPin != -1) {
                     val currentTime = System.currentTimeMillis()
@@ -344,6 +342,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
             }
-        }
+        }*/
     }
 }
