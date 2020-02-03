@@ -10,14 +10,14 @@ import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
 import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
-import com.naposystems.pepito.entity.conversation.ConversationAndAttachment
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
 import java.io.File
 
 class ConversationAdapter constructor(
     private val clickListener: ConversationClickListener
 ) :
-    PagedListAdapter<ConversationAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
+    PagedListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         const val TYPE_MY_MESSAGE = 1
@@ -26,17 +26,17 @@ class ConversationAdapter constructor(
 
     private var isFirst = false
 
-    object DiffCallback : DiffUtil.ItemCallback<ConversationAndAttachment>() {
+    object DiffCallback : DiffUtil.ItemCallback<MessageAndAttachment>() {
         override fun areItemsTheSame(
-            oldItem: ConversationAndAttachment,
-            newItem: ConversationAndAttachment
+            oldItem: MessageAndAttachment,
+            newItem: MessageAndAttachment
         ): Boolean {
-            return oldItem.conversation.id == newItem.conversation.id
+            return oldItem.message.id == newItem.message.id && oldItem.message.status == newItem.message.status
         }
 
         override fun areContentsTheSame(
-            oldItem: ConversationAndAttachment,
-            newItem: ConversationAndAttachment
+            oldItem: MessageAndAttachment,
+            newItem: MessageAndAttachment
         ): Boolean {
             return oldItem == newItem
         }
@@ -44,7 +44,7 @@ class ConversationAdapter constructor(
 
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
-        return if (conversation?.conversation?.isMine == Constants.IsMine.YES.value) {
+        return if (conversation?.message?.isMine == Constants.IsMine.YES.value) {
             TYPE_MY_MESSAGE
         } else {
             TYPE_INCOMING_MESSAGE
@@ -67,7 +67,7 @@ class ConversationAdapter constructor(
         val item = getItem(position)
 
         isFirst = (position + 1 == itemCount ||
-                (position + 1 < itemCount && item?.conversation?.isMine != getItem(position + 1)?.conversation?.isMine))
+                (position + 1 < itemCount && item?.message?.isMine != getItem(position + 1)?.message?.isMine))
 
         if (getItemViewType(position) == TYPE_MY_MESSAGE) {
             (holder as MyMessageViewHolder).bind(item!!, clickListener, isFirst)
@@ -80,7 +80,7 @@ class ConversationAdapter constructor(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: ConversationAndAttachment,
+            item: MessageAndAttachment,
             clickListener: ConversationClickListener,
             isFirst: Boolean
         ) {
@@ -125,7 +125,7 @@ class ConversationAdapter constructor(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: ConversationAndAttachment,
+            item: MessageAndAttachment,
             clickListener: ConversationClickListener,
             isFirst: Boolean
         ) {
@@ -141,6 +141,16 @@ class ConversationAdapter constructor(
             }
 
             binding.clickListener = clickListener
+
+            if (item.attachmentList.isNotEmpty()) {
+                binding.imageViewAttachment.visibility = View.VISIBLE
+                val firstAttachment = item.attachmentList[0]
+
+                Glide.with(context)
+                    .load(if (firstAttachment.uri.isNotEmpty()) File(firstAttachment.uri) else firstAttachment.body)
+                    .into(binding.imageViewAttachment)
+            }
+
             binding.executePendingBindings()
         }
 
@@ -158,7 +168,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    class ConversationClickListener(val clickListener: (item: ConversationAndAttachment) -> Unit) {
-        fun onClick(item: ConversationAndAttachment) = clickListener(item)
+    class ConversationClickListener(val clickListener: (item: MessageAndAttachment) -> Unit) {
+        fun onClick(item: MessageAndAttachment) = clickListener(item)
     }
 }

@@ -27,7 +27,7 @@ class SplashFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SplashViewModel
-    private lateinit var user:User
+    private lateinit var user: User
 
     //region Variables Access Pin
     private var lockStatus: Int = 0

@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.mainActivity
 
+import android.animation.Animator
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -7,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +25,7 @@ import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.Glide
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ActivityMainBinding
@@ -33,6 +36,7 @@ import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import javax.inject.Inject
+import kotlin.math.hypot
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -85,10 +89,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         NavigationUI.setupActionBarWithNavController(this, navController, binding.drawerLayout)
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
 
-        //Traer Preferencia
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
             viewModel.getAccountStatus()
+            Utils.hideKeyboard(binding.coordinator)
             when (destination.id) {
                 R.id.splashFragment,
                 R.id.landingFragment,
@@ -104,10 +107,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     enableDrawer()
                 }
                 R.id.conversationFragment -> {
+                    disableDrawer()
                     showToolbar()
                     binding.toolbar.title = ""
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
+                    binding.frameLayout.elevation = 0f
                     binding.toolbar.setBackgroundColor(
                         resources.getColor(
                             R.color.flatActionBarColor,
@@ -157,10 +162,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel.timeAccessPin.observe(this, Observer {
             timeRequestAccessPin = it
         })
-
-//        viewModel.blockTime.observe(this, Observer {
-//            timeLockApp = it
-//        })
 
         binding.navView.setNavigationItemSelectedListener(this)
 
@@ -239,10 +240,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun showToolbar() {
+        val fourDp = Utils.dpToPx(this, 4f).toFloat()
         binding.toolbar.apply {
             visibility = View.VISIBLE
-            elevation = Utils.dpToPx(context!!, 4f).toFloat()
+            elevation = fourDp
         }
+        binding.frameLayout.elevation = fourDp
     }
 
     private fun enableDrawer() {
@@ -262,10 +265,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            binding.drawerLayout.isDrawerOpen(GravityCompat.START) -> {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+            }
+            binding.searchView.isOpened() -> {
+                binding.searchView.showSearchView()
+            }
+            else -> {
+                super.onBackPressed()
+            }
         }
     }
 

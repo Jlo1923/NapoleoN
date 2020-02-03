@@ -1,38 +1,10 @@
 package com.naposystems.pepito.dto.contacts
 
-import com.naposystems.pepito.entity.Contact
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ContactsResDTO(
-    @Json(name = "id") val id: Int,
-    @Json(name = "nick") val nickname: String,
-    @Json(name = "fullname") val displayName: String,
-    @Json(name = "my_status") val status: String,
-    @Json(name = "lastseen") val lastSeen: String,
-    @Json(name = "avatar") val avatar: String
-) {
-    companion object {
-
-        fun toEntityList(contactsResDTO: List<ContactsResDTO>): List<Contact> {
-            val listContacts: MutableList<Contact> = arrayListOf()
-
-            for (resContact in contactsResDTO) {
-
-                val contact = Contact(
-                    resContact.id,
-                    resContact.avatar,
-                    resContact.nickname,
-                    resContact.displayName,
-                    resContact.status,
-                    resContact.lastSeen
-                )
-
-                listContacts.add(contact)
-            }
-
-            return listContacts
-        }
-    }
-}
+    @Json(name = "friends") var contacts: List<ContactResDTO> = ArrayList(),
+    @Json(name = "date") val date: String
+)

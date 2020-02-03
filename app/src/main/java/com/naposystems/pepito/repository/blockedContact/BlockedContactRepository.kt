@@ -2,6 +2,7 @@ package com.naposystems.pepito.repository.blockedContact
 
 import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactsLocalDataSource
 import com.naposystems.pepito.dto.blockedContact.BlockedContactResDTO
+import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.entity.BlockedContact
 import com.naposystems.pepito.ui.blockedContacts.IContractBlockedContact
 import com.naposystems.pepito.utility.Constants
@@ -19,7 +20,7 @@ class BlockedContactRepository constructor(
         val localBlockedContacts = blockedContactsLocalDataSource.getBlockedContacts()
 
         try {
-            val response = napoleonApi.getBlockedContacts(Constants.FriendShipState.BLOCKED.state)
+            val response = napoleonApi.getContactsByState(Constants.FriendShipState.BLOCKED.state)
 
             if (response.isSuccessful) {
 
@@ -27,7 +28,7 @@ class BlockedContactRepository constructor(
                     blockedContactsLocalDataSource.clearTable()
                 }
 
-                blockedContacts.addAll(BlockedContactResDTO.toEntityList(response.body()!!))
+                blockedContacts.addAll(ContactResDTO.toBlockedContactEntityList(response.body()!!.contacts))
                 blockedContactsLocalDataSource.insertBlockedContacts(blockedContacts)
 
             } else {

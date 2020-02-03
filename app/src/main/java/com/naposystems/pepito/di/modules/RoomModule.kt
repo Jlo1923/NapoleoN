@@ -8,12 +8,18 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.db.NapoleonRoomDatabase
 import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactDao
 import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactsLocalDataSource
+import com.naposystems.pepito.db.dao.contact.ContactDao
+import com.naposystems.pepito.db.dao.contact.ContactDataSource
+import com.naposystems.pepito.db.dao.contact.ContactLocalDataSource
+import com.naposystems.pepito.db.dao.message.MessageDao
+import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.message.MessageLocalDataSource
+import com.naposystems.pepito.db.dao.attachment.AttachmentDao
+import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
+import com.naposystems.pepito.db.dao.attachment.AttachmentLocalDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDao
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationLocalDataSource
-import com.naposystems.pepito.db.dao.conversationAttachment.ConversationAttachmentDao
-import com.naposystems.pepito.db.dao.conversationAttachment.ConversationAttachmentDataSource
-import com.naposystems.pepito.db.dao.conversationAttachment.ConversationAttachmentLocalDataSource
 import com.naposystems.pepito.db.dao.status.StatusDao
 import com.naposystems.pepito.db.dao.status.StatusLocalDataSource
 import com.naposystems.pepito.db.dao.user.UserDao
@@ -43,7 +49,8 @@ class RoomModule {
                     NapoleonRoomDatabase.MIGRATION_6_7,
                     NapoleonRoomDatabase.MIGRATION_7_8,
                     NapoleonRoomDatabase.MIGRATION_8_9,
-                    NapoleonRoomDatabase.MIGRATION_9_10
+                    NapoleonRoomDatabase.MIGRATION_9_10,
+                    NapoleonRoomDatabase.MIGRATION_10_11
                 )
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -107,25 +114,49 @@ class RoomModule {
 
     @Provides
     @Singleton
+    fun provideMessageDao(napoleonRoomDatabase: NapoleonRoomDatabase): MessageDao {
+        return napoleonRoomDatabase.messageDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessageLocalDataSource(messageDao: MessageDao): MessageDataSource {
+        return MessageLocalDataSource(messageDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAttachmentDao(napoleonRoomDatabase: NapoleonRoomDatabase): AttachmentDao {
+        return napoleonRoomDatabase.attachmentDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAttachmentLocalDataSource(attachmentDao: AttachmentDao): AttachmentDataSource {
+        return AttachmentLocalDataSource(attachmentDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideContactDao(napoleonRoomDatabase: NapoleonRoomDatabase): ContactDao {
+        return napoleonRoomDatabase.contactDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideContactLocalDataSource(contactDao: ContactDao): ContactDataSource {
+        return ContactLocalDataSource(contactDao)
+    }
+
+    @Provides
+    @Singleton
     fun provideConversationDao(napoleonRoomDatabase: NapoleonRoomDatabase): ConversationDao {
         return napoleonRoomDatabase.conversationDao()
     }
 
     @Provides
     @Singleton
-    fun provideConversationLocalDataSource(conversationDao: ConversationDao): ConversationDataSource {
-        return ConversationLocalDataSource(conversationDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideConversationAttachmentDao(napoleonRoomDatabase: NapoleonRoomDatabase): ConversationAttachmentDao {
-        return napoleonRoomDatabase.conversationAttachmentDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideConversationAttachmentLocalDataSource(conversationAttachmentDao: ConversationAttachmentDao): ConversationAttachmentDataSource {
-        return ConversationAttachmentLocalDataSource(conversationAttachmentDao)
+    fun provideConversationLocalDataSource(contactDao: ConversationDao): ConversationDataSource {
+        return ConversationLocalDataSource(contactDao)
     }
 }

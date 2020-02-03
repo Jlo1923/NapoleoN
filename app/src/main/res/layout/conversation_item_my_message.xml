@@ -7,7 +7,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.conversation.ConversationAndAttachment" />
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
 
         <variable
             name="clickListener"
@@ -40,32 +40,45 @@
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:visibility="gone"
-                tools:visibility="visible"
-                tools:src="@drawable/a1" />
+                tools:src="@drawable/a1"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{conversation.conversation.body}"
+                android:text="@{conversation.message.body}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
-                tools:text="@tools:sample/lorem/random" />
+                tools:text="@tools:sample/lorem" />
 
             <TextView
                 style="@style/MyMessageDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
+                app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
+                app:layout_constraintTop_toTopOf="@id/imageView_message_status"
+                app:messageDate="@{conversation.message.createdAt}"
+                tools:text="10:34"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_message_status"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
-                app:messageDate="@{conversation.conversation.createdAt}"
-                tools:text="10:34" />
+                app:messageStatus="@{conversation.message.status}"
+                tools:srcCompat="@drawable/ic_message_sent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

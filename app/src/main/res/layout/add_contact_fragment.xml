@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.addContact.AddContactFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipe_refresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ViewSwitcher
+                        android:id="@+id/viewSwitcher_friendship_request"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inAnimation="@anim/fade_in"
+                        android:outAnimation="@anim/fade_out">
+
+                        <ImageView
+                            android:id="@+id/imageView_empty_state_friendship"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="@dimen/normal_padding"
+                            android:src="@drawable/image_register_recovery_account" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView_friendship_request"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/colorBackground"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/add_contact_item" />
+
+                    </ViewSwitcher>
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <ViewSwitcher
+                    android:id="@+id/viewSwitcher_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inAnimation="@anim/fade_in"
+                    android:outAnimation="@anim/fade_out">
+
+                    <ImageView
+                        android:id="@+id/imageView_empty_state_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/normal_padding"
+                        android:src="@drawable/image_recovery_account" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_contacts"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorBackground"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/add_contact_item" />
+
+                </ViewSwitcher>
+            </ViewSwitcher>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

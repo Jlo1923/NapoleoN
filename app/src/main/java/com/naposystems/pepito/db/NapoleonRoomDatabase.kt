@@ -5,20 +5,23 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactDao
+import com.naposystems.pepito.db.dao.contact.ContactDao
+import com.naposystems.pepito.db.dao.message.MessageDao
+import com.naposystems.pepito.db.dao.attachment.AttachmentDao
 import com.naposystems.pepito.db.dao.conversation.ConversationDao
-import com.naposystems.pepito.db.dao.conversationAttachment.ConversationAttachmentDao
 import com.naposystems.pepito.db.dao.status.StatusDao
 import com.naposystems.pepito.db.dao.user.UserDao
 import com.naposystems.pepito.entity.*
 import com.naposystems.pepito.entity.conversation.Conversation
-import com.naposystems.pepito.entity.conversation.ConversationAttachment
+import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.entity.message.Attachment
 
 @Database(
     entities = [
-        User::class, Status::class, BlockedContact::class, Conversation::class,
-        ConversationAttachment::class
+        User::class, Status::class, BlockedContact::class, Message::class,
+        Attachment::class, Contact::class, Conversation::class
     ],
-    version = 10
+    version = 11
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
@@ -28,9 +31,13 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
 
     abstract fun blockedContactDao(): BlockedContactDao
 
-    abstract fun conversationDao(): ConversationDao
+    abstract fun messageDao(): MessageDao
 
-    abstract fun conversationAttachmentDao(): ConversationAttachmentDao
+    abstract fun attachmentDao(): AttachmentDao
+
+    abstract fun contactDao(): ContactDao
+
+    abstract fun conversationDao(): ConversationDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -110,6 +117,22 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                         `message_id` TEXT NOT NULL,
                         `type` TEXT NOT NULL,
                         `body` TEXT NOT NULL,
+                        PRIMARY KEY (`id`)
+                        )""".trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE `contact` (
+                        `id` INTEGER NOT NULL,
+                        `image_url` TEXT NOT NULL,
+                        `nickname` TEXT NOT NULL,
+                        `display_name` TEXT NOT NULL,
+                        `status` TEXT NOT NULL,
+                        `last_seen` TEXT NOT NULL,
                         PRIMARY KEY (`id`)
                         )""".trimIndent()
                 )

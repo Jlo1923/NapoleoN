@@ -9,6 +9,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.pepito.R
+import com.naposystems.pepito.reactive.RxBus
+import com.naposystems.pepito.reactive.RxEvent
 import java.util.*
 
 object NotificationUtils {
@@ -38,8 +40,15 @@ object NotificationUtils {
 
         createNotificationChannel(context, channelId)
 
-        with(NotificationManagerCompat.from(context)) {
-            notify(Random().nextInt(), builder.build())
+        if (data.isNotEmpty() && data.containsKey("type_notification")) {
+            when (data.getValue("type_notification").toInt()) {
+                4, 5, 6 -> {
+                    with(NotificationManagerCompat.from(context)) {
+                        notify(Random().nextInt(), builder.build())
+                    }
+                }
+                Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> RxBus.publish(RxEvent.NewFriendshipRequest())
+            }
         }
     }
 

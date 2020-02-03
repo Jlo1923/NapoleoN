@@ -1,17 +1,44 @@
 package com.naposystems.pepito.entity
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Entity(tableName = "contact")
 data class Contact(
-    @Json(name = "id") val id: Int,
-    @Json(name = "image_url") val imageUrl: String,
-    @Json(name = "nickname") val nickname: String,
-    @Json(name = "display_name") val displayName: String,
-    @Json(name = "status") val status: String,
-    @Json(name = "last_seen") val lastSeen: String
-) : Parcelable
+    @PrimaryKey val id: Int,
+    @ColumnInfo(name = "image_url") val imageUrl: String,
+    @ColumnInfo(name = "nickname") val nickname: String,
+    @ColumnInfo(name = "display_name") val displayName: String,
+    @ColumnInfo(name = "status") val status: String,
+    @ColumnInfo(name = "last_seen") val lastSeen: String
+) : Parcelable {
+    @Ignore
+    var haveFriendshipRequest: Boolean = false
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Contact
+
+        if (id != other.id) return false
+        if (nickname != other.nickname) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + nickname.hashCode()
+        return result
+    }
+
+
+}

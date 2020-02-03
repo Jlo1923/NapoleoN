@@ -3,12 +3,13 @@ package com.naposystems.pepito.di
 import android.app.Application
 import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.naposystems.pepito.repository.socket.SocketRepository
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
-import com.naposystems.pepito.webService.SocketService
-import com.naposystems.pepito.webService.service.IContractSocketService
+import com.naposystems.pepito.webService.socket.SocketService
+import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -88,7 +89,13 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideSocketClient(sharedPreferencesManager: SharedPreferencesManager): IContractSocketService {
-        return SocketService(sharedPreferencesManager)
+    fun provideSocketClient(
+        sharedPreferencesManager: SharedPreferencesManager,
+        socketRepository: IContractSocketService.Repository
+    ): IContractSocketService.SocketService {
+        return SocketService(
+            sharedPreferencesManager,
+            socketRepository
+        )
     }
 }

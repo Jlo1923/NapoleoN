@@ -5,7 +5,7 @@ import android.content.res.Configuration
 import com.facebook.stetho.Stetho
 import com.naposystems.pepito.di.DaggerApplicationComponent
 import com.naposystems.pepito.utility.LocaleHelper
-import com.naposystems.pepito.webService.SocketService
+import com.naposystems.pepito.webService.socket.SocketService
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import timber.log.Timber

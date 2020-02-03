@@ -1,25 +1,23 @@
 package com.naposystems.pepito.db.dao.conversation
 
-import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import com.naposystems.pepito.entity.conversation.Conversation
-import com.naposystems.pepito.entity.conversation.ConversationAndAttachment
+import com.naposystems.pepito.entity.conversation.ConversationAndContact
 
 @Dao
 interface ConversationDao {
 
-    @Query("SELECT * FROM conversation WHERE channel_name=:channelName ORDER BY id DESC")
-    fun getMessagesAndAttachments(channelName: String): DataSource.Factory<Int, ConversationAndAttachment>
-
     @Insert
-    fun insertConversation(conversation: Conversation): Long
+    suspend fun insertConversation(conversation: Conversation): Long
 
-    @Insert
-    fun insertConversationList(conversationList: List<Conversation>)
+    @Query("SELECT * FROM conversation WHERE contact_id=:contactId")
+    suspend fun getConversationByContactId(contactId: Int): List<Conversation>
 
     @Update
-    fun updateConversation(conversation: Conversation)
+    suspend fun updateConversation(conversation: Conversation)
+
+    @Transaction
+    @Query("SELECT * FROM contact")
+    fun getConversations(): LiveData<List<ConversationAndContact>>
 }

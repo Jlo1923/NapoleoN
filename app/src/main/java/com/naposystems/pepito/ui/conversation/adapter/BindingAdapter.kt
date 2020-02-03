@@ -8,14 +8,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @BindingAdapter("messageDate")
-fun bindMessageDate(textView: TextView, timestamp: String) {
+fun bindMessageDate(textView: TextView, timestamp: Int) {
     try {
-        if (timestamp.isNotEmpty()) {
-            val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
-            val netDate = Date(timestamp.toLong() * 1000)
-            textView.text = sdf.format(netDate)
-            textView.visibility = View.VISIBLE
-        }
+        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
+        val netDate = Date(timestamp.toLong() * 1000)
+        textView.text = sdf.format(netDate)
+        textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.d("Error parsing date")
     }

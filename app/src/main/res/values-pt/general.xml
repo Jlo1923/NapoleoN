@@ -25,4 +25,7 @@
     <string name="text_register">Registre-se</string>
     <string name="text_answer">Resposta</string>
     <string name="text_error">Error</string>
+    <string name="text_add">Adicionar</string>
+    <string name="text_sent">Enviado</string>
+    <string name="text_refuse">Recusar</string>
 </resources>

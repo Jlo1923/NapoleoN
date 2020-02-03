@@ -1,17 +1,20 @@
 package com.naposystems.pepito.db.dao.conversation
 
 import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
-import com.naposystems.pepito.entity.conversation.Conversation
-import com.naposystems.pepito.entity.conversation.ConversationAndAttachment
+import com.naposystems.pepito.dto.conversation.message.MessageResDTO
+import com.naposystems.pepito.entity.conversation.ConversationAndContact
 
 interface ConversationDataSource {
 
-    fun getMessages(channelName: String, pageSize: Int): LiveData<PagedList<ConversationAndAttachment>>
+    suspend fun insertConversations(messagesResList: List<MessageResDTO>, isMine: Boolean)
 
-    fun insertConversation(conversation: Conversation): Long
+    suspend fun insertConversation(
+        messageRes: MessageResDTO,
+        isMine: Boolean,
+        unreadMessages: Int
+    )
 
-    fun insertListConversation(conversationList: List<Conversation>)
+    fun getConversations(): LiveData<List<ConversationAndContact>>
 
-    fun updateConversation(conversation: Conversation)
+    suspend fun updateConversation(contactId: Int)
 }

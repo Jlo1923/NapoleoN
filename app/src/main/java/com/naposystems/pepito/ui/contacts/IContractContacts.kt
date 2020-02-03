@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.contacts
 
+import androidx.lifecycle.LiveData
 import com.naposystems.pepito.entity.Contact
 
 interface IContractContacts {
@@ -9,6 +10,7 @@ interface IContractContacts {
     }
 
     interface Repository {
-        suspend fun getContacts(): List<Contact>
+        suspend fun getLocalContacts(): LiveData<List<Contact>>
+        suspend fun getRemoteContacts()
     }
 }

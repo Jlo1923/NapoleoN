@@ -1,7 +1,9 @@
 package com.naposystems.pepito.ui.contacts.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -38,6 +40,11 @@ class ContactsAdapter constructor(private val clickListener: ContactClickListene
         fun bind(item: Contact, clickListener: ContactClickListener) {
             binding.contact = item
             binding.clickListener = clickListener
+
+            binding.buttonMore.setOnClickListener {
+                clickListener.onMoreClick(item, it)
+            }
+
             binding.executePendingBindings()
         }
 
@@ -56,6 +63,6 @@ class ContactsAdapter constructor(private val clickListener: ContactClickListene
 
     interface ContactClickListener {
         fun onClick(item: Contact)
-        fun onMoreClick(item: Contact)
+        fun onMoreClick(item: Contact, view: View)
     }
 }
