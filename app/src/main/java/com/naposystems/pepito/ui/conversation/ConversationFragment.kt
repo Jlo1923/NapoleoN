@@ -265,6 +265,19 @@ class ConversationFragment : Fragment() {
         inflater.inflate(R.menu.menu_conversation, menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_item_see_contact -> {
+                findNavController().navigate(
+                    ConversationFragmentDirections
+                        .actionConversationFragmentToContactProfileFragment(args.contact.id)
+                )
+            }
+        }
+
+        return true
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {

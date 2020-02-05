@@ -54,11 +54,9 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_contacts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/FabPrimary"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:backgroundTint="@color/buttonTint"
             app:borderWidth="0dp"
             app:srcCompat="@drawable/ic_person_black"
             app:tint="@color/fabIconColor" />

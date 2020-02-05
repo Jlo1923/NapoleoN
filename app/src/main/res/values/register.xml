@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_nickname">Apodo*</string>
     <string name="text_display_name">Nombre a mostrar</string>
     <string name="text_terms_and_conditions_line_one">Al hacer click en Registro, aceptaras los</string>
     <string name="text_terms_and_conditions_line_two">términos, condiciones y políticas de privacidad.</string>

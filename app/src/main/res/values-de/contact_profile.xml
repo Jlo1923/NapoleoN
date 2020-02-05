@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete_conversation">Konversation löschen</string>
+    <string name="silence_conversation">Gespräch stumm schalten</string>
+    <string name="restore_contact">Kontakt wiederherstellen</string>
+</resources>

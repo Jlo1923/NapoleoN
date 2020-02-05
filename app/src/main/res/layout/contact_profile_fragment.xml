@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel" />
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.contactProfile.ContactProfileFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_profile_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:imageContact="@{viewmodel.contact}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/ic_volume_off_black" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                style="@style/FabPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView_profile_contact"
+                android:layout_alignBottom="@+id/imageView_profile_contact"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView_profile_contact"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView_profile_contact"
+                app:layout_constraintVertical_bias="0.446"
+                app:srcCompat="@drawable/ic_edit_black"
+                app:tint="@color/fabIconColor" />
+
+            <TextView
+                android:id="@+id/textView_title_name"
+                style="@style/OptionTitle"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="28dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView_profile_contact"
+                app:nameContact="@{viewmodel.contact}"
+                tools:text="Cecilia Maidana" />
+
+            <TextView
+                android:id="@+id/textView_title_nickname"
+                style="@style/OptionValue"
+                android:layout_marginTop="10dp"
+                app:bindNickNameContactWithAt="@{viewmodel.contact}"
+                app:layout_constraintEnd_toEndOf="@+id/textView_title_name"
+                app:layout_constraintStart_toStartOf="@+id/textView_title_name"
+                app:layout_constraintTop_toBottomOf="@+id/textView_title_name"
+                tools:text="Cecilia Maidana" />
+
+            <TextView
+                android:id="@+id/textView_information"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:background="@color/sectionColor"
+                android:inputType="textCapCharacters"
+                android:padding="@dimen/normal_padding"
+                android:text="@string/text_information"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_title_nickname"
+                tools:ignore="TextViewEdits" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_change_name"
+                style="@style/Option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_information">
+
+                <ImageView
+                    android:id="@+id/imageView_change_name_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_person_black" />
+
+                <ImageButton
+                    android:id="@+id/imageButton_change_name_end_icon"
+                    style="@style/OptionEndIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_edit_black" />
+
+                <TextView
+                    android:id="@+id/textView_name"
+                    style="@style/OptionTitle"
+                    android:text="@string/text_name"
+                    app:layout_constraintBottom_toTopOf="@id/textView_text_name"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_change_name_end_icon"
+                    app:layout_constraintStart_toEndOf="@id/imageView_change_name_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView_text_name"
+                    style="@style/OptionValue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textView_name"
+                    app:layout_constraintStart_toStartOf="@+id/textView_name"
+                    app:nameContact="@{viewmodel.contact}"
+                    tools:text="Cecilia Maidana" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_change_nickname"
+                style="@style/Option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/option_change_name">
+
+                <ImageView
+                    android:id="@+id/imageView_change_nickname_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_at_black" />
+
+                <ImageButton
+                    android:id="@+id/imageButton_change_nickname_end_icon"
+                    style="@style/OptionEndIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_edit_black" />
+
+                <TextView
+                    android:id="@+id/textView_nickname"
+                    style="@style/OptionTitle"
+                    android:text="@string/text_nickname"
+                    app:layout_constraintBottom_toTopOf="@id/textView_text_nickname"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_change_nickname_end_icon"
+                    app:layout_constraintStart_toEndOf="@id/imageView_change_nickname_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView_text_nickname"
+                    style="@style/OptionValue"
+                    app:bindNickNameContact="@{viewmodel.contact}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textView_nickname"
+                    app:layout_constraintStart_toStartOf="@+id/textView_nickname"
+                    tools:text="Ceci Maidana" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/textView_general"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@color/sectionColor"
+                android:padding="@dimen/normal_padding"
+                android:text="@string/text_general"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/option_change_nickname" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_delete_conversation"
+                style="@style/Option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_general">
+
+                <ImageView
+                    android:id="@+id/imageView_delete_chat_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_delete_black" />
+
+                <TextView
+                    android:id="@+id/textView_label_delete_chat"
+                    style="@style/OptionTitle"
+                    android:text="@string/delete_conversation"
+                    app:layout_constraintStart_toEndOf="@id/imageView_delete_chat_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_silence_conversation"
+                style="@style/Option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/option_delete_conversation">
+
+                <ImageView
+                    android:id="@+id/imageView_silence_conversation_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_volume_off_black" />
+
+                <TextView
+                    android:id="@+id/textView_label_silence_conversation"
+                    style="@style/OptionTitle"
+                    android:text="@string/silence_conversation"
+                    app:layout_constraintStart_toEndOf="@id/imageView_silence_conversation_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_restore_contact_chat"
+                style="@style/Option"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/option_silence_conversation">
+
+                <ImageView
+                    android:id="@+id/imageView_restore_contact_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_delete_black" />
+
+                <TextView
+                    android:id="@+id/textView_label_restore_contact_chat"
+                    style="@style/OptionTitle"
+                    android:text="@string/restore_contact"
+                    app:layout_constraintStart_toEndOf="@id/imageView_restore_contact_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+</layout>

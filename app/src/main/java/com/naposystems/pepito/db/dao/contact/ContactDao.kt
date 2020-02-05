@@ -3,6 +3,7 @@ package com.naposystems.pepito.db.dao.contact
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.naposystems.pepito.entity.Contact
+import io.reactivex.Flowable
 
 @Dao
 interface ContactDao {
@@ -12,6 +13,9 @@ interface ContactDao {
 
     @Query("SELECT * FROM contact ORDER BY display_name ASC")
     suspend fun getLocalContacts(): List<Contact>
+
+    @Query("SELECT * FROM contact WHERE id = :idContact")
+    fun getContact(idContact : Int): LiveData<Contact>
 
     @Insert
     suspend fun insertContact(contact: Contact)

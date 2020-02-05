@@ -7,6 +7,10 @@ import javax.inject.Inject
 class ContactLocalDataSource @Inject constructor(private val contactDao: ContactDao) :
     ContactDataSource {
 
+    override fun getContact(idContact : Int): LiveData<Contact> {
+        return contactDao.getContact(idContact)
+    }
+
     override suspend fun getContacts(): LiveData<List<Contact>> {
         return contactDao.getContacts()
     }

@@ -9,6 +9,7 @@ import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
+import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
 import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.conversation.ConversationViewModel
@@ -195,4 +196,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UnlockAppTimeViewModel::class)
     internal abstract fun binUnlockAppTimeViewModel(viewModel: UnlockAppTimeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactProfileViewModel::class)
+    internal abstract fun bindContactProfileViewModel(viewModel: ContactProfileViewModel): ViewModel
+
 }

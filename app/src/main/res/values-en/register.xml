@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_nickname">Nickname*</string>
     <string name="text_display_name">Display name</string>
     <string name="text_terms_and_conditions_line_one">By clicking on Register, you accept the</string>
     <string name="text_terms_and_conditions_line_two">terms, conditions and privacy policies.</string>

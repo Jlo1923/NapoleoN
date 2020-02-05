@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_nickname">Spitzname*</string>
     <string name="text_display_name">Anzeigename</string>
     <string name="text_terms_and_conditions_line_one">Mit einem Klick auf Registrierung akzeptieren Sie die</string>
     <string name="text_terms_and_conditions_line_two">Allgemeine Geschäftsbedingungen und Datenschutzbestimmungen.</string>

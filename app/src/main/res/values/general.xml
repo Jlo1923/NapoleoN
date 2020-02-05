@@ -16,6 +16,7 @@
     <string name="text_continue">Continuar</string>
     <string name="text_next">Siguiente</string>
     <string name="text_name">Nombre</string>
+    <string name="text_nickname_with_asterisk">Apodo*</string>
     <string name="text_edit">Editar</string>
     <string name="text_error_connection">No hay conexión a internet. Inténte más tarde</string>
     <string name="text_welcome">Bienvenido</string>
@@ -39,4 +40,6 @@
     <string name="text_add">Agregar</string>
     <string name="text_sent">Enviado</string>
     <string name="text_refuse">Rechazar</string>
+    <string name="text_information">INFORMACIÓN</string>
+    <string name="text_nickname">Apodo</string>
 </resources>

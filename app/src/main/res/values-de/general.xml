@@ -2,11 +2,12 @@
 <resources>
     <string name="text_accept">Akzeptieren</string>
     <string name="text_cancel">Abbrechen</string>
-    <string name="text_continue">Weiter</string>
+    <string name="text_continue">Weiter</string>Información
     <string name="text_welcome">Herzlich willkommen</string>
     <string name="text_next">Weiter</string>
     <string name="text_fail">Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
     <string name="text_name">Vorname</string>
+    <string name="text_nickname_with_asterisk">Spitzname*</string>
     <string name="text_status">Zustand</string>
     <string name="text_blocked_contacts">Blockierte Kontakte</string>
     <string name="label_edit_photo">Foto bearbeiten</string>
@@ -28,4 +29,6 @@
     <string name="text_add">Hinzufügen</string>
     <string name="text_sent">Gesendet</string>
     <string name="text_refuse">Ablehnen</string>
+    <string name="text_information">INFORMATIONEN</string>
+    <string name="text_nickname">Spitzname</string>
 </resources>

@@ -9,6 +9,8 @@ interface ContactDataSource {
 
     suspend fun getLocaleContacts(): List<Contact>
 
+    fun getContact(idContact : Int): LiveData<Contact>
+
     suspend fun insertContact(contact: Contact)
 
     suspend fun insertContactList(contactList: List<Contact>, delete: Boolean)

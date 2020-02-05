@@ -7,6 +7,7 @@
     <string name="text_next">Seguente</string>
     <string name="text_fail">Qualcosa è andato storto, per favore riprova</string>
     <string name="text_name">Nome</string>
+    <string name="text_nickname_with_asterisk">Soprannome*</string>
     <string name="text_status">Stato</string>
     <string name="text_blocked_contacts">Contatti bloccati</string>
     <string name="label_edit_photo">Modifica foto</string>
@@ -28,4 +29,6 @@
     <string name="text_add">Aggiungere</string>
     <string name="text_sent">Inviato</string>
     <string name="text_refuse">Rifiutare</string>
+    <string name="text_information">INFORMAZIONI</string>
+    <string name="text_nickname">Soprannome</string>
 </resources>
