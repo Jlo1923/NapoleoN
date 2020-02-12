@@ -53,7 +53,7 @@ class BlockedContactsViewModel @Inject constructor(private val repository: Block
                     contact.statusBlocked = false
                     repository.unblockContactLocal(contact.id)
                 } else {
-                    Timber.e(response.errorBody()!!.string())
+                    _webServiceErrors.value = repository.getDefaultError(response.errorBody()!!)
                 }
             } catch (e: Exception) {
                 Timber.e(e)

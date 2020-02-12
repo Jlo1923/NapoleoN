@@ -4,4 +4,6 @@
     <string name="unblock_contact">Unblock Contact</string>
     <string name="text_description_empty_state_blocked_contacts">It has no blocked contacts</string>
     <string name="text_blocked_contact_not_found">Ups! Tu búsqueda no trajo resultados</string>
+    <string name="text_wish_unblock_contact">Do you want to unlock %1$s?</string>
+    <string name="text_unblocked_contact">Contact Unlocked</string>
 </resources>
