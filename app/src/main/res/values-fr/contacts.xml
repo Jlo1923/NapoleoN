@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_my_contacts">Les contacts</string>
+    <string name="text_description_empty_state_contacts">Ajoutez vos amis et partagez avec eux de manière sécurisée et privée.</string>
+    <string name="text_wish_block_contact">Voulez-vous vraiment bloquer %1$s?</string>
+    <string name="text_wish_delete_contact">Voulez-vous vraiment supprimer %1$s?</string>
+    <string name="text_blocked_contact">Contact bloqué</string>
+    <string name="text_deleted_contact">Contact supprimé</string>
 </resources>

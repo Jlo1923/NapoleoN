@@ -138,10 +138,11 @@ class Utils {
         fun generalDialog(
             title: String,
             message: String,
+            isCancelable: Boolean,
             childFragmentManager: FragmentManager,
             actionAccept: () -> Unit
         ) {
-            val dialog = GeneralDialogFragment.newInstance(title, message)
+            val dialog = GeneralDialogFragment.newInstance(title, message, isCancelable)
             dialog.setListener(object : GeneralDialogFragment.OnGeneralDialog {
                 override fun onAccept() {
                     actionAccept()

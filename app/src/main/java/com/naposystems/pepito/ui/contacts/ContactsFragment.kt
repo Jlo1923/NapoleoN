@@ -16,6 +16,8 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactsFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter
+import com.naposystems.pepito.utility.SnackbarUtils
+import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -79,6 +81,10 @@ class ContactsFragment : Fragment() {
             viewModel.getContacts()
             binding.swipeRefresh.isRefreshing = false
         }
+
+        viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
+            SnackbarUtils(binding.coordinator, it).showSnackbar()
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -94,9 +100,7 @@ class ContactsFragment : Fragment() {
     private fun setAdapter() {
         adapter = ContactsAdapter(object : ContactsAdapter.ContactClickListener {
             override fun onClick(item: Contact) {
-                findNavController().navigate(
-                    ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
-                )
+                goToConversation(item)
             }
 
             override fun onMoreClick(item: Contact, view: View) {
@@ -105,18 +109,16 @@ class ContactsFragment : Fragment() {
 
                 popup.setOnMenuItemClickListener {
                     when (it.itemId) {
-                        R.id.start_chat -> showToast(
-                            context!!, "Iniciar chat"
-                        )
+                        R.id.start_chat ->
+                            goToConversation(item)
                         R.id.see_profile -> showToast(
                             context!!, "Ver perfil"
                         )
-                        R.id.block_contact -> showToast(
-                            context!!, "Bloquear contacto"
-                        )
-                        R.id.delete_contact -> showToast(
-                            context!!, "Eliminar contacto"
-                        )
+                        R.id.block_contact ->
+                            blockedContact(item)
+
+                        R.id.delete_contact ->
+                            deleteContact(item)
                     }
 
                     true
@@ -127,6 +129,36 @@ class ContactsFragment : Fragment() {
         })
 
         binding.recyclerViewContacts.adapter = adapter
+    }
+
+    private fun goToConversation(item:Contact) {
+        findNavController().navigate(
+            ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
+        )
+    }
+
+    private fun blockedContact(contact: Contact) {
+        generalDialog(
+            getString(R.string.text_block_contact),
+            getString(R.string.text_wish_block_contact, contact.displayName),
+            true,
+            childFragmentManager
+        ) {
+            viewModel.sendBlockedContact(contact)
+            showToast(context!!, getString(R.string.text_blocked_contact))
+        }
+    }
+
+    private fun deleteContact(contact: Contact) {
+        generalDialog(
+            getString(R.string.text_delete_contact),
+            getString(R.string.text_wish_delete_contact, contact.displayName),
+            true,
+            childFragmentManager
+        ) {
+            viewModel.sendDeleteContact(contact)
+            showToast(context!!, getString(R.string.text_deleted_contact))
+        }
     }
 
 }

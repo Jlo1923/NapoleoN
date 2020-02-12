@@ -33,6 +33,22 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
         }
     }
 
+    override fun getBlockedContacts(): LiveData<List<Contact>> {
+        return contactDao.getBlockedContacts()
+    }
+
+    override suspend fun blockContact(contactId: Int) {
+        contactDao.blockContact(contactId)
+    }
+
+    override suspend fun unblockContact(contactId: Int) {
+        contactDao.unblockContact(contactId)
+    }
+
+    override suspend fun deleteContact(contact: Contact) {
+        contactDao.deleteContact(contact)
+    }
+
     override suspend fun deleteContacts(contacts: List<Contact>) {
         contactDao.deleteContacts(contacts)
     }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -94,6 +95,7 @@ class RecoveryAccountQuestionsFragment : Fragment() {
                 binding.buttonNextStep.text = getText(R.string.text_finish)
             }
             binding.buttonNextStep.isEnabled = false
+
         }
 
         return binding.root
@@ -106,11 +108,11 @@ class RecoveryAccountQuestionsFragment : Fragment() {
 
         viewModel.userAccountDisplayName.observe(viewLifecycleOwner, Observer { fullName ->
             if (fullName.isNotEmpty()) {
-
                 //Dialogo de creacción de cuenta
                 generalDialog(
                     getString(R.string.text_title_success),
                     getString(R.string.text_recovery_success),
+                    false,
                     childFragmentManager
                 ) {
                     findNavController().navigate(
@@ -124,6 +126,8 @@ class RecoveryAccountQuestionsFragment : Fragment() {
                 }
             }
         })
+
+
 
         viewModel.recoveryAnswerCreatingErrors.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)

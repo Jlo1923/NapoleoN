@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.findNavController
 
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.GeneralDialogFragmentBinding
@@ -19,16 +19,19 @@ class GeneralDialogFragment : DialogFragment() {
     private lateinit var binding: GeneralDialogFragmentBinding
     private lateinit var title: String
     private lateinit var message: String
+    private var optionIsCancelable: Boolean = true
 
     companion object {
 
         private const val TITLE: String = "TITLE"
         private const val MESSAGE: String = "MESSAGE"
+        private const val IS_CANCELABLE: String = "DIALOGTYPE"
 
-        fun newInstance(title: String, message: String) = GeneralDialogFragment().apply {
+        fun newInstance(title: String, message: String, isCancelable: Boolean = true) = GeneralDialogFragment().apply {
             arguments = Bundle().apply {
                 putString(TITLE, title)
                 putString(MESSAGE, message)
+                putBoolean(IS_CANCELABLE, isCancelable)
             }
         }
     }
@@ -47,6 +50,7 @@ class GeneralDialogFragment : DialogFragment() {
         arguments?.let {
             title = it.getString(TITLE)!!
             message = it.getString(MESSAGE)!!
+            optionIsCancelable = it.getBoolean(IS_CANCELABLE)
         }
 
         binding = DataBindingUtil.inflate(
@@ -55,6 +59,10 @@ class GeneralDialogFragment : DialogFragment() {
 
         binding.textViewTitle.text = title
         binding.textViewMessage.text = message
+
+        isCancelable = optionIsCancelable
+
+        binding.buttonCancel.isVisible = optionIsCancelable
 
         binding.buttonCancel.setOnClickListener {
             dismiss()

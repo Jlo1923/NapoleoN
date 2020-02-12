@@ -29,6 +29,9 @@ object Constants {
         const val GET_FRIENDSHIP_REQUESTS = "friendshiprequest"
         const val PUT_FRIENDSHIP_REQUEST = "friendshiprequest/{id}"
         const val GET_FRIENDSHIP_REQUEST_QUANTITY = "friendshiprequest/countfriendshiprequest"
+        const val PUT_BLOCK_CONTACT = "friendship/blockuser/{id}"
+        const val DELETE_CONTACT = "friendship/{id}"
+        const val PUT_UNBLOCK_CONTACT = "friendship/unblockuser/{id}"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
