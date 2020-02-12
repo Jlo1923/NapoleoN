@@ -17,7 +17,8 @@ data class Contact(
     @ColumnInfo(name = "nickname") val nickname: String,
     @ColumnInfo(name = "display_name") val displayName: String,
     @ColumnInfo(name = "status") val status: String,
-    @ColumnInfo(name = "last_seen") val lastSeen: String
+    @ColumnInfo(name = "last_seen") val lastSeen: String,
+    @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false
 ) : Parcelable {
     @Ignore
     var haveFriendshipRequest: Boolean = false

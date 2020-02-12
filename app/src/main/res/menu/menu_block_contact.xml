@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/see_profile"
+        android:title="@string/text_view_profile"/>
+
+    <item android:id="@+id/unblock"
+        android:title="@string/unblock_contact"/>
+</menu>

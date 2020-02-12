@@ -7,6 +7,7 @@
 
     </data>
 
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
@@ -22,6 +23,8 @@
                 android:id="@+id/viewSwitcher"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:inAnimation="@anim/fade_in"
+                android:outAnimation="@anim/fade_out"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -39,12 +42,39 @@
                         android:inAnimation="@anim/fade_in"
                         android:outAnimation="@anim/fade_out">
 
-                        <ImageView
-                            android:id="@+id/imageView_empty_state_friendship"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/container_empty_state_friendship"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="@dimen/normal_padding"
-                            android:src="@drawable/image_register_recovery_account" />
+                            android:layout_height="match_parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/imageView_empty_state_friendship"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                app:layout_constraintBottom_toTopOf="@id/textView_description_friendship"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHeight_percent="0.3"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_chainStyle="packed"
+                                app:srcCompat="@drawable/image_empty_state_friendship" />
+
+                            <TextView
+                                android:id="@+id/textView_description_friendship"
+                                style="@style/TextViewSecondaryTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/normal_margin"
+                                android:paddingStart="@dimen/small_padding"
+                                android:paddingEnd="@dimen/small_padding"
+                                android:text="@string/text_description_empty_state_blocked_contacts"
+                                android:textAlignment="center"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/imageView_empty_state_friendship" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerView_friendship_request"
@@ -65,12 +95,36 @@
                     android:inAnimation="@anim/fade_in"
                     android:outAnimation="@anim/fade_out">
 
-                    <ImageView
-                        android:id="@+id/imageView_empty_state_search"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_empty_state_search"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="@dimen/normal_padding"
-                        android:src="@drawable/image_recovery_account" />
+                        android:layout_height="match_parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/imageView_empty_state_search"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintBottom_toTopOf="@id/textView_description_state_search"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHeight_percent="0.3"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_chainStyle="packed"
+                            app:srcCompat="@drawable/image_empty_state_search" />
+
+                        <TextView
+                            android:id="@+id/textView_description_state_search"
+                            style="@style/TextViewSecondaryTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/normal_margin"
+                            android:text="Busque Puto"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/imageView_empty_state_search" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView_contacts"

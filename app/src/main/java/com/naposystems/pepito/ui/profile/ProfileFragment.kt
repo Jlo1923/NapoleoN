@@ -58,9 +58,6 @@ class ProfileFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    @Inject
-    lateinit var sharedPreferencesManager: SharedPreferencesManager
-
     private lateinit var binding: ProfileFragmentBinding
     private lateinit var viewModel: ProfileViewModel
     private lateinit var fileName: String

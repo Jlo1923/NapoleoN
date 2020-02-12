@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_blocked_contacts_info">The contacts in this list will not be able to communicate with you or access your profile.</string>
+    <string name="unblock_contact">Unblock Contact</string>
+    <string name="text_description_empty_state_blocked_contacts">It has no blocked contacts</string>
+    <string name="text_blocked_contact_not_found">Ups! Tu búsqueda no trajo resultados</string>
 </resources>

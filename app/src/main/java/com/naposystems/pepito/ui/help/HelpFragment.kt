@@ -33,6 +33,9 @@ class HelpFragment : Fragment() {
         )
         binding.lifecycleOwner = this
 
+        binding.optionContactUs.setOnClickListener(contactUsClickListener())
+        binding.imageButtonContactOptionEndIcon.setOnClickListener(contactUsClickListener())
+
         binding.optionFrequentQuestions.setOnClickListener(frequentQuestionsClickListener())
         binding.imageButtonFrequentOptionEndIcon.setOnClickListener(frequentQuestionsClickListener())
 
@@ -41,9 +44,6 @@ class HelpFragment : Fragment() {
 
         binding.optionAbout.setOnClickListener(aboutClickListener())
         binding.imageButtonAboutOptionEndIcon.setOnClickListener(aboutClickListener())
-
-        binding.optionContactUs.setOnClickListener(contactUsClickListener())
-        binding.imageButtonContactOptionEndIcon.setOnClickListener(contactUsClickListener())
 
         return binding.root
     }

@@ -1,26 +1,28 @@
 package com.naposystems.pepito.ui.blockedContacts
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.os.Handler
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-
+import androidx.lifecycle.ViewModelProviders
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.BlockedContactsFragmentBinding
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.blockedContacts.adapter.BlockedContactsAdapter
+import com.naposystems.pepito.ui.custom.SearchView
+import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.SnackbarUtils
+import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import java.util.concurrent.TimeUnit
+import java.util.*
 import javax.inject.Inject
 
-class BlockedContactsFragment : Fragment() {
+class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     companion object {
         fun newInstance() = BlockedContactsFragment()
@@ -32,6 +34,8 @@ class BlockedContactsFragment : Fragment() {
     private lateinit var viewModel: BlockedContactsViewModel
     private lateinit var binding: BlockedContactsFragmentBinding
     private lateinit var adapter: BlockedContactsAdapter
+    private lateinit var mainActivity: MainActivity
+    private lateinit var searchView: SearchView
 
 
     override fun onAttach(context: Context) {
@@ -43,14 +47,28 @@ class BlockedContactsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(
             inflater, R.layout.blocked_contacts_fragment, container, false
         )
 
+        setHasOptionsMenu(true)
+
         binding.lifecycleOwner = this
 
+        setAdapter()
+
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_blocked_contacts, menu)
+        if (activity is MainActivity) {
+            mainActivity = activity as MainActivity
+            searchView = mainActivity.findViewById(R.id.searchView)
+            searchView.setHint(R.string.text_search)
+            searchView.setMenuItem(menu.findItem(R.id.search_blocked_contacts))
+            searchView.setListener(this)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -58,17 +76,117 @@ class BlockedContactsFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(BlockedContactsViewModel::class.java)
 
-        viewModel.blockedContacts.observe(viewLifecycleOwner, Observer { blockedContacts ->
-            adapter = BlockedContactsAdapter(
-                blockedContacts,
-                BlockedContactsAdapter.BlockedContactSelectionListener {
-                    Toast.makeText(context!!, it.nickname, Toast.LENGTH_SHORT).show()
-                })
+        viewModel.getBlockedContacts()
+        viewModel.blockedContacts.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+            if (it.isNotEmpty()) {
+                if (binding.viewSwitcher.currentView.id == binding.containerEmptyStateBlockedContacts.id) {
+                    binding.viewSwitcher.showNext()
+                }
+            } else {
+                if (binding.viewSwitcher.currentView.id == binding.viewSwitcherRecycler.id) {
+                    binding.viewSwitcher.showNext()
+                }
+            }
+        })
 
-            binding.recyclerViewBlockedContacts.adapter = adapter
+        viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
+            SnackbarUtils(binding.coordinator, it).showSnackbar()
+        })
 
-            binding.viewSwitcher.showNext()
+        viewModel.listBlockedContacts.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+
+            if (it.isNotEmpty()) {
+                if (binding.viewSwitcherRecycler.currentView.id == binding.containerSearchNotFound.id) {
+                    binding.viewSwitcherRecycler.showNext()
+                }
+            } else {
+                if (binding.viewSwitcherRecycler.currentView.id == binding.containerRecyclerViewBlockedContacts.id) {
+                    binding.viewSwitcherRecycler.showNext()
+                }
+            }
         })
     }
 
+    //region Implementation SearchView.OnSearchView
+    override fun onOpened() {
+        //Nothing
+    }
+
+    override fun onQuery(text: String) {
+        if (text.length >= 4) {
+            viewModel.searchLocalBlockedContact(text.toLowerCase(Locale.getDefault()))
+        } else {
+            refreshView()
+        }
+    }
+
+    override fun onClosed() {
+        refreshView()
+    }
+    //endregion
+
+    private fun refreshView() {
+        adapter.submitList(viewModel.blockedContacts.value)
+        if (binding.viewSwitcherRecycler.currentView.id == binding.containerSearchNotFound.id) {
+            binding.viewSwitcherRecycler.showNext()
+        }
+    }
+
+    private fun setAdapter() {
+        adapter =
+            BlockedContactsAdapter(object : BlockedContactsAdapter.BlockedContactsClickListener {
+                override fun onClick(item: Contact) {
+                    seeProfile()
+                }
+
+                override fun onMoreClick(item: Contact, view: View) {
+                    val popup = PopupMenu(context!!, view)
+                    popup.menuInflater.inflate(R.menu.menu_block_contact, popup.menu)
+
+                    popup.setOnMenuItemClickListener {
+                        when (it.itemId) {
+                            R.id.see_profile -> {
+                                seeProfile()
+                            }
+                            R.id.unblock -> {
+                                unblockContact(item)
+                            }
+                        }
+
+                        true
+                    }
+                    popup.show()
+                }
+            })
+
+        binding.recyclerViewBlockedContacts.adapter = adapter
+    }
+
+    private fun seeProfile() {
+        showToast(
+            context!!, "Ver perfil"
+        )
+        /*findNavController().navigate(
+            BlockedContactsFragmentDirections
+                .actionBlockedContactsFragmentToContactProfileFragment()
+        )*/
+    }
+
+    private fun unblockContact(contact: Contact) {
+        Utils.generalDialog(
+            "Desbloquear contacto",
+            "¿Está seguro de que desea desbloquear a ${contact.displayName}?",
+            true,
+            childFragmentManager
+        ) {
+            viewModel.unblockContact(contact)
+            showToast(context!!, "Contacto Desbloquedo")
+        }
+    }
+}
+
+fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

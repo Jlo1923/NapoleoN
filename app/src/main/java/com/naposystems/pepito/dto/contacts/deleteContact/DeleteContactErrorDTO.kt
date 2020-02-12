@@ -1,9 +1,9 @@
-package com.naposystems.pepito.dto.blockedContact
+package com.naposystems.pepito.dto.contacts.deleteContact
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class BlockedContactErrorDTO(
+class DeleteContactErrorDTO(
     @Json(name = "error") val error: String
 )

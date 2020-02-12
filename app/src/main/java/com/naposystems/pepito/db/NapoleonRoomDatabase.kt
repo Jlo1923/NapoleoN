@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactDao
 import com.naposystems.pepito.db.dao.contact.ContactDao
 import com.naposystems.pepito.db.dao.message.MessageDao
 import com.naposystems.pepito.db.dao.attachment.AttachmentDao
@@ -18,7 +17,7 @@ import com.naposystems.pepito.entity.message.Attachment
 
 @Database(
     entities = [
-        User::class, Status::class, BlockedContact::class, Message::class,
+        User::class, Status::class, Message::class,
         Attachment::class, Contact::class, Conversation::class
     ],
     version = 11
@@ -28,8 +27,6 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     abstract fun statusDao(): StatusDao
-
-    abstract fun blockedContactDao(): BlockedContactDao
 
     abstract fun messageDao(): MessageDao
 
