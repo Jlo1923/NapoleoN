@@ -19,12 +19,11 @@ import javax.inject.Inject
 
 class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: LanguageSelectionViewModel
     private lateinit var binding: LanguageSelectionDialogFragmentBinding
     private lateinit var adapter: LanguageSelectionAdapter
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)

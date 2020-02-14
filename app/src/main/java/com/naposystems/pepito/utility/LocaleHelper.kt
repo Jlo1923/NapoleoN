@@ -2,9 +2,12 @@ package com.naposystems.pepito.utility
 
 import android.content.Context
 import android.content.ContextWrapper
+import com.naposystems.pepito.R
 import com.naposystems.pepito.model.languageSelection.Language
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import java.util.*
-import javax.inject.Inject
 
 class LocaleHelper(base: Context?) : ContextWrapper(base) {
 
@@ -33,9 +36,26 @@ class LocaleHelper(base: Context?) : ContextWrapper(base) {
             return newContext
         }
 
+        private fun getLanguages(context: Context): List<Language> {
+            val languages = context.resources
+                .openRawResource(R.raw.languages)
+                .bufferedReader()
+                .use { it.readLine() }
+
+            val moshi = Moshi.Builder().build()
+
+            val listType = Types.newParameterizedType(List::class.java, Language::class.java)
+            val adapter: JsonAdapter<List<Language>> = moshi.adapter(listType)
+
+            return adapter.fromJson(languages)!!
+        }
+
         private fun setLanguagePreference(context: Context, language: Language) {
             val sharedPreferences =
-                context.getSharedPreferences(Constants.SharedPreferences.PREF_NAME, Context.MODE_PRIVATE)
+                context.getSharedPreferences(
+                    Constants.SharedPreferences.PREF_NAME,
+                    Context.MODE_PRIVATE
+                )
 
             with(sharedPreferences!!.edit()) {
                 putString(
@@ -48,9 +68,22 @@ class LocaleHelper(base: Context?) : ContextWrapper(base) {
 
         fun getLanguagePreference(context: Context): String {
             val sharedPreferences =
-                context.getSharedPreferences(Constants.SharedPreferences.PREF_NAME, Context.MODE_PRIVATE)
+                context.getSharedPreferences(
+                    Constants.SharedPreferences.PREF_NAME,
+                    Context.MODE_PRIVATE
+                )
 
-            val defaultLanguage = "en"
+            var defaultLanguage = Locale.getDefault().language
+
+            val filterLanguage = getLanguages(
+                context
+            ).filter {
+                it.iso == defaultLanguage
+            }
+
+            if (filterLanguage.isEmpty()) {
+                defaultLanguage = "en"
+            }
 
             return sharedPreferences.getString(
                 Constants.SharedPreferences.PREF_LANGUAGE_SELECTED,

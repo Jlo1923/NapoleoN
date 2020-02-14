@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_blocked_contacts_info">I contatti in questo elenco non saranno in grado di comunicare con te o accedere al tuo profilo.</string>
+    <string name="unblock_contact">Sblocca contatto</string>
+    <string name="text_description_empty_state_blocked_contacts">Non ha contatti bloccati</string>
+    <string name="text_blocked_contact_not_found">Ups! Tu búsqueda no trajo resultados</string>
+    <string name="text_wish_unblock_contact">Vuoi sbloccare %1$s?</string>
+    <string name="text_unblocked_contact">Contatto sbloccato</string>
 </resources>

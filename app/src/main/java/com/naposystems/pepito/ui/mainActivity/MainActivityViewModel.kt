@@ -64,6 +64,16 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
         }
     }
 
+    override fun getOutputControl(): Int {
+        return repository.getOutputControl()
+    }
+
+    override fun setOutputControl(state: Int) {
+        viewModelScope.launch {
+            repository.setOutputControl(state)
+        }
+    }
+
     override fun getTimeRequestAccessPin() {
         viewModelScope.launch {
             _timeAccessPin.value = repository.getTimeRequestAccessPin()

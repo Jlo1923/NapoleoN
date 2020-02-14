@@ -9,7 +9,8 @@ data class CreateAccountResDTO(
     @Json(name = "fullname") val fullName: String,
     @Json(name = "nick") val nickname: String,
     @Json(name = "id") val id: Int,
-    @Json(name = "my_status") val status: String = ""
+    @Json(name = "my_status") val status: String = "",
+    @Json(name = "secret_key") val secretKey: String
 ) {
     companion object {
         fun toUserModel(

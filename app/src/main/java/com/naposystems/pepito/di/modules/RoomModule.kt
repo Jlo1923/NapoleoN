@@ -6,8 +6,6 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.pepito.R
 import com.naposystems.pepito.db.NapoleonRoomDatabase
-import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactDao
-import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactsLocalDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDao
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.contact.ContactLocalDataSource
@@ -41,16 +39,7 @@ class RoomModule {
         napoleonDB =
             Room.databaseBuilder(context, NapoleonRoomDatabase::class.java, "napoleon_database")
                 .addMigrations(
-                    NapoleonRoomDatabase.MIGRATION_1_2,
-                    NapoleonRoomDatabase.MIGRATION_2_3,
-                    NapoleonRoomDatabase.MIGRATION_3_4,
-                    NapoleonRoomDatabase.MIGRATION_4_5,
-                    NapoleonRoomDatabase.MIGRATION_5_6,
-                    NapoleonRoomDatabase.MIGRATION_6_7,
-                    NapoleonRoomDatabase.MIGRATION_7_8,
-                    NapoleonRoomDatabase.MIGRATION_8_9,
-                    NapoleonRoomDatabase.MIGRATION_9_10,
-                    NapoleonRoomDatabase.MIGRATION_10_11
+                    NapoleonRoomDatabase.MIGRATION_1_2
                 )
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -98,18 +87,6 @@ class RoomModule {
     @Singleton
     fun provideStatusLocalDataSource(statusDao: StatusDao): StatusLocalDataSource {
         return StatusLocalDataSource(statusDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideBlockedContactDao(napoleonRoomDatabase: NapoleonRoomDatabase): BlockedContactDao {
-        return napoleonRoomDatabase.blockedContactDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideBlockedContactsLocalDataSource(blockedContactDao: BlockedContactDao): BlockedContactsLocalDataSource {
-        return BlockedContactsLocalDataSource(blockedContactDao)
     }
 
     @Provides

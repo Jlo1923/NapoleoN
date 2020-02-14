@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.addContact.AddContactViewModel
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
+import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
 import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
@@ -13,11 +14,11 @@ import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.conversation.ConversationViewModel
 import com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
-import com.naposystems.pepito.ui.home.HomeViewModel
 import com.naposystems.pepito.ui.enterPin.EnterPinViewModel
+import com.naposystems.pepito.ui.home.HomeViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
-import com.naposystems.pepito.ui.previewImageSend.SharePreviewImageSendViewModel
+import com.naposystems.pepito.ui.conversationCamera.ShareConversationCameraViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -158,8 +159,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SharePreviewImageSendViewModel::class)
-    internal abstract fun bindSharePreviewImageSendViewModel(viewModel: SharePreviewImageSendViewModel): ViewModel
+    @ViewModelKey(ShareConversationCameraViewModel::class)
+    internal abstract fun bindSharePreviewImageSendViewModel(viewModel: ShareConversationCameraViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -195,6 +196,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UnlockAppTimeViewModel::class)
     internal abstract fun binUnlockAppTimeViewModel(viewModel: UnlockAppTimeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BaseViewModel::class)
+    internal abstract fun binBaseViewModel(viewModel: BaseViewModel): ViewModel
 
     @Binds
     @IntoMap

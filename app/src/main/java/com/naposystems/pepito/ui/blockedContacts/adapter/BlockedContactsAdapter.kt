@@ -1,57 +1,70 @@
 package com.naposystems.pepito.ui.blockedContacts.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.BlockedContactsItemBinding
-import com.naposystems.pepito.entity.BlockedContact
+import com.naposystems.pepito.entity.Contact
 
-class BlockedContactsAdapter constructor(
-    private val blockedContacts: List<BlockedContact>,
-    private val clickListener: BlockedContactSelectionListener
-) :
-    RecyclerView.Adapter<BlockedContactsAdapter.ViewHolder>() {
+class BlockedContactsAdapter constructor(private val clickListener: BlockedContactsClickListener) :
+    ListAdapter<Contact, BlockedContactsAdapter.BlockedContactsViewHolder>(DiffCallback) {
+
+    object DiffCallback : DiffUtil.ItemCallback<Contact>() {
+        override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+            return oldItem.nickname == newItem.nickname
+        }
+
+        override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+            return oldItem == newItem
+        }
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewHolder {
-        return ViewHolder.from(parent)
+    ): BlockedContactsViewHolder {
+        return BlockedContactsViewHolder.from(parent)
     }
 
-    override fun getItemCount() = blockedContacts.size
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val blockedContact = blockedContacts[position]
-        holder.bind(blockedContact, clickListener)
+    override fun onBindViewHolder(holder: BlockedContactsViewHolder, position: Int) {
+        val item = getItem(position)
+        holder.bind(item, clickListener)
     }
 
-    class ViewHolder constructor(private val binding: BlockedContactsItemBinding) :
+    class BlockedContactsViewHolder constructor(private val binding: BlockedContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(blockedContact: BlockedContact, clickListener: BlockedContactSelectionListener) {
-            binding.contact = blockedContact
+        fun bind(item: Contact, clickListener: BlockedContactsClickListener) {
+            binding.contact = item
             binding.clickListener = clickListener
+
+            binding.buttonMore.setOnClickListener {
+                clickListener.onMoreClick(item, it)
+            }
+
             binding.executePendingBindings()
         }
 
         companion object {
-            fun from(parent: ViewGroup): ViewHolder {
+            fun from(parent: ViewGroup): BlockedContactsViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-
                 val binding = BlockedContactsItemBinding.inflate(
                     layoutInflater,
                     parent,
                     false
                 )
 
-                return ViewHolder(binding)
+                return BlockedContactsViewHolder(binding)
             }
         }
 
     }
 
-    class BlockedContactSelectionListener(val clickListener: (blockedContact: BlockedContact) -> Unit) {
-        fun onClick(blockedContact: BlockedContact) = clickListener(blockedContact)
+    interface BlockedContactsClickListener {
+        fun onClick(item: Contact)
+        fun onMoreClick(item: Contact, view: View)
     }
 }

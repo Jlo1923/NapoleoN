@@ -43,9 +43,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
-//    private var timeLockApp: Long = 0L
     private var timeRequestAccessPin: Int = 0
     private var accountStatus: Int = 0
+    private var outputControl: Int = 0
 
     private val options by lazy {
         navOptions {
@@ -94,7 +94,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.registerFragment,
                 R.id.previewImageSendFragment,
                 R.id.enterPinFragment,
-                R.id.unlockAppTimeFragment -> {
+                R.id.unlockAppTimeFragment,
+                R.id.conversationCameraFragment-> {
                     hideToolbar()
                     disableDrawer()
                 }
@@ -316,7 +317,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
-        validLockTime()
+        if (viewModel.getOutputControl() == Constants.OutputControl.TRUE.state) {
+            viewModel.setOutputControl(Constants.OutputControl.FALSE.state)
+        } else {
+            validLockTime()
+        }
         showContent()
     }
 
@@ -341,21 +346,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun validLockTime() {
-        /*when(accountStatus) {
-            Constants.AccountStatus.ACCOUNT_CREATED.id -> {
-                if (timeRequestAccessPin != -1) {
-                    val currentTime = System.currentTimeMillis()
+        if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
+            when(accountStatus) {
+                Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+                    if (timeRequestAccessPin != -1) {
+                        val currentTime = System.currentTimeMillis()
 
-                    if(currentTime >= viewModel.getLockTimeApp()) {
-                        viewModel.setLockStatus(Constants.LockStatus.LOCK.state)
-                        navController.navigate(
-                            R.id.enterPinFragment,
-                            null,
-                            NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
-                        )
+                        if(currentTime >= viewModel.getLockTimeApp()) {
+                            viewModel.setLockStatus(Constants.LockStatus.LOCK.state)
+                            navController.navigate(
+                                R.id.enterPinFragment,
+                                null,
+                                NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
+                            )
+                        }
                     }
                 }
             }
-        }*/
+        }
     }
 }

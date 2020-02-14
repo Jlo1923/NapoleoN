@@ -7,18 +7,20 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.blockedContacts.adapter.BlockedContactsAdapter.BlockedContactSelectionListener" />
+            type="com.naposystems.pepito.ui.blockedContacts.adapter.BlockedContactsAdapter.BlockedContactsClickListener" />
 
         <variable
             name="contact"
-            type="com.naposystems.pepito.entity.BlockedContact" />
+            type="com.naposystems.pepito.entity.Contact" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_home_item"
-        android:padding="@dimen/normal_padding">
+        android:foreground="?attr/selectableItemBackground"
+        android:padding="@dimen/normal_padding"
+        android:onClick="@{() -> clickListener.onClick(contact)}">
 
         <ImageView
             android:id="@+id/imageView_user_image"
@@ -67,8 +69,7 @@
             android:id="@+id/button_more"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:background="@android:color/transparent"
-            android:onClick="@{() -> clickListener.onClick(contact)}"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:tint="@color/colorSecondaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

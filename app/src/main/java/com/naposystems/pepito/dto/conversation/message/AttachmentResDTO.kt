@@ -14,30 +14,6 @@ data class AttachmentResDTO(
     companion object {
 
         fun toListConversationAttachment(
-            listAttachmentsDTO: List<AttachmentResDTO>,
-            conversationId: Int,
-            listAttachmentsId: List<Long>
-        ): List<Attachment> {
-            val mutableList: MutableList<Attachment> = ArrayList()
-
-            for ((index, attachmentDTO) in listAttachmentsDTO.withIndex()) {
-                mutableList.add(
-                    Attachment(
-                        listAttachmentsId[index].toInt(),
-                        conversationId,
-                        attachmentDTO.id,
-                        attachmentDTO.messageId,
-                        attachmentDTO.type,
-                        attachmentDTO.body,
-                        ""
-                    )
-                )
-            }
-
-            return mutableList
-        }
-
-        fun toListConversationAttachment(
             conversationId: Int,
             listAttachmentsDTO: List<AttachmentResDTO>
         ): List<Attachment> {

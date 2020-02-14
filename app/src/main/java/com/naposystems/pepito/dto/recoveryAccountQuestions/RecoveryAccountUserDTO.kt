@@ -13,12 +13,13 @@ data class RecoveryAccountUserDTO(
     @Json(name = "my_status") val myStatus: String,
     @Json(name = "lastseen") val lastseen: String,
     @Json(name = "avatar") val avatar: String,
-    @Json(name = "language_iso") val languageIso: String
+    @Json(name = "language_iso") val languageIso: String,
+    @Json(name = "secret_key") val secretKey: String
 ) {
 
     companion object {
         fun toUserModel(recoveryAccountUserDTO: RecoveryAccountUserDTO, firebaseId: String): User {
-            val user = User(
+            return User(
                 firebaseId,
                 recoveryAccountUserDTO.id,
                 recoveryAccountUserDTO.nick,
@@ -29,8 +30,6 @@ data class RecoveryAccountUserDTO(
                 "",
                 ""
             )
-
-            return user
         }
     }
 }

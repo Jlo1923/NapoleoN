@@ -76,7 +76,8 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
                     context.theme
                 )
             )
-            setTextColor(resources.getColor(R.color.secondaryTextColor, context.theme))
+            setTextColor(resources.getColor(R.color.searchViewTextColor, context.theme))
+            setHintTextColor(resources.getColor(R.color.searchViewHintColor, context.theme))
             hint = customHint
             maxLines = 1
             isSingleLine = true
@@ -117,7 +118,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
 
     private fun createImageButtonClose() {
         imageButtonClose.setOnClickListener {
-//            isOpen = true
+            //            isOpen = true
             showSearchView()
         }
 

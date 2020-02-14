@@ -9,4 +9,7 @@
     <external-cache-path
         name="conversation"
         path="conversations/" />
+    <external-cache-path
+        name="chatBackground"
+        path="chatBackground/" />
 </paths>

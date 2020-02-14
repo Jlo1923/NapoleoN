@@ -9,8 +9,8 @@
         android:id="@+id/splashFragment"
         android:name="com.naposystems.pepito.ui.splash.SplashFragment"
         android:label="splash_fragment"
-        app:startDestination="@id/action_splashFragment_to_unlockAppTimeFragment"
-        tools:layout="@layout/splash_fragment">
+        tools:layout="@layout/splash_fragment"
+        app:startDestination="@id/action_splashFragment_to_unlockAppTimeFragment">
         <action
             android:id="@+id/action_splashFragment_to_landingFragment"
             app:destination="@id/landingFragment"
@@ -32,9 +32,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
-        app:popExitAnim="@anim/slide_out_right"
-        app:popUpTo="@+id/nav_graph"
-        app:popUpToInclusive="true" />
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashFragment_to_enterPinFragment"
             app:destination="@id/enterPinFragment"
@@ -127,7 +127,9 @@
             app:argType="boolean" />
         <action
             android:id="@+id/action_accessPinFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -343,6 +345,13 @@
             android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
             app:destination="@id/previewImageSendFragment" />
         <action
+            android:id="@+id/action_conversationFragment_to_conversationCameraFragment"
+            app:destination="@id/conversationCameraFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
             android:id="@+id/action_conversationFragment_to_contactProfileFragment"
             app:destination="@id/contactProfileFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -357,7 +366,8 @@
         tools:layout="@layout/recovery_account_fragment">
         <action
             android:id="@+id/action_recoveryAccountFragment_to_recoveryAccountQuestionsFragment"
-            app:destination="@id/recoveryAccountQuestionsFragment" />
+            app:destination="@id/recoveryAccountQuestionsFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountQuestionsFragment"
@@ -373,13 +383,6 @@
         <action
             android:id="@+id/action_recoveryAccountQuestionsFragment_to_accessPinFragment"
             app:destination="@id/accessPinFragment" />
-        <action
-            android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
-            app:destination="@id/previewImageSendFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/previewImageSendFragment"
@@ -395,8 +398,8 @@
         android:id="@+id/enterPinFragment"
         android:name="com.naposystems.pepito.ui.enterPin.EnterPinFragment"
         android:label="EnterPinFragment"
-        app:startDestination="@id/action_enterPinFragment_to_unlockAppTimeFragment"
-        tools:layout="@layout/enter_pin_fragment">
+        tools:layout="@layout/enter_pin_fragment"
+        app:startDestination="@id/action_enterPinFragment_to_unlockAppTimeFragment">
         <action
             android:id="@+id/action_enterPinFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -437,6 +440,18 @@
         android:name="com.naposystems.pepito.ui.addContact.AddContactFragment"
         android:label="@string/text_friend_requests"
         tools:layout="@layout/add_contact_fragment" />
+    <fragment
+        android:id="@+id/conversationCameraFragment"
+        android:name="com.naposystems.pepito.ui.conversationCamera.ConversationCameraFragment"
+        android:label="ConversationCameraFragment"
+        tools:layout="@layout/conversation_camera_fragment">
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+        <argument
+            android:name="contactId"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/contactProfileFragment"
         android:name="com.naposystems.pepito.ui.contactProfile.ContactProfileFragment"

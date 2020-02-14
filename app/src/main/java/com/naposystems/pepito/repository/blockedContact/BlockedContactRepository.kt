@@ -1,43 +1,59 @@
 package com.naposystems.pepito.repository.blockedContact
 
-import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactsLocalDataSource
-import com.naposystems.pepito.dto.blockedContact.BlockedContactResDTO
-import com.naposystems.pepito.dto.contacts.ContactResDTO
-import com.naposystems.pepito.entity.BlockedContact
+import androidx.lifecycle.LiveData
+import com.naposystems.pepito.db.dao.contact.ContactDataSource
+import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactErrorDTO
+import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.blockedContacts.IContractBlockedContact
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.webService.NapoleonApi
+import com.squareup.moshi.Moshi
+import okhttp3.ResponseBody
+import retrofit2.Response
 import timber.log.Timber
 
 class BlockedContactRepository constructor(
     private val napoleonApi: NapoleonApi,
-    private val blockedContactsLocalDataSource: BlockedContactsLocalDataSource
+    private val contactLocalDataSource: ContactDataSource
 ) : IContractBlockedContact.Repository {
 
-    override suspend fun getBlockedContacts(): List<BlockedContact> {
-            val blockedContacts: MutableList<BlockedContact> = arrayListOf()
-
-        val localBlockedContacts = blockedContactsLocalDataSource.getBlockedContacts()
-
+    override suspend fun getRemoteBlockedContacts() {
         try {
             val response = napoleonApi.getContactsByState(Constants.FriendShipState.BLOCKED.state)
 
             if (response.isSuccessful) {
-
-                if (localBlockedContacts.isNotEmpty()) {
-                    blockedContactsLocalDataSource.clearTable()
+                for (contact in response.body()!!.contacts) {
+                    contactLocalDataSource.blockContact(contact.id)
                 }
-
-                blockedContacts.addAll(ContactResDTO.toBlockedContactEntityList(response.body()!!.contacts))
-                blockedContactsLocalDataSource.insertBlockedContacts(blockedContacts)
-
             } else {
                 Timber.e(response.errorBody()!!.string())
             }
+
         } catch (e: Exception) {
             Timber.e(e)
         }
+    }
 
-        return blockedContacts
+    override suspend fun getBlockedContactsLocal(): LiveData<List<Contact>> {
+        return contactLocalDataSource.getBlockedContacts()
+    }
+
+    override suspend fun unblockContact(contact: Contact): Response<UnblockContactResDTO> {
+        return napoleonApi.putUnblockContact(contact.id.toString())
+    }
+
+    override suspend fun unblockContactLocal(contactId: Int) {
+        contactLocalDataSource.unblockContact(contactId)
+    }
+
+    override fun getDefaultError(response: ResponseBody): ArrayList<String> {
+        val moshi = Moshi.Builder().build()
+        val adapter = moshi.adapter(UnblockContactErrorDTO::class.java)
+        val errorJson = adapter.fromJson(response.string())
+        val errorList = ArrayList<String>()
+
+        errorList.add(errorJson!!.error)
+        return errorList
     }
 }

@@ -1,20 +1,24 @@
 package com.naposystems.pepito.ui.profile
 
 import android.Manifest
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider.getUriForFile
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -30,9 +34,9 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ProfileFragmentBinding
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.custom.AnimatedVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
-import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -40,10 +44,12 @@ import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.io.File
+import java.io.FileDescriptor
 import java.io.IOException
+import java.lang.Exception
 import javax.inject.Inject
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = ProfileFragment()
@@ -51,13 +57,11 @@ class ProfileFragment : Fragment() {
         const val REQUEST_GALLERY_IMAGE = 2
         const val AVATAR_SUBFOLDER = "avatars"
         const val HEADER_SUBFOLDER = "headers"
+        private const val FILE_EXTENSION = ".jpg"
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    @Inject
-    lateinit var sharedPreferencesManager: SharedPreferencesManager
-
+    override lateinit var viewModelFactory: ViewModelFactory
     private lateinit var binding: ProfileFragmentBinding
     private lateinit var viewModel: ProfileViewModel
     private lateinit var fileName: String
@@ -157,13 +161,16 @@ class ProfileFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ProfileViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+            .get(ProfileViewModel::class.java)
+
         binding.viewModel = viewModel
 
         viewModelObservers()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
@@ -172,8 +179,12 @@ class ProfileFragment : Fragment() {
             }
             REQUEST_GALLERY_IMAGE -> {
                 if (resultCode == RESULT_OK) {
-                    val imageUri = data!!.data
-                    cropImage(imageUri!!)
+                    try {
+                        val imageUri = data!!.data
+                        cropImage(imageUri!!)
+                    }catch (e: Exception) {
+                        Timber.e(e)
+                    }
                 }
             }
             UCrop.REQUEST_CROP -> {
@@ -344,8 +355,10 @@ class ProfileFragment : Fragment() {
         var title = ""
 
         when (subFolder) {
-            AVATAR_SUBFOLDER -> title = context!!.resources.getString(R.string.text_change_profile_photo)
-            HEADER_SUBFOLDER -> title = context!!.resources.getString(R.string.text_change_cover_photo)
+            AVATAR_SUBFOLDER -> title =
+                context!!.resources.getString(R.string.text_change_profile_photo)
+            HEADER_SUBFOLDER -> title =
+                context!!.resources.getString(R.string.text_change_cover_photo)
         }
 
         val dialog = ImageSelectorBottomSheetFragment.newInstance(title)
@@ -367,6 +380,7 @@ class ProfileFragment : Fragment() {
                     Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
+                pickPhoto.type = "image/*"
                 startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
             }
         })
@@ -391,11 +405,13 @@ class ProfileFragment : Fragment() {
 
         }
 
+        val path = File(context!!.externalCacheDir, subFolder)
+
         val destinationUri =
             Uri.fromFile(
                 File(
-                    context!!.externalCacheDir,
-                    Utils.queryName(context!!.contentResolver, sourceUri)
+                    path,
+                    "${System.currentTimeMillis()}_compressed.${FILE_EXTENSION}"
                 )
             )
         val options = UCrop.Options()

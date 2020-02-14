@@ -1,10 +1,12 @@
 package com.naposystems.pepito.repository.recoveryAccountQuestions
 
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.recoveryAccountQuestions.*
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Crypto
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
@@ -37,10 +39,26 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
         return napoleonApi.sendAnswers(request)
     }
 
-    override fun saveRecoveredAccountPref() {
+    override fun setRecoveredAccountPref() {
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             Constants.AccountStatus.ACCOUNT_RECOVERED.id
+        )
+    }
+
+    override fun saveSecretKey(secretKey: String) {
+        val crypto = Crypto()
+
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_SECRET_KEY,
+            crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
+        )
+    }
+
+    override fun setRecoveredQuestionsPref() {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED,
+            Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id
         )
     }
 

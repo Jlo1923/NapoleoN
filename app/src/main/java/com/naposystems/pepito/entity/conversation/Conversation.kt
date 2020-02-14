@@ -12,7 +12,7 @@ import com.naposystems.pepito.entity.Contact
             entity = Contact::class,
             parentColumns = ["id"],
             childColumns = ["contact_id"],
-            onDelete = ForeignKey.NO_ACTION
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )

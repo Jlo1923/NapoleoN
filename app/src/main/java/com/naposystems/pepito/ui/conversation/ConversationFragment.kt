@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
@@ -23,6 +25,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import androidx.security.crypto.EncryptedFile
+import androidx.security.crypto.MasterKeys
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -34,7 +38,7 @@ import com.naposystems.pepito.databinding.ConversationFragmentBinding
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
-import com.naposystems.pepito.ui.previewImageSend.SharePreviewImageSendViewModel
+import com.naposystems.pepito.ui.conversationCamera.ShareConversationCameraViewModel
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -63,20 +67,13 @@ class ConversationFragment : Fragment() {
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private lateinit var viewModel: ConversationViewModel
-    private lateinit var shareViewModel: SharePreviewImageSendViewModel
+    private lateinit var shareViewModel: ShareConversationCameraViewModel
     private lateinit var actionBarCustomView: ConversationActionBarBinding
     private lateinit var binding: ConversationFragmentBinding
     private lateinit var adapter: ConversationAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var fileName: String
-    private lateinit var compressFileName: String
     private val args: ConversationFragmentArgs by navArgs()
     private var isEditTextFilled: Boolean = false
-    private val subFolder by lazy {
-        "conversations/${viewModel.getUser().id}_${args.contact.id}"
-    }
-    private lateinit var path: File
-    private lateinit var file: Bitmap
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -148,6 +145,34 @@ class ConversationFragment : Fragment() {
 
         binding.inputPanel.getImageButtonAttachment().setOnClickListener {
             val attachmentDialog = AttachmentDialogFragment()
+            attachmentDialog.setListener(object :
+                AttachmentDialogFragment.OnAttachmentDialogListener {
+                override fun galleryPressed() {
+
+                }
+
+                override fun cameraPressed() {
+                    findNavController().navigate(
+                        ConversationFragmentDirections
+                            .actionConversationFragmentToConversationCameraFragment(
+                                viewModel.getUser().id,
+                                args.contact.id
+                            )
+                    )
+                }
+
+                override fun locationPressed() {
+
+                }
+
+                override fun audioPressed() {
+
+                }
+
+                override fun documentPressed() {
+
+                }
+            })
             attachmentDialog.show(parentFragmentManager, "attachmentDialog")
         }
 
@@ -162,31 +187,24 @@ class ConversationFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         shareViewModel = ViewModelProviders.of(activity!!, viewModelFactory)
-            .get(SharePreviewImageSendViewModel::class.java)
+            .get(ShareConversationCameraViewModel::class.java)
 
-        shareViewModel.hasCancelClicked.observe(activity!!, Observer {
+        shareViewModel.hasSendClicked.observe(activity!!, Observer {
             if (it == true) {
-                deleteImages()
-            }
-        })
-
-        shareViewModel.message.observe(activity!!, Observer {
-            if (it.isNotEmpty()) {
-                val base64 = Utils.bitmapToBase64(file)
+                val base64 = shareViewModel.getBase64()
 
                 viewModel.saveMessageWithAttachmentLocally(
-                    it,
+                    shareViewModel.message.value!!,
                     "",
                     args.contact,
                     Constants.IsMine.YES.value,
                     base64,
-                    "${path}/${fileName}_compress.jpg"
+                    shareViewModel.getUri()
                 )
 
                 with(binding.inputPanel.getEditTex()) {
                     setText("")
                 }
-                shareViewModel.resetMessage()
             }
         })
     }
@@ -196,11 +214,15 @@ class ConversationFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ConversationViewModel::class.java)
 
+        binding.viewModel = viewModel
+
         viewModel.getLocalContact(args.contact.id)
 
         viewModel.setContact(args.contact)
 
         viewModel.getLocalMessages()
+
+        setConversationBackground()
 
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -275,6 +297,11 @@ class ConversationFragment : Fragment() {
         inflater.inflate(R.menu.menu_conversation, menu)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        resetConversationBackground()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_see_contact -> {
@@ -296,14 +323,18 @@ class ConversationFragment : Fragment() {
                     val image = File(path, "${fileName}.jpg")
                     file = decodeFile(image)
 
-                    findNavController().navigate(
-                        ConversationFragmentDirections.actionConversationFragmentToPreviewImageSendFragment(
-                            file
-                        )
-                    )
-                }
-            }
+    private fun setConversationBackground() {
+        if (viewModel.getUser().chatBackground.isNotEmpty()) {
+            val uri = Uri.parse(viewModel.getUser().chatBackground)
+            val inputStream: InputStream = context!!.contentResolver.openInputStream(uri)!!
+            val yourDrawable = Drawable.createFromStream(inputStream, uri.toString())
+            yourDrawable.alpha = (255 * 0.3).toInt()
+            activity!!.window.setBackgroundDrawable(yourDrawable)
         }
+    }
+
+    private fun resetConversationBackground() {
+        activity!!.window.setBackgroundDrawableResource(R.color.colorBackground)
     }
 
     private fun inflateCustomActionBar(inflater: LayoutInflater) {
@@ -350,19 +381,12 @@ class ConversationFragment : Fragment() {
 
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report!!.areAllPermissionsGranted()) {
-                        fileName = System.currentTimeMillis().toString()
-                        compressFileName = "${fileName}_compress.jpg"
-                        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                        takePictureIntent.putExtra(
-                            MediaStore.EXTRA_OUTPUT,
-                            Utils.getCacheImagePath(context!!, "${fileName}.jpg", subFolder)
-                        )
-                        if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
-                            startActivityForResult(
-                                takePictureIntent,
-                                REQUEST_IMAGE_CAPTURE
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
+                                viewModel.getUser().id,
+                                args.contact.id
                             )
-                        }
+                        )
                     }
 
                     if (report.isAnyPermissionPermanentlyDenied) {
@@ -391,82 +415,5 @@ class ConversationFragment : Fragment() {
                     )
                 }
             }).check()
-    }
-
-    private fun decodeFile(f: File): Bitmap {
-        var b: Bitmap? = null
-
-        //Decode image size
-        val o: BitmapFactory.Options = BitmapFactory.Options()
-        o.inJustDecodeBounds = true
-
-        var fis: FileInputStream
-
-        try {
-            fis = FileInputStream(f)
-            BitmapFactory.decodeStream(fis, null, o)
-            fis.close()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        val IMAGE_MAX_SIZE = 1024
-        var scale = 1
-        if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
-            scale = 2.0.pow(
-                ceil(
-                    ln(
-                        IMAGE_MAX_SIZE / max(
-                            o.outHeight,
-                            o.outWidth
-                        ).toDouble()
-                    ).toInt() / ln(0.5)
-                )
-            ).toInt()
-        }
-
-        //Decode with inSampleSize
-        val o2 = BitmapFactory.Options()
-        o2.inSampleSize = scale
-        try {
-            fis = FileInputStream(f)
-            b = BitmapFactory.decodeStream(fis, null, o2)
-            fis.close()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        val destFile = File(path, compressFileName)
-        try {
-            val out = FileOutputStream(destFile)
-            b!!.compress(Bitmap.CompressFormat.PNG, 80, out)
-            out.flush()
-            out.close()
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        return b!!
-    }
-
-    private fun deleteImages() {
-        val path = File(context!!.externalCacheDir, subFolder)
-        if (path.exists() && path.isDirectory) {
-            val fileOriginalImage = File(path, "${fileName}.jpg")
-            val compressImage = File(path, compressFileName)
-
-            if (fileOriginalImage.exists()) {
-                fileOriginalImage.delete()
-            }
-
-            if (compressImage.exists()) {
-                compressImage.delete()
-            }
-        }
     }
 }

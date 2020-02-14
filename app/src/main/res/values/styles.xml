@@ -280,10 +280,13 @@
 
     <style name="TextViewCountTime">
         <item name="android:textSize">@dimen/count_time_size</item>
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColor">@color/buttonTint</item>
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="BackgroundSpinner" >
+        <item name="android:background">@drawable/bg_spinner</item>
+    </style>
     <style name="FabPrimary">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

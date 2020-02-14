@@ -31,7 +31,7 @@ class ConversationAdapter constructor(
             oldItem: MessageAndAttachment,
             newItem: MessageAndAttachment
         ): Boolean {
-            return oldItem.message.id == newItem.message.id && oldItem.message.status == newItem.message.status
+            return oldItem === newItem
         }
 
         override fun areContentsTheSame(
@@ -86,6 +86,7 @@ class ConversationAdapter constructor(
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
+            binding.imageViewAttachment.visibility = View.GONE
 
             val context = binding.containerMessage.context
 
@@ -100,10 +101,9 @@ class ConversationAdapter constructor(
                 val firstAttachment = item.attachmentList[0]
 
                 Glide.with(context)
-                    .load(if (firstAttachment.uri.isNotEmpty()) File(firstAttachment.uri) else firstAttachment.body)
+                    .load(File(firstAttachment.uri))
                     .into(binding.imageViewAttachment)
             }
-
             binding.executePendingBindings()
         }
 
@@ -131,6 +131,7 @@ class ConversationAdapter constructor(
         ) {
 
             binding.conversation = item
+            binding.imageViewAttachment.visibility = View.GONE
 
             val context = binding.containerMessage.context
 

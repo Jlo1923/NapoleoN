@@ -2,6 +2,7 @@ package com.naposystems.pepito.ui.conversation
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import com.naposystems.pepito.dto.conversation.message.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
@@ -52,7 +53,10 @@ interface IContractConversation {
         fun updateMessage(message: Message)
         suspend fun sendMessagesRead(contactId: Int)
         fun insertAttachment(listAttachment: List<Attachment>): List<Long>
-        fun updateAttachments(listAttachment: List<Attachment>)
+        fun updateAttachments(
+            listAttachmentsIds: List<Long>,
+            attachments: List<AttachmentResDTO>
+        )
         fun get422Error(response: Response<MessageResDTO>): ArrayList<String>
         fun getError(response: Response<MessageResDTO>): ArrayList<String>
         fun getLocalContact(idContact : Int): LiveData<Contact>

@@ -3,6 +3,7 @@ package com.naposystems.pepito.utility
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
+    const val DATA_CRYPT = "datacrypt"
 
     object NapoleonApi {
         const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
@@ -30,11 +31,19 @@ object Constants {
         const val GET_FRIENDSHIP_REQUESTS = "friendshiprequest"
         const val PUT_FRIENDSHIP_REQUEST = "friendshiprequest/{id}"
         const val GET_FRIENDSHIP_REQUEST_QUANTITY = "friendshiprequest/countfriendshiprequest"
+        const val PUT_BLOCK_CONTACT = "friendship/blockuser/{id}"
+        const val DELETE_CONTACT = "friendship/{id}"
+        const val PUT_UNBLOCK_CONTACT = "friendship/unblockuser/{id}"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
         LIGHT_THEME(1),
         DARK_THEME(2)
+    }
+
+    enum class OutputControl constructor(val state: Int) {
+        TRUE(1),
+        FALSE(0)
     }
 
     enum class AccountStatus constructor(val id: Int) {
@@ -178,6 +187,8 @@ object Constants {
         const val PREF_SOCKET_ID = "socket_id"
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
         const val PREF_CONTACTS_UPDATE_DATE = "contacts_update_date"
+        const val PREF_SECRET_KEY = "secret_key"
+        const val PREF_OUTPUT_CONTROL = "output_control"
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"

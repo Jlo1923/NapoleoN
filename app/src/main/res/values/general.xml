@@ -11,40 +11,32 @@
     <string name="only_numbers" translatable="false">0123456789</string>
     <string name="only_letters" translatable="false">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ abcdefghijklmnñopqrstuvwxyz</string>
     <string name="text_napoleon_secret_chat" translatable="false">NapoleoN Secret Chat</string>
-    <string name="text_accept">Aceptar</string>
-    <string name="text_cancel">Cancelar</string>
-    <string name="text_continue">Continuar</string>
-    <string name="text_next">Siguiente</string>
-    <string name="text_name">Nombre</string>
-    <string name="text_nickname_with_asterisk">Apodo*</string>
-    <string name="text_edit">Editar</string>
-    <string name="text_error_connection">No hay conexión a internet. Inténte más tarde</string>
-    <string name="text_welcome">Bienvenido</string>
-    <string name="text_fail">Algo ha salido mal, por favor inténte nuevamente</string>
-    <string name="text_status">Estado</string>
-    <string name="text_blocked_contacts">Contactos bloqueados</string>
-    <string name="label_edit_photo">Editar foto</string>
-    <string name="label_edit_cover">Editar banner</string>
-    <string name="text_share">Compartir</string>
-    <string name="text_search">Buscar</string>
-    <string name="text_add_contact">Agregar contacto</string>
-    <string name="text_register">Registrar</string>
-    <string name="text_finish">Finalizar</string>
-    <string name="text_gallery">Galería</string>
-    <string name="text_camera">Cámara</string>
-    <string name="text_location">Ubicación</string>
+    <string name="text_accept">Accept</string>
+    <string name="text_cancel">Cancel</string>
+    <string name="text_continue">Continue</string>
+    <string name="text_welcome">Welcome</string>
+    <string name="text_next">Next</string>
+    <string name="text_fail">Something went wrong, please try again</string>
+    <string name="text_name">Name</string>
+    <string name="text_status">Status</string>
+    <string name="text_blocked_contacts">Blocked contacts</string>
+    <string name="label_edit_photo">Edit photo</string>
+    <string name="label_edit_cover">Edit banner</string>
+    <string name="text_edit">Edit</string>
+    <string name="text_share">Share</string>
+    <string name="text_search">Search</string>
+    <string name="text_add_contact">Add contact</string>
+    <string name="text_finish">Finish</string>
+    <string name="text_gallery">Gallery</string>
+    <string name="text_camera">Camera</string>
+    <string name="text_location">Location</string>
     <string name="text_audio">Audio</string>
-    <string name="text_document">Documento</string>
-    <string name="text_answer">Respuesta</string>
+    <string name="text_document">Document</string>
+    <string name="text_error_connection">There is no Internet connection. Try again later</string>
+    <string name="text_register">Register</string>
+    <string name="text_answer">Answer</string>
     <string name="text_error">Error</string>
-    <string name="text_add">Agregar</string>
-    <string name="text_sent">Enviado</string>
-    <string name="text_refuse">Rechazar</string>
-    <string name="text_information">INFORMACIÓN</string>
-    <string name="text_nickname">Apodo</string>
-    <string name="text_delete_conversation">Eliminar conversación</string>
-    <string name="text_mute_conversation">Silenciar conversación</string>
-    <string name="text_block_contact">Bloquear contacto</string>
-
-
+    <string name="text_add">Add</string>
+    <string name="text_sent">Sent</string>
+    <string name="text_refuse">Refuse</string>
 </resources>

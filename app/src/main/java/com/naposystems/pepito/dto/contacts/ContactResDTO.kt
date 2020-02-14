@@ -1,7 +1,5 @@
 package com.naposystems.pepito.dto.contacts
 
-import com.naposystems.pepito.dto.blockedContact.BlockedContactResDTO
-import com.naposystems.pepito.entity.BlockedContact
 import com.naposystems.pepito.entity.Contact
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -40,25 +38,6 @@ data class ContactResDTO(
                 status = response.status,
                 lastSeen = response.lastSeen
             )
-        }
-
-        fun toBlockedContactEntityList(blockedContacts: List<ContactResDTO>): List<BlockedContact> {
-            val listBlockedContacts: MutableList<BlockedContact> = arrayListOf()
-
-            for (blockedContact in blockedContacts) {
-                val entity = BlockedContact(
-                    blockedContact.id,
-                    blockedContact.avatar,
-                    blockedContact.nickname,
-                    blockedContact.displayName,
-                    blockedContact.status,
-                    blockedContact.lastSeen
-                )
-
-                listBlockedContacts.add(entity)
-            }
-
-            return listBlockedContacts
         }
     }
 }

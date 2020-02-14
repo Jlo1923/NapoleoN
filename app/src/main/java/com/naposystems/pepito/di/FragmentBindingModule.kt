@@ -3,12 +3,14 @@ package com.naposystems.pepito.di
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.addContact.AddContactFragment
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment
+import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment
 import com.naposystems.pepito.ui.contactProfile.ContactProfileFragment
 import com.naposystems.pepito.ui.contactUs.ContactUsFragment
 import com.naposystems.pepito.ui.contacts.ContactsFragment
 import com.naposystems.pepito.ui.conversation.ConversationFragment
+import com.naposystems.pepito.ui.conversationCamera.ConversationCameraFragment
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.enterPin.EnterPinFragment
@@ -123,6 +125,12 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun binUnlockAppTimeFragment(): UnlockAppTimeFragment
+
+    @ContributesAndroidInjector
+    abstract fun binConversationCameraFragment(): ConversationCameraFragment
+
+    @ContributesAndroidInjector
+    abstract fun binBaseFragment(): BaseFragment
 
     @ContributesAndroidInjector
     abstract fun bindContactProfileFragment(): ContactProfileFragment

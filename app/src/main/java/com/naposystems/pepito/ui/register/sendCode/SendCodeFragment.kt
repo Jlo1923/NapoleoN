@@ -16,11 +16,8 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SendCodeFragmentBinding
 import com.naposystems.pepito.dto.sendCode.SendCodeReqDTO
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
-import com.naposystems.pepito.utility.Utils
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import javax.inject.Inject
 
 class SendCodeFragment : Fragment() {

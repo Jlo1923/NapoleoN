@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_friend_requests_received">Solicitudes de amistad recibidas</string>
+    <string name="text_friend_requests_sent">Solicitudes de amistad enviadas</string>
+    <string name="text_friend_requests">Solicitudes de amistad</string>
+</resources>

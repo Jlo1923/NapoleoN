@@ -1,11 +1,13 @@
 package com.naposystems.pepito.repository.home
 
 import androidx.lifecycle.LiveData
+import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.contacts.ContactResDTO
+import com.naposystems.pepito.dto.conversation.message.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
@@ -31,7 +33,8 @@ class HomeRepository @Inject constructor(
     private val socketService: IContractSocketService.SocketService,
     private val conversationLocalDataSource: ConversationDataSource,
     private val messageLocalDataSource: MessageDataSource,
-    private val contactLocalDataSource: ContactDataSource
+    private val contactLocalDataSource: ContactDataSource,
+    private val attachmentLocalDataSource: AttachmentDataSource
 ) :
     IContractHome.Repository {
 
@@ -81,14 +84,31 @@ class HomeRepository @Inject constructor(
 
             if (messageResList.isNotEmpty()) {
 
-                messageLocalDataSource.insertListMessage(
-                    MessageResDTO.toMessageListEntity(
-                        messageResList,
-                        Constants.IsMine.NO.value
-                    )
-                )
+                for (messageRes in messageResList) {
 
-                conversationLocalDataSource.insertConversations(messageResList, false)
+                    val message = MessageResDTO.toMessageEntity(
+                        0, messageRes, Constants.IsMine.NO.value
+                    )
+
+                    val conversationId = messageLocalDataSource.insertMessage(message)
+
+                    attachmentLocalDataSource.insertAttachment(
+                        AttachmentResDTO.toListConversationAttachment(
+                            conversationId.toInt(),
+                            messageRes.attachments
+                        )
+                    )
+
+                    val unreadMessages =
+                        messageResList.filter { it.userDestination == messageRes.userDestination }.size
+
+                    conversationLocalDataSource.insertConversation(
+                        messageRes,
+                        false,
+                        unreadMessages
+                    )
+                }
+
             }
         }
     }
@@ -116,7 +136,7 @@ class HomeRepository @Inject constructor(
 
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                contactLocalDataSource.insertContactList(contacts, false)
+                contactLocalDataSource.insertContactList(contacts)
 
                 if (contactResDTO.date.isNotEmpty()) {
                     sharedPreferencesManager.putString(

@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.splash
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -18,7 +17,6 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

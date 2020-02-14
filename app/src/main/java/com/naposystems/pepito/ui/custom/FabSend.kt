@@ -41,7 +41,7 @@ class FabSend : FloatingActionButton {
                     ContextCompat.getColor(context, R.color.fabIconColor),
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
-                backgroundTintList = ContextCompat.getColorStateList(context, R.color.colorPrimary)
+                backgroundTintList = ContextCompat.getColorStateList(context, R.color.buttonTint)
             } finally {
                 recycle()
             }

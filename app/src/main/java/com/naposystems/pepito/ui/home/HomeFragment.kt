@@ -131,11 +131,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupBadge(friendshipRequestQuantity: Int) {
-        if (friendshipRequestQuantity > 0) {
-            textViewBadge.visibility = View.VISIBLE
-            textViewBadge.text = friendshipRequestQuantity.toString()
-        } else {
-            textViewBadge.visibility = View.GONE
+        if (::textViewBadge.isInitialized) {
+            if (friendshipRequestQuantity > 0) {
+                textViewBadge.visibility = View.VISIBLE
+                textViewBadge.text = friendshipRequestQuantity.toString()
+            } else {
+                textViewBadge.visibility = View.GONE
+            }
         }
     }
 }

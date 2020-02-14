@@ -1,15 +1,13 @@
 package com.naposystems.pepito.ui.addContact
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-
+import androidx.lifecycle.ViewModelProviders
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AddContactFragmentBinding
 import com.naposystems.pepito.entity.Contact
@@ -102,7 +100,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         viewModel.users.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
             if (it.isNotEmpty()) {
-                if (binding.viewSwitcherSearch.currentView.id == binding.imageViewEmptyStateSearch.id) {
+                if (binding.viewSwitcherSearch.currentView.id == binding.containerEmptyStateSearch.id) {
                     binding.viewSwitcherSearch.showNext()
                 }
             } else {
@@ -123,7 +121,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             friendshipRequestsAdapter.submitList(it)
             binding.swipeRefresh.isRefreshing = false
             if (it.isNotEmpty()) {
-                if (binding.viewSwitcherFriendshipRequest.currentView.id == binding.imageViewEmptyStateFriendship.id) {
+                if (binding.viewSwitcherFriendshipRequest.currentView.id == binding.containerEmptyStateFriendship.id) {
                     binding.viewSwitcherFriendshipRequest.showNext()
                 }
             } else {
@@ -173,7 +171,6 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                     viewModel.cancelFriendshipRequest(friendshipRequest)
                 }
             })
-
 
         binding.recyclerViewFriendshipRequest.adapter = friendshipRequestsAdapter
     }

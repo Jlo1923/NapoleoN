@@ -4,7 +4,6 @@ import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.splash.IContractSplash
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import javax.inject.Inject
 
@@ -123,9 +122,14 @@ class SplashRepository @Inject constructor(
     }
 
     override suspend fun setDefaultBiometricsOption(biometricOption: Int) {
-        sharedPreferencesManager.putInt(
-            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION, biometricOption
+        val default = sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION
         )
+        if (default == 0) {
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_BIOMETRICS_OPTION, biometricOption
+            )
+        }
     }
 
     override suspend fun setDefaultLockType() {
