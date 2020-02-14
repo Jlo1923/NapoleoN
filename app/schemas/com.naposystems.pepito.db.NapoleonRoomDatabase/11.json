@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "3137981944852c4d7080129c2f9e992f",
+    "identityHash": "7bae69113ec8ff9af2967df85f27606e",
     "entities": [
       {
         "tableName": "user",
@@ -310,7 +310,7 @@
       },
       {
         "tableName": "conversation",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contact_id` INTEGER NOT NULL, `message` TEXT NOT NULL, `created` INTEGER NOT NULL, `status` INTEGER NOT NULL, `unreads` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `contact`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contact_id` INTEGER NOT NULL, `message` TEXT NOT NULL, `created` INTEGER NOT NULL, `status` INTEGER NOT NULL, `unreads` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `contact`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -359,7 +359,7 @@
         "foreignKeys": [
           {
             "table": "contact",
-            "onDelete": "NO ACTION",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
               "contact_id"
@@ -374,7 +374,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3137981944852c4d7080129c2f9e992f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7bae69113ec8ff9af2967df85f27606e')"
     ]
   }
 }

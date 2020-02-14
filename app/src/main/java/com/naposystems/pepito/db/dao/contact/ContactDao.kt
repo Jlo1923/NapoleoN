@@ -10,7 +10,7 @@ interface ContactDao {
     @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
     fun getContacts(): LiveData<List<Contact>>
 
-    @Query("SELECT * FROM contact ORDER BY display_name ASC")
+    @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
     suspend fun getLocalContacts(): List<Contact>
 
     @Insert

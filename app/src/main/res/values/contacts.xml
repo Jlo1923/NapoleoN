@@ -2,7 +2,7 @@
 <resources>
     <string name="text_my_contacts">Mis contactos</string>
     <string name="text_description_empty_state_contacts">Agrega a tus amigos y comparte con ellos de una manera segura y privada.</string>
-    <string name="text_wish_block_contact">¿Está seguro de que desea bloquear a  %1$s?</string>
+    <string name="text_wish_block_contact">¿Está seguro de que desea bloquear a %1$s?</string>
     <string name="text_wish_delete_contact">¿Está seguro de que desea eliminar a %1$s?</string>
     <string name="text_blocked_contact">Contacto bloqueado</string>
     <string name="text_deleted_contact">Contacto eliminado</string>

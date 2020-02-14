@@ -4,4 +4,6 @@
     <string name="unblock_contact">Déverrouiller le contact</string>
     <string name="text_description_empty_state_blocked_contacts">Il n\'a pas de contacts bloqués</string>
     <string name="text_blocked_contact_not_found">Ups! Tu búsqueda no trajo resultados</string>
+    <string name="text_wish_unblock_contact">Voulez-vous déverrouiller %1$s?</string>
+    <string name="text_unblocked_contact">Contact déverrouillé</string>
 </resources>

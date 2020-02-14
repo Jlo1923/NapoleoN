@@ -142,26 +142,30 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
                 }
 
                 override fun onMoreClick(item: Contact, view: View) {
-                    val popup = PopupMenu(context!!, view)
-                    popup.menuInflater.inflate(R.menu.menu_block_contact, popup.menu)
-
-                    popup.setOnMenuItemClickListener {
-                        when (it.itemId) {
-                            R.id.see_profile -> {
-                                seeProfile()
-                            }
-                            R.id.unblock -> {
-                                unblockContact(item)
-                            }
-                        }
-
-                        true
-                    }
-                    popup.show()
+                    showPopupMenu(view, item)
                 }
             })
 
         binding.recyclerViewBlockedContacts.adapter = adapter
+    }
+
+    private fun showPopupMenu(view: View, item: Contact) {
+        val popup = PopupMenu(context!!, view)
+        popup.menuInflater.inflate(R.menu.menu_block_contact, popup.menu)
+
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.see_profile -> {
+                    seeProfile()
+                }
+                R.id.unblock -> {
+                    unblockContact(item)
+                }
+            }
+
+            true
+        }
+        popup.show()
     }
 
     private fun seeProfile() {
@@ -176,13 +180,13 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     private fun unblockContact(contact: Contact) {
         Utils.generalDialog(
-            "Desbloquear contacto",
-            "¿Está seguro de que desea desbloquear a ${contact.displayName}?",
+            getString(R.string.unblock_contact),
+            getString(R.string.text_wish_unblock_contact, contact.displayName),
             true,
             childFragmentManager
         ) {
             viewModel.unblockContact(contact)
-            showToast(context!!, "Contacto Desbloquedo")
+            showToast(context!!, getString(R.string.text_unblocked_contact))
         }
     }
 }

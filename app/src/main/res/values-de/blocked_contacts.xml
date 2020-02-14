@@ -4,4 +4,6 @@
     <string name="unblock_contact">Kontakt entsperren</string>
     <string name="text_description_empty_state_blocked_contacts">Es hat keine gesperrten Kontakte</string>
     <string name="text_blocked_contact_not_found">Ups! Tu búsqueda no trajo resultados</string>
+    <string name="text_wish_unblock_contact">Möchten Sie %1$s freischalten?</string>
+    <string name="text_unblocked_contact">Kontakt freigeschaltet</string>
 </resources>
