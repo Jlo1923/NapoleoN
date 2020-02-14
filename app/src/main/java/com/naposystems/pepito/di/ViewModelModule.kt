@@ -3,8 +3,6 @@ package com.naposystems.pepito.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.addContact.AddContactViewModel
-import com.naposystems.pepito.di.modules.ActivateBiometricsModule
-import com.naposystems.pepito.di.modules.UnlockAppTimeModule
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
@@ -13,6 +11,7 @@ import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
 import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.conversation.ConversationViewModel
+import com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.home.HomeViewModel
 import com.naposystems.pepito.ui.enterPin.EnterPinViewModel
@@ -201,5 +200,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ContactProfileViewModel::class)
     internal abstract fun bindContactProfileViewModel(viewModel: ContactProfileViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MuteConversationViewModel::class)
+    internal abstract fun bindMuteConversationViewModel(viewModel: MuteConversationViewModel): ViewModel
 
 }

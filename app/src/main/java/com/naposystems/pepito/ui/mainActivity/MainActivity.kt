@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.mainActivity
 
-import android.animation.Animator
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -8,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewAnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -16,16 +14,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.Glide
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ActivityMainBinding
@@ -36,7 +33,6 @@ import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import javax.inject.Inject
-import kotlin.math.hypot
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -109,7 +105,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.conversationFragment -> {
                     disableDrawer()
                     showToolbar()
-                    binding.toolbar.title = ""
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
                     binding.frameLayout.elevation = 0f
@@ -240,12 +235,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun showToolbar() {
+        resetToolbar()
         val fourDp = Utils.dpToPx(this, 4f).toFloat()
         binding.toolbar.apply {
             visibility = View.VISIBLE
             elevation = fourDp
         }
         binding.frameLayout.elevation = fourDp
+    }
+
+    private fun resetToolbar(){
+        with(supportActionBar!!) {
+            setDisplayShowCustomEnabled(false)
+            setDisplayShowTitleEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
     }
 
     private fun enableDrawer() {

@@ -9,6 +9,7 @@ import com.naposystems.pepito.ui.contactProfile.ContactProfileFragment
 import com.naposystems.pepito.ui.contactUs.ContactUsFragment
 import com.naposystems.pepito.ui.contacts.ContactsFragment
 import com.naposystems.pepito.ui.conversation.ConversationFragment
+import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.enterPin.EnterPinFragment
 import com.naposystems.pepito.ui.home.HomeFragment
@@ -125,4 +126,7 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindContactProfileFragment(): ContactProfileFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindConversationMuteDialogFragment(): MuteConversationDialogFragment
 }

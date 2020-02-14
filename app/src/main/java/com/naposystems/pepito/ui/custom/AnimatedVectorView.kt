@@ -2,9 +2,11 @@ package com.naposystems.pepito.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.EditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.naposystems.pepito.R
+import com.naposystems.pepito.utility.Utils
 
 class AnimatedVectorView @JvmOverloads constructor(
     context: Context,
@@ -18,6 +20,7 @@ class AnimatedVectorView @JvmOverloads constructor(
     private var hourglassToCancelAnim: AnimatedVectorDrawableCompat? = null
     private var hourglassToEditAnim: AnimatedVectorDrawableCompat? = null
     private var cancelToEditAnim: AnimatedVectorDrawableCompat? = null
+
     var hasBeenInitialized = false
 
     init {
@@ -31,13 +34,29 @@ class AnimatedVectorView @JvmOverloads constructor(
             .create(context, R.drawable.anim_hourglass_edit)
         cancelToEditAnim = AnimatedVectorDrawableCompat
             .create(context, R.drawable.anim_cancel_edit)
-
-        setImageDrawable(editToCancelAnim)
     }
 
-    fun editToCancel() {
+    fun editToCancel(editText: EditText) {
         morph(editToCancelAnim)
         hasBeenInitialized = true
+        enabledEditText(editText)
+    }
+
+    private fun enabledEditText(editText: EditText) {
+        editText.apply {
+            isEnabled = true
+            isFocusable = true
+            requestFocus()
+            setSelection(this.text!!.length)
+            Utils.openKeyboard(this)
+        }
+    }
+
+    private fun disabledEditText(editText: EditText) {
+        editText.apply {
+            isEnabled = false
+            isFocusable = false
+        }
     }
 
     fun cancelToHourglass() {
@@ -56,9 +75,10 @@ class AnimatedVectorView @JvmOverloads constructor(
         hasBeenInitialized = false
     }
 
-    fun cancelToEdit() {
+    fun cancelToEdit(editText: EditText) {
         morph(cancelToEditAnim)
         hasBeenInitialized = false
+        disabledEditText(editText)
     }
 
     private fun morph(animatedVectorDrawable: AnimatedVectorDrawableCompat?) {

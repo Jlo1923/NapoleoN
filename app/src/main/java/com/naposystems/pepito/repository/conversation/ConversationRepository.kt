@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
+import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.conversation.message.*
@@ -34,7 +35,8 @@ class ConversationRepository @Inject constructor(
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
-    private val conversationLocalDataSource: ConversationDataSource
+    private val conversationLocalDataSource: ConversationDataSource,
+    private val contactDataSource: ContactDataSource
 ) :
     IContractConversation.Repository {
 
@@ -110,6 +112,10 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
         return napoleonApi.sendMessage(messageReqDTO)
+    }
+
+    override fun getLocalContact(idContact: Int): LiveData<Contact> {
+        return contactDataSource.getContact(idContact)
     }
 
     override suspend fun getLocalUser(): User {

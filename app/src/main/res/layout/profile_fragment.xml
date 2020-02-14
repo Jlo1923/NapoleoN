@@ -65,7 +65,7 @@
                         android:layout_marginBottom="@dimen/normal_margin"
                         android:background="@drawable/bg_profile_avatar"
                         android:scaleType="centerInside"
-                        app:avatar="@{viewModel.user.imageUrl}"
+                        app:avatarUser="@{viewModel.user}"
                         app:layout_constraintBottom_toTopOf="@+id/textView_user_name"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +109,7 @@
                         android:layout_marginStart="@dimen/normal_margin"
                         android:layout_marginEnd="@dimen/normal_margin"
                         android:singleLine="true"
-                        android:text="@{viewModel.user.displayName}"
+                        app:nameUser="@{viewModel.user}"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -127,7 +127,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
-                        app:nickname="@{viewModel.user.nickname}"
+                        app:nicknameUser="@{viewModel.user}"
                         tools:text="\@giusseprc7" />
 
                     <!-- EDIT ICON -->
@@ -191,7 +191,8 @@
                         android:scaleType="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_edit_secondary_black"/>
 
                     <!-- LABEL NAME -->
                     <TextView
@@ -224,7 +225,7 @@
                         android:maxLength="@dimen/max_length_display_name"
                         android:padding="0dp"
                         android:singleLine="true"
-                        android:text="@{viewModel.user.displayName}"
+                        app:nameUser="@{viewModel.user}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/textView_label_name"
                         app:layout_constraintStart_toStartOf="@id/textView_label_name"

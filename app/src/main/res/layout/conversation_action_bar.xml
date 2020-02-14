@@ -35,7 +35,7 @@
             android:layout_height="?android:attr/actionBarSize"
             android:paddingTop="@dimen/small_padding"
             android:paddingBottom="@dimen/small_padding"
-            app:avatar="@{contact.imageUrl}"
+            app:avatarActionBar="@{contact}"
             tools:src="@drawable/ic_spanish_flag" />
 
         <LinearLayout
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:lines="1"
-                android:text="@{contact.displayName}"
+                app:nameActionBar="@{contact}"
                 tools:text="Giussep Ricardo Cachaya" />
 
             <TextView
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:lines="1"
-                app:nickname="@{contact.nickname}"
+                app:nicknameActionBar="@{contact}"
                 tools:text="\@giussepr" />
         </LinearLayout>
 

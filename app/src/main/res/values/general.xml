@@ -42,4 +42,9 @@
     <string name="text_refuse">Rechazar</string>
     <string name="text_information">INFORMACIÓN</string>
     <string name="text_nickname">Apodo</string>
+    <string name="text_delete_conversation">Eliminar conversación</string>
+    <string name="text_mute_conversation">Silenciar conversación</string>
+    <string name="text_block_contact">Bloquear contacto</string>
+
+
 </resources>

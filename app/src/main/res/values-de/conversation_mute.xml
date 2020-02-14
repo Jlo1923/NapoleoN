@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_silence_conversation">Gespräch stumm schalten</string>
+    <string name="text_one_hours">1 Stunde</string>
+    <string name="text_eight_hours">8 Stunden</string>
+    <string name="text_one_days">1 Tag</string>
+    <string name="text_one_year">1 Jahr</string>
+    <string name="text_message_information">In der nächsten Zeit werden Benachrichtigungen für diesen Kontakt stummgeschaltet.</string>
+</resources>

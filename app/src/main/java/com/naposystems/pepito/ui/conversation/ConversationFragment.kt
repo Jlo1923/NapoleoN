@@ -94,6 +94,8 @@ class ConversationFragment : Fragment() {
             inflater, R.layout.conversation_fragment, container, false
         )
 
+        binding.lifecycleOwner = this
+
         binding.contact = args.contact
 
         setupAdapter()
@@ -194,6 +196,8 @@ class ConversationFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ConversationViewModel::class.java)
 
+        viewModel.getLocalContact(args.contact.id)
+
         viewModel.setContact(args.contact)
 
         viewModel.getLocalMessages()
@@ -253,6 +257,12 @@ class ConversationFragment : Fragment() {
 
             }
         })
+
+        viewModel.contactProfile.observe(viewLifecycleOwner, Observer {
+            if (it != null){
+                actionBarCustomView.contact = it
+            }
+        })
     }
 
     override fun onDetach() {
@@ -300,6 +310,8 @@ class ConversationFragment : Fragment() {
         actionBarCustomView = DataBindingUtil.inflate(
             inflater, R.layout.conversation_action_bar, null, false
         )
+
+        actionBarCustomView.lifecycleOwner = this
 
         with((activity as MainActivity).supportActionBar!!) {
             displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM

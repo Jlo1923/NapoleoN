@@ -31,4 +31,8 @@
     <string name="text_refuse">Recusar</string>
     <string name="text_information">INFORMAÇÃO</string>
     <string name="text_nickname">Apelido</string>
+    <string name="text_delete_conversation">Eliminar conversación</string>
+    <string name="text_mute_conversation">Silenciar conversa</string>
+    <string name="text_block_contact">Bloquear contato</string>
+
 </resources>

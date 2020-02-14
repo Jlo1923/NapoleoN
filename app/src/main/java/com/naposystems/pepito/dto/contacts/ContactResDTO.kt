@@ -13,7 +13,8 @@ data class ContactResDTO(
     @Json(name = "fullname") val displayName: String,
     @Json(name = "my_status") val status: String,
     @Json(name = "lastseen") val lastSeen: String,
-    @Json(name = "avatar") val avatar: String
+    @Json(name = "avatar") val avatar: String,
+    @Json(name = "silence") val silence: Boolean = false
 ) {
     companion object {
 
@@ -33,11 +34,11 @@ data class ContactResDTO(
         fun toEntity(response: ContactResDTO): Contact {
             return Contact(
                 response.id,
-                response.avatar,
-                response.nickname,
-                response.displayName,
-                response.status,
-                response.lastSeen
+                imageUrl = response.avatar,
+                nickname = response.nickname,
+                displayName = response.displayName,
+                status = response.status,
+                lastSeen = response.lastSeen
             )
         }
 

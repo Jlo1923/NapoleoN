@@ -2,13 +2,11 @@ package com.naposystems.pepito.ui.appearanceSettings
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.OpenableColumns
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -317,7 +315,7 @@ class AppearanceSettingsFragment : Fragment() {
             Uri.fromFile(
                 File(
                     context!!.externalCacheDir,
-                    queryName(context!!.contentResolver, sourceUri)
+                    Utils.queryName(context!!.contentResolver, sourceUri)
                 )
             )
         val options = UCrop.Options()
@@ -343,16 +341,4 @@ class AppearanceSettingsFragment : Fragment() {
             }
         }
     }
-
-    private fun queryName(resolver: ContentResolver, uri: Uri): String {
-        val returnCursor =
-            resolver.query(uri, null, null, null, null)
-        assert(returnCursor != null)
-        val nameIndex = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        returnCursor.moveToFirst()
-        val name = returnCursor.getString(nameIndex)
-        returnCursor.close()
-        return name
-    }
-
 }

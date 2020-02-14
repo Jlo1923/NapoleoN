@@ -1,5 +1,6 @@
 package com.naposystems.pepito.utility
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
@@ -14,7 +15,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
@@ -22,19 +22,19 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.math.roundToInt
 import android.graphics.BitmapFactory
+import android.provider.OpenableColumns
 import android.view.View
-
 
 class Utils {
 
     companion object {
 
-        fun openKeyboard(textInput: TextInputEditText) {
-            val context = textInput.context
+        fun openKeyboard(view: View) {
+            val context = view.context
 
             val inputMethodManager = context
                 .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.showSoftInput(textInput, SHOW_IMPLICIT)
+            inputMethodManager.showSoftInput(view, SHOW_IMPLICIT)
         }
 
         fun hideKeyboard(view: View) {
@@ -148,6 +148,26 @@ class Utils {
                 }
             })
             dialog.show(childFragmentManager, "GeneralDialog")
+        }
+
+        fun queryName(resolver: ContentResolver, uri: Uri): String {
+            val returnCursor =
+                resolver.query(uri, null, null, null, null)
+            assert(returnCursor != null)
+            val nameIndex = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            returnCursor.moveToFirst()
+            val name = returnCursor.getString(nameIndex)
+            returnCursor.close()
+            return name
+        }
+
+
+        fun convertBooleanToInvertedInt(boolean: Boolean) : Int {
+            return if(boolean) {
+                0
+            } else {
+                1
+            }
         }
     }
 }

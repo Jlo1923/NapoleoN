@@ -25,6 +25,7 @@ class ConversationViewModel @Inject constructor(
 
     private lateinit var user: User
     private lateinit var contact: Contact
+    lateinit var contactProfile: LiveData<Contact>
 
     private val _webServiceError = MutableLiveData<List<String>>()
     val webServiceError: LiveData<List<String>>
@@ -45,6 +46,10 @@ class ConversationViewModel @Inject constructor(
 
     override fun setContact(contact: Contact) {
         this.contact = contact
+    }
+
+    override fun getLocalContact(idContact: Int) {
+        contactProfile = repository.getLocalContact(idContact)
     }
 
     override fun getLocalMessages() {

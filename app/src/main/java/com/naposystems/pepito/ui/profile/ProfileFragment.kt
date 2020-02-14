@@ -2,7 +2,6 @@ package com.naposystems.pepito.ui.profile
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,13 +10,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider.getUriForFile
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -77,6 +74,11 @@ class ProfileFragment : Fragment() {
         super.onAttach(context)
     }
 
+    override fun onResume() {
+        animatedEditName.clearAnimation()
+        super.onResume()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -107,20 +109,9 @@ class ProfileFragment : Fragment() {
         binding.imageButtonNameOptionEndIcon.setOnClickListener {
             animatedEditName.apply {
                 if (!hasBeenInitialized) {
-                    editToCancel()
-                    binding.editTextDisplayName.apply {
-                        isEnabled = true
-                        isFocusable = true
-                        requestFocus()
-                        setSelection(this.text!!.length)
-                        Utils.openKeyboard(this)
-                    }
+                    editToCancel(binding.editTextDisplayName)
                 } else {
-                    cancelToEdit()
-                    binding.editTextDisplayName.apply {
-                        isEnabled = false
-                        isFocusable = false
-                    }
+                    cancelToEdit(binding.editTextDisplayName)
                 }
             }
         }
@@ -382,17 +373,6 @@ class ProfileFragment : Fragment() {
         dialog.show(childFragmentManager, "BottomSheetOptions")
     }
 
-    private fun queryName(resolver: ContentResolver, uri: Uri): String {
-        val returnCursor =
-            resolver.query(uri, null, null, null, null)
-        assert(returnCursor != null)
-        val nameIndex = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        returnCursor.moveToFirst()
-        val name = returnCursor.getString(nameIndex)
-        returnCursor.close()
-        return name
-    }
-
     private fun cropImage(sourceUri: Uri) {
 
         var title = ""
@@ -415,7 +395,7 @@ class ProfileFragment : Fragment() {
             Uri.fromFile(
                 File(
                     context!!.externalCacheDir,
-                    queryName(context!!.contentResolver, sourceUri)
+                    Utils.queryName(context!!.contentResolver, sourceUri)
                 )
             )
         val options = UCrop.Options()

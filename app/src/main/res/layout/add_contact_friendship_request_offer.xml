@@ -24,7 +24,7 @@
             android:id="@+id/imageView_user_image"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            app:avatar="@{friendshipRequest.contact.imageUrl}"
+            app:avatar="@{friendshipRequest.contact}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -39,7 +39,7 @@
             android:layout_marginBottom="@dimen/x_small_margin"
             android:ellipsize="end"
             android:lines="1"
-            android:text="@{friendshipRequest.contact.displayName}"
+            app:name="@{friendshipRequest.contact}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toTopOf="parent"
@@ -57,7 +57,7 @@
             app:layout_constraintEnd_toEndOf="@id/textView_user_name"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
-            app:nickname="@{friendshipRequest.contact.nickname}"
+            app:nickname="@{friendshipRequest.contact}"
             tools:text="@tools:sample/first_names" />
 
         <com.google.android.material.button.MaterialButton

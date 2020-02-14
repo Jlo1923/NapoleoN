@@ -24,7 +24,7 @@ import javax.inject.Singleton
         RecoveryAccountQuestionsModule::class, RegisterRecoveryAccountQuestionModule::class,
         AddContactModule::class, HomeModule::class, SocketModule::class,
         ActivateBiometricsModule::class, EnterPinModule::class, UnlockAppTimeModule::class,
-        RoomModule::class, ContactsProfileModule::class]
+        RoomModule::class, ContactProfileModule::class, MuteConversationModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
 

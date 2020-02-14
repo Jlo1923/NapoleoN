@@ -344,7 +344,11 @@
             app:destination="@id/previewImageSendFragment" />
         <action
             android:id="@+id/action_conversationFragment_to_contactProfileFragment"
-            app:destination="@id/contactProfileFragment" />
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
@@ -436,10 +440,9 @@
     <fragment
         android:id="@+id/contactProfileFragment"
         android:name="com.naposystems.pepito.ui.contactProfile.ContactProfileFragment"
-        android:label="ContactProfileFragment"
         tools:layout="@layout/contact_profile_fragment" >
         <argument
-            android:name="contactId"
+            android:name="idContact"
             app:argType="integer" />
     </fragment>
 </navigation>
