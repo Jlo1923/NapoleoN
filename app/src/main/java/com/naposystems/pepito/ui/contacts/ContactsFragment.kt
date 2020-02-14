@@ -55,6 +55,14 @@ class ContactsFragment : Fragment() {
 
         setAdapter()
 
+        binding.swipeRefresh.setOnRefreshListener {
+            if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
+                binding.viewSwitcher.showNext()
+            }
+            viewModel.getContacts()
+            binding.swipeRefresh.isRefreshing = false
+        }
+
         return binding.root
     }
 
@@ -70,20 +78,24 @@ class ContactsFragment : Fragment() {
         viewModel.contacts.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
             if (it.isNotEmpty()) {
-                if (binding.viewSwitcher.nextView == binding.swipeRefresh) {
+                if (binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
+                    binding.viewSwitcher.showNext()
+                }
+            } else {
+                if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
                     binding.viewSwitcher.showNext()
                 }
             }
         })
 
-        binding.swipeRefresh.setOnRefreshListener {
-            binding.viewSwitcher.showPrevious()
-            viewModel.getContacts()
-            binding.swipeRefresh.isRefreshing = false
-        }
-
         viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
             SnackbarUtils(binding.coordinator, it).showSnackbar()
+        })
+
+        viewModel.contactsLoaded.observe(viewLifecycleOwner, Observer {
+            if (it == true && binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
+                binding.viewSwitcher.showNext()
+            }
         })
     }
 
@@ -131,7 +143,7 @@ class ContactsFragment : Fragment() {
         binding.recyclerViewContacts.adapter = adapter
     }
 
-    private fun goToConversation(item:Contact) {
+    private fun goToConversation(item: Contact) {
         findNavController().navigate(
             ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
         )

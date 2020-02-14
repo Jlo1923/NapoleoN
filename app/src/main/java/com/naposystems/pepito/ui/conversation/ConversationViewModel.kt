@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.*
 import androidx.paging.PagedList
 import com.naposystems.pepito.R
-import com.naposystems.pepito.dto.conversation.message.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
@@ -171,11 +170,8 @@ class ConversationViewModel @Inject constructor(
 
                     if (listAttachmentsId.isNotEmpty()) {
                         repository.updateAttachments(
-                            AttachmentResDTO.toListConversationAttachment(
-                                response.body()!!.attachments,
-                                messageId,
-                                listAttachmentsId
-                            )
+                            listAttachmentsId,
+                            response.body()!!.attachments
                         )
                     }
 

@@ -2,6 +2,7 @@ package com.naposystems.pepito.ui.previewImageSend
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.PreviewImageSendFragmentBinding
+import com.naposystems.pepito.ui.conversationCamera.ShareConversationCameraViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -24,9 +26,7 @@ class PreviewImageSendFragment : Fragment() {
         fun newInstance() = PreviewImageSendFragment()
     }
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: SharePreviewImageSendViewModel
+//    private lateinit var viewModel: ShareConversationCameraViewModel
     private lateinit var binding: PreviewImageSendFragmentBinding
     private lateinit var bitMap: Bitmap
     private val args: PreviewImageSendFragmentArgs by navArgs()
@@ -49,28 +49,31 @@ class PreviewImageSendFragment : Fragment() {
 
         bitMap = args.bitmap
 
-        binding.imageViewImageSend.setImageBitmap(bitMap)
+        binding.imageViewImageSend.background = BitmapDrawable(context!!.resources, bitMap)
 
-        binding.imageButtonClose.setOnClickListener {
+        /*binding.imageButtonClose.setOnClickListener {
             viewModel.setCancelClicked()
+            viewModel.resetSendClicked()
             viewModel.resetCancelClicked()
             this.findNavController().popBackStack()
         }
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             viewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
-            viewModel.resetMessage()
+            viewModel.setSendClicked()
+            viewModel.resetCancelClicked()
+            viewModel.resetSendClicked()
             this.findNavController().popBackStack()
-        }
+        }*/
 
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel =
+        /*viewModel =
             ViewModelProviders.of(activity!!, viewModelFactory)
-                .get(SharePreviewImageSendViewModel::class.java)
+                .get(SharePreviewImageSendViewModel::class.java)*/
     }
 
 }

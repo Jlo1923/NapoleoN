@@ -1,14 +1,30 @@
 package com.naposystems.pepito.utility
 
 import android.content.Context
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
+import com.naposystems.pepito.BuildConfig
+
 
 class SharedPreferencesManager(private val context: Context) {
 
     private val sharedPreferences by lazy {
-        context.getSharedPreferences(
-            Constants.SharedPreferences.PREF_NAME,
-            Context.MODE_PRIVATE
-        )
+        if (BuildConfig.ENCRYPT_SHARED_PREFERENCES){
+            val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+            EncryptedSharedPreferences
+                .create(
+                    Constants.SharedPreferences.PREF_NAME,
+                    masterKeyAlias,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                )
+        }else {
+            context.getSharedPreferences(
+                Constants.SharedPreferences.PREF_NAME,
+                Context.MODE_PRIVATE
+            )
+        }
     }
 
     fun putString(preferenceName: String, data: String) {

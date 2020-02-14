@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_immediately">Inmediatamente</string>
-    <string name="text_ten_seconds">10 Segundos</string>
-    <string name="text_thirty_seconds">30 segundos</string>
-    <string name="text_one_minute">1 minuto</string>
-    <string name="text_five_minutes">5 minutos</string>
-    <string name="text_one_hour">1 hora</string>
-    <string name="text_one_day">1 día</string>
-    <string name="text_never">Nunca</string>
-    <string name="text_desc_pin_locked_time">Se solicita el pin de acceso despues de transcurrido el tiempo seleccionado, despues de bloquear la app.</string>
+    <string name="text_immediately">Immediately</string>
+    <string name="text_ten_seconds">10 seconds</string>
+    <string name="text_thirty_seconds">30 seconds</string>
+    <string name="text_one_minute">1 minute</string>
+    <string name="text_five_minutes">5 minutes</string>
+    <string name="text_one_hour">1 hour</string>
+    <string name="text_one_day">1 day</string>
+    <string name="text_never">Never</string>
+    <string name="text_desc_pin_locked_time">The access pin is requested after the selected time has elapsed, after blocking the app.</string>
 </resources>

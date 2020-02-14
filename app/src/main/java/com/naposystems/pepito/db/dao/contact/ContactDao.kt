@@ -13,11 +13,17 @@ interface ContactDao {
     @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
     suspend fun getLocalContacts(): List<Contact>
 
+    @Query("SELECT * FROM contact WHERE id=:id")
+    suspend fun getContactById(id: Int): List<Contact>
+
     @Insert
     suspend fun insertContact(contact: Contact)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertContacts(contacts: List<Contact>)
+
+    @Update
+    suspend fun updateContact(contact: Contact)
 
     @Query("SELECT * FROM contact WHERE status_blocked = 1 ORDER BY display_name ASC")
     fun getBlockedContacts(): LiveData<List<Contact>>
@@ -33,5 +39,4 @@ interface ContactDao {
 
     @Delete
     suspend fun deleteContacts(contacts: List<Contact>)
-
 }

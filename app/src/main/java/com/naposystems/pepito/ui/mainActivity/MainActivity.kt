@@ -94,7 +94,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.registerFragment,
                 R.id.previewImageSendFragment,
                 R.id.enterPinFragment,
-                R.id.unlockAppTimeFragment -> {
+                R.id.unlockAppTimeFragment,
+                R.id.conversationCameraFragment-> {
                     hideToolbar()
                     disableDrawer()
                 }

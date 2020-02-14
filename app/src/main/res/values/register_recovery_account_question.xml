@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_count_questions">Pregunta de Seguridad %1$d / %2$d</string>
-    <string name="text_add_question">Agregar Otra Pregunta</string>
-    <string name="text_security_questions">Elige una pregunta</string>
-    <string name="text_select_question">Debe seleccionar una pregunta</string>
-    <string name="text_title_register_questions">La opción de Recuperar Cuenta, te ayudara a recuperar tu Apodo, contactos y preferencias. Recuerda que una respuesta difícil es la clave para tu privacidad y seguridad</string>
-    <string name="text_description_cancel">No quedara registrada información para recuperación de cuenta. ¿Está seguro que deseas salir?</string>
-    <string name="text_title_cancel">¿Salir del registro?</string>
-    <string name="text_successful_message">Información registrada con éxito</string>
-    <string name="text_error_message">Error al registrar la información</string>
+    <string name="text_count_questions">Security Question %1$d/%2$d</string>
+    <string name="text_add_question">Add Another Question</string>
+    <string name="text_security_questions">Choose a question</string>
+    <string name="text_select_question">You must select a question</string>
+    <string name="text_title_register_questions">The Recover Account option will help you recover your Nickname, contacts and preferences. Remember that a difficult answer is the key to your privacy and security</string>
+    <string name="text_description_cancel">No information will be recorded for account recovery. Are you sure you want to leave?</string>
+    <string name="text_title_cancel">Leave?</string>
+    <string name="text_successful_message">Information registered successfully</string>
+    <string name="text_error_message">Error registering information</string>
 </resources>

@@ -20,6 +20,14 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
     val webServiceErrors: LiveData<List<String>>
         get() = _webServiceErrors
 
+    private val _contactsLoaded = MutableLiveData<Boolean>()
+    val contactsLoaded: LiveData<Boolean>
+        get() = _contactsLoaded
+
+    init {
+        _contactsLoaded.value = false
+    }
+
     //region Implementation IContractContacts.ViewModel
 
     override fun getContacts() {
@@ -27,6 +35,7 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
             try {
                 _contacts = repository.getLocalContacts()
                 repository.getRemoteContacts()
+                _contactsLoaded.value = true
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
@@ -65,6 +74,10 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
                 Timber.e(e)
             }
         }
+    }
+
+    override fun resetContactsLoaded() {
+        _contactsLoaded.value = false
     }
 
     //endregion

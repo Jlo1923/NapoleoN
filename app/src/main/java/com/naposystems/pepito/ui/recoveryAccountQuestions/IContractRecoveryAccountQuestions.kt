@@ -15,6 +15,7 @@ interface IContractRecoveryAccountQuestions {
 
     interface Repository {
         suspend fun sendRecoveryAnswers(nickname: String, answers: List<RecoveryAccountAnswersDTO>): Response<RecoveryAccountQuestionsResDTO>
+        fun saveSecretKey(secretKey: String)
         fun setRecoveredAccountPref()
         fun setRecoveredQuestionsPref()
         fun get422Error(response: ResponseBody) :ArrayList<String>

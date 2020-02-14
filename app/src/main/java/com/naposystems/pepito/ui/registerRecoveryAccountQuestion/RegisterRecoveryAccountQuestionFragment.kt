@@ -119,11 +119,16 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         viewModel.questions.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
 
+                val selectQuestion = context!!.getString(R.string.text_security_questions)
+
+                val newListQuestion = it.toMutableList()
+                newListQuestion.add(0, Questions(0, selectQuestion))
+
                 val adapter = ArrayAdapter<Questions>(
                     context!!,
                     R.layout.register_recovery_account_question_item,
                     R.id.textView_question_item,
-                    it
+                    newListQuestion
                 )
 
                 binding.spinnerQuestions.adapter = adapter

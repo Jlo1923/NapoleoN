@@ -90,10 +90,6 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
                             .toListQuestionEntity(response.body()!!)
                     )
 
-                    val selectQuestion = context.getString(R.string.text_security_questions)
-
-                    mutableList.add(0, Questions(0, selectQuestion))
-
                     _questions.value = mutableList
 
                 } else {

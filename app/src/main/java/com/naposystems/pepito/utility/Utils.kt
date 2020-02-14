@@ -4,9 +4,12 @@ import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.Settings
 import android.util.Base64
+import android.util.Base64OutputStream
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
@@ -16,13 +19,12 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
-import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
+import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import kotlin.math.roundToInt
-import android.graphics.BitmapFactory
-import android.view.View
 
 
 class Utils {
@@ -75,12 +77,6 @@ class Utils {
             snackbar.show()
         }
 
-        fun convertBitmapToBase64(bitmap: Bitmap): String? {
-            val outputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
-            return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
-        }
-
         fun showDialogToInformPermission(
             context: Context,
             fragmentManager: FragmentManager,
@@ -123,16 +119,27 @@ class Utils {
             return FileProvider.getUriForFile(context, "com.naposystems.pepito.provider", image)
         }
 
-        fun bitmapToBase64(bitmap: Bitmap): String {
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-            val byteArray = byteArrayOutputStream.toByteArray()
-            return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        fun convertBitmapToBase64(bitmap: Bitmap): String {
+            val outputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+            return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
         }
 
         fun base64ToBitmap(b64: String): Bitmap {
             val imageAsBytes = Base64.decode(b64.toByteArray(), Base64.DEFAULT)
             return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.size)
+        }
+
+        fun convertImageFileToBase64(imageFile: File): String {
+            return FileInputStream(imageFile).use { inputStream ->
+                ByteArrayOutputStream().use { outputStream ->
+                    Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
+                        inputStream.copyTo(base64FilterStream)
+                        base64FilterStream.close()
+                        outputStream.toString()
+                    }
+                }
+            }
         }
 
         fun generalDialog(

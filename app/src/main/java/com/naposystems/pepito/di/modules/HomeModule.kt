@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di.modules
 
+import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -25,7 +26,8 @@ class HomeModule {
         socketService: SocketService,
         conversationLocalDataSource: ConversationDataSource,
         messageLocalDataSource: MessageDataSource,
-        contactLocalDataSource: ContactDataSource
+        contactLocalDataSource: ContactDataSource,
+        attachmentLocalDataSource: AttachmentDataSource
     ): IContractHome.Repository {
         return HomeRepository(
             napoleonApi,
@@ -34,7 +36,8 @@ class HomeModule {
             socketService,
             conversationLocalDataSource,
             messageLocalDataSource,
-            contactLocalDataSource
+            contactLocalDataSource,
+            attachmentLocalDataSource
         )
     }
 }

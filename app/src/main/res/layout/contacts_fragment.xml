@@ -30,6 +30,7 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_empty_state"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:lottie_autoPlay="true"
