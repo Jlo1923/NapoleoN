@@ -56,6 +56,8 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
 
                     repository.saveRecoveredAccountPref()
                     repository.saveSecretKey(response.body()!!.user.secretKey)
+                    repository.setRecoveredAccountPref()
+                    repository.setRecoveredQuestionsPref()
                     repository.insertUser(response.body()!!.user)
 
                     _userAccountDisplayName.value = response.body()!!.user.fullname

@@ -6,8 +6,6 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.pepito.R
 import com.naposystems.pepito.db.NapoleonRoomDatabase
-import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactDao
-import com.naposystems.pepito.db.dao.blockedContacts.BlockedContactsLocalDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDao
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.contact.ContactLocalDataSource
@@ -89,18 +87,6 @@ class RoomModule {
     @Singleton
     fun provideStatusLocalDataSource(statusDao: StatusDao): StatusLocalDataSource {
         return StatusLocalDataSource(statusDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideBlockedContactDao(napoleonRoomDatabase: NapoleonRoomDatabase): BlockedContactDao {
-        return napoleonRoomDatabase.blockedContactDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideBlockedContactsLocalDataSource(blockedContactDao: BlockedContactDao): BlockedContactsLocalDataSource {
-        return BlockedContactsLocalDataSource(blockedContactDao)
     }
 
     @Provides

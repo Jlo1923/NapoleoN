@@ -39,7 +39,7 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
         return napoleonApi.sendAnswers(request)
     }
 
-    override fun saveRecoveredAccountPref() {
+    override fun setRecoveredAccountPref() {
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             Constants.AccountStatus.ACCOUNT_RECOVERED.id
@@ -52,6 +52,13 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_SECRET_KEY,
             crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
+        )
+    }
+
+    override fun setRecoveredQuestionsPref() {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED,
+            Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id
         )
     }
 

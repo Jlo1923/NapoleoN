@@ -27,6 +27,16 @@ class MainActivityRepository @Inject constructor(
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_ACCOUNT_STATUS)
     }
 
+    override fun getOutputControl(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_OUTPUT_CONTROL)
+    }
+
+    override suspend fun setOutputControl(state: Int) {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_OUTPUT_CONTROL, state
+        )
+    }
+
     override suspend fun getTimeRequestAccessPin(): Int {
         return sharedPreferencesManager.getInt(
             Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN

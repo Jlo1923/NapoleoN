@@ -31,6 +31,7 @@
                     android:layout_height="0dp"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintHeight_percent="0.3"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toTopOf="@+id/guideline_top"
                     app:srcCompat="@drawable/image_recovery_account" />

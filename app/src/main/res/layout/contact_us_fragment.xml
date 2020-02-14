@@ -35,10 +35,11 @@
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/spinner_category"
+                    style="@style/BackgroundSpinner"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="54dp"
                     android:layout_marginTop="@dimen/large_margin"
-                    android:popupBackground="@color/backgroundSpinnerColor"
+                    android:spinnerMode="dropdown"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toBottomOf="@+id/textView_info_pqrs"
@@ -92,8 +93,8 @@
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toBottomOf="@+id/textInputLayout_message"
-                    app:layout_constraintWidth_percent="@dimen/width_app_button"
-                    app:layout_constraintVertical_bias="1.0">
+                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintWidth_percent="@dimen/width_app_button">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_send_pqrs"

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -47,6 +48,13 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            showDeleteQuestionsDialog()
+        }
     }
 
     override fun onCreateView(
@@ -90,7 +98,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         binding.buttonNext.setOnClickListener(nextStep(0))
 
         binding.buttonCancel.setOnClickListener {
-            deleteQuestions()
+            showDeleteQuestionsDialog()
         }
 
         binding.imageButtonQuestionIcon.setOnClickListener {
@@ -200,7 +208,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         dialog.show(childFragmentManager, "InfoQuestions")
     }
 
-    private fun deleteQuestions() {
+    private fun showDeleteQuestionsDialog() {
         val dialog = DeleteQuestionsDialogFragment()
         dialog.setListener(object : DeleteQuestionsDialogFragment.DeleteQuestionsListener {
             override fun onDeleteQuestionsChange() {

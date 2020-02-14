@@ -4,6 +4,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class ContactUsErrorDTO (
+data class ContactUsErrorDTO(
     @Json(name = "error") val error: String
-    )
+)

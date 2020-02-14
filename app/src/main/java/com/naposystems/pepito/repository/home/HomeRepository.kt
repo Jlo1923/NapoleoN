@@ -136,7 +136,7 @@ class HomeRepository @Inject constructor(
 
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                contactLocalDataSource.insertContactList(contacts, false)
+                contactLocalDataSource.insertContactList(contacts)
 
                 if (contactResDTO.date.isNotEmpty()) {
                     sharedPreferencesManager.putString(

@@ -65,7 +65,7 @@ class ActivateBiometricsDialogFragment : BottomSheetDialogFragment() {
                     Timber.e("Biometric features are currently unavailable.")
                 BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                     Toast.makeText(
-                        context,"El dispositivo no tiene asignado un desbloqueo biometrico asociado", Toast.LENGTH_LONG).show()
+                        context,"El dispositivo no tiene asignado un desbloqueo biometrico", Toast.LENGTH_LONG).show()
                 }
             }
             viewModel.setBiometricsOption(optionBiometrics)

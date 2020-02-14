@@ -122,9 +122,14 @@ class SplashRepository @Inject constructor(
     }
 
     override suspend fun setDefaultBiometricsOption(biometricOption: Int) {
-        sharedPreferencesManager.putInt(
-            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION, biometricOption
+        val default = sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION
         )
+        if (default == 0) {
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_BIOMETRICS_OPTION, biometricOption
+            )
+        }
     }
 
     override suspend fun setDefaultLockType() {
