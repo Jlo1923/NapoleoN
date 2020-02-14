@@ -1,5 +1,6 @@
 package com.naposystems.pepito.repository.accessPin
 
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.accessPin.CreateAccount422DTO
 import com.naposystems.pepito.dto.accessPin.CreateAccountErrorDTO
@@ -8,6 +9,7 @@ import com.naposystems.pepito.dto.accessPin.CreateAccountResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.register.accessPin.IContractAccessPin
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Crypto
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
@@ -52,6 +54,16 @@ class CreateAccountRepository @Inject constructor(
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             Constants.AccountStatus.ACCOUNT_CREATED.id
+        )
+    }
+
+    override fun saveSecretKey(secretKey: String) {
+
+        val crypto = Crypto()
+
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_SECRET_KEY,
+            crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
         )
     }
 

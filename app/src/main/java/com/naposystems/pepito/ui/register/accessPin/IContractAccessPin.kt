@@ -23,5 +23,6 @@ interface IContractAccessPin {
         suspend fun createUser(user: User)
         suspend fun updateAccessPin(newAccessPin: String, firebaseId: String)
         fun createdUserPref()
+        fun saveSecretKey(secretKey: String)
     }
 }

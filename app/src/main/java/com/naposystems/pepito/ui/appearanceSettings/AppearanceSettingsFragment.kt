@@ -29,7 +29,6 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AppearanceSettingsFragmentBinding
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
-import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.Utils
@@ -48,6 +47,7 @@ class AppearanceSettingsFragment : Fragment() {
         fun newInstance() = AppearanceSettingsFragment()
         const val REQUEST_IMAGE_CAPTURE = 1
         const val REQUEST_GALLERY_IMAGE = 2
+        private const val FILE_EXTENSION = ".jpg"
     }
 
     @Inject
@@ -56,13 +56,16 @@ class AppearanceSettingsFragment : Fragment() {
     private lateinit var viewModel: AppearanceSettingsViewModel
     private lateinit var binding: AppearanceSettingsFragmentBinding
     private lateinit var fileName: String
+    private val compressedFileName by lazy {
+        "${System.currentTimeMillis()}_compressed.${FILE_EXTENSION}"
+    }
     private val subFolder: String by lazy {
         "chatBackground"
     }
     private var aspectRatioX: Float = 9f
     private var aspectRatioY: Float = 16f
-    private val bitmapMaxWidth = 1000
-    private val bitmapMaxHeight = 1000
+    private val bitmapMaxWidth = 720
+    private val bitmapMaxHeight = 1280
     private val imageCompression = 80
 
     override fun onAttach(context: Context) {
@@ -217,14 +220,14 @@ class AppearanceSettingsFragment : Fragment() {
         val dialog = ImageSelectorBottomSheetFragment.newInstance(title)
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected() {
-                fileName = "${System.currentTimeMillis()}.jpg"
+                fileName = "${System.currentTimeMillis()}.${FILE_EXTENSION}"
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
                     MediaStore.EXTRA_OUTPUT,
-                    getCacheImagePath(fileName)
+                    Utils.getCacheImagePath(context!!, fileName, subFolder)
                 )
                 if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
-                    startActivityForResult(takePictureIntent, ProfileFragment.REQUEST_IMAGE_CAPTURE)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
                 }
             }
 
@@ -233,18 +236,10 @@ class AppearanceSettingsFragment : Fragment() {
                     Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
-                startActivityForResult(pickPhoto, ProfileFragment.REQUEST_GALLERY_IMAGE)
+                startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
             }
         })
         dialog.show(childFragmentManager, "BottomSheetOptions")
-    }
-
-    private fun getCacheImagePath(fileName: String): Uri {
-        val path = File(activity!!.externalCacheDir!!.absolutePath, subFolder)
-        if (!path.exists())
-            path.mkdirs()
-        val image = File(path, fileName)
-        return FileProvider.getUriForFile(context!!, context!!.packageName + ".provider", image)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -280,7 +275,7 @@ class AppearanceSettingsFragment : Fragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    cropImage(getCacheImagePath(fileName))
+                    cropImage(Utils.getCacheImagePath(context!!, fileName, subFolder))
                 }
             }
             REQUEST_GALLERY_IMAGE -> {
@@ -299,7 +294,6 @@ class AppearanceSettingsFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             val uri = UCrop.getOutput(data!!)
             try {
-
                 viewModel.updateChatBackground(uri.toString())
 
                 clearCache(context!!)
@@ -311,15 +305,18 @@ class AppearanceSettingsFragment : Fragment() {
 
     private fun cropImage(sourceUri: Uri) {
 
-        var title = context!!.resources.getString(R.string.text_conversation_background)
+        val title = context!!.resources.getString(R.string.text_conversation_background)
+
+        val path = File(context!!.externalCacheDir!!, subFolder)
 
         val destinationUri =
             Uri.fromFile(
                 File(
-                    context!!.externalCacheDir,
-                    queryName(context!!.contentResolver, sourceUri)
+                    path,
+                    compressedFileName
                 )
             )
+
         val options = UCrop.Options()
         options.setCompressionQuality(imageCompression)
         options.setToolbarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
@@ -339,20 +336,10 @@ class AppearanceSettingsFragment : Fragment() {
         val path = File(context.externalCacheDir!!.absolutePath, subFolder)
         if (path.exists() && path.isDirectory) {
             for (child in path.listFiles()!!) {
-                child.delete()
+                if (child.name != compressedFileName) {
+                    child.delete()
+                }
             }
         }
     }
-
-    private fun queryName(resolver: ContentResolver, uri: Uri): String {
-        val returnCursor =
-            resolver.query(uri, null, null, null, null)
-        assert(returnCursor != null)
-        val nameIndex = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        returnCursor.moveToFirst()
-        val name = returnCursor.getString(nameIndex)
-        returnCursor.close()
-        return name
-    }
-
 }

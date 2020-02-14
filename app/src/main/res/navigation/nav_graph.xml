@@ -342,6 +342,9 @@
         <action
             android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
             app:destination="@id/previewImageSendFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_conversationCameraFragment"
+            app:destination="@id/conversationCameraFragment" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
@@ -366,13 +369,6 @@
         <action
             android:id="@+id/action_recoveryAccountQuestionsFragment_to_accessPinFragment"
             app:destination="@id/accessPinFragment" />
-        <action
-            android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
-            app:destination="@id/previewImageSendFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/previewImageSendFragment"
@@ -430,4 +426,16 @@
         android:name="com.naposystems.pepito.ui.addContact.AddContactFragment"
         android:label="@string/text_friend_requests"
         tools:layout="@layout/add_contact_fragment" />
+    <fragment
+        android:id="@+id/conversationCameraFragment"
+        android:name="com.naposystems.pepito.ui.conversationCamera.ConversationCameraFragment"
+        android:label="ConversationCameraFragment"
+        tools:layout="@layout/conversation_camera_fragment">
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+        <argument
+            android:name="contactId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

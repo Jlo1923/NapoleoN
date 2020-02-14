@@ -20,7 +20,6 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
     }
 
     override suspend fun insertContactList(contactList: List<Contact>, delete: Boolean) {
-        contactDao.insertContacts(contactList)
 
         if (delete) {
             val localContacts = getLocaleContacts()
@@ -28,12 +27,19 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
             val contactsDeleted = localContacts.subtract(contactList)
 
             if (contactsDeleted.isNotEmpty()) {
-                deleteContacts(contactsDeleted.toList())
+                contactDao.deleteContacts(contactsDeleted.toList())
             }
         }
-    }
 
-    override suspend fun deleteContacts(contacts: List<Contact>) {
-        contactDao.deleteContacts(contacts)
+        for (contact in contactList) {
+
+            val contactById = contactDao.getContactById(contact.id)
+
+            if (contactById.isNotEmpty()) {
+                contactDao.updateContact(contact)
+            } else {
+                contactDao.insertContact(contact)
+            }
+        }
     }
 }

@@ -86,6 +86,9 @@ class AccessPinViewModel @Inject constructor(
                             createAccountReqDTO.accessPin,
                             createAccountReqDTO.status
                         )
+
+                    repository.saveSecretKey(response.body()!!.secretKey)
+
                 } else {
                     when (response.code()) {
                         422 -> _webServiceError.value = repository.get422Error(response)

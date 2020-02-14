@@ -4,7 +4,6 @@ import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.splash.IContractSplash
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import javax.inject.Inject
 

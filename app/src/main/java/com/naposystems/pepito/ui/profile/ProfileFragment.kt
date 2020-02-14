@@ -353,8 +353,10 @@ class ProfileFragment : Fragment() {
         var title = ""
 
         when (subFolder) {
-            AVATAR_SUBFOLDER -> title = context!!.resources.getString(R.string.text_change_profile_photo)
-            HEADER_SUBFOLDER -> title = context!!.resources.getString(R.string.text_change_cover_photo)
+            AVATAR_SUBFOLDER -> title =
+                context!!.resources.getString(R.string.text_change_profile_photo)
+            HEADER_SUBFOLDER -> title =
+                context!!.resources.getString(R.string.text_change_cover_photo)
         }
 
         val dialog = ImageSelectorBottomSheetFragment.newInstance(title)

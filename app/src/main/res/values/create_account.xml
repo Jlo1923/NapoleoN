@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_nickname_unavailable">Apodo no disponible</string>
+    <string name="text_nickname_unavailable">Nickname unavailable</string>
 </resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_btn_recovery">Recuperar</string>
-    <string name="text_count_questions_recovery_account">Pregunta %1$d / %2$d</string>
-    <string name="text_description_recovery">Tus contactos te están esperando, tráelos de vuelta. Recupera de manera rápida y segura tus contactos, preferencias y apodo anterior respondiendo correctamente las preguntas de seguridad</string>
-    <string name="text_recovery_success">Tu cuenta ha sido recuperada, ahora podrás conversar de manera privada y segura con tus contactos.</string>
-    <string name="text_title_success">Recuperación de Cuenta</string>
+    <string name="text_btn_recovery">Recover</string>
+    <string name="text_count_questions_recovery_account">Question %1$d / %2$d</string>
+    <string name="text_description_recovery">Your contacts are waiting for you, bring them back. Quickly and safely recover your contacts, preferences and previous nickname by correctly answering security questions</string>
+    <string name="text_recovery_success">Your account has been recovered, now you can chat privately and securely with your contacts.</string>
+    <string name="text_title_success">Account Recovery</string>
 </resources>

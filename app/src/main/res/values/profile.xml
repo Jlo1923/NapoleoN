@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="explanation_camera_and_storage_permission">Para poder cambiar la foto de perfil y portada, permite que NapoleoN pueda acceder a tu cámara, fotos y contenido multimedia de tu dispositivo.</string>
+    <string name="explanation_camera_and_storage_permission">To be able to change the profile and cover photo, allow NapoleoN to access your camera, photos and multimedia content of your device.</string>
 </resources>

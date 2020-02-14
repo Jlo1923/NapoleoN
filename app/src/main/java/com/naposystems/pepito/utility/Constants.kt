@@ -3,6 +3,7 @@ package com.naposystems.pepito.utility
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
+    const val DATA_CRYPT = "datacrypt"
 
     object NapoleonApi {
         const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
@@ -169,6 +170,7 @@ object Constants {
         const val PREF_SOCKET_ID = "socket_id"
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
         const val PREF_CONTACTS_UPDATE_DATE = "contacts_update_date"
+        const val PREF_SECRET_KEY = "secret_key"
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"

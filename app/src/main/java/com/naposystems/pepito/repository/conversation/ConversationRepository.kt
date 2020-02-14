@@ -163,8 +163,18 @@ class ConversationRepository @Inject constructor(
         return attachmentLocalDataSource.insertAttachment(listAttachment)
     }
 
-    override fun updateAttachments(listAttachment: List<Attachment>) {
-        attachmentLocalDataSource.updateAttachments(listAttachment)
+    override fun updateAttachments(
+        listAttachmentsIds: List<Long>,
+        attachments: List<AttachmentResDTO>
+    ) {
+        for ((index, attachmentResDTO) in attachments.withIndex()) {
+            attachmentLocalDataSource.updateAttachments(
+                listAttachmentsIds[index],
+                attachmentResDTO.id,
+                attachmentResDTO.messageId,
+                attachmentResDTO.body
+            )
+        }
     }
 
     override fun get422Error(response: Response<MessageResDTO>): ArrayList<String> {
