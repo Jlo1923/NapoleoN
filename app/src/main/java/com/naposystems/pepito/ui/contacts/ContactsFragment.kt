@@ -160,7 +160,6 @@ class ContactsFragment : Fragment() {
             showToast(context!!, getString(R.string.text_deleted_contact))
         }
     }
-
 }
 
 fun showToast(context: Context, message: String) {

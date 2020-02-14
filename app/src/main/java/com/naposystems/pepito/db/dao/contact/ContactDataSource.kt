@@ -11,7 +11,7 @@ interface ContactDataSource {
 
     suspend fun insertContact(contact: Contact)
 
-    suspend fun insertContactList(contactList: List<Contact>, delete: Boolean)
+    suspend fun insertContactList(contactList: List<Contact>)
 
     fun getBlockedContacts() : LiveData<List<Contact>>
 

@@ -8,6 +8,8 @@ interface IContractMainActivity {
         fun getUser()
         fun getTheme()
         fun getAccountStatus()
+        fun getOutputControl(): Int
+        fun setOutputControl(state: Int)
         fun setLockTimeApp()
         fun getLockTimeApp(): Long
         fun getTimeRequestAccessPin()
@@ -18,6 +20,8 @@ interface IContractMainActivity {
         suspend fun getUser(): User
         suspend fun getTheme(): Int
         suspend fun getAccountStatus(): Int
+        fun getOutputControl(): Int
+        suspend fun setOutputControl(state: Int)
         suspend fun getTimeRequestAccessPin(): Int
         suspend fun getLockTimeApp(): Long
         suspend fun setLockStatus(state: Int)

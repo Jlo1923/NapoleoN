@@ -39,6 +39,11 @@ object Constants {
         DARK_THEME(2)
     }
 
+    enum class OutputControl constructor(val state: Int) {
+        TRUE(1),
+        FALSE(0)
+    }
+
     enum class AccountStatus constructor(val id: Int) {
         CODE_VALIDATED(1),
         ACCOUNT_CREATED(2),
@@ -172,6 +177,7 @@ object Constants {
         const val PREF_SOCKET_ID = "socket_id"
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
         const val PREF_CONTACTS_UPDATE_DATE = "contacts_update_date"
+        const val PREF_OUTPUT_CONTROL = "output_control"
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"
