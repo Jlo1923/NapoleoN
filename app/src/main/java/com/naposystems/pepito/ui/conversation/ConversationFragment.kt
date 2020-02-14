@@ -203,7 +203,6 @@ class ConversationFragment : Fragment() {
                 with(binding.inputPanel.getEditTex()) {
                     setText("")
                 }
-                shareViewModel.resetMessage()
             }
         })
     }
@@ -294,11 +293,13 @@ class ConversationFragment : Fragment() {
     }
 
     private fun setConversationBackground() {
-        val uri = Uri.parse(viewModel.getUser().chatBackground)
-        val inputStream: InputStream = context!!.contentResolver.openInputStream(uri)!!
-        val yourDrawable = Drawable.createFromStream(inputStream, uri.toString())
-        yourDrawable.alpha = (255 * 0.3).toInt()
-        activity!!.window.setBackgroundDrawable(yourDrawable)
+        if (viewModel.getUser().chatBackground.isNotEmpty()) {
+            val uri = Uri.parse(viewModel.getUser().chatBackground)
+            val inputStream: InputStream = context!!.contentResolver.openInputStream(uri)!!
+            val yourDrawable = Drawable.createFromStream(inputStream, uri.toString())
+            yourDrawable.alpha = (255 * 0.3).toInt()
+            activity!!.window.setBackgroundDrawable(yourDrawable)
+        }
     }
 
     private fun resetConversationBackground() {

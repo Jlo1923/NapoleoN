@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.addContact.AddContactViewModel
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
-import com.naposystems.pepito.ui.addContact.AddContactViewModel
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel

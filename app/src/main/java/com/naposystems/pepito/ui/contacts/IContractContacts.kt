@@ -12,6 +12,7 @@ interface IContractContacts {
         fun getContacts()
         fun sendBlockedContact(contact: Contact)
         fun sendDeleteContact(contact: Contact)
+        fun resetContactsLoaded()
     }
 
     interface Repository {

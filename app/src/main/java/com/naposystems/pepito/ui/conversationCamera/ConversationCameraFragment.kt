@@ -195,6 +195,7 @@ class ConversationCameraFragment : Fragment() {
             viewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
             viewModel.setSendClicked()
             viewModel.resetSendClicked()
+            viewModel.resetMessage()
             this.findNavController().navigateUp()
         }
 

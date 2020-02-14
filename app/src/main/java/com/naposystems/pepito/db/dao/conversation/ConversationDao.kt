@@ -18,6 +18,6 @@ interface ConversationDao {
     suspend fun updateConversation(conversation: Conversation)
 
     @Transaction
-    @Query("SELECT * FROM contact AS C INNER JOIN conversation AS CO on C.id=CO.contact_id")
+    @Query("SELECT * FROM contact AS C INNER JOIN conversation AS CO on C.id=CO.contact_id AND C.status_blocked=0")
     fun getConversations(): LiveData<List<ConversationAndContact>>
 }
