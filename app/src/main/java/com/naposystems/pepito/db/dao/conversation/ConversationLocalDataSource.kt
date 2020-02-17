@@ -83,4 +83,8 @@ class ConversationLocalDataSource @Inject constructor(private val conversationDa
         conversation.unReads = 0
         conversationDao.updateConversation(conversation)
     }
+
+    override suspend fun cleanConversation(idContact: Int) {
+        conversationDao.cleanConversation(idContact)
+    }
 }

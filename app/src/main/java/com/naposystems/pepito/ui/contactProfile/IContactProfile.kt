@@ -10,20 +10,20 @@ interface IContactProfile {
 
     interface ViewModel {
         fun getLocalContact(idContact : Int)
-        fun updateNameFakeLocalContact(idContact: Int, nameFake: String)
-        fun updateNicknameFakeLocalContact(idContact: Int, nameFake: String)
-        fun updateAvatarFakeLocalContact(idContact: Int, avatarFake: String)
-        fun restoreLocalContact(idContact: Int)
+        fun updateNameFakeContact(idContact: Int, nameFake: String)
+        fun updateNicknameFakeContact(idContact: Int, nameFake: String)
+        fun updateAvatarFakeContact(idContact: Int, avatarFake: String)
+        fun restoreContact(idContact: Int)
         fun deleteConversation(idContact: Int)
         fun updateContactSilenced(idContact : Int, contactSilenced : Boolean)
     }
 
     interface Repository {
         fun getLocalContact(idContact : Int): LiveData<Contact>
-        suspend fun updateNameFakeLocalContact(idContact: Int, nameFake: String)
-        suspend fun updateNicknameFakeLocalContact(idContact: Int, nicknameFake: String)
-        suspend fun updateAvatarFakeLocalContact(idContact: Int, avatarFake: String)
-        suspend fun restoreLocalContact(idContact: Int)
+        suspend fun updateNameFakeContact(idContact: Int, nameFake: String)
+        suspend fun updateNicknameFakeContact(idContact: Int, nicknameFake: String)
+        suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String)
+        suspend fun restoreContact(idContact: Int)
         suspend fun deleteConversation(idContact: Int)
         suspend fun updateContactSilenced(idContact : Int, contactSilenced: Int)
         suspend fun saveTimeMuteConversation(idContact : Int, time: MuteConversationReqDTO) : Response<MuteConversationResDTO>

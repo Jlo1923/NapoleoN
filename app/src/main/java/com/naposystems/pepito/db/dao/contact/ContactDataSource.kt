@@ -11,17 +11,13 @@ interface ContactDataSource {
 
     fun getContact(idContact : Int): LiveData<Contact>
 
-    suspend fun restoreLocalContact(idContact: Int)
+    suspend fun restoreContact(idContact: Int)
 
-    suspend fun deleteMessages(idContact: Int)
+    suspend fun updateNameFakeContact(idContact: Int, nameFake: String)
 
-    suspend fun cleanConversation(idContact: Int)
+    suspend fun updateNicknameFakeContact(idContact: Int, nicknameFake: String)
 
-    suspend fun updateNameFakeLocalContact(idContact: Int, nameFake: String)
-
-    suspend fun updateNicknameFakeLocalContact(idContact: Int, nicknameFake: String)
-
-    suspend fun updateAvatarFakeLocalContact(idContact: Int, avatarFake: String)
+    suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String)
 
     suspend fun insertContact(contact: Contact)
 

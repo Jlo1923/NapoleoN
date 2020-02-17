@@ -17,4 +17,6 @@ interface ConversationDataSource {
     fun getConversations(): LiveData<List<ConversationAndContact>>
 
     suspend fun updateConversation(contactId: Int)
+
+    suspend fun cleanConversation(idContact: Int)
 }
