@@ -2,6 +2,8 @@ package com.naposystems.pepito.repository.contactProfile
 
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
+import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
+import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.dto.muteConversation.MuteConversationErrorDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
@@ -14,7 +16,9 @@ import javax.inject.Inject
 
 class ContactProfileRepository@Inject constructor(
     private val napoleonApi: NapoleonApi,
-    private val contactDataSource: ContactDataSource
+    private val contactDataSource: ContactDataSource,
+    private val conversationDataSource: ConversationDataSource,
+    private val messageDataSource: MessageDataSource
 ) : IContactProfile.Repository {
 
     private val moshi: Moshi by lazy {
@@ -25,25 +29,25 @@ class ContactProfileRepository@Inject constructor(
         return contactDataSource.getContact(idContact)
     }
 
-    override suspend fun updateNameFakeLocalContact(idContact: Int, nameFake: String) {
-        contactDataSource.updateNameFakeLocalContact(idContact, nameFake)
+    override suspend fun updateNameFakeContact(idContact: Int, nameFake: String) {
+        contactDataSource.updateNameFakeContact(idContact, nameFake)
     }
 
-    override suspend fun updateNicknameFakeLocalContact(idContact: Int, nicknameFake: String) {
-        contactDataSource.updateNicknameFakeLocalContact(idContact, nicknameFake)
+    override suspend fun updateNicknameFakeContact(idContact: Int, nicknameFake: String) {
+        contactDataSource.updateNicknameFakeContact(idContact, nicknameFake)
     }
 
-    override suspend fun updateAvatarFakeLocalContact(idContact: Int, avatarFake: String) {
-        contactDataSource.updateAvatarFakeLocalContact(idContact, avatarFake)
+    override suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String) {
+        contactDataSource.updateAvatarFakeContact(idContact, avatarFake)
     }
 
-    override suspend fun restoreLocalContact(idContact: Int) {
-        contactDataSource.restoreLocalContact(idContact)
+    override suspend fun restoreContact(idContact: Int) {
+        contactDataSource.restoreContact(idContact)
     }
 
     override suspend fun deleteConversation(idContact: Int) {
-        contactDataSource.deleteMessages(idContact)
-        contactDataSource.cleanConversation(idContact)
+        messageDataSource.deleteMessages(idContact)
+        conversationDataSource.cleanConversation(idContact)
     }
 
     override suspend fun updateContactSilenced(idContact: Int, contactSilenced: Int) {

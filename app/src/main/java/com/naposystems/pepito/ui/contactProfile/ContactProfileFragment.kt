@@ -114,7 +114,7 @@ class ContactProfileFragment : Fragment() {
                     }
 
                     animatedEditName.cancelToHourglass()
-                    viewModel.updateNameFakeLocalContact(args.idContact, view.text.toString())
+                    viewModel.updateNameFakeContact(args.idContact, view.text.toString())
 
                     binding.editTextName.apply {
                         isEnabled = true
@@ -143,7 +143,7 @@ class ContactProfileFragment : Fragment() {
                     }
 
                     animatedEditNickName.cancelToHourglass()
-                    viewModel.updateNicknameFakeLocalContact(args.idContact, view.text.toString())
+                    viewModel.updateNicknameFakeContact(args.idContact, view.text.toString())
                     binding.editTextName.apply {
                         isEnabled = true
                     }
@@ -177,7 +177,7 @@ class ContactProfileFragment : Fragment() {
                 true,
                 childFragmentManager
             ) {
-                viewModel.restoreLocalContact(args.idContact)
+                viewModel.restoreContact(args.idContact)
             }
         }
 
@@ -399,7 +399,7 @@ class ContactProfileFragment : Fragment() {
         if (resultCode == RESULT_OK) {
             val uri = UCrop.getOutput(data!!)
             try {
-                viewModel.updateAvatarFakeLocalContact(args.idContact, uri.toString())
+                viewModel.updateAvatarFakeContact(args.idContact, uri.toString())
             } catch (ex: IOException) {
                 Timber.e(ex)
             }

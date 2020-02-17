@@ -26,4 +26,7 @@ interface MessageDao {
 
     @Query("SELECT web_id FROM message WHERE status=:status AND is_mine=0")
     suspend fun getMessagesByStatus(status: Int): List<String>
+
+    @Query("DELETE FROM message WHERE user_addressee = :idContact")
+    suspend fun deleteMessages(idContact: Int)
 }

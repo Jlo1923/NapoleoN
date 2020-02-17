@@ -35,29 +35,29 @@ class ContactProfileViewModel @Inject constructor(
         contact = repository.getLocalContact(idContact)
     }
 
-    override fun updateNameFakeLocalContact(idContact: Int, nameFake: String) {
+    override fun updateNameFakeContact(idContact: Int, nameFake: String) {
         viewModelScope.launch {
-            repository.updateNameFakeLocalContact(idContact, nameFake)
+            repository.updateNameFakeContact(idContact, nameFake)
             _responseEditNameFake.value = true
         }
     }
 
-    override fun updateNicknameFakeLocalContact(idContact: Int, nicknameFake: String) {
+    override fun updateNicknameFakeContact(idContact: Int, nicknameFake: String) {
         viewModelScope.launch {
-            repository.updateNicknameFakeLocalContact(idContact, nicknameFake)
+            repository.updateNicknameFakeContact(idContact, nicknameFake)
             _responseEditNicknameFake.value = true
         }
     }
 
-    override fun updateAvatarFakeLocalContact(idContact: Int, avatarFake: String) {
+    override fun updateAvatarFakeContact(idContact: Int, avatarFake: String) {
         viewModelScope.launch {
-            repository.updateAvatarFakeLocalContact(idContact, avatarFake)
+            repository.updateAvatarFakeContact(idContact, avatarFake)
         }
     }
 
-    override fun restoreLocalContact(idContact: Int) {
+    override fun restoreContact(idContact: Int) {
         viewModelScope.launch {
-            repository.restoreLocalContact(idContact)
+            repository.restoreContact(idContact)
         }
     }
 
