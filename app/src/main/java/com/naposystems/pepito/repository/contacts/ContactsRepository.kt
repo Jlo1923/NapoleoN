@@ -43,13 +43,6 @@ class ContactsRepository @Inject constructor(
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
                 contactLocalDataSource.insertContactList(contacts)
-
-                if (contactResDTO.date.isNotEmpty()) {
-                    sharedPreferencesManager.putString(
-                        Constants.SharedPreferences.PREF_CONTACTS_UPDATE_DATE,
-                        contactResDTO.date
-                    )
-                }
             } else {
                 Timber.e(response.errorBody()!!.string())
             }

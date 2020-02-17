@@ -105,6 +105,7 @@ class ContactProfileFragment : Fragment() {
                     Utils.generalDialog(
                         getString(R.string.text_name_invalid),
                         getString(R.string.text_alert_name),
+                        true,
                         childFragmentManager
                     ) { }
                 } else {
@@ -133,6 +134,7 @@ class ContactProfileFragment : Fragment() {
                     Utils.generalDialog(
                         getString(R.string.text_nickname_invalid),
                         getString(R.string.text_alert_nickname),
+                        true,
                         childFragmentManager
                     ) { }
                 } else {
@@ -172,6 +174,7 @@ class ContactProfileFragment : Fragment() {
             Utils.generalDialog(
                 getString(R.string.text_reset_contact),
                 getString(R.string.text_want_reset_contact),
+                true,
                 childFragmentManager
             ) {
                 viewModel.restoreLocalContact(args.idContact)
@@ -182,6 +185,7 @@ class ContactProfileFragment : Fragment() {
             Utils.generalDialog(
                 getString(R.string.text_delete_conversation),
                 getString(R.string.text_want_delete_conversation),
+                true,
                 childFragmentManager
             ) {
                 viewModel.deleteConversation(args.idContact)

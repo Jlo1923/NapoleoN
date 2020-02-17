@@ -116,19 +116,7 @@ class HomeRepository @Inject constructor(
     override suspend fun getContacts() {
         try {
 
-            val contactsUpdateDate = sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_CONTACTS_UPDATE_DATE,
-                ""
-            )
-
-            val response = if (contactsUpdateDate.isEmpty()) {
-                napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
-            } else {
-                napoleonApi.getContactsByDate(
-                    Constants.FriendShipState.ACTIVE.state,
-                    contactsUpdateDate
-                )
-            }
+            val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
 
             if (response.isSuccessful) {
 
@@ -137,13 +125,6 @@ class HomeRepository @Inject constructor(
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
                 contactLocalDataSource.insertContactList(contacts)
-
-                if (contactResDTO.date.isNotEmpty()) {
-                    sharedPreferencesManager.putString(
-                        Constants.SharedPreferences.PREF_CONTACTS_UPDATE_DATE,
-                        contactResDTO.date
-                    )
-                }
             } else {
                 Timber.e(response.errorBody()!!.string())
             }
