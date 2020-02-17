@@ -17,6 +17,9 @@ interface ConversationDao {
     @Update
     suspend fun updateConversation(conversation: Conversation)
 
+    @Query("UPDATE conversation SET message = '', created = 0, unreads = 0 WHERE contact_id = :idContact")
+    suspend fun cleanConversation(idContact: Int)
+
     @Transaction
     @Query("SELECT * FROM contact")
     fun getConversations(): LiveData<List<ConversationAndContact>>
