@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.BlockedContactsFragmentBinding
 import com.naposystems.pepito.entity.Contact
@@ -138,7 +139,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         adapter =
             BlockedContactsAdapter(object : BlockedContactsAdapter.BlockedContactsClickListener {
                 override fun onClick(item: Contact) {
-                    seeProfile()
+                    seeProfile(item)
                 }
 
                 override fun onMoreClick(item: Contact, view: View) {
@@ -156,7 +157,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.see_profile -> {
-                    seeProfile()
+                    seeProfile(item)
                 }
                 R.id.unblock -> {
                     unblockContact(item)
@@ -168,14 +169,11 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         popup.show()
     }
 
-    private fun seeProfile() {
-        showToast(
-            context!!, "Ver perfil"
-        )
-        /*findNavController().navigate(
+    private fun seeProfile(contact: Contact) {
+        findNavController().navigate(
             BlockedContactsFragmentDirections
-                .actionBlockedContactsFragmentToContactProfileFragment()
-        )*/
+                .actionBlockedContactsFragmentToContactProfileFragment(contact.id)
+        )
     }
 
     private fun unblockContact(contact: Contact) {

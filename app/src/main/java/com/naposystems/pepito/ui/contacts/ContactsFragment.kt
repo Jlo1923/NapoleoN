@@ -123,16 +123,14 @@ class ContactsFragment : Fragment() {
                     when (it.itemId) {
                         R.id.start_chat ->
                             goToConversation(item)
-                        R.id.see_profile -> showToast(
-                            context!!, "Ver perfil"
-                        )
+                        R.id.see_profile ->
+                            seeProfile(item)
                         R.id.block_contact ->
                             blockedContact(item)
 
                         R.id.delete_contact ->
                             deleteContact(item)
                     }
-
                     true
                 }
 
@@ -149,6 +147,14 @@ class ContactsFragment : Fragment() {
         )
     }
 
+    private fun seeProfile(contact: Contact) {
+        findNavController().navigate(
+            ContactsFragmentDirections
+                .actionContactsFragmentToContactProfileFragment(contact.id)
+        )
+
+    }
+
     private fun blockedContact(contact: Contact) {
         generalDialog(
             getString(R.string.text_block_contact),
@@ -157,7 +163,7 @@ class ContactsFragment : Fragment() {
             childFragmentManager
         ) {
             viewModel.sendBlockedContact(contact)
-            showToast(context!!, getString(R.string.text_blocked_contact))
+//            showToast(context!!, getString(R.string.text_blocked_contact))
         }
     }
 
@@ -169,7 +175,7 @@ class ContactsFragment : Fragment() {
             childFragmentManager
         ) {
             viewModel.sendDeleteContact(contact)
-            showToast(context!!, getString(R.string.text_deleted_contact))
+//            showToast(context!!, getString(R.string.text_deleted_contact))
         }
     }
 }

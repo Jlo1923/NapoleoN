@@ -9,8 +9,8 @@
         android:id="@+id/splashFragment"
         android:name="com.naposystems.pepito.ui.splash.SplashFragment"
         android:label="splash_fragment"
-        tools:layout="@layout/splash_fragment"
-        app:startDestination="@id/action_splashFragment_to_unlockAppTimeFragment">
+        app:startDestination="@id/action_splashFragment_to_unlockAppTimeFragment"
+        tools:layout="@layout/splash_fragment">
         <action
             android:id="@+id/action_splashFragment_to_landingFragment"
             app:destination="@id/landingFragment"
@@ -32,9 +32,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@+id/nav_graph"
-            app:popUpToInclusive="true" />
+        app:popExitAnim="@anim/slide_out_right"
+        app:popUpTo="@+id/nav_graph"
+        app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashFragment_to_enterPinFragment"
             app:destination="@id/enterPinFragment"
@@ -277,7 +277,16 @@
     <fragment
         android:id="@+id/blockedContactsFragment"
         android:name="com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment"
-        android:label="@string/text_blocked_contacts" />
+        android:label="@string/text_blocked_contacts"
+        tools:layout="@layout/blocked_contacts_fragment">
+        <action
+            android:id="@+id/action_blockedContactsFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/colorSchemeFragment"
         android:name="com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment"
@@ -309,6 +318,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_contactsFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/contactUsFragment"
@@ -350,14 +366,14 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_conversationFragment_to_contactProfileFragment"
             app:destination="@id/contactProfileFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
@@ -398,8 +414,8 @@
         android:id="@+id/enterPinFragment"
         android:name="com.naposystems.pepito.ui.enterPin.EnterPinFragment"
         android:label="EnterPinFragment"
-        tools:layout="@layout/enter_pin_fragment"
-        app:startDestination="@id/action_enterPinFragment_to_unlockAppTimeFragment">
+        app:startDestination="@id/action_enterPinFragment_to_unlockAppTimeFragment"
+        tools:layout="@layout/enter_pin_fragment">
         <action
             android:id="@+id/action_enterPinFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -455,7 +471,7 @@
     <fragment
         android:id="@+id/contactProfileFragment"
         android:name="com.naposystems.pepito.ui.contactProfile.ContactProfileFragment"
-        tools:layout="@layout/contact_profile_fragment" >
+        tools:layout="@layout/contact_profile_fragment">
         <argument
             android:name="idContact"
             app:argType="integer" />
