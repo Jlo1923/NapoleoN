@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="text_reset_contact">Restablecer contacto</string>
     <string name="text_want_delete_conversation">Tem certeza de que deseja excluir esta conversa?</string>
     <string name="text_want_reset_contact">Tem certeza de que quer contato restabelecer?</string>
@@ -9,5 +8,4 @@
     <string name="text_alert_name">O nome deve conter pelo menos 3 e no máximo 50 caracteres</string>
     <string name="text_name_invalid">Nome inválido</string>
     <string name="text_nickname_invalid">Apelido inválido</string>
-
 </resources>
