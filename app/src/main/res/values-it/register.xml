@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_nickname">Soprannome*</string>
     <string name="text_display_name">Nome visualizzato</string>
     <string name="text_terms_and_conditions_line_one">Facendo clic su Registrazione, si accetta il</string>
     <string name="text_terms_and_conditions_line_two">termini, condizioni e politiche sulla privacy.</string>

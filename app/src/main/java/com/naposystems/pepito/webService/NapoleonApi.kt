@@ -16,6 +16,8 @@ import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
+import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
+import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountResDTO
@@ -47,6 +49,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQU
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_MUTE_CONVERSATION
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_USER_INFO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
@@ -71,6 +74,9 @@ interface NapoleonApi {
 
     @PUT(UPDATE_USER_INFO)
     suspend fun updateUserInfo(@Body updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
+
+    @PUT(UPDATE_MUTE_CONVERSATION)
+    suspend fun updateMuteConversation(@Path("id") idContact: Int, @Body muteConversationReqDTO: MuteConversationReqDTO) : Response<MuteConversationResDTO>
 
     @GET(FRIEND_SHIP_SEARCH)
     suspend fun getContactsByState(@Path("state") state: String): Response<ContactsResDTO>

@@ -4,9 +4,6 @@
     <string name="text_video_call">Videochiamata</string>
     <string name="text_schedule">Programma</string>
     <string name="text_see_contact">Vedi contatto</string>
-    <string name="text_block_contact">Blocca contatto</string>
-    <string name="text_mute_conversation">Conversazione muta</string>
-    <string name="text_delete_conversation">Elimina la conversazione</string>
     <string name="text_write_message">Scrivi un messaggio</string>
     <string name="text_start_chat">Comincia chat</string>
     <string name="text_view_profile">Vedi profilo</string>

@@ -287,4 +287,10 @@
     <style name="BackgroundSpinner" >
         <item name="android:background">@drawable/bg_spinner</item>
     </style>
+    <style name="FabPrimary">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">@color/buttonTint</item>
+    </style>
+
 </resources>

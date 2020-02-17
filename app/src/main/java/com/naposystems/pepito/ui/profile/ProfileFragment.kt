@@ -3,7 +3,6 @@ package com.naposystems.pepito.ui.profile
 import android.Manifest
 import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,12 +13,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
-import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider.getUriForFile
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -74,10 +73,14 @@ class ProfileFragment : BaseFragment() {
     private val bitmapMaxHeight = 1000
     private val imageCompression = 80
 
-
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onResume() {
+        animatedEditName.clearAnimation()
+        super.onResume()
     }
 
     override fun onCreateView(
@@ -110,20 +113,9 @@ class ProfileFragment : BaseFragment() {
         binding.imageButtonNameOptionEndIcon.setOnClickListener {
             animatedEditName.apply {
                 if (!hasBeenInitialized) {
-                    editToCancel()
-                    binding.editTextDisplayName.apply {
-                        isEnabled = true
-                        isFocusable = true
-                        requestFocus()
-                        setSelection(this.text!!.length)
-                        Utils.openKeyboard(this)
-                    }
+                    editToCancel(binding.editTextDisplayName)
                 } else {
-                    cancelToEdit()
-                    binding.editTextDisplayName.apply {
-                        isEnabled = false
-                        isFocusable = false
-                    }
+                    cancelToEdit(binding.editTextDisplayName)
                 }
             }
         }

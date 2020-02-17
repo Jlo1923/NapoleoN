@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_reset_contact">Kontakt wiederherstellen</string>
+    <string name="text_want_delete_conversation">Sie sicher, dass Sie dieses Gespräch löschen?</string>
+    <string name="text_want_reset_contact">Sie sicher, dass Sie wieder herstellen wollen Kontakt?</string>
+    <string name="text_want_mute_conversation">Tem certeza de que quer contato restabelecer?</string>
+    <string name="text_alert_nickname">Der Spitzname muss mindestens 5 und bis zu 20 Zeichen</string>
+    <string name="text_alert_name">Der Name muß mindestens 3 und maximal 50 Zeichen enthalten</string>
+    <string name="text_name_invalid">Ungültiger Name</string>
+    <string name="text_nickname_invalid">Ungültiger Spitzname</string>
+
+</resources>

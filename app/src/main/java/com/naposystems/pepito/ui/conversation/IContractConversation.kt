@@ -35,6 +35,7 @@ interface IContractConversation {
             listAttachmentsId: List<Long>
         )
         fun sendMessagesRead()
+        fun getLocalContact(idContact : Int)
     }
 
     interface Repository {
@@ -58,5 +59,6 @@ interface IContractConversation {
         )
         fun get422Error(response: Response<MessageResDTO>): ArrayList<String>
         fun getError(response: Response<MessageResDTO>): ArrayList<String>
+        fun getLocalContact(idContact : Int): LiveData<Contact>
     }
 }

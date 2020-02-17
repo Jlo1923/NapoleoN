@@ -13,6 +13,7 @@ object Constants {
         const val VALIDATE_NICKNAME = "auth/validatenick"
         const val CREATE_ACCOUNT = "users"
         const val UPDATE_USER_INFO = "users/update"
+        const val UPDATE_MUTE_CONVERSATION = "friendship/silence/{id}"
         const val SEND_PQRS = "pqrs"
         const val FRIEND_SHIP_SEARCH = "friendship/search/{state}"
         const val FRIEND_SHIP_SEARCH_BY_DATE = "friendship/search/{state}"
@@ -82,6 +83,14 @@ object Constants {
         ONE_HOUR(3600000),
         ONE_DAY(86400000),
         NEVER(-1)
+    }
+
+    enum class TimeMuteConversation constructor(val time: Int) {
+        WITHOUT_TIME(0),
+        ONE_HOUR(60),
+        EIGHT_HOURS(480),
+        ONE_DAY(1),
+        ONE_YEAR(365)
     }
 
     enum class LockTypeApp constructor(val type: Int) {

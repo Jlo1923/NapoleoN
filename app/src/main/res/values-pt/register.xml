@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_nickname">Apelido*</string>
     <string name="text_display_name">Nome de exibição</string>
     <string name="text_terms_and_conditions_line_one">Ao clicar em Registro, você aceita o</string>
     <string name="text_terms_and_conditions_line_two">termos, condições e políticas de privacidade.</string>

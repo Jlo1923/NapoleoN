@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_silence_conversation">Silenciar conversa</string>
+    <string name="text_one_hours">1 Hora</string>
+    <string name="text_eight_hours">8 Horas</string>
+    <string name="text_one_days">1 Dia</string>
+    <string name="text_one_year">1 Ano</string>
+    <string name="text_message_information">Durante a próxima vez, as notificações serão silenciadas para esse contato.</string>
+</resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_nickname">Surnom*</string>
     <string name="text_display_name">Nom d\'affichage</string>
     <string name="text_terms_and_conditions_line_one">En cliquant sur Inscription, vous acceptez les</string>
     <string name="text_terms_and_conditions_line_two">termes, conditions et politiques de confidentialité.</string>

@@ -91,6 +91,8 @@ class ConversationFragment : Fragment() {
             inflater, R.layout.conversation_fragment, container, false
         )
 
+        binding.lifecycleOwner = this
+
         binding.contact = args.contact
 
         setupAdapter()
@@ -214,6 +216,8 @@ class ConversationFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        viewModel.getLocalContact(args.contact.id)
+
         viewModel.setContact(args.contact)
 
         viewModel.getLocalMessages()
@@ -275,6 +279,12 @@ class ConversationFragment : Fragment() {
 
             }
         })
+
+        viewModel.contactProfile.observe(viewLifecycleOwner, Observer {
+            if (it != null){
+                actionBarCustomView.contact = it
+            }
+        })
     }
 
     override fun onDetach() {
@@ -291,6 +301,27 @@ class ConversationFragment : Fragment() {
         super.onDestroy()
         resetConversationBackground()
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_item_see_contact -> {
+                findNavController().navigate(
+                    ConversationFragmentDirections
+                        .actionConversationFragmentToContactProfileFragment(args.contact.id)
+                )
+            }
+        }
+
+        return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_IMAGE_CAPTURE -> {
+                if (resultCode == RESULT_OK) {
+                    path = File(context!!.externalCacheDir!!, subFolder)
+                    val image = File(path, "${fileName}.jpg")
+                    file = decodeFile(image)
 
     private fun setConversationBackground() {
         if (viewModel.getUser().chatBackground.isNotEmpty()) {
@@ -310,6 +341,8 @@ class ConversationFragment : Fragment() {
         actionBarCustomView = DataBindingUtil.inflate(
             inflater, R.layout.conversation_action_bar, null, false
         )
+
+        actionBarCustomView.lifecycleOwner = this
 
         with((activity as MainActivity).supportActionBar!!) {
             displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM

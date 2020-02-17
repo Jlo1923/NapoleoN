@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_reset_contact">Restablecer contacto</string>
+    <string name="text_want_delete_conversation">Estás seguro que deseas eliminar esta conversación?</string>
+    <string name="text_want_reset_contact">Estás seguro que deseas restablecer el contacto?</string>
+    <string name="text_want_mute_conversation">Tem certeza de que quer contato restabelecer?</string>
+    <string name="text_alert_nickname">El Apodo debe contener mínimo 5 y máximo 20 caracteres</string>
+    <string name="text_alert_name">El Nombre debe contener mínimo 3 y máximo 50 caracteres</string>
+    <string name="text_name_invalid">Nombre no válido</string>
+    <string name="text_nickname_invalid">Apodo no válido</string>
+
+
+</resources>

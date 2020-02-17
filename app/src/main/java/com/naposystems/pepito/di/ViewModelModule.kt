@@ -8,9 +8,11 @@ import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
+import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
 import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.conversation.ConversationViewModel
+import com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.enterPin.EnterPinViewModel
 import com.naposystems.pepito.ui.home.HomeViewModel
@@ -199,4 +201,15 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(BaseViewModel::class)
     internal abstract fun binBaseViewModel(viewModel: BaseViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactProfileViewModel::class)
+    internal abstract fun bindContactProfileViewModel(viewModel: ContactProfileViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MuteConversationViewModel::class)
+    internal abstract fun bindMuteConversationViewModel(viewModel: MuteConversationViewModel): ViewModel
+
 }

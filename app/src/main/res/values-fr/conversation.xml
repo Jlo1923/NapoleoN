@@ -4,9 +4,6 @@
     <string name="text_video_call">Appel vidéo</string>
     <string name="text_schedule">Horaire</string>
     <string name="text_see_contact">Voir contact</string>
-    <string name="text_block_contact">Bloquer le contact</string>
-    <string name="text_mute_conversation">Conversation muette</string>
-    <string name="text_delete_conversation">Supprimer la conversation</string>
     <string name="text_write_message">Écrire un message</string>
     <string name="text_start_chat">Chattez</string>
     <string name="text_view_profile">Voir le profil</string>

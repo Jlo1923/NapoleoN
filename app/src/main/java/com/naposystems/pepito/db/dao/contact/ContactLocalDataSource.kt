@@ -7,6 +7,34 @@ import javax.inject.Inject
 class ContactLocalDataSource @Inject constructor(private val contactDao: ContactDao) :
     ContactDataSource {
 
+    override suspend fun updateNicknameFakeLocalContact(idContact: Int, nicknameFake: String) {
+        contactDao.updateNickNameFakeContact(idContact, nicknameFake)
+    }
+
+    override suspend fun updateNameFakeLocalContact(idContact: Int, nameFake: String) {
+        contactDao.updateNameFakeLocalContact(idContact, nameFake)
+    }
+
+    override suspend fun updateAvatarFakeLocalContact(idContact: Int, avatarFake: String) {
+        contactDao.updateAvatarFakeLocalContact(idContact, avatarFake)
+    }
+
+    override suspend fun restoreLocalContact(idContact: Int) {
+        contactDao.restoreLocalContact(idContact)
+    }
+
+    override suspend fun deleteMessages(idContact: Int) {
+        contactDao.deleteMessages(idContact)
+    }
+
+    override suspend fun cleanConversation(idContact: Int) {
+        contactDao.cleanConversation(idContact)
+    }
+
+    override fun getContact(idContact : Int): LiveData<Contact> {
+        return contactDao.getContact(idContact)
+    }
+
     override suspend fun getContacts(): LiveData<List<Contact>> {
         return contactDao.getContacts()
     }
@@ -41,5 +69,9 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
 
     override suspend fun deleteContacts(contacts: List<Contact>) {
         contactDao.deleteContacts(contacts)
+    }
+
+    override suspend fun updateContactSilenced(idContact: Int, contactSilenced: Int) {
+        contactDao.updateContactSilenced(idContact, contactSilenced)
     }
 }

@@ -2,6 +2,7 @@ package com.naposystems.pepito.di.modules
 
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
+import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.conversation.ConversationRepository
@@ -25,7 +26,8 @@ class ConversationModule {
         attachmentDataSource: AttachmentDataSource,
         sharedPreferencesManager: SharedPreferencesManager,
         napoleonApi: NapoleonApi,
-        conversationLocalDataSource: ConversationDataSource
+        conversationLocalDataSource: ConversationDataSource,
+        contactDataSource: ContactDataSource
     ): IContractConversation.Repository {
         return ConversationRepository(
             socketService,
@@ -34,7 +36,8 @@ class ConversationModule {
             attachmentDataSource,
             sharedPreferencesManager,
             napoleonApi,
-            conversationLocalDataSource
+            conversationLocalDataSource,
+            contactDataSource
         )
     }
 }
