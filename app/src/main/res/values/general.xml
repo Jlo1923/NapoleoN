@@ -18,6 +18,7 @@
     <string name="text_next">Next</string>
     <string name="text_fail">Something went wrong, please try again</string>
     <string name="text_name">Name</string>
+    <string name="text_nickname_with_asterisk">Nickname*</string>
     <string name="text_status">Status</string>
     <string name="text_blocked_contacts">Blocked contacts</string>
     <string name="label_edit_photo">Edit photo</string>
@@ -39,4 +40,5 @@
     <string name="text_add">Add</string>
     <string name="text_sent">Sent</string>
     <string name="text_refuse">Refuse</string>
+    <string name="text_information">INFORMATION</string>
 </resources>

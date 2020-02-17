@@ -186,7 +186,6 @@ object Constants {
         const val PREF_ALLOW_DOWNLOAD_ATTACHMENTS = "allow_download_attachments"
         const val PREF_SOCKET_ID = "socket_id"
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
-        const val PREF_CONTACTS_UPDATE_DATE = "contacts_update_date"
         const val PREF_SECRET_KEY = "secret_key"
         const val PREF_OUTPUT_CONTROL = "output_control"
 

@@ -128,9 +128,8 @@ class ApplicationModule {
             BASE_URL + it == original.url().uri().toString()
         }
 
-        return if (original.method() == "GET" || isNotEncryptedRequest) {
+        if (original.method() == "GET" || isNotEncryptedRequest) {
             request.method(original.method(), original.body())
-            chain.proceed(request.build())
         } else {
             val jsonObject = JSONObject()
             jsonObject.put(
@@ -142,7 +141,12 @@ class ApplicationModule {
                 RequestBody.create(MediaType.parse("application/json"), jsonObject.toString())
 
             request.method(original.method(), newRequestBody)
+        }
+
+        return if (BuildConfig.ENCRYPT_API) {
             decryptResponse(chain, request, cripto, secretKey)
+        } else {
+            chain.proceed(request.build())
         }
     }
 

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Base64
 import android.util.Base64OutputStream
@@ -25,9 +26,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import kotlin.math.roundToInt
-import android.graphics.BitmapFactory
-import android.provider.OpenableColumns
-import android.view.View
 
 class Utils {
 

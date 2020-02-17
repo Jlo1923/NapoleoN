@@ -21,7 +21,7 @@ data class Contact(
     @ColumnInfo(name = "display_name_fake") val displayNameFake: String = "",
     @ColumnInfo(name = "status") val status: String,
     @ColumnInfo(name = "last_seen") val lastSeen: String,
-    @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false
+    @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false,
     @ColumnInfo(name = "silenced") val silenced: Boolean = false
 ) : Parcelable {
     @Ignore

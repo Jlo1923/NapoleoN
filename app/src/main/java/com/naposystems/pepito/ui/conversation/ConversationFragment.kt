@@ -315,14 +315,6 @@ class ConversationFragment : Fragment() {
         return true
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_IMAGE_CAPTURE -> {
-                if (resultCode == RESULT_OK) {
-                    path = File(context!!.externalCacheDir!!, subFolder)
-                    val image = File(path, "${fileName}.jpg")
-                    file = decodeFile(image)
-
     private fun setConversationBackground() {
         if (viewModel.getUser().chatBackground.isNotEmpty()) {
             val uri = Uri.parse(viewModel.getUser().chatBackground)
