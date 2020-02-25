@@ -1,5 +1,7 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
 import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
 import java.io.File
@@ -31,7 +34,7 @@ class ConversationAdapter constructor(
             oldItem: MessageAndAttachment,
             newItem: MessageAndAttachment
         ): Boolean {
-            return oldItem === newItem
+            return oldItem.message.id == newItem.message.id && oldItem.message.status == newItem.message.status && oldItem.message.isSelected == newItem.message.isSelected
         }
 
         override fun areContentsTheSame(
@@ -79,6 +82,7 @@ class ConversationAdapter constructor(
     class MyMessageViewHolder constructor(private val binding: ConversationItemMyMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
             clickListener: ConversationClickListener,
@@ -89,6 +93,22 @@ class ConversationAdapter constructor(
             binding.imageViewAttachment.visibility = View.GONE
 
             val context = binding.containerMessage.context
+
+            if(item.message.isSelected){
+                binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+
+            binding.containerMyMessage.setOnLongClickListener {
+                clickListener.onLongClick(item.message)
+                true
+            }
+
+            binding.containerMyMessage.setOnClickListener {
+                clickListener.onClick(item.message)
+            }
+
 
             binding.containerMessage.background = if (isFirst) {
                 context.getDrawable(R.drawable.bg_my_message)
@@ -124,6 +144,7 @@ class ConversationAdapter constructor(
 
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
             clickListener: ConversationClickListener,
@@ -131,9 +152,25 @@ class ConversationAdapter constructor(
         ) {
 
             binding.conversation = item
+            binding.clickListener = clickListener
             binding.imageViewAttachment.visibility = View.GONE
 
             val context = binding.containerMessage.context
+
+            if(item.message.isSelected){
+                binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+
+            binding.containerIncomingMessage.setOnLongClickListener {
+                clickListener.onLongClick(item.message)
+                true
+            }
+
+            binding.containerIncomingMessage.setOnClickListener {
+                clickListener.onClick(item.message)
+            }
 
             binding.containerMessage.background = if (isFirst) {
                 context.getDrawable(R.drawable.bg_incoming_message)
@@ -169,7 +206,8 @@ class ConversationAdapter constructor(
         }
     }
 
-    class ConversationClickListener(val clickListener: (item: MessageAndAttachment) -> Unit) {
-        fun onClick(item: MessageAndAttachment) = clickListener(item)
+    interface ConversationClickListener {
+        fun onClick(item: Message)
+        fun onLongClick(item: Message)
     }
 }

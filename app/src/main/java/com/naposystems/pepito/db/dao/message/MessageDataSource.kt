@@ -15,6 +15,22 @@ interface MessageDataSource {
 
     fun updateMessage(message: Message)
 
+    suspend fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected : Int)
+
+    suspend fun cleanSelectionMessages(idContact: Int)
+
+    suspend fun deleteMessagesSelected(idContact: Int)
+
+    suspend fun copyMessagesSelected(idContact: Int): List<String>
+
+    suspend fun getLastMessageByContact(idContact: Int): MessageAndAttachment
+
+    suspend fun getIdContactWithWebId(ListWebId: List<String>): Int
+
+    suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>>
+
+    suspend fun deletedMessages(listWebIdMessages: List<String>)
+
     fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
 
     suspend fun getMessagesByStatus(status: Int): List<String>

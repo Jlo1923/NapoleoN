@@ -7,6 +7,10 @@ import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessage422DTO
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
 import com.naposystems.pepito.dto.conversation.message.*
 import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
@@ -24,6 +28,7 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.coroutineScope
+import okhttp3.ResponseBody
 import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
@@ -183,7 +188,47 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override fun get422Error(response: Response<MessageResDTO>): ArrayList<String> {
+    override suspend fun updateStateSelectionMessage(
+        idContact: Int,
+        idMessage: Int,
+        isSelected: Int
+    ) {
+        messageLocalDataSource.updateStateSelectionMessage(idContact, idMessage, isSelected)
+    }
+
+    override suspend fun cleanSelectionMessages(idContact: Int) {
+        messageLocalDataSource.cleanSelectionMessages(idContact)
+    }
+
+    override suspend fun deleteMessagesSelected(idContact: Int) {
+        messageLocalDataSource.deleteMessagesSelected(idContact)
+        val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(idContact)
+        if (messageAndAttachment != null) {
+            conversationLocalDataSource.updateConversationByContact(
+                idContact,
+                messageAndAttachment.message.body,
+                messageAndAttachment.message.createdAt,
+                messageAndAttachment.message.status,
+                0
+            )
+        } else {
+            conversationLocalDataSource.cleanConversation(idContact)
+        }
+    }
+
+    override suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO> {
+        return napoleonApi.deleteMessagesForAll(deleteMessagesReqDTO)
+    }
+
+    override suspend fun copyMessagesSelected(idContact: Int): List<String> {
+        return messageLocalDataSource.copyMessagesSelected(idContact)
+    }
+
+    override suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessagesSelected(idContact)
+    }
+
+    override fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
         val adapter = moshi.adapter(Message422DTO::class.java)
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
@@ -191,11 +236,31 @@ class ConversationRepository @Inject constructor(
         return WebServiceUtils.get422Errors(conversationError!!)
     }
 
-    override fun getError(response: Response<MessageResDTO>): ArrayList<String> {
+    override fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
 
         val adapter = moshi.adapter(MessageErrorDTO::class.java)
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
+
+        val errorList = ArrayList<String>()
+
+        errorList.add(conversationError!!.error)
+
+        return errorList
+    }
+
+    override fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
+        val adapter = moshi.adapter(DeleteMessage422DTO::class.java)
+
+        val conversationError = adapter.fromJson(response.string())
+
+        return WebServiceUtils.get422Errors(conversationError!!)
+    }
+
+    override fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
+        val adapter = moshi.adapter(DeleteMessagesErrorDTO::class.java)
+
+        val conversationError = adapter.fromJson(response.string())
 
         val errorList = ArrayList<String>()
 

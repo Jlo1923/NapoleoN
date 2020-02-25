@@ -8,4 +8,9 @@
     <string name="text_start_chat">Chattez</string>
     <string name="text_view_profile">Voir le profil</string>
     <string name="text_delete_contact">Supprimer un contact</string>
+    <string name="text_delete_messages">Supprimer les messages?</string>
+    <string name="text_delete_message_for_me">Elimina per me</string>
+    <string name="text_delete_message_for_all">Supprimer pour tous</string>
+    <string name="text_message_copied">Message copié</string>
+
 </resources>

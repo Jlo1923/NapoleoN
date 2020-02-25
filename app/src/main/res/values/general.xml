@@ -41,4 +41,7 @@
     <string name="text_sent">Sent</string>
     <string name="text_refuse">Refuse</string>
     <string name="text_information">INFORMATION</string>
+    <string name="text_delete_conversation">Delete conversation</string>
+    <string name="text_block_contact">Block contact</string>
+
 </resources>

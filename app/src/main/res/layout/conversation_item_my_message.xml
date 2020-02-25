@@ -12,9 +12,11 @@
         <variable
             name="clickListener"
             type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ConversationClickListener" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_my_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/x_x_small_padding"

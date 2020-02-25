@@ -18,6 +18,8 @@ interface IContractSocketService {
         fun verifyMessagesReceived()
 
         fun verifyMessagesRead()
+
+        fun getDeletedMessages()
     }
 
 }

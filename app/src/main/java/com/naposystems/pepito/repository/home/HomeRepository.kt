@@ -13,7 +13,6 @@ import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
-import com.naposystems.pepito.entity.conversation.Conversation
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.ui.home.IContractHome
@@ -130,6 +129,42 @@ class HomeRepository @Inject constructor(
             }
         } catch (e: Exception) {
             Timber.e(e)
+        }
+    }
+
+    override suspend fun getDeletedMessages() {
+        try {
+            val response = napoleonApi.getDeletedMessages()
+            if(response.isSuccessful) {
+                val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
+                messageLocalDataSource.deletedMessages(response.body()!!)
+                when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(idContact)) {
+                    null -> {
+                        conversationLocalDataSource.cleanConversation(idContact)
+                    }
+                    else -> {
+                        conversationLocalDataSource.getQuantityUnreads(idContact).let { quantityUnreads->
+                            if (quantityUnreads > 0) {
+                                conversationLocalDataSource.updateConversationByContact(
+                                    idContact,
+                                    messageAndAttachment.message.body,
+                                    messageAndAttachment.message.createdAt,
+                                    messageAndAttachment.message.status,
+                                    quantityUnreads - response.body()!!.count())
+                            } else {
+                                conversationLocalDataSource.updateConversationByContact(
+                                    idContact,
+                                    messageAndAttachment.message.body,
+                                    messageAndAttachment.message.createdAt,
+                                    messageAndAttachment.message.status,
+                                    0)
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
     }
 }

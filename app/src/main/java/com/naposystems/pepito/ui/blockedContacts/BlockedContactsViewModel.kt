@@ -25,7 +25,6 @@ class BlockedContactsViewModel @Inject constructor(private val repository: Block
     val webServiceErrors: LiveData<List<String>>
         get() = _webServiceErrors
 
-
     //region Implementation IContractBlockedContact.ViewModel
     override fun getBlockedContacts() {
         viewModelScope.launch {
