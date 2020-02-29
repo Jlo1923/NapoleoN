@@ -31,4 +31,5 @@
     <color name="red">#DA5E58</color>
     <color name="searchViewTextColor">#4d4d4d</color>
     <color name="searchViewHintColor">#808080</color>
+    <color name="colorButtonAlertDialog">#f2f2f2</color>
 </resources>

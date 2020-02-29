@@ -36,4 +36,66 @@
         <attr name="seekbarProgressTint" format="reference" />
         <attr name="seekbarThumbTint" format="reference" />
     </declare-styleable>
+
+    <!--//Background-->
+    <attr name="attrBackgroundColorPrimary" format ="reference"/>
+    <attr name="attrBackgroundSectionColor" format ="reference"/>
+    <attr name="attrBackgroundColorBackground" format ="reference"/>
+
+    <!--//Tint-->
+    <attr name="attrTintColorSecondaryDark" format ="reference"/>
+
+    <!--TextColor-->
+    <attr name="attrTextColorPrimaryTextColor" format ="reference"/>
+    <attr name="attrTextColorSecondaryTextColor" format ="reference"/>
+    <attr name="attrTextColorButtonTint" format ="reference"/>
+    <attr name="attrTextColorRed" format ="reference"/>
+    <attr name="attrTextColorWhite" format ="reference"/>
+    <attr name="attrTextColorColorTextMyMessage" format ="reference"/>
+    <attr name="attrTextColorColorTextIncomingMessage" format ="reference"/>
+    <attr name="attrTextColorLinkTextColor" format ="reference"/>
+    <attr name="attrTextColorColorError" format ="reference"/>
+    <attr name="attrTextColorColorPrimary" format ="reference"/>
+
+    <!--HintTextColor-->
+    <attr name="attrHintTextColorSecondaryTextColor" format ="reference"/>
+
+    <!--IconTint-->
+    <attr name="attrIconTintWhite" format ="reference"/>
+
+    <!--BackgroundTint-->
+    <attr name="attrBackgroundTintColorSecondary" format ="reference"/>
+    <attr name="attrBackgroundTintButtonTint" format ="reference"/>
+
+
+    <!--StrokeColor-->
+    <attr name="attrStrokeColorButtonTint" format ="reference"/>
+    <attr name="attrStrokeColorRed" format ="reference"/>
+
+    <!--RippleColor-->
+    <attr name="attrRippleColorRippleTint" format ="reference"/>
+    <attr name="attrRippleColorRed" format ="reference"/>
+
+    <!--boxStrokeColor-->
+    <attr name="attrBoxStrokeColorTextInputLayoutBoxColor" format ="reference"/>
+
+    <!--boxStrokeErrorColor-->
+    <attr name="attrBoxStrokeErrorColorColorError" format ="reference"/>
+
+    <!--errorTextColor-->
+    <attr name="attrErrorTextColorColorError" format ="reference"/>
+
+    <!--errorIconTint-->
+    <attr name="attrErrorIconTintColorError" format ="reference"/>
+
+    <!--Color-->
+    <attr name="attrColorButtonTint" format ="reference"/>
+
+    <!--TrackColor-->
+    <attr name="attrColorTrackColor" format ="reference"/>
+
+    <!--Separator-->
+    <attr name="attrSeparatorColor" format ="reference"/>
+
+
 </resources>

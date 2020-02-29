@@ -10,4 +10,9 @@
     <string name="text_delete_contact">Contacto de exclusão</string>
     <string name="explanation_camera_to_attachment_picture">Para enviar uma foto, permitir o acesso NAPOLEON sua câmera.</string>
     <string name="explanation_to_send_audio_attacment">Para enviar um áudio, napoleon permitem acessar conteúdo multimídia.</string>
+    <string name="text_delete_messages">Excluir mensagens?</string>
+    <string name="text_delete_message_for_me">Excluir para mim</string>
+    <string name="text_delete_message_for_all">Eliminar para todos</string>
+    <string name="text_message_copied">Mensagem copiada</string>
+
 </resources>

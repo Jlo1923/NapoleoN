@@ -191,6 +191,17 @@ class ContactProfileFragment : Fragment() {
             }
         }
 
+        binding.optionBlockContact.setOnClickListener {
+            Utils.generalDialog(
+                getString(R.string.text_delete_conversation),
+                getString(R.string.text_want_delete_conversation),
+                true,
+                childFragmentManager
+            ) {
+                viewModel.deleteConversation(args.idContact)
+            }
+        }
+
         binding.imageButtonEditHeader.setOnClickListener {
             subFolder = HEADER_SUBFOLDER
             verifyCameraAndMediaPermission()

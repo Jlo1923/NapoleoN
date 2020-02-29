@@ -87,6 +87,8 @@ class HomeFragment : Fragment() {
 
         viewModel.getContactsAndMessages()
 
+        viewModel.getDeletedMessages()
+
         viewModel.getFriendshipQuantity()
 
         viewModel.subscribeToGeneralSocketChannel()

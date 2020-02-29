@@ -26,12 +26,14 @@
             tools:context=".ui.conversation.ConversationFragment">
 
             <!-- HEADER STATUS -->
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/flatActionBarColor"
+                android:background="?attr/attrBackgroundColorPrimary"
                 android:padding="@dimen/small_padding"
+                android:elevation="1dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -81,7 +83,7 @@
                 app:layout_constraintBottom_toTopOf="@id/container_editText_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_status"
+                app:layout_constraintTop_toTopOf="@+id/container_status"
                 tools:background="@drawable/vertical_photo" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -91,16 +93,20 @@
                 android:clipToPadding="true"
                 app:layout_constraintBottom_toTopOf="@id/container_editText_message"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_status"
+                app:layout_constraintTop_toTopOf="@+id/container_status"
+                app:layout_constraintVertical_bias="0.0"
                 tools:itemCount="30"
-                tools:listitem="@layout/conversation_item_my_message" />
+                tools:listitem="@layout/conversation_item_my_message">
+
+            </androidx.recyclerview.widget.RecyclerView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_editText_message"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/colorBackground"
+                android:background="?attr/attrBackgroundColorBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -114,6 +120,52 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_fab_scroll"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|end"
+            android:outlineProvider="none"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="60dp">
+
+            <TextView
+                android:id="@+id/textView_notification_message"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/bg_textview_notification_message"
+                android:text="!"
+                android:outlineProvider="none"
+                android:gravity="center"
+                android:elevation="17dp"
+                android:textColor="@color/white"
+                android:visibility="invisible"
+                app:borderWidth="0dp"
+                app:layout_constraintEnd_toEndOf="@+id/fab_go_down"
+                tools:text="!"
+                tools:visibility="visible"
+                tools:ignore="MissingConstraints" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_go_down"
+                style="@style/FabGoDown"
+                android:src="@drawable/ic_keyboard_arrow_down_black"
+                android:visibility="invisible"
+                app:fabSize="normal"
+                android:outlineProvider="none"
+                app:backgroundTint="@color/fabNotificationMessage"
+                app:borderWidth="0dp"
+                app:elevation="16dp"
+                app:fabCustomSize="40dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/fabIconColor"
+                tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

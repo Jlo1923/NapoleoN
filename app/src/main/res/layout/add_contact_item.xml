@@ -62,12 +62,11 @@
 
             <TextView
                 android:id="@+id/textView_user_nickname"
-                style="@style/BodyTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:lines="1"
-                android:textColor="@color/buttonTint"
+                android:textColor="?attr/attrColorButtonTint"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/textView_user_name"
                 app:layout_constraintStart_toStartOf="@id/textView_user_name"

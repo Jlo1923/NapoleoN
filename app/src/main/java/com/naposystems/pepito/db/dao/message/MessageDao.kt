@@ -1,16 +1,34 @@
 package com.naposystems.pepito.db.dao.message
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.utility.Constants
 
 @Dao
 interface MessageDao {
 
     @Query("SELECT * FROM message WHERE user_addressee=:contact ORDER BY id DESC")
     fun getMessagesAndAttachments(contact: Int): DataSource.Factory<Int, MessageAndAttachment>
+
+    @Query("UPDATE message SET is_selected =:isSelected WHERE user_addressee=:contact AND id =:idMessage")
+    suspend fun updateMessagesSelected(contact: Int, idMessage : Int, isSelected : Int)
+
+    @Query("UPDATE message SET is_selected = 0 WHERE user_addressee=:contact")
+    suspend fun cleanSelectionMessages(contact: Int)
+
+    @Query("DELETE FROM message WHERE user_addressee = :idContact AND is_selected = 1")
+    suspend fun deleteMessagesSelected(idContact: Int)
+
+    @Query("SELECT body FROM message WHERE user_addressee=:idContact AND is_selected = 1 ORDER BY id ASC")
+    suspend fun copyMessagesSelected(idContact: Int) : List<String>
+
+    @Query("SELECT * FROM message WHERE user_addressee=:idContact ORDER BY id DESC LIMIT 1")
+    suspend fun getLastMessageByContact(idContact: Int): MessageAndAttachment
+
+    @Query("SELECT * FROM message WHERE user_addressee=:idContact AND is_selected = 1 ORDER BY id DESC")
+    fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>>
 
     @Insert
     fun insertMessage(message: Message): Long
@@ -29,4 +47,10 @@ interface MessageDao {
 
     @Query("DELETE FROM message WHERE user_addressee = :idContact")
     suspend fun deleteMessages(idContact: Int)
+
+    @Query("DELETE FROM message WHERE web_id =:webId")
+    suspend fun deletedMessages(webId: String)
+
+    @Query("SELECT user_addressee FROM message WHERE web_id =:webId ")
+    fun getIdContactWithWebId(webId: String) : Int
 }

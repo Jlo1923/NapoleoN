@@ -22,7 +22,9 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
-
+import androidx.lifecycle.LiveData
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
+import com.naposystems.pepito.utility.Utils
 
 class ConversationViewModel @Inject constructor(
     private val context: Context,
@@ -41,9 +43,28 @@ class ConversationViewModel @Inject constructor(
     val messageMessages: LiveData<PagedList<MessageAndAttachment>>
         get() = _messageMessages
 
-    init {
-        _webServiceError.value = ArrayList()
+    private lateinit var _messagesSelected: LiveData<List<MessageAndAttachment>>
+    val messagesSelected: LiveData<List<MessageAndAttachment>>
+        get() = _messagesSelected
 
+    private val _stringsCopy = MutableLiveData<List<String>>()
+    val stringsCopy: LiveData<List<String>>
+        get() = _stringsCopy
+
+    private val _responseDeleteLocalMessages = MutableLiveData<Boolean>()
+    val responseDeleteLocalMessages: LiveData<Boolean>
+        get() = _responseDeleteLocalMessages
+
+    private val _deleteMessagesForAllWsError = MutableLiveData<List<String>>()
+    val deleteMessagesForAllWsError: LiveData<List<String>>
+        get() = _deleteMessagesForAllWsError
+
+    private var countOldMessages: Int = 0
+
+    init {
+        _responseDeleteLocalMessages.value = false
+        _webServiceError.value = ArrayList()
+        _stringsCopy.value = emptyList()
     }
 
     private fun copyAudioToAppFolder(
@@ -274,8 +295,8 @@ class ConversationViewModel @Inject constructor(
                     repository.insertConversation(response.body()!!)
                 } else {
                     when (response.code()) {
-                        422 -> _webServiceError.value = repository.get422Error(response)
-                        else -> _webServiceError.value = repository.getError(response)
+                        422 -> _webServiceError.value = repository.get422ErrorMessage(response)
+                        else -> _webServiceError.value = repository.getErrorMessage(response)
                     }
                 }
             } catch (e: Exception) {
@@ -286,10 +307,112 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    override fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Boolean) {
+        viewModelScope.launch {
+            repository.updateStateSelectionMessage(
+                idContact,
+                idMessage,
+                Utils.convertBooleanToInvertedInt(isSelected)
+            )
+        }
+    }
+
+    override fun cleanSelectionMessages(idContact: Int) {
+        viewModelScope.launch {
+            repository.cleanSelectionMessages(idContact)
+        }
+    }
+
+    override fun deleteMessagesSelected(idContact: Int) {
+        viewModelScope.launch {
+            repository.deleteMessagesSelected(idContact)
+            _responseDeleteLocalMessages.value = true
+        }
+    }
+
+    override fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>) {
+        viewModelScope.launch {
+            try{
+                val response =
+                    repository.deleteMessagesForAll(buildObjectDeleteMessages(idContact, listMessages))
+
+                if (response.isSuccessful) {
+                    repository.deleteMessagesSelected(idContact)
+                    _responseDeleteLocalMessages.value = true
+                } else {
+                    when (response.code()) {
+                        422 -> {
+                            _deleteMessagesForAllWsError.value =
+                                repository.get422ErrorDeleteMessagesForAll(response.errorBody()!!)
+                        }
+                        else -> {
+                            _deleteMessagesForAllWsError.value =
+                                repository.get422ErrorDeleteMessagesForAll(response.errorBody()!!)
+                        }
+                    }
+                }
+            } catch (ex: Exception) {
+                Timber.d(ex)
+                val error = context.getString(R.string.text_fail)
+                _webServiceError.value = arrayListOf(error)
+            }
+
+        }
+    }
+
+    override fun copyMessagesSelected(idContact: Int) {
+        viewModelScope.launch {
+            _stringsCopy.value = repository.copyMessagesSelected(idContact)
+        }
+    }
+
+    override fun resetListStringCopy() {
+        _stringsCopy.value = emptyList()
+    }
+
+    override fun setCountOldMessages(count: Int) {
+        countOldMessages = count
+    }
+
+    override fun getCountOldMessages(): Int {
+        return countOldMessages
+    }
+
+    override fun getMessagesSelected(idContact: Int) {
+        viewModelScope.launch {
+            _messagesSelected = repository.getMessagesSelected(idContact)
+        }
+    }
+
+    override fun parsingListByTextBlock(listBody: List<String>): String {
+        var stringOfReturn = String()
+        listBody.forEachIndexed { index, body ->
+            stringOfReturn += if (index < listBody.count() - 1)
+                "$body\n"
+            else
+                body
+        }
+        return stringOfReturn
+    }
+
     override fun sendMessagesRead() {
         viewModelScope.launch {
             repository.sendMessagesRead(contact.id)
         }
+    }
+
+    private fun buildObjectDeleteMessages(
+        idContact: Int,
+        listMessages: List<MessageAndAttachment>
+    ): DeleteMessagesReqDTO {
+        val listReturn = arrayListOf<String>()
+        listMessages.forEach {
+            listReturn.add(it.message.webId)
+        }
+        return DeleteMessagesReqDTO(
+            userReceiver = idContact,
+            messagesId = listReturn
+        )
     }
 
     //endregion

@@ -4,13 +4,16 @@
     <string name="text_video_call">Video call</string>
     <string name="text_schedule">Schedule</string>
     <string name="text_see_contact">See contact</string>
-    <string name="text_block_contact">Block contact</string>
     <string name="text_mute_conversation">Mute conversation</string>
-    <string name="text_delete_conversation">Delete conversation</string>
     <string name="text_write_message">Write message</string>
     <string name="text_start_chat">Start chat</string>
     <string name="text_view_profile">View profile</string>
     <string name="text_delete_contact">Delete contact</string>
     <string name="explanation_camera_to_attachment_picture">To send a photo, allow NapoleoN to access your camera.</string>
     <string name="explanation_to_send_audio_attacment">To send an audio, allow NapoleoN to access your multimedia content.</string>
+    <string name="text_delete_messages">Delete messages?</string>
+    <string name="text_delete_message_for_me">Delete for me</string>
+    <string name="text_delete_message_for_all">Delete for all</string>
+    <string name="text_message_copied">Message copied</string>
+
 </resources>

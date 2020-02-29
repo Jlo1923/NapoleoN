@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.pepito.entity.conversation.Conversation
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -52,7 +51,17 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
             try {
                 repository.getContacts()
                 repository.getRemoteMessages()
-            } catch (ex: Exception){
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    override fun getDeletedMessages() {
+        viewModelScope.launch {
+            try {
+                repository.getDeletedMessages()
+            } catch (ex: Exception) {
                 Timber.e(ex)
             }
         }

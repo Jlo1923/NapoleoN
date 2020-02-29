@@ -10,6 +10,8 @@ import com.naposystems.pepito.dto.contacts.ContactsResDTO
 import com.naposystems.pepito.dto.contacts.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.dto.contacts.deleteContact.DeleteContactResDTO
 import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
@@ -31,6 +33,7 @@ import com.naposystems.pepito.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.pepito.dto.validateNickname.ValidateNicknameResDTO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_CONTACT
+import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_MESSAGES_FOR_ALL
 import com.naposystems.pepito.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH
 import com.naposystems.pepito.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH_BY_DATE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
@@ -141,4 +144,10 @@ interface NapoleonApi {
 
     @DELETE(DELETE_CONTACT)
     suspend fun sendDeleteContact(@Path("id") deleteContact: String): Response<DeleteContactResDTO>
+
+    @POST(DELETE_MESSAGES_FOR_ALL)
+    suspend fun deleteMessagesForAll(@Body deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
+
+    @GET(DELETE_MESSAGES_FOR_ALL)
+    suspend fun getDeletedMessages(): Response<List<String>>
 }

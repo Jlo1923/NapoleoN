@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_delete_black"
+        android:title="@string/text_search"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/copy"
+        android:icon="@drawable/ic_content_copy_black"
+        android:title="@string/text_add_contact"
+        app:showAsAction="always" />
+</menu>

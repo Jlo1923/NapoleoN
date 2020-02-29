@@ -1,5 +1,7 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.content.ContentUris
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -23,6 +25,7 @@ import com.bumptech.glide.request.target.Target
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithAudioBinding
 import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.databinding.ConversationItemMyMessageWithAudioBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
@@ -53,7 +56,7 @@ class ConversationAdapter constructor(
             oldItem: MessageAndAttachment,
             newItem: MessageAndAttachment
         ): Boolean {
-            return oldItem.message.id == newItem.message.id && oldItem.message.status == newItem.message.status
+            return oldItem.message.id == newItem.message.id && oldItem.message.status == newItem.message.status && oldItem.message.isSelected == newItem.message.isSelected
         }
 
         override fun areContentsTheSame(
@@ -135,6 +138,7 @@ class ConversationAdapter constructor(
     class MyMessageViewHolder constructor(private val binding: ConversationItemMyMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
@@ -145,6 +149,36 @@ class ConversationAdapter constructor(
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
 
+            if(item.message.isSelected){
+                binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+
+            binding.containerMyMessage.setOnLongClickListener {
+                clickListener.onLongClick(item.message)
+                true
+            }
+
+            binding.containerMyMessage.setOnClickListener {
+                clickListener.onClick(item.message)
+            }
+
+
+            binding.containerMessage.background = if (isFirst) {
+                context.getDrawable(R.drawable.bg_my_message)
+            } else {
+                context.getDrawable(R.drawable.bg_my_message_rounded)
+            }
+
+            if (item.attachmentList.isNotEmpty()) {
+                binding.imageViewAttachment.visibility = View.VISIBLE
+                val firstAttachment = item.attachmentList[0]
+
+                Glide.with(context)
+                    .load(File(firstAttachment.uri))
+                    .into(binding.imageViewAttachment)
+            }
             binding.executePendingBindings()
         }
 
@@ -164,6 +198,7 @@ class ConversationAdapter constructor(
     class IncomingMessageViewHolder constructor(private val binding: ConversationItemIncomingMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
@@ -171,10 +206,32 @@ class ConversationAdapter constructor(
         ) {
 
             binding.conversation = item
+            binding.clickListener = clickListener
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
 
             val context = binding.containerMessage.context
+
+            if(item.message.isSelected){
+                binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+
+            binding.containerIncomingMessage.setOnLongClickListener {
+                clickListener.onLongClick(item.message)
+                true
+            }
+
+            binding.containerIncomingMessage.setOnClickListener {
+                clickListener.onClick(item.message)
+            }
+
+            binding.containerMessage.background = if (isFirst) {
+                context.getDrawable(R.drawable.bg_incoming_message)
+            } else {
+                context.getDrawable(R.drawable.bg_incoming_message_rounded)
+            }
 
             binding.clickListener = clickListener
 
@@ -204,6 +261,9 @@ class ConversationAdapter constructor(
         }
     }
 
+    interface ConversationClickListener {
+        fun onClick(item: Message)
+        fun onLongClick(item: Message)
     class MyMessageAudioViewHolder constructor(private val binding: ConversationItemMyMessageWithAudioBinding) :
         RecyclerView.ViewHolder(binding.root) {
 

@@ -37,6 +37,8 @@ class SocketService @Inject constructor(
 
             listenMessagesRead()
 
+            listenMessagesDestroy()
+
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -68,6 +70,12 @@ class SocketService @Inject constructor(
     private fun listenMessagesRead(){
         socket.on("App\\Events\\NotifyMessageReaded"){
             repository.verifyMessagesRead()
+        }
+    }
+
+    private fun listenMessagesDestroy(){
+        socket.on("App\\Events\\SendMessagesDestroyEvent"){
+            repository.getDeletedMessages()
         }
     }
 }
