@@ -331,9 +331,14 @@ class ConversationViewModel @Inject constructor(
 
     override fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
-            try{
+            try {
                 val response =
-                    repository.deleteMessagesForAll(buildObjectDeleteMessages(idContact, listMessages))
+                    repository.deleteMessagesForAll(
+                        buildObjectDeleteMessages(
+                            idContact,
+                            listMessages
+                        )
+                    )
 
                 if (response.isSuccessful) {
                     repository.deleteMessagesSelected(idContact)
