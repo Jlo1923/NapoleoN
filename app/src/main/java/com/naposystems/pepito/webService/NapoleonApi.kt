@@ -58,10 +58,14 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_RECEIVED
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface NapoleonApi {
+
+    @GET
+    suspend fun downloadFileByUrl(@Url fileUrl: String): Response<ResponseBody>
 
     @POST(GENERATE_CODE)
     suspend fun generateCode(@Body sendCodeReqDTO: SendCodeReqDTO): Response<SendCodeResDTO>
@@ -79,7 +83,7 @@ interface NapoleonApi {
     suspend fun updateUserInfo(@Body updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
 
     @PUT(UPDATE_MUTE_CONVERSATION)
-    suspend fun updateMuteConversation(@Path("id") idContact: Int, @Body muteConversationReqDTO: MuteConversationReqDTO) : Response<MuteConversationResDTO>
+    suspend fun updateMuteConversation(@Path("id") idContact: Int, @Body muteConversationReqDTO: MuteConversationReqDTO): Response<MuteConversationResDTO>
 
     @GET(FRIEND_SHIP_SEARCH)
     suspend fun getContactsByState(@Path("state") state: String): Response<ContactsResDTO>

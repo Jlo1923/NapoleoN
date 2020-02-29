@@ -11,20 +11,27 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
+import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithAudioBinding
 import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
+import com.naposystems.pepito.databinding.ConversationItemMyMessageWithAudioBinding
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import java.io.File
 
 class ConversationAdapter constructor(
-    private val clickListener: ConversationClickListener
+    private val clickListener: ClickListener,
+    private val mediaPlayerManager: MediaPlayerManager
 ) :
     PagedListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         const val TYPE_MY_MESSAGE = 1
         const val TYPE_INCOMING_MESSAGE = 2
+        const val TYPE_MY_MESSAGE_AUDIO = 3
+        const val TYPE_INCOMING_MESSAGE_AUDIO = 4
     }
 
     private var isFirst = false
@@ -47,10 +54,37 @@ class ConversationAdapter constructor(
 
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
-        return if (conversation?.message?.isMine == Constants.IsMine.YES.value) {
-            TYPE_MY_MESSAGE
+
+        return if (conversation?.attachmentList!!.isNotEmpty()) {
+            when (conversation.attachmentList[0].type) {
+                Constants.AttachmentType.IMAGE.type -> {
+                    if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        TYPE_MY_MESSAGE
+                    } else {
+                        TYPE_INCOMING_MESSAGE
+                    }
+                }
+                Constants.AttachmentType.AUDIO.type -> {
+                    if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        TYPE_MY_MESSAGE_AUDIO
+                    } else {
+                        TYPE_INCOMING_MESSAGE_AUDIO
+                    }
+                }
+                else -> {
+                    if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        TYPE_MY_MESSAGE
+                    } else {
+                        TYPE_INCOMING_MESSAGE
+                    }
+                }
+            }
         } else {
-            TYPE_INCOMING_MESSAGE
+            if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                TYPE_MY_MESSAGE
+            } else {
+                TYPE_INCOMING_MESSAGE
+            }
         }
     }
 
@@ -58,10 +92,12 @@ class ConversationAdapter constructor(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
-        return if (viewType == TYPE_MY_MESSAGE) {
-            MyMessageViewHolder.from(parent)
-        } else {
-            IncomingMessageViewHolder.from(parent)
+        return when (viewType) {
+            TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent)
+            TYPE_MY_MESSAGE_AUDIO -> MyMessageAudioViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(parent)
+            else -> MyMessageViewHolder.from(parent)
         }
     }
 
@@ -72,10 +108,15 @@ class ConversationAdapter constructor(
         isFirst = (position + 1 == itemCount ||
                 (position + 1 < itemCount && item?.message?.isMine != getItem(position + 1)?.message?.isMine))
 
-        if (getItemViewType(position) == TYPE_MY_MESSAGE) {
-            (holder as MyMessageViewHolder).bind(item!!, clickListener, isFirst)
-        } else {
-            (holder as IncomingMessageViewHolder).bind(item!!, clickListener, isFirst)
+        when (getItemViewType(position)) {
+            TYPE_MY_MESSAGE -> (holder as MyMessageViewHolder)
+                .bind(item!!, clickListener, isFirst)
+            TYPE_INCOMING_MESSAGE -> (holder as IncomingMessageViewHolder)
+                .bind(item!!, clickListener, isFirst)
+            TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
+                .bind(item!!, clickListener, isFirst, mediaPlayerManager)
+            TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
+                .bind(item!!, clickListener, isFirst, mediaPlayerManager)
         }
     }
 
@@ -85,14 +126,13 @@ class ConversationAdapter constructor(
         @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
-            clickListener: ConversationClickListener,
+            clickListener: ClickListener,
             isFirst: Boolean
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.imageViewAttachment.visibility = View.GONE
-
-            val context = binding.containerMessage.context
+            binding.isFirst = isFirst
 
             if(item.message.isSelected){
                 binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -107,22 +147,6 @@ class ConversationAdapter constructor(
 
             binding.containerMyMessage.setOnClickListener {
                 clickListener.onClick(item.message)
-            }
-
-
-            binding.containerMessage.background = if (isFirst) {
-                context.getDrawable(R.drawable.bg_my_message)
-            } else {
-                context.getDrawable(R.drawable.bg_my_message_rounded)
-            }
-
-            if (item.attachmentList.isNotEmpty()) {
-                binding.imageViewAttachment.visibility = View.VISIBLE
-                val firstAttachment = item.attachmentList[0]
-
-                Glide.with(context)
-                    .load(File(firstAttachment.uri))
-                    .into(binding.imageViewAttachment)
             }
             binding.executePendingBindings()
         }
@@ -141,19 +165,19 @@ class ConversationAdapter constructor(
     }
 
     class IncomingMessageViewHolder constructor(private val binding: ConversationItemIncomingMessageBinding) :
-
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
-            clickListener: ConversationClickListener,
+            clickListener: ClickListener,
             isFirst: Boolean
         ) {
 
             binding.conversation = item
             binding.clickListener = clickListener
             binding.imageViewAttachment.visibility = View.GONE
+            binding.isFirst = isFirst
 
             val context = binding.containerMessage.context
 
@@ -206,8 +230,91 @@ class ConversationAdapter constructor(
         }
     }
 
-    interface ConversationClickListener {
+    class MyMessageAudioViewHolder constructor(private val binding: ConversationItemMyMessageWithAudioBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener,
+            isFirst: Boolean,
+            mediaPlayerManager: MediaPlayerManager
+        ) {
+            binding.conversation = item
+            binding.clickListener = clickListener
+            binding.isFirst = isFirst
+
+            with(binding.audioPlayer) {
+                setMediaPlayerManager(mediaPlayerManager)
+                isEncryptedFile(true)
+                setAbsolutePath(item.attachmentList[0].uri)
+                setAudioId(item.attachmentList[0].id)
+                setListener(object : AudioPlayerCustomView.Listener {
+                    override fun onErrorPlayingAudio() {
+                        clickListener.errorPlayingAudio()
+                    }
+                })
+            }
+
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): MyMessageAudioViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemMyMessageWithAudioBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return MyMessageAudioViewHolder(binding)
+            }
+        }
+    }
+
+    class IncomingMessageAudioViewHolder constructor(private val binding: ConversationItemIncomingMessageWithAudioBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener,
+            isFirst: Boolean,
+            mediaPlayerManager: MediaPlayerManager
+        ) {
+            binding.conversation = item
+            binding.clickListener = clickListener
+            binding.isFirst = isFirst
+
+            with(binding.audioPlayer) {
+                setMediaPlayerManager(mediaPlayerManager)
+                isEncryptedFile(true)
+                setAbsolutePath(item.attachmentList[0].uri)
+                setAudioId(item.attachmentList[0].id)
+                setListener(object : AudioPlayerCustomView.Listener {
+                    override fun onErrorPlayingAudio() {
+                        clickListener.errorPlayingAudio()
+                    }
+                })
+            }
+
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): IncomingMessageAudioViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemIncomingMessageWithAudioBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return IncomingMessageAudioViewHolder(binding)
+            }
+        }
+    }
+
+    interface ClickListener {
         fun onClick(item: Message)
         fun onLongClick(item: Message)
+        fun errorPlayingAudio()
     }
 }

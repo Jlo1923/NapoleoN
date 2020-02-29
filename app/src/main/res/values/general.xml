@@ -11,6 +11,9 @@
     <string name="only_numbers" translatable="false">0123456789</string>
     <string name="only_letters" translatable="false">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ abcdefghijklmnñopqrstuvwxyz</string>
     <string name="text_napoleon_secret_chat" translatable="false">NapoleoN Secret Chat</string>
+    <string name="text_duration_and_size" translatable="false">%1$s - %2$s</string>
+    <string name="transition_name_gallery_thumbnail" translatable="false">gallery_item_thumbnail_%1$d</string>
+
     <string name="text_accept">Accept</string>
     <string name="text_cancel">Cancel</string>
     <string name="text_continue">Continue</string>
@@ -41,6 +44,12 @@
     <string name="text_sent">Sent</string>
     <string name="text_refuse">Refuse</string>
     <string name="text_information">INFORMATION</string>
+    <string name="text_send_to">Send to %1$s</string>
+    <string name="text_error_playing_audio">An error occurred while playing the audio</string>
+    <plurals name="text_selected">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
     <string name="text_delete_conversation">Delete conversation</string>
     <string name="text_block_contact">Block contact</string>
 

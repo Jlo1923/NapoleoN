@@ -1,17 +1,12 @@
 package com.naposystems.pepito.ui.conversationCamera
 
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -24,13 +19,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationCameraFragmentBinding
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.GlobalScope
@@ -38,7 +30,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.nio.ByteBuffer
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -60,7 +51,7 @@ class ConversationCameraFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: ShareConversationCameraViewModel
+    private lateinit var viewModel: ConversationShareViewModel
     private lateinit var binding: ConversationCameraFragmentBinding
     private lateinit var analysisExecutor: Executor
     private lateinit var mainExecutor: Executor
@@ -81,10 +72,6 @@ class ConversationCameraFragment : Fragment() {
         private const val PHOTO_EXTENSION = ".jpg"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
-
-        /** Milliseconds used for UI animations */
-        const val ANIMATION_FAST_MILLIS = 50L
-        const val ANIMATION_SLOW_MILLIS = 100L
     }
 
     override fun onAttach(context: Context) {
@@ -98,7 +85,7 @@ class ConversationCameraFragment : Fragment() {
         analysisExecutor = Executors.newSingleThreadExecutor()
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory)
-            .get(ShareConversationCameraViewModel::class.java)
+            .get(ConversationShareViewModel::class.java)
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             if (binding.viewSwitcher.currentView.id == binding.containerPreview.id) {
@@ -176,10 +163,10 @@ class ConversationCameraFragment : Fragment() {
                             binding.viewSwitcher.showNext()
                         }
 
-                        viewModel.setUri(photoFile.absolutePath)
+                        viewModel.setImageUri(photoFile.absolutePath)
 
                         GlobalScope.launch {
-                            viewModel.setBase64(Utils.convertImageFileToBase64(photoFile))
+                            viewModel.setImageBase64(Utils.convertImageFileToBase64(photoFile))
                         }
 
                         Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
@@ -193,8 +180,8 @@ class ConversationCameraFragment : Fragment() {
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             viewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
-            viewModel.setSendClicked()
-            viewModel.resetSendClicked()
+            viewModel.setCameraSendClicked()
+            viewModel.resetCameraSendClicked()
             viewModel.resetMessage()
             this.findNavController().navigateUp()
         }
@@ -207,7 +194,7 @@ class ConversationCameraFragment : Fragment() {
             if (photoFile.exists()) {
                 photoFile.delete()
             }
-            viewModel.setBase64("")
+            viewModel.setImageBase64("")
             binding.viewSwitcher.showNext()
         }
     }
@@ -275,7 +262,7 @@ class ConversationCameraFragment : Fragment() {
                     this as LifecycleOwner, cameraSelector, preview, imageCapture, imageAnalyzer
                 )
             } catch (exc: Exception) {
-                Timber.e("Use case binding failed", exc)
+                Timber.e("Use case binding failed")
             }
 
         }, mainExecutor)

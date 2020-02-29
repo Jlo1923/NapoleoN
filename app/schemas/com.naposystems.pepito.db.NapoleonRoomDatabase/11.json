@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "5bc7ba65a6896fb2a51945b0e9a02481",
+    "identityHash": "1c83ea0020940d9d3f31d198aafea8fd",
     "entities": [
       {
         "tableName": "user",
@@ -192,7 +192,7 @@
       },
       {
         "tableName": "attachment",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message_id` INTEGER NOT NULL, `web_id` TEXT NOT NULL, `message_web_id` TEXT NOT NULL, `type` TEXT NOT NULL, `body` TEXT NOT NULL, `uri` TEXT NOT NULL, FOREIGN KEY(`message_id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message_id` INTEGER NOT NULL, `web_id` TEXT NOT NULL, `message_web_id` TEXT NOT NULL, `type` TEXT NOT NULL, `body` TEXT NOT NULL, `uri` TEXT NOT NULL, `origin` INTEGER NOT NULL, FOREIGN KEY(`message_id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -234,6 +234,12 @@
             "fieldPath": "uri",
             "columnName": "uri",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "origin",
+            "columnName": "origin",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -404,7 +410,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5bc7ba65a6896fb2a51945b0e9a02481')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c83ea0020940d9d3f31d198aafea8fd')"
     ]
   }
 }

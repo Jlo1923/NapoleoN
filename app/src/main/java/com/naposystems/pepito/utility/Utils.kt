@@ -1,5 +1,6 @@
 package com.naposystems.pepito.utility
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
@@ -19,13 +20,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
+import androidx.security.crypto.EncryptedFile
+import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileDescriptor
 import java.io.FileInputStream
+import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
 class Utils {
@@ -143,6 +149,17 @@ class Utils {
             }
         }
 
+        fun convertFileInputStreamToBase64(fileInputStream: FileInputStream) =
+            fileInputStream.use { inputStream ->
+                ByteArrayOutputStream().use { outPutStream ->
+                    Base64OutputStream(outPutStream, Base64.DEFAULT).use { base64FileStream ->
+                        inputStream.copyTo(base64FileStream)
+                        base64FileStream.close()
+                        outPutStream.toString()
+                    }
+                }
+            }
+
         fun generalDialog(
             title: String,
             message: String,
@@ -248,6 +265,98 @@ class Utils {
                 0
             } else {
                 1
+            }
+        }
+
+        @SuppressLint("SimpleDateFormat")
+        fun dateToTimestamp(day: Int, month: Int, year: Int): Long =
+            SimpleDateFormat("dd.MM.yyyy").let { formatter ->
+                formatter.parse("$day.$month.$year")?.time ?: 0
+            }
+
+        fun getDuration(millisUntilFinished: Long, showHours: Boolean = true): String {
+            var duration = ""
+            val hour = ((millisUntilFinished / 1000) / 60) / 60
+            val minutes = ((millisUntilFinished / 1000) / 60) % 60
+            val seconds = (millisUntilFinished / 1000) % 60
+
+            if (showHours) {
+                duration += if (hour < 10) "0${hour}:" else "$hour:"
+            } else if (hour > 0) {
+                duration += if (hour < 10) "0${hour}:" else "$hour:"
+            }
+
+            duration += if (minutes < 10) "0${minutes}:" else "$minutes:"
+            duration += if (seconds < 10) "0${seconds}" else "$seconds"
+
+            return duration
+        }
+
+        fun getFileSize(sizeInByte: Long): String {
+            val kilobyte = sizeInByte / 1000
+            val megabyte = ((kilobyte / 1000f) * 10.0).roundToInt() / 10.0
+            val gigabyte = ((megabyte / 1000) * 10.0).roundToInt() / 10.0
+
+            return when {
+                gigabyte > 1 -> "$gigabyte GB"
+                megabyte > 1 -> "$megabyte MB"
+                else -> "$kilobyte kB"
+            }
+        }
+
+        fun copyEncryptedFile(
+            context: Context,
+            fileInputStream: FileInputStream,
+            subFolder: String,
+            fileName: String
+        ): File {
+            val path = File(context.externalCacheDir!!, subFolder)
+            if (!path.exists())
+                path.mkdirs()
+            val audioFile = File(path, fileName)
+
+            val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+            val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+
+            val encryptedFile = EncryptedFile.Builder(
+                audioFile,
+                context,
+                masterKeyAlias,
+                EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
+            ).build()
+
+            encryptedFile.openFileOutput().use { fileOut ->
+                fileInputStream.copyTo(fileOut)
+                fileOut.flush()
+                fileOut.close()
+            }
+
+            fileInputStream.close()
+
+            return audioFile
+        }
+
+        fun getEncryptedFile(context: Context, file: File): EncryptedFile {
+            val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+            val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+
+            return EncryptedFile.Builder(
+                file,
+                context,
+                masterKeyAlias,
+                EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
+            ).build()
+        }
+
+        fun decodeFileDescriptorToBitmap(fileDescriptor: FileDescriptor): Bitmap? {
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            return try {
+                BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
+            } catch (e: Exception) {
+                Timber.e(e)
+                null
             }
         }
     }

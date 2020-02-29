@@ -9,9 +9,10 @@ import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
-import com.naposystems.pepito.entity.message.Attachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -28,9 +29,10 @@ interface IContractConversation {
             contact: Contact,
             isMine: Int,
             base64: String,
-            uri: String
+            uri: String,
+            origin: Int
         )
-
+        fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio)
         fun sendMessage(
             messageId: Int,
             messageReqDTO: MessageReqDTO,
@@ -67,7 +69,8 @@ interface IContractConversation {
         suspend fun insertConversation(messageResDTO: MessageResDTO)
         fun updateMessage(message: Message)
         suspend fun sendMessagesRead(contactId: Int)
-        fun insertAttachment(listAttachment: List<Attachment>): List<Long>
+        fun insertAttachment(attachment: Attachment): Long
+        fun insertAttachments(listAttachment: List<Attachment>): List<Long>
         fun updateAttachments(
             listAttachmentsIds: List<Long>,
             attachments: List<AttachmentResDTO>

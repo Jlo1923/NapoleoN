@@ -130,7 +130,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         )
 
         imageButtonClose.apply {
-            setImageResource(R.drawable.ic_close_black_24dp)
+            setImageResource(R.drawable.ic_close_black_24)
             setBackgroundResource(outValue.resourceId)
         }
 

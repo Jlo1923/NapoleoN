@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="galleryItem"
+            type="com.naposystems.pepito.model.attachment.gallery.GalleryItem" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.attachmentPreview.AttachmentPreviewFragment">
+
+        <ImageView
+            android:id="@+id/imageView_preview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItem.id)}"
+            app:galleryImage="@{galleryItem}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/vertical_photo" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/imageButton_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="@dimen/small_padding"
+            android:tint="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close_black_24" />
+
+        <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget
+            android:id="@+id/inputPanel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/small_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:showAttachmentIcon="false"
+            app:showCameraIcon="false"
+            app:showEmojiIcon="false"
+            app:showOnlySendIcon="true" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

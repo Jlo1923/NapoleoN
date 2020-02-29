@@ -91,7 +91,7 @@ class HomeRepository @Inject constructor(
 
                     val conversationId = messageLocalDataSource.insertMessage(message)
 
-                    attachmentLocalDataSource.insertAttachment(
+                    attachmentLocalDataSource.insertAttachments(
                         AttachmentResDTO.toListConversationAttachment(
                             conversationId.toInt(),
                             messageRes.attachments

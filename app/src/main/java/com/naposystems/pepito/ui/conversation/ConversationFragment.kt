@@ -18,8 +18,9 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,8 +28,6 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
@@ -37,22 +36,23 @@ import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
-import com.naposystems.pepito.ui.conversationCamera.ShareConversationCameraViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.adapters.verifyPermission
+import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : Fragment() {
+class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     companion object {
-        const val REQUEST_IMAGE_CAPTURE = 1
         fun newInstance() = ConversationFragment()
     }
 
@@ -62,12 +62,15 @@ class ConversationFragment : Fragment() {
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
-    private lateinit var viewModel: ConversationViewModel
-    private lateinit var shareViewModel: ShareConversationCameraViewModel
+    private val viewModel: ConversationViewModel by viewModels {
+        viewModelFactory
+    }
+    private val shareViewModel: ConversationShareViewModel by activityViewModels()
+
     private lateinit var actionBarCustomView: ConversationActionBarBinding
     private lateinit var binding: ConversationFragmentBinding
-    private lateinit var adapter: ConversationAdapter
-    private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var conversationAdapter: ConversationAdapter
+    private lateinit var linearLayoutManager: LinearLayoutManager
     private val args: ConversationFragmentArgs by navArgs()
     private var isEditTextFilled: Boolean = false
     private lateinit var actionMode: ActionModeMenu
@@ -86,6 +89,10 @@ class ConversationFragment : Fragment() {
             context!!,
             R.anim.scale_down
         )
+    }
+
+    private val mediaPlayerManager: MediaPlayerManager by lazy {
+        MediaPlayerManager(context!!)
     }
 
     override fun onAttach(context: Context) {
@@ -162,17 +169,32 @@ class ConversationFragment : Fragment() {
             attachmentDialog.setListener(object :
                 AttachmentDialogFragment.OnAttachmentDialogListener {
                 override fun galleryPressed() {
-
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        drawableIconId = R.drawable.ic_folder_primary,
+                        message = R.string.explanation_to_send_audio_attacment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
+                                args.contact
+                            )
+                        )
+                    }
                 }
 
                 override fun cameraPressed() {
-                    findNavController().navigate(
-                        ConversationFragmentDirections
-                            .actionConversationFragmentToConversationCameraFragment(
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.CAMERA,
+                        drawableIconId = R.drawable.ic_camera_primary,
+                        message = R.string.explanation_camera_to_attachment_picture
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
                                 viewModel.getUser().id,
                                 args.contact.id
                             )
-                    )
+                        )
+                    }
                 }
 
                 override fun locationPressed() {
@@ -180,7 +202,17 @@ class ConversationFragment : Fragment() {
                 }
 
                 override fun audioPressed() {
-
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        drawableIconId = R.drawable.ic_folder_primary,
+                        message = R.string.explanation_to_send_audio_attacment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentAudioFragment(
+                                args.contact
+                            )
+                        )
+                    }
                 }
 
                 override fun documentPressed() {
@@ -191,7 +223,18 @@ class ConversationFragment : Fragment() {
         }
 
         binding.inputPanel.getImageButtonCamera().setOnClickListener {
-            verifyCameraAndMediaPermission()
+            verifyPermission(
+                Manifest.permission.CAMERA,
+                drawableIconId = R.drawable.ic_camera_primary,
+                message = R.string.explanation_camera_to_attachment_picture
+            ) {
+                findNavController().navigate(
+                    ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
+                        viewModel.getUser().id,
+                        args.contact.id
+                    )
+                )
+            }
         }
 
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -202,12 +245,9 @@ class ConversationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        shareViewModel = ViewModelProviders.of(activity!!, viewModelFactory)
-            .get(ShareConversationCameraViewModel::class.java)
-
-        shareViewModel.hasSendClicked.observe(activity!!, Observer {
+        shareViewModel.hasCameraSendClicked.observe(activity!!, Observer {
             if (it == true) {
-                val base64 = shareViewModel.getBase64()
+                val base64 = shareViewModel.getImageBase64()
 
                 viewModel.saveMessageWithAttachmentLocally(
                     shareViewModel.message.value!!,
@@ -215,7 +255,8 @@ class ConversationFragment : Fragment() {
                     args.contact,
                     Constants.IsMine.YES.value,
                     base64,
-                    shareViewModel.getUri()
+                    shareViewModel.getImageUri(),
+                    Constants.ATTACHMENT_ORIGIN.CAMERA.origin
                 )
 
                 with(binding.inputPanel.getEditTex()) {
@@ -223,12 +264,39 @@ class ConversationFragment : Fragment() {
                 }
             }
         })
+
+        shareViewModel.hasAudioSendClicked.observe(activity!!, Observer {
+            if (it == true) {
+                shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
+                    viewModel.saveMessageWithAudioAttachment(mediaStoreAudio)
+                }
+            }
+        })
+
+        shareViewModel.hasGallerySendClicked.observe(activity!!, Observer {
+            if (it == true) {
+                val base64 = shareViewModel.getImageBase64()
+
+                viewModel.saveMessageWithAttachmentLocally(
+                    shareViewModel.message.value!!,
+                    "",
+                    args.contact,
+                    Constants.IsMine.YES.value,
+                    base64,
+                    shareViewModel.getImageUri(),
+                    Constants.ATTACHMENT_ORIGIN.GALLERY.origin
+                )
+
+                with(binding.inputPanel.getEditTex()) {
+                    setText("")
+                }
+            }
+        })
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(ConversationViewModel::class.java)
 
         binding.viewModel = viewModel
 
@@ -292,7 +360,7 @@ class ConversationFragment : Fragment() {
 
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
 
-            adapter.submitList(conversationList)
+            conversationAdapter.submitList(conversationList)
 
             if (conversationList.isNotEmpty()) {
                 viewModel.sendMessagesRead()
@@ -337,7 +405,7 @@ class ConversationFragment : Fragment() {
 
     private fun handlerGoDown() {
         Handler().postDelayed({
-            if (adapter.itemCount > 0) {
+            if (conversationAdapter.itemCount > 0) {
                 val smoothScroller: RecyclerView.SmoothScroller =
                     object : LinearSmoothScroller(context) {
                         override fun getVerticalSnapPreference(): Int {
@@ -345,7 +413,7 @@ class ConversationFragment : Fragment() {
                         }
                     }
                 smoothScroller.targetPosition = 0
-                layoutManager.startSmoothScroll(smoothScroller)
+                linearLayoutManager.startSmoothScroll(smoothScroller)
             }
         }, 300)
     }
@@ -360,9 +428,16 @@ class ConversationFragment : Fragment() {
         inflater.inflate(R.menu.menu_conversation, menu)
     }
 
+    override fun onResume() {
+        super.onResume()
+        mediaPlayerManager.registerProximityListener()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         resetConversationBackground()
+        mediaPlayerManager.unregisterProximityListener()
+        mediaPlayerManager.resetMediaPlayer()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -473,7 +548,7 @@ class ConversationFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = ConversationAdapter(object : ConversationAdapter.ConversationClickListener {
+        conversationAdapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
             override fun onClick(item: Message) {
                 if (actionMode.mode != null) {
                     updateStateSelectionMessage(item)
@@ -486,19 +561,27 @@ class ConversationFragment : Fragment() {
                     updateStateSelectionMessage(item)
                 }
             }
-        })
 
-        layoutManager = LinearLayoutManager(context!!)
-        layoutManager.reverseLayout = true
+            override fun errorPlayingAudio() {
+                Utils.showSimpleSnackbar(
+                    binding.coordinator,
+                    getString(R.string.text_error_playing_audio),
+                    3
+                )
+            }
+        }, mediaPlayerManager)
 
-        binding.recyclerViewConversation.adapter = adapter
-        binding.recyclerViewConversation.layoutManager = layoutManager
+        linearLayoutManager = LinearLayoutManager(context!!)
+        linearLayoutManager.reverseLayout = true
+
+        binding.recyclerViewConversation.adapter = conversationAdapter
+        binding.recyclerViewConversation.layoutManager = linearLayoutManager
 
         binding.recyclerViewConversation.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 when {
-                    layoutManager.findFirstVisibleItemPosition() <= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION -> {
+                    linearLayoutManager.findFirstVisibleItemPosition() <= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION -> {
                         if (binding.textViewNotificationMessage.visibility == View.VISIBLE) {
                             showFabScroll(View.INVISIBLE, animationScaleDown)
                         }
@@ -518,7 +601,7 @@ class ConversationFragment : Fragment() {
     }
 
     private fun showFabScroll(visible: Int, animation: Animation) {
-        binding.fabGoDown!!.startAnimation(animation)
+        binding.fabGoDown.startAnimation(animation)
         binding.textViewNotificationMessage!!.startAnimation(animation)
         binding.fabGoDown.visibility = visible
         binding.textViewNotificationMessage.visibility = visible
@@ -533,53 +616,22 @@ class ConversationFragment : Fragment() {
     }
 
     override fun onPause() {
+        super.onPause()
+        mediaPlayerManager.pauseAudio()
+        mediaPlayerManager.unregisterProximityListener()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
-        super.onPause()
     }
 
-    private fun verifyCameraAndMediaPermission() {
-
-        Dexter.withActivity(activity!!)
-            .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
-            .withListener(object : MultiplePermissionsListener {
-
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    if (report!!.areAllPermissionsGranted()) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
-                                viewModel.getUser().id,
-                                args.contact.id
-                            )
-                        )
-                    }
-
-                    if (report.isAnyPermissionPermanentlyDenied) {
-                        Utils.showDialogToInformPermission(
-                            context!!,
-                            childFragmentManager,
-                            R.drawable.ic_camera_primary,
-                            R.string.explanation_camera_and_storage_permission,
-                            { Utils.openSetting(context!!) },
-                            {}
-                        )
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    Utils.showDialogToInformPermission(
-                        context!!,
-                        childFragmentManager,
-                        R.drawable.ic_camera_primary,
-                        R.string.explanation_camera_and_storage_permission,
-                        { token!!.continuePermissionRequest() },
-                        { token!!.cancelPermissionRequest() }
-                    )
-                }
-            }).check()
+    //region Implementation MediaPlayerManager.Listener
+    override fun onErrorPlayingAudio() {
+        Utils.showSimpleSnackbar(
+            binding.coordinator,
+            getString(R.string.text_error_playing_audio),
+            3
+        )
     }
+
+    //endregion
 }

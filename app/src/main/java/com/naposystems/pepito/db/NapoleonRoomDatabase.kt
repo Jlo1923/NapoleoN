@@ -13,7 +13,7 @@ import com.naposystems.pepito.db.dao.user.UserDao
 import com.naposystems.pepito.entity.*
 import com.naposystems.pepito.entity.conversation.Conversation
 import com.naposystems.pepito.entity.message.Message
-import com.naposystems.pepito.entity.message.Attachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 
 @Database(
     entities = [

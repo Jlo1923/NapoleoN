@@ -11,8 +11,11 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ConversationClickListener" />
+            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
+        <variable
+            name="isFirst"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,6 +35,7 @@
             android:paddingTop="@dimen/x_small_padding"
             android:paddingEnd="20dp"
             android:paddingBottom="@dimen/x_small_padding"
+            app:isFirstMyMessage="@{isFirst}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
@@ -43,6 +47,7 @@
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
+                app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

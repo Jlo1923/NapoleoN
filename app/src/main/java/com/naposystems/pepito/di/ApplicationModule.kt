@@ -2,6 +2,8 @@ package com.naposystems.pepito.di
 
 import android.app.Application
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.utility.Constants
@@ -15,6 +17,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Crypto
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.webService.GzipRequestInterceptor
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService

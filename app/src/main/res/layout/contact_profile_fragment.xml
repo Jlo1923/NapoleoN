@@ -90,7 +90,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_person_black" />
 
-                    <com.naposystems.pepito.ui.custom.AnimatedVectorView
+                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
                         android:id="@+id/imageButton_change_name_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_at_black" />
 
-                    <com.naposystems.pepito.ui.custom.AnimatedVectorView
+                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
                         android:id="@+id/imageButton_change_nickname_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

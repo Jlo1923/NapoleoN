@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="conversation"
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+
+        <variable
+            name="isFirst"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/x_x_small_padding"
+        android:paddingEnd="@dimen/small_padding"
+        android:paddingBottom="@dimen/x_x_small_padding">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_my_message"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingTop="@dimen/x_small_padding"
+            android:paddingEnd="20dp"
+            android:paddingBottom="@dimen/x_small_padding"
+            app:isFirstMyMessage="@{isFirst}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.7">
+
+            <com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
+                android:id="@+id/audio_player"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:controlColors="@color/colorTextMyMessage"
+                app:isEncryptedFile="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:seekbarProgressBackgroundTint="@color/black"
+                app:seekbarProgressTint="@color/colorSecondaryLight"
+                app:seekbarThumbTint="@color/colorSecondary" />
+
+            <TextView
+                style="@style/MyMessageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
+                app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
+                app:layout_constraintTop_toTopOf="@id/imageView_message_status"
+                app:messageDate="@{conversation.message.createdAt}"
+                tools:text="10:34"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_message_status"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/audio_player"
+                app:messageStatus="@{conversation.message.status}"
+                tools:srcCompat="@drawable/ic_message_sent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

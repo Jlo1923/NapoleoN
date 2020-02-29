@@ -190,6 +190,12 @@ object Constants {
         READED(3)
     }
 
+    enum class ATTACHMENT_ORIGIN(val origin: Int) {
+        CAMERA(1),
+        GALLERY(2),
+        AUDIO_SELECTION(3)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
