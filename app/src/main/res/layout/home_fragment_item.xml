@@ -79,7 +79,7 @@
             android:ellipsize="end"
             android:lines="1"
             app:nickname="@{conversation.contact}"
-            android:textColor="@color/buttonTint"
+            android:textColor="?attr/attrColorButtonTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"

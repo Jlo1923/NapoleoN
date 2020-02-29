@@ -30,7 +30,7 @@
                 android:id="@+id/container_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/flatActionBarColor"
+                android:background="?attr/attrBackgroundColorPrimary"
                 android:padding="@dimen/small_padding"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -100,7 +100,7 @@
                 android:id="@+id/container_editText_message"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/colorBackground"
+                android:background="?attr/attrBackgroundColorBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">

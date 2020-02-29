@@ -35,6 +35,8 @@ class ColorSchemeFragment : Fragment() {
     private lateinit var binding: ColorSchemeFragmentBinding
     private lateinit var adapter: ColorSchemeAdapter
 
+    var theme : Int = 0
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -48,6 +50,25 @@ class ColorSchemeFragment : Fragment() {
             inflater, R.layout.color_scheme_fragment, container, false
         )
 
+        binding.radioGroupTheme.setOnCheckedChangeListener { _, checkedId ->
+            theme = when(checkedId){
+                R.id.radioButton_light_napoleon -> Constants.ThemesApplication.LIGHT_NAPOLEON.theme
+                R.id.radioButton_dark_napoleon -> Constants.ThemesApplication.DARK_NAPOLEON.theme
+                R.id.radioButton_black_gold_alloy -> Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme
+                R.id.radioButton_cold_ocean -> Constants.ThemesApplication.COLD_OCEAN.theme
+                R.id.radioButton_camouflage -> Constants.ThemesApplication.CAMOUFLAGE.theme
+                R.id.radioButton_purple_bluebonnets -> Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme
+                R.id.radioButton_pink_dream -> Constants.ThemesApplication.PINK_DREAM.theme
+                else -> Constants.ThemesApplication.CLEAR_SKY.theme
+            }
+        }
+
+        binding.imageButtonSaveConfiguration.setOnClickListener {
+            viewModel.setTheme(theme)
+            viewModel.getActualTheme()
+            activity?.recreate()
+        }
+
         return binding.root
     }
 
@@ -57,11 +78,26 @@ class ColorSchemeFragment : Fragment() {
             .get(ColorSchemeViewModel::class.java)
 
         viewModel.theme.observe(viewLifecycleOwner, Observer {
-            setAdapter(it)
+/*            when(it) {
+                1 ->{
+                    activity?.setTheme(R.style.AppTheme)
+                    context!!.theme.applyStyle(R.style.AppTheme, true)
+                }
+                7 ->{
+                    activity?.setTheme(R.style.AppThemePinkDream)
+                    context!!.theme.applyStyle(R.style.AppThemePinkDream, true)
+                }
+                8 ->{
+                    activity?.setTheme(R.style.AppThemeClearSky)
+                    context!!.theme.applyStyle(R.style.AppThemeClearSky, true)
+                }
+            }*/
         })
+
+
     }
 
-    private fun setAdapter(selectedTheme: Int) {
+/*    private fun setAdapter(selectedTheme: Int) {
         val themeList = listOf(
             Theme(1, context!!.getString(R.string.text_light_theme), false),
             Theme(2, context!!.getString(R.string.text_dark_theme), false)
@@ -86,7 +122,7 @@ class ColorSchemeFragment : Fragment() {
             AppCompatDelegate.setDefaultNightMode(theme)
         })
 
-        binding.recyclerViewThemes.adapter = adapter
-    }
+        //binding.recyclerViewThemes.adapter = adapter
+    }*/
 
 }

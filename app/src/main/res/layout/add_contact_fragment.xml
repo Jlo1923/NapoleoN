@@ -80,7 +80,7 @@
                             android:id="@+id/recyclerView_friendship_request"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@color/colorBackground"
+                            android:background="?attr/attrBackgroundColorBackground"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/add_contact_item" />
 
@@ -130,7 +130,7 @@
                         android:id="@+id/recyclerView_contacts"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/colorBackground"
+                        android:background="?attr/attrBackgroundColorBackground"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/add_contact_item" />
 
