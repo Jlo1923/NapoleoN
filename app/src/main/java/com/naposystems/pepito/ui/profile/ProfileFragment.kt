@@ -1,26 +1,21 @@
 package com.naposystems.pepito.ui.profile
 
 import android.Manifest
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider.getUriForFile
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -35,7 +30,7 @@ import com.naposystems.pepito.databinding.ProfileFragmentBinding
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
-import com.naposystems.pepito.ui.custom.AnimatedVectorView
+import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
@@ -44,7 +39,6 @@ import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.io.File
-import java.io.FileDescriptor
 import java.io.IOException
 import java.lang.Exception
 import javax.inject.Inject
@@ -66,7 +60,7 @@ class ProfileFragment : BaseFragment() {
     private lateinit var viewModel: ProfileViewModel
     private lateinit var fileName: String
     private lateinit var subFolder: String
-    private lateinit var animatedEditName: AnimatedVectorView
+    private lateinit var animatedThreeEditName: AnimatedThreeVectorView
     private var aspectRatioX: Float = 1f
     private var aspectRatioY: Float = 1f
     private val bitmapMaxWidth = 1000
@@ -79,7 +73,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     override fun onResume() {
-        animatedEditName.clearAnimation()
+        animatedThreeEditName.clearAnimation()
         super.onResume()
     }
 
@@ -93,7 +87,7 @@ class ProfileFragment : BaseFragment() {
         )
         binding.lifecycleOwner = this
 
-        animatedEditName = binding.imageButtonNameOptionEndIcon
+        animatedThreeEditName = binding.imageButtonNameOptionEndIcon
 
         binding.floatingButtonProfileImage.setOnClickListener {
             subFolder = AVATAR_SUBFOLDER
@@ -111,7 +105,7 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.imageButtonNameOptionEndIcon.setOnClickListener {
-            animatedEditName.apply {
+            animatedThreeEditName.apply {
                 if (!hasBeenInitialized) {
                     editToCancel(binding.editTextDisplayName)
                 } else {
@@ -125,7 +119,7 @@ class ProfileFragment : BaseFragment() {
 
                 val newDisplayName = view.text.toString()
 
-                animatedEditName.cancelToHourglass()
+                animatedThreeEditName.cancelToHourglass()
 
                 binding.editTextDisplayName.apply {
                     isEnabled = false
@@ -136,9 +130,9 @@ class ProfileFragment : BaseFragment() {
                 )
 
                 viewModel.updateDisplayName(updateUserInfoReqDTO, {
-                    animatedEditName.hourglassToEdit()
+                    animatedThreeEditName.hourglassToEdit()
                 }, {
-                    animatedEditName.hourglassToCancel()
+                    animatedThreeEditName.hourglassToCancel()
                     binding.editTextDisplayName.apply {
                         isEnabled = true
                     }
@@ -247,7 +241,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     override fun onDetach() {
-        animatedEditName.clearAnimation()
+        animatedThreeEditName.clearAnimation()
         super.onDetach()
     }
 

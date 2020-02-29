@@ -25,7 +25,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactProfileFragmentBinding
-import com.naposystems.pepito.ui.custom.AnimatedVectorView
+import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
@@ -35,7 +35,6 @@ import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.profile_fragment.*
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -56,8 +55,8 @@ class ContactProfileFragment : Fragment() {
     private lateinit var viewModel: ContactProfileViewModel
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
-    private lateinit var animatedEditName: AnimatedVectorView
-    private lateinit var animatedEditNickName: AnimatedVectorView
+    private lateinit var animatedThreeEditName: AnimatedThreeVectorView
+    private lateinit var animatedThreeEditNickName: AnimatedThreeVectorView
 
     private var contactSilenced: Boolean = false
     private lateinit var subFolder: String
@@ -83,11 +82,11 @@ class ContactProfileFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        animatedEditName = binding.imageButtonChangeNameEndIcon
-        animatedEditNickName = binding.imageButtonChangeNicknameEndIcon
+        animatedThreeEditName = binding.imageButtonChangeNameEndIcon
+        animatedThreeEditNickName = binding.imageButtonChangeNicknameEndIcon
 
         binding.imageButtonChangeNameEndIcon.setOnClickListener {
-            animatedEditName.apply {
+            animatedThreeEditName.apply {
                 if (hasBeenInitialized) {
                     binding.imageButtonChangeNicknameEndIcon.isEnabled = true
                     cancelToEdit(binding.editTextName)
@@ -113,7 +112,7 @@ class ContactProfileFragment : Fragment() {
                         isEnabled = false
                     }
 
-                    animatedEditName.cancelToHourglass()
+                    animatedThreeEditName.cancelToHourglass()
                     viewModel.updateNameFakeContact(args.idContact, view.text.toString())
 
                     binding.editTextName.apply {
@@ -142,7 +141,7 @@ class ContactProfileFragment : Fragment() {
                         isEnabled = false
                     }
 
-                    animatedEditNickName.cancelToHourglass()
+                    animatedThreeEditNickName.cancelToHourglass()
                     viewModel.updateNicknameFakeContact(args.idContact, view.text.toString())
                     binding.editTextName.apply {
                         isEnabled = true
@@ -157,7 +156,7 @@ class ContactProfileFragment : Fragment() {
         }
 
         binding.imageButtonChangeNicknameEndIcon.setOnClickListener {
-            animatedEditNickName.apply {
+            animatedThreeEditNickName.apply {
                 if (hasBeenInitialized) {
                     binding.imageButtonChangeNameEndIcon.isEnabled = true
                     cancelToEdit(binding.editTextNickname)
@@ -200,8 +199,8 @@ class ContactProfileFragment : Fragment() {
         return binding.root
     }
 
-    private fun actionVectorView(animatedEditText: AnimatedVectorView, editText: EditText) {
-        animatedEditText.apply {
+    private fun actionVectorView(animatedThreeEditText: AnimatedThreeVectorView, editText: EditText) {
+        animatedThreeEditText.apply {
             if (!hasBeenInitialized) {
                 editToCancel(editText)
             } else {
@@ -229,13 +228,13 @@ class ContactProfileFragment : Fragment() {
 
         viewModel.responseEditNameFake.observe(viewLifecycleOwner, Observer {
             if (it) {
-                animatedEditName.hourglassToEdit()
+                animatedThreeEditName.hourglassToEdit()
             }
         })
 
         viewModel.responseEditNicknameFake.observe(viewLifecycleOwner, Observer {
             if (it) {
-                animatedEditNickName.hourglassToEdit()
+                animatedThreeEditNickName.hourglassToEdit()
             }
         })
 

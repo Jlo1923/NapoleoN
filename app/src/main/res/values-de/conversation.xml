@@ -8,4 +8,6 @@
     <string name="text_start_chat">Chat beginnen</string>
     <string name="text_view_profile">Profil ansehen</string>
     <string name="text_delete_contact">Blockkontakt</string>
+    <string name="explanation_camera_to_attachment_picture">Um ein Foto zu senden, erlauben NAPOLEON Zugriff auf Ihre Kamera.</string>
+    <string name="explanation_to_send_audio_attacment">Um ein Audio zu senden, napoleon erlaubt den Zugriff von Multimedia-Inhalte.</string>
 </resources>

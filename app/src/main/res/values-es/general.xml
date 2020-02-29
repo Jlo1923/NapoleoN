@@ -30,4 +30,10 @@
     <string name="text_sent">Enviado</string>
     <string name="text_refuse">Rechazar</string>
     <string name="text_information">INFORMACIÓN</string>
+    <string name="text_send_to">Enviar a %1$s</string>
+    <string name="text_error_playing_audio">Ha ocurrido un error al reproducir el audio</string>
+    <plurals name="text_selected">
+        <item quantity="one">%d seleccionado</item>
+        <item quantity="other">%d seleccionados</item>
+    </plurals>
 </resources>

@@ -8,7 +8,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.Utils
 
-class AnimatedVectorView @JvmOverloads constructor(
+class AnimatedThreeVectorView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

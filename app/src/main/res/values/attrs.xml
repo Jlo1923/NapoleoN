@@ -21,4 +21,19 @@
         <attr name="hint" format="string" />
         <attr name="characterCount" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="AnimatedTwoVectorView">
+        <attr name="firstAnimation" format="reference" />
+        <attr name="secondAnimation" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AudioPlayerCustomView">
+        <attr name="controlColors" format="reference" />
+        <attr name="isEncryptedFile" format="boolean" />
+        <attr name="absolutePath" format="string" />
+        <attr name="audioId" format="integer" />
+        <attr name="seekbarProgressBackgroundTint" format="reference" />
+        <attr name="seekbarProgressTint" format="reference" />
+        <attr name="seekbarThumbTint" format="reference" />
+    </declare-styleable>
 </resources>

@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di.modules
 
+import android.content.Context
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -16,11 +17,12 @@ class SocketModule {
     @Provides
     @Singleton
     fun provideRepository(
+        context: Context,
         napoleonApi: NapoleonApi,
         conversationLocalDataSource: ConversationDataSource,
         messageLocalDataSource: MessageDataSource,
         attachmentLocalDataSource: AttachmentDataSource
     ): IContractSocketService.Repository {
-        return SocketRepository(napoleonApi, conversationLocalDataSource, messageLocalDataSource, attachmentLocalDataSource)
+        return SocketRepository(context, napoleonApi, conversationLocalDataSource, messageLocalDataSource, attachmentLocalDataSource)
     }
 }

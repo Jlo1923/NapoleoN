@@ -10,21 +10,21 @@ class StatusAdapter(
     private val status: List<Status>,
     private val clickListener: StatusSelectionListener
 ) :
-    RecyclerView.Adapter<StatusAdapter.ViewHolder>() {
+    RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatusViewHolder {
+        return StatusViewHolder.from(parent)
     }
 
     override fun getItemCount() = status.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holderStatus: StatusViewHolder, position: Int) {
         val status = status[position]
-        holder.bind(status, clickListener)
+        holderStatus.bind(status, clickListener)
     }
 
-    class ViewHolder private constructor(private val binding: StatusFragmentItemBinding) :
+    class StatusViewHolder private constructor(private val binding: StatusFragmentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(status: Status, clickListener: StatusSelectionListener) {
@@ -34,14 +34,14 @@ class StatusAdapter(
         }
 
         companion object {
-            fun from(parent: ViewGroup): ViewHolder {
+            fun from(parent: ViewGroup): StatusViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = StatusFragmentItemBinding.inflate(
                     layoutInflater,
                     parent,
                     false
                 )
-                return ViewHolder(binding)
+                return StatusViewHolder(binding)
             }
         }
     }

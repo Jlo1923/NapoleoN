@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -93,10 +92,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.splashFragment,
                 R.id.landingFragment,
                 R.id.registerFragment,
-                R.id.previewImageSendFragment,
                 R.id.enterPinFragment,
                 R.id.unlockAppTimeFragment,
-                R.id.conversationCameraFragment-> {
+                R.id.conversationCameraFragment,
+                R.id.attachmentPreviewFragment -> {
                     hideToolbar()
                     disableDrawer()
                 }
@@ -124,6 +123,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     } else {
                         showToolbar()
                     }
+                }
+                R.id.attachmentAudioFragment -> {
+                    showToolbar()
+                    supportActionBar?.subtitle = getString(R.string.text_tap_to_select)
+                    disableDrawer()
                 }
                 else -> {
                     showToolbar()
@@ -246,8 +250,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.frameLayout.elevation = fourDp
     }
 
-    private fun resetToolbar(){
+    private fun resetToolbar() {
         with(supportActionBar!!) {
+            subtitle = ""
             setDisplayShowCustomEnabled(false)
             setDisplayShowTitleEnabled(true)
             setDisplayHomeAsUpEnabled(true)
@@ -348,12 +353,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun validLockTime() {
         if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
-            when(accountStatus) {
+            when (accountStatus) {
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
                     if (timeRequestAccessPin != -1) {
                         val currentTime = System.currentTimeMillis()
 
-                        if(currentTime >= viewModel.getLockTimeApp()) {
+                        if (currentTime >= viewModel.getLockTimeApp()) {
                             viewModel.setLockStatus(Constants.LockStatus.LOCK.state)
                             navController.navigate(
                                 R.id.enterPinFragment,

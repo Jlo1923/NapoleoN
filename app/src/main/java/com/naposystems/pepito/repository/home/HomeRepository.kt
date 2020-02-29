@@ -13,7 +13,6 @@ import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
-import com.naposystems.pepito.entity.conversation.Conversation
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.ui.home.IContractHome
@@ -92,7 +91,7 @@ class HomeRepository @Inject constructor(
 
                     val conversationId = messageLocalDataSource.insertMessage(message)
 
-                    attachmentLocalDataSource.insertAttachment(
+                    attachmentLocalDataSource.insertAttachments(
                         AttachmentResDTO.toListConversationAttachment(
                             conversationId.toInt(),
                             messageRes.attachments

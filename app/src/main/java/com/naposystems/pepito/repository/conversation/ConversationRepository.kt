@@ -13,7 +13,7 @@ import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
-import com.naposystems.pepito.entity.message.Attachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
@@ -165,8 +165,12 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override fun insertAttachment(listAttachment: List<Attachment>): List<Long> {
-        return attachmentLocalDataSource.insertAttachment(listAttachment)
+    override fun insertAttachment(attachment: Attachment): Long {
+        return attachmentLocalDataSource.insertAttachment(attachment)
+    }
+
+    override fun insertAttachments(listAttachment: List<Attachment>): List<Long> {
+        return attachmentLocalDataSource.insertAttachments(listAttachment)
     }
 
     override fun updateAttachments(

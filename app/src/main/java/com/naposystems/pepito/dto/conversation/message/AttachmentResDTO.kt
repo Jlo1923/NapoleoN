@@ -1,6 +1,6 @@
 package com.naposystems.pepito.dto.conversation.message
 
-import com.naposystems.pepito.entity.message.Attachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -28,7 +28,8 @@ data class AttachmentResDTO(
                         attachmentDTO.messageId,
                         attachmentDTO.type,
                         attachmentDTO.body,
-                        ""
+                        "",
+                        0
                     )
                 )
             }

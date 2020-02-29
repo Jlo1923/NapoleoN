@@ -11,4 +11,6 @@
     <string name="text_start_chat">Start chat</string>
     <string name="text_view_profile">View profile</string>
     <string name="text_delete_contact">Delete contact</string>
+    <string name="explanation_camera_to_attachment_picture">To send a photo, allow NapoleoN to access your camera.</string>
+    <string name="explanation_to_send_audio_attacment">To send an audio, allow NapoleoN to access your multimedia content.</string>
 </resources>

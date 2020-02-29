@@ -170,19 +170,19 @@
                     app:layout_constraintTop_toBottomOf="@id/container_header">
 
                     <!-- START ICON -->
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageView_name_option_start_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="fitCenter"
-                        android:tint="@color/colorSecondaryDark"
+                        app:tint="@color/colorSecondaryDark"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_person_black" />
 
                     <!-- EDIT ICON -->
-                    <com.naposystems.pepito.ui.custom.AnimatedVectorView
+                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
                         android:id="@+id/imageButton_name_option_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -247,12 +247,12 @@
                     app:layout_constraintTop_toBottomOf="@id/option_name">
 
                     <!-- START ICON -->
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageView_status_option_start_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="fitCenter"
-                        android:tint="@color/colorSecondaryDark"
+                        app:tint="@color/colorSecondaryDark"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -322,12 +322,12 @@
                     app:layout_constraintTop_toBottomOf="@id/option_status">
 
                     <!-- START ICON -->
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageView_blocked_contacts_option_start_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:scaleType="fitCenter"
-                        android:tint="@color/colorSecondaryDark"
+                        app:tint="@color/colorSecondaryDark"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

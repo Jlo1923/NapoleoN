@@ -2,6 +2,7 @@ package com.naposystems.pepito.entity.message
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.naposystems.pepito.entity.message.attachments.Attachment
 
 data class MessageAndAttachment(
     @Embedded

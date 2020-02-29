@@ -36,11 +36,6 @@ class UnlockAppTimeFragment : Fragment() {
     private var unlockTime = 0L
     private var lockTime = 0L
 
-    private var hour = 0L
-    private var minutes = 0L
-    private var seconds = 0L
-    private var showTime = ""
-
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -80,16 +75,7 @@ class UnlockAppTimeFragment : Fragment() {
         val timer = object : CountDownTimer(time, 1000) {
             @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
-                showTime = ""
-                hour = ((millisUntilFinished / 1000) / 60) / 60
-                minutes = ((millisUntilFinished / 1000) / 60) % 60
-                seconds = (millisUntilFinished / 1000) % 60
-
-                showTime += if(hour < 10) "0${hour}:" else "$hour:"
-                showTime += if(minutes < 10) "0${minutes}:" else "$minutes:"
-                showTime += if(seconds < 10) "0${seconds}" else "$seconds"
-
-                binding.textViewTime.text = showTime
+                binding.textViewTime.text = Utils.getDuration(millisUntilFinished)
             }
 
             override fun onFinish() {

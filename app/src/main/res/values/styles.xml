@@ -68,6 +68,10 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="AppPrimaryButtonText.Primary">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
     <style name="TextViewPrimaryTitle">
         <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textColor">@color/colorPrimary</item>
@@ -104,6 +108,10 @@
 
     <style name="BodyTextView.Tint">
         <item name="android:textColor">@color/buttonTint</item>
+    </style>
+
+    <style name="BodyTextView.SecondaryForAll">
+        <item name="android:textColor">@color/secondaryTextColorForAll</item>
     </style>
 
     <style name="MyMessageTextView" parent="BodyTextView">
@@ -284,13 +292,33 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="BackgroundSpinner" >
+    <style name="BackgroundSpinner">
         <item name="android:background">@drawable/bg_spinner</item>
     </style>
+
     <style name="FabPrimary">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:backgroundTint">@color/buttonTint</item>
+    </style>
+
+    <style name="AudioPlayerControlStyle">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="AudioPlayerControlStyle.Incoming">
+        <item name="android:tint">@color/colorTextIncomingMessage</item>
+    </style>
+
+    <style name="SeekbarMyMessageStyle">
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:max">100</item>
+        <item name="android:progressBackgroundTint">@color/black</item>
+        <item name="android:progressTint">@color/white</item>
+        <item name="android:thumbTint">@color/colorSecondary</item>
     </style>
 
 </resources>
