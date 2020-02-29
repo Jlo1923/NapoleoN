@@ -140,7 +140,7 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun sendMessagesRead(contactId: Int) {
         val messagesUnread =
-            messageLocalDataSource.getMessagesByStatus(Constants.MessageStatus.UNREAD.status)
+            messageLocalDataSource.getMessagesByStatus(contactId, Constants.MessageStatus.UNREAD.status)
 
         if (messagesUnread.isNotEmpty()) {
             try {

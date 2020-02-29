@@ -144,5 +144,15 @@ class SplashRepository @Inject constructor(
         }
     }
 
-
+    override suspend fun setDefaultSelfDestructTimeMessageNotSent() {
+        val default = sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+        )
+        if (default == 0) {
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT,
+                Constants.MessageSelfDestructTimeNotSent.SEVEN_DAYS.time
+            )
+        }
+    }
 }

@@ -56,7 +56,6 @@ class BlockedContactsAdapter constructor(private val clickListener: BlockedConta
                     parent,
                     false
                 )
-
                 return BlockedContactsViewHolder(binding)
             }
         }

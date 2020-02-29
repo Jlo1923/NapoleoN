@@ -1,21 +1,18 @@
 package com.naposystems.pepito.ui.editAccessPin
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.EditAccessPinFragmentBinding
 import com.naposystems.pepito.utility.FieldsValidator
@@ -61,8 +58,8 @@ class EditAccessPinFragment : Fragment() {
                 val newAccessPin = binding.textInputEditTextAccessPin.text!!.toString()
                 if (FieldsValidator.isAccessPinValid(binding.textInputLayoutAccessPin) &&
                     FieldsValidator.isConfirmAccessPinValid(
-                        binding.textInputLayoutConfirmAccessPin,
-                        newAccessPin
+                        binding.textInputLayoutAccessPin,
+                        binding.textInputLayoutConfirmAccessPin
                     )
                 ) {
                     viewModel.updateAccessPin(newAccessPin)
@@ -78,7 +75,7 @@ class EditAccessPinFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(EditAccessPinViewModel::class.java)
 
         binding.viewModel = viewModel

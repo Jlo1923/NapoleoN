@@ -4,10 +4,8 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +15,7 @@ import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -25,6 +24,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactProfileFragmentBinding
+import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.custom.AnimatedVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
@@ -32,16 +32,16 @@ import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.profile_fragment.*
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-class ContactProfileFragment : Fragment() {
+class ContactProfileFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = ContactProfileFragment()
@@ -51,9 +51,10 @@ class ContactProfileFragment : Fragment() {
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: ContactProfileViewModel
+    private lateinit var shareContactViewModel: ShareContactViewModel
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
     private lateinit var animatedEditName: AnimatedVectorView
@@ -114,7 +115,7 @@ class ContactProfileFragment : Fragment() {
                     }
 
                     animatedEditName.cancelToHourglass()
-                    viewModel.updateNameFakeContact(args.idContact, view.text.toString())
+                    viewModel.updateNameFakeContact(args.contactId, view.text.toString())
 
                     binding.editTextName.apply {
                         isEnabled = true
@@ -143,7 +144,7 @@ class ContactProfileFragment : Fragment() {
                     }
 
                     animatedEditNickName.cancelToHourglass()
-                    viewModel.updateNicknameFakeContact(args.idContact, view.text.toString())
+                    viewModel.updateNicknameFakeContact(args.contactId, view.text.toString())
                     binding.editTextName.apply {
                         isEnabled = true
                     }
@@ -177,7 +178,7 @@ class ContactProfileFragment : Fragment() {
                 true,
                 childFragmentManager
             ) {
-                viewModel.restoreContact(args.idContact)
+                viewModel.restoreContact(args.contactId)
             }
         }
 
@@ -188,7 +189,7 @@ class ContactProfileFragment : Fragment() {
                 true,
                 childFragmentManager
             ) {
-                viewModel.deleteConversation(args.idContact)
+                shareContactViewModel.deleteConversation(args.contactId)
             }
         }
 
@@ -213,12 +214,19 @@ class ContactProfileFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ContactProfileViewModel::class.java)
+
+        try {
+            shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
+                .get(ShareContactViewModel::class.java)
+        } catch (e: Exception){
+            Timber.e(e)
+        }
 
         binding.viewmodel = viewModel
 
-        viewModel.getLocalContact(args.idContact)
+        viewModel.getLocalContact(args.contactId)
 
         viewModel.muteConversationWsError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -274,7 +282,7 @@ class ContactProfileFragment : Fragment() {
             if (button.isPressed) {
                 if (isChecked) {
                     val dialog =
-                        MuteConversationDialogFragment.newInstance(args.idContact, contactSilenced)
+                        MuteConversationDialogFragment.newInstance(args.contactId, contactSilenced)
                     dialog.setListener(object :
                         MuteConversationDialogFragment.MuteConversationListener {
                         override fun onMuteConversationChange() {
@@ -283,7 +291,7 @@ class ContactProfileFragment : Fragment() {
                     })
                     dialog.show(childFragmentManager, "MuteConversation")
                 } else {
-                    viewModel.updateContactSilenced(args.idContact, contactSilenced)
+                    viewModel.updateContactSilenced(args.contactId, contactSilenced)
                 }
             }
         }
@@ -399,7 +407,7 @@ class ContactProfileFragment : Fragment() {
         if (resultCode == RESULT_OK) {
             val uri = UCrop.getOutput(data!!)
             try {
-                viewModel.updateAvatarFakeContact(args.idContact, uri.toString())
+                viewModel.updateAvatarFakeContact(args.contactId, uri.toString())
             } catch (ex: IOException) {
                 Timber.e(ex)
             }

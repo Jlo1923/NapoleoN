@@ -24,7 +24,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_status"
-                android:padding="@dimen/normal_padding"
+                android:backgroundTint="@color/sectionColor"
+                android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -37,18 +38,75 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/imageButton_status_end_icon"
+                    style="@style/OptionEndIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_right_primary" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_chats"
-                android:layout_width="0dp"
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher_chats"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:inAnimation="@anim/fade_in"
+                android:outAnimation="@anim/fade_out"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_status"
-                tools:listitem="@layout/home_fragment_item" />
+                app:layout_constraintTop_toBottomOf="@id/container_status">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_recycler_chats"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_chats"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/home_fragment_item" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_empty_state_chats"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_empty_state_chats"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toTopOf="@id/textView_description_chats"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHeight_percent="0.4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:srcCompat="@drawable/image_empty_state_conversation" />
+
+                    <TextView
+                        android:id="@+id/textView_description_chats"
+                        style="@style/TextViewSecondaryTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:paddingStart="@dimen/small_padding"
+                        android:paddingEnd="@dimen/small_padding"
+                        android:text="No hay conversación!!"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_empty_state_chats" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </ViewSwitcher>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

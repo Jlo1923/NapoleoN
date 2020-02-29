@@ -40,23 +40,10 @@ class BlockedContactsViewModel @Inject constructor(private val repository: Block
 
     override fun searchLocalBlockedContact(query: String) {
         _listBlockedContacts.value = _blockedContacts.value!!.filter {
-            it.nickname.contains(query)
-        }
-    }
-
-    override fun unblockContact(contact: Contact) {
-        viewModelScope.launch {
-            try {
-                val response = repository.unblockContact(contact)
-
-                if (response.isSuccessful) {
-                    contact.statusBlocked = false
-                    repository.unblockContactLocal(contact.id)
-                } else {
-                    _webServiceErrors.value = repository.getDefaultError(response.errorBody()!!)
-                }
-            } catch (e: Exception) {
-                Timber.e(e)
+            if (it.nicknameFake == "") {
+                it.nickname.contains(query)
+            } else {
+                it.nicknameFake.contains(query)
             }
         }
     }

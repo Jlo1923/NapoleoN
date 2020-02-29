@@ -40,7 +40,7 @@
             android:layout_marginStart="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"
-            android:text="@{contact.displayName}"
+            app:name="@{contact}"
             app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
             app:layout_constraintEnd_toStartOf="@id/button_more"
             app:layout_constraintHorizontal_bias="0.5"

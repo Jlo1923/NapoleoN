@@ -10,19 +10,13 @@ interface IContractContacts {
 
     interface ViewModel {
         fun getContacts()
-        fun sendBlockedContact(contact: Contact)
-        fun sendDeleteContact(contact: Contact)
         fun resetContactsLoaded()
+        fun searchContact(query: String)
     }
 
     interface Repository {
         suspend fun getLocalContacts(): LiveData<List<Contact>>
+        suspend fun getLocalContactsForSearch(): LiveData<List<Contact>>
         suspend fun getRemoteContacts()
-        suspend fun sendBlockedContact(contact: Contact) : Response<BlockedContactResDTO>
-        suspend fun blockContactLocal(contactId: Int)
-        suspend fun sendDeleteContact(contact: Contact) : Response<DeleteContactResDTO>
-        suspend fun deleteContactLocal(contact: Contact)
-        fun getDefaultBlockedError(response: Response<BlockedContactResDTO>): List<String>
-        fun getDefaultDeleteError(response: Response<DeleteContactResDTO>): List<String>
     }
 }

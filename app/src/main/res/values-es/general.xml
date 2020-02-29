@@ -30,4 +30,5 @@
     <string name="text_sent">Enviado</string>
     <string name="text_refuse">Rechazar</string>
     <string name="text_information">INFORMACIÓN</string>
+    <string name="text_field_cannot_be_empty">El campo no puede estar vacío</string>
 </resources>

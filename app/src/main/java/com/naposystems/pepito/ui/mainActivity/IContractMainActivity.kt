@@ -12,7 +12,7 @@ interface IContractMainActivity {
         fun setOutputControl(state: Int)
         fun setLockTimeApp()
         fun getLockTimeApp(): Long
-        fun getTimeRequestAccessPin()
+        fun getTimeRequestAccessPin(): Int
         fun setLockStatus(state: Int)
     }
 
@@ -22,7 +22,7 @@ interface IContractMainActivity {
         suspend fun getAccountStatus(): Int
         fun getOutputControl(): Int
         suspend fun setOutputControl(state: Int)
-        suspend fun getTimeRequestAccessPin(): Int
+        fun getTimeRequestAccessPin(): Int
         suspend fun getLockTimeApp(): Long
         suspend fun setLockStatus(state: Int)
         fun setLockTimeApp(lockTime: Long)

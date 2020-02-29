@@ -13,7 +13,6 @@ import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
-import com.naposystems.pepito.entity.conversation.Conversation
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.ui.home.IContractHome
@@ -72,6 +71,13 @@ class HomeRepository @Inject constructor(
         socketService.subscribe(SocketReqDTO.toJSONObject(socketReqDTO))
     }
 
+    override suspend fun getUser(): User {
+        val firebaseId = sharedPreferencesManager.getString(
+            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+        )
+        return userLocalDataSource.getUser(firebaseId)
+    }
+
     override fun getConversations(): LiveData<List<ConversationAndContact>> {
         return conversationLocalDataSource.getConversations()
     }
@@ -99,16 +105,12 @@ class HomeRepository @Inject constructor(
                         )
                     )
 
-                    val unreadMessages =
-                        messageResList.filter { it.userDestination == messageRes.userDestination }.size
-
                     conversationLocalDataSource.insertConversation(
                         messageRes,
                         false,
-                        unreadMessages
+                        1
                     )
                 }
-
             }
         }
     }

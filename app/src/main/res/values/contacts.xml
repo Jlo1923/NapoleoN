@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_my_contacts">Contacts</string>
+    <string name="text_my_contacts">My Contacts</string>
     <string name="text_description_empty_state_contacts">Add your friends and share with them in a safe and private way.</string>
     <string name="text_wish_block_contact">Are you sure you want to block %1$s?</string>
     <string name="text_wish_delete_contact">Are you sure you want to remove %1$s?</string>

@@ -37,7 +37,7 @@ class MainActivityRepository @Inject constructor(
         )
     }
 
-    override suspend fun getTimeRequestAccessPin(): Int {
+    override fun getTimeRequestAccessPin(): Int {
         return sharedPreferencesManager.getInt(
             Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN
         )

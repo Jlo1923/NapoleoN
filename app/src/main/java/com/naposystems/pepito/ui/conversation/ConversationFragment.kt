@@ -1,32 +1,27 @@
 package com.naposystems.pepito.ui.conversation
 
 import android.Manifest
-import android.app.Activity.RESULT_OK
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import androidx.security.crypto.EncryptedFile
-import androidx.security.crypto.MasterKeys
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -37,21 +32,17 @@ import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
-import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.conversationCamera.ShareConversationCameraViewModel
+import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import java.io.*
+import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.math.ceil
-import kotlin.math.ln
-import kotlin.math.max
-import kotlin.math.pow
 
 class ConversationFragment : Fragment() {
 
@@ -185,8 +176,11 @@ class ConversationFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
 
-        shareViewModel = ViewModelProviders.of(activity!!, viewModelFactory)
+        shareViewModel = ViewModelProvider(activity!!, viewModelFactory)
             .get(ShareConversationCameraViewModel::class.java)
 
         shareViewModel.hasSendClicked.observe(activity!!, Observer {
@@ -211,7 +205,7 @@ class ConversationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ConversationViewModel::class.java)
 
         binding.viewModel = viewModel
@@ -233,33 +227,9 @@ class ConversationFragment : Fragment() {
 
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
 
+            viewModel.sendMessagesRead()
+
             if (conversationList.isNotEmpty()) {
-
-                viewModel.sendMessagesRead()
-
-                /*val mutableList: MutableList<Conversation> = ArrayList()
-
-                mutableList.addAll(conversationList.sortedBy { it.id })
-
-                val conversationGrouped = mutableList.groupBy {
-                    if (it.createdAt.isNotEmpty()) {
-                        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                        val calendar = Calendar.getInstance(TimeZone.getDefault())
-                        calendar.timeInMillis = it.createdAt.toLong() * 1000
-                        calendar.set(Calendar.HOUR, 0)
-                        calendar.set(Calendar.MINUTE, 0)
-                        calendar.set(Calendar.SECOND, 0)
-                        calendar.set(Calendar.MILLISECOND, 0)
-                        calendar.time
-                    }
-                }
-
-                for (groupedKey in conversationGrouped.entries) {
-                    val indexFirst = mutableList.indexOf(groupedKey.value[0])
-
-                    Timber.d(indexFirst.toString())
-                }*/
-
                 adapter.submitList(conversationList)
 
                 Handler().postDelayed({

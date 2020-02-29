@@ -50,14 +50,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/x_small_margin"
-                android:ellipsize="end"
-                android:lines="1"
-                app:name="@{contact}"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
                 app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
                 app:layout_constraintEnd_toStartOf="@id/viewSwitcher"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed"
+                app:name="@{contact}"
                 tools:text="@tools:sample/full_names" />
 
             <TextView

@@ -9,7 +9,7 @@ import com.naposystems.pepito.utility.Constants
 @Dao
 interface MessageDao {
 
-    @Query("SELECT * FROM message WHERE user_addressee=:contact ORDER BY id DESC")
+    @Query("SELECT * FROM message WHERE contact_id=:contact ORDER BY id DESC")
     fun getMessagesAndAttachments(contact: Int): DataSource.Factory<Int, MessageAndAttachment>
 
     @Insert
@@ -24,9 +24,9 @@ interface MessageDao {
     @Query("UPDATE message SET status=:status WHERE web_id=:webId")
     fun updateMessageStatus(webId: String, status: Int)
 
-    @Query("SELECT web_id FROM message WHERE status=:status AND is_mine=0")
-    suspend fun getMessagesByStatus(status: Int): List<String>
+    @Query("SELECT web_id FROM message WHERE contact_id=:contactId AND status=:status AND is_mine=0")
+    suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
 
-    @Query("DELETE FROM message WHERE user_addressee = :idContact")
+    @Query("DELETE FROM message WHERE contact_id = :idContact")
     suspend fun deleteMessages(idContact: Int)
 }

@@ -2,13 +2,11 @@ package com.naposystems.pepito.repository.contactProfile
 
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
-import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.dto.muteConversation.MuteConversationErrorDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.ui.contactProfile.IContactProfile
+import com.naposystems.pepito.ui.contactProfile.IContractContactProfile
 import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
@@ -16,10 +14,8 @@ import javax.inject.Inject
 
 class ContactProfileRepository@Inject constructor(
     private val napoleonApi: NapoleonApi,
-    private val contactDataSource: ContactDataSource,
-    private val conversationDataSource: ConversationDataSource,
-    private val messageDataSource: MessageDataSource
-) : IContactProfile.Repository {
+    private val contactDataSource: ContactDataSource
+) : IContractContactProfile.Repository {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -43,11 +39,6 @@ class ContactProfileRepository@Inject constructor(
 
     override suspend fun restoreContact(idContact: Int) {
         contactDataSource.restoreContact(idContact)
-    }
-
-    override suspend fun deleteConversation(idContact: Int) {
-        messageDataSource.deleteMessages(idContact)
-        conversationDataSource.cleanConversation(idContact)
     }
 
     override suspend fun updateContactSilenced(idContact: Int, contactSilenced: Int) {

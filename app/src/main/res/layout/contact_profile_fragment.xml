@@ -43,7 +43,16 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:srcCompat="@drawable/ic_volume_off_black" />
+                        tools:src="@tools:sample/backgrounds/scenic" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/bg_black_gradient"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageButton
                         android:id="@+id/imageButton_edit_header"
@@ -100,7 +109,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_edit_secondary_black"/>
+                        app:srcCompat="@drawable/ic_edit_secondary_black" />
 
                     <TextView
                         android:id="@+id/textView_name"
@@ -117,7 +126,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:digits="@string/only_letters"
+                        android:imeOptions="actionDone"
                         android:inputType="textCapWords|textNoSuggestions"
                         android:maxLength="@dimen/max_length_display_name"
                         android:padding="0dp"
@@ -156,7 +165,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_edit_secondary_black"/>
+                        app:srcCompat="@drawable/ic_edit_secondary_black" />
 
                     <TextView
                         android:id="@+id/textView_nickname"
@@ -173,7 +182,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:digits="@string/only_letters_and_numbers"
                         android:inputType="textCapWords|textNoSuggestions"
                         android:maxLength="@dimen/max_length_nickname"
                         android:padding="0dp"

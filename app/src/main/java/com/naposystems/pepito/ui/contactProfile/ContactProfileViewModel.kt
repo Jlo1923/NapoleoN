@@ -14,8 +14,8 @@ import javax.inject.Inject
 
 class ContactProfileViewModel @Inject constructor(
     private val context: Context,
-    private val repository: IContactProfile.Repository
-) : ViewModel(), IContactProfile.ViewModel {
+    private val repository: IContractContactProfile.Repository
+) : ViewModel(), IContractContactProfile.ViewModel {
 
     lateinit var contact: LiveData<Contact>
 
@@ -58,12 +58,6 @@ class ContactProfileViewModel @Inject constructor(
     override fun restoreContact(idContact: Int) {
         viewModelScope.launch {
             repository.restoreContact(idContact)
-        }
-    }
-
-    override fun deleteConversation(idContact: Int) {
-        viewModelScope.launch {
-            repository.deleteConversation(idContact)
         }
     }
 

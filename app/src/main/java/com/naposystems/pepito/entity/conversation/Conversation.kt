@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.entity.message.Message
 
 @Entity(
     tableName = "conversation", foreignKeys = [

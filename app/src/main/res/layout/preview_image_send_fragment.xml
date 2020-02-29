@@ -54,7 +54,7 @@
                 android:tint="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_close_black_24dp" />
+                app:srcCompat="@drawable/ic_close_black_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

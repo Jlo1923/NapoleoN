@@ -100,6 +100,7 @@ class SplashViewModel @Inject constructor(
             repository.setDefaultTimeRequestAccessPin()
             repository.setDefaultAllowDownloadAttachments()
             repository.setDefaultLockType()
+            repository.setDefaultSelfDestructTimeMessageNotSent()
         }
     }
 

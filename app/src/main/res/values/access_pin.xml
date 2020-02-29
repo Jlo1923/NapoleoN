@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_access_pin">Access pin</string>
+    <string name="text_access_pin">Access Pin</string>
     <string name="text_confirm_access_pin">Confirm access pin</string>
     <string name="text_access_pin_required">The access pin can\'t be empty</string>
     <string name="text_confirm_pin_access_required">You must confirm the access pin</string>

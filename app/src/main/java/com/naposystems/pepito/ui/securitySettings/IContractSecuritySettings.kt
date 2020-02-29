@@ -4,17 +4,19 @@ interface IContractSecuritySettings {
 
     interface ViewModel {
         fun getSelfDestructTime()
-        fun getTimeRequestAccessPin()
         fun getAllowDownload()
+        fun getMessageSelfDestructTimeNotSent()
         fun updateAllowDownload(state: Boolean)
         fun getBiometricsOption()
+        fun getTimeRequestAccessPin()
     }
 
     interface Repository {
         fun getSelfDestructTime(): Int
-        fun getTimeRequestAccessPin(): Int
         fun getAllowDownload(): Int
         fun updateAllowDownload(state: Int)
+        fun getMessageSelfDestructTimeNotSent(): Int
         fun getBiometricsOption(): Int
+        fun getTimeRequestAccessPin(): Int
     }
 }

@@ -19,15 +19,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- GENERAL TITLE -->
+            <!-- CONVERSATION TITLE -->
             <TextView
-                android:id="@+id/textView_general"
+                android:id="@+id/textView_conversation"
                 style="@style/SmallBodyTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/sectionColor"
-                android:padding="@dimen/normal_padding"
-                android:text="@string/text_general"
+                android:padding="10dp"
+                android:text="CONVERSACIÓN!!"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,7 +38,7 @@
                 style="@style/Option"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView_general">
+                app:layout_constraintTop_toBottomOf="@id/textView_conversation">
 
                 <!-- START ICON -->
                 <ImageView
@@ -93,9 +93,9 @@
                 <ImageView
                     android:id="@+id/imageView_allow_download_option_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView_title_allow_download"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textView_title_allow_download"
                     app:srcCompat="@drawable/ic_cloud_download_black" />
 
                 <!-- SWITCH -->
@@ -104,9 +104,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:allowDownload="@{viewModel.allowDownloads}"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView_title_allow_download"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textView_title_allow_download"
                     app:srcCompat="@drawable/ic_arrow_right_primary"
                     app:thumbTint="@color/thumb_color"
                     app:trackTint="@color/track_color" />
@@ -116,6 +116,7 @@
                     android:id="@+id/textView_title_allow_download"
                     style="@style/OptionTitle"
                     android:text="@string/text_allow_download_attachments"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/switch_allow_download"
                     app:layout_constraintStart_toEndOf="@id/imageView_allow_download_option_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -124,7 +125,7 @@
 
             <!-- OPTION MESSAGE SELF DESTRUCT TIME NOT SEND -->
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/option_message_self_destruct_time_not_send"
+                android:id="@+id/option_message_self_destruct_time_not_sent"
                 style="@style/Option.WithOutLine"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -152,7 +153,7 @@
                 <TextView
                     android:id="@+id/textView_message_not_send_title"
                     style="@style/OptionTitle"
-                    android:text="Tiempo de autodestrucción de mensajes no enviado"
+                    android:text="@string/text_message_self_destruct_time_not_send"
                     app:layout_constraintBottom_toTopOf="@id/textView_message_not_send_time"
                     app:layout_constraintEnd_toStartOf="@id/imageButton_message_not_send_option_end_icon"
                     app:layout_constraintStart_toEndOf="@id/imageView_message_not_send_option_start_icon"
@@ -165,8 +166,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/textView_message_not_send_title"
                     app:layout_constraintStart_toStartOf="@id/textView_message_not_send_title"
-                    app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct_time_not_send"
-                    app:selfDestructTime="@{viewModel.selfDestructTime}"
+                    app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct_time_not_sent"
+                    app:messageSelfDestructTimeNotSent="@{viewModel.messageSelfDestructTimeNotSent}"
                     tools:text="1 día" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -178,11 +179,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/sectionColor"
-                android:padding="@dimen/normal_padding"
+                android:padding="10dp"
                 android:text="@string/text_security"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct_time_not_send" />
+                app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct_time_not_sent" />
 
             <!-- OPTION EDIT ACCESS PIN -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -261,7 +262,7 @@
             <!-- OPTION TIME TO REQUEST ACCESS PIN -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/option_time_request_access_pin"
-                style="@style/Option"
+                style="@style/Option.WithOutLine"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/option_biometrics">
@@ -307,13 +308,63 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- GENERAL TITLE -->
+            <TextView
+                android:id="@+id/textView_general"
+                style="@style/SmallBodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/sectionColor"
+                android:padding="10dp"
+                android:text="@string/text_general"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/option_time_request_access_pin" />
+
+            <!-- OPTION MASK APP -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_mask_app"
+                style="@style/Option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_general">
+
+                <!-- START ICON -->
+                <ImageView
+                    android:id="@+id/imageView_mask_app_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/anim_cancel_edit" />
+
+                <!-- EDIT ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_mask_app_end_icon"
+                    style="@style/OptionEndIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+                <!-- OPTION TITLE -->
+                <TextView
+                    android:id="@+id/textView_mask_app_title"
+                    style="@style/OptionTitle"
+                    android:text="Enmascarar la App!!"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_mask_app_end_icon"
+                    app:layout_constraintStart_toEndOf="@id/imageView_mask_app_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <!-- OPTION ACCOUNT RECOVERY INFORMATION -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/option_account_recovery_information"
                 style="@style/Option"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_time_request_access_pin">
+                app:layout_constraintTop_toBottomOf="@id/option_mask_app">
 
                 <!-- START ICON -->
                 <ImageView

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 
 import com.naposystems.pepito.R
@@ -61,7 +62,7 @@ class StatusFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(StatusViewModel::class.java)
 
         binding.viewModel = viewModel

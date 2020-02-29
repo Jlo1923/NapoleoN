@@ -70,9 +70,9 @@ class ConversationAdapter constructor(
                 (position + 1 < itemCount && item?.message?.isMine != getItem(position + 1)?.message?.isMine))
 
         if (getItemViewType(position) == TYPE_MY_MESSAGE) {
-            (holder as MyMessageViewHolder).bind(item!!, clickListener, isFirst)
+            item?.let { (holder as MyMessageViewHolder).bind(it, clickListener, isFirst) }
         } else {
-            (holder as IncomingMessageViewHolder).bind(item!!, clickListener, isFirst)
+            item?.let { (holder as IncomingMessageViewHolder).bind(it, clickListener, isFirst) }
         }
     }
 

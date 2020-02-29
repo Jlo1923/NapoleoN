@@ -77,7 +77,6 @@ class ConversationViewModel @Inject constructor(
                 Constants.MessageStatus.SENT.status
             )
 
-
             val messageId = repository.insertMessage(message).toInt()
 
             val messageReqDTO =

@@ -34,5 +34,6 @@
     <string name="text_delete_conversation">Supprimer la conversation</string>
     <string name="text_mute_conversation">Conversation muette</string>
     <string name="text_block_contact">Bloquer le contact</string>
+    <string name="text_field_cannot_be_empty">Le champ ne peut pas être vide</string>
 
 </resources>

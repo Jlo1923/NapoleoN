@@ -18,5 +18,7 @@ interface ConversationDataSource {
 
     suspend fun updateConversation(contactId: Int)
 
-    suspend fun cleanConversation(idContact: Int)
+    suspend fun cleanConversation(contactId: Int)
+
+    suspend fun deleteConversationAndMessages(contactId: Int)
 }

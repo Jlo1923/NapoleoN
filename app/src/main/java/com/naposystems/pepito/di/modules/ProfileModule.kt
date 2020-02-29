@@ -2,6 +2,7 @@ package com.naposystems.pepito.di.modules
 
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.profile.ProfileRepository
+import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
 import dagger.Module
 import dagger.Provides
@@ -14,8 +15,9 @@ class ProfileModule {
     @Singleton
     fun provideRepository(
         userLocalDataSource: UserLocalDataSource,
-        napoleonApi: NapoleonApi
+        napoleonApi: NapoleonApi,
+        sharedPreferencesManager: SharedPreferencesManager
     ): ProfileRepository {
-        return ProfileRepository(userLocalDataSource, napoleonApi)
+        return ProfileRepository(userLocalDataSource, napoleonApi, sharedPreferencesManager)
     }
 }

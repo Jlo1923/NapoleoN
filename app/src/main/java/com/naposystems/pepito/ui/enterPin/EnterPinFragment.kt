@@ -11,18 +11,22 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.EnterPinFragmentBinding
 import com.naposystems.pepito.ui.custom.EnterCodeWidget
+import com.naposystems.pepito.ui.custom.NumericKeyboardCustomView
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
+class EnterPinFragment : Fragment(),
+    EnterCodeWidget.OnEventListener,
+    NumericKeyboardCustomView.OnEventListener {
 
     companion object {
         fun newInstance() = EnterPinFragment()
@@ -52,6 +56,7 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
         )
 
         binding.enterCodeWidget.setListener(this)
+        binding.numericKeyboard.setListener(this)
 
         validateBiometrics()
 
@@ -64,7 +69,7 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(EnterPinViewModel::class.java)
 
         viewModel.getBiometricsOption()
@@ -148,14 +153,12 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
                     binding.imageButtonFingerprint.visibility = View.VISIBLE
                 } else {
                     binding.imageButtonFingerprint.visibility = View.GONE
-                    binding.enterCodeWidget.requestFocusFirst()
                 }
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE,
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE,
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 binding.imageButtonFingerprint.visibility = View.GONE
-                binding.enterCodeWidget.requestFocusFirst()
             }
         }
     }
@@ -165,4 +168,11 @@ class EnterPinFragment : Fragment(), EnterCodeWidget.OnEventListener {
         validateBiometrics()
     }
 
+    override fun onKeyPressed(keyCode: Int) {
+        binding.enterCodeWidget.setAddNumber(keyCode)
+    }
+
+    override fun onDeletePressed() {
+        binding.enterCodeWidget.deleteNumber()
+    }
 }

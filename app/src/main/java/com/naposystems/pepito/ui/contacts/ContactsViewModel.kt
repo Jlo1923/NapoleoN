@@ -1,13 +1,11 @@
 package com.naposystems.pepito.ui.contacts
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.naposystems.pepito.entity.Contact
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class ContactsViewModel @Inject constructor(private val repository: IContractContacts.Repository) :
     ViewModel(), IContractContacts.ViewModel {
@@ -15,6 +13,10 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
     private lateinit var _contacts: LiveData<List<Contact>>
     val contacts: LiveData<List<Contact>>
         get() = _contacts
+
+    private val _contactsForSearch = MutableLiveData<List<Contact>>()
+    val contactsForSearch: LiveData<List<Contact>>
+        get() = _contactsForSearch
 
     private val _webServiceErrors = MutableLiveData<List<String>>()
     val webServiceErrors: LiveData<List<String>>
@@ -42,36 +44,18 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
         }
     }
 
-    override fun sendBlockedContact(contact: Contact) {
+    override fun searchContact(query: String) {
         viewModelScope.launch {
             try {
-                val response = repository.sendBlockedContact(contact)
-
-                if (response.isSuccessful) {
-                    contact.statusBlocked = true
-                    repository.blockContactLocal(contact.id)
-                } else {
-                    _webServiceErrors.value = repository.getDefaultBlockedError(response)
+                _contactsForSearch.value = _contacts.value!!.filter {
+                    if (it.nicknameFake.isEmpty()) {
+                        it.nickname.contains(query)
+                    } else {
+                        it.nicknameFake.contains(query)
+                    }
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
-            }
-        }
-    }
-
-    override fun sendDeleteContact(contact: Contact) {
-        viewModelScope.launch {
-            try {
-                val response = repository.sendDeleteContact(contact)
-
-                if (response.isSuccessful) {
-                    repository.deleteContactLocal(contact)
-                } else {
-                    _webServiceErrors.value = repository.getDefaultDeleteError(response)
-                }
-
-            } catch (e: Exception) {
-                Timber.e(e)
             }
         }
     }

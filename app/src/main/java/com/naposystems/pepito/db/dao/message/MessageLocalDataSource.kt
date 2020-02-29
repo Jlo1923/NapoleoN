@@ -47,8 +47,8 @@ class MessageLocalDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getMessagesByStatus(status: Int): List<String> {
-        return messageDao.getMessagesByStatus(status)
+    override suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String> {
+        return messageDao.getMessagesByStatus(contactId, status)
     }
 
     override suspend fun deleteMessages(idContact: Int) {

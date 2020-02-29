@@ -8,7 +8,7 @@ import retrofit2.Response
 
 interface IContractRegisterRecoveryAccountQuestion {
     interface ViewModel {
-        fun addRecoveryAnswer(answer: RecoveryAnswer)
+        fun addRecoveryAnswer(answer: RecoveryAnswer, isFinal: Int)
         fun getQuestions()
         fun sendRecoveryAnswers()
     }

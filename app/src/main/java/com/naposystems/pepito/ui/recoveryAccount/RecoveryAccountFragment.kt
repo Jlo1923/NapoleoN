@@ -10,12 +10,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RecoveryAccountFragmentBinding
 import com.naposystems.pepito.model.recoveryAccount.ListRecoveryQuestions
-import com.naposystems.pepito.model.recoveryAccount.RecoveryQuestions
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -51,7 +50,7 @@ class RecoveryAccountFragment : Fragment() {
 
         binding.textInputEditTextNickname.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.buttonRecoveryAccount.isEnabled = s!!.length >= 4
+                binding.buttonRecoveryAccount.isEnabled = s!!.length >= 5
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -73,7 +72,7 @@ class RecoveryAccountFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(RecoveryAccountViewModel::class.java)
 
 

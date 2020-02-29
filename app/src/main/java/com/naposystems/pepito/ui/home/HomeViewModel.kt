@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.pepito.entity.conversation.Conversation
+import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -12,6 +12,10 @@ import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val repository: IContractHome.Repository) :
     ViewModel(), IContractHome.ViewModel {
+
+    private val _user = MutableLiveData<User>()
+    val user: LiveData<User>
+        get() = _user
 
     private val _quantityFriendshipRequest = MutableLiveData<Int>()
     val quantityFriendshipRequest: LiveData<Int>
@@ -41,6 +45,13 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
         }
     }
 
+    override fun getUser(): User {
+        viewModelScope.launch {
+            _user.value = repository.getUser()
+        }
+        return _user.value!!
+    }
+
     override fun subscribeToGeneralSocketChannel() {
         viewModelScope.launch {
             repository.subscribeToGeneralSocketChannel()
@@ -57,6 +68,5 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
             }
         }
     }
-
     //endregion
 }

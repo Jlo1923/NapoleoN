@@ -14,25 +14,25 @@ class SecuritySettingsViewModel @Inject constructor(
     val selfDestructTime: LiveData<Int>
         get() = _selfDestructTime
 
-    private val _timeRequestAccessPin = MutableLiveData<Int>()
-    val timeRequestAccessPin: LiveData<Int>
-        get() = _timeRequestAccessPin
-
     private val _allowDownloads = MutableLiveData<Int>()
     val allowDownloads: LiveData<Int>
         get() = _allowDownloads
+
+    private val _messageSelfDestructTimeNotSent = MutableLiveData<Int>()
+    val messageSelfDestructTimeNotSent: LiveData<Int>
+        get() = _messageSelfDestructTimeNotSent
 
     private val _biometricsOption = MutableLiveData<Int>()
     val biometricsOption: LiveData<Int>
         get() = _biometricsOption
 
+    private val _timeRequestAccessPin = MutableLiveData<Int>()
+    val timeRequestAccessPin: LiveData<Int>
+        get() = _timeRequestAccessPin
+
     //region Implementation IContractSecuritySettings.ViewModel
     override fun getSelfDestructTime() {
         _selfDestructTime.value = repository.getSelfDestructTime()
-    }
-
-    override fun getTimeRequestAccessPin() {
-        _timeRequestAccessPin.value = repository.getTimeRequestAccessPin()
     }
 
     override fun getAllowDownload() {
@@ -47,8 +47,16 @@ class SecuritySettingsViewModel @Inject constructor(
         _allowDownloads.value = newState
     }
 
+    override fun getMessageSelfDestructTimeNotSent() {
+        _messageSelfDestructTimeNotSent.value = repository.getMessageSelfDestructTimeNotSent()
+    }
+
     override fun getBiometricsOption() {
         _biometricsOption.value = repository.getBiometricsOption()
+    }
+
+    override fun getTimeRequestAccessPin() {
+        _timeRequestAccessPin.value = repository.getTimeRequestAccessPin()
     }
 
     //endregion

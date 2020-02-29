@@ -42,12 +42,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView_contacts"
+                    <ViewSwitcher
+                        android:id="@+id/viewSwitcher_search_contact"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/contacts_item" />
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView_contacts"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/contacts_item" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/container_search_contact_not_found"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/textView_search_not_found"
+                                style="@style/TextViewSecondaryTitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="@dimen/normal_padding"
+                                android:paddingEnd="@dimen/normal_padding"
+                                android:text="@string/text_blocked_contact_not_found"
+                                android:textAlignment="center"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </ViewSwitcher>
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

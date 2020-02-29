@@ -7,6 +7,8 @@ import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.profile.IContractProfile
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
@@ -20,7 +22,8 @@ import kotlin.reflect.full.memberProperties
 
 class ProfileRepository @Inject constructor(
     private val localDataSource: UserLocalDataSource,
-    private val napoleonApi: NapoleonApi
+    private val napoleonApi: NapoleonApi,
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractProfile.Repository {
 
@@ -28,8 +31,13 @@ class ProfileRepository @Inject constructor(
         Moshi.Builder().build()
     }
 
-    override suspend fun getUser(firebaseId: String): User {
-        return localDataSource.getUser(firebaseId)
+    override suspend fun getUser(): User {
+        return localDataSource.getUser(
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.PREF_FIREBASE_ID,
+                ""
+            )
+        )
     }
 
     override suspend fun updateUserInfo(updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO> {

@@ -1,29 +1,32 @@
 package com.naposystems.pepito.ui.contacts
 
-import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
-import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactsFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter
+import com.naposystems.pepito.ui.custom.SearchView
+import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
+import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 
-class ContactsFragment : Fragment() {
+class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
     companion object {
         fun newInstance() = ContactsFragment()
@@ -31,10 +34,12 @@ class ContactsFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
     private lateinit var viewModel: ContactsViewModel
+    private lateinit var shareContactViewModel: ShareContactViewModel
     private lateinit var binding: ContactsFragmentBinding
     private lateinit var adapter: ContactsAdapter
+    private lateinit var mainActivity: MainActivity
+    private lateinit var searchView: SearchView
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -68,8 +73,15 @@ class ContactsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ContactsViewModel::class.java)
+
+        try {
+            shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
+                .get(ShareContactViewModel::class.java)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
 
         binding.viewModel = viewModel
 
@@ -97,15 +109,29 @@ class ContactsFragment : Fragment() {
                 binding.viewSwitcher.showNext()
             }
         })
+
+        viewModel.contactsForSearch.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+            if (it.isNotEmpty()) {
+                if (binding.viewSwitcherSearchContact.currentView.id == binding.containerSearchContactNotFound.id) {
+                    binding.viewSwitcherSearchContact.showNext()
+                }
+            } else {
+                if (binding.viewSwitcherSearchContact.currentView.id == binding.recyclerViewContacts.id) {
+                    binding.viewSwitcherSearchContact.showNext()
+                }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_contacts, menu)
-
-        val searchManager = context!!.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        (menu.findItem(R.id.search).actionView as SearchView).apply {
-            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-            setIconifiedByDefault(false)
+        if (activity is MainActivity) {
+            mainActivity = activity as MainActivity
+            searchView = mainActivity.findViewById(R.id.searchView)
+            searchView.setHint(R.string.text_search)
+            searchView.setMenuItem(menu.findItem(R.id.search_contacts))
+            searchView.setListener(this)
         }
     }
 
@@ -127,17 +153,14 @@ class ContactsFragment : Fragment() {
                             seeProfile(item)
                         R.id.block_contact ->
                             blockedContact(item)
-
                         R.id.delete_contact ->
                             deleteContact(item)
                     }
                     true
                 }
-
                 popup.show()
             }
         })
-
         binding.recyclerViewContacts.adapter = adapter
     }
 
@@ -152,17 +175,23 @@ class ContactsFragment : Fragment() {
             ContactsFragmentDirections
                 .actionContactsFragmentToContactProfileFragment(contact.id)
         )
-
     }
 
     private fun blockedContact(contact: Contact) {
         generalDialog(
             getString(R.string.text_block_contact),
-            getString(R.string.text_wish_block_contact, contact.displayName),
+            getString(
+                R.string.text_wish_block_contact,
+                if (contact.displayNameFake.isEmpty()) {
+                    contact.displayName
+                } else {
+                    contact.displayNameFake
+                }
+            ),
             true,
             childFragmentManager
         ) {
-            viewModel.sendBlockedContact(contact)
+            shareContactViewModel.sendBlockedContact(contact)
 //            showToast(context!!, getString(R.string.text_blocked_contact))
         }
     }
@@ -170,12 +199,45 @@ class ContactsFragment : Fragment() {
     private fun deleteContact(contact: Contact) {
         generalDialog(
             getString(R.string.text_delete_contact),
-            getString(R.string.text_wish_delete_contact, contact.displayName),
+            getString(
+                R.string.text_wish_delete_contact,
+                if (contact.displayNameFake.isEmpty()) {
+                    contact.displayName
+                } else {
+                    contact.displayNameFake
+                }
+            ),
             true,
             childFragmentManager
         ) {
-            viewModel.sendDeleteContact(contact)
+            shareContactViewModel.sendDeleteContact(contact)
 //            showToast(context!!, getString(R.string.text_deleted_contact))
+        }
+    }
+
+    //region Implementation SearchView.OnSearchView
+    override fun onOpened() {
+        binding.swipeRefresh.isEnabled = false
+    }
+
+    override fun onQuery(text: String) {
+        if (text.length >= 4) {
+            viewModel.searchContact(text.toLowerCase(Locale.getDefault()))
+        } else {
+            refreshView()
+        }
+    }
+
+    override fun onClosed() {
+        refreshView()
+        binding.swipeRefresh.isEnabled = true
+    }
+    //endregion
+
+    private fun refreshView() {
+        adapter.submitList(viewModel.contacts.value)
+        if (binding.viewSwitcherSearchContact.currentView.id == binding.containerSearchContactNotFound.id) {
+            binding.viewSwitcherSearchContact.showNext()
         }
     }
 }

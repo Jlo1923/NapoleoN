@@ -135,9 +135,6 @@ dependencies {
     //Permissions
     implementation 'com.karumi:dexter:6.0.0'
 
-    //SearchView
-    implementation 'com.github.Ferfalk:SimpleSearchView:0.1.4'
-
     //Socket-io
     implementation('io.socket:socket.io-client:0.8.3') {
         // excluding org.json which is provided by Android

@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -46,7 +48,7 @@ class SecuritySettingsFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        //region GENERAL
+        //region CONVERSATION
         binding.optionMessageSelfDestruct.setOnClickListener(optionMessageClickListener())
         binding.imageButtonMessageOptionEndIcon.setOnClickListener(optionMessageClickListener())
 
@@ -57,6 +59,12 @@ class SecuritySettingsFragment : Fragment() {
             viewModel.updateAllowDownload(isChecked)
         }
 
+        binding.optionMessageSelfDestructTimeNotSent.setOnClickListener(
+            optionMessageSelfDestructTimeNotSentClickListener()
+        )
+        binding.imageButtonMessageNotSendOptionEndIcon.setOnClickListener(
+            optionMessageSelfDestructTimeNotSentClickListener()
+        )
         //endregion
 
         //region SECURITY
@@ -70,6 +78,7 @@ class SecuritySettingsFragment : Fragment() {
 
         binding.optionTimeRequestAccessPin.setOnClickListener(optionTimeAccessPinClickListener())
         binding.imageButtonTimeOptionEndIcon.setOnClickListener(optionTimeAccessPinClickListener())
+        //endregion
 
         binding.optionAccountRecoveryInformation.setOnClickListener(
             optionRegisterRecoveryAccountClickListener()
@@ -78,14 +87,12 @@ class SecuritySettingsFragment : Fragment() {
             optionRegisterRecoveryAccountClickListener()
         )
 
-        //endregion
-
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SecuritySettingsViewModel::class.java)
 
         binding.viewModel = viewModel
@@ -132,6 +139,17 @@ class SecuritySettingsFragment : Fragment() {
             }
         })
         dialog.show(childFragmentManager, "TimeRequestAccessPin")
+    }
+
+    private fun optionMessageSelfDestructTimeNotSentClickListener() = View.OnClickListener {
+        val dialog = SelfDestructTimeMessageNotSentDialogFragment()
+        dialog.setListener(
+            object : SelfDestructTimeMessageNotSentDialogFragment.MessageSelfDestructTimeNotSentListener {
+                override fun onDestructMessageChange() {
+                    viewModel.getMessageSelfDestructTimeNotSent()
+                }
+            })
+        dialog.show(childFragmentManager, "MessageSelfDestructTimeNotSent")
     }
 
     private fun optionRegisterRecoveryAccountClickListener() = View.OnClickListener {

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_message_self_destruction">Message Self Destruction</string>
-    <string name="text_every_five_minutes">Every 5 minutes</string>
-    <string name="text_every_fifteen_minutes">Every 15 minutes</string>
-    <string name="text_every_thirty_minutes">Every 30 minutes</string>
-    <string name="text_every_one_hour">Every 1 hour</string>
-    <string name="text_every_six_hours">Every 6 hours</string>
-    <string name="text_every_twenty_four_hours">Every 24 hours</string>
+    <string name="text_every_five_minutes">5 minutes</string>
+    <string name="text_every_fifteen_minutes">15 minutes</string>
+    <string name="text_every_thirty_minutes">30 minutes</string>
+    <string name="text_every_one_hour">1 hour</string>
+    <string name="text_every_six_hours">6 hours</string>
+    <string name="text_every_twenty_four_hours">24 hours</string>
     <string name="text_info_message_self_destruction">Messages sent and received in this conversation will be deleted after the selected time.</string>
+    <string name="text_every_seven_days">7 días</string>
 </resources>

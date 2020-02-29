@@ -1,5 +1,6 @@
 package com.naposystems.pepito.utility
 
+import android.widget.Spinner
 import com.google.android.material.textfield.TextInputLayout
 import com.naposystems.pepito.R
 import java.util.regex.Pattern
@@ -95,30 +96,35 @@ class FieldsValidator {
             return true
         }
 
-        fun isConfirmAccessPinValid(textInputLayout: TextInputLayout, accessPin: String): Boolean {
-            val confirmAccessPin = textInputLayout.editText!!.text.toString()
-            val context = textInputLayout.context
+        fun isConfirmAccessPinValid(
+            textInputLayout: TextInputLayout,
+            textInputLayoutConfirm: TextInputLayout
+        ): Boolean {
+            val accessPin = textInputLayout.editText!!.text.toString()
+            val confirmAccessPin = textInputLayoutConfirm.editText!!.text.toString()
+            val context = textInputLayoutConfirm.context
 
-            textInputLayout.error = null
+            textInputLayoutConfirm.error = null
 
             if (confirmAccessPin.isEmpty()) {
-                textInputLayout.error = context.getString(R.string.text_confirm_pin_access_required)
+                textInputLayoutConfirm.error = context.getString(R.string.text_confirm_pin_access_required)
                 return false
             }
 
             if (confirmAccessPin.length < 4) {
-                textInputLayout.error = context.getString(R.string.text_access_pin_length)
+                textInputLayoutConfirm.error = context.getString(R.string.text_access_pin_length)
                 return false
             }
 
             if (textContainSpecialCharacters(confirmAccessPin)) {
-                textInputLayout.error =
+                textInputLayoutConfirm.error =
                     context.getString(R.string.text_cant_contain_special_characters)
                 return false
             }
 
             if (accessPin != confirmAccessPin) {
                 textInputLayout.error = context.getString(R.string.text_access_pin_not_match)
+                textInputLayoutConfirm.error = context.getString(R.string.text_access_pin_not_match)
                 return false
             }
             return true
