@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.ui.addContact.AddContactViewModel
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
+import com.naposystems.pepito.ui.attachmentAudio.AttachmentAudioViewModel
+import com.naposystems.pepito.ui.attachmentGallery.AttachmentGalleryViewModel
+import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFoldersViewModel
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
@@ -18,7 +21,6 @@ import com.naposystems.pepito.ui.enterPin.EnterPinViewModel
 import com.naposystems.pepito.ui.home.HomeViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
-import com.naposystems.pepito.ui.conversationCamera.ShareConversationCameraViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -37,6 +39,7 @@ import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeViewModel
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -161,11 +164,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ShareConversationCameraViewModel::class)
-    internal abstract fun bindSharePreviewImageSendViewModel(viewModel: ShareConversationCameraViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(RecoveryAccountViewModel::class)
     internal abstract fun binRecoveryAccountViewModel(viewModel: RecoveryAccountViewModel): ViewModel
 
@@ -223,4 +221,25 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SelfDestructTimeMessageNotSentViewModel::class)
     internal abstract fun bindSelfDestructTimeMessageNotSentViewModel(viewModel: SelfDestructTimeMessageNotSentViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AttachmentAudioViewModel::class)
+    internal abstract fun bindAttachmentAudioViewModel(viewModel: AttachmentAudioViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConversationShareViewModel::class)
+    internal abstract fun bindConversationShareViewModel(viewModel: ConversationShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AttachmentGalleryFoldersViewModel::class)
+    internal abstract fun bindAttachmentGalleryFoldersViewModel(viewModel: AttachmentGalleryFoldersViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AttachmentGalleryViewModel::class)
+    internal abstract fun bindAttachmentGalleryViewModel(viewModel: AttachmentGalleryViewModel): ViewModel
+
 }

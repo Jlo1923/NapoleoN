@@ -13,6 +13,7 @@ interface IContractHome {
         fun getFriendshipQuantity()
         fun subscribeToGeneralSocketChannel()
         fun getContactsAndMessages()
+        fun getDeletedMessages()
     }
 
     interface Repository {
@@ -22,5 +23,6 @@ interface IContractHome {
         fun getConversations(): LiveData<List<ConversationAndContact>>
         suspend fun getRemoteMessages()
         suspend fun getContacts()
+        suspend fun getDeletedMessages()
     }
 }

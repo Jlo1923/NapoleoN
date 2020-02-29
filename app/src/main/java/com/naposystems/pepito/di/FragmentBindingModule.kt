@@ -3,6 +3,9 @@ package com.naposystems.pepito.di
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.addContact.AddContactFragment
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment
+import com.naposystems.pepito.ui.attachmentAudio.AttachmentAudioFragment
+import com.naposystems.pepito.ui.attachmentGallery.AttachmentGalleryFragment
+import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFoldersFragment
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment
@@ -16,7 +19,6 @@ import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.enterPin.EnterPinFragment
 import com.naposystems.pepito.ui.home.HomeFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
-import com.naposystems.pepito.ui.previewImageSend.PreviewImageSendFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment
@@ -104,9 +106,6 @@ abstract class FragmentBindingModule {
     abstract fun bindRegisterRecoveryAccountQuestionFragment(): RegisterRecoveryAccountQuestionFragment
 
     @ContributesAndroidInjector
-    abstract fun bindPreviewImageSendFragment(): PreviewImageSendFragment
-
-    @ContributesAndroidInjector
     abstract fun bindRecoveryAccountFragment(): RecoveryAccountFragment
 
     @ContributesAndroidInjector
@@ -141,4 +140,13 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindSelfDestructTimeMessageNotSentDialogFragment(): SelfDestructTimeMessageNotSentDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindAttachmentAudioFragment(): AttachmentAudioFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindAttachmentGalleryFoldersFragment(): AttachmentGalleryFoldersFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindAttachmentGalleryFragment(): AttachmentGalleryFragment
 }

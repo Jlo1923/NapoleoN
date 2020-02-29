@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+            android:id="@+id/imageButton_play"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="@dimen/x_small_margin"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            app:firstAnimation="@drawable/anim_play_to_pause"
+            app:layout_constraintBottom_toBottomOf="@id/seekbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/container_controls"
+            app:secondAnimation="@drawable/anim_pause_to_play"
+            app:srcCompat="@drawable/ic_play_arrow_black" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_controls"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageButton_play"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_rewind"
+                style="@style/AudioPlayerControlStyle"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_speed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_fast_rewind_black" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_speed"
+                style="@style/AudioPlayerControlStyle"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_forward"
+                app:layout_constraintStart_toEndOf="@+id/imageButton_rewind"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_1x_speed_black" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_forward"
+                style="@style/AudioPlayerControlStyle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageButton_speed"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_fast_forward_black" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textView_duration"
+            style="@style/SmallBodyTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_audio_duration"
+            app:layout_constraintBottom_toBottomOf="@id/seekbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/seekbar"
+            tools:text="10:34" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:max="100"
+            app:layout_constraintEnd_toStartOf="@id/textView_duration"
+            app:layout_constraintStart_toStartOf="@id/container_controls"
+            app:layout_constraintTop_toBottomOf="@id/container_controls"
+            tools:progress="50"
+            tools:progressBackgroundTint="@color/black"
+            tools:progressTint="@color/colorSecondaryLight"
+            tools:thumbTint="@color/colorSecondary" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -371,9 +371,6 @@
             android:name="contact"
             app:argType="com.naposystems.pepito.entity.Contact" />
         <action
-            android:id="@+id/action_conversationFragment_to_previewImageSendFragment"
-            app:destination="@id/previewImageSendFragment" />
-        <action
             android:id="@+id/action_conversationFragment_to_conversationCameraFragment"
             app:destination="@id/conversationCameraFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -387,6 +384,12 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentAudioFragment"
+            app:destination="@id/attachmentAudioFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
@@ -412,16 +415,6 @@
         <action
             android:id="@+id/action_recoveryAccountQuestionsFragment_to_accessPinFragment"
             app:destination="@id/accessPinFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/previewImageSendFragment"
-        android:name="com.naposystems.pepito.ui.previewImageSend.PreviewImageSendFragment"
-        android:label="preview_image_send_fragment"
-        tools:layout="@layout/preview_image_send_fragment">
-
-        <argument
-            android:name="bitmap"
-            app:argType="android.graphics.Bitmap" />
     </fragment>
     <fragment
         android:id="@+id/enterPinFragment"
@@ -488,5 +481,55 @@
         <argument
             android:name="contactId"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentAudioFragment"
+        android:name="com.naposystems.pepito.ui.attachmentAudio.AttachmentAudioFragment"
+        tools:layout="@layout/attachment_audio_fragment">
+        <argument
+            android:name="contact"
+            app:argType="com.naposystems.pepito.entity.Contact" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentGalleryFoldersFragment"
+        android:name="com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFoldersFragment"
+        android:label="attachment_gallery_fragment"
+        tools:layout="@layout/attachment_gallery_folders_fragment">
+        <argument
+            android:name="contact"
+            app:argType="com.naposystems.pepito.entity.Contact" />
+        <action
+            android:id="@+id/action_attachmentGalleryFragment_to_attachmentGalleryFragment"
+            app:destination="@id/attachmentGalleryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentGalleryFragment"
+        android:name="com.naposystems.pepito.ui.attachmentGallery.AttachmentGalleryFragment"
+        android:label="AttachmentGalleryFragment"
+        tools:layout="@layout/attachment_gallery_fragment">
+        <argument
+            android:name="contact"
+            app:argType="com.naposystems.pepito.entity.Contact" />
+        <argument
+            android:name="folderName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_attachmentGalleryFragment_to_attachmentPreviewFragment"
+            app:destination="@id/attachmentPreviewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentPreviewFragment"
+        android:name="com.naposystems.pepito.ui.attachmentPreview.AttachmentPreviewFragment"
+        android:label="AttachmentPreviewFragment"
+        tools:layout="@layout/attachment_preview_fragment">
+        <argument
+            android:name="contact"
+            app:argType="com.naposystems.pepito.entity.Contact" />
+        <argument
+            android:name="galleryItem"
+            app:argType="com.naposystems.pepito.model.attachment.gallery.GalleryItem" />
+        <action
+            android:id="@+id/action_attachmentPreviewFragment_to_conversationFragment"
+            app:destination="@id/conversationFragment" />
     </fragment>
 </navigation>

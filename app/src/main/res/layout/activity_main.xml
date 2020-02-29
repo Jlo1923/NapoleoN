@@ -39,11 +39,12 @@
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?android:attr/actionBarSize"
-                        android:background="@color/colorPrimary"
+                        android:background="?attr/attrBackgroundColorPrimary"
                         android:elevation="@dimen/elevation"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:subtitleTextColor="@color/white"
                         app:title="@string/app_name"
                         app:titleTextColor="@color/white" />
 
@@ -79,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="@color/colorBackground"
+            android:background="?attr/attrBackgroundColorBackground"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/chat_drawer_header"
             app:itemIconTint="@color/secondaryTextColor"

@@ -91,4 +91,12 @@ class ConversationLocalDataSource @Inject constructor(private val conversationDa
     override suspend fun deleteConversationAndMessages(contactId: Int) {
         conversationDao.deleteConversation(contactId)
     }
+
+    override suspend fun updateConversationByContact(idContact: Int, message: String, created: Int, status: Int, unreads: Int) {
+        conversationDao.updateConversationByContact(idContact, message, created, status, unreads)
+    }
+
+    override suspend fun getQuantityUnreads(idContact: Int): Int {
+        return conversationDao.getQuantityUnreads(idContact)
+    }
 }

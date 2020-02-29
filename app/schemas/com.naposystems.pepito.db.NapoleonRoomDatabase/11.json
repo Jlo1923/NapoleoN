@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "f2aaea308250aada20ff04ea87e10fb0",
+    "identityHash": "e5f54bc3913b222342157feb84a538b3",
     "entities": [
       {
         "tableName": "user",
@@ -106,7 +106,7 @@
       },
       {
         "tableName": "message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `contact_id` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `contact_id` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, `is_selected` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -161,6 +161,12 @@
             "columnName": "status",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isSelected",
+            "columnName": "is_selected",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -186,7 +192,7 @@
       },
       {
         "tableName": "attachment",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message_id` INTEGER NOT NULL, `web_id` TEXT NOT NULL, `message_web_id` TEXT NOT NULL, `type` TEXT NOT NULL, `body` TEXT NOT NULL, `uri` TEXT NOT NULL, FOREIGN KEY(`message_id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message_id` INTEGER NOT NULL, `web_id` TEXT NOT NULL, `message_web_id` TEXT NOT NULL, `type` TEXT NOT NULL, `body` TEXT NOT NULL, `uri` TEXT NOT NULL, `origin` INTEGER NOT NULL, FOREIGN KEY(`message_id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -228,6 +234,12 @@
             "fieldPath": "uri",
             "columnName": "uri",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "origin",
+            "columnName": "origin",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -398,7 +410,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f2aaea308250aada20ff04ea87e10fb0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e5f54bc3913b222342157feb84a538b3')"
     ]
   }
 }

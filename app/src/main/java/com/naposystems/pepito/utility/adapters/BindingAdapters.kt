@@ -3,11 +3,67 @@ package com.naposystems.pepito.utility.adapters
 import android.net.Uri
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.databinding.BindingAdapter
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.utility.Utils
+
+fun Fragment.verifyPermission(
+    vararg permissions: String,
+    drawableIconId: Int,
+    message: Int,
+    successCallback: () -> Unit
+) {
+
+    Dexter.withActivity(activity!!)
+        .withPermissions(*permissions)
+        .withListener(object : MultiplePermissionsListener {
+
+            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                if (report!!.areAllPermissionsGranted()) {
+                    successCallback()
+                }
+
+                if (report.isAnyPermissionPermanentlyDenied) {
+                    Utils.showDialogToInformPermission(
+                        context!!,
+                        childFragmentManager,
+                        drawableIconId,
+                        message,
+                        { Utils.openSetting(context!!) },
+                        {}
+                    )
+                }
+            }
+
+            override fun onPermissionRationaleShouldBeShown(
+                permissions: MutableList<PermissionRequest>?,
+                token: PermissionToken?
+            ) {
+                Utils.showDialogToInformPermission(
+                    context!!,
+                    childFragmentManager,
+                    drawableIconId,
+                    message,
+                    { token!!.continuePermissionRequest() },
+                    { token!!.cancelPermissionRequest() }
+                )
+            }
+        }).check()
+}
+
+fun Fragment.showToast(message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
 
 @BindingAdapter("background")
 fun bindBackground(imageView: ImageView, imageUrl: String) {

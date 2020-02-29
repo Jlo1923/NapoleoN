@@ -22,16 +22,16 @@
         android:background="@drawable/bg_home_item"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{() -> clickListener.onClick(conversation)}"
-        android:padding="7dp">
+        android:padding="@dimen/small_padding">
 
         <ImageView
             android:id="@+id/imageView_user_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="5dp"
+            android:background="@drawable/border_avatar_contact"
             android:onClick="@{() -> clickListener.onClickAvatar(conversation)}"
             app:avatar="@{conversation.contact}"
-            android:background="@drawable/border_avatar_contact"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
-            android:textColor="@color/buttonTint"
+            android:textColor="?attr/attrColorButtonTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"

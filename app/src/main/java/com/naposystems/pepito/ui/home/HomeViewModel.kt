@@ -63,7 +63,17 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
             try {
                 repository.getContacts()
                 repository.getRemoteMessages()
-            } catch (ex: Exception){
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    override fun getDeletedMessages() {
+        viewModelScope.launch {
+            try {
+                repository.getDeletedMessages()
+            } catch (ex: Exception) {
                 Timber.e(ex)
             }
         }

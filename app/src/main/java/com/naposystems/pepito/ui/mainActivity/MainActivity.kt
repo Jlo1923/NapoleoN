@@ -34,6 +34,7 @@ import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
+import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -76,20 +79,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             WindowManager.LayoutParams.FLAG_SECURE
         )
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-        /*binding.toolbar.setOnClickListener() {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
-        }*/
-
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
 
-        viewModel.getTheme()
+        //viewModel.getTheme()
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
             accountStatus = it
         })
+
+        val ola = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
+        when(ola) {
+            1 -> setTheme(R.style.AppTheme)
+            3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
+            4 -> setTheme(R.style.AppThemeColdOcean)
+            5 -> setTheme(R.style.AppThemeCamouflage)
+            6 -> setTheme(R.style.AppThemePurpleBluebonnets)
+            7 -> setTheme(R.style.AppThemePinkDream)
+            8 -> setTheme(R.style.AppThemeClearSky)
+        }
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         val disposableNoInternetConnection = RxBus.listen(RxEvent.NoInternetConnection::class.java)
             .observeOn(AndroidSchedulers.mainThread())
@@ -120,10 +130,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.splashFragment,
                 R.id.landingFragment,
                 R.id.registerFragment,
-                R.id.previewImageSendFragment,
                 R.id.enterPinFragment,
                 R.id.unlockAppTimeFragment,
-                R.id.conversationCameraFragment -> {
+                R.id.conversationCameraFragment,
+                R.id.attachmentPreviewFragment -> {
                     hideToolbar()
                     disableDrawer()
                 }
@@ -139,12 +149,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
                     binding.frameLayout.elevation = 0f
-                    binding.toolbar.setBackgroundColor(
+                    /*binding.toolbar.setBackgroundColor(
                         resources.getColor(
                             R.color.flatActionBarColor,
                             this.theme
                         )
-                    )
+                    )*/
                 }
                 R.id.accessPinFragment -> {
                     if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {
@@ -154,6 +164,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         showToolbar()
                         dontOpenMenu()
                     }
+                }
+                R.id.attachmentAudioFragment -> {
+                    showToolbar()
+                    supportActionBar?.subtitle = getString(R.string.text_tap_to_select)
+                    disableDrawer()
                 }
                 else -> {
                     showToolbar()
@@ -178,13 +193,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         viewModel.theme.observe(this, Observer {
-            val theme = when (it) {
+/*            when(it) {
+                1 ->{
+                    setTheme(R.style.AppTheme)
+                }
+                6 ->{
+                    setTheme(R.style.AppThemePink)
+                }
+            }*/
+/*            val theme = when (it) {
                 Constants.ColorScheme.LIGHT_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_NO
                 Constants.ColorScheme.DARK_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_YES
                 else -> AppCompatDelegate.MODE_NIGHT_NO
             }
 
-            AppCompatDelegate.setDefaultNightMode(theme)
+            AppCompatDelegate.setDefaultNightMode(theme)*/
         })
 
         binding.navView.setNavigationItemSelectedListener(this)
@@ -287,6 +310,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun resetToolbar() {
         with(supportActionBar!!) {
+            subtitle = ""
             setDisplayShowCustomEnabled(false)
             setDisplayShowTitleEnabled(true)
             setDisplayHomeAsUpEnabled(true)

@@ -6,60 +6,327 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="colorControlNormal">@color/white</item>
         <item name="android:textSize">@dimen/normal_text_size</item>
         <item name="fontFamily">@font/roboto</item>
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textCursorDrawable">@null</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimary</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColor</item>
+        <item name="attrIconTintWhite">@color/white</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondary</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColor</item>
+        <item name="attrTextColorButtonTint">@color/buttonTint</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTint</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/red</item>
+        <item name="attrStrokeColorRed">@color/red</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/white</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColor</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessage</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessage</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColor</item>
+        <item name="attrTextColorColorError">@color/colorError</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColor</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTint</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackground</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDark</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimary</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorError</item>
+        <item name="attrErrorTextColorColorError">@color/colorError</item>
+        <item name="attrErrorIconTintColorError">@color/colorError</item>
+        <item name="attrColorButtonTint">@color/colorPrimaryDark</item>
+        <item name="attrColorTrackColor">@color/trackColor</item>
+        <item name="attrSeparatorColor">@color/separator</item>
+
+    </style>
+
+    <style name="AppThemePinkDream" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryPinkDream</item>
+        <item name="colorSecondary">@color/colorSecondaryPinkDream</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkPinkDream</item>
+        <item name="android:colorBackground">@color/colorBackgroundPinkDream</item>
+        <item name="colorAccent">@color/colorPrimaryPinkDream</item>
+        <item name="colorControlNormal">@color/whitePinkDream</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimaryPinkDream</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorPinkDream</item>
+        <item name="attrIconTintWhite">@color/whitePinkDream</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryPinkDream</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorPinkDream</item>
+        <item name="attrTextColorButtonTint">@color/buttonTintPinkDream</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTintPinkDream</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/redPinkDream</item>
+        <item name="attrStrokeColorRed">@color/redPinkDream</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/whitePinkDream</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColorPinkDream</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightPinkDream</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorPinkDream</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColorPinkDream</item>
+        <item name="attrTextColorColorError">@color/colorErrorPinkDream</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorPinkDream</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTintPinkDream</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackgroundPinkDream</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkPinkDream</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimaryPinkDream</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorPinkDream</item>
+        <item name="attrErrorTextColorColorError">@color/colorErrorPinkDream</item>
+        <item name="attrErrorIconTintColorError">@color/colorErrorPinkDream</item>
+        <item name="attrColorButtonTint">@color/colorPrimaryDarkPinkDream</item>
+        <item name="attrColorTrackColor">@color/trackColorPinkDream</item>
+        <item name="android:itemBackground">@color/colorBackgroundPinkDream</item>
+        <item name="android:panelFullBackground">@color/colorBackgroundPinkDream</item>
+        <item name="attrSeparatorColor">@color/buttonTintPinkDream</item>
+
+    </style>
+
+    <style name="AppThemeClearSky" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryClearSky</item>
+        <item name="colorSecondary">@color/colorSecondaryClearSky</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkClearSky</item>
+        <item name="android:colorBackground">@color/colorBackgroundClearSky</item>
+        <item name="colorAccent">@color/colorPrimaryClearSky</item>
+        <item name="colorControlNormal">@color/whiteClearSky</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimaryClearSky</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorClearSky</item>
+        <item name="attrIconTintWhite">@color/whiteClearSky</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryClearSky</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorClearSky</item>
+        <item name="attrTextColorButtonTint">@color/buttonTintClearSky</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTintClearSky</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/redClearSky</item>
+        <item name="attrStrokeColorRed">@color/redClearSky</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/whiteClearSky</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColorClearSky</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightClearSky</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorClearSky</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColorClearSky</item>
+        <item name="attrTextColorColorError">@color/colorErrorClearSky</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorClearSky</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTintClearSky</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackgroundClearSky</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkClearSky</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimaryClearSky</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorClearSky</item>
+        <item name="attrErrorTextColorColorError">@color/colorErrorClearSky</item>
+        <item name="attrErrorIconTintColorError">@color/colorErrorClearSky</item>
+        <item name="attrColorButtonTint">@color/colorPrimaryDarkClearSky</item>
+        <item name="attrColorTrackColor">@color/trackColorClearSky</item>
+        <item name="android:itemBackground">@color/colorBackgroundClearSky</item>
+        <item name="android:panelFullBackground">@color/colorBackgroundClearSky</item>
+        <item name="attrSeparatorColor">@color/buttonTintClearSky</item>
+
+    </style>
+
+    <style name="AppThemePurpleBluebonnets" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryPurpleBluebonnets</item>
+        <item name="colorSecondary">@color/colorSecondaryPurpleBluebonnets</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkPurpleBluebonnets</item>
+        <item name="android:colorBackground">@color/colorBackgroundPurpleBluebonnets</item>
+        <item name="colorAccent">@color/colorPrimaryPurpleBluebonnets</item>
+        <item name="colorControlNormal">@color/whitePurpleBluebonnets</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimaryPurpleBluebonnets</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorPurpleBluebonnets</item>
+        <item name="attrIconTintWhite">@color/whitePurpleBluebonnets</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryPurpleBluebonnets</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorPurpleBluebonnets</item>
+        <item name="attrTextColorButtonTint">@color/buttonTintPurpleBluebonnets</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTintPurpleBluebonnets</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/redPurpleBluebonnets</item>
+        <item name="attrStrokeColorRed">@color/redPurpleBluebonnets</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/whitePurpleBluebonnets</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColorPurpleBluebonnets</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightPurpleBluebonnets</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorPurpleBluebonnets</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColorPurpleBluebonnets</item>
+        <item name="attrTextColorColorError">@color/colorErrorPurpleBluebonnets</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorPurpleBluebonnets</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTintPurpleBluebonnets</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackgroundPurpleBluebonnets</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkPurpleBluebonnets</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimaryPurpleBluebonnets</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorPurpleBluebonnets</item>
+        <item name="attrErrorTextColorColorError">@color/colorErrorPurpleBluebonnets</item>
+        <item name="attrErrorIconTintColorError">@color/colorErrorPurpleBluebonnets</item>
+        <item name="attrColorButtonTint">@color/colorPrimaryDarkPurpleBluebonnets</item>
+        <item name="attrColorTrackColor">@color/trackColorPurpleBluebonnets</item>
+        <item name="android:itemBackground">@color/colorBackgroundPurpleBluebonnets</item>
+        <item name="android:panelFullBackground">@color/colorBackgroundPurpleBluebonnets</item>
+        <item name="attrSeparatorColor">@color/buttonTintPurpleBluebonnets</item>
+
+    </style>
+
+    <style name="AppThemeCamouflage" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryCamouflage</item>
+        <item name="colorSecondary">@color/colorSecondaryCamouflage</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkCamouflage</item>
+        <item name="android:colorBackground">@color/colorBackgroundCamouflage</item>
+        <item name="colorAccent">@color/colorPrimaryCamouflage</item>
+        <item name="colorControlNormal">@color/whiteCamouflage</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimaryCamouflage</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorCamouflage</item>
+        <item name="attrIconTintWhite">@color/whiteCamouflage</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryCamouflage</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorCamouflage</item>
+        <item name="attrTextColorButtonTint">@color/buttonTintCamouflage</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTintCamouflage</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/redCamouflage</item>
+        <item name="attrStrokeColorRed">@color/redCamouflage</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/whiteCamouflage</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColorCamouflage</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightCamouflage</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorCamouflage</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColorCamouflage</item>
+        <item name="attrTextColorColorError">@color/colorErrorCamouflage</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorCamouflage</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTintCamouflage</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackgroundCamouflage</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkCamouflage</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimaryCamouflage</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorCamouflage</item>
+        <item name="attrErrorTextColorColorError">@color/colorErrorCamouflage</item>
+        <item name="attrErrorIconTintColorError">@color/colorErrorCamouflage</item>
+        <item name="attrColorButtonTint">@color/colorPrimaryDarkCamouflage</item>
+    </style>
+
+    <style name="AppThemeBlackGoldAlloy" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryBlackGoldAlloy</item>
+        <item name="colorSecondary">@color/colorSecondaryBlackGoldAlloy</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlackGoldAlloy</item>
+        <item name="android:colorBackground">@color/colorBackgroundBlackGoldAlloy</item>
+        <item name="colorAccent">@color/colorPrimaryBlackGoldAlloy</item>
+        <item name="colorControlNormal">@color/whiteBlackGoldAlloy</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimaryBlackGoldAlloy</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorBlackGoldAlloy</item>
+        <item name="attrIconTintWhite">@color/whiteBlackGoldAlloy</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryBlackGoldAlloy</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorBlackGoldAlloy</item>
+        <item name="attrTextColorButtonTint">@color/buttonTintBlackGoldAlloy</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTintBlackGoldAlloy</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/redBlackGoldAlloy</item>
+        <item name="attrStrokeColorRed">@color/redBlackGoldAlloy</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/whiteBlackGoldAlloy</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColorBlackGoldAlloy</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessageBlackGoldAlloy</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessageBlackGoldAlloy</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColorBlackGoldAlloy</item>
+        <item name="attrTextColorColorError">@color/colorErrorBlackGoldAlloy</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorBlackGoldAlloy</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTintBlackGoldAlloy</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackgroundBlackGoldAlloy</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkBlackGoldAlloy</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimaryBlackGoldAlloy</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorBlackGoldAlloy</item>
+        <item name="attrErrorTextColorColorError">@color/colorErrorBlackGoldAlloy</item>
+        <item name="attrErrorIconTintColorError">@color/colorErrorBlackGoldAlloy</item>
+        <item name="attrColorButtonTint">@color/colorPrimaryDarkBlackGoldAlloy</item>
+    </style>
+
+    <style name="AppThemeColdOcean" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryColdOcean</item>
+        <item name="colorSecondary">@color/colorSecondaryColdOcean</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkColdOcean</item>
+        <item name="android:colorBackground">@color/colorBackgroundColdOcean</item>
+        <item name="colorAccent">@color/colorPrimaryColdOcean</item>
+        <item name="colorControlNormal">@color/whiteColdOcean</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimaryColdOcean</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorColdOcean</item>
+        <item name="attrIconTintWhite">@color/whiteColdOcean</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryColdOcean</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorColdOcean</item>
+        <item name="attrTextColorButtonTint">@color/buttonTintColdOcean</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTintColdOcean</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/redColdOcean</item>
+        <item name="attrStrokeColorRed">@color/redColdOcean</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/whiteColdOcean</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColorColdOcean</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessageColdOcean</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessageColdOcean</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColorColdOcean</item>
+        <item name="attrTextColorColorError">@color/colorErrorColdOcean</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorColdOcean</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTintColdOcean</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackgroundColdOcean</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkColdOcean</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimaryColdOcean</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorColdOcean</item>
+        <item name="attrErrorTextColorColorError">@color/colorErrorColdOcean</item>
+        <item name="attrErrorIconTintColorError">@color/colorErrorColdOcean</item>
+        <item name="attrColorButtonTint">@color/colorPrimaryDarkColdOcean</item>
     </style>
 
     <style name="AppPrimaryButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:background">?attr/attrBackgroundColorPrimary</item>
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
         <item name="layout_constraintWidth_percent">@dimen/width_app_button</item>
     </style>
 
     <style name="AppPrimaryButton.Icon" parent="Widget.MaterialComponents.Button.Icon">
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:background">?attr/attrBackgroundColorPrimary</item>
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
         <item name="layout_constraintWidth_percent">@dimen/width_app_button</item>
-        <item name="iconTint">@color/white</item>
+        <item name="iconTint">?attr/attrIconTintWhite</item>
     </style>
 
     <style name="AppSecondaryButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:backgroundTint">@color/colorSecondary</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:backgroundTint">?attr/attrBackgroundTintColorSecondary</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="AppOutlinedPrimaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:textColor">@color/buttonTint</item>
-        <item name="strokeColor">@color/buttonTint</item>
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
+        <item name="strokeColor">?attr/attrStrokeColorButtonTint</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="AppOutlinedPrimaryButtonSmall" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:textColor">@color/buttonTint</item>
+        <item name="android:textColor">@color/green</item>
         <item name="iconTint">@null</item>
         <item name="android:textSize">@dimen/minor_text_size</item>
-        <item name="strokeColor">@color/buttonTint</item>
+        <item name="strokeColor">@color/green</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
-        <item name="rippleColor">@color/ripple_tint</item>
+        <item name="rippleColor">?attr/attrRippleColorRippleTint</item>
     </style>
 
     <style name="AppOutlinedPrimaryButtonSmall.Red" parent="AppOutlinedPrimaryButtonSmall">
-        <item name="android:textColor">@color/red</item>
-        <item name="strokeColor">@color/red</item>
-        <item name="rippleColor">@color/ripple_red</item>
+        <item name="android:textColor">?attr/attrTextColorRed</item>
+        <item name="strokeColor">?attr/attrStrokeColorRed</item>
+        <item name="rippleColor">?attr/attrRippleColorRed</item>
     </style>
 
     <style name="AppPrimaryButtonText.Keyboard" parent="Widget.MaterialComponents.Button.TextButton">
@@ -72,30 +339,34 @@
     </style>
 
     <style name="AppPrimaryButtonText" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:textColor">@color/buttonTint</item>
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
         <item name="android:textSize">@dimen/normal_button_text_size</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="AppPrimaryButtonText.Primary">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
     <style name="TextViewPrimaryTitle">
         <item name="android:textSize">@dimen/title_text_size</item>
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextViewSecondaryTitle">
         <item name="android:textSize">@dimen/title_text_size</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextViewSecondaryTitle.White">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
     </style>
 
     <style name="BodyTextView">
         <item name="android:textSize">@dimen/normal_text_size</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
     </style>
 
     <style name="BodyTextView.nickname">
@@ -112,29 +383,34 @@
     </style>
 
     <style name="BodyTextView.White">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
     </style>
 
     <style name="TextViewListTitle" parent="BodyTextView.Bold">
-        <item name="android:background">@color/sectionColor</item>
+        <item name="android:background">?attr/attrBackgroundSectionColor</item>
         <item name="android:padding">@dimen/small_padding</item>
+
     </style>
 
     <style name="BodyTextView.Tint">
-        <item name="android:textColor">@color/buttonTint</item>
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
+    </style>
+
+    <style name="BodyTextView.SecondaryForAll">
+        <item name="android:textColor">@color/secondaryTextColorForAll</item>
     </style>
 
     <style name="MyMessageTextView" parent="BodyTextView">
-        <item name="android:textColor">@color/colorTextMyMessage</item>
+        <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
     </style>
 
     <style name="IncomingMessageTextView" parent="BodyTextView">
-        <item name="android:textColor">@color/colorTextIncomingMessage</item>
+        <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
     </style>
 
     <style name="SmallBodyTextView">
         <item name="android:textSize">@dimen/small_text_size</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
     </style>
 
     <style name="SmallBodyTextView.Time">
@@ -144,37 +420,37 @@
 
     <style name="SmallBodyTextView.Link">
         <item name="android:textSize">@dimen/small_text_size</item>
-        <item name="android:textColor">@color/linkTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorLinkTextColor</item>
     </style>
 
     <style name="SmallBodyTextView.Error" parent="SmallBodyTextView">
-        <item name="android:textColor">@color/colorError</item>
+        <item name="android:textColor">?attr/attrTextColorColorError</item>
     </style>
 
     <style name="SmallBodyTextView.White" parent="SmallBodyTextView">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
     </style>
 
     <style name="MyMessageDateTextView" parent="SmallBodyTextView">
-        <item name="android:textColor">@color/colorTextMyMessage</item>
+        <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
     </style>
 
     <style name="IncomingMessageDateTextView" parent="SmallBodyTextView">
-        <item name="android:textColor">@color/colorTextIncomingMessage</item>
+        <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
     </style>
 
     <style name="SmallBodyTextView.WhiteBold" parent="SmallBodyTextView">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="MinorBodyTextView">
         <item name="android:textSize">@dimen/minor_text_size</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
     </style>
 
     <style name="MinorBodyTextView.White" parent="MinorBodyTextView">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
     </style>
 
     <style name="DialogAnimation">
@@ -188,24 +464,24 @@
         <item name="android:background">@drawable/bg_enter_code</item>
         <item name="android:textAlignment">center</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
         <item name="android:textSize">@dimen/text_size_editText_enter_code</item>
         <item name="android:maxLength">1</item>
         <item name="android:hint">@string/middle_dash</item>
     </style>
 
     <style name="TextInputLayoutOutlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="hintTextColor">@color/secondaryTextColor</item>
-        <item name="boxStrokeColor">@color/textinput_layout_box_color</item>
-        <item name="boxStrokeErrorColor">@color/colorError</item>
-        <item name="android:colorAccent">@color/buttonTint</item>
-        <item name="errorTextColor">@color/colorError</item>
-        <item name="errorIconTint">@color/colorError</item>
+        <item name="hintTextColor">?attr/attrHintTextColorSecondaryTextColor</item>
+        <item name="boxStrokeColor">?attr/attrBackgroundSectionColor</item>
+        <item name="boxStrokeErrorColor">?attr/attrBoxStrokeErrorColorColorError</item>
+        <item name="android:colorAccent">?attr/attrColorButtonTint</item>
+        <item name="errorTextColor">?attr/attrErrorTextColorColorError</item>
+        <item name="errorIconTint">?attr/attrErrorIconTintColorError</item>
     </style>
 
     <style name="EditTextInputPanel" parent="Widget.AppCompat.EditText">
-        <item name="hintTextColor">@color/secondaryTextColor</item>
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="hintTextColor">?attr/attrHintTextColorSecondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorColorPrimary</item>
     </style>
 
     <style name="OptionEndIcon">
@@ -213,14 +489,14 @@
         <item name="android:layout_height">24dp</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:tint">@color/colorSecondaryDark</item>
+        <item name="android:tint">?attr/attrTintColorSecondaryDark</item>
     </style>
 
     <style name="OptionStartIcon">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:tint">@color/colorSecondaryDark</item>
+        <item name="android:tint">?attr/attrTintColorSecondaryDark</item>
     </style>
 
     <style name="Option">
@@ -234,7 +510,7 @@
     </style>
 
     <style name="Option.WithOutLine">
-        <item name="android:background">@color/colorBackground</item>
+        <item name="android:background">?attr/attrBackgroundColorBackground</item>
     </style>
 
     <style name="OptionTitle" parent="BodyTextView.Bold">
@@ -304,17 +580,72 @@
 
     <style name="TextViewCountTime">
         <item name="android:textSize">@dimen/count_time_size</item>
-        <item name="android:textColor">@color/buttonTint</item>
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="BackgroundSpinner" >
+    <style name="BackgroundSpinner">
         <item name="android:background">@drawable/bg_spinner</item>
     </style>
+
     <style name="FabPrimary">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:backgroundTint">@color/buttonTint</item>
+        <item name="android:backgroundTint">?attr/attrBackgroundTintButtonTint</item>
+    </style>
+
+    <style name="RadioButtonTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layoutDirection">rtl</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
+    <style name="MyAppActionBarTheme" parent="android:Theme.Holo.Light">
+        <item name="android:popupMenuStyle">@style/MyApp.PopupMenu</item>
+    </style>
+
+    <style name="MyApp.PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">?attr/attrBackgroundColorBackground</item>
+    </style>
+
+    <style name="FabGoDown">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/colorPrimaryDark</item>
+        <item name="titleTextStyle">@style/ActionModeTitleTextStyle</item>
+    </style>
+
+    <style name="ActionModeTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AudioPlayerControlStyle">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="AudioPlayerControlStyle.Incoming">
+        <item name="android:tint">@color/colorTextIncomingMessage</item>
+    </style>
+
+    <style name="SeekbarMyMessageStyle">
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:max">100</item>
+        <item name="android:progressBackgroundTint">@color/black</item>
+        <item name="android:progressTint">@color/white</item>
+        <item name="android:thumbTint">@color/colorSecondary</item>
     </style>
 
 </resources>

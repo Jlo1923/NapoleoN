@@ -74,7 +74,7 @@
                     android:id="@+id/textView_information"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@color/sectionColor"
+                    android:background="?attr/attrBackgroundSectionColor"
                     android:inputType="textCapCharacters"
                     android:padding="@dimen/normal_padding"
                     android:text="@string/text_information"
@@ -99,7 +99,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_person_black" />
 
-                    <com.naposystems.pepito.ui.custom.AnimatedVectorView
+                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
                         android:id="@+id/imageButton_change_name_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_at_black" />
 
-                    <com.naposystems.pepito.ui.custom.AnimatedVectorView
+                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
                         android:id="@+id/imageButton_change_nickname_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -198,7 +198,7 @@
                     android:id="@+id/textView_general"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@color/sectionColor"
+                    android:background="?attr/attrBackgroundSectionColor"
                     android:padding="@dimen/normal_padding"
                     android:text="@string/text_general"
                     app:layout_constraintEnd_toEndOf="parent"
