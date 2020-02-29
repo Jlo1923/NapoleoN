@@ -4,6 +4,10 @@ object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
     const val DATA_CRYPT = "datacrypt"
+    const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 1
+    const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
+    const val QUANTITY_TO_HIDE_ACTIONMODE = 0
+    const val QUANTITY_ATTACHMENTS = 0
 
     object NapoleonApi {
         const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
@@ -33,6 +37,7 @@ object Constants {
         const val GET_FRIENDSHIP_REQUEST_QUANTITY = "friendshiprequest/countfriendshiprequest"
         const val PUT_BLOCK_CONTACT = "friendship/blockuser/{id}"
         const val DELETE_CONTACT = "friendship/{id}"
+        const val DELETE_MESSAGES_FOR_ALL = "destroymessages"
         const val PUT_UNBLOCK_CONTACT = "friendship/unblockuser/{id}"
     }
 

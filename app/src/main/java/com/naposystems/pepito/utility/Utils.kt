@@ -15,6 +15,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
@@ -158,6 +159,78 @@ class Utils {
             dialog.show(childFragmentManager, "GeneralDialog")
         }
 
+        fun alertDialogWithNeutralButton(
+            message: Int,
+            isCancelable: Boolean,
+            childFragmentManager: Context,
+            titleTopButton: Int,
+            titleCentralButton: Int,
+            titleDownButton: Int,
+            clickTopButton: (Boolean) -> Unit,
+            clickDownButton: (Boolean) -> Unit
+        ) {
+            val dialog = AlertDialog.Builder(childFragmentManager)
+                .setMessage(message)
+                .setCancelable(isCancelable)
+                .setPositiveButton(titleTopButton) { _, _ ->
+                    clickTopButton(true)
+                }
+                .setNeutralButton(titleCentralButton) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setNegativeButton(titleDownButton) { _, _ ->
+                    clickDownButton(true)
+                }
+                .create()
+
+            dialog.show()
+
+            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(textColorButton)
+            positiveButton.isAllCaps = false
+
+            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+            neutralButton.setTextColor(textColorButton)
+            neutralButton.isAllCaps = false
+
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            negativeButton.setTextColor(textColorButton)
+            negativeButton.isAllCaps = false
+        }
+
+        fun alertDialogWithoutNeutralButton(
+            message: Int,
+            isCancelable: Boolean,
+            childFragmentManager: Context,
+            titlePositiveButton: Int,
+            titleNegativeButton: Int,
+            clickTopButton: (Boolean) -> Unit
+        ) {
+            val dialog = AlertDialog.Builder(childFragmentManager)
+                .setMessage(message)
+                .setCancelable(isCancelable)
+                .setPositiveButton(titlePositiveButton) { _, _ ->
+                    clickTopButton(true)
+                }
+                .setNegativeButton(titleNegativeButton) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+
+            dialog.show()
+
+            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(textColorButton)
+            positiveButton.isAllCaps = false
+
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            negativeButton.setTextColor(textColorButton)
+            negativeButton.isAllCaps = false
+        }
+
         fun queryName(resolver: ContentResolver, uri: Uri): String {
             val returnCursor =
                 resolver.query(uri, null, null, null, null)
@@ -170,8 +243,8 @@ class Utils {
         }
 
 
-        fun convertBooleanToInvertedInt(boolean: Boolean) : Int {
-            return if(boolean) {
+        fun convertBooleanToInvertedInt(boolean: Boolean): Int {
+            return if (boolean) {
                 0
             } else {
                 1

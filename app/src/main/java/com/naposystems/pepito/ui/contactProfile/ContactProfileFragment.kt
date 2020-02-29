@@ -35,7 +35,6 @@ import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.profile_fragment.*
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -182,6 +181,17 @@ class ContactProfileFragment : Fragment() {
         }
 
         binding.optionDeleteConversation.setOnClickListener {
+            Utils.generalDialog(
+                getString(R.string.text_delete_conversation),
+                getString(R.string.text_want_delete_conversation),
+                true,
+                childFragmentManager
+            ) {
+                viewModel.deleteConversation(args.idContact)
+            }
+        }
+
+        binding.optionBlockContact.setOnClickListener {
             Utils.generalDialog(
                 getString(R.string.text_delete_conversation),
                 getString(R.string.text_want_delete_conversation),

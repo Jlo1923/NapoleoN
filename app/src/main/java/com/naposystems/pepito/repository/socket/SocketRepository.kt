@@ -83,4 +83,38 @@ class SocketRepository @Inject constructor(
             }
         }
     }
+
+    override fun getDeletedMessages() {
+        GlobalScope.launch {
+            val response = napoleonApi.getDeletedMessages()
+            if(response.isSuccessful) {
+                val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
+                messageLocalDataSource.deletedMessages(response.body()!!)
+                when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(idContact)) {
+                    null -> {
+                        conversationLocalDataSource.cleanConversation(idContact)
+                    }
+                    else -> {
+                        conversationLocalDataSource.getQuantityUnreads(idContact).let { quantityUnreads->
+                            if (quantityUnreads > 0) {
+                                conversationLocalDataSource.updateConversationByContact(
+                                    idContact,
+                                    messageAndAttachment.message.body,
+                                    messageAndAttachment.message.createdAt,
+                                    messageAndAttachment.message.status,
+                                    quantityUnreads - response.body()!!.count())
+                            } else {
+                                conversationLocalDataSource.updateConversationByContact(
+                                    idContact,
+                                    messageAndAttachment.message.body,
+                                    messageAndAttachment.message.createdAt,
+                                    messageAndAttachment.message.status,
+                                    0)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

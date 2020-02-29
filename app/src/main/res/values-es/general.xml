@@ -30,4 +30,7 @@
     <string name="text_sent">Enviado</string>
     <string name="text_refuse">Rechazar</string>
     <string name="text_information">INFORMACIÓN</string>
+    <string name="text_delete_conversation">Eliminar conversación</string>
+    <string name="text_block_contact">Bloquear contacto</string>
+
 </resources>

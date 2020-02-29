@@ -8,4 +8,9 @@
     <string name="text_start_chat">Iniciar bate-papo</string>
     <string name="text_view_profile">Ver perfil</string>
     <string name="text_delete_contact">Contacto de exclusão</string>
+    <string name="text_delete_messages">Excluir mensagens?</string>
+    <string name="text_delete_message_for_me">Excluir para mim</string>
+    <string name="text_delete_message_for_all">Eliminar para todos</string>
+    <string name="text_message_copied">Mensagem copiada</string>
+
 </resources>

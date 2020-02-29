@@ -13,6 +13,7 @@
     <color name="black">#000000</color>
     <color name="black_212121">#212121</color>
     <color name="gray_F2F2F4">#F2F2F4</color>
+    <color name="gray_8B8989">#8B8989</color>
     <color name="black_40">#66000000</color>
     <color name="colorError">#EF5350</color>
     <color name="separator">#CCCCCC</color>
@@ -32,4 +33,6 @@
     <color name="red">#DA5E58</color>
     <color name="searchViewTextColor">#4d4d4d</color>
     <color name="searchViewHintColor">#808080</color>
+    <color name="fabNotificationMessage">#AF8B8989</color>
+    <color name="colorButtonAlertDialog">#d8a608</color>
 </resources>
