@@ -59,7 +59,7 @@
             android:layout_marginTop="@dimen/x_small_margin"
             android:ellipsize="end"
             android:lines="1"
-            android:textColor="@color/buttonTint"
+            android:textColor="?attr/attrColorButtonTint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/textView_user_name"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"

@@ -70,6 +70,17 @@ object Constants {
         ONLY_NICKNAME(3)
     }
 
+    enum class ThemesApplication constructor(val theme: Int) {
+        LIGHT_NAPOLEON(1),
+        DARK_NAPOLEON(2),
+        BLACK_GOLD_ALLOY(3),
+        COLD_OCEAN(4),
+        CAMOUFLAGE(5),
+        PURPLE_BLUEBONNETS(6),
+        PINK_DREAM(7),
+        CLEAR_SKY(8)
+    }
+
     enum class SelfDestructTime constructor(val time: Int) {
         EVERY_FIVE_MINUTES(1),
         EVERY_FIFTEEN_MINUTES(2),

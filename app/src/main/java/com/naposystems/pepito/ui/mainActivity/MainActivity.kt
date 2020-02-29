@@ -29,6 +29,7 @@ import com.naposystems.pepito.databinding.ActivityMainBinding
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
+import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -38,6 +39,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -65,11 +68,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
 
-        viewModel.getTheme()
+        //viewModel.getTheme()
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
             accountStatus = it
         })
+
+        val ola = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
+        when(ola) {
+            1 -> setTheme(R.style.AppTheme)
+            3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
+            4 -> setTheme(R.style.AppThemeColdOcean)
+            5 -> setTheme(R.style.AppThemeCamouflage)
+            6 -> setTheme(R.style.AppThemePurpleBluebonnets)
+            7 -> setTheme(R.style.AppThemePinkDream)
+            8 -> setTheme(R.style.AppThemeClearSky)
+        }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
@@ -109,12 +123,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
                     binding.frameLayout.elevation = 0f
-                    binding.toolbar.setBackgroundColor(
+                    /*binding.toolbar.setBackgroundColor(
                         resources.getColor(
                             R.color.flatActionBarColor,
                             this.theme
                         )
-                    )
+                    )*/
                 }
                 R.id.accessPinFragment -> {
                     if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {
@@ -146,13 +160,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         viewModel.theme.observe(this, Observer {
-            val theme = when (it) {
+/*            when(it) {
+                1 ->{
+                    setTheme(R.style.AppTheme)
+                }
+                6 ->{
+                    setTheme(R.style.AppThemePink)
+                }
+            }*/
+/*            val theme = when (it) {
                 Constants.ColorScheme.LIGHT_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_NO
                 Constants.ColorScheme.DARK_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_YES
                 else -> AppCompatDelegate.MODE_NIGHT_NO
             }
 
-            AppCompatDelegate.setDefaultNightMode(theme)
+            AppCompatDelegate.setDefaultNightMode(theme)*/
         })
 
         viewModel.timeAccessPin.observe(this, Observer {
