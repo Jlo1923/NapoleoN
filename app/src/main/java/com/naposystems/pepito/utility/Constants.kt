@@ -90,6 +90,11 @@ object Constants {
         EVERY_TWENTY_FOUR_HOURS(6)
     }
 
+    enum class MessageSelfDestructTimeNotSent constructor(val time: Int) {
+        TWENTY_FOUR(1),
+        SEVEN_DAYS(2)
+    }
+
     enum class TimeRequestAccessPin constructor(val time: Int) {
         IMMEDIATELY(1),
         TEN_SECONDS(10000),
@@ -210,6 +215,7 @@ object Constants {
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
         const val PREF_SECRET_KEY = "secret_key"
         const val PREF_OUTPUT_CONTROL = "output_control"
+        const val PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT = "message_self_destruct_time_not_sent"
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"
@@ -226,5 +232,9 @@ object Constants {
         const val ONLY_LETTERS_AND_NUMBERS = "^[a-zA-Z0-9]*$"
         const val NICKNAME = "^[a-zA-Z0-9]{5,20}$"
         const val NAME_TO_SHOW = "^[a-zA-ZñÑ]+(([' ][a-zA-ZñÑ ])?[a-zA-Z]){5,50}$"
+    }
+
+    object ValidConnection {
+        const val REQUEST_PIN = "ping -c 1 www.google.com"
     }
 }

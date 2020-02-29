@@ -12,11 +12,6 @@ class SecuritySettingsRepository @Inject constructor(
     override fun getSelfDestructTime(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME)
     }
-
-    override fun getTimeRequestAccessPin(): Int {
-        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN)
-    }
-
     override fun getAllowDownload(): Int {
         return sharedPreferencesManager.getInt(
             Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS
@@ -30,9 +25,19 @@ class SecuritySettingsRepository @Inject constructor(
         )
     }
 
+    override fun getMessageSelfDestructTimeNotSent(): Int {
+        return sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+        )
+    }
+
     override fun getBiometricsOption(): Int {
         return sharedPreferencesManager.getInt(
             Constants.SharedPreferences.PREF_BIOMETRICS_OPTION
         )
+    }
+
+    override fun getTimeRequestAccessPin(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN)
     }
 }

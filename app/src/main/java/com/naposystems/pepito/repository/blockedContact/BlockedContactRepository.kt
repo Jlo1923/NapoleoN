@@ -2,15 +2,10 @@ package com.naposystems.pepito.repository.blockedContact
 
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
-import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactErrorDTO
-import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.blockedContacts.IContractBlockedContact
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.webService.NapoleonApi
-import com.squareup.moshi.Moshi
-import okhttp3.ResponseBody
-import retrofit2.Response
 import timber.log.Timber
 
 class BlockedContactRepository constructor(
@@ -37,23 +32,5 @@ class BlockedContactRepository constructor(
 
     override suspend fun getBlockedContactsLocal(): LiveData<List<Contact>> {
         return contactLocalDataSource.getBlockedContacts()
-    }
-
-    override suspend fun unblockContact(contact: Contact): Response<UnblockContactResDTO> {
-        return napoleonApi.putUnblockContact(contact.id.toString())
-    }
-
-    override suspend fun unblockContactLocal(contactId: Int) {
-        contactLocalDataSource.unblockContact(contactId)
-    }
-
-    override fun getDefaultError(response: ResponseBody): ArrayList<String> {
-        val moshi = Moshi.Builder().build()
-        val adapter = moshi.adapter(UnblockContactErrorDTO::class.java)
-        val errorJson = adapter.fromJson(response.string())
-        val errorList = ArrayList<String>()
-
-        errorList.add(errorJson!!.error)
-        return errorList
     }
 }

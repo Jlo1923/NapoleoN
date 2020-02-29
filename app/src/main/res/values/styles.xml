@@ -329,6 +329,15 @@
         <item name="rippleColor">?attr/attrRippleColorRed</item>
     </style>
 
+    <style name="AppPrimaryButtonText.Keyboard" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textSize">36dp</item>
+        <item name="android:textColor">@color/keboard_color</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="tint">@color/keboard_color</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
     <style name="AppPrimaryButtonText" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textColor">?attr/attrTextColorButtonTint</item>
         <item name="android:textSize">@dimen/normal_button_text_size</item>
@@ -358,6 +367,15 @@
     <style name="BodyTextView">
         <item name="android:textSize">@dimen/normal_text_size</item>
         <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
+    <style name="BodyTextView.nickname">
+        <item name="android:textSize">@dimen/normal_text_size</item>
+    </style>
+
+    <style name="BodyTextView.message">
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
     </style>
 
     <style name="BodyTextView.Bold">
@@ -393,6 +411,11 @@
     <style name="SmallBodyTextView">
         <item name="android:textSize">@dimen/small_text_size</item>
         <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
+    <style name="SmallBodyTextView.Time">
+        <item name="android:textSize">@dimen/minor_text_size</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
     </style>
 
     <style name="SmallBodyTextView.Link">
@@ -507,6 +530,7 @@
         <item name="android:maxLength">@dimen/max_length_display_name</item>
         <item name="android:padding">0dp</item>
         <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/buttonTint</item>
     </style>
 
     <style name="AccessPinEditText">

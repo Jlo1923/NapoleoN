@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "1c83ea0020940d9d3f31d198aafea8fd",
+    "identityHash": "e5f54bc3913b222342157feb84a538b3",
     "entities": [
       {
         "tableName": "user",
@@ -106,7 +106,7 @@
       },
       {
         "tableName": "message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `user_addressee` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, `is_selected` INTEGER NOT NULL, FOREIGN KEY(`user_addressee`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `contact_id` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, `is_selected` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -133,8 +133,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "userAddressee",
-            "columnName": "user_addressee",
+            "fieldPath": "contactId",
+            "columnName": "contact_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -182,7 +182,7 @@
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
-              "user_addressee"
+              "contact_id"
             ],
             "referencedColumns": [
               "id"
@@ -410,7 +410,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c83ea0020940d9d3f31d198aafea8fd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e5f54bc3913b222342157feb84a538b3')"
     ]
   }
 }

@@ -108,15 +108,17 @@ class ConversationAdapter constructor(
         isFirst = (position + 1 == itemCount ||
                 (position + 1 < itemCount && item?.message?.isMine != getItem(position + 1)?.message?.isMine))
 
-        when (getItemViewType(position)) {
-            TYPE_MY_MESSAGE -> (holder as MyMessageViewHolder)
-                .bind(item!!, clickListener, isFirst)
-            TYPE_INCOMING_MESSAGE -> (holder as IncomingMessageViewHolder)
-                .bind(item!!, clickListener, isFirst)
-            TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
-                .bind(item!!, clickListener, isFirst, mediaPlayerManager)
-            TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
-                .bind(item!!, clickListener, isFirst, mediaPlayerManager)
+        item?.let {
+            when (getItemViewType(position)) {
+                TYPE_MY_MESSAGE -> (holder as MyMessageViewHolder)
+                    .bind(item, clickListener, isFirst)
+                TYPE_INCOMING_MESSAGE -> (holder as IncomingMessageViewHolder)
+                    .bind(item, clickListener, isFirst)
+                TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager)
+                TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager)
+            }
         }
     }
 

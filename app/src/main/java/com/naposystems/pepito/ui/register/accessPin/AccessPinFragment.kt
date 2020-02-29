@@ -52,7 +52,7 @@ class AccessPinFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(AccessPinViewModel::class.java)
 
         binding = DataBindingUtil.inflate(
@@ -71,9 +71,16 @@ class AccessPinFragment : Fragment() {
         displayName = args.displayName
         recoveredAccount = args.isRecoveredAccount
 
+        if (recoveredAccount) {
+            binding.textViewTitle.text = "Restablecer Pin de Acceso"
+            binding.buttonRegister.text = "Recuperar cuenta"
+        }
+
         binding.buttonRegister.setOnClickListener {
             validateAccessPin()
         }
+
+
 
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -119,8 +126,8 @@ class AccessPinFragment : Fragment() {
 
         val itsAccessPinOk = FieldsValidator.isAccessPinValid(binding.textInputLayoutAccessPin)
         val itsConfirmAccessPinOk = FieldsValidator.isConfirmAccessPinValid(
-            binding.textInputLayoutConfirmAccessPin,
-            binding.textInputEditTextAccessPin.text.toString()
+            binding.textInputLayoutAccessPin,
+            binding.textInputLayoutConfirmAccessPin
         )
 
         if (itsAccessPinOk && itsConfirmAccessPinOk) {

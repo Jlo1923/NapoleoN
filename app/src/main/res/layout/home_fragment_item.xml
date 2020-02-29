@@ -12,20 +12,25 @@
         <variable
             name="conversation"
             type="com.naposystems.pepito.entity.conversation.ConversationAndContact" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constrainsLayout_conversation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_home_item"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{() -> clickListener.onClick(conversation)}"
-        android:padding="@dimen/normal_padding">
+        android:padding="@dimen/small_padding">
 
         <ImageView
             android:id="@+id/imageView_user_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/border_avatar_contact"
+            android:onClick="@{() -> clickListener.onClickAvatar(conversation)}"
             app:avatar="@{conversation.contact}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +39,7 @@
 
         <TextView
             android:id="@+id/textView_hora"
-            style="@style/SmallBodyTextView"
+            style="@style/SmallBodyTextView.Time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -52,6 +57,7 @@
             android:textColor="@color/colorTextMyMessage"
             app:layout_constraintBottom_toBottomOf="@id/textView_message"
             app:layout_constraintEnd_toEndOf="@id/textView_hora"
+            app:layout_constraintTop_toTopOf="@+id/textView_message"
             app:unreadMessages="@{conversation.conversation.unReads}"
             tools:text="99" />
 
@@ -63,11 +69,11 @@
             android:layout_marginStart="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"
-            app:name="@{conversation.contact}"
             app:layout_constraintEnd_toStartOf="@id/textView_hora"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/imageView_user_image"
             app:layout_constraintTop_toTopOf="parent"
+            app:name="@{conversation.contact}"
             tools:text="@tools:sample/full_names" />
 
         <TextView
@@ -75,23 +81,21 @@
             style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/x_small_margin"
             android:ellipsize="end"
             android:lines="1"
-            app:nickname="@{conversation.contact}"
             android:textColor="?attr/attrColorButtonTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            app:nickname="@{conversation.contact}"
             tools:text="@tools:sample/first_names" />
 
         <TextView
             android:id="@+id/textView_message"
-            style="@style/BodyTextView"
+            style="@style/BodyTextView.message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/x_small_margin"
             android:layout_marginEnd="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"

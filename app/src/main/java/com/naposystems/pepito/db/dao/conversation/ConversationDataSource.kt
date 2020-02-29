@@ -16,11 +16,13 @@ interface ConversationDataSource {
 
     fun getConversations(): LiveData<List<ConversationAndContact>>
 
-    suspend fun getQuantityUnreads(idContact: Int) : Int
+    suspend fun getQuantityUnreads(contactId: Int) : Int
 
     suspend fun updateConversation(contactId: Int)
 
-    suspend fun cleanConversation(idContact: Int)
+    suspend fun cleanConversation(contactId: Int)
 
-    suspend fun updateConversationByContact(idContact: Int, message: String, created: Int, status: Int, unreads: Int)
+    suspend fun deleteConversationAndMessages(contactId: Int)
+
+    suspend fun updateConversationByContact(contactId: Int, message: String, created: Int, status: Int, unreads: Int)
 }

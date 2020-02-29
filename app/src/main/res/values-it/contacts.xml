@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_my_contacts">Contatti</string>
+    <string name="text_my_contacts">I miei contatti</string>
     <string name="text_description_empty_state_contacts">Aggiungi i tuoi amici e condividi con loro in modo sicuro e privato.</string>
     <string name="text_wish_block_contact">Sei sicuro di voler bloccare %1$s?</string>
     <string name="text_wish_delete_contact">Sei sicuro di voler rimuovere %1$s?</string>

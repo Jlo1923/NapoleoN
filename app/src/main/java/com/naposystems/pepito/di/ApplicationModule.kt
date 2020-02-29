@@ -20,6 +20,7 @@ import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.webService.GzipRequestInterceptor
 import com.naposystems.pepito.webService.NapoleonApi
+import com.naposystems.pepito.webService.NetworkConnectionInterceptor
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.naposystems.pepito.webService.socket.SocketService
 import com.squareup.moshi.Moshi
@@ -69,6 +70,7 @@ class ApplicationModule {
 
         httpClient.addNetworkInterceptor(StethoInterceptor())
 
+        httpClient.addInterceptor(NetworkConnectionInterceptor(context))
         httpClient.addInterceptor { chain ->
 
             val firebaseInstanceId = sharedPreferencesManager.getString(

@@ -5,17 +5,20 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -27,12 +30,16 @@ import com.google.android.material.navigation.NavigationView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ActivityMainBinding
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.reactive.RxBus
+import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -46,9 +53,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
-    private var timeRequestAccessPin: Int = 0
     private var accountStatus: Int = 0
-    private var outputControl: Int = 0
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     private val options by lazy {
         navOptions {
@@ -61,11 +69,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
+
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
 
         //viewModel.getTheme()
@@ -86,6 +100,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        val disposableNoInternetConnection = RxBus.listen(RxEvent.NoInternetConnection::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Toast.makeText(
+                    this, getString(R.string.text_error_connection), Toast.LENGTH_SHORT
+                ).show()
+            }
+
+        disposable.add(disposableNoInternetConnection)
 
         setSupportActionBar(binding.toolbar)
 
@@ -116,10 +140,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.homeFragment -> {
                     showToolbar()
                     enableDrawer()
+                    openMenu()
                 }
                 R.id.conversationFragment -> {
                     disableDrawer()
                     showToolbar()
+                    dontOpenMenu()
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
                     binding.frameLayout.elevation = 0f
@@ -136,6 +162,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         disableDrawer()
                     } else {
                         showToolbar()
+                        dontOpenMenu()
                     }
                 }
                 R.id.attachmentAudioFragment -> {
@@ -145,6 +172,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 else -> {
                     showToolbar()
+                    dontOpenMenu()
                     disableDrawer()
                 }
             }
@@ -182,14 +210,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             AppCompatDelegate.setDefaultNightMode(theme)*/
         })
 
-        viewModel.timeAccessPin.observe(this, Observer {
-            timeRequestAccessPin = it
-        })
-
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
 
+    }
+
+    private fun openMenu() {
+        binding.toolbar.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+    }
+
+    private fun dontOpenMenu() {
+        binding.toolbar.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
     }
 
     private fun setMarginToNavigationView() {
@@ -350,34 +386,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             validLockTime()
         }
-        showContent()
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.setLockTimeApp()
-        viewModel.getTimeRequestAccessPin()
-        hideContent()
     }
 
-    override fun onStop() {
-        super.onStop()
-        hideContent()
-    }
-
-    private fun hideContent() {
-        binding.screenSaver.visibility = View.VISIBLE
-    }
-
-    private fun showContent() {
-        binding.screenSaver.visibility = View.GONE
+    override fun onDestroy() {
+        disposable.clear()
+        super.onDestroy()
     }
 
     private fun validLockTime() {
         if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
             when (accountStatus) {
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
-                    if (timeRequestAccessPin != -1) {
+                    val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
+                    if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
                         val currentTime = System.currentTimeMillis()
 
                         if (currentTime >= viewModel.getLockTimeApp()) {

@@ -76,3 +76,17 @@ fun bindAllowDownload(switch: SwitchMaterial, state: Int) {
         else -> false
     }
 }
+
+@BindingAdapter("messageSelfDestructTimeNotSent")
+fun bindMessageSelfDestructTimeNotSent(textView: TextView, selfDestructTimeMessageNotSent: Int) {
+    val context = textView.context
+
+    val selfDestructTimeMessageNotSent = when (selfDestructTimeMessageNotSent) {
+        Constants.MessageSelfDestructTimeNotSent.TWENTY_FOUR.time ->
+            context.getString(R.string.text_every_twenty_four_hours)
+        else ->
+            context.getString(R.string.text_every_seven_days)
+    }
+
+    textView.text = selfDestructTimeMessageNotSent
+}

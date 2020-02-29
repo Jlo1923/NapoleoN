@@ -53,12 +53,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/container_title">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_camera"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_camera_primary"
-                android:tint="@color/colorSecondaryDark"
+                app:tint="@color/colorSecondaryDark"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -90,12 +90,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/container_camera_option">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_gallery"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_image_black"
-                android:tint="@color/colorSecondaryDark"
+                app:tint="@color/colorSecondaryDark"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

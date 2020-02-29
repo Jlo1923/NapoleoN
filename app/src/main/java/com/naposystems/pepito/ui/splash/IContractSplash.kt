@@ -32,6 +32,7 @@ interface IContractSplash {
         suspend fun setDefaultAllowDownloadAttachments()
         suspend fun setDefaultBiometricsOption(biometricOption: Int)
         suspend fun setDefaultLockType()
+        suspend fun setDefaultSelfDestructTimeMessageNotSent()
     }
 }
 

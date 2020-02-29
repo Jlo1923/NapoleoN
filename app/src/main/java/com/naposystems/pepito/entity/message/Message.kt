@@ -2,13 +2,14 @@ package com.naposystems.pepito.entity.message
 
 import androidx.room.*
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.entity.conversation.Conversation
 
 @Entity(
     tableName = "message", foreignKeys = [
         ForeignKey(
             entity = Contact::class,
             parentColumns = ["id"],
-            childColumns = ["user_addressee"],
+            childColumns = ["contact_id"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
@@ -20,7 +21,7 @@ data class Message(
     @ColumnInfo(name = "web_id") val webId: String,
     @ColumnInfo(name = "body") val body: String,
     @ColumnInfo(name = "quoted") val quoted: String,
-    @ColumnInfo(name = "user_addressee") val userAddressee: Int,
+    @ColumnInfo(name = "contact_id") val contactId: Int,
     @ColumnInfo(name = "updated_at") val updatedAt: Int,
     @ColumnInfo(name = "created_at") val createdAt: Int,
     @ColumnInfo(name = "is_mine") val isMine: Int,

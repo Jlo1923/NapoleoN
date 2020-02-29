@@ -78,13 +78,7 @@ class ProfileViewModel @Inject constructor(
     override fun getUser() {
         viewModelScope.launch {
             try {
-
-                val firebaseId = sharedPreferencesManager.getString(
-                    Constants.SharedPreferences.PREF_FIREBASE_ID,
-                    ""
-                )
-
-                user.value = repository.getUser(firebaseId)
+                user.value = repository.getUser()
             } catch (ex: Exception) {
                 Timber.e(ex)
                 _errorGettingLocalUser.value = true

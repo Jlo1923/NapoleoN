@@ -85,7 +85,7 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                         `body` TEXT NOT NULL,
                         `type` TEXT NOT NULL,
                         `user_destination` INTEGER NOT NULL,
-                        `user_addressee` INTEGER NOT NULL,
+                        `contact_id` INTEGER NOT NULL,
                         `updated_at` INTEGER NOT NULL,
                         `created_at` INTEGER NOT NULL,
                         PRIMARY KEY (`id`)

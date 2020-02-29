@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_message_self_destruction">Autodistruzione del messaggio</string>
-    <string name="text_every_five_minutes">Ogni 5 minuti</string>
-    <string name="text_every_fifteen_minutes">Ogni 15 minuti</string>
-    <string name="text_every_thirty_minutes">Ogni 30 minuti</string>
-    <string name="text_every_one_hour">Ogni 1 ora</string>
-    <string name="text_every_six_hours">Ogni 6 ore</string>
-    <string name="text_every_twenty_four_hours">Ogni 24 ore</string>
+    <string name="text_every_five_minutes">5 minuti</string>
+    <string name="text_every_fifteen_minutes">15 minuti</string>
+    <string name="text_every_thirty_minutes">30 minuti</string>
+    <string name="text_every_one_hour">1 ora</string>
+    <string name="text_every_six_hours">6 ore</string>
+    <string name="text_every_twenty_four_hours">24 ore</string>
     <string name="text_info_message_self_destruction">I messaggi inviati e ricevuti in questa conversazione verranno eliminati dopo l\'orario selezionato.</string>
+    <string name="text_every_seven_days">7 días</string>
 </resources>

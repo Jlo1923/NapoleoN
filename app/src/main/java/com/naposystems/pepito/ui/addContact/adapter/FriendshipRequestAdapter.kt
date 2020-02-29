@@ -83,6 +83,8 @@ class FriendshipRequestAdapter constructor(private val clickListener: ClickListe
             binding.buttonRefuse.isEnabled = true
             binding.buttonAccept.isEnabled = true
 
+            binding.textViewUserName.isSelected = true
+
             binding.buttonRefuse.setOnClickListener {
                 it.isEnabled = false
                 binding.buttonAccept.isEnabled = false

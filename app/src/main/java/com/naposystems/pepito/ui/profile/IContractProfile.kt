@@ -22,7 +22,7 @@ interface IContractProfile {
     }
 
     interface Repository {
-        suspend fun getUser(firebaseId: String): User
+        suspend fun getUser(): User
         suspend fun updateUserInfo(updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
         suspend fun updateLocalUser(user: User)
     }

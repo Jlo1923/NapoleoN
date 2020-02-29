@@ -1,9 +1,7 @@
 package com.naposystems.pepito.ui.timeAccessPin
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +9,7 @@ import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-
+import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.TimeAccessPinDialogFragmentBinding
 import com.naposystems.pepito.utility.Constants
@@ -33,8 +31,9 @@ class TimeAccessPinDialogFragment : DialogFragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: TimeAccessPinDialogViewModel
     private lateinit var binding: TimeAccessPinDialogFragmentBinding
-    private var timeAccess: Int = 0
     private lateinit var listener: TimeAccessPinListener
+
+    private var timeAccess: Int = 0
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -88,7 +87,7 @@ class TimeAccessPinDialogFragment : DialogFragment() {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(TimeAccessPinDialogViewModel::class.java)
 
         binding.viewModel = viewModel

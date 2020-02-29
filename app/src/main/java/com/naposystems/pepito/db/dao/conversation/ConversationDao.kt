@@ -28,6 +28,9 @@ interface ConversationDao {
     suspend fun updateConversationByContact(idContact: Int, message: String, created: Int, status: Int, unreads: Int)
 
     @Transaction
-    @Query("SELECT * FROM contact AS C INNER JOIN conversation AS CO on C.id=CO.contact_id AND C.status_blocked=0")
+    @Query("SELECT * FROM contact AS C INNER JOIN conversation AS CO on C.id=CO.contact_id AND C.status_blocked=0 ORDER BY created DESC")
     fun getConversations(): LiveData<List<ConversationAndContact>>
+
+    @Query("DELETE FROM conversation WHERE contact_id=:contactId")
+    fun deleteConversation(contactId: Int)
 }

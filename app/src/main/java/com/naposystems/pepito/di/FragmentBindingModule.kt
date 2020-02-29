@@ -30,6 +30,7 @@ import com.naposystems.pepito.ui.registerRecoveryAccount.RegisterRecoveryAccount
 import com.naposystems.pepito.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment
 import com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.pepito.ui.splash.SplashFragment
 import com.naposystems.pepito.ui.status.StatusFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
@@ -136,6 +137,9 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindConversationMuteDialogFragment(): MuteConversationDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindSelfDestructTimeMessageNotSentDialogFragment(): SelfDestructTimeMessageNotSentDialogFragment
 
     @ContributesAndroidInjector
     abstract fun bindAttachmentAudioFragment(): AttachmentAudioFragment

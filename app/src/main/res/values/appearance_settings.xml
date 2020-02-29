@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_color_scheme">Color scheme</string>
+    <string name="text_color_scheme">Theme Selection</string>
     <string name="text_user_display_format">Username Format</string>
     <string name="text_language">Language</string>
     <string name="text_light_theme">Light theme</string>

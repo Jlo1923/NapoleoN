@@ -42,6 +42,8 @@ class AddContactAdapter constructor(private val clickListener: ClickListener) :
             binding.clickListener = clickListener
             binding.buttonAdd.isEnabled = true
 
+            binding.textViewUserName.isSelected = true
+
             binding.buttonAdd.setOnClickListener {
                 if (!item.haveFriendshipRequest) {
                     it.isEnabled = false

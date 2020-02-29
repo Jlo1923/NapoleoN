@@ -8,7 +8,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.BlockedContactsFragmentBinding
 import com.naposystems.pepito.entity.Contact
@@ -17,8 +18,10 @@ import com.naposystems.pepito.ui.custom.SearchView
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -32,6 +35,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: BlockedContactsViewModel
+    private lateinit var shareContactViewModel: ShareContactViewModel
     private lateinit var binding: BlockedContactsFragmentBinding
     private lateinit var adapter: BlockedContactsAdapter
     private lateinit var mainActivity: MainActivity
@@ -73,8 +77,15 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(BlockedContactsViewModel::class.java)
+
+        try {
+            shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
+                .get(ShareContactViewModel::class.java)
+        } catch (e: Exception){
+            Timber.e(e)
+        }
 
         viewModel.getBlockedContacts()
         viewModel.blockedContacts.observe(viewLifecycleOwner, Observer {
@@ -138,7 +149,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         adapter =
             BlockedContactsAdapter(object : BlockedContactsAdapter.BlockedContactsClickListener {
                 override fun onClick(item: Contact) {
-                    seeProfile()
+                    seeProfile(item)
                 }
 
                 override fun onMoreClick(item: Contact, view: View) {
@@ -156,36 +167,39 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.see_profile -> {
-                    seeProfile()
+                    seeProfile(item)
                 }
                 R.id.unblock -> {
                     unblockContact(item)
                 }
             }
-
             true
         }
         popup.show()
     }
 
-    private fun seeProfile() {
-        showToast(
-            context!!, "Ver perfil"
-        )
-        /*findNavController().navigate(
+    private fun seeProfile(contact: Contact) {
+        findNavController().navigate(
             BlockedContactsFragmentDirections
-                .actionBlockedContactsFragmentToContactProfileFragment()
-        )*/
+                .actionBlockedContactsFragmentToContactProfileFragment(contact.id)
+        )
     }
 
     private fun unblockContact(contact: Contact) {
         Utils.generalDialog(
             getString(R.string.unblock_contact),
-            getString(R.string.text_wish_unblock_contact, contact.displayName),
+            getString(
+                R.string.text_wish_unblock_contact,
+                if (contact.displayNameFake.isEmpty()) {
+                    contact.displayName
+                } else {
+                    contact.displayNameFake
+                }
+                ),
             true,
             childFragmentManager
         ) {
-            viewModel.unblockContact(contact)
+            shareContactViewModel.unblockContact(contact)
             showToast(context!!, getString(R.string.text_unblocked_contact))
         }
     }

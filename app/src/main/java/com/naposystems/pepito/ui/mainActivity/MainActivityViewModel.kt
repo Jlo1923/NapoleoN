@@ -30,10 +30,6 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     val accountStatus: LiveData<Int>
         get() = _accountStatus
 
-    private val _timeAccessPin = MutableLiveData<Int>()
-    val timeAccessPin: LiveData<Int>
-        get() = _timeAccessPin
-
     init {
         _user.value = null
         _errorGettingUser.value = false
@@ -74,10 +70,8 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
         }
     }
 
-    override fun getTimeRequestAccessPin() {
-        viewModelScope.launch {
-            _timeAccessPin.value = repository.getTimeRequestAccessPin()
-        }
+    override fun getTimeRequestAccessPin(): Int {
+        return repository.getTimeRequestAccessPin()
     }
 
     override fun setLockTimeApp() {

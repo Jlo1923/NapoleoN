@@ -15,6 +15,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,9 +27,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
@@ -244,6 +242,9 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
 
         shareViewModel.hasCameraSendClicked.observe(activity!!, Observer {
             if (it == true) {
@@ -602,7 +603,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     private fun showFabScroll(visible: Int, animation: Animation) {
         binding.fabGoDown.startAnimation(animation)
-        binding.textViewNotificationMessage!!.startAnimation(animation)
+        binding.textViewNotificationMessage.startAnimation(animation)
         binding.fabGoDown.visibility = visible
         binding.textViewNotificationMessage.visibility = visible
     }

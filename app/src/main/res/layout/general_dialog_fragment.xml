@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,6 +10,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="@dimen/normal_padding"
+        android:paddingEnd="@dimen/small_padding"
+        android:paddingTop="@dimen/normal_padding"
+        android:paddingBottom="0dp"
         tools:context=".ui.generalDialog.GeneralDialogFragment">
 
         <TextView
@@ -18,14 +22,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:paddingStart="@dimen/large_padding"
-            android:paddingTop="@dimen/normal_padding"
-            android:paddingEnd="@dimen/large_padding"
-            android:paddingBottom="@dimen/normal_padding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Título"/>
+            tools:text="Título" />
 
         <TextView
             android:id="@+id/textView_message"
@@ -33,21 +33,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin"
-            android:paddingStart="@dimen/large_padding"
-            android:paddingEnd="@dimen/large_padding"
-            android:text="Description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_title"
-            tools:text="Descripción"/>
+            tools:text="Descripción" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_accept"
             style="@style/AppPrimaryButtonText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
-            android:layout_marginEnd="@dimen/small_margin"
+            android:layout_marginTop="@dimen/small_margin"
             android:text="@string/text_accept"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_message" />

@@ -32,11 +32,13 @@ import com.naposystems.pepito.ui.registerRecoveryAccount.RegisterRecoveryAccount
 import com.naposystems.pepito.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionViewModel
 import com.naposystems.pepito.ui.securitySettings.SecuritySettingsViewModel
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
+import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewModel
 import com.naposystems.pepito.ui.splash.SplashViewModel
 import com.naposystems.pepito.ui.status.StatusViewModel
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeViewModel
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewModel
+import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.utility.viewModel.ViewModelKey
@@ -209,6 +211,16 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MuteConversationViewModel::class)
     internal abstract fun bindMuteConversationViewModel(viewModel: MuteConversationViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ShareContactViewModel::class)
+    internal abstract fun bindShareContactViewModel(viewModel: ShareContactViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SelfDestructTimeMessageNotSentViewModel::class)
+    internal abstract fun bindSelfDestructTimeMessageNotSentViewModel(viewModel: SelfDestructTimeMessageNotSentViewModel): ViewModel
 
     @Binds
     @IntoMap

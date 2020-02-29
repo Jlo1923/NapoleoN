@@ -71,34 +71,6 @@
                     app:navGraph="@navigation/nav_graph"
                     tools:context=".ui.mainActivity.MainActivity" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/screenSaver"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="?attr/attrBackgroundColorBackground"
-                    android:elevation="30dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="gone">
-
-                    <ImageView
-                        android:id="@+id/imageView_logo_app"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:elevation="11dp"
-                        app:layout_constraintBottom_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHeight_percent="0.2"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="parent"
-                        app:srcCompat="@drawable/logo_napoleon_app" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -111,6 +83,8 @@
             android:background="?attr/attrBackgroundColorBackground"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/chat_drawer_header"
+            app:itemIconTint="@color/secondaryTextColor"
+            app:itemTextColor="@color/secondaryTextColor"
             app:menu="@menu/main_chat_menu" />
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

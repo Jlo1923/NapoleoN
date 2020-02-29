@@ -33,7 +33,7 @@ interface MessageDataSource {
 
     fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
 
-    suspend fun getMessagesByStatus(status: Int): List<String>
+    suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
 
     suspend fun deleteMessages(idContact: Int)
 }

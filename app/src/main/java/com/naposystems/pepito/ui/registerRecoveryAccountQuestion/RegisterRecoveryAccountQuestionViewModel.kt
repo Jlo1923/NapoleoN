@@ -39,10 +39,6 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
     val countAnswers: LiveData<Int>
         get() = _countAnswers
 
-    private val _maxAnswers = MutableLiveData<Int>()
-    val maxAnswers: LiveData<Int>
-        get() = _maxAnswers
-
     private val _recoveryQuestionsSavedSuccessfully = MutableLiveData<Boolean>()
     val recoveryQuestionsSavedSuccessfully: LiveData<Boolean>
         get() = _recoveryQuestionsSavedSuccessfully
@@ -52,12 +48,11 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
         _webServiceError.value = ArrayList()
         _recoveryAnswers.value = ArrayList()
         _countAnswers.value = 1
-        _maxAnswers.value = 3
     }
 
     //region Implementation IContractRegisterRecoveryAccountQuestion.ViewModel
 
-    override fun addRecoveryAnswer(answer: RecoveryAnswer) {
+    override fun addRecoveryAnswer(answer: RecoveryAnswer, isFinal: Int) {
         val mutableAnswers: MutableList<RecoveryAnswer> = ArrayList()
 
         mutableAnswers.addAll(_recoveryAnswers.value!!)
@@ -73,7 +68,9 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
 
         _questions.value = mutableQuestions
         _recoveryAnswers.value = mutableAnswers
-        _countAnswers.value = _countAnswers.value!! + 1
+        if(isFinal != 0) {
+            _countAnswers.value = _countAnswers.value!! + 1
+        }
     }
 
     override fun getQuestions() {
@@ -89,7 +86,6 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
                         RegisterRecoveryAccountQuestionResDTO
                             .toListQuestionEntity(response.body()!!)
                     )
-
                     _questions.value = mutableList
 
                 } else {

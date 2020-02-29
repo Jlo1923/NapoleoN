@@ -67,7 +67,7 @@
                 <!-- COLOR SCHEME SELECTED -->
                 <TextView
                     android:id="@+id/textView_color_selected"
-                    style="@style/SmallBodyTextView"
+                    style="@style/OptionValue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
@@ -130,7 +130,7 @@
                 <!-- COLOR SCHEME SELECTED -->
                 <TextView
                     android:id="@+id/textView_user_display_selected"
-                    style="@style/SmallBodyTextView"
+                    style="@style/OptionValue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
@@ -193,7 +193,7 @@
                 <!-- COLOR SCHEME SELECTED -->
                 <TextView
                     android:id="@+id/textView_language_selected"
-                    style="@style/SmallBodyTextView"
+                    style="@style/OptionValue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"

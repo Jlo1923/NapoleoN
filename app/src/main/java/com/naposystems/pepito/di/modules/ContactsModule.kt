@@ -16,9 +16,8 @@ class ContactsModule {
     @Singleton
     fun provideRepository(
         napoleonApi: NapoleonApi,
-        contactDataSource: ContactDataSource,
-        sharedPreferencesManager: SharedPreferencesManager
+        contactDataSource: ContactDataSource
     ): IContractContacts.Repository {
-        return ContactsRepository(napoleonApi, contactDataSource, sharedPreferencesManager)
+        return ContactsRepository(napoleonApi, contactDataSource)
     }
 }

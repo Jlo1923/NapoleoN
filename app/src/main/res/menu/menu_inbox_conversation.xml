@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/start_chat_from_inbox"
+        android:title="@string/text_start_chat"/>
+
+    <item android:id="@+id/see_profile_from_inbox"
+        android:title="@string/text_view_profile"/>
+
+    <item android:id="@+id/delete_chat_from_inbox"
+        android:title="Borrar Conversación!!"/>
+
+    <item android:id="@+id/block_contact_from_inbox"
+        android:title="@string/text_block_contact"/>
+</menu>

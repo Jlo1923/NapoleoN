@@ -1,6 +1,7 @@
 package com.naposystems.pepito.ui.home.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -8,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.HomeFragmentItemBinding
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 
-class ConversationAdapter(private val clickListener: ClickListener): ListAdapter<ConversationAndContact, ConversationAdapter.ConversationAndContactViewHolder>(DiffCallback) {
+class ConversationAdapter(private val clickListener: ClickListener) :
+    ListAdapter<ConversationAndContact,
+            ConversationAdapter.ConversationAndContactViewHolder>(DiffCallback) {
 
     object DiffCallback : DiffUtil.ItemCallback<ConversationAndContact>() {
         override fun areItemsTheSame(
@@ -26,7 +29,10 @@ class ConversationAdapter(private val clickListener: ClickListener): ListAdapter
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationAndContactViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ConversationAndContactViewHolder {
         return ConversationAndContactViewHolder.from(parent)
     }
 
@@ -35,12 +41,23 @@ class ConversationAdapter(private val clickListener: ClickListener): ListAdapter
         holder.bind(chat, clickListener)
     }
 
-    class ConversationAndContactViewHolder private constructor(private val binding: HomeFragmentItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class ConversationAndContactViewHolder private constructor(
+        private val binding: HomeFragmentItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(conversation: ConversationAndContact, clickListener: ClickListener) {
-            binding.clickListener = clickListener
             binding.conversation = conversation
+            binding.clickListener = clickListener
+
+            binding.constrainsLayoutConversation.setOnLongClickListener {
+                clickListener.onLongClick(conversation, binding.textViewHora)
+                true
+            }
+
+            binding.imageViewUserImage.setOnClickListener {
+                clickListener.onClickAvatar(conversation)
+            }
+
             binding.executePendingBindings()
         }
 
@@ -60,5 +77,7 @@ class ConversationAdapter(private val clickListener: ClickListener): ListAdapter
 
     interface ClickListener {
         fun onClick(item: ConversationAndContact)
+        fun onClickAvatar(item: ConversationAndContact)
+        fun onLongClick(item: ConversationAndContact, view: View)
     }
 }

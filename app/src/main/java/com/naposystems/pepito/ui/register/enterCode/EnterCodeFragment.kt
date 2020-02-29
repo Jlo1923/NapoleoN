@@ -11,20 +11,22 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.EnterCodeFragmentBinding
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.ui.custom.EnterCodeWidget
+import com.naposystems.pepito.ui.custom.NumericKeyboardCustomView
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import dagger.android.support.AndroidSupportInjection
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
+class EnterCodeFragment :
+    Fragment(), EnterCodeWidget.OnEventListener,
+    NumericKeyboardCustomView.OnEventListener {
 
     companion object {
         fun newInstance() = EnterCodeFragment()
@@ -55,7 +57,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(EnterCodeViewModel::class.java)
 
         binding = DataBindingUtil.inflate(
@@ -65,7 +67,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
         viewModel.attempts.observe(viewLifecycleOwner, Observer {
             binding.textViewAttempts.apply {
                 text = resources.getString(R.string.text_number_attempts, it, MAX_ATTEMPTS)
-                visibility = if (it >= 1) View.VISIBLE else View.GONE
+                visibility = if (it >= 1) View.VISIBLE else {View.GONE}
             }
             if (it == MAX_ATTEMPTS) {
                 disableAllWidgets()
@@ -82,6 +84,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
                 binding.viewSwitcher.showPrevious()
                 viewModel.increaseAttempts()
                 binding.enterCodeWidget.showError()
+                binding.numericKeyboard.disableKeyboard()
             }
         })
 
@@ -109,17 +112,13 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
         })
 
         binding.enterCodeWidget.setListener(this)
+        binding.numericKeyboard.setListener(this)
 
         binding.buttonContinue.setOnClickListener {
             sendCodeToWs(binding.enterCodeWidget.getCode())
         }
 
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.enterCodeWidget.requestFocusFirst()
     }
 
     override fun onDestroy() {
@@ -183,6 +182,7 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
                     binding.textViewNewAttemptIn.visibility = View.GONE
                     viewModel.resetShowInvalidCode()
                     enableAllWidgets()
+                    binding.numericKeyboard.enableKeyboard()
                 }
 
                 override fun onTick(millisUntilFinished: Long) {
@@ -198,13 +198,11 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
     }
 
     private fun disableAllWidgets() {
-        binding.enterCodeWidget.disableTextInput()
         binding.buttonDidntReceiveCode.isEnabled = false
         binding.buttonContinue.isEnabled = false
     }
 
     private fun enableAllWidgets() {
-        binding.enterCodeWidget.enableTextInput()
         binding.buttonDidntReceiveCode.isEnabled = true
         binding.buttonContinue.isEnabled = true
     }
@@ -218,5 +216,15 @@ class EnterCodeFragment : Fragment(), EnterCodeWidget.OnEventListener {
         binding.buttonContinue.isEnabled = isCompleted
     }
 
+    //endregion
+
+    //region Implementation NumericKeyboardCustomView.OnEventListener
+    override fun onKeyPressed(keyCode: Int) {
+        binding.enterCodeWidget.setAddNumber(keyCode)
+    }
+
+    override fun onDeletePressed() {
+        binding.enterCodeWidget.deleteNumber()
+    }
     //endregion
 }
