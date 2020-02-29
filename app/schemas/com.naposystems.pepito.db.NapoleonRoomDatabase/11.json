@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "26b50ab985f50848ec9e29ff675f3c1f",
+    "identityHash": "1c83ea0020940d9d3f31d198aafea8fd",
     "entities": [
       {
         "tableName": "user",
@@ -106,7 +106,7 @@
       },
       {
         "tableName": "message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `user_addressee` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, FOREIGN KEY(`user_addressee`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `user_addressee` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, `is_selected` INTEGER NOT NULL, FOREIGN KEY(`user_addressee`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -159,6 +159,12 @@
           {
             "fieldPath": "status",
             "columnName": "status",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSelected",
+            "columnName": "is_selected",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -404,7 +410,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '26b50ab985f50848ec9e29ff675f3c1f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c83ea0020940d9d3f31d198aafea8fd')"
     ]
   }
 }

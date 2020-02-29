@@ -24,7 +24,6 @@ import java.io.FileInputStream
 import javax.inject.Inject
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
-import com.naposystems.pepito.utility.Utils
 
 class ConversationViewModel @Inject constructor(
     private val context: Context,

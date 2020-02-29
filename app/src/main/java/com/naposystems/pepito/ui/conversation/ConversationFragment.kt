@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,27 +28,20 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
-import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
-import com.naposystems.pepito.ui.conversationCamera.ShareConversationCameraViewModel
-import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
-import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.adapters.verifyPermission
-import com.naposystems.pepito.utility.itemAnimators.SlideInUpAnimator
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -413,7 +405,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     private fun handlerGoDown() {
         Handler().postDelayed({
-            if (adapter.itemCount > 0) {
+            if (conversationAdapter.itemCount > 0) {
                 val smoothScroller: RecyclerView.SmoothScroller =
                     object : LinearSmoothScroller(context) {
                         override fun getVerticalSnapPreference(): Int {
@@ -421,7 +413,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         }
                     }
                 smoothScroller.targetPosition = 0
-                layoutManager.startSmoothScroll(smoothScroller)
+                linearLayoutManager.startSmoothScroll(smoothScroller)
             }
         }, 300)
     }
@@ -439,12 +431,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     override fun onResume() {
         super.onResume()
         mediaPlayerManager.registerProximityListener()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mediaPlayerManager.pauseAudio()
-        mediaPlayerManager.unregisterProximityListener()
     }
 
     override fun onDestroy() {
@@ -562,7 +548,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     private fun setupAdapter() {
-        adapter = ConversationAdapter(object : ConversationAdapter.ConversationClickListener {
+        conversationAdapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
             override fun onClick(item: Message) {
                 if (actionMode.mode != null) {
                     updateStateSelectionMessage(item)
@@ -585,17 +571,17 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             }
         }, mediaPlayerManager)
 
-        layoutManager = LinearLayoutManager(context!!)
-        layoutManager.reverseLayout = true
+        linearLayoutManager = LinearLayoutManager(context!!)
+        linearLayoutManager.reverseLayout = true
 
-        binding.recyclerViewConversation.adapter = adapter
-        binding.recyclerViewConversation.layoutManager = layoutManager
+        binding.recyclerViewConversation.adapter = conversationAdapter
+        binding.recyclerViewConversation.layoutManager = linearLayoutManager
 
         binding.recyclerViewConversation.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 when {
-                    layoutManager.findFirstVisibleItemPosition() <= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION -> {
+                    linearLayoutManager.findFirstVisibleItemPosition() <= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION -> {
                         if (binding.textViewNotificationMessage.visibility == View.VISIBLE) {
                             showFabScroll(View.INVISIBLE, animationScaleDown)
                         }
@@ -615,7 +601,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     private fun showFabScroll(visible: Int, animation: Animation) {
-        binding.fabGoDown!!.startAnimation(animation)
+        binding.fabGoDown.startAnimation(animation)
         binding.textViewNotificationMessage!!.startAnimation(animation)
         binding.fabGoDown.visibility = visible
         binding.textViewNotificationMessage.visibility = visible
@@ -630,39 +616,13 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     override fun onPause() {
+        super.onPause()
+        mediaPlayerManager.pauseAudio()
+        mediaPlayerManager.unregisterProximityListener()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
-        super.onPause()
     }
-
-    private fun verifyCameraAndMediaPermission() {
-
-        Dexter.withActivity(activity!!)
-            .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
-            .withListener(object : MultiplePermissionsListener {
-
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    if (report!!.areAllPermissionsGranted()) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
-                                viewModel.getUser().id,
-                                args.contact.id
-                            )
-                        )
-                    }
-
-                    if (report.isAnyPermissionPermanentlyDenied) {
-                        Utils.showDialogToInformPermission(
-                            context!!,
-                            childFragmentManager,
-                            R.drawable.ic_camera_primary,
-                            R.string.explanation_camera_and_storage_permission,
-                            { Utils.openSetting(context!!) },
-                            {}
-                        )
-                    }
-                }
 
     //region Implementation MediaPlayerManager.Listener
     override fun onErrorPlayingAudio() {
