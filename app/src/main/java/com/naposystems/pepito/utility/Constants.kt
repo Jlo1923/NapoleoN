@@ -43,7 +43,13 @@ object Constants {
 
     enum class ColorScheme constructor(val scheme: Int) {
         LIGHT_THEME(1),
-        DARK_THEME(2)
+        DARK_THEME(2),
+        BLACK_GOLD_ALLOY(3),
+        COLD_OCEAN(4),
+        CAMOUFLAGE(5),
+        PURPLE_BLUEBONNETS(6),
+        PINK_DREAM(7),
+        CLEAR_SKY(8)
     }
 
     enum class OutputControl constructor(val state: Int) {

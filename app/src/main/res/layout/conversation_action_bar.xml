@@ -33,6 +33,7 @@
                 android:layout_marginStart="@dimen/normal_margin"
                 android:layout_marginEnd="@dimen/small_margin"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="?attr/attrBackgroundTintIconToolbar"
                 app:srcCompat="@drawable/ic_arrow_back_white" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -61,6 +62,7 @@
                     <TextView
                         android:id="@+id/textView_user_display_name"
                         style="@style/SmallBodyTextView.WhiteBold"
+                        android:textColor="?attr/attrTextColorNameConversation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
@@ -71,6 +73,7 @@
                     <TextView
                         android:id="@+id/textView_user_nickname"
                         style="@style/MinorBodyTextView.White"
+                        android:textColor="?attr/attrTextColorNicknameConversation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"

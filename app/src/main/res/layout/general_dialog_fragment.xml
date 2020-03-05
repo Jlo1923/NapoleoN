@@ -14,6 +14,7 @@
         android:paddingEnd="@dimen/small_padding"
         android:paddingTop="@dimen/normal_padding"
         android:paddingBottom="0dp"
+        android:background="?attr/attrBackgroundColorBackgroundDialog"
         tools:context=".ui.generalDialog.GeneralDialogFragment">
 
         <TextView

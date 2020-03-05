@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -427,6 +428,24 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_conversation, menu)
+
+/*        val value = TypedValue()
+        context!!.theme.resolveAttribute(R.attr.attrColorButtonTint, value, true)
+
+        for (i in 0 until menu.size()) {
+            val drawable = menu.getItem(i).icon
+            if (drawable != null) {
+                drawable.mutate()
+                drawable.setColorFilter(
+                    ContextCompat.getColor(context!!, value.resourceId),
+                    PorterDuff.Mode.SRC_ATOP
+                )
+*//*                setColorFilter(
+                    ContextCompat.getColor(context, outValueBackgroundTint.resourceId),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+                )*//*
+            }
+        }*/
     }
 
     override fun onResume() {
@@ -470,7 +489,9 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     private fun resetConversationBackground() {
-        activity!!.window.setBackgroundDrawableResource(R.color.colorBackground)
+        val value = TypedValue()
+        context!!.theme.resolveAttribute(R.attr.attrBackgroundColorBackground, value, true)
+        activity!!.window.setBackgroundDrawableResource(value.resourceId)
     }
 
     private fun inflateCustomActionBar(inflater: LayoutInflater) {

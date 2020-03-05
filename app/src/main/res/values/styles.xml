@@ -9,8 +9,13 @@
         <item name="android:textSize">@dimen/normal_text_size</item>
         <item name="fontFamily">@font/roboto</item>
         <item name="android:fontFamily">@font/roboto</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:actionBarStyle">@color/green</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/secondaryTextColor</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="attrBackgroundColorPrimary">@color/colorPrimary</item>
@@ -19,6 +24,7 @@
         <item name="attrBackgroundTintColorSecondary">@color/colorSecondary</item>
         <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColor</item>
         <item name="attrTextColorButtonTint">@color/buttonTint</item>
+        <item name="attrColorTextButtonTintCamera">@color/buttonTintCamera</item>
         <item name="attrStrokeColorButtonTint">@color/buttonTint</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
         <item name="attrTextColorRed">@color/red</item>
@@ -39,247 +45,360 @@
         <item name="attrBoxStrokeErrorColorColorError">@color/colorError</item>
         <item name="attrErrorTextColorColorError">@color/colorError</item>
         <item name="attrErrorIconTintColorError">@color/colorError</item>
-        <item name="attrColorButtonTint">@color/colorPrimaryDark</item>
+        <item name="attrColorButtonTint">@color/buttonTint</item>
+        <item name="attrBackgroundBatchMessage">@color/buttonTint</item>
         <item name="attrColorTrackColor">@color/trackColor</item>
         <item name="attrSeparatorColor">@color/separator</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/colorBackgroundDialog</item>
+        <item name="attrBackgroundSectionOtherColor">@color/separator</item>
+        <item name="attrBackgroundColorActionMode">@color/colorPrimaryDark</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/secondaryTextColor</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/secondaryTextColor</item>
+        <item name="attrTextColorHint">@color/secondaryTextColor</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
 
     </style>
 
     <style name="AppThemePinkDream" parent="AppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryPinkDream</item>
-        <item name="colorSecondary">@color/colorSecondaryPinkDream</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkPinkDream</item>
-        <item name="android:colorBackground">@color/colorBackgroundPinkDream</item>
-        <item name="colorAccent">@color/colorPrimaryPinkDream</item>
-        <item name="colorControlNormal">@color/whitePinkDream</item>
-        <item name="attrBackgroundColorPrimary">@color/colorPrimaryPinkDream</item>
-        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorPinkDream</item>
-        <item name="attrIconTintWhite">@color/whitePinkDream</item>
-        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryPinkDream</item>
-        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorPinkDream</item>
-        <item name="attrTextColorButtonTint">@color/buttonTintPinkDream</item>
-        <item name="attrStrokeColorButtonTint">@color/buttonTintPinkDream</item>
+        <item name="colorPrimary">@color/color_F38DC7</item>
+        <item name="colorSecondary">@color/color_D19DBB</item>
+        <item name="colorPrimaryDark">@color/color_BF5D96</item>
+        <item name="android:colorBackground">@color/color_FFEFFF</item>
+        <item name="colorAccent">@color/color_F38DC7</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_F38DC7</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/color_9F6E8B</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_FFEFFF</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_D19DBB</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_903B6E</item>
+        <item name="attrTextColorButtonTint">@color/color_903B6E</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_903B6E</item>
+        <item name="attrStrokeColorButtonTint">@color/color_903B6E</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
-        <item name="attrTextColorRed">@color/redPinkDream</item>
-        <item name="attrStrokeColorRed">@color/redPinkDream</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
-        <item name="attrTextColorWhite">@color/whitePinkDream</item>
-        <item name="attrBackgroundSectionColor">@color/sectionColorPinkDream</item>
-        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightPinkDream</item>
-        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorPinkDream</item>
-        <item name="attrTextColorLinkTextColor">@color/linkTextColorPinkDream</item>
-        <item name="attrTextColorColorError">@color/colorErrorPinkDream</item>
-        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorPinkDream</item>
-        <item name="attrBackgroundTintButtonTint">@color/buttonTintPinkDream</item>
-        <item name="attrBackgroundColorBackground">@color/colorBackgroundPinkDream</item>
-        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkPinkDream</item>
-        <item name="attrTextColorColorPrimary">@color/colorPrimaryPinkDream</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_F38DC7</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_E6E6E6</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_FFCEED</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_903B6E</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_903B6E</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_903B6E</item>
+        <item name="attrBackgroundColorBackground">@color/color_FFEFFF</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9F6E8B</item>
+        <item name="attrTextColorColorPrimary">@color/color_F38DC7</item>
         <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
-        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorPinkDream</item>
-        <item name="attrErrorTextColorColorError">@color/colorErrorPinkDream</item>
-        <item name="attrErrorIconTintColorError">@color/colorErrorPinkDream</item>
-        <item name="attrColorButtonTint">@color/colorPrimaryDarkPinkDream</item>
-        <item name="attrColorTrackColor">@color/trackColorPinkDream</item>
-        <item name="android:itemBackground">@color/colorBackgroundPinkDream</item>
-        <item name="android:panelFullBackground">@color/colorBackgroundPinkDream</item>
-        <item name="attrSeparatorColor">@color/buttonTintPinkDream</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_903B6E</item>
+        <item name="attrBackgroundBatchMessage">@color/color_903B6E</item>
+        <item name="attrColorTrackColor">@color/color_F38DC7</item>
+        <item name="android:itemBackground">@color/color_FFEFFF</item>
+        <item name="android:panelFullBackground">@color/color_FFEFFF</item>
+        <item name="attrSeparatorColor">@color/color_903B6E</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_FFEFFF</item>
+        <item name="attrBackgroundColorActionMode">@color/color_BF5D96</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/color_9F6E8B</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_903B6E</item>
+        <item name="attrTextColorHint">@color/secondaryTextColor</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
 
     </style>
 
     <style name="AppThemeClearSky" parent="AppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryClearSky</item>
-        <item name="colorSecondary">@color/colorSecondaryClearSky</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkClearSky</item>
-        <item name="android:colorBackground">@color/colorBackgroundClearSky</item>
-        <item name="colorAccent">@color/colorPrimaryClearSky</item>
-        <item name="colorControlNormal">@color/whiteClearSky</item>
-        <item name="attrBackgroundColorPrimary">@color/colorPrimaryClearSky</item>
-        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorClearSky</item>
-        <item name="attrIconTintWhite">@color/whiteClearSky</item>
-        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryClearSky</item>
-        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorClearSky</item>
-        <item name="attrTextColorButtonTint">@color/buttonTintClearSky</item>
-        <item name="attrStrokeColorButtonTint">@color/buttonTintClearSky</item>
+        <item name="colorPrimary">@color/color_4AA3D9</item>
+        <item name="colorSecondary">@color/color_CCCCCC</item>
+        <item name="colorPrimaryDark">@color/color_0074A7</item>
+        <item name="android:colorBackground">@color/color_E6F2FF</item>
+        <item name="colorAccent">@color/color_4AA3D9</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_4AA3D9</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorButtonTint">@color/color_0074A7</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_0074A7</item>
+        <item name="attrStrokeColorButtonTint">@color/color_0074A7</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
-        <item name="attrTextColorRed">@color/redClearSky</item>
-        <item name="attrStrokeColorRed">@color/redClearSky</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
-        <item name="attrTextColorWhite">@color/whiteClearSky</item>
-        <item name="attrBackgroundSectionColor">@color/sectionColorClearSky</item>
-        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightClearSky</item>
-        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorClearSky</item>
-        <item name="attrTextColorLinkTextColor">@color/linkTextColorClearSky</item>
-        <item name="attrTextColorColorError">@color/colorErrorClearSky</item>
-        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorClearSky</item>
-        <item name="attrBackgroundTintButtonTint">@color/buttonTintClearSky</item>
-        <item name="attrBackgroundColorBackground">@color/colorBackgroundClearSky</item>
-        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkClearSky</item>
-        <item name="attrTextColorColorPrimary">@color/colorPrimaryClearSky</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_82D4FF</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_E6E6E6</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_0074A7</item>
+        <item name="attrBackgroundColorBackground">@color/color_E6F2FF</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
+        <item name="attrTextColorColorPrimary">@color/color_4AA3D9</item>
         <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
-        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorClearSky</item>
-        <item name="attrErrorTextColorColorError">@color/colorErrorClearSky</item>
-        <item name="attrErrorIconTintColorError">@color/colorErrorClearSky</item>
-        <item name="attrColorButtonTint">@color/colorPrimaryDarkClearSky</item>
-        <item name="attrColorTrackColor">@color/trackColorClearSky</item>
-        <item name="android:itemBackground">@color/colorBackgroundClearSky</item>
-        <item name="android:panelFullBackground">@color/colorBackgroundClearSky</item>
-        <item name="attrSeparatorColor">@color/buttonTintClearSky</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_0074A7</item>
+        <item name="attrBackgroundBatchMessage">@color/color_0074A7</item>
+        <item name="attrColorTrackColor">@color/color_4AA3D9</item>
+        <item name="android:itemBackground">@color/color_E6F2FF</item>
+        <item name="android:panelFullBackground">@color/color_E6F2FF</item>
+        <item name="attrSeparatorColor">@color/color_0074A7</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_E6F2FF</item>
+        <item name="attrBackgroundColorActionMode">@color/color_0074A7</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/color_9B9B9B</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_4D4D4D</item>
+        <item name="attrTextColorHint">@color/colorSecondary</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
 
     </style>
 
     <style name="AppThemePurpleBluebonnets" parent="AppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryPurpleBluebonnets</item>
-        <item name="colorSecondary">@color/colorSecondaryPurpleBluebonnets</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkPurpleBluebonnets</item>
-        <item name="android:colorBackground">@color/colorBackgroundPurpleBluebonnets</item>
-        <item name="colorAccent">@color/colorPrimaryPurpleBluebonnets</item>
-        <item name="colorControlNormal">@color/whitePurpleBluebonnets</item>
-        <item name="attrBackgroundColorPrimary">@color/colorPrimaryPurpleBluebonnets</item>
-        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorPurpleBluebonnets</item>
-        <item name="attrIconTintWhite">@color/whitePurpleBluebonnets</item>
-        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryPurpleBluebonnets</item>
-        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorPurpleBluebonnets</item>
-        <item name="attrTextColorButtonTint">@color/buttonTintPurpleBluebonnets</item>
-        <item name="attrStrokeColorButtonTint">@color/buttonTintPurpleBluebonnets</item>
+        <item name="colorPrimary">@color/color_7D366F</item>
+        <item name="colorSecondary">@color/color_CCCCCC</item>
+        <item name="colorPrimaryDark">@color/color_7D5B76</item>
+        <item name="android:colorBackground">@color/color_F2F2F2</item>
+        <item name="colorAccent">@color/color_7D366F</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_7D366F</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorButtonTint">@color/color_7D366F</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_7D366F</item>
+        <item name="attrStrokeColorButtonTint">@color/color_7D366F</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
-        <item name="attrTextColorRed">@color/redPurpleBluebonnets</item>
-        <item name="attrStrokeColorRed">@color/redPurpleBluebonnets</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
-        <item name="attrTextColorWhite">@color/whitePurpleBluebonnets</item>
-        <item name="attrBackgroundSectionColor">@color/sectionColorPurpleBluebonnets</item>
-        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightPurpleBluebonnets</item>
-        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorPurpleBluebonnets</item>
-        <item name="attrTextColorLinkTextColor">@color/linkTextColorPurpleBluebonnets</item>
-        <item name="attrTextColorColorError">@color/colorErrorPurpleBluebonnets</item>
-        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorPurpleBluebonnets</item>
-        <item name="attrBackgroundTintButtonTint">@color/buttonTintPurpleBluebonnets</item>
-        <item name="attrBackgroundColorBackground">@color/colorBackgroundPurpleBluebonnets</item>
-        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkPurpleBluebonnets</item>
-        <item name="attrTextColorColorPrimary">@color/colorPrimaryPurpleBluebonnets</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_E6E6E6</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_7D366F</item>
+        <item name="attrBackgroundColorBackground">@color/color_F2F2F2</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
+        <item name="attrTextColorColorPrimary">@color/color_7D366F</item>
         <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
-        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorPurpleBluebonnets</item>
-        <item name="attrErrorTextColorColorError">@color/colorErrorPurpleBluebonnets</item>
-        <item name="attrErrorIconTintColorError">@color/colorErrorPurpleBluebonnets</item>
-        <item name="attrColorButtonTint">@color/colorPrimaryDarkPurpleBluebonnets</item>
-        <item name="attrColorTrackColor">@color/trackColorPurpleBluebonnets</item>
-        <item name="android:itemBackground">@color/colorBackgroundPurpleBluebonnets</item>
-        <item name="android:panelFullBackground">@color/colorBackgroundPurpleBluebonnets</item>
-        <item name="attrSeparatorColor">@color/buttonTintPurpleBluebonnets</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_7D5B76</item>
+        <item name="attrBackgroundBatchMessage">@color/color_7D5B76</item>
+        <item name="attrColorTrackColor">@color/color_7D366F</item>
+        <item name="android:itemBackground">@color/color_F2F2F2</item>
+        <item name="android:panelFullBackground">@color/color_F2F2F2</item>
+        <item name="attrSeparatorColor">@color/color_7D366F</item>
+        <item name="attrBackgroundColorActionMode">@color/color_7D5B76</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/color_9B9B9B</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_4D4D4D</item>
+        <item name="attrTextColorHint">@color/colorSecondary</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
 
     </style>
 
     <style name="AppThemeCamouflage" parent="AppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryCamouflage</item>
-        <item name="colorSecondary">@color/colorSecondaryCamouflage</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkCamouflage</item>
-        <item name="android:colorBackground">@color/colorBackgroundCamouflage</item>
-        <item name="colorAccent">@color/colorPrimaryCamouflage</item>
-        <item name="colorControlNormal">@color/whiteCamouflage</item>
-        <item name="attrBackgroundColorPrimary">@color/colorPrimaryCamouflage</item>
-        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorCamouflage</item>
-        <item name="attrIconTintWhite">@color/whiteCamouflage</item>
-        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryCamouflage</item>
-        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorCamouflage</item>
-        <item name="attrTextColorButtonTint">@color/buttonTintCamouflage</item>
-        <item name="attrStrokeColorButtonTint">@color/buttonTintCamouflage</item>
+        <item name="colorPrimary">@color/color_031E03</item>
+        <item name="colorSecondary">@color/color_38732C</item>
+        <item name="colorPrimaryDark">@color/color_002100</item>
+        <item name="android:colorBackground">@color/color_001600</item>
+        <item name="colorAccent">@color/color_031E03</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_031E03</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_38732C</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/white</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_38732C</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorButtonTint">@color/color_3CB043</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_3CB043</item>
+        <item name="attrStrokeColorButtonTint">@color/color_3CB043</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
-        <item name="attrTextColorRed">@color/redCamouflage</item>
-        <item name="attrStrokeColorRed">@color/redCamouflage</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
-        <item name="attrTextColorWhite">@color/whiteCamouflage</item>
-        <item name="attrBackgroundSectionColor">@color/sectionColorCamouflage</item>
-        <item name="attrTextColorColorTextMyMessage">@color/colorSecondaryLightCamouflage</item>
-        <item name="attrTextColorColorTextIncomingMessage">@color/secondaryTextColorCamouflage</item>
-        <item name="attrTextColorLinkTextColor">@color/linkTextColorCamouflage</item>
-        <item name="attrTextColorColorError">@color/colorErrorCamouflage</item>
-        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorCamouflage</item>
-        <item name="attrBackgroundTintButtonTint">@color/buttonTintCamouflage</item>
-        <item name="attrBackgroundColorBackground">@color/colorBackgroundCamouflage</item>
-        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkCamouflage</item>
-        <item name="attrTextColorColorPrimary">@color/colorPrimaryCamouflage</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_031E03</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_002100</item>
+        <item name="attrTextColorColorTextMyMessage">@color/white</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_59BC88</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_3CB043</item>
+        <item name="attrBackgroundColorBackground">@color/color_001600</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
+        <item name="attrTextColorColorPrimary">@color/color_031E03</item>
         <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
-        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorCamouflage</item>
-        <item name="attrErrorTextColorColorError">@color/colorErrorCamouflage</item>
-        <item name="attrErrorIconTintColorError">@color/colorErrorCamouflage</item>
-        <item name="attrColorButtonTint">@color/colorPrimaryDarkCamouflage</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_3CB043</item>
+        <item name="attrBackgroundBatchMessage">@color/color_002100</item>
+        <item name="attrBackgroundColorActionMode">@color/color_002100</item>
+        <item name="attrFabIconColor">@color/color_002100</item>
+        <item name="attrActionBarItemBackground">@color/color_59BC88</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_59BC88</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_001600</item>
+        <item name="attrTextColorHint">@color/white</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/color_3CB043</item>
+        <item name="attrTextColorNameConversation">@color/color_59BC88</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/white</item>
+
     </style>
 
     <style name="AppThemeBlackGoldAlloy" parent="AppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryBlackGoldAlloy</item>
-        <item name="colorSecondary">@color/colorSecondaryBlackGoldAlloy</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlackGoldAlloy</item>
-        <item name="android:colorBackground">@color/colorBackgroundBlackGoldAlloy</item>
-        <item name="colorAccent">@color/colorPrimaryBlackGoldAlloy</item>
-        <item name="colorControlNormal">@color/whiteBlackGoldAlloy</item>
-        <item name="attrBackgroundColorPrimary">@color/colorPrimaryBlackGoldAlloy</item>
-        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorBlackGoldAlloy</item>
-        <item name="attrIconTintWhite">@color/whiteBlackGoldAlloy</item>
-        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryBlackGoldAlloy</item>
-        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorBlackGoldAlloy</item>
-        <item name="attrTextColorButtonTint">@color/buttonTintBlackGoldAlloy</item>
-        <item name="attrStrokeColorButtonTint">@color/buttonTintBlackGoldAlloy</item>
+        <item name="colorPrimary">@color/color_282828</item>
+        <item name="colorSecondary">@color/color_8F8F8F</item>
+        <item name="colorPrimaryDark">@color/color_000000</item>
+        <item name="android:colorBackground">@color/color_121212</item>
+        <item name="colorAccent">@color/color_282828</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_282828</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrTextColorButtonTint">@color/color_D8A605</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_D8A605</item>
+        <item name="attrStrokeColorButtonTint">@color/color_D8A605</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
-        <item name="attrTextColorRed">@color/redBlackGoldAlloy</item>
-        <item name="attrStrokeColorRed">@color/redBlackGoldAlloy</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
-        <item name="attrTextColorWhite">@color/whiteBlackGoldAlloy</item>
-        <item name="attrBackgroundSectionColor">@color/sectionColorBlackGoldAlloy</item>
-        <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessageBlackGoldAlloy</item>
-        <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessageBlackGoldAlloy</item>
-        <item name="attrTextColorLinkTextColor">@color/linkTextColorBlackGoldAlloy</item>
-        <item name="attrTextColorColorError">@color/colorErrorBlackGoldAlloy</item>
-        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorBlackGoldAlloy</item>
-        <item name="attrBackgroundTintButtonTint">@color/buttonTintBlackGoldAlloy</item>
-        <item name="attrBackgroundColorBackground">@color/colorBackgroundBlackGoldAlloy</item>
-        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkBlackGoldAlloy</item>
-        <item name="attrTextColorColorPrimary">@color/colorPrimaryBlackGoldAlloy</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_282828</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_121212</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_D8A605</item>
+        <item name="attrBackgroundColorBackground">@color/color_121212</item>
+        <item name="attrTintColorSecondaryDark">@color/color_D8A605</item>
+        <item name="attrTextColorColorPrimary">@color/color_282828</item>
         <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
-        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorBlackGoldAlloy</item>
-        <item name="attrErrorTextColorColorError">@color/colorErrorBlackGoldAlloy</item>
-        <item name="attrErrorIconTintColorError">@color/colorErrorBlackGoldAlloy</item>
-        <item name="attrColorButtonTint">@color/colorPrimaryDarkBlackGoldAlloy</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_D8A605</item>
+        <item name="attrBackgroundBatchMessage">@color/color_000000</item>
+        <item name="attrBackgroundColorActionMode">@color/color_000000</item>
+        <item name="attrFabIconColor">@color/color_000000</item>
+        <item name="attrActionBarItemBackground">@color/white</item>
+        <item name="attrConversationIconColor">@color/color_D8A605</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_121212</item>
+        <item name="attrTextColorHint">@color/white</item>
+        <item name="attrBackgroundTintIconToolbar">@color/color_D8A605</item>
+        <item name="attrTextColorNicknameConversation">@color/color_D8A605</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/white</item>
+
     </style>
 
     <style name="AppThemeColdOcean" parent="AppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryColdOcean</item>
-        <item name="colorSecondary">@color/colorSecondaryColdOcean</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkColdOcean</item>
-        <item name="android:colorBackground">@color/colorBackgroundColdOcean</item>
-        <item name="colorAccent">@color/colorPrimaryColdOcean</item>
-        <item name="colorControlNormal">@color/whiteColdOcean</item>
-        <item name="attrBackgroundColorPrimary">@color/colorPrimaryColdOcean</item>
-        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColorColdOcean</item>
-        <item name="attrIconTintWhite">@color/whiteColdOcean</item>
-        <item name="attrBackgroundTintColorSecondary">@color/colorSecondaryColdOcean</item>
-        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColorColdOcean</item>
-        <item name="attrTextColorButtonTint">@color/buttonTintColdOcean</item>
-        <item name="attrStrokeColorButtonTint">@color/buttonTintColdOcean</item>
+        <item name="colorPrimary">@color/color_2A2C45</item>
+        <item name="colorSecondary">@color/color_81819E</item>
+        <item name="colorPrimaryDark">@color/color_01001E</item>
+        <item name="android:colorBackground">@color/color_20202E</item>
+        <item name="colorAccent">@color/color_2A2C45</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_2A2C45</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_2A2C45</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_81819E</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorButtonTint">@color/color_59BC88</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_2A2C45</item>
+        <item name="attrStrokeColorButtonTint">@color/color_F2F2F2</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
-        <item name="attrTextColorRed">@color/redColdOcean</item>
-        <item name="attrStrokeColorRed">@color/redColdOcean</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
-        <item name="attrTextColorWhite">@color/whiteColdOcean</item>
-        <item name="attrBackgroundSectionColor">@color/sectionColorColdOcean</item>
-        <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessageColdOcean</item>
-        <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessageColdOcean</item>
-        <item name="attrTextColorLinkTextColor">@color/linkTextColorColdOcean</item>
-        <item name="attrTextColorColorError">@color/colorErrorColdOcean</item>
-        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColorColdOcean</item>
-        <item name="attrBackgroundTintButtonTint">@color/buttonTintColdOcean</item>
-        <item name="attrBackgroundColorBackground">@color/colorBackgroundColdOcean</item>
-        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDarkColdOcean</item>
-        <item name="attrTextColorColorPrimary">@color/colorPrimaryColdOcean</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_2A2C45</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_59BC88</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorBackground">@color/color_20202E</item>
+        <item name="attrTintColorSecondaryDark">@color/color_59BC88</item>
+        <item name="attrTextColorColorPrimary">@color/color_2A2C45</item>
         <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
-        <item name="attrBoxStrokeErrorColorColorError">@color/colorErrorColdOcean</item>
-        <item name="attrErrorTextColorColorError">@color/colorErrorColdOcean</item>
-        <item name="attrErrorIconTintColorError">@color/colorErrorColdOcean</item>
-        <item name="attrColorButtonTint">@color/colorPrimaryDarkColdOcean</item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundBatchMessage">@color/color_2A2C45</item>
+        <item name="attrBackgroundColorActionMode">@color/color_01001E</item>
+        <item name="attrFabIconColor">@color/color_2A2C45</item>
+        <item name="attrActionBarItemBackground">@color/color_59BC88</item>
+        <item name="attrConversationIconColor">@color/color_59BC88</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_20202E</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_59BC88</item>
+        <item name="attrTextColorHint">@color/white</item>
+        <item name="attrBackgroundTintIconToolbar">@color/color_59BC88</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/color_59BC88</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/white</item>
+
+    </style>
+
+    <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">?attr/attrBackgroundTintIconToolbar</item>
     </style>
 
     <style name="AppPrimaryButton" parent="Widget.MaterialComponents.Button">
@@ -331,10 +450,10 @@
 
     <style name="AppPrimaryButtonText.Keyboard" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textSize">36dp</item>
-        <item name="android:textColor">@color/keboard_color</item>
+        <item name="android:textColor">?attr/attrColorButtonTint</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textStyle">bold</item>
-        <item name="tint">@color/keboard_color</item>
+        <item name="tint">?attr/attrColorButtonTint</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>
 
@@ -345,7 +464,11 @@
     </style>
 
     <style name="AppPrimaryButtonText.Primary">
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
+    </style>
+
+    <style name="AppPrimaryButtonText.Primary.Camera">
+        <item name="android:textColor">?attr/attrColorTextButtonTintCamera</item>
     </style>
 
     <style name="TextViewPrimaryTitle">
@@ -375,7 +498,7 @@
 
     <style name="BodyTextView.message">
         <item name="android:textSize">@dimen/small_text_size</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorMessageAndTimeHome</item>
     </style>
 
     <style name="BodyTextView.Bold">
@@ -387,7 +510,7 @@
     </style>
 
     <style name="TextViewListTitle" parent="BodyTextView.Bold">
-        <item name="android:background">?attr/attrBackgroundSectionColor</item>
+        <item name="android:background">?attr/attrBackgroundSectionOtherColor</item>
         <item name="android:padding">@dimen/small_padding</item>
 
     </style>
@@ -415,7 +538,7 @@
 
     <style name="SmallBodyTextView.Time">
         <item name="android:textSize">@dimen/minor_text_size</item>
-        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorMessageAndTimeHome</item>
     </style>
 
     <style name="SmallBodyTextView.Link">
@@ -440,7 +563,6 @@
     </style>
 
     <style name="SmallBodyTextView.WhiteBold" parent="SmallBodyTextView">
-        <item name="android:textColor">?attr/attrTextColorWhite</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -530,7 +652,7 @@
         <item name="android:maxLength">@dimen/max_length_display_name</item>
         <item name="android:padding">0dp</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/buttonTint</item>
+        <item name="android:textColor">?attr/attrColorButtonTint</item>
     </style>
 
     <style name="AccessPinEditText">
@@ -605,6 +727,7 @@
         <item name="android:textSize">@dimen/small_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+        <item name="android:background">@drawable/bg_white_with_separator</item>
     </style>
 
     <style name="MyAppActionBarTheme" parent="android:Theme.Holo.Light">
@@ -621,7 +744,7 @@
     </style>
 
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="background">@color/colorPrimaryDark</item>
+        <item name="background">?attr/attrBackgroundColorActionMode</item>
         <item name="titleTextStyle">@style/ActionModeTitleTextStyle</item>
     </style>
 

@@ -41,6 +41,18 @@
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintWidth_percent="0.7">
 
+            <TextView
+                android:id="@+id/textView_CountDown"
+                style="@style/MyMessageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:messageDate="@{conversation.message.createdAt}"
+                tools:text="10:34"
+                tools:visibility="visible" />
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_attachment"
                 android:layout_width="wrap_content"
@@ -50,7 +62,7 @@
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_CountDown"
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 

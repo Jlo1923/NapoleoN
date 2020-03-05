@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#121212</color>
+    <color name="colorPrimary">#383838</color>
     <color name="colorPrimaryLight">#383838</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorSecondary">#8F8F8F</color>
@@ -17,8 +17,10 @@
     <color name="separator">#8F8F8F</color>
     <color name="green">#59BC88</color>
     <color name="colorBackground">#121212</color>
+    <color name="colorBackgroundDialog">#383838</color>
     <color name="colorSecondaryBackground">#282828</color>
     <color name="buttonTint">#f2f2f2</color>
+    <color name="buttonTintCamera">#121212</color>
     <color name="trackColor">#4Df2f2f2</color>
     <color name="disabledTrackColor">#4D505564</color>
     <color name="disabledThumbColor">@color/colorSecondaryDark</color>
