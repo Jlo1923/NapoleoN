@@ -7,7 +7,6 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.media.AudioAttributes
 import android.media.AudioManager
-import android.media.AudioManager.GET_DEVICES_INPUTS
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
@@ -35,7 +34,6 @@ class MediaPlayerManager(private val context: Context) :
     private var mediaPlayer: MediaPlayer? = null
 
     private var mStartAudioTime: Long? = null
-    private var mAudioContentType = AudioAttributes.CONTENT_TYPE_MUSIC
     private var mIsEncryptedFile: Boolean = false
     private var mSpeed: Float = 1.0f
     private var mImageButtonPlay: AnimatedTwoVectorView? = null
@@ -219,11 +217,11 @@ class MediaPlayerManager(private val context: Context) :
 
                 if (isPlaying) {
                     pause()
-                    mImageButtonPlay?.reverse()
+                    mImageButtonPlay?.reverseAnimation()
                 } else {
                     start()
                     mHandler.postDelayed(mRunnable, 0)
-                    mImageButtonPlay?.play()
+                    mImageButtonPlay?.playAnimation()
                 }
             }
         } catch (e: Exception) {
@@ -250,7 +248,7 @@ class MediaPlayerManager(private val context: Context) :
     override fun pauseAudio() {
         if (mediaPlayer != null) {
             if (mediaPlayer!!.isPlaying) {
-                mImageButtonPlay?.reverse()
+                mImageButtonPlay?.reverseAnimation()
             }
             mediaPlayer!!.pause()
         }
@@ -266,7 +264,7 @@ class MediaPlayerManager(private val context: Context) :
 
     override fun setImageButtonPlay(imageButtonPlay: AnimatedTwoVectorView) {
         if (this.mImageButtonPlay != imageButtonPlay) {
-            this.mImageButtonPlay?.reverse()
+            this.mImageButtonPlay?.reverseAnimation()
         }
         this.mImageButtonPlay = imageButtonPlay
     }
@@ -360,7 +358,7 @@ class MediaPlayerManager(private val context: Context) :
         }
 
         mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
-        mImageButtonPlay?.reverse()
+        mImageButtonPlay?.reverseAnimation()
         mImageButtonPlay = null
         mImageButtonSpeed = null
         mPreviousAudioId = null

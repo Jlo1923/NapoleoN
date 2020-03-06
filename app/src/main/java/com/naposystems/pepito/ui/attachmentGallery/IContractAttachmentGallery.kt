@@ -2,12 +2,13 @@ package com.naposystems.pepito.ui.attachmentGallery
 
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.dataSource.attachmentGallery.State
+import com.naposystems.pepito.model.attachment.gallery.GalleryFolder
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 
 interface IContractAttachmentGallery {
 
     interface ViewModel {
-        fun loadGalleryItemsByFolder(folderName: String)
+        fun loadGalleryItemsByFolder(galleryFolder: GalleryFolder)
         fun getState(): LiveData<State>
     }
 

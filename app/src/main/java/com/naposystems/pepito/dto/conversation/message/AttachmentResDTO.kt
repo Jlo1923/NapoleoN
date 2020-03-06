@@ -1,6 +1,7 @@
 package com.naposystems.pepito.dto.conversation.message
 
 import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.utility.Constants
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -29,7 +30,7 @@ data class AttachmentResDTO(
                         attachmentDTO.type,
                         attachmentDTO.body,
                         "",
-                        0
+                        Constants.AttachmentOrigin.DOWNLOADED.origin
                     )
                 )
             }

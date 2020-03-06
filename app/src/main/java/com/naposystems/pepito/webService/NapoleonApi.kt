@@ -13,6 +13,7 @@ import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
+import com.naposystems.pepito.dto.conversation.message.MessageReqTestDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
@@ -50,6 +51,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.SEARCH_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQUEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_TEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_MUTE_CONVERSATION
@@ -58,6 +60,8 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_RECEIVED
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -83,13 +87,19 @@ interface NapoleonApi {
     suspend fun updateUserInfo(@Body updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
 
     @PUT(UPDATE_MUTE_CONVERSATION)
-    suspend fun updateMuteConversation(@Path("id") idContact: Int, @Body muteConversationReqDTO: MuteConversationReqDTO): Response<MuteConversationResDTO>
+    suspend fun updateMuteConversation(
+        @Path("id") idContact: Int,
+        @Body muteConversationReqDTO: MuteConversationReqDTO
+    ): Response<MuteConversationResDTO>
 
     @GET(FRIEND_SHIP_SEARCH)
     suspend fun getContactsByState(@Path("state") state: String): Response<ContactsResDTO>
 
     @GET(FRIEND_SHIP_SEARCH_BY_DATE)
-    suspend fun getContactsByDate(@Path("state") state: String, @Query("date") date: String): Response<ContactsResDTO>
+    suspend fun getContactsByDate(
+        @Path("state") state: String,
+        @Query("date") date: String
+    ): Response<ContactsResDTO>
 
     @POST(SEND_PQRS)
     suspend fun sendPqrs(@Body contactUsReqDTO: ContactUsReqDTO): Response<ContactUsResDTO>
@@ -102,6 +112,16 @@ interface NapoleonApi {
 
     @POST(SEND_MESSAGE)
     suspend fun sendMessage(@Body messageReqDTO: MessageReqDTO): Response<MessageResDTO>
+
+    @Multipart
+    @POST(SEND_MESSAGE_TEST)
+    suspend fun sendMessageTest(
+        @Part("user_receiver") userDestination: RequestBody,
+        @Part("quoted") quoted: RequestBody,
+        @Part("body") body: RequestBody,
+        @Part("type_attachment") attachmentType: RequestBody,
+        @Part files: List<MultipartBody.Part>
+    ): Response<MessageResDTO>
 
     @GET(GET_MY_MESSAGES)
     suspend fun getMyMessages(): Response<List<MessageResDTO>>
@@ -131,7 +151,10 @@ interface NapoleonApi {
     suspend fun getFriendshipRequests(): Response<FriendshipRequestsResDTO>
 
     @PUT(PUT_FRIENDSHIP_REQUEST)
-    suspend fun putFriendshipRequest(@Path("id") friendshipRequestId: String, @Body request: FriendshipRequestPutReqDTO): Response<FriendshipRequestPutResDTO>
+    suspend fun putFriendshipRequest(
+        @Path("id") friendshipRequestId: String,
+        @Body request: FriendshipRequestPutReqDTO
+    ): Response<FriendshipRequestPutResDTO>
 
     @GET(GET_FRIENDSHIP_REQUEST_QUANTITY)
     suspend fun getFriendshipRequestQuantity(): Response<FriendshipRequestQuantityResDTO>

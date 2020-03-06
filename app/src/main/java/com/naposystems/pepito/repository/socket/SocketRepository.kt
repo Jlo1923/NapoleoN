@@ -110,11 +110,28 @@ class SocketRepository @Inject constructor(
 
     private fun saveToDisk(body: ResponseBody, attachment: Attachment): String {
         try {
+            var extension = ""
+            var folder = ""
 
-            val path = File(context.externalCacheDir!!, "Audios")
+            when (attachment.type) {
+                Constants.AttachmentType.IMAGE.type -> {
+                    extension = ".jpg"
+                    folder = "Images"
+                }
+                Constants.AttachmentType.AUDIO.type -> {
+                    extension = ".mp3"
+                    folder = "Audios"
+                }
+                Constants.AttachmentType.VIDEO.type -> {
+                    extension = ".mp4"
+                    folder = "Videos"
+                }
+            }
+
+            val path = File(context.externalCacheDir!!, folder)
             if (!path.exists())
                 path.mkdirs()
-            val audioFile = File(path, "${attachment.webId}.mp3")
+            val audioFile = File(path, "${attachment.webId}${extension}")
 
             val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
             val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
@@ -165,31 +182,35 @@ class SocketRepository @Inject constructor(
     override fun getDeletedMessages() {
         GlobalScope.launch {
             val response = napoleonApi.getDeletedMessages()
-            if(response.isSuccessful) {
+            if (response.isSuccessful) {
                 val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
-                when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(idContact)) {
+                when (val messageAndAttachment =
+                    messageLocalDataSource.getLastMessageByContact(idContact)) {
                     null -> {
                         conversationLocalDataSource.cleanConversation(idContact)
                     }
                     else -> {
-                        conversationLocalDataSource.getQuantityUnreads(idContact).let { quantityUnreads->
-                            if (quantityUnreads > 0) {
-                                conversationLocalDataSource.updateConversationByContact(
-                                    idContact,
-                                    messageAndAttachment.message.body,
-                                    messageAndAttachment.message.createdAt,
-                                    messageAndAttachment.message.status,
-                                    quantityUnreads - response.body()!!.count())
-                            } else {
-                                conversationLocalDataSource.updateConversationByContact(
-                                    idContact,
-                                    messageAndAttachment.message.body,
-                                    messageAndAttachment.message.createdAt,
-                                    messageAndAttachment.message.status,
-                                    0)
+                        conversationLocalDataSource.getQuantityUnreads(idContact)
+                            .let { quantityUnreads ->
+                                if (quantityUnreads > 0) {
+                                    conversationLocalDataSource.updateConversationByContact(
+                                        idContact,
+                                        messageAndAttachment.message.body,
+                                        messageAndAttachment.message.createdAt,
+                                        messageAndAttachment.message.status,
+                                        quantityUnreads - response.body()!!.count()
+                                    )
+                                } else {
+                                    conversationLocalDataSource.updateConversationByContact(
+                                        idContact,
+                                        messageAndAttachment.message.body,
+                                        messageAndAttachment.message.createdAt,
+                                        messageAndAttachment.message.status,
+                                        0
+                                    )
+                                }
                             }
-                        }
                     }
                 }
             }

@@ -146,7 +146,9 @@ class ConversationViewModel @Inject constructor(
         isMine: Int,
         base64: String,
         uri: String,
-        origin: Int
+        thumbnailUri: String,
+        origin: Int,
+        attachmentType: String
     ) {
         viewModelScope.launch {
             val message = Message(
@@ -161,19 +163,19 @@ class ConversationViewModel @Inject constructor(
                 Constants.MessageStatus.SENT.status
             )
 
-
             val messageId = repository.insertMessage(message).toInt()
 
             val attachment =
                 Attachment(
-                    0,
-                    messageId,
-                    "",
-                    "",
-                    Constants.AttachmentType.IMAGE.type,
-                    "",
-                    uri,
-                    origin
+                    id = 0,
+                    messageId = messageId,
+                    webId = "",
+                    messageWebId = "",
+                    type = attachmentType,
+                    body = "",
+                    uri = uri,
+                    origin = origin,
+                    thumbnailUri = thumbnailUri
                 )
             val listAttachment: MutableList<Attachment> = ArrayList()
             listAttachment.add(attachment)
@@ -190,12 +192,48 @@ class ConversationViewModel @Inject constructor(
                     Attachment.toListAttachmentDTO(listAttachment)
                 )
 
-            sendMessage(
+            try {
+                val response = repository.sendMessageTest(
+                    userDestination = contact.id,
+                    quoted = quoted,
+                    body = body,
+                    attachmentType = attachmentType,
+                    uriString = uri
+                )
+
+                if (response.isSuccessful) {
+                    Timber.d("Message send successFully")
+                    val messageEntity = MessageResDTO.toMessageEntity(
+                        messageId,
+                        response.body()!!,
+                        isMine
+                    )
+                    repository.updateMessage(messageEntity)
+
+                    if (listAttachmentId.isNotEmpty()) {
+                        repository.updateAttachments(
+                            listAttachmentId,
+                            response.body()!!.attachments
+                        )
+                    }
+
+                    repository.insertConversation(response.body()!!)
+                } else {
+                    when (response.code()) {
+                        422 -> _webServiceError.value = repository.get422ErrorMessage(response)
+                        else -> _webServiceError.value = repository.getErrorMessage(response)
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+
+            /*sendMessage(
                 messageId,
                 messageReqDTO,
                 isMine,
                 listAttachmentId
-            )
+            )*/
         }
     }
 
@@ -234,7 +272,7 @@ class ConversationViewModel @Inject constructor(
                         Constants.AttachmentType.AUDIO.type,
                         "",
                         audioFile!!.absolutePath,
-                        Constants.ATTACHMENT_ORIGIN.AUDIO_SELECTION.origin
+                        Constants.AttachmentOrigin.AUDIO_SELECTION.origin
                     )
 
                 val attachmentId = repository.insertAttachment(attachment)
@@ -298,7 +336,7 @@ class ConversationViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.e(e)
                 val error = context.getString(R.string.text_fail)
                 _webServiceError.value = arrayListOf(error)
             }

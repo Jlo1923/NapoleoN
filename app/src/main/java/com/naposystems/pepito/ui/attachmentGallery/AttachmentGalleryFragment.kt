@@ -67,7 +67,7 @@ class AttachmentGalleryFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.loadGalleryItemsByFolder(args.folderName)
+        viewModel.loadGalleryItemsByFolder(args.galleryFolder)
 
         viewModel.galleryItems.observe(viewLifecycleOwner, Observer {
             if (it != null) {

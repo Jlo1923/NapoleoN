@@ -31,6 +31,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
 import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
@@ -187,7 +188,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         message = R.string.explanation_camera_to_attachment_picture
                     ) {
                         findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
+                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraNewFragment(
                                 viewModel.getUser().id,
                                 args.contact.id
                             )
@@ -227,7 +228,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 message = R.string.explanation_camera_to_attachment_picture
             ) {
                 findNavController().navigate(
-                    ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
+                    ConversationFragmentDirections.actionConversationFragmentToConversationCameraNewFragment(
                         viewModel.getUser().id,
                         args.contact.id
                     )
@@ -248,16 +249,18 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         shareViewModel.hasCameraSendClicked.observe(activity!!, Observer {
             if (it == true) {
-                val base64 = shareViewModel.getImageBase64()
+//                val base64 = shareViewModel.getImageBase64()
 
                 viewModel.saveMessageWithAttachmentLocally(
-                    shareViewModel.message.value!!,
-                    "",
-                    args.contact,
-                    Constants.IsMine.YES.value,
-                    base64,
-                    shareViewModel.getImageUri(),
-                    Constants.ATTACHMENT_ORIGIN.CAMERA.origin
+                    body = shareViewModel.message.value!!,
+                    quoted = "",
+                    contact = args.contact,
+                    isMine = Constants.IsMine.YES.value,
+                    base64 = "",
+                    uri = shareViewModel.getImageUri(),
+                    thumbnailUri = shareViewModel.getMediaThumbnailUri(),
+                    origin = Constants.AttachmentOrigin.CAMERA.origin,
+                    attachmentType = Constants.AttachmentType.IMAGE.type
                 )
 
                 with(binding.inputPanel.getEditTex()) {
@@ -274,18 +277,21 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             }
         })
 
-        shareViewModel.hasGallerySendClicked.observe(activity!!, Observer {
-            if (it == true) {
+        shareViewModel.hasGalleryTypeSelected.observe(activity!!, Observer { attachmentType ->
+            if (attachmentType.isNotEmpty()) {
+
                 val base64 = shareViewModel.getImageBase64()
 
                 viewModel.saveMessageWithAttachmentLocally(
-                    shareViewModel.message.value!!,
-                    "",
-                    args.contact,
-                    Constants.IsMine.YES.value,
-                    base64,
-                    shareViewModel.getImageUri(),
-                    Constants.ATTACHMENT_ORIGIN.GALLERY.origin
+                    body = shareViewModel.message.value!!,
+                    quoted = "",
+                    contact = args.contact,
+                    isMine = Constants.IsMine.YES.value,
+                    base64 = base64,
+                    uri = shareViewModel.getImageUri(),
+                    thumbnailUri = shareViewModel.getMediaThumbnailUri(),
+                    origin = Constants.AttachmentOrigin.GALLERY.origin,
+                    attachmentType = attachmentType
                 )
 
                 with(binding.inputPanel.getEditTex()) {
@@ -293,7 +299,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
             }
         })
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -386,7 +391,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
             if (it) {
-                if(actionMode.mode != null) {
+                if (actionMode.mode != null) {
                     actionMode.mode!!.finish()
                 }
             }
@@ -509,14 +514,14 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             clickCopy = {
                 viewModel.copyMessagesSelected(args.contact.id)
             },
-            clickDelete = {moreMessagesOtherContact ->
-                if(moreMessagesOtherContact){
+            clickDelete = { moreMessagesOtherContact ->
+                if (moreMessagesOtherContact) {
                     Utils.alertDialogWithoutNeutralButton(
                         R.string.text_delete_messages,
                         false, context!!,
                         R.string.text_delete_message_for_me,
                         R.string.text_cancel,
-                        clickTopButton = {clickTopButton ->
+                        clickTopButton = { clickTopButton ->
                             if (clickTopButton) {
                                 viewModel.deleteMessagesSelected(args.contact.id)
                             }
@@ -528,12 +533,12 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         R.string.text_delete_message_for_me,
                         R.string.text_cancel,
                         R.string.text_delete_message_for_all,
-                        clickTopButton = {clickTopButton ->
+                        clickTopButton = { clickTopButton ->
                             if (clickTopButton) {
                                 viewModel.deleteMessagesSelected(args.contact.id)
                             }
                         },
-                        clickDownButton = {clickDowButton ->
+                        clickDownButton = { clickDowButton ->
                             if (clickDowButton) {
                                 viewModel.deleteMessagesForAll(
                                     args.contact.id,
@@ -568,6 +573,14 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     binding.coordinator,
                     getString(R.string.text_error_playing_audio),
                     3
+                )
+            }
+
+            override fun onPreviewClick(item: MessageAndAttachment) {
+                findNavController().navigate(
+                    ConversationFragmentDirections.actionConversationFragmentToPreviewMediaFragment(
+                        item
+                    )
                 )
             }
         }, mediaPlayerManager)

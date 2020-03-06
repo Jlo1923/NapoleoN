@@ -2,7 +2,9 @@ package com.naposystems.pepito.ui.conversation.adapter
 
 import android.content.ContentUris
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -14,18 +16,25 @@ import androidx.annotation.Nullable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.Target
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.GlideManager
+import com.naposystems.pepito.utility.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 @BindingAdapter("messageDate")
 fun bindMessageDate(textView: TextView, timestamp: Int) {
@@ -35,7 +44,7 @@ fun bindMessageDate(textView: TextView, timestamp: Int) {
         textView.text = sdf.format(netDate)
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
-        Timber.d("Error parsing date")
+        Timber.e("Error parsing date")
     }
 }
 
@@ -139,52 +148,24 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
 
 @BindingAdapter("imageAttachment")
 fun bindImageAttachment(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
-    val context = imageView.context
 
     if (messageAndAttachment.attachmentList.isNotEmpty()) {
         imageView.visibility = View.VISIBLE
         val firstAttachment = messageAndAttachment.attachmentList[0]
 
-        try {
-            when (firstAttachment.origin) {
-                Constants.ATTACHMENT_ORIGIN.CAMERA.origin -> {
-                    Glide.with(context)
-                        .load(File(firstAttachment.uri))
-                        .into(imageView)
-                }
-                Constants.ATTACHMENT_ORIGIN.GALLERY.origin -> {
-                    var bitmap: Bitmap
-                    val contentUri = ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        ContentUris.parseId(Uri.parse(firstAttachment.uri))
-                    )
+        Glide.with(imageView)
+            .load(firstAttachment)
+            .into(imageView)
+    }
+}
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        ImageDecoder.createSource(
-                            context.contentResolver,
-                            contentUri
-                        )
-                            .also { source ->
-                                ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
-                                    bitmap = bitmapDecoded
-                                }
-                            }
-                    } else {
+@BindingAdapter("mediaThumbnail")
+fun bindMediaThumbnail(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+    if (messageAndAttachment.attachmentList.isNotEmpty()) {
+        val firstAttachment = messageAndAttachment.attachmentList[0]
 
-                        bitmap = MediaStore.Images.Media.getBitmap(
-                            context.contentResolver,
-                            contentUri
-                        )
-                    }
-
-                    GlideManager.loadBitmap(
-                        imageView,
-                        bitmap
-                    )
-                }
-            }
-        } catch (e: FileNotFoundException) {
-            Toast.makeText(context, "La imagen no existe!!", Toast.LENGTH_SHORT).show()
+        if (firstAttachment.thumbnailUri.isNotEmpty()) {
+            GlideManager.loadFile(imageView, File(firstAttachment.thumbnailUri))
         }
     }
 }

@@ -163,10 +163,10 @@ class ConversationCameraFragment : Fragment() {
                             binding.viewSwitcher.showNext()
                         }
 
-                        viewModel.setImageUri(photoFile.absolutePath)
+                        viewModel.setMediaUri(photoFile.absolutePath)
 
                         GlobalScope.launch {
-                            viewModel.setImageBase64(Utils.convertImageFileToBase64(photoFile))
+                            viewModel.setMediaBase64(Utils.convertImageFileToBase64(photoFile))
                         }
 
                         Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
@@ -194,7 +194,7 @@ class ConversationCameraFragment : Fragment() {
             if (photoFile.exists()) {
                 photoFile.delete()
             }
-            viewModel.setImageBase64("")
+            viewModel.setMediaBase64("")
             binding.viewSwitcher.showNext()
         }
     }

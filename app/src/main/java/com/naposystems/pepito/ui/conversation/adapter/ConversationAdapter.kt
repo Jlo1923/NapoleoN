@@ -2,6 +2,7 @@ package com.naposystems.pepito.ui.conversation.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,16 +11,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
-import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
-import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithAudioBinding
-import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
-import com.naposystems.pepito.databinding.ConversationItemMyMessageWithAudioBinding
+import com.naposystems.pepito.databinding.*
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class ConversationAdapter constructor(
     private val clickListener: ClickListener,
@@ -32,6 +31,8 @@ class ConversationAdapter constructor(
         const val TYPE_INCOMING_MESSAGE = 2
         const val TYPE_MY_MESSAGE_AUDIO = 3
         const val TYPE_INCOMING_MESSAGE_AUDIO = 4
+        const val TYPE_MY_MESSAGE_VIDEO = 5
+        const val TYPE_INCOMING_MESSAGE_VIDEO = 6
     }
 
     private var isFirst = false
@@ -71,6 +72,13 @@ class ConversationAdapter constructor(
                         TYPE_INCOMING_MESSAGE_AUDIO
                     }
                 }
+                Constants.AttachmentType.VIDEO.type -> {
+                    if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        TYPE_MY_MESSAGE_VIDEO
+                    } else {
+                        TYPE_INCOMING_MESSAGE_VIDEO
+                    }
+                }
                 else -> {
                     if (conversation.message.isMine == Constants.IsMine.YES.value) {
                         TYPE_MY_MESSAGE
@@ -97,6 +105,7 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent)
             TYPE_MY_MESSAGE_AUDIO -> MyMessageAudioViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(parent)
+            TYPE_MY_MESSAGE_VIDEO -> MyMessageVideoViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
     }
@@ -118,6 +127,8 @@ class ConversationAdapter constructor(
                     .bind(item, clickListener, isFirst, mediaPlayerManager)
                 TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
                     .bind(item, clickListener, isFirst, mediaPlayerManager)
+                TYPE_MY_MESSAGE_VIDEO -> (holder as MyMessageVideoViewHolder)
+                    .bind(item, clickListener, isFirst)
             }
         }
     }
@@ -183,7 +194,7 @@ class ConversationAdapter constructor(
 
             val context = binding.containerMessage.context
 
-            if(item.message.isSelected){
+            if (item.message.isSelected) {
                 binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
             } else {
                 binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
@@ -198,22 +209,7 @@ class ConversationAdapter constructor(
                 clickListener.onClick(item.message)
             }
 
-            binding.containerMessage.background = if (isFirst) {
-                context.getDrawable(R.drawable.bg_incoming_message)
-            } else {
-                context.getDrawable(R.drawable.bg_incoming_message_rounded)
-            }
-
             binding.clickListener = clickListener
-
-            if (item.attachmentList.isNotEmpty()) {
-                binding.imageViewAttachment.visibility = View.VISIBLE
-                val firstAttachment = item.attachmentList[0]
-
-                Glide.with(context)
-                    .load(if (firstAttachment.uri.isNotEmpty()) File(firstAttachment.uri) else firstAttachment.body)
-                    .into(binding.imageViewAttachment)
-            }
 
             binding.executePendingBindings()
         }
@@ -314,9 +310,44 @@ class ConversationAdapter constructor(
         }
     }
 
+    class MyMessageVideoViewHolder constructor(private val binding: ConversationItemMyMessageWithVideoBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener,
+            isFirst: Boolean
+        ) {
+            binding.conversation = item
+            binding.clickListener = clickListener
+            binding.isFirst = isFirst
+
+            if (item.message.isSelected) {
+                binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): MyMessageVideoViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemMyMessageWithVideoBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return MyMessageVideoViewHolder(binding)
+            }
+        }
+    }
+
     interface ClickListener {
         fun onClick(item: Message)
         fun onLongClick(item: Message)
         fun errorPlayingAudio()
+        fun onPreviewClick(item: MessageAndAttachment)
     }
 }

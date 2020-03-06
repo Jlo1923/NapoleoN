@@ -1,12 +1,15 @@
 package com.naposystems.pepito.entity.message.attachments
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.naposystems.pepito.dto.conversation.message.AttachmentReqDTO
 import com.naposystems.pepito.entity.message.Message
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(
     tableName = "attachment", foreignKeys = [
         ForeignKey(
@@ -25,8 +28,9 @@ data class Attachment(
     @ColumnInfo(name = "type") val type: String,
     @ColumnInfo(name = "body") var body: String,
     @ColumnInfo(name = "uri") var uri: String,
-    @ColumnInfo(name = "origin") var origin: Int
-) {
+    @ColumnInfo(name = "origin") var origin: Int,
+    @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = ""
+) : Parcelable {
     companion object {
         fun toListAttachmentDTO(listAttachment: List<Attachment>): List<AttachmentReqDTO> {
             val mutableAttachmentDTO: MutableList<AttachmentReqDTO> = ArrayList()

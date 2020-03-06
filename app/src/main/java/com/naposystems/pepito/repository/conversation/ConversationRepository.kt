@@ -1,11 +1,14 @@
 package com.naposystems.pepito.repository.conversation
 
+import android.content.Context
+import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
+import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessage422DTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
@@ -16,10 +19,10 @@ import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.message.Message
-import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -28,12 +31,18 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.coroutineScope
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
+
 class ConversationRepository @Inject constructor(
+    private val context: Context,
     private val socketService: IContractSocketService.SocketService,
     private val userLocalDataSource: UserLocalDataSource,
     private val messageLocalDataSource: MessageDataSource,
@@ -119,6 +128,52 @@ class ConversationRepository @Inject constructor(
         return napoleonApi.sendMessage(messageReqDTO)
     }
 
+    override suspend fun sendMessageTest(
+        userDestination: Int,
+        quoted: String,
+        body: String,
+        attachmentType: String,
+        uriString: String
+    ): Response<MessageResDTO> {
+        val listParts: MutableList<MultipartBody.Part> = ArrayList()
+
+        listParts.add(createPartFromFile(uriString))
+
+        val requestBodyUserDestination = createPartFromString(userDestination.toString())
+        val requestBodyQuoted = createPartFromString(quoted)
+        val requestBodyBody = createPartFromString(body)
+        val requestBodyAttachmentType = createPartFromString(attachmentType)
+
+        return napoleonApi.sendMessageTest(
+            userDestination = requestBodyUserDestination,
+            quoted = requestBodyQuoted,
+            body = requestBodyBody,
+            attachmentType = requestBodyAttachmentType,
+            files = listParts
+        )
+    }
+
+    private fun createPartFromString(string: String): RequestBody {
+        return RequestBody.create(MultipartBody.FORM, string)
+    }
+
+    private fun createPartFromFile(uriString: String): MultipartBody.Part {
+        val file = File(uriString)
+
+        var type: String? = null
+        val extension = MimeTypeMap.getFileExtensionFromUrl(uriString)
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        }
+
+        val requestFile: RequestBody = RequestBody.create(
+            MediaType.parse(type!!),
+            file
+        )
+
+        return MultipartBody.Part.createFormData("attachments[]", file.name, requestFile)
+    }
+
     override fun getLocalContact(idContact: Int): LiveData<Contact> {
         return contactDataSource.getContact(idContact)
     }
@@ -145,7 +200,10 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun sendMessagesRead(contactId: Int) {
         val messagesUnread =
-            messageLocalDataSource.getMessagesByStatus(contactId, Constants.MessageStatus.UNREAD.status)
+            messageLocalDataSource.getMessagesByStatus(
+                contactId,
+                Constants.MessageStatus.UNREAD.status
+            )
 
         if (messagesUnread.isNotEmpty()) {
             try {

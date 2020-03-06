@@ -7,10 +7,12 @@ interface IContractConversationShareViewModel {
 
     fun setMessage(message: String)
     fun resetMessage()
-    fun setImageBase64(base64: String)
+    fun setMediaBase64(base64: String)
     fun getImageBase64(): String
-    fun setImageUri(uri: String)
+    fun setMediaUri(uri: String)
     fun getImageUri(): String
+    fun setMediaThumbnailUri(uri: String)
+    fun getMediaThumbnailUri(): String
 
     interface CameraAttachment {
         fun setCameraSendClicked()
@@ -27,7 +29,7 @@ interface IContractConversationShareViewModel {
     interface GalleryAttachment {
         fun setGalleryItemsSelected(listGalleryItem: List<GalleryItem>)
         fun getGalleryItemsSelected(): List<GalleryItem>
-        fun setGallerySendClicked()
-        fun resetGallerySendClicked()
+        fun setGalleryTypeSelected(attachmentType: String)
+        fun resetGalleryTypeSelected()
     }
 }

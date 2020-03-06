@@ -15,6 +15,7 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     private var base64: String = ""
     private var uri: String = ""
+    private var thumbnailMediaUri: String = ""
     private var _listMediaStoreAudio = mutableListOf<MediaStoreAudio>()
     private var _listGalleryItems = mutableListOf<GalleryItem>()
 
@@ -26,9 +27,9 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
     val hasAudioSendClicked: LiveData<Boolean>
         get() = _hasAudioSendClicked
 
-    private val _hasGallerySendClicked = MutableLiveData<Boolean>()
-    val hasGallerySendClicked: LiveData<Boolean>
-        get() = _hasGallerySendClicked
+    private val _hasGalleryTypeSelected = MutableLiveData<String>()
+    val hasGalleryTypeSelected: LiveData<String>
+        get() = _hasGalleryTypeSelected
 
     private val _message = MutableLiveData<String>()
     val message: LiveData<String>
@@ -36,7 +37,7 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     init {
         _hasCameraSendClicked.value = false
-        _hasGallerySendClicked.value = false
+        _hasGalleryTypeSelected.value = ""
         _message.value = ""
     }
 
@@ -49,17 +50,24 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
         _message.value = ""
     }
 
-    override fun setImageBase64(base64: String) {
+    override fun setMediaBase64(base64: String) {
         this.base64 = base64
     }
 
     override fun getImageBase64(): String = base64
 
-    override fun setImageUri(uri: String) {
+    override fun setMediaUri(uri: String) {
         this.uri = uri
     }
 
     override fun getImageUri(): String = uri
+
+    override fun setMediaThumbnailUri(uri: String) {
+        this.thumbnailMediaUri = uri
+    }
+
+    override fun getMediaThumbnailUri() = thumbnailMediaUri
+
     //endregion
 
     //region Implementation IContractConversationShareViewModel.CameraAttachment
@@ -99,12 +107,12 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     override fun getGalleryItemsSelected() = _listGalleryItems
 
-    override fun setGallerySendClicked() {
-        _hasGallerySendClicked.value = true
+    override fun setGalleryTypeSelected(attachmentType: String) {
+        _hasGalleryTypeSelected.value = attachmentType
     }
 
-    override fun resetGallerySendClicked() {
-        _hasGallerySendClicked.value = false
+    override fun resetGalleryTypeSelected() {
+        _hasGalleryTypeSelected.value = ""
     }
     //endregion
 }

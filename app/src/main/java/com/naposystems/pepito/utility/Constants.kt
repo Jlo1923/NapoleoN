@@ -22,6 +22,7 @@ object Constants {
         const val FRIEND_SHIP_SEARCH = "friendship/search/{state}"
         const val FRIEND_SHIP_SEARCH_BY_DATE = "friendship/search/{state}"
         const val SEND_MESSAGE = "messages"
+        const val SEND_MESSAGE_TEST = "storemessagetest"
         const val GET_MY_MESSAGES = "messages/getmymessages"
         const val VERIFY_MESSAGES_RECEIVED = "messages/verifymessagesreceived"
         const val VERIFY_MESSAGES_READ = "messages/verifymessagesreaded"
@@ -195,10 +196,11 @@ object Constants {
         READED(3)
     }
 
-    enum class ATTACHMENT_ORIGIN(val origin: Int) {
+    enum class AttachmentOrigin(val origin: Int) {
         CAMERA(1),
         GALLERY(2),
-        AUDIO_SELECTION(3)
+        AUDIO_SELECTION(3),
+        DOWNLOADED(4)
     }
 
     object SharedPreferences {

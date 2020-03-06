@@ -39,29 +39,35 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
+            app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.7">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_attachment"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="200dp"
+                android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintWidth_percent="1"
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@{conversation.message.body}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintWidth_percent="1"
                 tools:text="@tools:sample/lorem" />
 
             <TextView

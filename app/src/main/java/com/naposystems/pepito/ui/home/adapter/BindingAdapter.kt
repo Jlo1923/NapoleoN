@@ -18,7 +18,7 @@ fun bindMessageDate(textView: TextView, timestamp: Int) {
         textView.text = sdf.format(netDate)
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
-        Timber.d("Error parsing date")
+        Timber.e("Error parsing date")
     }
 }
 

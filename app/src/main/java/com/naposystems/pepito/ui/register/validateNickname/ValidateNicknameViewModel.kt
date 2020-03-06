@@ -69,7 +69,7 @@ class ValidateNicknameViewModel @Inject constructor(private val repository: Vali
                     }
                 }
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.e(e)
                 _webServiceError.value = "Error inesperado"
             }
         }

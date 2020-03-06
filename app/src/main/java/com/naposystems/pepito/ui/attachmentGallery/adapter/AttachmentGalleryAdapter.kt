@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.AttachmentGalleryItemBinding
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem

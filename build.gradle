@@ -20,8 +20,8 @@ buildscript {
         paging_version = "2.1.1"
         biometric_version = "1.0.1"
         security_version = "1.0.0-alpha02"
-        camerax_version = "1.0.0-alpha10"
-        camerax_view = "1.0.0-alpha07"
+        camerax_version = "1.0.0-beta01"
+        camerax_view = "1.0.0-alpha08"
     }
 
     repositories {
@@ -30,7 +30,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.0'
+        classpath 'com.android.tools.build:gradle:3.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
         classpath 'com.google.gms:google-services:4.3.3'

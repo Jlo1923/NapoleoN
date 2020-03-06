@@ -71,7 +71,7 @@ class AttachmentGalleryFoldersFragment : Fragment() {
                     findNavController().navigate(
                         AttachmentGalleryFoldersFragmentDirections.actionAttachmentGalleryFragmentToAttachmentGalleryFragment(
                             args.contact,
-                            galleryFolder.folderName
+                            galleryFolder
                         )
                     )
                 }

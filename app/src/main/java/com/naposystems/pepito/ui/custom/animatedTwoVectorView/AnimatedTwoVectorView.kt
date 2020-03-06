@@ -55,12 +55,12 @@ class AnimatedTwoVectorView(context: Context, attrs: AttributeSet) :
     }
 
     //region Implementation IContractAnimatedTwoVectorView
-    override fun play() {
+    override fun playAnimation() {
         hasBeenInitialized = true
         morph()
     }
 
-    override fun reverse() {
+    override fun reverseAnimation() {
         hasBeenInitialized = false
         morph()
     }

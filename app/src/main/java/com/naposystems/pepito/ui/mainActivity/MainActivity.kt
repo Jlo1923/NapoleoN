@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
@@ -89,7 +90,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         val ola = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
-        when(ola) {
+        when (ola) {
             1 -> setTheme(R.style.AppTheme)
             3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
             4 -> setTheme(R.style.AppThemeColdOcean)
@@ -133,7 +134,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.enterPinFragment,
                 R.id.unlockAppTimeFragment,
                 R.id.conversationCameraFragment,
-                R.id.attachmentPreviewFragment -> {
+                R.id.conversationCameraNewFragment,
+                R.id.attachmentPreviewFragment,
+                R.id.previewMediaFragment -> {
                     hideToolbar()
                     disableDrawer()
                 }
@@ -193,14 +196,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         viewModel.theme.observe(this, Observer {
-/*            when(it) {
-                1 ->{
-                    setTheme(R.style.AppTheme)
-                }
-                6 ->{
-                    setTheme(R.style.AppThemePink)
-                }
-            }*/
+            /*            when(it) {
+                            1 ->{
+                                setTheme(R.style.AppTheme)
+                            }
+                            6 ->{
+                                setTheme(R.style.AppThemePink)
+                            }
+                        }*/
 /*            val theme = when (it) {
                 Constants.ColorScheme.LIGHT_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_NO
                 Constants.ColorScheme.DARK_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_YES

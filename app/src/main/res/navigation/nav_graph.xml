@@ -390,6 +390,16 @@
         <action
             android:id="@+id/action_conversationFragment_to_attachmentGalleryFoldersFragment"
             app:destination="@id/attachmentGalleryFoldersFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_previewMediaFragment"
+            app:destination="@id/previewMediaFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_conversationFragment_to_conversationCameraNewFragment"
+            app:destination="@id/conversationCameraNewFragment" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
@@ -511,8 +521,8 @@
             android:name="contact"
             app:argType="com.naposystems.pepito.entity.Contact" />
         <argument
-            android:name="folderName"
-            app:argType="string" />
+            android:name="galleryFolder"
+            app:argType="com.naposystems.pepito.model.attachment.gallery.GalleryFolder" />
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentPreviewFragment"
             app:destination="@id/attachmentPreviewFragment" />
@@ -531,5 +541,28 @@
         <action
             android:id="@+id/action_attachmentPreviewFragment_to_conversationFragment"
             app:destination="@id/conversationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewMediaFragment"
+        android:name="com.naposystems.pepito.ui.previewMedia.PreviewMediaFragment"
+        android:label="PreviewMediaFragment"
+        tools:layout="@layout/preview_media_fragment">
+        <argument
+            android:name="messageAndAttachment"
+            app:argType="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+    </fragment>
+    <fragment
+        android:id="@+id/conversationCameraNewFragment"
+        android:name="com.naposystems.pepito.ui.conversationCamera.ConversationCameraNewFragment"
+        android:label="conversation_camera_new_fragment"
+        tools:layout="@layout/conversation_camera_new_fragment">
+
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+        <argument
+            android:name="contactId"
+            app:argType="integer" />
+
     </fragment>
 </navigation>

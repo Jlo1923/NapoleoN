@@ -105,7 +105,7 @@ class ApplicationModule {
 
         }
 
-        httpClient.addInterceptor(GzipRequestInterceptor())
+//        httpClient.addInterceptor(GzipRequestInterceptor())
 
         return httpClient.build()
     }

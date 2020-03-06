@@ -44,7 +44,7 @@ class RecoveryAccountViewModel @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.e(e)
             }
         }
     }
