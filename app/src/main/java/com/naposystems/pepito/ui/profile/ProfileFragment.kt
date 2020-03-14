@@ -168,7 +168,7 @@ class ProfileFragment : BaseFragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
-                    cropImage(Utils.getCacheImagePath(context!!, fileName, subFolder))
+                    cropImage(Utils.getFileUri(context!!, fileName, subFolder))
                 }
             }
             REQUEST_GALLERY_IMAGE -> {
@@ -366,7 +366,7 @@ class ProfileFragment : BaseFragment() {
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
                     MediaStore.EXTRA_OUTPUT,
-                    Utils.getCacheImagePath(context!!, fileName, subFolder)
+                    Utils.getFileUri(context!!, fileName, subFolder)
                 )
                 if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
@@ -403,7 +403,7 @@ class ProfileFragment : BaseFragment() {
 
         }
 
-        val path = File(context!!.externalCacheDir, subFolder)
+        val path = File(context!!.cacheDir, subFolder)
 
         val destinationUri =
             Uri.fromFile(
@@ -438,7 +438,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun clearCache(context: Context) {
-        val path = File(context.externalCacheDir!!.absolutePath, subFolder)
+        val path = File(context.cacheDir!!.absolutePath, subFolder)
         if (path.exists() && path.isDirectory) {
             for (child in path.listFiles()!!) {
                 child.delete()

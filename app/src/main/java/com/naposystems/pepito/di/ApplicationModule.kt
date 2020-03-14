@@ -12,6 +12,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Crypto
@@ -34,6 +35,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
@@ -42,7 +44,8 @@ val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
     VALIDATE_NICKNAME,
     CREATE_ACCOUNT,
     GET_RECOVERY_QUESTIONS,
-    SEND_ANSWERS
+    SEND_ANSWERS,
+    SEND_MESSAGE_ATTACHMENT
 )
 
 @Module(includes = [ViewModelModule::class])
@@ -67,10 +70,12 @@ class ApplicationModule {
         sharedPreferencesManager: SharedPreferencesManager
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
 
         //httpClient.addNetworkInterceptor(StethoInterceptor())
 
-        httpClient.addInterceptor(NetworkConnectionInterceptor(context))
+//        httpClient.addInterceptor(NetworkConnectionInterceptor(context))
         httpClient.addInterceptor { chain ->
 
             val firebaseInstanceId = sharedPreferencesManager.getString(
@@ -105,7 +110,7 @@ class ApplicationModule {
 
         }
 
-        httpClient.addInterceptor(GzipRequestInterceptor())
+//        httpClient.addInterceptor(GzipRequestInterceptor())
 
         return httpClient.build()
     }
@@ -148,7 +153,9 @@ class ApplicationModule {
             request.method(original.method(), newRequestBody)
         }
 
-        return if (BuildConfig.ENCRYPT_API) {
+        return if (BuildConfig.ENCRYPT_API && !isNotEncryptedRequest) {
+            decryptResponse(chain, request, cripto, secretKey)
+        } else if (BASE_URL + SEND_MESSAGE_ATTACHMENT == original.url().uri().toString()) {
             decryptResponse(chain, request, cripto, secretKey)
         } else {
             chain.proceed(request.build())

@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di.modules
 
+import android.content.Context
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
@@ -20,6 +21,7 @@ class ConversationModule {
     @Provides
     @Singleton
     fun provideRepository(
+        context: Context,
         socketService: IContractSocketService.SocketService,
         userLocalDataSource: UserLocalDataSource,
         messageLocalDataSource: MessageDataSource,
@@ -30,6 +32,7 @@ class ConversationModule {
         contactDataSource: ContactDataSource
     ): IContractConversation.Repository {
         return ConversationRepository(
+            context,
             socketService,
             userLocalDataSource,
             messageLocalDataSource,

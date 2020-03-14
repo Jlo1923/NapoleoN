@@ -41,7 +41,8 @@
         <item name="attrBackgroundColorBackground">@color/colorBackground</item>
         <item name="attrTintColorSecondaryDark">@color/colorSecondaryDark</item>
         <item name="attrTextColorColorPrimary">@color/colorPrimary</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
         <item name="attrBoxStrokeErrorColorColorError">@color/colorError</item>
         <item name="attrErrorTextColorColorError">@color/colorError</item>
         <item name="attrErrorIconTintColorError">@color/colorError</item>
@@ -63,7 +64,8 @@
         <item name="attrTextColorNameConversation">@color/white</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
-
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
     </style>
 
     <style name="AppThemePinkDream" parent="AppTheme">
@@ -99,7 +101,8 @@
         <item name="attrBackgroundColorBackground">@color/color_FFEFFF</item>
         <item name="attrTintColorSecondaryDark">@color/color_9F6E8B</item>
         <item name="attrTextColorColorPrimary">@color/color_F38DC7</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -121,7 +124,8 @@
         <item name="attrTextColorNameConversation">@color/white</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
-
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
     </style>
 
     <style name="AppThemeClearSky" parent="AppTheme">
@@ -178,7 +182,8 @@
         <item name="attrTextColorNameConversation">@color/white</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
-
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
     </style>
 
     <style name="AppThemePurpleBluebonnets" parent="AppTheme">
@@ -233,7 +238,8 @@
         <item name="attrTextColorNameConversation">@color/white</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
-
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
     </style>
 
     <style name="AppThemeCamouflage" parent="AppTheme">
@@ -287,7 +293,8 @@
         <item name="attrTextColorNameConversation">@color/color_59BC88</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/white</item>
-
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
     </style>
 
     <style name="AppThemeBlackGoldAlloy" parent="AppTheme">
@@ -340,7 +347,8 @@
         <item name="attrTextColorNameConversation">@color/white</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/white</item>
-
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
     </style>
 
     <style name="AppThemeColdOcean" parent="AppTheme">
@@ -394,7 +402,8 @@
         <item name="attrTextColorNameConversation">@color/color_59BC88</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/white</item>
-
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
     </style>
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">

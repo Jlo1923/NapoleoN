@@ -52,7 +52,7 @@
     <attr name="attrBackgroundBatchMessage" format ="reference"/>
 
     <!--//Tint-->
-    <attr name="attrTintColorSecondaryDark" format ="reference"/>
+    <attr name="attrTintColorSecondaryDark" format="reference" />
 
     <!--TextColor-->
     <attr name="attrTextColorPrimaryTextColor" format ="reference"/>
@@ -76,10 +76,10 @@
     <attr name="attrActionBarItemBackground" format ="reference"/>
 
     <!--HintTextColor-->
-    <attr name="attrHintTextColorSecondaryTextColor" format ="reference"/>
+    <attr name="attrHintTextColorSecondaryTextColor" format="reference" />
 
     <!--IconTint-->
-    <attr name="attrIconTintWhite" format ="reference"/>
+    <attr name="attrIconTintWhite" format="reference" />
 
     <!--BackgroundTint-->
     <attr name="attrBackgroundTintColorSecondary" format ="reference"/>
@@ -87,24 +87,24 @@
     <attr name="attrBackgroundTintIconToolbar" format ="reference"/>
 
     <!--StrokeColor-->
-    <attr name="attrStrokeColorButtonTint" format ="reference"/>
-    <attr name="attrStrokeColorRed" format ="reference"/>
+    <attr name="attrStrokeColorButtonTint" format="reference" />
+    <attr name="attrStrokeColorRed" format="reference" />
 
     <!--RippleColor-->
-    <attr name="attrRippleColorRippleTint" format ="reference"/>
-    <attr name="attrRippleColorRed" format ="reference"/>
+    <attr name="attrRippleColorRippleTint" format="reference" />
+    <attr name="attrRippleColorRed" format="reference" />
 
     <!--boxStrokeColor-->
-    <attr name="attrBoxStrokeColorTextInputLayoutBoxColor" format ="reference"/>
+    <attr name="attrBoxStrokeColorTextInputLayoutBoxColor" format="reference" />
 
     <!--boxStrokeErrorColor-->
-    <attr name="attrBoxStrokeErrorColorColorError" format ="reference"/>
+    <attr name="attrBoxStrokeErrorColorColorError" format="reference" />
 
     <!--errorTextColor-->
-    <attr name="attrErrorTextColorColorError" format ="reference"/>
+    <attr name="attrErrorTextColorColorError" format="reference" />
 
     <!--errorIconTint-->
-    <attr name="attrErrorIconTintColorError" format ="reference"/>
+    <attr name="attrErrorIconTintColorError" format="reference" />
 
     <!--fabIconColor-->
     <attr name="attrFabIconColor" format ="reference"/>
@@ -113,16 +113,20 @@
     <attr name="attrConversationIconColor" format ="reference"/>
 
     <!--Color-->
-    <attr name="attrColorButtonTint" format ="reference"/>
+    <attr name="attrColorButtonTint" format="reference" />
 
     <!--TrackColor-->
-    <attr name="attrColorTrackColor" format ="reference"/>
+    <attr name="attrColorTrackColor" format="reference" />
 
     <!--Separator-->
-    <attr name="attrSeparatorColor" format ="reference"/>
+    <attr name="attrSeparatorColor" format="reference" />
 
     <!--Drawer-->
     <attr name="attrIconAndTextColorDrawer" format ="reference"/>
 
+    <!-- Seekbar Progress Tint -->
+    <attr name="attrSeekbarProgressTint" format="reference" />
 
+    <!-- Seekbar Thumb Tint -->
+    <attr name="attrSeekbarThumbTint" format="reference" />
 </resources>

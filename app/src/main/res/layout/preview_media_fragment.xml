@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="message"
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        tools:context=".ui.previewMedia.PreviewMediaFragment">
+
+        <ViewSwitcher
+            android:id="@+id/viewSwitcher"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:id="@+id/container_video_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black">
+
+                <com.google.android.exoplayer2.ui.PlayerView
+                    android:id="@+id/videoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center" />
+
+                <com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+                    android:id="@+id/imageButton_play"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/x_small_margin"
+                    android:background="@drawable/bg_play_attachment_preview"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="fitCenter"
+                    app:firstAnimation="@drawable/anim_play_to_pause"
+                    app:secondAnimation="@drawable/anim_pause_to_play"
+                    app:srcCompat="@drawable/ic_play_arrow_black"
+                    app:tint="@color/white" />
+
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/imageView_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/vertical_photo" />
+        </ViewSwitcher>
+
+        <!-- HEADER -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black_40"
+            android:padding="@dimen/normal_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_back_white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- MESSAGE AND SEEKBAR -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_message_and_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black_40"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/textView_message"
+                style="@style/BodyTextView.White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:maxLines="3"
+                android:padding="@dimen/normal_padding"
+                android:text="@{message.message.body}"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toTopOf="@id/container_seekbar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="@tools:sample/lorem/random" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/seekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/normal_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_marginBottom="@dimen/large_margin"
+                    android:layout_weight="1"
+                    android:max="100"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/textView_duration"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:progress="50"
+                    tools:progressBackgroundTint="@color/black"
+                    tools:progressTint="?attr/attrSeekbarProgressTint"
+                    tools:thumbTint="?attr/attrSeekbarThumbTint" />
+
+                <TextView
+                    android:id="@+id/textView_duration"
+                    style="@style/BodyTextView.White"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    app:layout_constraintBottom_toBottomOf="@id/seekbar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/seekbar"
+                    tools:text="10:34" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.naposystems.pepito.R
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -18,7 +19,7 @@ fun bindMessageDate(textView: TextView, timestamp: Int) {
         textView.text = sdf.format(netDate)
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
-        Timber.d("Error parsing date")
+        Timber.e("Error parsing date")
     }
 }
 
@@ -38,25 +39,16 @@ fun bindMessageStatus(imageView: ImageView, status: Int) {
 
     val context = imageView.context
 
-    val drawable = when (status) {
-        Constants.MessageStatus.SENT.status -> context.resources.getDrawable(
-            R.drawable.ic_message_sent,
-            context.theme
-        )
-        Constants.MessageStatus.UNREAD.status -> context.resources.getDrawable(
-            R.drawable.ic_message_unread,
-            context.theme
-        )
-        Constants.MessageStatus.READED.status -> context.resources.getDrawable(
-            R.drawable.ic_message_readed,
-            context.theme
-        )
-        else ->
-            context.resources.getDrawable(
-                R.drawable.ic_message_sent,
-                context.theme
-            )
+    val drawableId = when (status) {
+        Constants.MessageStatus.SENDING.status -> R.drawable.ic_access_time_black
+        Constants.MessageStatus.SENT.status -> R.drawable.ic_message_sent
+        Constants.MessageStatus.UNREAD.status -> R.drawable.ic_message_unread
+        Constants.MessageStatus.READED.status -> R.drawable.ic_message_readed
+        Constants.MessageStatus.ERROR.status -> R.drawable.ic_error_outline_black
+        else -> R.drawable.ic_access_time_black
     }
+
+    val drawable = context.resources.getDrawable(drawableId, context.theme)
 
     imageView.setImageDrawable(drawable)
 }

@@ -2,6 +2,7 @@ package com.naposystems.pepito.repository.attachmentGalleryFolder
 
 import android.content.ContentUris
 import android.content.Context
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore
 import com.naposystems.pepito.model.attachment.gallery.GalleryFolder

@@ -24,6 +24,8 @@ import java.io.FileInputStream
 import javax.inject.Inject
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
+import com.naposystems.pepito.utility.FileManager
+import java.util.concurrent.TimeUnit
 
 class ConversationViewModel @Inject constructor(
     private val context: Context,
@@ -66,20 +68,32 @@ class ConversationViewModel @Inject constructor(
         _stringsCopy.value = emptyList()
     }
 
-    private fun copyAudioToAppFolder(
-        fileDescriptor: ParcelFileDescriptor,
-        mediaStoreAudio: MediaStoreAudio
-    ): File {
+    private suspend fun copyAudioToAppFolder(fileDescriptor: ParcelFileDescriptor): File {
 
         val fileInputStream = FileInputStream(fileDescriptor.fileDescriptor)
-        val subFolder = "conversations/${user.id}_${contact.id}"
 
-        return Utils.copyEncryptedFile(
+        /*return Utils.copyEncryptedFile(
             context,
             fileInputStream,
             subFolder,
             "${System.currentTimeMillis()}.${mediaStoreAudio.extension}"
+        )*/
+
+        return FileManager.copyFile(
+            context,
+            fileInputStream,
+            Constants.NapoleonCacheDirectories.AUDIOS.folder,
+            "${System.currentTimeMillis()}.mp3"
         )
+    }
+
+    private fun setStatusErrorMessageAndAttachment(message: Message, attachment: Attachment?) {
+        message.status = Constants.MessageStatus.ERROR.status
+        repository.updateMessage(message)
+        attachment?.let {
+            attachment.status = Constants.AttachmentStatus.ERROR.status
+            repository.updateAttachment(attachment)
+        }
     }
 
     //region Implementation IContractConversation.ViewModel
@@ -101,213 +115,166 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun saveMessageLocally(
-        body: String,
-        quoted: String,
-        contact: Contact,
-        selfDestructTime : Int,
-        isMine: Int
+    override fun saveMessageLocally(body: String, selfDestructTime: Int) {
+        saveMessageAndAttachment(body, null, 0, selfDestructTime)
+    }
+
+    override fun saveMessageAndAttachment(
+        messageString: String,
+        attachment: Attachment?,
+        numberAttachments: Int,
+        selfDestructTime: Int
     ) {
         viewModelScope.launch {
             val message = Message(
-                0,
-                "",
-                body,
-                quoted,
-                contact.id,
-                0,
-                0,
-                isMine,
-                Constants.MessageStatus.SENT.status
+                id = 0,
+                webId = "",
+                body = messageString,
+                quoted = "",
+                contactId = contact.id,
+                updatedAt = 0,
+                createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
+                isMine = Constants.IsMine.YES.value,
+                status = Constants.MessageStatus.SENDING.status,
+                numberAttachments = numberAttachments
             )
 
             val messageId = repository.insertMessage(message).toInt()
 
-            val messageReqDTO =
-                MessageReqDTO(
-                    contact.id,
-                    quoted,
-                    body,
-                    selfDestructTime,
-                    emptyList()
-                )
+            message.id = messageId
 
-            sendMessage(
-                messageId,
-                messageReqDTO,
-                isMine,
-                emptyList()
+            attachment?.let {
+                attachment.messageId = messageId
+
+                val attachmentId = repository.insertAttachment(attachment)
+                attachment.id = attachmentId.toInt()
+            }
+
+            sendMessageAndAttachment(
+                attachment = attachment,
+                message = message,
+                numberAttachments = numberAttachments,
+                selfDestructTime = selfDestructTime
             )
         }
     }
 
-    override fun saveMessageWithAttachmentLocally(
-        body: String,
-        quoted: String,
-        contact: Contact,
-        isMine: Int,
-        base64: String,
-        uri: String,
-        selfDestructTime: Int,
-        origin: Int
+    override fun saveMessageWithAudioAttachment(
+        mediaStoreAudio: MediaStoreAudio,
+        selfDestructTime: Int
     ) {
-        viewModelScope.launch {
-            val message = Message(
-                0,
-                "",
-                body,
-                quoted,
-                contact.id,
-                0,
-                0,
-                isMine,
-                Constants.MessageStatus.SENT.status
-            )
-
-
-            val messageId = repository.insertMessage(message).toInt()
-
-            val attachment =
-                Attachment(
-                    0,
-                    messageId,
-                    "",
-                    "",
-                    Constants.AttachmentType.IMAGE.type,
-                    "",
-                    uri,
-                    origin
-                )
-            val listAttachment: MutableList<Attachment> = ArrayList()
-            listAttachment.add(attachment)
-
-            val listAttachmentId = repository.insertAttachments(listAttachment)
-
-            attachment.body = base64
-
-            val messageReqDTO =
-                MessageReqDTO(
-                    contact.id,
-                    quoted,
-                    body,
-                    selfDestructTime,
-                    Attachment.toListAttachmentDTO(listAttachment)
-                )
-
-            sendMessage(
-                messageId,
-                messageReqDTO,
-                isMine,
-                listAttachmentId
-            )
-        }
-    }
-
-    override fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio,
-                                                selfDestructTime: Int) {
         viewModelScope.launch {
             val fileDescriptor = context.contentResolver
                 .openFileDescriptor(mediaStoreAudio.contentUri, "r")
 
             if (fileDescriptor != null) {
 
-                val message = Message(
-                    0,
-                    "",
-                    "",
-                    "",
-                    contact.id,
-                    0,
-                    0,
-                    Constants.IsMine.YES.value,
-                    Constants.MessageStatus.SENT.status
+                val audioFile = copyAudioToAppFolder(fileDescriptor)
+
+                val attachment = Attachment(
+                    id = 0,
+                    messageId = 0,
+                    webId = "",
+                    messageWebId = "",
+                    type = Constants.AttachmentType.AUDIO.type,
+                    body = "",
+                    uri = audioFile.name,
+                    origin = Constants.AttachmentOrigin.AUDIO_SELECTION.origin,
+                    thumbnailUri = "",
+                    status = Constants.AttachmentStatus.SENDING.status,
+                    extension = "mp3"
                 )
 
-                val messageId = repository.insertMessage(message).toInt()
-
-                var audioFile: File? = null
-                withContext(Dispatchers.IO) {
-                    audioFile = copyAudioToAppFolder(fileDescriptor, mediaStoreAudio)
-                }
-
-                val attachment =
-                    Attachment(
-                        0,
-                        messageId,
-                        "",
-                        "",
-                        Constants.AttachmentType.AUDIO.type,
-                        "",
-                        audioFile!!.absolutePath,
-                        Constants.ATTACHMENT_ORIGIN.AUDIO_SELECTION.origin
-                    )
-
-                val attachmentId = repository.insertAttachment(attachment)
-
-                withContext(Dispatchers.IO) {
-                    val encryptedFile = Utils.getEncryptedFile(context, audioFile!!)
-                    attachment.body = Utils.convertFileInputStreamToBase64(
-                        encryptedFile.openFileInput()
-                    )
-                }
-
-                val messageReqDTO =
-                    MessageReqDTO(
-                        contact.id,
-                        "",
-                        "",
-                        selfDestructTime,
-                        listOf(Attachment.toAttachmentDTO(attachment))
-                    )
-
-                sendMessage(
-                    messageId,
-                    messageReqDTO,
-                    Constants.IsMine.YES.value,
-                    listOf(attachmentId)
+                saveMessageAndAttachment(
+                    messageString = "",
+                    attachment = attachment,
+                    numberAttachments = 1,
+                    selfDestructTime = selfDestructTime
                 )
             }
         }
     }
 
-    override fun sendMessage(
-        messageId: Int,
-        messageReqDTO: MessageReqDTO,
-        isMine: Int,
-        listAttachmentsId: List<Long>
+    private suspend fun sendMessageAndAttachment(
+        attachment: Attachment?,
+        message: Message,
+        numberAttachments: Int,
+        selfDestructTime: Int
     ) {
-        viewModelScope.launch {
-            try {
-                val response = repository.sendMessage(messageReqDTO)
+        try {
 
-                if (response.isSuccessful) {
-                    Timber.d("Message send successFully")
+            val messageReqDTO = MessageReqDTO(
+                userDestination = contact.id,
+                quoted = "",
+                body = message.body,
+                numberAttachments = numberAttachments,
+                destroy = selfDestructTime
+            )
+
+            val messageResponse = repository.sendMessage(messageReqDTO)
+
+            if (messageResponse.isSuccessful) {
+
+                repository.insertConversation(messageResponse.body()!!)
+
+                if (attachment != null) {
+
+                    withContext(Dispatchers.IO) {
+
+                        attachment.messageWebId = messageResponse.body()!!.id
+
+                        try {
+                            val responseAttachment =
+                                repository.sendMessageAttachment(attachment)
+
+                            if (responseAttachment.isSuccessful) {
+
+                                responseAttachment.body()?.let { attachmentResDTO ->
+                                    attachment.apply {
+                                        webId = attachmentResDTO.id
+                                        messageWebId = attachmentResDTO.messageId
+                                        body = attachmentResDTO.body
+                                        status = Constants.AttachmentStatus.SENT.status
+                                    }
+                                }
+
+                                val messageEntity = MessageResDTO.toMessageEntity(
+                                    message,
+                                    messageResponse.body()!!,
+                                    Constants.IsMine.YES.value
+                                )
+                                repository.updateMessage(messageEntity)
+
+                                repository.updateAttachment(attachment)
+
+                            } else {
+                                setStatusErrorMessageAndAttachment(message, attachment)
+                            }
+                        } catch (e: Exception) {
+                            setStatusErrorMessageAndAttachment(message, attachment)
+                            Timber.e(e)
+                        }
+                    }
+                } else {
                     val messageEntity = MessageResDTO.toMessageEntity(
-                        messageId,
-                        response.body()!!,
-                        isMine
+                        message,
+                        messageResponse.body()!!,
+                        Constants.IsMine.YES.value
                     )
                     repository.updateMessage(messageEntity)
-
-                    if (listAttachmentsId.isNotEmpty()) {
-                        repository.updateAttachments(
-                            listAttachmentsId,
-                            response.body()!!.attachments
-                        )
-                    }
-
-                    repository.insertConversation(response.body()!!)
-                } else {
-                    when (response.code()) {
-                        422 -> _webServiceError.value = repository.get422ErrorMessage(response)
-                        else -> _webServiceError.value = repository.getErrorMessage(response)
-                    }
                 }
-            } catch (e: Exception) {
-                Timber.d(e)
-                val error = context.getString(R.string.text_fail)
-                _webServiceError.value = arrayListOf(error)
+            } else {
+                setStatusErrorMessageAndAttachment(message, attachment)
+
+                when (messageResponse.code()) {
+                    422 -> _webServiceError.value =
+                        repository.get422ErrorMessage(messageResponse)
+                    else -> _webServiceError.value = repository.getErrorMessage(messageResponse)
+                }
             }
+        } catch (e: Exception) {
+            setStatusErrorMessageAndAttachment(message, attachment)
+            Timber.e(e)
         }
     }
 

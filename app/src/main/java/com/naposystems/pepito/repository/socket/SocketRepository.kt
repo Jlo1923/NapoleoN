@@ -1,15 +1,15 @@
 package com.naposystems.pepito.repository.socket
 
 import android.content.Context
-import androidx.security.crypto.EncryptedFile
-import androidx.security.crypto.MasterKeys
+import android.net.Uri
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
-import com.naposystems.pepito.dto.conversation.message.AttachmentResDTO
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +41,7 @@ class SocketRepository @Inject constructor(
                     for (messageRes in messageResList) {
 
                         val message = MessageResDTO.toMessageEntity(
-                            0, messageRes, Constants.IsMine.NO.value
+                            null, messageRes, Constants.IsMine.NO.value
                         )
 
                         val conversationId = messageLocalDataSource.insertMessage(message)
@@ -59,7 +59,11 @@ class SocketRepository @Inject constructor(
 
                                 if (responseDownloadFile.isSuccessful) {
                                     attachment.uri =
-                                        saveToDisk(responseDownloadFile.body()!!, attachment)
+                                        FileManager.saveToDisk(
+                                            context,
+                                            responseDownloadFile.body()!!,
+                                            attachment
+                                        )
                                 }
                             }
                         }
@@ -108,88 +112,38 @@ class SocketRepository @Inject constructor(
         }
     }
 
-    private fun saveToDisk(body: ResponseBody, attachment: Attachment): String {
-        try {
-
-            val path = File(context.externalCacheDir!!, "Audios")
-            if (!path.exists())
-                path.mkdirs()
-            val audioFile = File(path, "${attachment.webId}.mp3")
-
-            val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
-            val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
-
-            val encryptedFile = EncryptedFile.Builder(
-                audioFile,
-                context,
-                masterKeyAlias,
-                EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-            ).build()
-
-            var inputStream: InputStream? = null
-            var outputStream: OutputStream? = null
-
-            try {
-                Timber.d("File Size=" + body.contentLength())
-                inputStream = body.byteStream()
-                outputStream = encryptedFile.openFileOutput()
-                val data = ByteArray(4096)
-                var count: Int
-                var progress = 0
-                while (inputStream.read(data).also { count = it } != -1) {
-                    outputStream.write(data, 0, count)
-                    progress += count
-                    Timber.d(
-                        "Progress: " + progress + "/" + body.contentLength() + " >>>> " + progress.toFloat() / body.contentLength()
-                    )
-                }
-                outputStream.flush()
-                Timber.d("File saved successfully!")
-                return ""
-            } catch (e: IOException) {
-                e.printStackTrace()
-                Timber.d("Failed to save the file!")
-                return ""
-            } finally {
-                inputStream?.close()
-                outputStream?.close()
-                return audioFile.absolutePath
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            Timber.d("Failed to save the file!")
-            return ""
-        }
-    }
-
     override fun getDeletedMessages() {
         GlobalScope.launch {
             val response = napoleonApi.getDeletedMessages()
-            if(response.isSuccessful && (response.body()!!.count() > 0)) {
+            if (response.isSuccessful && (response.body()!!.count() > 0)) {
                 val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
-                when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(idContact)) {
+                when (val messageAndAttachment =
+                    messageLocalDataSource.getLastMessageByContact(idContact)) {
                     null -> {
                         conversationLocalDataSource.cleanConversation(idContact)
                     }
                     else -> {
-                        conversationLocalDataSource.getQuantityUnreads(idContact).let { quantityUnreads->
-                            if (quantityUnreads > 0) {
-                                conversationLocalDataSource.updateConversationByContact(
-                                    idContact,
-                                    messageAndAttachment.message.body,
-                                    messageAndAttachment.message.createdAt,
-                                    messageAndAttachment.message.status,
-                                    quantityUnreads - response.body()!!.count())
-                            } else {
-                                conversationLocalDataSource.updateConversationByContact(
-                                    idContact,
-                                    messageAndAttachment.message.body,
-                                    messageAndAttachment.message.createdAt,
-                                    messageAndAttachment.message.status,
-                                    0)
+                        conversationLocalDataSource.getQuantityUnreads(idContact)
+                            .let { quantityUnreads ->
+                                if (quantityUnreads > 0) {
+                                    conversationLocalDataSource.updateConversationByContact(
+                                        idContact,
+                                        messageAndAttachment.message.body,
+                                        messageAndAttachment.message.createdAt,
+                                        messageAndAttachment.message.status,
+                                        quantityUnreads - response.body()!!.count()
+                                    )
+                                } else {
+                                    conversationLocalDataSource.updateConversationByContact(
+                                        idContact,
+                                        messageAndAttachment.message.body,
+                                        messageAndAttachment.message.createdAt,
+                                        messageAndAttachment.message.status,
+                                        0
+                                    )
+                                }
                             }
-                        }
                     }
                 }
             }

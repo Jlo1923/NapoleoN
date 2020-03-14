@@ -1,48 +1,34 @@
 package com.naposystems.pepito.ui.attachmentGallery.adapter
 
 import android.provider.MediaStore
+import android.util.Size
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
-import com.naposystems.pepito.utility.GlideManager
-import java.io.File
+import com.naposystems.pepito.utility.Constants
 
 @BindingAdapter("galleryItemThumbnail")
 fun binGalleryItemThumbnail(imageView: ImageView, galleryItem: GalleryItem) {
 
-    if (galleryItem.thumbnailUri != null) {
-        GlideManager.loadFile(imageView, File(galleryItem.thumbnailUri!!.path!!))
-    } else if (galleryItem.contentUri != null) {
+    Glide.with(imageView)
+        .load(galleryItem)
+        .into(imageView)
 
-        /*var bitmap: Bitmap
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ImageDecoder.createSource(context.contentResolver, galleryItem.contentUri!!)
-                .also { source ->
-                    ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
-                        bitmap = bitmapDecoded
-                    }
-                }
-        } else {
-            bitmap =
-                MediaStore.Images.Media.getBitmap(
-                    context.contentResolver,
-                    galleryItem.contentUri
-                )
-        }
+    /*val context = imageView.context
 
-        GlideManager.loadBitmap(
-            imageView,
-            bitmap
-        )*/
-    }
+    val bitmap =
+        context.contentResolver.loadThumbnail(galleryItem.contentUri!!, Size(512, 512), null)
+
+    Glide.with(imageView)
+        .load((bitmap))
+        .into(imageView)*/
 }
 
 @BindingAdapter("mediaTypeIcon")
 fun bindMediaTypeIcon(imageView: ImageView, galleryItem: GalleryItem) {
-    val context = imageView.context
-
-    if (galleryItem.mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
+    if (galleryItem.attachmentType == Constants.AttachmentType.VIDEO.type) {
         imageView.visibility = View.VISIBLE
     }
 }

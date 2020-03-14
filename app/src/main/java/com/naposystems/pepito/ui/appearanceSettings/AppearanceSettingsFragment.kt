@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -222,7 +221,7 @@ class AppearanceSettingsFragment : Fragment() {
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
                     MediaStore.EXTRA_OUTPUT,
-                    Utils.getCacheImagePath(context!!, fileName, subFolder)
+                    Utils.getFileUri(context!!, fileName, subFolder)
                 )
                 if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
@@ -273,7 +272,7 @@ class AppearanceSettingsFragment : Fragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    cropImage(Utils.getCacheImagePath(context!!, fileName, subFolder))
+                    cropImage(Utils.getFileUri(context!!, fileName, subFolder))
                 }
             }
             REQUEST_GALLERY_IMAGE -> {
@@ -305,7 +304,7 @@ class AppearanceSettingsFragment : Fragment() {
 
         val title = context!!.resources.getString(R.string.text_conversation_background)
 
-        val path = File(context!!.externalCacheDir!!, subFolder)
+        val path = File(context!!.cacheDir!!, subFolder)
 
         val destinationUri =
             Uri.fromFile(
@@ -331,7 +330,7 @@ class AppearanceSettingsFragment : Fragment() {
     }
 
     private fun clearCache(context: Context) {
-        val path = File(context.externalCacheDir!!.absolutePath, subFolder)
+        val path = File(context.cacheDir!!.absolutePath, subFolder)
         if (path.exists() && path.isDirectory) {
             for (child in path.listFiles()!!) {
                 if (child.name != compressedFileName) {

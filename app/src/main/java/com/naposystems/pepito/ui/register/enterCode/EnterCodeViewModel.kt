@@ -66,7 +66,7 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
                     }
                 }
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.e(e)
                 _showErrors.value = arrayListOf("Error inesperado")
             }
         }

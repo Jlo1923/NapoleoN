@@ -282,7 +282,7 @@ class ContactProfileFragment : BaseFragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
-                    cropImage(Utils.getCacheImagePath(context!!, fileName, subFolder))
+                    cropImage(Utils.getFileUri(context!!, fileName, subFolder))
                 }
             }
             REQUEST_GALLERY_IMAGE -> {
@@ -379,7 +379,7 @@ class ContactProfileFragment : BaseFragment() {
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
                     MediaStore.EXTRA_OUTPUT,
-                    Utils.getCacheImagePath(context!!, fileName, subFolder)
+                    Utils.getFileUri(context!!, fileName, subFolder)
                 )
                 if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
                     startActivityForResult(takePictureIntent, ProfileFragment.REQUEST_IMAGE_CAPTURE)
@@ -403,7 +403,7 @@ class ContactProfileFragment : BaseFragment() {
         val destinationUri =
             Uri.fromFile(
                 File(
-                    context!!.externalCacheDir,
+                    context!!.cacheDir,
                     Utils.queryName(context!!.contentResolver, sourceUri)
                 )
             )

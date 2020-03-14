@@ -91,7 +91,7 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
                     _webServiceError.value = repository.getError(response.errorBody()!!)
                 }
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.e(e)
             }
         }
     }
@@ -126,7 +126,7 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 _recoveryQuestionsSavedSuccessfully.value = false
-                Timber.d(e)
+                Timber.e(e)
             }
         }
     }

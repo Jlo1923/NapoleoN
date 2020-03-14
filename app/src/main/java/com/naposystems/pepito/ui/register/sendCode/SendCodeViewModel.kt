@@ -65,7 +65,7 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
                     }
                 }
             } catch (e: Exception) {
-                Timber.d(e)
+                Timber.e(e)
                 _webServiceError.value = "Error inesperado jajaja"
             }
         }

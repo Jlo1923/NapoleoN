@@ -12,11 +12,11 @@ import com.naposystems.pepito.dto.contacts.ContactsResDTO
 import com.naposystems.pepito.dto.contacts.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.dto.contacts.deleteContact.DeleteContactResDTO
 import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentReqDTO
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
-import com.naposystems.pepito.dto.conversation.message.MessageResDTO
-import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
+import com.naposystems.pepito.dto.conversation.message.*
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
@@ -64,6 +64,8 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.SEARCH_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQUEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_TEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_SELECTED_SUBSCRIPTION
@@ -76,6 +78,8 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_PASSWORD_OL
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_RECEIVED
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -126,6 +130,24 @@ interface NapoleonApi {
 
     @POST(SEND_MESSAGE)
     suspend fun sendMessage(@Body messageReqDTO: MessageReqDTO): Response<MessageResDTO>
+
+    @Multipart
+    @POST(SEND_MESSAGE_ATTACHMENT)
+    suspend fun sendMessageAttachment(
+        @Part("message_id") messageId: RequestBody,
+        @Part("type") attachmentType: RequestBody,
+        @Part file: MultipartBody.Part
+    ): Response<AttachmentResDTO>
+
+    @Multipart
+    @POST(SEND_MESSAGE_TEST)
+    suspend fun sendMessageTest(
+        @Part("user_receiver") userDestination: RequestBody,
+        @Part("quoted") quoted: RequestBody,
+        @Part("body") body: RequestBody,
+        @Part("type_attachment") attachmentType: RequestBody,
+        @Part files: List<MultipartBody.Part>
+    ): Response<MessageResDTO>
 
     @GET(GET_MY_MESSAGES)
     suspend fun getMyMessages(): Response<List<MessageResDTO>>

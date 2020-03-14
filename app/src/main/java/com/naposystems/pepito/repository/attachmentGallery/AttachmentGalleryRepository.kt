@@ -4,8 +4,10 @@ import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Size
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 import com.naposystems.pepito.ui.attachmentGallery.IContractAttachmentGallery
+import com.naposystems.pepito.utility.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -65,56 +67,30 @@ class AttachmentGalleryRepository @Inject constructor(private val context: Conte
                     val fileId = cursorFilesInFolder.getInt(idColumnIndex)
                     val mediaType = cursorFilesInFolder.getInt(mediaTypeColumnIndex)
 
+                    val attachmentType = when (mediaType) {
+                        MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> Constants.AttachmentType.IMAGE.type
+                        MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> Constants.AttachmentType.VIDEO.type
+                        else -> ""
+                    }
+
                     val galleryItem = GalleryItem(
                         id = fileId,
-                        mediaType = mediaType
+                        attachmentType = attachmentType
                     )
 
-                    var tableUri: Uri? = null
-                    var projectionThumbnail: Array<String>? = null
-                    var selectionThumbnail: String? = null
-                    var dataColumn = ""
+                    var externalUri: Uri? = null
 
                     if (mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
-                        tableUri = MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI
-                        projectionThumbnail = arrayOf(MediaStore.Images.Thumbnails.DATA)
-                        selectionThumbnail = "${MediaStore.Images.Thumbnails.IMAGE_ID}=$fileId"
-                        dataColumn = MediaStore.Images.Thumbnails.DATA
-
+                        externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                     } else if (mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
-                        tableUri = MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
-                        projectionThumbnail = arrayOf(MediaStore.Video.Thumbnails.DATA)
-                        selectionThumbnail = "${MediaStore.Video.Thumbnails.VIDEO_ID}=$fileId"
-                        dataColumn = MediaStore.Video.Thumbnails.DATA
+                        externalUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                     }
 
-                    context.contentResolver.query(
-                        tableUri!!,
-                        projectionThumbnail,
-                        selectionThumbnail,
-                        null,
-                        null
-                    )?.use {
-                        if (it.moveToFirst()) {
-                            val dataColumnIndex = it.getColumnIndexOrThrow(dataColumn)
-                            galleryItem.thumbnailUri =
-                                Uri.parse(it.getString(dataColumnIndex))
-                        }
-
-                        var externalUri: Uri? = null
-
-                        if (mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE) {
-                            externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                        } else if (mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
-                            externalUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                        }
-
-                        val contentUri = ContentUris.withAppendedId(
-                            externalUri!!,
-                            fileId.toLong()
-                        )
-                        galleryItem.contentUri = contentUri
-                    }
+                    val contentUri = ContentUris.withAppendedId(
+                        externalUri!!,
+                        fileId.toLong()
+                    )
+                    galleryItem.contentUri = contentUri
 
                     galleryItems.add(galleryItem)
                 }

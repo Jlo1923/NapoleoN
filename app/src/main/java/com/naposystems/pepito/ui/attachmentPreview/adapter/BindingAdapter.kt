@@ -1,37 +1,21 @@
 package com.naposystems.pepito.ui.attachmentPreview.adapter
 
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.os.Build
-import android.provider.MediaStore
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import com.naposystems.pepito.model.attachment.gallery.GalleryItem
+import com.bumptech.glide.Glide
+import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.GlideManager
+import java.io.File
 
-@BindingAdapter("galleryImage")
-fun bindGalleryImage(imageView: ImageView, galleryItem: GalleryItem) {
+@BindingAdapter("attachmentImage")
+fun bindGalleryImage(imageView: ImageView, attachment: Attachment) {
 
-    val context = imageView.context
-
-    var bitmap: Bitmap
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        ImageDecoder.createSource(context.contentResolver, galleryItem.contentUri!!)
-            .also { source ->
-                ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
-                    bitmap = bitmapDecoded
-                }
-            }
-    } else {
-        bitmap =
-            MediaStore.Images.Media.getBitmap(
-                context.contentResolver,
-                galleryItem.contentUri
-            )
+    when (attachment.type) {
+        Constants.AttachmentType.IMAGE.type -> {
+            Glide.with(imageView)
+                .load(attachment)
+                .into(imageView)
+        }
     }
-
-    GlideManager.loadBitmap(
-        imageView,
-        bitmap
-    )
 }

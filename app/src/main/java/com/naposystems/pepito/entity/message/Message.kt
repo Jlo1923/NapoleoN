@@ -1,8 +1,12 @@
 package com.naposystems.pepito.entity.message
 
+import android.os.Parcelable
 import androidx.room.*
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.entity.conversation.Conversation
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(
     tableName = "message", foreignKeys = [
         ForeignKey(
@@ -24,11 +28,12 @@ data class Message(
     @ColumnInfo(name = "updated_at") val updatedAt: Int,
     @ColumnInfo(name = "created_at") val createdAt: Int,
     @ColumnInfo(name = "is_mine") val isMine: Int,
-    @ColumnInfo(name = "status") val status: Int,
-    @ColumnInfo(name = "is_selected") val isSelected: Boolean = false,
+    @ColumnInfo(name = "status") var status: Int,
+    @ColumnInfo(name = "is_selected") val isSelected:  Boolean = false,
+    @ColumnInfo(name = "number_attachments") val numberAttachments: Int,
     @ColumnInfo(name = "self_destruction_at") val selfDestructionAt: Int = -1,
     @ColumnInfo(name = "total_self_destruction_at") val totalSelfDestructionAt: Int = 0
-    ) {
+): Parcelable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

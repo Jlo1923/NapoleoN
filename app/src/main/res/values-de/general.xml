@@ -37,6 +37,7 @@
     <string name="text_field_cannot_be_empty">Das Feld darf nicht leer sein</string>
     <string name="text_send_to">Schicken %1$s</string>
     <string name="text_error_playing_audio">Ein Fehler ist auf das Spiel Audio aufgetreten</string>
+    <string name="text_attachment_document_name">Dokument.%1$s</string>
     <plurals name="text_selected">
         <item quantity="one">%d ausgewählt</item>
         <item quantity="other">%d ausgewählt</item>

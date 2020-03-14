@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "9cc82a13c72a80dadbfaa0488b2617d4",
+    "identityHash": "8daf49f988d7e450e997fb0013180797",
     "entities": [
       {
         "tableName": "user",
@@ -118,7 +118,7 @@
       },
       {
         "tableName": "message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `contact_id` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, `is_selected` INTEGER NOT NULL, `self_destruction_at` INTEGER NOT NULL, `total_self_destruction_at` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `web_id` TEXT NOT NULL, `body` TEXT NOT NULL, `quoted` TEXT NOT NULL, `contact_id` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `is_mine` INTEGER NOT NULL, `status` INTEGER NOT NULL, `is_selected` INTEGER NOT NULL, `number_attachments` INTEGER NOT NULL, `self_destruction_at` INTEGER NOT NULL, `total_self_destruction_at` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `contact`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -181,6 +181,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "numberAttachments",
+            "columnName": "number_attachments",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "selfDestructionAt",
             "columnName": "self_destruction_at",
             "affinity": "INTEGER",
@@ -216,7 +222,7 @@
       },
       {
         "tableName": "attachment",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message_id` INTEGER NOT NULL, `web_id` TEXT NOT NULL, `message_web_id` TEXT NOT NULL, `type` TEXT NOT NULL, `body` TEXT NOT NULL, `uri` TEXT NOT NULL, `origin` INTEGER NOT NULL, FOREIGN KEY(`message_id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `message_id` INTEGER NOT NULL, `web_id` TEXT NOT NULL, `message_web_id` TEXT NOT NULL, `type` TEXT NOT NULL, `body` TEXT NOT NULL, `uri` TEXT NOT NULL, `origin` INTEGER NOT NULL, `thumbnail_uri` TEXT NOT NULL, `status` INTEGER NOT NULL, `extension` TEXT NOT NULL, FOREIGN KEY(`message_id`) REFERENCES `message`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -264,6 +270,24 @@
             "fieldPath": "origin",
             "columnName": "origin",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUri",
+            "columnName": "thumbnail_uri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "extension",
+            "columnName": "extension",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -440,7 +464,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9cc82a13c72a80dadbfaa0488b2617d4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8daf49f988d7e450e997fb0013180797')"
     ]
   }
 }

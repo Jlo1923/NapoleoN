@@ -1,15 +1,9 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
-import android.content.ContentUris
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
@@ -18,11 +12,11 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.GlideManager
+import com.naposystems.pepito.utility.FileManager
+import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +28,7 @@ fun bindMessageDate(textView: TextView, timestamp: Int) {
         textView.text = sdf.format(netDate)
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
-        Timber.d("Error parsing date")
+        Timber.e("Error parsing date")
     }
 }
 
@@ -138,52 +132,64 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
 
 @BindingAdapter("imageAttachment")
 fun bindImageAttachment(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
-    val context = imageView.context
+
+    try {
+        if (messageAndAttachment.attachmentList.isNotEmpty()) {
+            imageView.visibility = View.VISIBLE
+            val firstAttachment = messageAndAttachment.attachmentList[0]
+
+            if (firstAttachment.type == Constants.AttachmentType.IMAGE.type) {
+                Glide.with(imageView)
+                    .load(firstAttachment)
+                    .into(imageView)
+            } else if (firstAttachment.type == Constants.AttachmentType.VIDEO.type) {
+                val uri = Utils.getFileUri(
+                    imageView.context,
+                    firstAttachment.uri,
+                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                )
+                Glide.with(imageView)
+                    .load(uri)
+                    .thumbnail(0.1f)
+                    .into(imageView)
+            }
+        }
+    } catch (e: Exception) {
+        Timber.e(e)
+    }
+}
+
+@BindingAdapter("attachmentDocumentName")
+fun bindAttachmentDocumentName(textView: TextView, messageAndAttachment: MessageAndAttachment) {
 
     if (messageAndAttachment.attachmentList.isNotEmpty()) {
-        imageView.visibility = View.VISIBLE
+        val context = textView.context
         val firstAttachment = messageAndAttachment.attachmentList[0]
 
-        try {
-            when (firstAttachment.origin) {
-                Constants.ATTACHMENT_ORIGIN.CAMERA.origin -> {
-                    Glide.with(context)
-                        .load(File(firstAttachment.uri))
-                        .into(imageView)
-                }
-                Constants.ATTACHMENT_ORIGIN.GALLERY.origin -> {
-                    var bitmap: Bitmap
-                    val contentUri = ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        ContentUris.parseId(Uri.parse(firstAttachment.uri))
-                    )
+        textView.text =
+            context.getString(R.string.text_attachment_document_name, firstAttachment.extension)
+    }
+}
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        ImageDecoder.createSource(
-                            context.contentResolver,
-                            contentUri
-                        )
-                            .also { source ->
-                                ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
-                                    bitmap = bitmapDecoded
-                                }
-                            }
-                    } else {
+@BindingAdapter("attachmentDocumentIcon")
+fun bindAttachmentDocumentIcon(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
 
-                        bitmap = MediaStore.Images.Media.getBitmap(
-                            context.contentResolver,
-                            contentUri
-                        )
-                    }
+    if (messageAndAttachment.attachmentList.isNotEmpty()) {
+        val firstAttachment = messageAndAttachment.attachmentList[0]
 
-                    GlideManager.loadBitmap(
-                        imageView,
-                        bitmap
-                    )
-                }
-            }
-        } catch (e: FileNotFoundException) {
-            Toast.makeText(context, "La imagen no existe!!", Toast.LENGTH_SHORT).show()
+        val drawableId = when (firstAttachment.extension) {
+            "doc" -> R.drawable.ic_attachment_doc
+            "docx" -> R.drawable.ic_attachment_docx
+            "xls" -> R.drawable.ic_attachment_xls
+            "xlsx" -> R.drawable.ic_attachment_xlsx
+            "ppt" -> R.drawable.ic_attachment_ppt
+            "pptx" -> R.drawable.ic_attachment_pptx
+            "pdf" -> R.drawable.ic_attachment_pdf
+            else -> R.drawable.ic_attachment_document
         }
+
+        Glide.with(imageView)
+            .load(drawableId)
+            .into(imageView)
     }
 }

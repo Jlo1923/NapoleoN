@@ -1,27 +1,28 @@
 package com.naposystems.pepito.ui.attachmentPreview
 
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.FileProvider
-import androidx.core.view.ViewCompat
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AttachmentPreviewFragmentBinding
+import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileInputStream
 
 class AttachmentPreviewFragment : Fragment() {
 
@@ -33,7 +34,28 @@ class AttachmentPreviewFragment : Fragment() {
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
 
     private lateinit var binding: AttachmentPreviewFragmentBinding
+    private var isPlayingVideo: Boolean = false
+    private var hasSentAttachment: Boolean = false
     private val args: AttachmentPreviewFragmentArgs by navArgs()
+    private val attachment: Attachment by lazy {
+        args.attachment
+    }
+    private val animationFadeIn: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            context!!,
+            R.anim.fade_in_fast
+        )
+    }
+    private val animationFadeOut: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            context!!,
+            R.anim.fade_out_fast
+        )
+    }
+    private val mHandler: Handler by lazy {
+        Handler()
+    }
+    private lateinit var mRunnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,42 +71,140 @@ class AttachmentPreviewFragment : Fragment() {
             inflater, R.layout.attachment_preview_fragment, container, false
         )
 
-        binding.galleryItem = args.galleryItem
-        binding.executePendingBindings()
+        binding.attachment = attachment
+        binding.galleryItemId = args.galleryItemId
 
-        if (args.galleryItem.contentUri != null) {
-            conversationShareViewModel.setImageUri(args.galleryItem.contentUri!!.path!!)
+        when (attachment.type) {
+            Constants.AttachmentType.IMAGE.type -> {
+                if (binding.viewSwitcher.currentView.id == binding.containerVideoView.id) {
+                    binding.viewSwitcher.showNext()
+                }
+            }
+            Constants.AttachmentType.VIDEO.type -> {
+                binding.containerSeekbar.visibility = View.VISIBLE
 
-            GlobalScope.launch {
-                val fileDescriptor = context!!.contentResolver
-                    .openAssetFileDescriptor(args.galleryItem.contentUri!!, "r")
-                val fileInputStream = FileInputStream(fileDescriptor!!.fileDescriptor)
+                if (binding.viewSwitcher.currentView.id == binding.imageViewPreview.id) {
+                    binding.viewSwitcher.showNext()
+                }
 
-                conversationShareViewModel.setImageBase64(
-                    Utils.convertFileInputStreamToBase64(
-                        fileInputStream
+                binding.videoView.apply {
+
+                    val fileUri = Utils.getFileUri(
+                        context = context!!,
+                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                        fileName = attachment.uri
                     )
-                )
+
+                    setVideoURI(fileUri)
+                    requestFocus()
+                    seekTo(1)
+
+                    setOnPreparedListener {
+                        binding.seekbar.max = duration
+                    }
+
+                    setOnCompletionListener {
+                        this@AttachmentPreviewFragment.isPlayingVideo = false
+                        if (::mRunnable.isInitialized) {
+                            mHandler.removeCallbacks(mRunnable)
+                        }
+
+                        binding.seekbar.apply {
+                            progress = 0
+                            max = duration
+                        }
+                        showPlayButton()
+                    }
+
+                    mRunnable = Runnable {
+                        setSeekbarProgress()
+
+                        mHandler.postDelayed(
+                            mRunnable,
+                            50
+                        )
+                    }
+                }
             }
         }
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
-            conversationShareViewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
-            conversationShareViewModel.setGallerySendClicked()
-            conversationShareViewModel.resetGallerySendClicked()
-            conversationShareViewModel.resetMessage()
+            with(conversationShareViewModel) {
+                setMessage(binding.inputPanel.getEditTex().text.toString())
+                setAttachmentSelected(args.attachment)
+                resetAttachmentSelected()
+                resetMessage()
+                hasSentAttachment = true
+            }
+            /*conversationShareViewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
+            conversationShareViewModel.setAttachmentSelected(args.attachment)
+            conversationShareViewModel.setAttachmentOrigin(attachment.origin)
+            conversationShareViewModel.setGalleryTypeSelected(attachment.type)
+            conversationShareViewModel.resetGalleryTypeSelected()
+            conversationShareViewModel.resetMessage()*/
             this.findNavController().popBackStack(R.id.conversationFragment, false)
-            /*this.findNavController().navigate(
-                AttachmentPreviewFragmentDirections.actionAttachmentPreviewFragmentToConversationFragment(
-                    args.contact
-                )
-            )*/
         }
 
         binding.imageButtonClose.setOnClickListener {
             findNavController().navigateUp()
         }
 
+        binding.containerVideoView.setOnClickListener {
+            if (!isPlayingVideo) {
+                binding.imageViewPlay.startAnimation(animationFadeOut)
+                binding.imageViewPlay.visibility = View.GONE
+                binding.videoView.start()
+                mHandler.postDelayed(mRunnable, 0)
+            } else {
+                showPlayButton()
+            }
+
+            isPlayingVideo = !isPlayingVideo
+        }
+
+        binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    binding.videoView.seekTo(progress)
+                }
+                binding.textViewDuration.text = Utils.getDuration(
+                    (binding.videoView.duration - progress).toLong(),
+                    showHours = false
+                )
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+        })
+
+        binding.executePendingBindings()
+
         return binding.root
+    }
+
+    override fun onDestroy() {
+        if (!hasSentAttachment) {
+            val file = File(args.attachment.uri)
+
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+        super.onDestroy()
+    }
+
+    private fun showPlayButton() {
+        binding.imageViewPlay.startAnimation(animationFadeIn)
+        binding.imageViewPlay.visibility = View.VISIBLE
+        binding.videoView.pause()
+    }
+
+    private fun setSeekbarProgress() {
+        binding.seekbar.progress = binding.videoView.currentPosition
     }
 }

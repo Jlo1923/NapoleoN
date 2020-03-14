@@ -8,33 +8,38 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.naposystems.pepito.model.attachment.gallery.GalleryFolder
 import com.naposystems.pepito.utility.GlideManager
+import timber.log.Timber
 import java.io.File
 
 @BindingAdapter("folderThumbnail")
 fun binFolderThumbnail(imageView: ImageView, galleryFolder: GalleryFolder) {
 
-    val context = imageView.context
+    try {
+        val context = imageView.context
 
-    if (galleryFolder.thumbnailUri != null) {
-        GlideManager.loadFile(imageView, File(galleryFolder.thumbnailUri!!.path!!))
-    } else if (galleryFolder.contentUri != null) {
+        if (galleryFolder.thumbnailUri != null) {
+            GlideManager.loadFile(imageView, File(galleryFolder.thumbnailUri!!.path!!))
+        } else if (galleryFolder.contentUri != null) {
 
-        var bitmap: Bitmap
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ImageDecoder.createSource(context.contentResolver, galleryFolder.contentUri!!)
-                .also { source ->
-                    ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
-                        bitmap = bitmapDecoded
+            var bitmap: Bitmap
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ImageDecoder.createSource(context.contentResolver, galleryFolder.contentUri!!)
+                    .also { source ->
+                        ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
+                            bitmap = bitmapDecoded
+                        }
                     }
-                }
-        } else {
-            bitmap =
-                MediaStore.Images.Media.getBitmap(context.contentResolver, galleryFolder.contentUri)
-        }
+            } else {
+                bitmap =
+                    MediaStore.Images.Media.getBitmap(context.contentResolver, galleryFolder.contentUri)
+            }
 
-        GlideManager.loadBitmap(
-            imageView,
-            bitmap
-        )
+            GlideManager.loadBitmap(
+                imageView,
+                bitmap
+            )
+        }
+    } catch (e: Exception) {
+        Timber.e(e)
     }
 }

@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <external-cache-path
+    <cache-path
         name="avatar"
         path="avatars/" />
-    <external-cache-path
+    <cache-path
         name="header"
         path="headers/" />
-    <external-cache-path
+    <cache-path
         name="conversation"
         path="conversations/" />
-    <external-cache-path
+    <cache-path
         name="chatBackground"
         path="chatBackground/" />
+    <cache-path
+        name="Images"
+        path="Images/" />
+    <cache-path
+        name="Videos"
+        path="Videos/" />
+    <cache-path
+        name="Audios"
+        path="Audios/" />
+    <cache-path
+        name="Documentos"
+        path="Documentos/" />
 </paths>

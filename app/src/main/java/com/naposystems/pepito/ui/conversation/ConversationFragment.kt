@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.util.TypedValue
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
@@ -34,6 +36,7 @@ import com.naposystems.pepito.databinding.ConversationFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
@@ -52,6 +55,7 @@ import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewM
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import java.io.File
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -141,10 +145,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
                 viewModel.saveMessageLocally(
                     binding.inputPanel.getEditTex().text.toString(),
-                    "",
-                    args.contact,
-                    obtainTimeSelfDestruct(),
-                    Constants.IsMine.YES.value
+                    obtainTimeSelfDestruct()
                 )
 
                 with(binding.inputPanel.getEditTex()) {
@@ -200,7 +201,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
                 override fun cameraPressed() {
                     this@ConversationFragment.verifyPermission(
-                        Manifest.permission.CAMERA,
+                        Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                         drawableIconId = R.drawable.ic_camera_primary,
                         message = R.string.explanation_camera_to_attachment_picture
                     ) {
@@ -232,7 +233,15 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
 
                 override fun documentPressed() {
-
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        drawableIconId = R.drawable.ic_folder_primary,
+                        message = R.string.explanation_to_send_audio_attacment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentDocumentFragment()
+                        )
+                    }
                 }
             })
             attachmentDialog.show(parentFragmentManager, "attachmentDialog")
@@ -240,7 +249,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         binding.inputPanel.getImageButtonCamera().setOnClickListener {
             verifyPermission(
-                Manifest.permission.CAMERA,
+                Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                 drawableIconId = R.drawable.ic_camera_primary,
                 message = R.string.explanation_camera_to_attachment_picture
             ) {
@@ -264,27 +273,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             findNavController().popBackStack(R.id.homeFragment, false)
         }
 
-        shareViewModel.hasCameraSendClicked.observe(activity!!, Observer {
-            if (it == true) {
-                val base64 = shareViewModel.getImageBase64()
-
-                viewModel.saveMessageWithAttachmentLocally(
-                    shareViewModel.message.value!!,
-                    "",
-                    args.contact,
-                    Constants.IsMine.YES.value,
-                    base64,
-                    shareViewModel.getImageUri(),
-                    obtainTimeSelfDestruct(),
-                    Constants.ATTACHMENT_ORIGIN.CAMERA.origin
-                )
-
-                with(binding.inputPanel.getEditTex()) {
-                    setText("")
-                }
-            }
-        })
-
         shareViewModel.hasAudioSendClicked.observe(activity!!, Observer {
             if (it == true) {
                 shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
@@ -296,24 +284,14 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             }
         })
 
-        shareViewModel.hasGallerySendClicked.observe(activity!!, Observer {
-            if (it == true) {
-                val base64 = shareViewModel.getImageBase64()
-
-                viewModel.saveMessageWithAttachmentLocally(
-                    shareViewModel.message.value!!,
-                    "",
-                    args.contact,
-                    Constants.IsMine.YES.value,
-                    base64,
-                    shareViewModel.getImageUri(),
-                    obtainTimeSelfDestruct(),
-                    Constants.ATTACHMENT_ORIGIN.GALLERY.origin
+        shareViewModel.attachmentSelected.observe(activity!!, Observer { attachment ->
+            if (attachment != null) {
+                viewModel.saveMessageAndAttachment(
+                    shareViewModel.getMessage() ?: "",
+                    attachment,
+                    1,
+                    obtainTimeSelfDestruct()
                 )
-
-                with(binding.inputPanel.getEditTex()) {
-                    setText("")
-                }
             }
         })
     }
@@ -687,10 +665,25 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
-            override fun onClick(item: Message) {
+            override fun onClick(item: MessageAndAttachment) {
                 if (actionMode.mode != null) {
-                    updateStateSelectionMessage(item)
+                    updateStateSelectionMessage(item.message)
                 }
+
+                if (item.attachmentList.isNotEmpty()) {
+                    val firstAttachment = item.attachmentList.first()
+
+                    if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
+                        openAttachmentDocument(firstAttachment)
+                    }
+
+                    if (firstAttachment.status == Constants.AttachmentStatus.ERROR.status) {
+                        when (firstAttachment.type) {
+
+                        }
+                    }
+                }
+
             }
 
             override fun onLongClick(item: Message) {
@@ -711,6 +704,14 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     binding.coordinator,
                     getString(R.string.text_error_playing_audio),
                     3
+                )
+            }
+
+            override fun onPreviewClick(item: MessageAndAttachment) {
+                findNavController().navigate(
+                    ConversationFragmentDirections.actionConversationFragmentToPreviewMediaFragment(
+                        item
+                    )
                 )
             }
         }, mediaPlayerManager, resources)
@@ -757,6 +758,31 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     private fun cleanSelectionMessages() {
         viewModel.cleanSelectionMessages(args.contact.id)
+    }
+
+    private fun openAttachmentDocument(attachment: Attachment) {
+        val intent = Intent(Intent.ACTION_VIEW)
+
+        val uri: Uri = Utils.getFileUri(
+            context!!,
+            attachment.uri,
+            Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+        )
+        val extension = MimeTypeMap.getFileExtensionFromUrl(
+            uri.toString()
+        )
+        val mimeType =
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        if (extension.equals("", ignoreCase = true) || mimeType == null) {
+            // if there is no extension or there is no definite mimetype, still try to open the file
+            intent.setDataAndType(uri, "text/*")
+        } else {
+            intent.setDataAndType(uri, mimeType)
+        }
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        // custom message for the intent
+        // custom message for the intent
+        startActivity(Intent.createChooser(intent, "Choose an Application:"))
     }
 
     override fun onPause() {

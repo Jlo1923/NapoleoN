@@ -7,7 +7,6 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.media.AudioAttributes
 import android.media.AudioManager
-import android.media.AudioManager.GET_DEVICES_INPUTS
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
@@ -16,13 +15,13 @@ import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
-
 
 class MediaPlayerManager(private val context: Context) :
     SensorEventListener, IContractMediaPlayer {
@@ -32,10 +31,17 @@ class MediaPlayerManager(private val context: Context) :
         private const val TWO_X_SPEED = 1.5f
     }
 
-    private var mediaPlayer: MediaPlayer? = null
+    private val mediaPlayer: MediaPlayer by lazy {
+        MediaPlayer().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+        }
+    }
 
     private var mStartAudioTime: Long? = null
-    private var mAudioContentType = AudioAttributes.CONTENT_TYPE_MUSIC
     private var mIsEncryptedFile: Boolean = false
     private var mSpeed: Float = 1.0f
     private var mImageButtonPlay: AnimatedTwoVectorView? = null
@@ -88,7 +94,7 @@ class MediaPlayerManager(private val context: Context) :
             )
         val fileInputStream = encryptedFile.openFileInput()
 
-        val outputDir = File(context.externalCacheDir, "Audios")
+        val outputDir = File(context.cacheDir, "Audios")
         if (!outputDir.exists()) {
             outputDir.mkdir()
         }
@@ -163,15 +169,7 @@ class MediaPlayerManager(private val context: Context) :
                 mPreviousUri = uri
             }
 
-            mediaPlayer = MediaPlayer().apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-                )
-            }
-
-            mediaPlayer!!.apply {
+            mediaPlayer.apply {
 
                 if (mPreviousAudioId != audioId) {
                     mPreviousAudioId = audioId
@@ -185,16 +183,13 @@ class MediaPlayerManager(private val context: Context) :
                         setDataSource(tempFile.absolutePath)
                         prepare()
                     } else {
-                        val fileDescriptor = context.contentResolver.openFileDescriptor(
-                            uri,
-                            "r"
-                        )
-                        setDataSource(fileDescriptor?.fileDescriptor)
+                        val stream = context.contentResolver.openFileDescriptor(uri, "r")
+                        setDataSource(stream!!.fileDescriptor)
                         prepare()
                     }
                 }
 
-                mediaPlayer?.setOnPreparedListener {
+                mediaPlayer.setOnPreparedListener {
                     mSensorManager.registerListener(
                         this@MediaPlayerManager,
                         mProximitySensor,
@@ -203,7 +198,7 @@ class MediaPlayerManager(private val context: Context) :
                     mSeekBar?.max = duration
                 }
 
-                mediaPlayer?.setOnCompletionListener {
+                mediaPlayer.setOnCompletionListener {
                     deleteTempFile()
                     resetMediaPlayer()
                 }
@@ -219,11 +214,11 @@ class MediaPlayerManager(private val context: Context) :
 
                 if (isPlaying) {
                     pause()
-                    mImageButtonPlay?.reverse()
+                    mImageButtonPlay?.reverseAnimation()
                 } else {
                     start()
                     mHandler.postDelayed(mRunnable, 0)
-                    mImageButtonPlay?.play()
+                    mImageButtonPlay?.playAnimation()
                 }
             }
         } catch (e: Exception) {
@@ -248,12 +243,10 @@ class MediaPlayerManager(private val context: Context) :
     }
 
     override fun pauseAudio() {
-        if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying) {
-                mImageButtonPlay?.reverse()
-            }
-            mediaPlayer!!.pause()
+        if (mediaPlayer.isPlaying) {
+            mImageButtonPlay?.reverseAnimation()
         }
+        mediaPlayer.pause()
     }
 
     override fun isEncryptedFile(isEncryptedFile: Boolean) {
@@ -266,7 +259,7 @@ class MediaPlayerManager(private val context: Context) :
 
     override fun setImageButtonPlay(imageButtonPlay: AnimatedTwoVectorView) {
         if (this.mImageButtonPlay != imageButtonPlay) {
-            this.mImageButtonPlay?.reverse()
+            this.mImageButtonPlay?.reverseAnimation()
         }
         this.mImageButtonPlay = imageButtonPlay
     }
@@ -288,11 +281,11 @@ class MediaPlayerManager(private val context: Context) :
         this.mSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
-                    mediaPlayer?.seekTo(progress)
+                    mediaPlayer.seekTo(progress)
                 }
                 try {
                     mTextViewDuration?.text = Utils.getDuration(
-                        (mediaPlayer!!.duration - progress).toLong(),
+                        (mediaPlayer.duration - progress).toLong(),
                         showHours = false
                     )
                 } catch (e: Exception) {
@@ -318,13 +311,13 @@ class MediaPlayerManager(private val context: Context) :
     }
 
     override fun rewindMilliseconds(audioId: Int, millis: Long) {
-        if (mediaPlayer != null && mSeekBar != null && audioId == mPreviousAudioId) {
-            val minusValue = mediaPlayer!!.currentPosition - millis
+        if (mSeekBar != null && audioId == mPreviousAudioId) {
+            val minusValue = mediaPlayer.currentPosition - millis
 
-            if (mediaPlayer!!.currentPosition >= millis) {
-                mediaPlayer!!.seekTo(minusValue.toInt())
+            if (mediaPlayer.currentPosition >= millis) {
+                mediaPlayer.seekTo(minusValue.toInt())
             } else {
-                mediaPlayer!!.seekTo(0)
+                mediaPlayer.seekTo(0)
             }
         }
     }
@@ -338,16 +331,16 @@ class MediaPlayerManager(private val context: Context) :
                 mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
                 NORMAL_SPEED
             }
-            mediaPlayer!!.playbackParams = mediaPlayer!!.playbackParams.setSpeed(mSpeed)
+            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(mSpeed)
         }
     }
 
     override fun forwardMilliseconds(audioId: Int, millis: Long) {
-        if (mediaPlayer != null && mSeekBar != null && mPreviousAudioId == audioId) {
-            val minorValue = mediaPlayer!!.duration - (millis + TimeUnit.SECONDS.toMillis(1))
+        if (mSeekBar != null && mPreviousAudioId == audioId) {
+            val minorValue = mediaPlayer.duration - (millis + TimeUnit.SECONDS.toMillis(1))
 
             if (mSeekBar!!.progress <= minorValue) {
-                mediaPlayer?.seekTo(mediaPlayer!!.currentPosition + 5000)
+                mediaPlayer.seekTo(mediaPlayer.currentPosition + 5000)
             }
         }
     }
@@ -360,7 +353,7 @@ class MediaPlayerManager(private val context: Context) :
         }
 
         mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
-        mImageButtonPlay?.reverse()
+        mImageButtonPlay?.reverseAnimation()
         mImageButtonPlay = null
         mImageButtonSpeed = null
         mPreviousAudioId = null
@@ -370,8 +363,8 @@ class MediaPlayerManager(private val context: Context) :
         mTextViewDuration = null
         mSpeed = NORMAL_SPEED
 
-        mediaPlayer?.pause()
-        mediaPlayer?.reset()
+        mediaPlayer.pause()
+        mediaPlayer.reset()
         mSensorManager.unregisterListener(this, mProximitySensor)
         if (wakeLock.isHeld) {
             wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)

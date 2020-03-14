@@ -8,5 +8,5 @@ interface AttachmentDataSource {
 
     fun insertAttachments(listAttachment: List<Attachment>): List<Long>
 
-    fun updateAttachments(attachmentId: Long, webId: String, messageWebId: String, body: String)
+    fun updateAttachment(attachment: Attachment)
 }

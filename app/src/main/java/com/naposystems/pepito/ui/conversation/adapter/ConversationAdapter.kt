@@ -10,18 +10,13 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.naposystems.pepito.R
-import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
-import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithAudioBinding
-import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
-import com.naposystems.pepito.databinding.ConversationItemMyMessageWithAudioBinding
+import com.naposystems.pepito.databinding.*
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
-import java.io.File
 
 class ConversationAdapter constructor(
     private val clickListener: ClickListener,
@@ -35,6 +30,10 @@ class ConversationAdapter constructor(
         const val TYPE_INCOMING_MESSAGE = 2
         const val TYPE_MY_MESSAGE_AUDIO = 3
         const val TYPE_INCOMING_MESSAGE_AUDIO = 4
+        const val TYPE_MY_MESSAGE_VIDEO = 5
+        const val TYPE_INCOMING_MESSAGE_VIDEO = 6
+        const val TYPE_MY_MESSAGE_DOCUMENT = 7
+        const val TYPE_INCOMING_MESSAGE_DOCUMENT = 8
     }
 
     private var isFirst = false
@@ -58,8 +57,8 @@ class ConversationAdapter constructor(
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
 
-        conversation.let {
-            return if (conversation?.attachmentList!!.isNotEmpty()) {
+        conversation?.let {
+            return if (conversation.attachmentList.isNotEmpty()) {
                 when (conversation.attachmentList[0].type) {
                     Constants.AttachmentType.IMAGE.type -> {
                         if (conversation.message.isMine == Constants.IsMine.YES.value) {
@@ -73,6 +72,20 @@ class ConversationAdapter constructor(
                             TYPE_MY_MESSAGE_AUDIO
                         } else {
                             TYPE_INCOMING_MESSAGE_AUDIO
+                        }
+                    }
+                    Constants.AttachmentType.VIDEO.type -> {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                            TYPE_MY_MESSAGE_VIDEO
+                        } else {
+                            TYPE_INCOMING_MESSAGE_VIDEO
+                        }
+                    }
+                    Constants.AttachmentType.DOCUMENT.type -> {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                            TYPE_MY_MESSAGE_DOCUMENT
+                        } else {
+                            TYPE_INCOMING_MESSAGE_DOCUMENT
                         }
                     }
                     else -> {
@@ -91,6 +104,8 @@ class ConversationAdapter constructor(
                 }
             }
         }
+
+        return -1
     }
 
     override fun onCreateViewHolder(
@@ -104,7 +119,14 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent, countDownTimer)
             TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent, countDownTimer)
             TYPE_MY_MESSAGE_AUDIO -> MyMessageAudioViewHolder.from(parent, countDownTimer)
-            TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(parent, countDownTimer)
+            TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(
+                parent,
+                countDownTimer
+            )
+            TYPE_MY_MESSAGE_VIDEO -> MyMessageVideoViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_VIDEO -> IncomingMessageVideoViewHolder.from(parent)
+            TYPE_MY_MESSAGE_DOCUMENT -> MyMessageDocumentViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_DOCUMENT -> IncomingMessageDocumentViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent, countDownTimer)
         }
     }
@@ -126,11 +148,22 @@ class ConversationAdapter constructor(
                     .bind(item, clickListener, isFirst, mediaPlayerManager, resources)
                 TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
                     .bind(item, clickListener, isFirst, mediaPlayerManager, resources)
+                TYPE_MY_MESSAGE_VIDEO -> (holder as MyMessageVideoViewHolder)
+                    .bind(item, clickListener, isFirst)
+                TYPE_INCOMING_MESSAGE_VIDEO -> (holder as IncomingMessageVideoViewHolder)
+                    .bind(item, clickListener, isFirst)
+                TYPE_MY_MESSAGE_DOCUMENT -> (holder as MyMessageDocumentViewHolder)
+                    .bind(item, clickListener, isFirst)
+                TYPE_INCOMING_MESSAGE_DOCUMENT -> (holder as IncomingMessageDocumentViewHolder)
+                    .bind(item, clickListener, isFirst)
             }
         }
     }
 
-    class MyMessageViewHolder constructor(private val binding: ConversationItemMyMessageBinding, countDownTimer: CountDownTimer?) :
+    class MyMessageViewHolder constructor(
+        private val binding: ConversationItemMyMessageBinding,
+        countDownTimer: CountDownTimer?
+    ) :
         ConversationViewHolder(binding.root, countDownTimer) {
 
         @SuppressLint("ResourceAsColor")
@@ -145,9 +178,14 @@ class ConversationAdapter constructor(
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
 
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = {messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             if (item.message.isSelected) {
                 binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -161,7 +199,7 @@ class ConversationAdapter constructor(
             }
 
             binding.containerMyMessage.setOnClickListener {
-                clickListener.onClick(item.message)
+                clickListener.onClick(item)
             }
             binding.executePendingBindings()
         }
@@ -179,7 +217,10 @@ class ConversationAdapter constructor(
         }
     }
 
-    class IncomingMessageViewHolder constructor(private val binding: ConversationItemIncomingMessageBinding, countDownTimer: CountDownTimer?) :
+    class IncomingMessageViewHolder constructor(
+        private val binding: ConversationItemIncomingMessageBinding,
+        countDownTimer: CountDownTimer?
+    ) :
         ConversationViewHolder(binding.root, countDownTimer) {
 
         @SuppressLint("ResourceAsColor")
@@ -194,11 +235,14 @@ class ConversationAdapter constructor(
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
 
-            val context = binding.containerMessage.context
-
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = {messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             if (item.message.isSelected) {
                 binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -212,31 +256,19 @@ class ConversationAdapter constructor(
             }
 
             binding.containerIncomingMessage.setOnClickListener {
-                clickListener.onClick(item.message)
-            }
-
-            binding.containerMessage.background = if (isFirst) {
-                context.getDrawable(R.drawable.bg_incoming_message)
-            } else {
-                context.getDrawable(R.drawable.bg_incoming_message_rounded)
+                clickListener.onClick(item)
             }
 
             binding.clickListener = clickListener
-
-            if (item.attachmentList.isNotEmpty()) {
-                binding.imageViewAttachment.visibility = View.VISIBLE
-                val firstAttachment = item.attachmentList[0]
-
-                Glide.with(context)
-                    .load(if (firstAttachment.uri.isNotEmpty()) File(firstAttachment.uri) else firstAttachment.body)
-                    .into(binding.imageViewAttachment)
-            }
 
             binding.executePendingBindings()
         }
 
         companion object {
-            fun from(parent: ViewGroup, countDownTimer: CountDownTimer?): IncomingMessageViewHolder {
+            fun from(
+                parent: ViewGroup,
+                countDownTimer: CountDownTimer?
+            ): IncomingMessageViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemIncomingMessageBinding.inflate(
                     layoutInflater,
@@ -248,7 +280,10 @@ class ConversationAdapter constructor(
         }
     }
 
-    class MyMessageAudioViewHolder constructor(private val binding: ConversationItemMyMessageWithAudioBinding, countDownTimer: CountDownTimer?) :
+    class MyMessageAudioViewHolder constructor(
+        private val binding: ConversationItemMyMessageWithAudioBinding,
+        countDownTimer: CountDownTimer?
+    ) :
         ConversationViewHolder(binding.root, countDownTimer) {
 
         fun bind(
@@ -262,14 +297,28 @@ class ConversationAdapter constructor(
             binding.clickListener = clickListener
             binding.isFirst = isFirst
 
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = { messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             with(binding.audioPlayer) {
+
+                val firstAttachment = item.attachmentList[0]
+
                 setMediaPlayerManager(mediaPlayerManager)
-                isEncryptedFile(true)
-                setAbsolutePath(item.attachmentList[0].uri)
+                isEncryptedFile(false)
+                setAudioFileUri(
+                    Utils.getFileUri(
+                        context = context,
+                        fileName = firstAttachment.uri,
+                        subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                    )
+                )
                 setAudioId(item.attachmentList[0].id)
                 setListener(object : AudioPlayerCustomView.Listener {
                     override fun onErrorPlayingAudio() {
@@ -294,8 +343,11 @@ class ConversationAdapter constructor(
         }
     }
 
-    class IncomingMessageAudioViewHolder constructor(private val binding: ConversationItemIncomingMessageWithAudioBinding, countDownTimer: CountDownTimer?) :
-        ConversationViewHolder(binding.root, countDownTimer){
+    class IncomingMessageAudioViewHolder constructor(
+        private val binding: ConversationItemIncomingMessageWithAudioBinding,
+        countDownTimer: CountDownTimer?
+    ) :
+        ConversationViewHolder(binding.root, countDownTimer) {
 
         fun bind(
             item: MessageAndAttachment,
@@ -308,14 +360,27 @@ class ConversationAdapter constructor(
             binding.clickListener = clickListener
             binding.isFirst = isFirst
 
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = {messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             with(binding.audioPlayer) {
+                val firstAttachment = item.attachmentList[0]
+
                 setMediaPlayerManager(mediaPlayerManager)
-                isEncryptedFile(true)
-                setAbsolutePath(item.attachmentList[0].uri)
+                isEncryptedFile(false)
+                setAudioFileUri(
+                    Utils.getFileUri(
+                        context = context,
+                        fileName = firstAttachment.uri,
+                        subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                    )
+                )
                 setAudioId(item.attachmentList[0].id)
                 setListener(object : AudioPlayerCustomView.Listener {
                     override fun onErrorPlayingAudio() {
@@ -328,7 +393,10 @@ class ConversationAdapter constructor(
         }
 
         companion object {
-            fun from(parent: ViewGroup, countDownTimer: CountDownTimer?): IncomingMessageAudioViewHolder {
+            fun from(
+                parent: ViewGroup,
+                countDownTimer: CountDownTimer?
+            ): IncomingMessageAudioViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemIncomingMessageWithAudioBinding.inflate(
                     layoutInflater,
@@ -340,10 +408,147 @@ class ConversationAdapter constructor(
         }
     }
 
+    class MyMessageVideoViewHolder constructor(private val binding: ConversationItemMyMessageWithVideoBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener,
+            isFirst: Boolean
+        ) {
+            binding.conversation = item
+            binding.clickListener = clickListener
+            binding.isFirst = isFirst
+
+            if (item.message.isSelected) {
+                binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): MyMessageVideoViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemMyMessageWithVideoBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return MyMessageVideoViewHolder(binding)
+            }
+        }
+    }
+
+    class IncomingMessageVideoViewHolder constructor(private val binding: ConversationItemIncomingMessageWithVideoBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener,
+            isFirst: Boolean
+        ) {
+            binding.conversation = item
+            binding.clickListener = clickListener
+            binding.isFirst = isFirst
+
+            if (item.message.isSelected) {
+                binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): IncomingMessageVideoViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemIncomingMessageWithVideoBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return IncomingMessageVideoViewHolder(binding)
+            }
+        }
+    }
+
+    class MyMessageDocumentViewHolder constructor(private val binding: ConversationItemMyMessageWithDocumentBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener,
+            isFirst: Boolean
+        ) {
+            binding.conversation = item
+            binding.clickListener = clickListener
+            binding.isFirst = isFirst
+
+            if (item.message.isSelected) {
+                binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): MyMessageDocumentViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemMyMessageWithDocumentBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return MyMessageDocumentViewHolder(binding)
+            }
+        }
+    }
+
+    class IncomingMessageDocumentViewHolder constructor(private val binding: ConversationItemIncomingMessageWithDocumentBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener,
+            isFirst: Boolean
+        ) {
+            binding.conversation = item
+            binding.clickListener = clickListener
+            binding.isFirst = isFirst
+
+            if (item.message.isSelected) {
+                binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): IncomingMessageDocumentViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemIncomingMessageWithDocumentBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return IncomingMessageDocumentViewHolder(binding)
+            }
+        }
+    }
+
     interface ClickListener {
-        fun onClick(item: Message)
+        fun onClick(item: MessageAndAttachment)
         fun onLongClick(item: Message)
         fun messageToEliminate(item: MessageAndAttachment)
         fun errorPlayingAudio()
+        fun onPreviewClick(item: MessageAndAttachment)
     }
 }

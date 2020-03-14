@@ -4,10 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="attachment"
+            type="com.naposystems.pepito.entity.message.attachments.Attachment" />
 
         <variable
-            name="galleryItem"
-            type="com.naposystems.pepito.model.attachment.gallery.GalleryItem" />
+            name="galleryItemId"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,18 +18,50 @@
         android:layout_height="match_parent"
         tools:context=".ui.attachmentPreview.AttachmentPreviewFragment">
 
-        <ImageView
-            android:id="@+id/imageView_preview"
+        <ViewSwitcher
+            android:id="@+id/viewSwitcher"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
-            android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItem.id)}"
-            app:galleryImage="@{galleryItem}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/vertical_photo" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:id="@+id/container_video_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black">
+
+                <VideoView
+                    android:id="@+id/videoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageView_play"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_play_attachment_preview"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_play_arrow_black"
+                    app:tint="@color/white" />
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/imageView_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
+                app:attachmentImage="@{attachment}"
+                tools:src="@drawable/vertical_photo" />
+        </ViewSwitcher>
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/imageButton_close"
@@ -39,6 +74,43 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_close_black_24" />
+
+        <LinearLayout
+            android:id="@+id/container_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageButton_close"
+            app:layout_constraintTop_toTopOf="@id/imageButton_close"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_weight="1"
+                android:max="100"
+                tools:progress="50"
+                tools:progressBackgroundTint="@color/black"
+                tools:progressTint="?attr/attrSeekbarProgressTint"
+                tools:thumbTint="?attr/attrSeekbarThumbTint" />
+
+            <TextView
+                android:id="@+id/textView_duration"
+                style="@style/SmallBodyTextView.White"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:textSize="@dimen/text_size_audio_duration"
+                app:layout_constraintBottom_toBottomOf="@id/seekbar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/seekbar"
+                tools:text="10:34" />
+        </LinearLayout>
 
         <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget
             android:id="@+id/inputPanel"
