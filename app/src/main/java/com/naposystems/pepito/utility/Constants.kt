@@ -12,10 +12,10 @@ object Constants {
     const val QUANTITY_ATTACHMENTS = 0
 
     object NapoleonApi {
-//        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
-        const val BASE_URL = "http://dev.napoleon-chat.com/api/"
-//        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
-        const val SOCKET_BASE_URL = "http://dev.napoleon-chat.com:6001"
+        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
+//        const val BASE_URL = "http://dev.napoleon-chat.com/api/"
+        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
+//        const val SOCKET_BASE_URL = "http://dev.napoleon-chat.com:6001"
         const val GENERATE_CODE = "auth/sendverificationcode"
         const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
