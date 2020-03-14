@@ -6,7 +6,6 @@ interface IContractMainActivity {
 
     interface ViewModel {
         fun getUser()
-        fun getTheme()
         fun getAccountStatus()
         fun getOutputControl(): Int
         fun setOutputControl(state: Int)
@@ -18,7 +17,6 @@ interface IContractMainActivity {
 
     interface Repository {
         suspend fun getUser(): User
-        suspend fun getTheme(): Int
         suspend fun getAccountStatus(): Int
         fun getOutputControl(): Int
         suspend fun setOutputControl(state: Int)

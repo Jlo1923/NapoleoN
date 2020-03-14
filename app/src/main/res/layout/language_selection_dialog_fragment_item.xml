@@ -31,6 +31,7 @@
             android:layout_marginTop="@dimen/small_margin"
             android:layout_marginEnd="@dimen/small_margin"
             android:visibility="gone"
+            android:elevation="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_language_selected"
@@ -39,6 +40,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/attrBackgroundColorBackgroundDialog"
             android:padding="@dimen/normal_padding">
 
             <androidx.appcompat.widget.AppCompatImageView

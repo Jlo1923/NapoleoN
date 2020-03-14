@@ -62,7 +62,8 @@
                     app:layout_constraintBottom_toBottomOf="@id/button_video_call"
                     app:layout_constraintEnd_toStartOf="@id/button_video_call"
                     app:layout_constraintTop_toTopOf="@id/button_video_call"
-                    app:srcCompat="@drawable/ic_phone_white" />
+                    app:srcCompat="@drawable/ic_phone_white"
+                    android:tint="?attr/attrConversationIconColor"/>
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/button_video_call"
@@ -71,7 +72,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_video_cam_white" />
+                    app:srcCompat="@drawable/ic_video_cam_white"
+                    android:tint="?attr/attrConversationIconColor" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatImageView

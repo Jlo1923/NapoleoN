@@ -7,15 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ColorSchemeFragmentBinding
-import com.naposystems.pepito.databinding.ColorSchemeItemBinding
-import com.naposystems.pepito.entity.Theme
 import com.naposystems.pepito.ui.colorScheme.adapter.ColorSchemeAdapter
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -77,52 +72,19 @@ class ColorSchemeFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ColorSchemeViewModel::class.java)
 
+        viewModel.getActualTheme()
+
         viewModel.theme.observe(viewLifecycleOwner, Observer {
-/*            when(it) {
-                1 ->{
-                    activity?.setTheme(R.style.AppTheme)
-                    context!!.theme.applyStyle(R.style.AppTheme, true)
-                }
-                7 ->{
-                    activity?.setTheme(R.style.AppThemePinkDream)
-                    context!!.theme.applyStyle(R.style.AppThemePinkDream, true)
-                }
-                8 ->{
-                    activity?.setTheme(R.style.AppThemeClearSky)
-                    context!!.theme.applyStyle(R.style.AppThemeClearSky, true)
-                }
-            }*/
+            when(it) {
+                1 -> binding.radioButtonLightNapoleon.isChecked = true
+                2 -> binding.radioButtonDarkNapoleon.isChecked = true
+                3 -> binding.radioButtonBlackGoldAlloy.isChecked = true
+                4 -> binding.radioButtonColdOcean.isChecked = true
+                5 -> binding.radioButtonCamouflage.isChecked = true
+                6 -> binding.radioButtonPurpleBluebonnets.isChecked = true
+                7 -> binding.radioButtonPinkDream.isChecked = true
+                8 -> binding.radioButtonClearSky.isChecked = true
+            }
         })
-
-
     }
-
-/*    private fun setAdapter(selectedTheme: Int) {
-        val themeList = listOf(
-            Theme(1, context!!.getString(R.string.text_light_theme), false),
-            Theme(2, context!!.getString(R.string.text_dark_theme), false)
-        )
-
-        for (theme in themeList) {
-            if (theme.id == selectedTheme) {
-                theme.isSelected = true
-            }
-        }
-
-        adapter = ColorSchemeAdapter(themeList, ColorSchemeAdapter.ColorSchemeListener {
-            val theme = when (it.id) {
-                Constants.ColorScheme.LIGHT_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_NO
-                Constants.ColorScheme.DARK_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_NO
-            }
-
-
-            viewModel.setTheme(it.id)
-            viewModel.getActualTheme()
-            AppCompatDelegate.setDefaultNightMode(theme)
-        })
-
-        //binding.recyclerViewThemes.adapter = adapter
-    }*/
-
 }
