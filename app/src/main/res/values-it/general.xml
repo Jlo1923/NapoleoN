@@ -31,7 +31,7 @@
     <string name="text_refuse">Rifiutare</string>
     <string name="text_information">INFORMAZIONI</string>
     <string name="text_nickname">Soprannome</string>
-    <string name="text_delete_conversation">Elimina la conversazione</string>
+    <string name="text_title_delete_conversation">Elimina la conversazione</string>
     <string name="text_mute_conversation">Conversazione muta</string>
     <string name="text_block_contact">Blocca contatto</string>
     <string name="text_field_cannot_be_empty">Il campo non può essere vuoto</string>

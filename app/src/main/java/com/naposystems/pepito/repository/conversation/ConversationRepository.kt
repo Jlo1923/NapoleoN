@@ -314,8 +314,8 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.cleanSelectionMessages(idContact)
     }
 
-    override suspend fun deleteMessagesSelected(idContact: Int) {
-        messageLocalDataSource.deleteMessagesSelected(idContact)
+    override suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
+        messageLocalDataSource.deleteMessagesSelected(idContact, listMessages)
         val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(idContact)
         if (messageAndAttachment != null) {
             conversationLocalDataSource.updateConversationByContact(

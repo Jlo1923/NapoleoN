@@ -6,6 +6,7 @@
         android:id="@+id/search"
         android:icon="@drawable/ic_search_white"
         android:title="@string/text_search"
+        app:iconTint="?attr/attrBackgroundTintIconToolbar"
         app:showAsAction="ifRoom" />
 
     <item
@@ -13,5 +14,6 @@
         android:icon="@drawable/ic_person_add_white"
         android:title="@string/text_add_contact"
         app:actionLayout="@layout/add_contact_badge"
+        app:iconTint="?attr/attrBackgroundTintIconToolbar"
         app:showAsAction="always" />
 </menu>

@@ -4,7 +4,7 @@
     <corners android:radius="200dp" />
     <stroke
         android:width="2dp"
-        android:color="@color/buttonTint" />
+        android:color="?attr/attrColorButtonTint" />
     <padding android:left="2dp" android:top="2dp" android:right="2dp"
         android:bottom="2dp" />
 </shape>

@@ -10,7 +10,9 @@ data class CreateAccountResDTO(
     @Json(name = "nick") val nickname: String,
     @Json(name = "id") val id: Int,
     @Json(name = "my_status") val status: String = "",
-    @Json(name = "secret_key") val secretKey: String
+    @Json(name = "secret_key") val secretKey: String,
+    @Json(name = "type") val userType: Int,
+    @Json(name = "created_at") val createAt: Long
 ) {
     companion object {
         fun toUserModel(
@@ -20,15 +22,17 @@ data class CreateAccountResDTO(
             status: String
         ): User {
             return User(
-                firebaseId,
-                createAccountResDTO.id,
-                createAccountResDTO.nickname,
-                createAccountResDTO.fullName,
-                accessPin,
-                "",
-                status,
-                "",
-                ""
+                firebaseId = firebaseId,
+                id = createAccountResDTO.id,
+                nickname = createAccountResDTO.nickname,
+                displayName =  createAccountResDTO.fullName,
+                accessPin = accessPin,
+                imageUrl = "",
+                status = status,
+                headerUri = "",
+                chatBackground = "",
+                type = createAccountResDTO.userType,
+                createAt = createAccountResDTO.createAt
             )
         }
     }

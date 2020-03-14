@@ -2,6 +2,7 @@ package com.naposystems.pepito.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.naposystems.pepito.ui.accountAttack.AccountAttackDialogViewModel
 import com.naposystems.pepito.ui.addContact.AddContactViewModel
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
@@ -24,6 +25,7 @@ import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
+import com.naposystems.pepito.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsViewModel
 import com.naposystems.pepito.ui.register.accessPin.AccessPinViewModel
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeViewModel
 import com.naposystems.pepito.ui.register.sendCode.SendCodeViewModel
@@ -35,9 +37,11 @@ import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewModel
 import com.naposystems.pepito.ui.splash.SplashViewModel
 import com.naposystems.pepito.ui.status.StatusViewModel
+import com.naposystems.pepito.ui.subscription.SubscriptionViewModel
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeViewModel
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewModel
+import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -241,5 +245,25 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AttachmentGalleryViewModel::class)
     internal abstract fun bindAttachmentGalleryViewModel(viewModel: AttachmentGalleryViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ValidatePasswordPreviousRecoveryAccountViewModel::class)
+    internal abstract fun bindValidatePasswordPreviousRecoveryAccountViewModel(viewModel: ValidatePasswordPreviousRecoveryAccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecoveryOlderAccountQuestionsViewModel::class)
+    internal abstract fun bindRecoveryOlderAccountQuestionsViewModel(viewModel: RecoveryOlderAccountQuestionsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AccountAttackDialogViewModel::class)
+    internal abstract fun bindAccountAttackDialogViewModel(viewModel: AccountAttackDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SubscriptionViewModel::class)
+    internal abstract fun bindSubscriptionViewModel(viewModel: SubscriptionViewModel): ViewModel
 
 }

@@ -9,5 +9,6 @@ data class MessageReqDTO(
     @Json(name = "user_receiver") val userDestination: Int,
     @Json(name = "quoted") val quoted: String,
     @Json(name = "body") val body: String,
-    @Json(name = "number_attachments") val numberAttachments: Int
+    @Json(name = "number_attachments") val numberAttachments: Int,
+    @Json(name = "destroy") val destroy: Int
 )

@@ -192,7 +192,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
             childFragmentManager
         ) {
             shareContactViewModel.sendBlockedContact(contact)
-//            showToast(context!!, getString(R.string.text_blocked_contact))
         }
     }
 
@@ -211,7 +210,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
             childFragmentManager
         ) {
             shareContactViewModel.sendDeleteContact(contact)
-//            showToast(context!!, getString(R.string.text_deleted_contact))
         }
     }
 

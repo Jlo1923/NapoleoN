@@ -2,6 +2,7 @@ package com.naposystems.pepito.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -36,12 +37,19 @@ class FabSend : FloatingActionButton {
 
                 setCustomImageDrawable()
 
+                val valueColorFab = TypedValue()
+                context.theme.resolveAttribute(R.attr.attrFabIconColor, valueColorFab, true)
+
                 customSize = resources.getDimension(R.dimen.conversation_fab_size).toInt()
                 setColorFilter(
-                    ContextCompat.getColor(context, R.color.fabIconColor),
+                    ContextCompat.getColor(context, valueColorFab.resourceId),
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
-                backgroundTintList = ContextCompat.getColorStateList(context, R.color.buttonTint)
+
+                val value = TypedValue()
+                context.theme.resolveAttribute(R.attr.attrColorButtonTint, value, true)
+
+                backgroundTintList = ContextCompat.getColorStateList(context, value.resourceId)
             } finally {
                 recycle()
             }

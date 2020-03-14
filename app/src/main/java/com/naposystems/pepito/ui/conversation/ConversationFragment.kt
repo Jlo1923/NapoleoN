@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -32,19 +33,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
+import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -68,7 +76,14 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
     }
+    private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
+        viewModelFactory
+    }
+
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
+    private val shareContactViewModel: ShareContactViewModel by viewModels {
+        viewModelFactory
+    }
 
     private lateinit var actionBarCustomView: ConversationActionBarBinding
     private lateinit var binding: ConversationFragmentBinding
@@ -77,6 +92,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private val args: ConversationFragmentArgs by navArgs()
     private var isEditTextFilled: Boolean = false
     private lateinit var actionMode: ActionModeMenu
+    private var contactSilenced: Boolean = false
+    private lateinit var menuOptionsContact: Menu
 
     private var clipboard: ClipboardManager? = null
     private var clipData: ClipData? = null
@@ -286,7 +303,15 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         viewModel.getMessagesSelected(args.contact.id)
 
+        selfDestructTimeViewModel.getSelfDestructTimeByContact(args.contact.id)
+
+        selfDestructTimeViewModel.getSelfDestructTime()
+
         setConversationBackground()
+
+        selfDestructTimeViewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {
+            selfDestructTimeViewModel.selfDestructTimeByContact = it
+        })
 
         viewModel.messagesSelected.observe(
             viewLifecycleOwner, Observer { listMessageAndAttachment ->
@@ -349,6 +374,13 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         viewModel.contactProfile.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 actionBarCustomView.contact = it
+                if (it.silenced) {
+                    menuOptionsContact.findItem(R.id.menu_item_mute_conversation).title =
+                        "Desilenciar!!"
+                } else {
+                    menuOptionsContact.findItem(R.id.menu_item_mute_conversation).title =
+                        "Silenciar!!"
+                }
             }
         })
 
@@ -403,7 +435,13 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menuOptionsContact = menu
         inflater.inflate(R.menu.menu_conversation, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        //setOptionSilenceMenu()
+        super.onPrepareOptionsMenu(menu)
     }
 
     override fun onResume() {
@@ -426,9 +464,87 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         .actionConversationFragmentToContactProfileFragment(args.contact.id)
                 )
             }
+            R.id.menu_item_schedule -> {
+                val dialog = SelfDestructTimeDialogFragment.newInstance(args.contact.id)
+                dialog.setListener(object :
+                    SelfDestructTimeDialogFragment.SelfDestructTimeListener {
+                    override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
+                        selfDestructTimeViewModel.setSelfDestructTimeByContact(
+                            selfDestructTimeSelected,
+                            args.contact.id
+                        )
+                    }
+                })
+                dialog.show(childFragmentManager, "SelfDestructTime")
+            }
+            R.id.menu_item_block_contact -> {
+                blockContact(args.contact)
+            }
+            R.id.menu_item_mute_conversation -> {
+                if (args.contact.silenced)
+                    deactiveSilence()
+                else
+                    silenceConversation()
+
+            }
+            R.id.menu_item_delete_conversation -> {
+                deleteConversation(args.contact)
+            }
         }
 
         return true
+    }
+
+    private fun blockContact(contact: Contact) {
+        generalDialog(
+            getString(R.string.text_block_contact),
+            getString(
+                R.string.text_wish_block_contact,
+                if (contact.displayNameFake.isEmpty()) {
+                    contact.displayName
+                } else {
+                    contact.displayNameFake
+                }
+            ),
+            true,
+            childFragmentManager
+        ) {
+            shareContactViewModel.sendBlockedContact(args.contact)
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
+    }
+
+    private fun silenceConversation() {
+        val dialog = MuteConversationDialogFragment.newInstance(
+            args.contact.id, args.contact.silenced
+        )
+        dialog.setListener(object : MuteConversationDialogFragment.MuteConversationListener {
+            override fun onMuteConversationChange() {}
+        })
+        dialog.show(childFragmentManager, "MuteConversation")
+    }
+
+    private fun deactiveSilence() {
+        shareContactViewModel.muteConversation(args.contact.id, args.contact.silenced)
+    }
+
+    private fun deleteConversation(contact: Contact) {
+        generalDialog(
+            getString(R.string.text_delete_contact),
+            getString(
+                R.string.text_wish_delete_contact,
+                if (contact.displayNameFake.isEmpty()) {
+                    contact.displayName
+                } else {
+                    contact.displayNameFake
+                }
+            ),
+            true,
+            childFragmentManager
+        ) {
+            shareContactViewModel.deleteConversation(args.contact.id)
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
     }
 
     private fun copyDataInClipboard(text: String) {
@@ -446,8 +562,18 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         }
     }
 
+    private fun obtainTimeSelfDestruct(): Int {
+        return if (selfDestructTimeViewModel.selfDestructTimeByContact!! < 0) {
+            selfDestructTimeViewModel.selfDestructTimeGlobal
+        } else {
+            selfDestructTimeViewModel.selfDestructTimeByContact!!
+        }
+    }
+
     private fun resetConversationBackground() {
-        activity!!.window.setBackgroundDrawableResource(R.color.colorBackground)
+        val value = TypedValue()
+        context!!.theme.resolveAttribute(R.attr.attrBackgroundColorBackground, value, true)
+        activity!!.window.setBackgroundDrawableResource(value.resourceId)
     }
 
     private fun inflateCustomActionBar(inflater: LayoutInflater) {
@@ -495,7 +621,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         R.string.text_cancel,
                         clickTopButton = { clickTopButton ->
                             if (clickTopButton) {
-                                viewModel.deleteMessagesSelected(args.contact.id)
+                                viewModel.deleteMessagesSelected(
+                                    args.contact.id,
+                                    viewModel.messagesSelected.value!!
+                                )
                             }
                         })
                 } else {
@@ -507,7 +636,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         R.string.text_delete_message_for_all,
                         clickTopButton = { clickTopButton ->
                             if (clickTopButton) {
-                                viewModel.deleteMessagesSelected(args.contact.id)
+                                viewModel.deleteMessagesSelected(
+                                    args.contact.id,
+                                    viewModel.messagesSelected.value!!
+                                )
                             }
                         },
                         clickDownButton = { clickDowButton ->
@@ -555,6 +687,12 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
             }
 
+            override fun messageToEliminate(item: MessageAndAttachment) {
+                val messages = arrayListOf<MessageAndAttachment>()
+                messages.add(item)
+                viewModel.deleteMessagesSelected(args.contact.id, messages)
+            }
+
             override fun errorPlayingAudio() {
                 Utils.showSimpleSnackbar(
                     binding.coordinator,
@@ -570,7 +708,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     )
                 )
             }
-        }, mediaPlayerManager)
+        }, mediaPlayerManager, resources)
 
         linearLayoutManager = LinearLayoutManager(context!!)
         linearLayoutManager.reverseLayout = true

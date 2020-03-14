@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di
 
+import com.naposystems.pepito.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.addContact.AddContactFragment
 import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment
@@ -22,6 +23,7 @@ import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragme
 import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment
+import com.naposystems.pepito.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment
 import com.naposystems.pepito.ui.register.accessPin.AccessPinFragment
 import com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment
 import com.naposystems.pepito.ui.register.sendCode.SendCodeFragment
@@ -33,9 +35,11 @@ import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.pepito.ui.splash.SplashFragment
 import com.naposystems.pepito.ui.status.StatusFragment
+import com.naposystems.pepito.ui.subscription.SubscriptionFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
+import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -149,4 +153,18 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindAttachmentGalleryFragment(): AttachmentGalleryFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindValidatePasswordPreviousRecoveryAccountFragment(): ValidatePasswordPreviousRecoveryAccountFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindRecoveryOlderAccountQuestionsFragment(): RecoveryOlderAccountQuestionsFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindAccountAttackDialogFragment(): AccountAttackDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindSubscriptionFragment(): SubscriptionFragment
+
+
 }

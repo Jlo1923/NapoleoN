@@ -79,7 +79,6 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
                 val response = repository.getQuestions()
 
                 if (response.isSuccessful) {
-
                     val mutableList: MutableList<Questions> = ArrayList()
 
                     mutableList.addAll(

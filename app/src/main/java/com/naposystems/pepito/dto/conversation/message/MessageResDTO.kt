@@ -16,8 +16,9 @@ data class MessageResDTO(
     @Json(name = "updated_at") val updatedAt: Int,
     @Json(name = "created_at") val createdAt: Int,
     @Json(name = "attachments") var attachments: List<AttachmentResDTO> = ArrayList(),
+    @Json(name = "destroy") val destroy: Int = -1,
     @Json(name = "number_attachments") val numberAttachments: Int
-) {
+    ) {
     companion object {
         fun toMessageEntity(
             message: Message?,
@@ -35,7 +36,8 @@ data class MessageResDTO(
                 createdAt = message?.createdAt ?: messageResDTO.createdAt,
                 isMine = isMine,
                 status = if (isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status else Constants.MessageStatus.SENT.status,
-                numberAttachments = messageResDTO.numberAttachments
+                numberAttachments = messageResDTO.numberAttachments,
+                selfDestructionAt = messageResDTO.destroy
             )
         }
     }

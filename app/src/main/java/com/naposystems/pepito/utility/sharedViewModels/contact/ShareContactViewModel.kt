@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.pepito.R
+import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.repository.sharedRepository.ShareContactRepository
-import com.naposystems.pepito.utility.sharedViewModels.contact.IContractShareContact
+import com.naposystems.pepito.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,6 +20,10 @@ class ShareContactViewModel @Inject constructor(
     private val _webServiceErrors = MutableLiveData<List<String>>()
     val webServiceErrors: LiveData<List<String>>
         get() = _webServiceErrors
+
+    private val _muteConversationWsError = MutableLiveData<List<String>>()
+    val muteConversationWsError: LiveData<List<String>>
+        get() = _muteConversationWsError
 
     override fun sendBlockedContact(contact: Contact) {
         viewModelScope.launch {
@@ -74,4 +80,21 @@ class ShareContactViewModel @Inject constructor(
             repository.deleteConversation(contactId)
         }
     }
+
+    override fun muteConversation(contactId: Int, contactSilenced: Boolean) {
+        viewModelScope.launch {
+            try {
+                val response = repository.muteConversation(contactId, MuteConversationReqDTO())
+
+                if(response.isSuccessful) {
+                    repository.muteConversationLocal(contactId, Utils.convertBooleanToInvertedInt(contactSilenced))
+                } else {
+                    _muteConversationWsError.value = repository.muteError(response)
+                }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
 }

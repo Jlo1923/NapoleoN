@@ -30,7 +30,7 @@ interface IContractConversation {
         fun getLocalContact(idContact: Int)
         fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Boolean)
         fun cleanSelectionMessages(idContact: Int)
-        fun deleteMessagesSelected(idContact: Int)
+        fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
         fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>)
         fun copyMessagesSelected(idContact: Int)
         fun parsingListByTextBlock(listBody: List<String>): String
@@ -75,7 +75,7 @@ interface IContractConversation {
         fun getLocalContact(idContact: Int): LiveData<Contact>
         suspend fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Int)
         suspend fun cleanSelectionMessages(idContact: Int)
-        suspend fun deleteMessagesSelected(idContact: Int)
+        suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
         suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
         suspend fun copyMessagesSelected(idContact: Int): List<String>
         suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>>

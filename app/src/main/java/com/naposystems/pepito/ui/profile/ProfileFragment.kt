@@ -214,15 +214,17 @@ class ProfileFragment : BaseFragment() {
                         val viewModelUser = viewModel.user.value!!
 
                         val user = User(
-                            viewModelUser.firebaseId,
-                            viewModelUser.id,
-                            viewModelUser.nickname,
-                            viewModelUser.displayName,
-                            viewModelUser.accessPin,
-                            viewModelUser.imageUrl,
-                            viewModelUser.status,
-                            uri.toString(),
-                            viewModelUser.chatBackground
+                            firebaseId = viewModelUser.firebaseId,
+                            id = viewModelUser.id,
+                            nickname = viewModelUser.nickname,
+                            displayName = viewModelUser.displayName,
+                            accessPin = viewModelUser.accessPin,
+                            imageUrl = viewModelUser.imageUrl,
+                            status = viewModelUser.status,
+                            headerUri = uri.toString(),
+                            chatBackground = viewModelUser.chatBackground,
+                            type = viewModelUser.type,
+                            createAt = viewModelUser.createAt
                         )
 
                         Glide.with(this)
@@ -280,15 +282,17 @@ class ProfileFragment : BaseFragment() {
                 val viewModelUser = viewModel.user.value!!
 
                 val user = User(
-                    viewModelUser.firebaseId,
-                    viewModelUser.id,
-                    it.nickname,
-                    it.displayName,
-                    viewModelUser.accessPin,
-                    it.avatarUrl,
-                    it.status,
-                    viewModelUser.headerUri,
-                    viewModelUser.chatBackground
+                    firebaseId = viewModelUser.firebaseId,
+                    id = viewModelUser.id,
+                    nickname = it.nickname,
+                    displayName = it.displayName,
+                    accessPin = viewModelUser.accessPin,
+                    imageUrl = it.avatarUrl,
+                    status = it.status,
+                    headerUri = viewModelUser.headerUri,
+                    chatBackground = viewModelUser.chatBackground,
+                    type = viewModelUser.type,
+                    createAt = viewModelUser.createAt
                 )
 
                 viewModel.updateLocalUser(user)

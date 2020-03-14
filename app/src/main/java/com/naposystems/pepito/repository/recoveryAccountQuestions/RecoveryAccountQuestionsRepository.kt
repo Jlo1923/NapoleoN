@@ -13,7 +13,10 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class RecoveryAccountQuestionsRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
@@ -59,6 +62,34 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED,
             Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id
+        )
+    }
+
+    override suspend fun setAttemptPref() {
+        var actualAttempts = sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_ACCOUNT_RECOVERY_ATTEMPTS
+        )
+        actualAttempts++
+
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_ACCOUNT_RECOVERY_ATTEMPTS, actualAttempts
+        )
+    }
+
+    override suspend fun setFreeTrialPref() {
+        val firebaseId = sharedPreferencesManager.getString(
+            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+        )
+        val createAtMiliseconds = TimeUnit.SECONDS.toMillis(
+            userLocalDataSource.getUser(firebaseId).createAt
+        )
+
+        val calendar = Calendar.getInstance()
+        calendar.time = Date(createAtMiliseconds)
+        calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.FORTY_FIVE_DAYS.time)
+
+        sharedPreferencesManager.putLong(
+            Constants.SharedPreferences.PREF_FREE_TRIAL, calendar.timeInMillis
         )
     }
 

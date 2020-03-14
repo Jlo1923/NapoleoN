@@ -72,6 +72,12 @@ class AccessPinViewModel @Inject constructor(
         repository.createdUserPref()
     }
 
+    override fun insertFreeTrialPref() {
+        viewModelScope.launch {
+            repository.setFreeTrialPref()
+        }
+    }
+
     //region Implementation IContractAccessPin.ViewModel
     override fun createAccount(createAccountReqDTO: CreateAccountReqDTO) {
         viewModelScope.launch {
@@ -86,7 +92,6 @@ class AccessPinViewModel @Inject constructor(
                             createAccountReqDTO.accessPin,
                             createAccountReqDTO.status
                         )
-
                     repository.saveSecretKey(response.body()!!.secretKey)
 
                 } else {

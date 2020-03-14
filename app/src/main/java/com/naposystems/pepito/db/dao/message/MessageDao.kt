@@ -13,16 +13,16 @@ interface MessageDao {
     fun getMessagesAndAttachments(contact: Int): DataSource.Factory<Int, MessageAndAttachment>
 
     @Query("UPDATE message SET is_selected =:isSelected WHERE contact_id=:contact AND id =:idMessage")
-    suspend fun updateMessagesSelected(contact: Int, idMessage : Int, isSelected : Int)
+    suspend fun updateMessagesSelected(contact: Int, idMessage: Int, isSelected: Int)
 
     @Query("UPDATE message SET is_selected = 0 WHERE contact_id=:contact")
     suspend fun cleanSelectionMessages(contact: Int)
 
-    @Query("DELETE FROM message WHERE contact_id = :contactId AND is_selected = 1")
-    suspend fun deleteMessagesSelected(contactId: Int)
+    @Query("DELETE FROM message WHERE contact_id = :contactId AND id =:messageId")
+    suspend fun deleteMessagesSelected(contactId: Int, messageId : Int)
 
     @Query("SELECT body FROM message WHERE contact_id=:contactId AND is_selected = 1 ORDER BY id ASC")
-    suspend fun copyMessagesSelected(contactId: Int) : List<String>
+    suspend fun copyMessagesSelected(contactId: Int): List<String>
 
     @Query("SELECT * FROM message WHERE contact_id=:contactId ORDER BY id DESC LIMIT 1")
     suspend fun getLastMessageByContact(contactId: Int): MessageAndAttachment
@@ -39,8 +39,13 @@ interface MessageDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateMessage(message: Message)
 
-    @Query("UPDATE message SET status=:status WHERE web_id=:webId")
-    fun updateMessageStatus(webId: String, status: Int)
+    @Query("UPDATE message SET status=:status, updated_At=:updateMessageStatus, total_self_destruction_at=:totalSelfDestructTime WHERE web_id=:webId")
+    fun updateMessageStatus(
+        webId: String,
+        updateMessageStatus: Long,
+        totalSelfDestructTime: Long,
+        status: Int
+    )
 
     @Query("SELECT web_id FROM message WHERE contact_id=:contactId AND status=:status AND is_mine=0")
     suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
@@ -52,5 +57,11 @@ interface MessageDao {
     suspend fun deletedMessages(webId: String)
 
     @Query("SELECT contact_id FROM message WHERE web_id =:webId ")
-    fun getIdContactWithWebId(webId: String) : Int
+    fun getIdContactWithWebId(webId: String): Int
+
+    @Query("UPDATE message SET self_destruction_at=:selfDestructTime WHERE contact_id=:contactId AND self_destruction_at = 0 AND is_mine = 1")
+    suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
+
+    @Query("SELECT self_destruction_at FROM message WHERE web_id =:webId")
+    fun getSelfDestructTimeByMessage(webId: String): Int
 }

@@ -19,7 +19,7 @@ interface MessageDataSource {
 
     suspend fun cleanSelectionMessages(idContact: Int)
 
-    suspend fun deleteMessagesSelected(idContact: Int)
+    suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
 
     suspend fun copyMessagesSelected(idContact: Int): List<String>
 
@@ -31,9 +31,11 @@ interface MessageDataSource {
 
     suspend fun deletedMessages(listWebIdMessages: List<String>)
 
-    fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
+    fun updateMessageStatus(messagesWebIds: List<String>, /*selfDestructTime: Int,*/ status: Int)
 
     suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
 
     suspend fun deleteMessages(idContact: Int)
+
+    suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
 }

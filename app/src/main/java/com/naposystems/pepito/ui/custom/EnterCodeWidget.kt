@@ -6,6 +6,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.InputType
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.KeyCharacterMap
 import android.view.View
@@ -14,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.Utils
 
@@ -70,9 +72,13 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
      */
     private fun createLinearLayout(context: Context): LinearLayout {
 
+        val value = TypedValue()
+        context.theme.resolveAttribute(R.attr.attrBackgroundColorBackground, value, true)
+        val colorBackground = ContextCompat.getColor(context, value.resourceId)
+
         linearTextInputs.apply {
             id = View.generateViewId()
-            setBackgroundColor(resources.getColor(R.color.colorBackground, context.theme))
+            setBackgroundColor(colorBackground)
             orientation = HORIZONTAL
         }
 

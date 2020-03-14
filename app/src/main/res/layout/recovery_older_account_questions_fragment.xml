@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_container_landing">
+
+                    <ImageView
+                        android:id="@+id/imageView_section"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                        app:layout_constraintHeight_percent="0.3"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@id/guideline_start"
+                        app:layout_constraintTop_toTopOf="@+id/guideline_top"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:srcCompat="@drawable/image_recovery_account" />
+
+                    <TextView
+                        android:id="@+id/textView_description"
+                        style="@style/BodyTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:text="@string/text_description_validate_old_answers"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                        app:layout_constraintStart_toStartOf="@id/guideline_start"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_section"/>
+
+                    <TextView
+                        android:id="@+id/textView_question_one"
+                        style="@style/BodyTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/large_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toTopOf="@id/textInputLayout_answer_one"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                        app:layout_constraintStart_toStartOf="@id/guideline_start"
+                        app:layout_constraintTop_toBottomOf="@id/textView_description"
+                        tools:text="¿Qual é o nome do animal de estimação do seu melhor amigo?" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout_answer_one"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:hint="@string/text_answer"
+                        app:layout_constraintBottom_toTopOf="@id/textView_question_two"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                        app:layout_constraintStart_toStartOf="@id/guideline_start"
+                        app:layout_constraintTop_toBottomOf="@+id/textView_question_one">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textInputEditText_answer_one"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="1"
+                            android:maxLength="20"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/textView_question_two"
+                        style="@style/BodyTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toTopOf="@id/textInputLayout_answer_two"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                        app:layout_constraintStart_toStartOf="@id/guideline_start"
+                        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_answer_one"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        tools:text="¿Qual é o nome do animal de estimação do seu melhor amigo?" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout_answer_two"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:hint="@string/text_answer"
+                        app:layout_constraintBottom_toTopOf="@+id/viewSwitcher_Progress_recovery"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                        app:layout_constraintStart_toStartOf="@id/guideline_start"
+                        app:layout_constraintTop_toBottomOf="@+id/textView_question_two">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textInputEditText_answer_two"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lines="1"
+                            android:maxLength="20"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ViewSwitcher
+                        android:id="@+id/viewSwitcher_Progress_recovery"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                        app:layout_constraintStart_toStartOf="@id/guideline_start"
+                        app:layout_constraintTop_toBottomOf="@id/textInputLayout_answer_two">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_recovery_account"
+                                style="@style/AppPrimaryButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/text_btn_recovery"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_percent="@dimen/width_app_button" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <ProgressBar
+                            android:id="@+id/progressBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" />
+
+                    </ViewSwitcher>
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="@dimen/normal_margin" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_end="@dimen/normal_margin" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_begin="@dimen/normal_margin"
+                        app:layout_constraintGuide_percent="0.05" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_end="@dimen/normal_margin" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </ScrollView>
+
+        </FrameLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

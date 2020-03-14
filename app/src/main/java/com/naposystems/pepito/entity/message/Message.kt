@@ -30,7 +30,9 @@ data class Message(
     @ColumnInfo(name = "is_mine") val isMine: Int,
     @ColumnInfo(name = "status") var status: Int,
     @ColumnInfo(name = "is_selected") val isSelected:  Boolean = false,
-    @ColumnInfo(name = "number_attachments") val numberAttachments: Int
+    @ColumnInfo(name = "number_attachments") val numberAttachments: Int,
+    @ColumnInfo(name = "self_destruction_at") val selfDestructionAt: Int = -1,
+    @ColumnInfo(name = "total_self_destruction_at") val totalSelfDestructionAt: Int = 0
 ): Parcelable {
 
     override fun equals(other: Any?): Boolean {

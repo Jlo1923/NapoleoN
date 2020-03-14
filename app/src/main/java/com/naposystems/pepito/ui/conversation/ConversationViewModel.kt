@@ -157,7 +157,8 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio) {
+    override fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio,
+                                                selfDestructTime: Int) {
         viewModelScope.launch {
             val fileDescriptor = context.contentResolver
                 .openFileDescriptor(mediaStoreAudio.contentUri, "r")
@@ -286,9 +287,9 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun deleteMessagesSelected(idContact: Int) {
+    override fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
-            repository.deleteMessagesSelected(idContact)
+            repository.deleteMessagesSelected(idContact, listMessages)
             _responseDeleteLocalMessages.value = true
         }
     }
@@ -296,6 +297,7 @@ class ConversationViewModel @Inject constructor(
     override fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
             try {
+
                 val response =
                     repository.deleteMessagesForAll(
                         buildObjectDeleteMessages(
@@ -305,7 +307,7 @@ class ConversationViewModel @Inject constructor(
                     )
 
                 if (response.isSuccessful) {
-                    repository.deleteMessagesSelected(idContact)
+                    repository.deleteMessagesSelected(idContact, listMessages)
                     _responseDeleteLocalMessages.value = true
                 } else {
                     when (response.code()) {

@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -184,19 +185,27 @@ class ContactProfileFragment : BaseFragment() {
 
         binding.optionDeleteConversation.setOnClickListener {
             Utils.generalDialog(
-                getString(R.string.text_delete_conversation),
+                getString(R.string.text_title_delete_conversation),
                 getString(R.string.text_want_delete_conversation),
                 true,
                 childFragmentManager
             ) {
                 shareContactViewModel.deleteConversation(args.contactId)
+                findNavController().popBackStack(R.id.homeFragment, false)
             }
         }
 
         binding.optionBlockContact.setOnClickListener {
             Utils.generalDialog(
                 getString(R.string.text_block_contact),
-                getString(R.string.text_wish_block_contact),
+                getString(
+                    R.string.text_wish_block_contact,
+                    if (viewModel.contact.value!!.displayNameFake.isEmpty()) {
+                        viewModel.contact.value!!.displayName
+                    } else {
+                        viewModel.contact.value!!.displayNameFake
+                    }
+                ),
                 true,
                 childFragmentManager
             ) {

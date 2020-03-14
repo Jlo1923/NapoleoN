@@ -5,8 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -22,7 +20,8 @@ data class Contact(
     @ColumnInfo(name = "status") val status: String,
     @ColumnInfo(name = "last_seen") val lastSeen: String,
     @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false,
-    @ColumnInfo(name = "silenced") val silenced: Boolean = false
+    @ColumnInfo(name = "silenced") val silenced: Boolean = false,
+    @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1
 ) : Parcelable {
     @Ignore
     var haveFriendshipRequest: Boolean = false

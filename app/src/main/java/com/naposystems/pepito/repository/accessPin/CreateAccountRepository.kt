@@ -15,7 +15,11 @@ import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
+import timber.log.Timber
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class CreateAccountRepository @Inject constructor(
     private val userLocalDataSource: UserLocalDataSource,
@@ -57,6 +61,29 @@ class CreateAccountRepository @Inject constructor(
         )
     }
 
+    override suspend fun setFreeTrialPref() {
+        val firebaseId = sharedPreferencesManager.getString(
+            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+        )
+        val user = userLocalDataSource.getUser(firebaseId)
+        val createAtMiliseconds = TimeUnit.SECONDS.toMillis(user.createAt)
+        val calendar = Calendar.getInstance()
+
+        calendar.time = Date(createAtMiliseconds)
+
+        when (user.type) {
+            Constants.UserType.NEW_USER.type -> {
+                calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.FORTY_FIVE_DAYS.time)
+            }
+            Constants.UserType.OLD_USER.type -> {
+                calendar.add(Calendar.MONTH, Constants.FreeTrialUsers.THREE_MONTHS.time)
+            }
+        }
+        sharedPreferencesManager.putLong(
+            Constants.SharedPreferences.PREF_FREE_TRIAL, calendar.timeInMillis
+        )
+    }
+
     override fun saveSecretKey(secretKey: String) {
 
         val crypto = Crypto()
@@ -66,6 +93,8 @@ class CreateAccountRepository @Inject constructor(
             crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
         )
     }
+
+
 
     fun get422Error(response: Response<CreateAccountResDTO>): ArrayList<String> {
         val moshi = Moshi.Builder().build()

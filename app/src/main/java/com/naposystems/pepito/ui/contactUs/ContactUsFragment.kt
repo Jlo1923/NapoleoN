@@ -62,7 +62,7 @@ class ContactUsFragment : Fragment() {
             CategoryPqrs(3, context!!.getString(R.string.text_suggestion))
         )
 
-        val adapter = ArrayAdapter<CategoryPqrs>(
+        val adapter = ArrayAdapter(
             context!!,
             R.layout.contact_us_item,
             R.id.textView_category_item,
