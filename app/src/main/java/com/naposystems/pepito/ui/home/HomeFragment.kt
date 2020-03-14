@@ -27,6 +27,7 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
+
 class HomeFragment : Fragment() {
 
     companion object {

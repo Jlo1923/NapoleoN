@@ -64,7 +64,6 @@
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 
-
             <TextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"

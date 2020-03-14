@@ -12,6 +12,7 @@ import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Base64
 import android.util.Base64OutputStream
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
@@ -203,7 +204,10 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+            val valueColorFab = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+
+            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
             positiveButton.isAllCaps = false
@@ -238,7 +242,10 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+            val valueColorFab = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+
+            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)

@@ -83,8 +83,8 @@
             android:background="?attr/attrBackgroundColorBackground"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/chat_drawer_header"
-            app:itemIconTint="@color/secondaryTextColor"
-            app:itemTextColor="@color/secondaryTextColor"
+            app:itemIconTint="?attr/attrIconAndTextColorDrawer"
+            app:itemTextColor="?attr/attrIconAndTextColorDrawer"
             app:menu="@menu/main_chat_menu" />
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>
