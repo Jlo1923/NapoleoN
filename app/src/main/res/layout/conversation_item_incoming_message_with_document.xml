@@ -22,6 +22,7 @@
         android:id="@+id/container_incoming_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
         android:paddingStart="@dimen/small_padding"
         android:paddingTop="@dimen/x_x_small_padding"
         android:paddingBottom="@dimen/x_x_small_padding">
@@ -44,11 +45,11 @@
                 android:id="@+id/imageView_document_type"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                app:attachmentDocumentIcon="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/textView_document_name"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/colorTextIncomingMessage"
-                app:attachmentDocumentIcon="@{conversation}"
                 tools:src="@drawable/ic_attachment_doc" />
 
             <TextView
@@ -60,10 +61,10 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textAlignment="textStart"
+                app:attachmentDocumentName="@{conversation}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_document_type"
                 app:layout_constraintEnd_toStartOf="@id/imageView_document_type"
                 app:layout_constraintStart_toStartOf="parent"
-                app:attachmentDocumentName="@{conversation}"
                 app:layout_constraintTop_toTopOf="@id/imageView_document_type"
                 tools:text="El mero packistan.pdf" />
 

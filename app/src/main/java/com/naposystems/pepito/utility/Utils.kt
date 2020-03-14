@@ -119,11 +119,16 @@ class Utils {
         }
 
         fun getFileUri(context: Context, fileName: String, subFolder: String): Uri {
-            val path = File(context.cacheDir!!, subFolder)
-            if (!path.exists())
-                path.mkdirs()
-            val image = File(path, fileName)
-            return FileProvider.getUriForFile(context, "com.naposystems.pepito.provider", image)
+            return try {
+                val path = File(context.cacheDir!!, subFolder)
+                if (!path.exists())
+                    path.mkdirs()
+                val image = File(path, fileName)
+                FileProvider.getUriForFile(context, "com.naposystems.pepito.provider", image)
+            } catch (e: Exception) {
+                Timber.e(e)
+                Uri.parse("")
+            }
         }
 
         fun convertBitmapToBase64(bitmap: Bitmap): String {
@@ -202,7 +207,8 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+            val textColorButton =
+                childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
             positiveButton.isAllCaps = false
@@ -237,7 +243,8 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+            val textColorButton =
+                childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
@@ -401,7 +408,7 @@ class Utils {
             }
         }
 
-        fun convertFileInputStreamToByteArray(fileInputStream: FileInputStream): ByteArray{
+        fun convertFileInputStreamToByteArray(fileInputStream: FileInputStream): ByteArray {
             val outputStream = ByteArrayOutputStream()
             fileInputStream.use { input ->
                 outputStream.use { output ->

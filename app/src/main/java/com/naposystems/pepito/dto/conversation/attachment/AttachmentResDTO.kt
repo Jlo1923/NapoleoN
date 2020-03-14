@@ -7,13 +7,13 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class AttachmentResDTO(
-    @Json(name = "id") val id: String,
-    @Json(name = "type") val type: String,
-    @Json(name = "body") val body: String,
     @Json(name = "message_id") val messageId: String,
+    @Json(name = "body") val body: String,
+    @Json(name = "type") val type: String,
     @Json(name = "width") val width: Int,
     @Json(name = "height") val height: Int,
-    @Json(name = "ext") val extension: String
+    @Json(name = "ext") val extension: String,
+    @Json(name = "id") val id: String
 ) {
     companion object {
 

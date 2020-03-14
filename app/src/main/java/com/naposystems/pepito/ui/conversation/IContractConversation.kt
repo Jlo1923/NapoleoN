@@ -24,7 +24,7 @@ interface IContractConversation {
         fun setContact(contact: Contact)
         fun getLocalMessages()
         fun saveMessageLocally(body: String)
-        fun saveMessageAndAttachment(messageString: String, attachment: Attachment?)
+        fun saveMessageAndAttachment(messageString: String, attachment: Attachment?, numberAttachments: Int)
         fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio)
         fun sendMessagesRead()
         fun getLocalContact(idContact: Int)

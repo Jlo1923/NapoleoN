@@ -116,10 +116,14 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun saveMessageLocally(body: String) {
-        saveMessageAndAttachment(body, null)
+        saveMessageAndAttachment(body, null, 0)
     }
 
-    override fun saveMessageAndAttachment(messageString: String, attachment: Attachment?) {
+    override fun saveMessageAndAttachment(
+        messageString: String,
+        attachment: Attachment?,
+        numberAttachments: Int
+    ) {
         viewModelScope.launch {
             val message = Message(
                 id = 0,
@@ -131,7 +135,7 @@ class ConversationViewModel @Inject constructor(
                 createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
                 isMine = Constants.IsMine.YES.value,
                 status = Constants.MessageStatus.SENDING.status,
-                numberAttachments = 1
+                numberAttachments = numberAttachments
             )
 
             val messageId = repository.insertMessage(message).toInt()
@@ -147,7 +151,8 @@ class ConversationViewModel @Inject constructor(
 
             sendMessageAndAttachment(
                 attachment = attachment,
-                message = message
+                message = message,
+                numberAttachments = numberAttachments
             )
         }
     }
@@ -175,14 +180,19 @@ class ConversationViewModel @Inject constructor(
                     extension = "mp3"
                 )
 
-                saveMessageAndAttachment(messageString = "", attachment = attachment)
+                saveMessageAndAttachment(
+                    messageString = "",
+                    attachment = attachment,
+                    numberAttachments = 1
+                )
             }
         }
     }
 
     private suspend fun sendMessageAndAttachment(
         attachment: Attachment?,
-        message: Message
+        message: Message,
+        numberAttachments: Int
     ) {
         try {
 
@@ -190,7 +200,7 @@ class ConversationViewModel @Inject constructor(
                 userDestination = contact.id,
                 quoted = "",
                 body = message.body,
-                numberAttachments = 1
+                numberAttachments = numberAttachments
             )
 
             val messageResponse = repository.sendMessage(messageReqDTO)

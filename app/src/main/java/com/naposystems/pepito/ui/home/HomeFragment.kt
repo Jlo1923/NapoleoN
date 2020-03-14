@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.crashlytics.android.Crashlytics
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentBinding
 import com.naposystems.pepito.entity.Contact

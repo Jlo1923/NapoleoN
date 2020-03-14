@@ -12,6 +12,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Crypto
@@ -43,7 +44,8 @@ val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
     VALIDATE_NICKNAME,
     CREATE_ACCOUNT,
     GET_RECOVERY_QUESTIONS,
-    SEND_ANSWERS
+    SEND_ANSWERS,
+    SEND_MESSAGE_ATTACHMENT
 )
 
 @Module(includes = [ViewModelModule::class])
@@ -151,7 +153,9 @@ class ApplicationModule {
             request.method(original.method(), newRequestBody)
         }
 
-        return if (BuildConfig.ENCRYPT_API) {
+        return if (BuildConfig.ENCRYPT_API && !isNotEncryptedRequest) {
+            decryptResponse(chain, request, cripto, secretKey)
+        } else if (BASE_URL + SEND_MESSAGE_ATTACHMENT == original.url().uri().toString()) {
             decryptResponse(chain, request, cripto, secretKey)
         } else {
             chain.proceed(request.build())

@@ -266,7 +266,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             if (attachment != null) {
                 viewModel.saveMessageAndAttachment(
                     shareViewModel.getMessage() ?: "",
-                    attachment
+                    attachment,
+                    1
                 )
             }
         })

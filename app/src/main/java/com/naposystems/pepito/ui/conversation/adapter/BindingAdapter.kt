@@ -133,25 +133,29 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
 @BindingAdapter("imageAttachment")
 fun bindImageAttachment(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
 
-    if (messageAndAttachment.attachmentList.isNotEmpty()) {
-        imageView.visibility = View.VISIBLE
-        val firstAttachment = messageAndAttachment.attachmentList[0]
+    try {
+        if (messageAndAttachment.attachmentList.isNotEmpty()) {
+            imageView.visibility = View.VISIBLE
+            val firstAttachment = messageAndAttachment.attachmentList[0]
 
-        if (firstAttachment.type == Constants.AttachmentType.IMAGE.type) {
-            Glide.with(imageView)
-                .load(firstAttachment)
-                .into(imageView)
-        } else if (firstAttachment.type == Constants.AttachmentType.VIDEO.type) {
-            val uri = Utils.getFileUri(
-                imageView.context,
-                firstAttachment.uri,
-                Constants.NapoleonCacheDirectories.VIDEOS.folder
-            )
-            Glide.with(imageView)
-                .load(uri)
-                .thumbnail(0.1f)
-                .into(imageView)
+            if (firstAttachment.type == Constants.AttachmentType.IMAGE.type) {
+                Glide.with(imageView)
+                    .load(firstAttachment)
+                    .into(imageView)
+            } else if (firstAttachment.type == Constants.AttachmentType.VIDEO.type) {
+                val uri = Utils.getFileUri(
+                    imageView.context,
+                    firstAttachment.uri,
+                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                )
+                Glide.with(imageView)
+                    .load(uri)
+                    .thumbnail(0.1f)
+                    .into(imageView)
+            }
         }
+    } catch (e: Exception) {
+        Timber.e(e)
     }
 }
 

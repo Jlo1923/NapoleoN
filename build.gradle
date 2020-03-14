@@ -29,8 +29,10 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
         classpath 'com.android.tools.build:gradle:3.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
@@ -45,6 +47,8 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url 'https://s3.amazonaws.com/fabric-artifacts-private/internal-snapshots' }
+        maven { url 'https://maven.fabric.io/public' }
     }
 }
 

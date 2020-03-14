@@ -51,7 +51,7 @@ class SocketRepository @Inject constructor(
                             messageRes.attachments
                         )
 
-                        /*withContext(Dispatchers.IO) {
+                        withContext(Dispatchers.IO) {
                             listAttachments.forEach { attachment ->
 
                                 val responseDownloadFile =
@@ -66,7 +66,7 @@ class SocketRepository @Inject constructor(
                                         )
                                 }
                             }
-                        }*/
+                        }
 
                         attachmentLocalDataSource.insertAttachments(listAttachments)
 

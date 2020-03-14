@@ -103,74 +103,19 @@ class PreviewMediaFragment : Fragment() {
                     .into(binding.imageViewPreview)
             }
             Constants.AttachmentType.VIDEO.type -> {
-                binding.containerSeekbar.visibility = View.VISIBLE
-                /*binding.imageViewPreview.visibility = View.GONE
+                try {
+                    binding.containerSeekbar.visibility = View.VISIBLE
 
-                if (binding.viewSwitcher.currentView.id == binding.imageViewPreview.id) {
-                    binding.viewSwitcher.showNext()
-                }*/
+                    contentUri = Utils.getFileUri(
+                        context = context!!,
+                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                        fileName = firstAttachment.uri
+                    )
 
-                contentUri = Utils.getFileUri(
-                    context = context!!,
-                    subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                    fileName = firstAttachment.uri
-                )
-
-                /*when (firstAttachment.origin) {
-                    *//*Constants.AttachmentOrigin.GALLERY.origin -> {
-                        contentUri = Uri.parse(firstAttachment.uri)
-                    }
-                    Constants.AttachmentOrigin.CAMERA.origin -> {
-                        contentUri = Uri.parse(firstAttachment.uri)
-                    }
-                    Constants.AttachmentOrigin.DOWNLOADED.origin -> {
-                        *//**//*tempFile = Utils.createTempFileFromEncryptedFile(
-                            context = context!!,
-                            file = File(firstAttachment.uri),
-                            extension = ".mp4"
-                        )*//**//*
-                        contentUri = Uri.parse(firstAttachment.uri)
-                    }*//*
-                }*/
-
-                initializePlayer()
-
-                /*binding.videoView.apply {
-                    setVideoURI(contentUri)
-                    requestFocus()
-                    seekTo(1)
-
-                    setOnPreparedListener {
-                        binding.seekbar.max = duration
-                        startVideo()
-                        isPlayingVideo = !isPlayingVideo
-                    }
-
-                    setOnCompletionListener {
-                        this@PreviewMediaFragment.isPlayingVideo = false
-                        if (::mRunnable.isInitialized) {
-                            mHandler.removeCallbacks(mRunnable)
-                        }
-
-                        binding.videoView.seekTo(1)
-                        binding.seekbar.apply {
-                            progress = 0
-                            max = duration
-                        }
-
-                        binding.imageButtonPlay.reverseAnimation()
-                        showUI()
-                    }
-
-                    mRunnable = Runnable {
-                        setSeekbarProgress()
-
-                        mHandler.postDelayed(
-                            mRunnable,
-                            50
-                        )
-                    }
-                }*/
+                    initializePlayer()
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
             }
         }
 

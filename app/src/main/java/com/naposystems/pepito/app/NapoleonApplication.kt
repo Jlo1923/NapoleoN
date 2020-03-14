@@ -1,10 +1,12 @@
 package com.naposystems.pepito.app
 
+import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.naposystems.pepito.di.DaggerApplicationComponent
 import com.naposystems.pepito.webService.socket.SocketService
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
+import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -21,5 +23,6 @@ class NapoleonApplication : DaggerApplication() {
         super.onCreate()
         Stetho.initializeWithDefaults(this)
         Timber.plant(Timber.DebugTree())
+        Fabric.with(this, Crashlytics())
     }
 }

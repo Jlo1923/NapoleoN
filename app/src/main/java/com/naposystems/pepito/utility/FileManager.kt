@@ -163,7 +163,7 @@ class FileManager {
                 } finally {
                     inputStream?.close()
                     outputStream?.close()
-                    return file.absolutePath
+                    return file.name
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
