@@ -92,7 +92,7 @@ class SplashRepository @Inject constructor(
         if (default == 0) {
             sharedPreferencesManager.putInt(
                 Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME,
-                Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS.time
+                Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time
             )
         }
     }

@@ -10,8 +10,12 @@ object Constants {
     const val QUANTITY_ATTACHMENTS = 0
 
     object NapoleonApi {
-        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
-        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
+/*        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
+        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"*/
+        const val BASE_URL = "http://dev.napoleon-chat.com/api/"
+        const val SOCKET_BASE_URL = "http://dev.napoleon-chat.com:6001"
+/*        const val BASE_URL = "http://dev-loadbalancer-1600637640.us-west-2.elb.amazonaws.com/api/"
+        const val SOCKET_BASE_URL = "http://dev-loadbalancer-1600637640.us-west-2.elb.amazonaws.com:6001"*/
         const val GENERATE_CODE = "auth/sendverificationcode"
         const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
@@ -82,12 +86,16 @@ object Constants {
     }
 
     enum class SelfDestructTime constructor(val time: Int) {
-        EVERY_FIVE_MINUTES(1),
-        EVERY_FIFTEEN_MINUTES(2),
-        EVERY_THIRTY_MINUTES(3),
-        EVERY_ONE_HOUR(4),
-        EVERY_SIX_HOURS(5),
-        EVERY_TWENTY_FOUR_HOURS(6)
+        EVERY_FIVE_SECONDS(0),
+        EVERY_FIFTEEN_SECONDS(1),
+        EVERY_THIRTY_SECONDS(2),
+        EVERY_ONE_MINUTE(3),
+        EVERY_TEN_MINUTES(4),
+        EVERY_THIRTY_MINUTES(5),
+        EVERY_ONE_HOUR(6),
+        EVERY_TWELVE_HOURS(7),
+        EVERY_ONE_DAY(8),
+        EVERY_SEVEN_DAY(9)
     }
 
     enum class MessageSelfDestructTimeNotSent constructor(val time: Int) {

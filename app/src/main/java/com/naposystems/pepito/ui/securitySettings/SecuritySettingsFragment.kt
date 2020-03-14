@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
@@ -110,9 +109,9 @@ class SecuritySettingsFragment : Fragment() {
     }
 
     private fun optionMessageClickListener() = View.OnClickListener {
-        val dialog = SelfDestructTimeDialogFragment()
+        val dialog = SelfDestructTimeDialogFragment.newInstance(0)
         dialog.setListener(object : SelfDestructTimeDialogFragment.SelfDestructTimeListener {
-            override fun onSelfDestructTimeChange() {
+            override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
                 viewModel.getSelfDestructTime()
             }
         })

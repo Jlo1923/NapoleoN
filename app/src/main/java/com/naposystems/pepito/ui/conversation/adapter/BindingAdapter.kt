@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.GlideManager
 import timber.log.Timber

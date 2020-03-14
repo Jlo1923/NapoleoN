@@ -31,10 +31,13 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
 import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -61,6 +64,9 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private val viewModel: ConversationViewModel by viewModels {
+        viewModelFactory
+    }
+    private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
         viewModelFactory
     }
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
@@ -126,6 +132,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     binding.inputPanel.getEditTex().text.toString(),
                     "",
                     args.contact,
+                    obtainTimeSelfDestruct(),
                     Constants.IsMine.YES.value
                 )
 
@@ -257,6 +264,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     Constants.IsMine.YES.value,
                     base64,
                     shareViewModel.getImageUri(),
+                    obtainTimeSelfDestruct(),
                     Constants.ATTACHMENT_ORIGIN.CAMERA.origin
                 )
 
@@ -269,7 +277,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         shareViewModel.hasAudioSendClicked.observe(activity!!, Observer {
             if (it == true) {
                 shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
-                    viewModel.saveMessageWithAudioAttachment(mediaStoreAudio)
+                    viewModel.saveMessageWithAudioAttachment(
+                        mediaStoreAudio,
+                        obtainTimeSelfDestruct()
+                    )
                 }
             }
         })
@@ -285,6 +296,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     Constants.IsMine.YES.value,
                     base64,
                     shareViewModel.getImageUri(),
+                    obtainTimeSelfDestruct(),
                     Constants.ATTACHMENT_ORIGIN.GALLERY.origin
                 )
 
@@ -293,7 +305,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
             }
         })
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -309,7 +320,15 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         viewModel.getMessagesSelected(args.contact.id)
 
+        selfDestructTimeViewModel.getSelfDestructTimeByContact(args.contact.id)
+
+        selfDestructTimeViewModel.getSelfDestructTime()
+
         setConversationBackground()
+
+        selfDestructTimeViewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {
+            selfDestructTimeViewModel.selfDestructTimeByContact = it
+        })
 
         viewModel.messagesSelected.observe(
             viewLifecycleOwner, Observer { listMessageAndAttachment ->
@@ -386,7 +405,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
             if (it) {
-                if(actionMode.mode != null) {
+                if (actionMode.mode != null) {
                     actionMode.mode!!.finish()
                 }
             }
@@ -449,6 +468,19 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         .actionConversationFragmentToContactProfileFragment(args.contact.id)
                 )
             }
+            R.id.menu_item_schedule -> {
+                val dialog = SelfDestructTimeDialogFragment.newInstance(args.contact.id)
+                dialog.setListener(object :
+                    SelfDestructTimeDialogFragment.SelfDestructTimeListener {
+                    override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
+                        selfDestructTimeViewModel.setSelfDestructTimeByContact(
+                            selfDestructTimeSelected,
+                            args.contact.id
+                        )
+                    }
+                })
+                dialog.show(childFragmentManager, "SelfDestructTime")
+            }
         }
 
         return true
@@ -466,6 +498,14 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             val yourDrawable = Drawable.createFromStream(inputStream, uri.toString())
             yourDrawable.alpha = (255 * 0.3).toInt()
             activity!!.window.setBackgroundDrawable(yourDrawable)
+        }
+    }
+
+    private fun obtainTimeSelfDestruct() : Int{
+        return if (selfDestructTimeViewModel.selfDestructTimeByContact!! < 0) {
+            selfDestructTimeViewModel.selfDestructTimeGlobal
+        } else {
+            selfDestructTimeViewModel.selfDestructTimeByContact!!
         }
     }
 
@@ -509,16 +549,19 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             clickCopy = {
                 viewModel.copyMessagesSelected(args.contact.id)
             },
-            clickDelete = {moreMessagesOtherContact ->
-                if(moreMessagesOtherContact){
+            clickDelete = { moreMessagesOtherContact ->
+                if (moreMessagesOtherContact) {
                     Utils.alertDialogWithoutNeutralButton(
                         R.string.text_delete_messages,
                         false, context!!,
                         R.string.text_delete_message_for_me,
                         R.string.text_cancel,
-                        clickTopButton = {clickTopButton ->
+                        clickTopButton = { clickTopButton ->
                             if (clickTopButton) {
-                                viewModel.deleteMessagesSelected(args.contact.id)
+                                viewModel.deleteMessagesSelected(
+                                    args.contact.id,
+                                    viewModel.messagesSelected.value!!
+                                )
                             }
                         })
                 } else {
@@ -528,12 +571,15 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         R.string.text_delete_message_for_me,
                         R.string.text_cancel,
                         R.string.text_delete_message_for_all,
-                        clickTopButton = {clickTopButton ->
+                        clickTopButton = { clickTopButton ->
                             if (clickTopButton) {
-                                viewModel.deleteMessagesSelected(args.contact.id)
+                                viewModel.deleteMessagesSelected(
+                                    args.contact.id,
+                                    viewModel.messagesSelected.value!!
+                                )
                             }
                         },
-                        clickDownButton = {clickDowButton ->
+                        clickDownButton = { clickDowButton ->
                             if (clickDowButton) {
                                 viewModel.deleteMessagesForAll(
                                     args.contact.id,
@@ -563,6 +609,12 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
             }
 
+            override fun messageToEliminate(item: MessageAndAttachment) {
+                val messages = arrayListOf<MessageAndAttachment>()
+                messages.add(item)
+                viewModel.deleteMessagesSelected(args.contact.id, messages)
+            }
+
             override fun errorPlayingAudio() {
                 Utils.showSimpleSnackbar(
                     binding.coordinator,
@@ -570,7 +622,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     3
                 )
             }
-        }, mediaPlayerManager)
+        }, mediaPlayerManager, resources)
 
         linearLayoutManager = LinearLayoutManager(context!!)
         linearLayoutManager.reverseLayout = true

@@ -38,71 +38,117 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_title" />
 
-        <RadioGroup
-            android:id="@+id/radioGroup_options"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/large_padding"
-            android:paddingEnd="0dp"
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="340dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_title_separator">
+            app:layout_constraintTop_toBottomOf="@+id/textView_title">
 
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/radioButton_five_minutes"
-                style="@style/BodyTextView"
+            <RadioGroup
+                android:id="@+id/radioGroup_options"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="@dimen/x_large_padding"
+                android:paddingStart="@dimen/large_padding"
                 android:paddingEnd="0dp"
-                android:text="@string/text_every_five_minutes" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_title_separator">
 
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/radioButton_fifteen_minutes"
-                style="@style/BodyTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/x_large_padding"
-                android:paddingEnd="0dp"
-                android:text="@string/text_every_fifteen_minutes" />
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_five_seconds"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_five_seconds" />
 
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/radioButton_thirty_minutes"
-                style="@style/BodyTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/x_large_padding"
-                android:paddingEnd="0dp"
-                android:text="@string/text_every_thirty_minutes" />
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_fifteen_seconds"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_fifteen_seconds" />
 
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/radioButton_one_hour"
-                style="@style/BodyTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/x_large_padding"
-                android:paddingEnd="0dp"
-                android:text="@string/text_every_one_hour" />
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_thirty_seconds"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_thirty_seconds" />
 
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/radioButton_six_hours"
-                style="@style/BodyTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/x_large_padding"
-                android:paddingEnd="0dp"
-                android:text="@string/text_every_six_hours" />
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_one_minute"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_one_minute" />
 
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/radioButton_twenty_four_hours"
-                style="@style/BodyTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/x_large_padding"
-                android:paddingEnd="0dp"
-                android:text="@string/text_every_twenty_four_hours" />
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_ten_minutes"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_ten_minutes" />
 
-        </RadioGroup>
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_thirty_minutes"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_thirty_minutes" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_one_hour"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_one_hour" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_twelve_hours"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_twelve_hours" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_one_day"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_one_day" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_seven_days"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_seven_days" />
+
+            </RadioGroup>
+
+        </ScrollView>
 
         <View
             android:id="@+id/view_radio_group_separator"
@@ -111,7 +157,7 @@
             android:background="@color/separator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/radioGroup_options" />
+            app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
 
         <TextView
             android:id="@+id/textView_info"

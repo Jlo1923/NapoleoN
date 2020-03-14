@@ -74,4 +74,12 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
     override suspend fun updateContactSilenced(idContact: Int, contactSilenced: Int) {
         contactDao.updateContactSilenced(idContact, contactSilenced)
     }
+
+    override suspend fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int) {
+        contactDao.setSelfDestructTimeByContact(selfDestructTime, contactId)
+    }
+
+    override suspend fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int> {
+        return contactDao.getSelfDestructTimeByContact(contactId)
+    }
 }

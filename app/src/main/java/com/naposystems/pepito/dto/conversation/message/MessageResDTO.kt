@@ -14,8 +14,9 @@ data class MessageResDTO(
     @Json(name = "user_sender") val userAddressee: Int,
     @Json(name = "updated_at") val updatedAt: Int,
     @Json(name = "created_at") val createdAt: Int,
-    @Json(name = "attachments") var attachments: List<AttachmentResDTO> = ArrayList()
-) {
+    @Json(name = "attachments") var attachments: List<AttachmentResDTO> = ArrayList(),
+    @Json(name = "destroy") val destroy: Int = -1
+    ) {
     companion object {
 
         fun toMessageListEntity(
@@ -52,13 +53,15 @@ data class MessageResDTO(
             return Message(
                 messageId,
                 messageResDTO.id,
-                messageResDTO.body,
-                messageResDTO.quoted,
-                if (isMine == Constants.IsMine.NO.value) messageResDTO.userAddressee else messageResDTO.userDestination,
-                messageResDTO.updatedAt,
-                messageResDTO.createdAt,
-                isMine,
-                if (isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status else Constants.MessageStatus.SENT.status
+                body = messageResDTO.body,
+                quoted = messageResDTO.quoted,
+                contactId = if (isMine == Constants.IsMine.NO.value) messageResDTO.userAddressee else messageResDTO.userDestination,
+                updatedAt = messageResDTO.updatedAt,
+                createdAt = messageResDTO.createdAt,
+                isMine = isMine,
+                status = if (isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status else Constants.MessageStatus.SENT.status,
+                selfDestructionAt = messageResDTO.destroy
+
             )
         }
     }

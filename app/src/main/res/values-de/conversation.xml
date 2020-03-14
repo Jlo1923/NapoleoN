@@ -14,5 +14,13 @@
     <string name="text_delete_message_for_me">Für mich löschen</string>
     <string name="text_delete_message_for_all">Für alle löschen</string>
     <string name="text_message_copied">Nachricht kopiert</string>
+    <plurals name="text_self_destruct_time_days">
+        <item quantity="one">%d tag</item>
+        <item quantity="other">%d tage</item>
+    </plurals>
+    <plurals name="text_self_destruct_time_hours">
+        <item quantity="one">%d stunde</item>
+        <item quantity="other">%d stunden</item>
+    </plurals>
 
 </resources>

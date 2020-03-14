@@ -138,7 +138,7 @@ class HomeRepository @Inject constructor(
     override suspend fun getDeletedMessages() {
         try {
             val response = napoleonApi.getDeletedMessages()
-            if(response.isSuccessful) {
+            if(response.isSuccessful && (response.body()!!.count() > 0)) {
                 val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
                 when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(idContact)) {
