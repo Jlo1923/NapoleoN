@@ -31,43 +31,43 @@ class ContactProfileViewModel @Inject constructor(
     val muteConversationWsError: LiveData<List<String>>
         get() = _muteConversationWsError
 
-    override fun getLocalContact(idContact: Int) {
-        contact = repository.getLocalContact(idContact)
+    override fun getLocalContact(contactId: Int) {
+        contact = repository.getLocalContact(contactId)
     }
 
-    override fun updateNameFakeContact(idContact: Int, nameFake: String) {
+    override fun updateNameFakeContact(contactId: Int, nameFake: String) {
         viewModelScope.launch {
-            repository.updateNameFakeContact(idContact, nameFake)
+            repository.updateNameFakeContact(contactId, nameFake)
             _responseEditNameFake.value = true
         }
     }
 
-    override fun updateNicknameFakeContact(idContact: Int, nicknameFake: String) {
+    override fun updateNicknameFakeContact(contactId: Int, nicknameFake: String) {
         viewModelScope.launch {
-            repository.updateNicknameFakeContact(idContact, nicknameFake)
+            repository.updateNicknameFakeContact(contactId, nicknameFake)
             _responseEditNicknameFake.value = true
         }
     }
 
-    override fun updateAvatarFakeContact(idContact: Int, avatarFake: String) {
+    override fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
         viewModelScope.launch {
-            repository.updateAvatarFakeContact(idContact, avatarFake)
+            repository.updateAvatarFakeContact(contactId, avatarFake)
         }
     }
 
-    override fun restoreContact(idContact: Int) {
+    override fun restoreContact(contactId: Int) {
         viewModelScope.launch {
-            repository.restoreContact(idContact)
+            repository.restoreContact(contactId)
         }
     }
 
-    override fun updateContactSilenced(idContact: Int, contactSilenced: Boolean) {
+    override fun updateContactSilenced(contactId: Int, contactSilenced: Boolean) {
         viewModelScope.launch {
             try {
-                val response = repository.saveTimeMuteConversation(idContact, MuteConversationReqDTO())
+                val response = repository.saveTimeMuteConversation(contactId, MuteConversationReqDTO())
 
                 if(response.isSuccessful) {
-                    repository.updateContactSilenced(idContact, Utils.convertBooleanToInvertedInt(contactSilenced))
+                    repository.updateContactSilenced(contactId, Utils.convertBooleanToInvertedInt(contactSilenced))
                 } else {
                     _muteConversationWsError.value = repository.getError(response)
                 }

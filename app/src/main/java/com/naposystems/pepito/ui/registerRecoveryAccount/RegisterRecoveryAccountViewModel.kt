@@ -21,7 +21,4 @@ class RegisterRecoveryAccountViewModel @Inject constructor(
     override fun getRecoveryQuestionsPref() {
         _recoveryQuestionsPref.value = repository.getRecoveryQuestionsPref()
     }
-
-
-
 }

@@ -14,6 +14,7 @@ interface IContractAccessPin {
         fun createUser(user: User)
         fun updateAccessPin(newAccessPin: String, firebaseId: String)
         fun createdUserPref()
+        fun insertFreeTrialPref()
     }
 
     interface Repository {
@@ -23,6 +24,7 @@ interface IContractAccessPin {
         suspend fun createUser(user: User)
         suspend fun updateAccessPin(newAccessPin: String, firebaseId: String)
         fun createdUserPref()
+        suspend fun setFreeTrialPref()
         fun saveSecretKey(secretKey: String)
     }
 }

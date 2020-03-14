@@ -18,6 +18,46 @@
             android:layout_height="match_parent"
             android:background="?attr/attrBackgroundColorBackground">
 
+            <!-- SUBSCRIPTION -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_subscription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/redIntense"
+                android:backgroundTint="@color/redIntense"
+                android:padding="@dimen/small_padding"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/imageButton_subscription_start_icon"
+                    style="@style/OptionEndIcon"
+                    android:layout_marginStart="@dimen/normal_margin"
+                    android:tint="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView_message_subscription"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textView_message_subscription"
+                    app:srcCompat="@drawable/anim_cancel_edit" />
+
+                <TextView
+                    android:id="@+id/textView_message_subscription"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/small_margin"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imageButton_subscription_start_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/text_expired_subscription" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
             <!-- STATUS -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_status"
@@ -25,10 +65,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_status"
                 android:backgroundTint="?attr/attrBackgroundSectionColor"
-                android:padding="10dp"
+                android:padding="@dimen/small_padding"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/container_subscription">
 
                 <TextView
                     style="@style/BodyTextView"
@@ -99,7 +139,7 @@
                         android:layout_marginTop="@dimen/normal_margin"
                         android:paddingStart="@dimen/small_padding"
                         android:paddingEnd="@dimen/small_padding"
-                        android:text="No hay conversación!!"
+                        android:text="No hay conversación|!!"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

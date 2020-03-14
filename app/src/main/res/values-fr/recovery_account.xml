@@ -5,4 +5,7 @@
     <string name="text_description_recovery">Vos contacts vous attendent, ramenez-les. Récupérez rapidement et en toute sécurité vos contacts, préférences et surnom précédent en répondant correctement aux questions de sécurité</string>
     <string name="text_recovery_success">Votre compte a été récupéré, vous pouvez désormais discuter en privé et en toute sécurité avec vos contacts.</string>
     <string name="text_title_success">Récupération de compte</string>
+    <string name="text_placeholder_password">Entrez votre mot de passe</string>
+    <string name="text_description_enter_password">Saisissez votre mot de passe. Vous êtes à un pas de récupérer votre compte. Entrez votre numéro de mot de passe de récupération de compte.</string>
+    <string name="text_description_validate_old_answers">Questions de sécurité. Vous êtes plus près de récupérer votre compte, veuillez nous aider à confirmer votre identité. Répondez correctement aux questions de sécurité suivantes</string>
 </resources>

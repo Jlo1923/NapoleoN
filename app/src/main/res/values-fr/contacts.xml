@@ -6,4 +6,5 @@
     <string name="text_wish_delete_contact">Voulez-vous vraiment supprimer %1$s?</string>
     <string name="text_blocked_contact">Contact bloqué</string>
     <string name="text_deleted_contact">Contact supprimé</string>
+    <string name="search_by_nickname">Recherche par surnom</string>
 </resources>

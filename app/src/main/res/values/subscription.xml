@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="text_trial_period">Trial period</string>
+    <string name="text_current_subscription">Current subscription</string>
+    <string name="text_get_subscription">Buy a subscription</string>
+    <string name="text_subscription_type">Subscription type</string>
+    <string name="text_select_subscription">Select a subscription type</string>
+    <string name="text_expired_subscription">Subscription expired</string>
+    <string name="text_free_trial_expired">Test time expired</string>
+        <string name="text_subscription_expiration">Subscription expiration</string>
+</resources>

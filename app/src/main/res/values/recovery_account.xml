@@ -5,4 +5,7 @@
     <string name="text_description_recovery">Your contacts are waiting for you, bring them back. Quickly and safely recover your contacts, preferences and previous nickname by correctly answering security questions</string>
     <string name="text_recovery_success">Your account has been recovered, now you can chat privately and securely with your contacts.</string>
     <string name="text_title_success">Account Recovery</string>
+    <string name="text_placeholder_password">Enter your Password</string>
+    <string name="text_description_enter_password">Enter your Password. You are one step away from recovering your account. Enter your account recovery password number.</string>
+    <string name="text_description_validate_old_answers">Security questions. You are closer to recovering your account, please help us confirm your identity. Answer the following security questions correctly</string>
 </resources>

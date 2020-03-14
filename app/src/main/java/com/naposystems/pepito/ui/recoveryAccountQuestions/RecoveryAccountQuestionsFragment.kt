@@ -6,11 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.radiobutton.MaterialRadioButton
@@ -41,6 +40,9 @@ class RecoveryAccountQuestionsFragment : Fragment() {
     private var maxQuestions = 0
     private lateinit var question: RecoveryQuestions
     private var selectedAnswer: String = ""
+    private val questions: List<RecoveryQuestions> by lazy {
+        args.userType.newRecoveryInfo
+    }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -52,9 +54,9 @@ class RecoveryAccountQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        if (args.questions.isNotEmpty()) {
-            maxQuestions = args.questions.size
-            question = args.questions[indexQuestion]
+        if (questions.isNotEmpty()) {
+            maxQuestions = questions.size
+            question = questions[indexQuestion]
         }
 
         binding = DataBindingUtil.inflate(
@@ -69,7 +71,7 @@ class RecoveryAccountQuestionsFragment : Fragment() {
                 R.string.text_count_questions_recovery_account, indexQuestion + 1, maxQuestions
             )
 
-        if (args.questions.isNotEmpty()) {//Obtener Preguntas y respuestas por primera vez
+        if (questions.isNotEmpty()) {//Obtener Preguntas y respuestas por primera vez
             getQuestionAndAnswers(inflater, container)
         }
 
@@ -90,6 +92,7 @@ class RecoveryAccountQuestionsFragment : Fragment() {
             } else {
                 saveQuestionAndAnswers(question.questionId, selectedAnswer)
                 viewModel.sendRecoveryAnswers(args.nickname)
+                disableRadioGroup()
             }
 
             if (indexQuestion == maxQuestions) {
@@ -104,27 +107,19 @@ class RecoveryAccountQuestionsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
             .get(RecoveryAccountQuestionsViewModel::class.java)
 
         viewModel.userAccountDisplayName.observe(viewLifecycleOwner, Observer { fullName ->
             if (fullName.isNotEmpty()) {
-                //Dialogo de creacción de cuenta
-                generalDialog(
-                    getString(R.string.text_title_success),
-                    getString(R.string.text_recovery_success),
-                    false,
-                    childFragmentManager
-                ) {
-                    findNavController().navigate(
-                        RecoveryAccountQuestionsFragmentDirections
-                            .actionRecoveryAccountQuestionsFragmentToAccessPinFragment(
-                                args.nickname,
-                                fullName,
-                                true
-                            )
-                    )
-                }
+                findNavController().navigate(
+                    RecoveryAccountQuestionsFragmentDirections
+                        .actionRecoveryAccountQuestionsFragmentToAccessPinFragment(
+                            args.nickname,
+                            fullName,
+                            true
+                        )
+                )
             }
         })
 
@@ -133,6 +128,7 @@ class RecoveryAccountQuestionsFragment : Fragment() {
             for (error in errors) {
                 Toast.makeText(context, error, Toast.LENGTH_LONG).show()
             }
+            viewModel.setAttemptPref()
             this.findNavController().popBackStack()
         })
     }
@@ -146,9 +142,9 @@ class RecoveryAccountQuestionsFragment : Fragment() {
     }
 
     private fun getQuestionAndAnswers(inflater: LayoutInflater, container: ViewGroup?) {
-        question = args.questions[indexQuestion]
+        question = questions[indexQuestion]
         binding.radioGroupOptions.removeAllViews()
-        binding.textViewQuestion.text = args.questions[indexQuestion].question
+        binding.textViewQuestion.text = questions[indexQuestion].question
         binding.textViewControlQuestion.text =
             getString(
                 R.string.text_count_questions_recovery_account, indexQuestion + 1, maxQuestions

@@ -34,6 +34,7 @@ import com.naposystems.pepito.databinding.ActivityMainBinding
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
+import com.naposystems.pepito.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
@@ -108,6 +110,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(
                     this, getString(R.string.text_error_connection), Toast.LENGTH_SHORT
                 ).show()
+            }
+
+        disposable.add(disposableNoInternetConnection)
+
+
+        val disposableAccountAttack = RxBus.listen(RxEvent.AccountAttack::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val dialog = AccountAttackDialogFragment()
+
+                dialog.show(supportFragmentManager, "AttackDialog")
             }
 
         disposable.add(disposableNoInternetConnection)
@@ -342,6 +355,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
+            R.id.suscription -> navController.navigate(
+                R.id.subscriptionFragment,
+                null,
+                options
+            )
             R.id.security_settings -> navController.navigate(
                 R.id.securitySettingsFragment,
                 null,

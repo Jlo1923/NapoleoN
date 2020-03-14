@@ -2,6 +2,8 @@ package com.naposystems.pepito.webService
 
 import com.naposystems.pepito.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.pepito.dto.accessPin.CreateAccountResDTO
+import com.naposystems.pepito.dto.accountAttackDialog.AccountAttackDialogReqDTO
+import com.naposystems.pepito.dto.accountAttackDialog.AccountAttackDialogResDTO
 import com.naposystems.pepito.dto.addContact.*
 import com.naposystems.pepito.dto.contactUs.ContactUsReqDTO
 import com.naposystems.pepito.dto.contactUs.ContactUsResDTO
@@ -22,15 +24,25 @@ import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
-import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountResDTO
+import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountQuestionsReqDTO
 import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountQuestionsResDTO
+import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.getQuestions.RecoveryOlderAccountQuestionsResDTO
+import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.sendAnswers.RecoveryOlderAccountQuestionsAnswersReqDTO
+import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.sendAnswers.RecoveryOlderAccountQuestionsAnswersResDTO
 import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
 import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeResDTO
+import com.naposystems.pepito.dto.subscription.SubscriptionUrlResDTO
+import com.naposystems.pepito.dto.subscription.SubscriptionUserResDTO
+import com.naposystems.pepito.dto.subscription.SubscriptionsResDTO
+import com.naposystems.pepito.dto.subscription.TypeSubscriptionReqDTO
 import com.naposystems.pepito.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.pepito.dto.validateNickname.ValidateNicknameResDTO
+import com.naposystems.pepito.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountReqDTO
+import com.naposystems.pepito.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountResDTO
+import com.naposystems.pepito.utility.Constants.NapoleonApi.BLOCK_ATTACKER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_MESSAGES_FOR_ALL
@@ -42,7 +54,9 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_MY_MESSAGES
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS_OLD_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_SUBSCRIPTION_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_BLOCK_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_FRIENDSHIP_REQUEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_UNBLOCK_CONTACT
@@ -52,9 +66,13 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQU
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_SELECTED_SUBSCRIPTION
+import com.naposystems.pepito.utility.Constants.NapoleonApi.TYPE_SUBSCRIPTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_MUTE_CONVERSATION
 import com.naposystems.pepito.utility.Constants.NapoleonApi.UPDATE_USER_INFO
+import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_ANSWERS_OLD_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
+import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_PASSWORD_OLD_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFY_MESSAGES_RECEIVED
@@ -83,13 +101,19 @@ interface NapoleonApi {
     suspend fun updateUserInfo(@Body updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
 
     @PUT(UPDATE_MUTE_CONVERSATION)
-    suspend fun updateMuteConversation(@Path("id") idContact: Int, @Body muteConversationReqDTO: MuteConversationReqDTO): Response<MuteConversationResDTO>
+    suspend fun updateMuteConversation(
+        @Path("id") idContact: Int,
+        @Body muteConversationReqDTO: MuteConversationReqDTO
+    ): Response<MuteConversationResDTO>
 
     @GET(FRIEND_SHIP_SEARCH)
     suspend fun getContactsByState(@Path("state") state: String): Response<ContactsResDTO>
 
     @GET(FRIEND_SHIP_SEARCH_BY_DATE)
-    suspend fun getContactsByDate(@Path("state") state: String, @Query("date") date: String): Response<ContactsResDTO>
+    suspend fun getContactsByDate(
+        @Path("state") state: String,
+        @Query("date") date: String
+    ): Response<ContactsResDTO>
 
     @POST(SEND_PQRS)
     suspend fun sendPqrs(@Body contactUsReqDTO: ContactUsReqDTO): Response<ContactUsResDTO>
@@ -116,7 +140,7 @@ interface NapoleonApi {
     suspend fun sendMessagesRead(@Body messagesReadReqDTO: MessagesReadReqDTO): Response<List<String>>
 
     @GET(GET_RECOVERY_QUESTIONS)
-    suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<List<RecoveryAccountResDTO>>
+    suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<RecoveryAccountUserTypeResDTO>
 
     @POST(SEND_ANSWERS)
     suspend fun sendAnswers(@Body recoveryAccountQuestionsReqDTO: RecoveryAccountQuestionsReqDTO): Response<RecoveryAccountQuestionsResDTO>
@@ -131,7 +155,10 @@ interface NapoleonApi {
     suspend fun getFriendshipRequests(): Response<FriendshipRequestsResDTO>
 
     @PUT(PUT_FRIENDSHIP_REQUEST)
-    suspend fun putFriendshipRequest(@Path("id") friendshipRequestId: String, @Body request: FriendshipRequestPutReqDTO): Response<FriendshipRequestPutResDTO>
+    suspend fun putFriendshipRequest(
+        @Path("id") friendshipRequestId: String,
+        @Body request: FriendshipRequestPutReqDTO
+    ): Response<FriendshipRequestPutResDTO>
 
     @GET(GET_FRIENDSHIP_REQUEST_QUANTITY)
     suspend fun getFriendshipRequestQuantity(): Response<FriendshipRequestQuantityResDTO>
@@ -150,4 +177,26 @@ interface NapoleonApi {
 
     @GET(DELETE_MESSAGES_FOR_ALL)
     suspend fun getDeletedMessages(): Response<List<String>>
+
+    @POST(VALIDATE_PASSWORD_OLD_ACCOUNT)
+    suspend fun sendPasswordOlderAccount(@Body validatePasswordPreviousRecoveryAccountReqDTO: ValidatePasswordPreviousRecoveryAccountReqDTO): Response<ValidatePasswordPreviousRecoveryAccountResDTO>
+
+    @GET(GET_QUESTIONS_OLD_USER)
+    suspend fun getRecoveryOlderQuestions(@Path("nick") nickname: String): Response<RecoveryOlderAccountQuestionsResDTO>
+
+    @POST(VALIDATE_ANSWERS_OLD_USER)
+    suspend fun sendAnswersOldAccount(@Body recoveryOlderAccountQuestionsAnswersReqDTO: RecoveryOlderAccountQuestionsAnswersReqDTO): Response<RecoveryOlderAccountQuestionsAnswersResDTO>
+
+    @POST(BLOCK_ATTACKER)
+    suspend fun blockAttacker(@Body accountAttackDialogReqDTO: AccountAttackDialogReqDTO): Response<AccountAttackDialogResDTO>
+
+    @GET(GET_SUBSCRIPTION_USER)
+    suspend fun getSubscriptionUser(): Response<SubscriptionUserResDTO>
+
+    @GET(TYPE_SUBSCRIPTIONS)
+    suspend fun typeSubscriptions(): Response<List<SubscriptionsResDTO>>
+
+    @POST(SEND_SELECTED_SUBSCRIPTION)
+    suspend fun sendSelectedSubscription(@Body typeSubscriptionReqDTO: TypeSubscriptionReqDTO): Response<SubscriptionUrlResDTO>
+
 }

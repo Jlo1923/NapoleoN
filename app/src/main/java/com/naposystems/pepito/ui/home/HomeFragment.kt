@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -58,12 +59,14 @@ class HomeFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        binding = DataBindingUtil.inflate(layoutInflater,
-            R.layout.home_fragment, container, false)
+        binding = DataBindingUtil.inflate(
+            layoutInflater,
+            R.layout.home_fragment, container, false
+        )
 
         setAdapter()
 
-        binding.containerStatus.setOnClickListener{
+        binding.containerStatus.setOnClickListener {
             goToStatus()
         }
         binding.imageButtonStatusEndIcon.setOnClickListener {
@@ -95,7 +98,7 @@ class HomeFragment : Fragment() {
         try {
             shareContactViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(ShareContactViewModel::class.java)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
 
@@ -112,6 +115,10 @@ class HomeFragment : Fragment() {
                 setupBadge(it)
             }
         })
+
+        viewModel.insertSubscription()
+
+        validateSubscriptionTime()
 
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
@@ -131,7 +138,22 @@ class HomeFragment : Fragment() {
         actionView.setOnClickListener {
             onOptionsItemSelected(menuItem)
         }
+    }
 
+    private fun validateSubscriptionTime() {
+        val freeTrial = viewModel.getFreeTrial()
+        val subscriptionTime = viewModel.getSubscriptionTime()
+
+        if (System.currentTimeMillis() > freeTrial){
+            if (System.currentTimeMillis() > subscriptionTime && subscriptionTime == 0L){
+                binding.textViewMessageSubscription.text = getString(R.string.text_free_trial_expired)
+            } else {
+                binding.textViewMessageSubscription.text = getString(R.string.text_expired_subscription)
+            }
+            binding.containerSubscription.isVisible = true
+        } else {
+            binding.containerSubscription.isVisible = false
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -212,8 +234,8 @@ class HomeFragment : Fragment() {
 
     private fun deleteChat(contact: Contact) {
         generalDialog(
-            "Borrar Conversación!!",
-            "Desea eliminar la conversación?!!",
+            getString(R.string.text_title_delete_conversation),
+            getString(R.string.text_want_delete_conversation),
             true,
             childFragmentManager
         ) {
