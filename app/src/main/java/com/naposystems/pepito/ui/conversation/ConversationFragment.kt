@@ -36,7 +36,6 @@ import com.naposystems.pepito.databinding.ConversationFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
@@ -144,7 +143,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
-                viewModel.saveMessageLocally(binding.inputPanel.getEditTex().text.toString())
+                viewModel.saveMessageLocally(
+                    binding.inputPanel.getEditTex().text.toString(),
+                    obtainTimeSelfDestruct()
+                )
 
                 with(binding.inputPanel.getEditTex()) {
                     setText("")
@@ -274,7 +276,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         shareViewModel.hasAudioSendClicked.observe(activity!!, Observer {
             if (it == true) {
                 shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
-                    viewModel.saveMessageWithAudioAttachment(mediaStoreAudio)
+                    viewModel.saveMessageWithAudioAttachment(
+                        mediaStoreAudio,
+                        obtainTimeSelfDestruct()
+                    )
                 }
             }
         })
@@ -284,7 +289,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 viewModel.saveMessageAndAttachment(
                     shareViewModel.getMessage() ?: "",
                     attachment,
-                    1
+                    1,
+                    obtainTimeSelfDestruct()
                 )
             }
         })
@@ -773,7 +779,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         } else {
             intent.setDataAndType(uri, mimeType)
         }
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         // custom message for the intent
         // custom message for the intent
         startActivity(Intent.createChooser(intent, "Choose an Application:"))

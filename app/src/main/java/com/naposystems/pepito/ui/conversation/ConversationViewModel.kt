@@ -115,14 +115,15 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun saveMessageLocally(body: String) {
-        saveMessageAndAttachment(body, null, 0)
+    override fun saveMessageLocally(body: String, selfDestructTime: Int) {
+        saveMessageAndAttachment(body, null, 0, selfDestructTime)
     }
 
     override fun saveMessageAndAttachment(
         messageString: String,
         attachment: Attachment?,
-        numberAttachments: Int
+        numberAttachments: Int,
+        selfDestructTime: Int
     ) {
         viewModelScope.launch {
             val message = Message(
@@ -152,13 +153,16 @@ class ConversationViewModel @Inject constructor(
             sendMessageAndAttachment(
                 attachment = attachment,
                 message = message,
-                numberAttachments = numberAttachments
+                numberAttachments = numberAttachments,
+                selfDestructTime = selfDestructTime
             )
         }
     }
 
-    override fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio,
-                                                selfDestructTime: Int) {
+    override fun saveMessageWithAudioAttachment(
+        mediaStoreAudio: MediaStoreAudio,
+        selfDestructTime: Int
+    ) {
         viewModelScope.launch {
             val fileDescriptor = context.contentResolver
                 .openFileDescriptor(mediaStoreAudio.contentUri, "r")
@@ -184,7 +188,8 @@ class ConversationViewModel @Inject constructor(
                 saveMessageAndAttachment(
                     messageString = "",
                     attachment = attachment,
-                    numberAttachments = 1
+                    numberAttachments = 1,
+                    selfDestructTime = selfDestructTime
                 )
             }
         }
@@ -193,7 +198,8 @@ class ConversationViewModel @Inject constructor(
     private suspend fun sendMessageAndAttachment(
         attachment: Attachment?,
         message: Message,
-        numberAttachments: Int
+        numberAttachments: Int,
+        selfDestructTime: Int
     ) {
         try {
 
@@ -201,7 +207,8 @@ class ConversationViewModel @Inject constructor(
                 userDestination = contact.id,
                 quoted = "",
                 body = message.body,
-                numberAttachments = numberAttachments
+                numberAttachments = numberAttachments,
+                destroy = selfDestructTime
             )
 
             val messageResponse = repository.sendMessage(messageReqDTO)

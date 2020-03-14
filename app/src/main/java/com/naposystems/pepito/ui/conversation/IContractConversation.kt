@@ -23,9 +23,15 @@ interface IContractConversation {
         fun getUser(): User
         fun setContact(contact: Contact)
         fun getLocalMessages()
-        fun saveMessageLocally(body: String)
-        fun saveMessageAndAttachment(messageString: String, attachment: Attachment?, numberAttachments: Int)
-        fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio)
+        fun saveMessageLocally(body: String, selfDestructTime: Int)
+        fun saveMessageAndAttachment(
+            messageString: String,
+            attachment: Attachment?,
+            numberAttachments: Int,
+            selfDestructTime: Int
+        )
+
+        fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio, selfDestructTime: Int)
         fun sendMessagesRead()
         fun getLocalContact(idContact: Int)
         fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Boolean)

@@ -119,7 +119,10 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent, countDownTimer)
             TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent, countDownTimer)
             TYPE_MY_MESSAGE_AUDIO -> MyMessageAudioViewHolder.from(parent, countDownTimer)
-            TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(
+                parent,
+                countDownTimer
+            )
             TYPE_MY_MESSAGE_VIDEO -> MyMessageVideoViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_VIDEO -> IncomingMessageVideoViewHolder.from(parent)
             TYPE_MY_MESSAGE_DOCUMENT -> MyMessageDocumentViewHolder.from(parent)
@@ -157,7 +160,10 @@ class ConversationAdapter constructor(
         }
     }
 
-    class MyMessageViewHolder constructor(private val binding: ConversationItemMyMessageBinding, countDownTimer: CountDownTimer?) :
+    class MyMessageViewHolder constructor(
+        private val binding: ConversationItemMyMessageBinding,
+        countDownTimer: CountDownTimer?
+    ) :
         ConversationViewHolder(binding.root, countDownTimer) {
 
         @SuppressLint("ResourceAsColor")
@@ -172,9 +178,14 @@ class ConversationAdapter constructor(
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
 
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = {messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             if (item.message.isSelected) {
                 binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -206,7 +217,10 @@ class ConversationAdapter constructor(
         }
     }
 
-    class IncomingMessageViewHolder constructor(private val binding: ConversationItemIncomingMessageBinding, countDownTimer: CountDownTimer?) :
+    class IncomingMessageViewHolder constructor(
+        private val binding: ConversationItemIncomingMessageBinding,
+        countDownTimer: CountDownTimer?
+    ) :
         ConversationViewHolder(binding.root, countDownTimer) {
 
         @SuppressLint("ResourceAsColor")
@@ -221,11 +235,14 @@ class ConversationAdapter constructor(
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
 
-            val context = binding.containerMessage.context
-
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = {messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             if (item.message.isSelected) {
                 binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -248,7 +265,10 @@ class ConversationAdapter constructor(
         }
 
         companion object {
-            fun from(parent: ViewGroup, countDownTimer: CountDownTimer?): IncomingMessageViewHolder {
+            fun from(
+                parent: ViewGroup,
+                countDownTimer: CountDownTimer?
+            ): IncomingMessageViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemIncomingMessageBinding.inflate(
                     layoutInflater,
@@ -260,7 +280,10 @@ class ConversationAdapter constructor(
         }
     }
 
-    class MyMessageAudioViewHolder constructor(private val binding: ConversationItemMyMessageWithAudioBinding, countDownTimer: CountDownTimer?) :
+    class MyMessageAudioViewHolder constructor(
+        private val binding: ConversationItemMyMessageWithAudioBinding,
+        countDownTimer: CountDownTimer?
+    ) :
         ConversationViewHolder(binding.root, countDownTimer) {
 
         fun bind(
@@ -274,9 +297,14 @@ class ConversationAdapter constructor(
             binding.clickListener = clickListener
             binding.isFirst = isFirst
 
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = { messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             with(binding.audioPlayer) {
 
@@ -315,8 +343,11 @@ class ConversationAdapter constructor(
         }
     }
 
-    class IncomingMessageAudioViewHolder constructor(private val binding: ConversationItemIncomingMessageWithAudioBinding, countDownTimer: CountDownTimer?) :
-        ConversationViewHolder(binding.root, countDownTimer){
+    class IncomingMessageAudioViewHolder constructor(
+        private val binding: ConversationItemIncomingMessageWithAudioBinding,
+        countDownTimer: CountDownTimer?
+    ) :
+        ConversationViewHolder(binding.root, countDownTimer) {
 
         fun bind(
             item: MessageAndAttachment,
@@ -329,9 +360,14 @@ class ConversationAdapter constructor(
             binding.clickListener = clickListener
             binding.isFirst = isFirst
 
-            countDown(item, item.message.totalSelfDestructionAt.toLong(), binding.textViewCountDown, resources, itemToEliminate = {messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
+            countDown(
+                item,
+                item.message.totalSelfDestructionAt.toLong(),
+                binding.textViewCountDown,
+                resources,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
 
             with(binding.audioPlayer) {
                 val firstAttachment = item.attachmentList[0]
@@ -357,7 +393,10 @@ class ConversationAdapter constructor(
         }
 
         companion object {
-            fun from(parent: ViewGroup, countDownTimer: CountDownTimer?): IncomingMessageAudioViewHolder {
+            fun from(
+                parent: ViewGroup,
+                countDownTimer: CountDownTimer?
+            ): IncomingMessageAudioViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemIncomingMessageWithAudioBinding.inflate(
                     layoutInflater,
