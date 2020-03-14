@@ -247,7 +247,7 @@
                     <TextView
                         android:id="@+id/textView_label_delete_chat"
                         style="@style/OptionTitle"
-                        android:text="@string/text_delete_conversation"
+                        android:text="@string/text_title_delete_conversation"
                         app:layout_constraintStart_toEndOf="@id/imageView_delete_chat_start_icon"
                         app:layout_constraintTop_toTopOf="parent" />
 

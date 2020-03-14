@@ -30,17 +30,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -63,7 +67,11 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
     }
+
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
+    private val shareContactViewModel: ShareContactViewModel by viewModels{
+        viewModelFactory
+    }
 
     private lateinit var actionBarCustomView: ConversationActionBarBinding
     private lateinit var binding: ConversationFragmentBinding
@@ -72,6 +80,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private val args: ConversationFragmentArgs by navArgs()
     private var isEditTextFilled: Boolean = false
     private lateinit var actionMode: ActionModeMenu
+    private var contactSilenced: Boolean = false
+    private lateinit var menuOptionsContact: Menu
 
     private var clipboard: ClipboardManager? = null
     private var clipData: ClipData? = null
@@ -108,9 +118,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.conversation_fragment, container, false
         )
-
         binding.lifecycleOwner = this
-
         binding.contact = args.contact
 
         setupActionMode()
@@ -372,6 +380,11 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         viewModel.contactProfile.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 actionBarCustomView.contact = it
+                if (it.silenced) {
+                    menuOptionsContact.findItem(R.id.menu_item_mute_conversation).title = "Desilenciar!!"
+                } else {
+                    menuOptionsContact.findItem(R.id.menu_item_mute_conversation).title = "Silenciar!!"
+                }
             }
         })
 
@@ -426,7 +439,13 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menuOptionsContact = menu
         inflater.inflate(R.menu.menu_conversation, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        //setOptionSilenceMenu()
+        super.onPrepareOptionsMenu(menu)
     }
 
     override fun onResume() {
@@ -449,9 +468,74 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         .actionConversationFragmentToContactProfileFragment(args.contact.id)
                 )
             }
+            R.id.menu_item_block_contact -> {
+                blockContact(args.contact)
+            }
+            R.id.menu_item_mute_conversation -> {
+                if (args.contact.silenced)
+                    deactiveSilence()
+                else
+                    silenceConversation()
+
+            }
+            R.id.menu_item_delete_conversation -> {
+                deleteConversation(args.contact)
+            }
         }
 
         return true
+    }
+
+    private fun blockContact(contact: Contact) {
+        generalDialog(
+            getString(R.string.text_block_contact),
+            getString(
+                R.string.text_wish_block_contact,
+                if (contact.displayNameFake.isEmpty()) {
+                    contact.displayName
+                } else {
+                    contact.displayNameFake
+                }
+            ),
+            true,
+            childFragmentManager
+        ) {
+            shareContactViewModel.sendBlockedContact(args.contact)
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
+    }
+
+    private fun silenceConversation() {
+        val dialog = MuteConversationDialogFragment.newInstance(
+            args.contact.id, args.contact.silenced
+        )
+        dialog.setListener(object : MuteConversationDialogFragment.MuteConversationListener {
+            override fun onMuteConversationChange() {}
+        })
+        dialog.show(childFragmentManager, "MuteConversation")
+    }
+
+    private fun deactiveSilence() {
+        shareContactViewModel.muteConversation(args.contact.id, args.contact.silenced)
+    }
+
+    private fun deleteConversation(contact: Contact) {
+        generalDialog(
+            getString(R.string.text_delete_contact),
+            getString(
+                R.string.text_wish_delete_contact,
+                if (contact.displayNameFake.isEmpty()) {
+                    contact.displayName
+                } else {
+                    contact.displayNameFake
+                }
+            ),
+            true,
+            childFragmentManager
+        ) {
+            shareContactViewModel.deleteConversation(args.contact.id)
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
     }
 
     private fun copyDataInClipboard(text: String) {

@@ -107,7 +107,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
                 val newListQuestion = it.toMutableList()
                 newListQuestion.add(0, Questions(0, selectQuestion))
 
-                val adapter = ArrayAdapter<Questions>(
+                val adapter = ArrayAdapter(
                     context!!,
                     R.layout.register_recovery_account_question_item,
                     R.id.textView_question_item,
@@ -157,7 +157,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
 
         if(selectedIdQuestion.toInt() == 0 && textInputAnswer.isEmpty() && countAnswer > 3) {
             generalDialog(
-                "",
+                "greg",
                 "lhnsdfonsodjisdvionhd",
                 true,
                 childFragmentManager

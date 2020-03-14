@@ -84,7 +84,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
             searchView = mainActivity.findViewById(R.id.searchView)
-            searchView.setHint(R.string.text_search)
+            searchView.setHint(R.string.search_by_nickname)
             searchView.setMenuItem(menu.findItem(R.id.search))
             searchView.setListener(this)
         }

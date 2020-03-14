@@ -15,6 +15,7 @@ import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 import com.naposystems.pepito.ui.home.IContractHome
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -23,6 +24,7 @@ import com.naposystems.pepito.webService.socket.IContractSocketService
 import kotlinx.coroutines.coroutineScope
 import retrofit2.Response
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(
@@ -138,36 +140,87 @@ class HomeRepository @Inject constructor(
     override suspend fun getDeletedMessages() {
         try {
             val response = napoleonApi.getDeletedMessages()
-            if(response.isSuccessful) {
+            if (response.isSuccessful) {
                 val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
-                when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(idContact)) {
+                when (val messageAndAttachment =
+                    messageLocalDataSource.getLastMessageByContact(idContact)) {
                     null -> {
                         conversationLocalDataSource.cleanConversation(idContact)
                     }
                     else -> {
-                        conversationLocalDataSource.getQuantityUnreads(idContact).let { quantityUnreads->
-                            if (quantityUnreads > 0) {
-                                conversationLocalDataSource.updateConversationByContact(
-                                    idContact,
-                                    messageAndAttachment.message.body,
-                                    messageAndAttachment.message.createdAt,
-                                    messageAndAttachment.message.status,
-                                    quantityUnreads - response.body()!!.count())
-                            } else {
-                                conversationLocalDataSource.updateConversationByContact(
-                                    idContact,
-                                    messageAndAttachment.message.body,
-                                    messageAndAttachment.message.createdAt,
-                                    messageAndAttachment.message.status,
-                                    0)
+                        conversationLocalDataSource.getQuantityUnreads(idContact)
+                            .let { quantityUnreads ->
+                                if (quantityUnreads > 0) {
+                                    conversationLocalDataSource.updateConversationByContact(
+                                        idContact,
+                                        messageAndAttachment.message.body,
+                                        messageAndAttachment.message.createdAt,
+                                        messageAndAttachment.message.status,
+                                        quantityUnreads - response.body()!!.count()
+                                    )
+                                } else {
+                                    conversationLocalDataSource.updateConversationByContact(
+                                        idContact,
+                                        messageAndAttachment.message.body,
+                                        messageAndAttachment.message.createdAt,
+                                        messageAndAttachment.message.status,
+                                        0
+                                    )
+                                }
                             }
-                        }
                     }
                 }
             }
         } catch (ex: Exception) {
             Timber.e(ex)
         }
+    }
+
+    override suspend fun insertSubscription() {
+        try {
+            val response = napoleonApi.getSubscriptionUser()
+            if (response.isSuccessful) {
+                if (response.body()!!.dateExpires != 0L) {
+                    sharedPreferencesManager.putInt(
+                        Constants.SharedPreferences.PREF_TYPE_SUBSCRIPTION,
+                        response.body()!!.subscriptionId
+                    )
+                    sharedPreferencesManager.putLong(
+                        Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME,
+                        TimeUnit.SECONDS.toMillis(response.body()!!.dateExpires)
+                    )
+                    if (response.body()!!.dateExpires > System.currentTimeMillis()){
+                        sharedPreferencesManager.putLong(
+                            Constants.SharedPreferences.PREF_FREE_TRIAL,
+                            1
+                        )
+                    }
+                } else {
+                    sharedPreferencesManager.putInt(
+                        Constants.SharedPreferences.PREF_TYPE_SUBSCRIPTION,
+                        0
+                    )
+                    sharedPreferencesManager.putLong(
+                        Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME,
+                        0L
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    override fun getFreeTrial(): Long {
+        return sharedPreferencesManager.getLong(
+            Constants.SharedPreferences.PREF_FREE_TRIAL
+        )
+    }
+
+    override fun getSubscriptionTime(): Long {
+        return sharedPreferencesManager.getLong(
+            Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
+        )
     }
 }

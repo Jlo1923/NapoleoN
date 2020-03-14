@@ -7,4 +7,5 @@ class RxEvent {
     data class NewMessageReceivedEvent(val channelName: String, val jsonObject: JSONObject)
     class NewFriendshipRequest
     class NoInternetConnection
+    class AccountAttack
 }

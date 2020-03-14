@@ -184,6 +184,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_subscriptionFragment"
+            app:destination="@id/subscriptionFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -399,7 +402,18 @@
         <action
             android:id="@+id/action_recoveryAccountFragment_to_recoveryAccountQuestionsFragment"
             app:destination="@id/recoveryAccountQuestionsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_recoveryAccountFragment_to_validatePasswordPreviousRecoveryAccountFragment"
+            app:destination="@id/validatePasswordPreviousRecoveryAccountFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountQuestionsFragment"
@@ -407,14 +421,18 @@
         android:label="@string/text_recovery_account"
         tools:layout="@layout/recovery_account_questions_fragment">
         <argument
-            android:name="questions"
-            app:argType="com.naposystems.pepito.model.recoveryAccount.ListRecoveryQuestions" />
+            android:name="userType"
+            app:argType="com.naposystems.pepito.model.recoveryAccount.RecoveryAccountUserType" />
         <argument
             android:name="nickname"
             app:argType="string" />
         <action
             android:id="@+id/action_recoveryAccountQuestionsFragment_to_accessPinFragment"
-            app:destination="@id/accessPinFragment" />
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/enterPinFragment"
@@ -531,5 +549,59 @@
         <action
             android:id="@+id/action_attachmentPreviewFragment_to_conversationFragment"
             app:destination="@id/conversationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"
+        android:name="com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment"
+        android:label="ValidatePasswordPreviousRecoveryAccountFragment"
+        tools:layout="@layout/validate_password_previous_recovery_account_fragment">
+        <action
+            android:id="@+id/action_validatePasswordPreviousRecoveryAccountFragment_to_recoveryOlderAccountQuestionsFragment"
+            app:destination="@id/recoveryOlderAccountQuestionsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/recoveryOlderAccountQuestionsFragment"
+        android:name="com.naposystems.pepito.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment"
+        android:label="RecoveryOlderAccountQuestionsFragment"
+        tools:layout="@layout/recovery_older_account_questions_fragment">
+        <action
+            android:id="@+id/action_recoveryOlderAccountQuestionsFragment_to_accessPinFragment"
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/subscriptionFragment"
+        android:name="com.naposystems.pepito.ui.subscription.SubscriptionFragment"
+        android:label="@string/text_subscription_title"
+        tools:layout="@layout/subscription_fragment" >
+        <action
+            android:id="@+id/action_subscriptionFragment_to_subscriptionPaymentFragment"
+            app:destination="@id/subscriptionPaymentFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/subscriptionPaymentFragment"
+        android:name="com.naposystems.pepito.ui.subscriptionPayment.SubscriptionPaymentFragment"
+        android:label="Suscripción!!"
+        tools:layout="@layout/subscription_payment_fragment" >
+        <argument
+            android:name="url"
+            app:argType="string" />
     </fragment>
 </navigation>

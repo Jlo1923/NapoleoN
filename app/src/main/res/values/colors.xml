@@ -32,6 +32,7 @@
     <color name="colorTextMyMessage">#f2f2f2</color>
     <color name="colorTextIncomingMessage">#4d4d4d</color>
     <color name="red">#DA5E58</color>
+    <color name="redIntense">#ff5131</color>
     <color name="searchViewTextColor">#4d4d4d</color>
     <color name="searchViewHintColor">#808080</color>
     <color name="fabNotificationMessage">#AF8B8989</color>

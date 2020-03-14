@@ -9,22 +9,22 @@ import retrofit2.Response
 interface IContractContactProfile {
 
     interface ViewModel {
-        fun getLocalContact(idContact : Int)
-        fun updateNameFakeContact(idContact: Int, nameFake: String)
-        fun updateNicknameFakeContact(idContact: Int, nameFake: String)
-        fun updateAvatarFakeContact(idContact: Int, avatarFake: String)
-        fun restoreContact(idContact: Int)
-        fun updateContactSilenced(idContact : Int, contactSilenced : Boolean)
+        fun getLocalContact(contactId : Int)
+        fun updateNameFakeContact(contactId: Int, nameFake: String)
+        fun updateNicknameFakeContact(contactId: Int, nameFake: String)
+        fun updateAvatarFakeContact(contactId: Int, avatarFake: String)
+        fun restoreContact(contactId: Int)
+        fun updateContactSilenced(contactId : Int, contactSilenced : Boolean)
     }
 
     interface Repository {
-        fun getLocalContact(idContact : Int): LiveData<Contact>
-        suspend fun updateNameFakeContact(idContact: Int, nameFake: String)
-        suspend fun updateNicknameFakeContact(idContact: Int, nicknameFake: String)
-        suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String)
-        suspend fun restoreContact(idContact: Int)
-        suspend fun updateContactSilenced(idContact : Int, contactSilenced: Int)
-        suspend fun saveTimeMuteConversation(idContact : Int, time: MuteConversationReqDTO) : Response<MuteConversationResDTO>
+        fun getLocalContact(contactId : Int): LiveData<Contact>
+        suspend fun updateNameFakeContact(contactId: Int, nameFake: String)
+        suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String)
+        suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String)
+        suspend fun restoreContact(contactId: Int)
+        suspend fun updateContactSilenced(contactId : Int, contactSilenced: Int)
+        suspend fun saveTimeMuteConversation(contactId : Int, time: MuteConversationReqDTO) : Response<MuteConversationResDTO>
         fun getError(response: Response<MuteConversationResDTO>) : ArrayList<String>
     }
 

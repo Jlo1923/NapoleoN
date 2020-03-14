@@ -51,7 +51,7 @@
         <item quantity="one">%d selected</item>
         <item quantity="other">%d selected</item>
     </plurals>
-    <string name="text_delete_conversation">Delete conversation</string>
+    <string name="text_title_delete_conversation">Delete conversation</string>
     <string name="text_block_contact">Block contact</string>
 
 </resources>

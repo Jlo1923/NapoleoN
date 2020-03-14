@@ -11,7 +11,8 @@
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/attrBackgroundColorPrimary">
+        android:background="?attr/attrBackgroundColorPrimary"
+        tools:context=".ui.contactUs.ContactUsFragment">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -20,8 +21,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:context=".ui.contactUs.ContactUsFragment">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/textView_info_pqrs"

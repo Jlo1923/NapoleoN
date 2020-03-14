@@ -31,7 +31,7 @@
     <string name="text_refuse">Ablehnen</string>
     <string name="text_information">INFORMATIONEN</string>
     <string name="text_nickname">Spitzname</string>
-    <string name="text_delete_conversation">Konversation löschen</string>
+    <string name="text_title_delete_conversation">Konversation löschen</string>
     <string name="text_mute_conversation">Gespräch stumm schalten</string>
     <string name="text_block_contact">Kontakt blockieren</string>
     <string name="text_field_cannot_be_empty">Das Feld darf nicht leer sein</string>

@@ -16,11 +16,11 @@ interface ContactDao {
     @Query("SELECT * FROM contact WHERE id=:id")
     suspend fun getContactById(id: Int): List<Contact>
 
-    @Query("SELECT * FROM contact WHERE id = :idContact")
-    fun getContact(idContact: Int): LiveData<Contact>
+    @Query("SELECT * FROM contact WHERE id = :contactId")
+    fun getContact(contactId: Int): LiveData<Contact>
 
-    @Query("UPDATE contact SET silenced = :contactSilenced WHERE id = :idContact")
-    fun updateContactSilenced(idContact: Int, contactSilenced : Int)
+    @Query("UPDATE contact SET silenced = :contactSilenced WHERE id = :contactId")
+    fun updateContactSilenced(contactId: Int, contactSilenced : Int)
 
     @Query("UPDATE contact SET display_name_fake = :nameFake WHERE id = :idContact ")
     suspend fun updateNameFakeContact(idContact: Int, nameFake: String)
@@ -31,8 +31,8 @@ interface ContactDao {
     @Query("UPDATE contact SET nickname_fake = :nickNameFake WHERE id = :idContact ")
     suspend fun updateNickNameFakeContact(idContact: Int, nickNameFake: String)
 
-    @Query("UPDATE contact SET display_name_fake = '', nickname_fake = '', image_url_fake = ''  WHERE id = :idContact ")
-    suspend fun restoreContact(idContact: Int)
+    @Query("UPDATE contact SET display_name_fake = '', nickname_fake = '', image_url_fake = ''  WHERE id = :contactId ")
+    suspend fun restoreContact(contactId: Int)
 
     @Insert
     suspend fun insertContact(contact: Contact)

@@ -72,15 +72,13 @@ class AccessPinFragment : Fragment() {
         recoveredAccount = args.isRecoveredAccount
 
         if (recoveredAccount) {
-            binding.textViewTitle.text = "Restablecer Pin de Acceso"
-            binding.buttonRegister.text = "Recuperar cuenta"
+            binding.textViewTitle.text = "Restablecer Pin de Acceso!!"
+            binding.buttonRegister.text = "Recuperar cuenta!!"
         }
 
         binding.buttonRegister.setOnClickListener {
             validateAccessPin()
         }
-
-
 
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -112,6 +110,7 @@ class AccessPinFragment : Fragment() {
         viewModel.openHomeFragment.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 viewModel.createdUserPref()
+                viewModel.insertFreeTrialPref()
                 findNavController()
                     .navigate(AccessPinFragmentDirections.actionAccessPinFragmentToHomeFragment())
                 viewModel.onOpenedHomeFragment()

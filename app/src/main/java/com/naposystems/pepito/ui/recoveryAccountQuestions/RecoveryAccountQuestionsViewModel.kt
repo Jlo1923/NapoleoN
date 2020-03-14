@@ -55,12 +55,13 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
                     _sendAnswersSuccessfully.value = true
 
                     repository.saveSecretKey(response.body()!!.user.secretKey)
-                    repository.setRecoveredAccountPref()
-                    repository.setRecoveredQuestionsPref()
                     repository.insertUser(response.body()!!.user)
 
                     _userAccountDisplayName.value = response.body()!!.user.fullname
 
+                    repository.setRecoveredAccountPref()
+                    repository.setRecoveredQuestionsPref()
+                    repository.setFreeTrialPref()
                 } else {
                     when (response.code()) {
                         422 -> {
@@ -79,6 +80,12 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
                 _sendAnswersSuccessfully.value = false
                 Timber.e(e)
             }
+        }
+    }
+
+    override fun setAttemptPref() {
+        viewModelScope.launch {
+            repository.setAttemptPref()
         }
     }
 }

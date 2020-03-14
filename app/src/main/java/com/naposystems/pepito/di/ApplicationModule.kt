@@ -68,7 +68,7 @@ class ApplicationModule {
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
 
-        httpClient.addNetworkInterceptor(StethoInterceptor())
+        //httpClient.addNetworkInterceptor(StethoInterceptor())
 
         httpClient.addInterceptor(NetworkConnectionInterceptor(context))
         httpClient.addInterceptor { chain ->

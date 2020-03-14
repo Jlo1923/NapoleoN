@@ -4,6 +4,8 @@ import com.naposystems.pepito.dto.contacts.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.dto.contacts.deleteContact.DeleteContactResDTO
 import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactErrorDTO
 import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
+import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
+import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.pepito.entity.Contact
 import retrofit2.Response
 
@@ -13,6 +15,7 @@ interface IContractShareContact {
         fun unblockContact(contact: Contact)
         fun sendDeleteContact(contact: Contact)
         fun deleteConversation(contactId: Int)
+        fun muteConversation(contactId: Int, contactSilenced: Boolean)
     }
 
     interface Repository {
@@ -31,10 +34,15 @@ interface IContractShareContact {
         //region Delete Conversation
         suspend fun deleteConversation(contactId: Int)
         //endregion
+        //region Mute Conversation
+        suspend fun muteConversation(contactId : Int, time: MuteConversationReqDTO) : Response<MuteConversationResDTO>
+        suspend fun muteConversationLocal(contactId : Int, contactSilenced: Int)
+        //endregion
         //region Errors
         fun getDefaultBlockedError(response: Response<BlockedContactResDTO>): List<String>
         fun getDefaultUnblockError(response: Response<UnblockContactResDTO>): List<String>
         fun getDefaultDeleteError(response: Response<DeleteContactResDTO>): List<String>
+        fun muteError(response: Response<MuteConversationResDTO>): ArrayList<String>
         //endregion
     }
 }

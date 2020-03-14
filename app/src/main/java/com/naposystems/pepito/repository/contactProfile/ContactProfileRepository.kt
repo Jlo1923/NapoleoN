@@ -21,32 +21,32 @@ class ContactProfileRepository@Inject constructor(
         Moshi.Builder().build()
     }
 
-    override fun getLocalContact(idContact: Int): LiveData<Contact> {
-        return contactDataSource.getContact(idContact)
+    override fun getLocalContact(contactId: Int): LiveData<Contact> {
+        return contactDataSource.getContact(contactId)
     }
 
-    override suspend fun updateNameFakeContact(idContact: Int, nameFake: String) {
-        contactDataSource.updateNameFakeContact(idContact, nameFake)
+    override suspend fun updateNameFakeContact(contactId: Int, nameFake: String) {
+        contactDataSource.updateNameFakeContact(contactId, nameFake)
     }
 
-    override suspend fun updateNicknameFakeContact(idContact: Int, nicknameFake: String) {
-        contactDataSource.updateNicknameFakeContact(idContact, nicknameFake)
+    override suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String) {
+        contactDataSource.updateNicknameFakeContact(contactId, nicknameFake)
     }
 
-    override suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String) {
-        contactDataSource.updateAvatarFakeContact(idContact, avatarFake)
+    override suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
+        contactDataSource.updateAvatarFakeContact(contactId, avatarFake)
     }
 
-    override suspend fun restoreContact(idContact: Int) {
-        contactDataSource.restoreContact(idContact)
+    override suspend fun restoreContact(contactId: Int) {
+        contactDataSource.restoreContact(contactId)
     }
 
-    override suspend fun updateContactSilenced(idContact: Int, contactSilenced: Int) {
-        contactDataSource.updateContactSilenced(idContact, contactSilenced)
+    override suspend fun updateContactSilenced(contactId: Int, contactSilenced: Int) {
+        contactDataSource.updateContactSilenced(contactId, contactSilenced)
     }
 
-    override suspend fun saveTimeMuteConversation(idContact: Int, time: MuteConversationReqDTO): Response<MuteConversationResDTO> {
-        return napoleonApi.updateMuteConversation(idContact, time)
+    override suspend fun saveTimeMuteConversation(contactId: Int, time: MuteConversationReqDTO): Response<MuteConversationResDTO> {
+        return napoleonApi.updateMuteConversation(contactId, time)
     }
 
     override fun getError(response: Response<MuteConversationResDTO>): ArrayList<String> {

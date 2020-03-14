@@ -1,6 +1,7 @@
 package com.naposystems.pepito.ui.mainActivity
 
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 
 interface IContractMainActivity {
 

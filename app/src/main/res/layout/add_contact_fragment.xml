@@ -51,7 +51,7 @@
                                 android:id="@+id/imageView_empty_state_friendship"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
-                                app:layout_constraintBottom_toTopOf="@id/textView_description_friendship"
+                                app:layout_constraintBottom_toTopOf="@id/textView_description_title_friendship"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHeight_percent="0.3"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +60,7 @@
                                 app:srcCompat="@drawable/image_empty_state_friendship" />
 
                             <TextView
-                                android:id="@+id/textView_description_friendship"
+                                android:id="@+id/textView_description_title_friendship"
                                 style="@style/TextViewSecondaryTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -73,6 +73,17 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/imageView_empty_state_friendship" />
+
+                            <TextView
+                                android:id="@+id/textView_description_friendship"
+                                style="@style/BodyTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/small_margin"
+                                android:text="No tiene solicitudes de amistad|!!"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/textView_description_title_friendship" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -104,7 +115,7 @@
                             android:id="@+id/imageView_empty_state_search"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
-                            app:layout_constraintBottom_toTopOf="@id/textView_description_state_search"
+                            app:layout_constraintBottom_toTopOf="@id/textView_description_title_state_search"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHeight_percent="0.3"
                             app:layout_constraintStart_toStartOf="parent"
@@ -113,16 +124,30 @@
                             app:srcCompat="@drawable/image_empty_state_search" />
 
                         <TextView
-                            android:id="@+id/textView_description_state_search"
+                            android:id="@+id/textView_description_title_state_search"
                             style="@style/TextViewSecondaryTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/normal_margin"
-                            android:text="Buscar Contacto!!"
+                            android:text="Busca a Tus Amigos!!"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/imageView_empty_state_search" />
+
+                        <TextView
+                            android:id="@+id/textView_description_state_search"
+                            style="@style/BodyTextView"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/small_margin"
+                            android:textAlignment="center"
+                            android:text="Busca un Apodo, agrégalo y comparte con esa persona de una forma privada y segura!!"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintWidth_percent="0.9"
+                            app:layout_constraintTop_toBottomOf="@+id/textView_description_title_state_search" />
+
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

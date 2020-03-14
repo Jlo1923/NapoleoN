@@ -1,5 +1,7 @@
 package com.naposystems.pepito.utility
 
+import java.util.*
+
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
@@ -10,8 +12,10 @@ object Constants {
     const val QUANTITY_ATTACHMENTS = 0
 
     object NapoleonApi {
-        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
-        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
+//        const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
+        const val BASE_URL = "http://dev.napoleon-chat.com/api/"
+//        const val SOCKET_BASE_URL = "http://192.168.1.222:6001"
+        const val SOCKET_BASE_URL = "http://dev.napoleon-chat.com:6001"
         const val GENERATE_CODE = "auth/sendverificationcode"
         const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
@@ -39,6 +43,15 @@ object Constants {
         const val DELETE_CONTACT = "friendship/{id}"
         const val DELETE_MESSAGES_FOR_ALL = "destroymessages"
         const val PUT_UNBLOCK_CONTACT = "friendship/unblockuser/{id}"
+        const val VALIDATE_PASSWORD_OLD_ACCOUNT = "inforecovery/validateoldpassword"
+        const val GET_QUESTIONS_OLD_USER  = "inforecovery/getanswersinforecoveryolduser/{nick}"
+        const val VALIDATE_ANSWERS_OLD_USER = "inforecovery/validateanswersolduser"
+        const val BLOCK_ATTACKER = "inforecovery/blockattacker"
+
+        const val GET_SUBSCRIPTION_USER = "payments/ultimatepayment"
+        const val TYPE_SUBSCRIPTIONS = "subscriptions"
+        const val SEND_SELECTED_SUBSCRIPTION = "paypal/createpayment"
+
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
@@ -186,7 +199,8 @@ object Constants {
     }
 
     enum class NotificationType(val type: Int) {
-        NEW_FRIENDSHIP_REQUEST(2)
+        NEW_FRIENDSHIP_REQUEST(2),
+        ACCOUNT_ATTACK(6)
     }
 
     enum class MessageStatus(val status: Int) {
@@ -200,6 +214,27 @@ object Constants {
         GALLERY(2),
         AUDIO_SELECTION(3)
     }
+
+    enum class ExistingAttack(val type: Int ) {
+        NOT_EXISTING(1),
+        EXISTING(2)
+    }
+
+    enum class UserType(val type: Int){
+        NEW_USER(1),
+        OLD_USER(2)
+    }
+
+    enum class TypeSubscription(val type: Int){
+        ONE_MONTH(1),
+        ONE_YEAR(2)
+    }
+
+    enum class FreeTrialUsers(val time: Int) {
+        FORTY_FIVE_DAYS(45),
+        THREE_MONTHS(3)
+    }
+
 
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
@@ -216,6 +251,13 @@ object Constants {
         const val PREF_SECRET_KEY = "secret_key"
         const val PREF_OUTPUT_CONTROL = "output_control"
         const val PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT = "message_self_destruct_time_not_sent"
+        const val PREF_EXISTING_ATTACK = "existing_attack"
+        const val PREF_ATTCKER_ID = "attacker_id"
+        const val PREF_ACCOUNT_RECOVERY_ATTEMPTS = "account_recovery_attempts"
+        const val PREF_FREE_TRIAL = "free_trial"
+        const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
+        const val PREF_SUBSCRIPTION_TIME = "subscription_time"
+
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"

@@ -5,4 +5,7 @@
     <string name="text_description_recovery">Tus contactos te están esperando, tráelos de vuelta. Recupera de manera rápida y segura tus contactos, preferencias y apodo anterior respondiendo correctamente las preguntas de seguridad</string>
     <string name="text_recovery_success">Tu cuenta ha sido recuperada, ahora podrás conversar de manera privada y segura con tus contactos.</string>
     <string name="text_title_success">Recuperación de Cuenta</string>
+    <string name="text_placeholder_password">Ingrese su Contraseña</string>
+    <string name="text_description_enter_password">Ingrese su Contraseña. Está a un paso de recuperar su cuenta. Digita el número de su contraseña de recuperación de cuenta.</string>
+    <string name="text_description_validate_old_answers">Preguntas de Seguridad. Está más cerca de recuperar su cuenta, ayúdanos a confirmar su identidad. Responde de manera correcta las siguientes preguntas de seguridad</string>
 </resources>

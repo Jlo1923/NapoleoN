@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_trial_period">Período de provas</string>
+    <string name="text_current_subscription">Assinatura atual</string>
+    <string name="text_get_subscription">Compre uma assinatura</string>
+    <string name="text_subscription_type">Tipo de assinatura</string>
+    <string name="text_select_subscription">Selecione um tipo de assinatura</string>
+    <string name="text_expired_subscription">Assinatura expirada</string>
+    <string name="text_free_trial_expired">Tempo de teste expirado</string>
+    <string name="text_subscription_expiration">Expiração da assinatura</string>
+</resources>

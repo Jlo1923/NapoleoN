@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_trial_period">Probezeit</string>
+    <string name="text_current_subscription">Aktuelles Abonnement</string>
+    <string name="text_get_subscription">Kaufen Sie ein Abonnement</string>
+    <string name="text_subscription_type">Abonnementtyp</string>
+    <string name="text_select_subscription">Wählen Sie einen Abonnementtyp</string>
+    <string name="text_expired_subscription">Abonnement abgelaufen</string>
+    <string name="text_free_trial_expired">Testzeit abgelaufen</string>
+    <string name="text_subscription_expiration">Ablauf des Abonnements</string>
+</resources>
