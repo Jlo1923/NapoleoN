@@ -1,15 +1,14 @@
 package com.naposystems.pepito.ui.attachmentPreview
 
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.MediaController
 import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,13 +18,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AttachmentPreviewFragmentBinding
-import com.naposystems.pepito.model.attachment.gallery.GalleryItem
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.FileInputStream
+import java.io.File
 
 class AttachmentPreviewFragment : Fragment() {
 
@@ -38,9 +35,10 @@ class AttachmentPreviewFragment : Fragment() {
 
     private lateinit var binding: AttachmentPreviewFragmentBinding
     private var isPlayingVideo: Boolean = false
+    private var hasSentAttachment: Boolean = false
     private val args: AttachmentPreviewFragmentArgs by navArgs()
-    private val galleryItem: GalleryItem by lazy {
-        args.galleryItem
+    private val attachment: Attachment by lazy {
+        args.attachment
     }
     private val animationFadeIn: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -73,33 +71,16 @@ class AttachmentPreviewFragment : Fragment() {
             inflater, R.layout.attachment_preview_fragment, container, false
         )
 
-        binding.galleryItem = args.galleryItem
-        binding.executePendingBindings()
+        binding.attachment = attachment
+        binding.galleryItemId = args.galleryItemId
 
-        if (galleryItem.contentUri != null) {
-            conversationShareViewModel.setMediaUri(args.galleryItem.contentUri!!.path!!)
-            conversationShareViewModel.setMediaThumbnailUri(args.galleryItem.thumbnailUri!!.path!!)
-
-            GlobalScope.launch {
-                val fileDescriptor = context!!.contentResolver
-                    .openAssetFileDescriptor(args.galleryItem.contentUri!!, "r")
-                val fileInputStream = FileInputStream(fileDescriptor!!.fileDescriptor)
-
-                conversationShareViewModel.setMediaBase64(
-                    Utils.convertFileInputStreamToBase64(
-                        fileInputStream
-                    )
-                )
-            }
-        }
-
-        when (galleryItem.mediaType) {
-            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
+        when (attachment.type) {
+            Constants.AttachmentType.IMAGE.type -> {
                 if (binding.viewSwitcher.currentView.id == binding.containerVideoView.id) {
                     binding.viewSwitcher.showNext()
                 }
             }
-            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
+            Constants.AttachmentType.VIDEO.type -> {
                 binding.containerSeekbar.visibility = View.VISIBLE
 
                 if (binding.viewSwitcher.currentView.id == binding.imageViewPreview.id) {
@@ -107,7 +88,14 @@ class AttachmentPreviewFragment : Fragment() {
                 }
 
                 binding.videoView.apply {
-                    setVideoURI(galleryItem.contentUri)
+
+                    val fileUri = Utils.getFileUri(
+                        context = context!!,
+                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                        fileName = attachment.uri
+                    )
+
+                    setVideoURI(fileUri)
                     requestFocus()
                     seekTo(1)
 
@@ -141,17 +129,19 @@ class AttachmentPreviewFragment : Fragment() {
         }
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
-            conversationShareViewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
-
-            val attachmentType: String = when (galleryItem.mediaType) {
-                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> Constants.AttachmentType.IMAGE.type
-                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> Constants.AttachmentType.VIDEO.type
-                else -> ""
+            with(conversationShareViewModel) {
+                setMessage(binding.inputPanel.getEditTex().text.toString())
+                setAttachmentSelected(args.attachment)
+                resetAttachmentSelected()
+                resetMessage()
+                hasSentAttachment = true
             }
-
-            conversationShareViewModel.setGalleryTypeSelected(attachmentType)
+            /*conversationShareViewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
+            conversationShareViewModel.setAttachmentSelected(args.attachment)
+            conversationShareViewModel.setAttachmentOrigin(attachment.origin)
+            conversationShareViewModel.setGalleryTypeSelected(attachment.type)
             conversationShareViewModel.resetGalleryTypeSelected()
-            conversationShareViewModel.resetMessage()
+            conversationShareViewModel.resetMessage()*/
             this.findNavController().popBackStack(R.id.conversationFragment, false)
         }
 
@@ -192,7 +182,20 @@ class AttachmentPreviewFragment : Fragment() {
             }
         })
 
+        binding.executePendingBindings()
+
         return binding.root
+    }
+
+    override fun onDestroy() {
+        if (!hasSentAttachment) {
+            val file = File(args.attachment.uri)
+
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+        super.onDestroy()
     }
 
     private fun showPlayButton() {

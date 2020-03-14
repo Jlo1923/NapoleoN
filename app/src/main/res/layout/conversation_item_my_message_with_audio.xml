@@ -21,6 +21,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
         android:paddingTop="@dimen/x_x_small_padding"
         android:paddingEnd="@dimen/small_padding"
         android:paddingBottom="@dimen/x_x_small_padding">
@@ -44,7 +45,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:controlColors="@color/colorTextMyMessage"
-                app:isEncryptedFile="true"
+                app:isEncryptedFile="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -72,7 +73,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/audio_player"
                 app:messageStatus="@{conversation.message.status}"
-                tools:srcCompat="@drawable/ic_message_sent" />
+                tools:srcCompat="@drawable/ic_access_time_black" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

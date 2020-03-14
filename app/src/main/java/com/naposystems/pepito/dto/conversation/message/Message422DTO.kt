@@ -5,7 +5,5 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 class Message422DTO(
-    @Json(name = "user_destination") val userDestination: List<String> = ArrayList(),
-    @Json(name = "type") val type: List<String> = ArrayList(),
-    @Json(name = "body") val body: List<String> = ArrayList()
+    @Json(name = "user_receiver") val userDestination: List<String> = ArrayList()
 )

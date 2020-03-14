@@ -28,8 +28,9 @@ data class Message(
     @ColumnInfo(name = "updated_at") val updatedAt: Int,
     @ColumnInfo(name = "created_at") val createdAt: Int,
     @ColumnInfo(name = "is_mine") val isMine: Int,
-    @ColumnInfo(name = "status") val status: Int,
-    @ColumnInfo(name = "is_selected") val isSelected:  Boolean = false
+    @ColumnInfo(name = "status") var status: Int,
+    @ColumnInfo(name = "is_selected") val isSelected:  Boolean = false,
+    @ColumnInfo(name = "number_attachments") val numberAttachments: Int
 ): Parcelable {
 
     override fun equals(other: Any?): Boolean {

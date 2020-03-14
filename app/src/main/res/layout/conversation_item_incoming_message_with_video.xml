@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="conversation"
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+
+        <variable
+            name="isFirst"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_incoming_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/small_padding"
+        android:paddingTop="@dimen/x_x_small_padding"
+        android:paddingBottom="@dimen/x_x_small_padding">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_incoming_message"
+            android:paddingStart="20dp"
+            android:paddingTop="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/small_padding"
+            android:paddingBottom="@dimen/x_small_padding"
+            app:isFirstIncomingMessage="@{isFirst}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="wrap"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintWidth_percent="0.7">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_attachment"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:imageAttachment="@{conversation}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/vertical_photo"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_play"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_play_attachment_preview"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="@+id/imageView_attachment"
+                app:layout_constraintStart_toStartOf="@+id/imageView_attachment"
+                app:layout_constraintTop_toTopOf="@+id/imageView_attachment"
+                app:srcCompat="@drawable/ic_play_arrow_black"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/textView_message"
+                style="@style/IncomingMessageTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{conversation.message.body}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintWidth_percent="1"
+                tools:text="@tools:sample/lorem" />
+
+            <TextView
+                style="@style/IncomingMessageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_message"
+                app:messageDate="@{conversation.message.createdAt}"
+                tools:text="10:34"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

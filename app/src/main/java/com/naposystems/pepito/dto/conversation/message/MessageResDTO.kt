@@ -1,5 +1,6 @@
 package com.naposystems.pepito.dto.conversation.message
 
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.utility.Constants
 import com.squareup.moshi.Json
@@ -14,51 +15,27 @@ data class MessageResDTO(
     @Json(name = "user_sender") val userAddressee: Int,
     @Json(name = "updated_at") val updatedAt: Int,
     @Json(name = "created_at") val createdAt: Int,
-    @Json(name = "attachments") var attachments: List<AttachmentResDTO> = ArrayList()
+    @Json(name = "attachments") var attachments: List<AttachmentResDTO> = ArrayList(),
+    @Json(name = "number_attachments") val numberAttachments: Int
 ) {
     companion object {
-
-        fun toMessageListEntity(
-            listMessageResDTO: List<MessageResDTO>,
-            isMine: Int
-        ): List<Message> {
-            val mutableList: MutableList<Message> = ArrayList()
-
-            for (messageRes in listMessageResDTO) {
-                mutableList.add(
-                    Message(
-                        0,
-                        messageRes.id,
-                        messageRes.body,
-                        messageRes.quoted,
-                        messageRes.userAddressee,
-                        messageRes.updatedAt,
-                        messageRes.createdAt,
-                        isMine,
-                        Constants.MessageStatus.UNREAD.status
-                    )
-                )
-            }
-
-            return mutableList
-        }
-
         fun toMessageEntity(
-            messageId: Int,
+            message: Message?,
             messageResDTO: MessageResDTO,
             isMine: Int
         ): Message {
 
             return Message(
-                messageId,
-                messageResDTO.id,
-                messageResDTO.body,
-                messageResDTO.quoted,
-                if (isMine == Constants.IsMine.NO.value) messageResDTO.userAddressee else messageResDTO.userDestination,
-                messageResDTO.updatedAt,
-                messageResDTO.createdAt,
-                isMine,
-                if (isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status else Constants.MessageStatus.SENT.status
+                id = message?.id ?: 0,
+                webId = messageResDTO.id,
+                body = messageResDTO.body,
+                quoted = messageResDTO.quoted,
+                contactId = if (isMine == Constants.IsMine.NO.value) messageResDTO.userAddressee else messageResDTO.userDestination,
+                updatedAt = messageResDTO.updatedAt,
+                createdAt = message?.createdAt ?: messageResDTO.createdAt,
+                isMine = isMine,
+                status = if (isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status else Constants.MessageStatus.SENT.status,
+                numberAttachments = messageResDTO.numberAttachments
             )
         }
     }

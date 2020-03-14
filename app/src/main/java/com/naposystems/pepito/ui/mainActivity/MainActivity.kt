@@ -134,7 +134,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.enterPinFragment,
                 R.id.unlockAppTimeFragment,
                 R.id.conversationCameraFragment,
-                R.id.conversationCameraNewFragment,
                 R.id.attachmentPreviewFragment,
                 R.id.previewMediaFragment -> {
                     hideToolbar()

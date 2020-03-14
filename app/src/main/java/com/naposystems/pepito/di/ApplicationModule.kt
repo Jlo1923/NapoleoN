@@ -34,6 +34,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
@@ -67,10 +68,12 @@ class ApplicationModule {
         sharedPreferencesManager: SharedPreferencesManager
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
 
         httpClient.addNetworkInterceptor(StethoInterceptor())
 
-        httpClient.addInterceptor(NetworkConnectionInterceptor(context))
+//        httpClient.addInterceptor(NetworkConnectionInterceptor(context))
         httpClient.addInterceptor { chain ->
 
             val firebaseInstanceId = sharedPreferencesManager.getString(

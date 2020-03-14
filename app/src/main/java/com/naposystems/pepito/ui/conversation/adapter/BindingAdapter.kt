@@ -1,40 +1,24 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
-import android.content.ContentUris
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.media.ThumbnailUtils
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.Target
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.GlideManager
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 @BindingAdapter("messageDate")
 fun bindMessageDate(textView: TextView, timestamp: Int) {
@@ -153,19 +137,55 @@ fun bindImageAttachment(imageView: ImageView, messageAndAttachment: MessageAndAt
         imageView.visibility = View.VISIBLE
         val firstAttachment = messageAndAttachment.attachmentList[0]
 
-        Glide.with(imageView)
-            .load(firstAttachment)
-            .into(imageView)
+        if (firstAttachment.type == Constants.AttachmentType.IMAGE.type) {
+            Glide.with(imageView)
+                .load(firstAttachment)
+                .into(imageView)
+        } else if (firstAttachment.type == Constants.AttachmentType.VIDEO.type) {
+            val uri = Utils.getFileUri(
+                imageView.context,
+                firstAttachment.uri,
+                Constants.NapoleonCacheDirectories.VIDEOS.folder
+            )
+            Glide.with(imageView)
+                .load(uri)
+                .thumbnail(0.1f)
+                .into(imageView)
+        }
     }
 }
 
-@BindingAdapter("mediaThumbnail")
-fun bindMediaThumbnail(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+@BindingAdapter("attachmentDocumentName")
+fun bindAttachmentDocumentName(textView: TextView, messageAndAttachment: MessageAndAttachment) {
+
+    if (messageAndAttachment.attachmentList.isNotEmpty()) {
+        val context = textView.context
+        val firstAttachment = messageAndAttachment.attachmentList[0]
+
+        textView.text =
+            context.getString(R.string.text_attachment_document_name, firstAttachment.extension)
+    }
+}
+
+@BindingAdapter("attachmentDocumentIcon")
+fun bindAttachmentDocumentIcon(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+
     if (messageAndAttachment.attachmentList.isNotEmpty()) {
         val firstAttachment = messageAndAttachment.attachmentList[0]
 
-        if (firstAttachment.thumbnailUri.isNotEmpty()) {
-            GlideManager.loadFile(imageView, File(firstAttachment.thumbnailUri))
+        val drawableId = when (firstAttachment.extension) {
+            "doc" -> R.drawable.ic_attachment_doc
+            "docx" -> R.drawable.ic_attachment_docx
+            "xls" -> R.drawable.ic_attachment_xls
+            "xlsx" -> R.drawable.ic_attachment_xlsx
+            "ppt" -> R.drawable.ic_attachment_ppt
+            "pptx" -> R.drawable.ic_attachment_pptx
+            "pdf" -> R.drawable.ic_attachment_pdf
+            else -> R.drawable.ic_attachment_document
         }
+
+        Glide.with(imageView)
+            .load(drawableId)
+            .into(imageView)
     }
 }

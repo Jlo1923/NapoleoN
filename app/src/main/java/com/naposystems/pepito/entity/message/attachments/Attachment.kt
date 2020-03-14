@@ -5,10 +5,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.naposystems.pepito.dto.conversation.message.AttachmentReqDTO
 import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.utility.Constants.AttachmentStatus
 import kotlinx.android.parcel.Parcelize
 
+/**
+ * El [status] hace referencia al enumerable [AttachmentStatus]
+ */
 @Parcelize
 @Entity(
     tableName = "attachment", foreignKeys = [
@@ -22,34 +25,14 @@ import kotlinx.android.parcel.Parcelize
 )
 data class Attachment(
     @PrimaryKey(autoGenerate = true) var id: Int,
-    @ColumnInfo(name = "message_id") val messageId: Int,
-    @ColumnInfo(name = "web_id") val webId: String,
-    @ColumnInfo(name = "message_web_id") val messageWebId: String,
+    @ColumnInfo(name = "message_id") var messageId: Int,
+    @ColumnInfo(name = "web_id") var webId: String,
+    @ColumnInfo(name = "message_web_id") var messageWebId: String,
     @ColumnInfo(name = "type") val type: String,
     @ColumnInfo(name = "body") var body: String,
     @ColumnInfo(name = "uri") var uri: String,
     @ColumnInfo(name = "origin") var origin: Int,
-    @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = ""
-) : Parcelable {
-    companion object {
-        fun toListAttachmentDTO(listAttachment: List<Attachment>): List<AttachmentReqDTO> {
-            val mutableAttachmentDTO: MutableList<AttachmentReqDTO> = ArrayList()
-
-            for (attachment in listAttachment) {
-                mutableAttachmentDTO.add(
-                    AttachmentReqDTO(
-                        attachment.type,
-                        attachment.body
-                    )
-                )
-            }
-
-            return mutableAttachmentDTO
-        }
-
-        fun toAttachmentDTO(attachment: Attachment) = AttachmentReqDTO(
-            type = attachment.type,
-            body = attachment.body
-        )
-    }
-}
+    @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = "",
+    @ColumnInfo(name = "status") var status: Int,
+    @ColumnInfo(name = "extension") var extension: String = ""
+) : Parcelable

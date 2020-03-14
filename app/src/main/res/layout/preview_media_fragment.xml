@@ -14,6 +14,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
         tools:context=".ui.previewMedia.PreviewMediaFragment">
 
         <ViewSwitcher
@@ -31,7 +33,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/black">
 
-                <VideoView
+                <com.google.android.exoplayer2.ui.PlayerView
                     android:id="@+id/videoView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -59,7 +61,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                app:imageAttachment="@{message}"
                 tools:src="@drawable/vertical_photo" />
         </ViewSwitcher>
 

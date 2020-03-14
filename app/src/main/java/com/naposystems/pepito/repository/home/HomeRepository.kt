@@ -7,7 +7,7 @@ import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.contacts.ContactResDTO
-import com.naposystems.pepito.dto.conversation.message.AttachmentResDTO
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
@@ -93,7 +93,7 @@ class HomeRepository @Inject constructor(
                 for (messageRes in messageResList) {
 
                     val message = MessageResDTO.toMessageEntity(
-                        0, messageRes, Constants.IsMine.NO.value
+                        null, messageRes, Constants.IsMine.NO.value
                     )
 
                     val conversationId = messageLocalDataSource.insertMessage(message)

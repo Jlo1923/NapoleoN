@@ -53,5 +53,6 @@
     </plurals>
     <string name="text_delete_conversation">Delete conversation</string>
     <string name="text_block_contact">Block contact</string>
+    <string name="text_attachment_document_name">Document.%1$s</string>
 
 </resources>

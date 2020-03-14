@@ -22,6 +22,7 @@ object Constants {
         const val FRIEND_SHIP_SEARCH = "friendship/search/{state}"
         const val FRIEND_SHIP_SEARCH_BY_DATE = "friendship/search/{state}"
         const val SEND_MESSAGE = "messages"
+        const val SEND_MESSAGE_ATTACHMENT = "messages/attachment"
         const val SEND_MESSAGE_TEST = "storemessagetest"
         const val GET_MY_MESSAGES = "messages/getmymessages"
         const val VERIFY_MESSAGES_RECEIVED = "messages/verifymessagesreceived"
@@ -169,9 +170,7 @@ object Constants {
         IMAGE("image"),
         AUDIO("audio"),
         VIDEO("video"),
-        WORD("word"),
-        EXCEL("excel"),
-        PDF("pdf")
+        DOCUMENT("document"),
     }
 
     enum class FriendShipRequestType(val type: Int) {
@@ -191,9 +190,17 @@ object Constants {
     }
 
     enum class MessageStatus(val status: Int) {
-        SENT(1),
-        UNREAD(2),
-        READED(3)
+        SENDING(1),
+        SENT(2),
+        UNREAD(3),
+        READED(4),
+        ERROR(5)
+    }
+
+    enum class AttachmentStatus(val status: Int) {
+        SENDING(1),
+        SENT(2),
+        ERROR(3)
     }
 
     enum class AttachmentOrigin(val origin: Int) {
@@ -201,6 +208,13 @@ object Constants {
         GALLERY(2),
         AUDIO_SELECTION(3),
         DOWNLOADED(4)
+    }
+
+    enum class NapoleonCacheDirectories(val folder: String){
+        IMAGES("Images"),
+        VIDEOS("Videos"),
+        AUDIOS("Audios"),
+        DOCUMENTOS("Documentos")
     }
 
     object SharedPreferences {

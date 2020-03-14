@@ -4,10 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="attachment"
+            type="com.naposystems.pepito.entity.message.attachments.Attachment" />
 
         <variable
-            name="galleryItem"
-            type="com.naposystems.pepito.model.attachment.gallery.GalleryItem" />
+            name="galleryItemId"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,8 +58,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItem.id)}"
-                app:galleryImage="@{galleryItem}"
+                android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
+                app:attachmentImage="@{attachment}"
                 tools:src="@drawable/vertical_photo" />
         </ViewSwitcher>
 

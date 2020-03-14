@@ -10,12 +10,11 @@ import com.naposystems.pepito.dto.contacts.ContactsResDTO
 import com.naposystems.pepito.dto.contacts.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.dto.contacts.deleteContact.DeleteContactResDTO
 import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentReqDTO
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
-import com.naposystems.pepito.dto.conversation.message.MessageReqTestDTO
-import com.naposystems.pepito.dto.conversation.message.MessageResDTO
-import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
+import com.naposystems.pepito.dto.conversation.message.*
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
@@ -51,6 +50,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.SEARCH_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQUEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_TEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_QUESTIONS
@@ -112,6 +112,14 @@ interface NapoleonApi {
 
     @POST(SEND_MESSAGE)
     suspend fun sendMessage(@Body messageReqDTO: MessageReqDTO): Response<MessageResDTO>
+
+    @Multipart
+    @POST(SEND_MESSAGE_ATTACHMENT)
+    suspend fun sendMessageAttachment(
+        @Part("message_id") messageId: RequestBody,
+        @Part("type") attachmentType: RequestBody,
+        @Part file: MultipartBody.Part
+    ): Response<AttachmentResDTO>
 
     @Multipart
     @POST(SEND_MESSAGE_TEST)

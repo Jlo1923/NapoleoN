@@ -1,18 +1,22 @@
 package com.naposystems.pepito.utility.glideModelLoaders.attachment
 
+import android.R.attr.path
 import android.content.ContentUris
 import android.content.Context
+import android.graphics.Bitmap
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Size
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
+import java.io.*
+
 
 class AttachmentDataFetcher constructor(
     private val context: Context,
@@ -34,29 +38,23 @@ class AttachmentDataFetcher constructor(
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
         try {
-            when (attachment.origin) {
-                Constants.AttachmentOrigin.DOWNLOADED.origin -> {
-                    val encryptedFile = Utils.getEncryptedFile(context, File(attachment.uri))
+            val subFolder =
+                FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
 
-                    callback.onDataReady(encryptedFile.openFileInput())
-                }
-                Constants.AttachmentOrigin.CAMERA.origin -> {
-                    val file = File(attachment.uri)
-                    callback.onDataReady(file.inputStream())
-                }
-                Constants.AttachmentOrigin.GALLERY.origin -> {
-                    val contentUri = ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        ContentUris.parseId(Uri.parse(attachment.uri))
-                    )
+            val fileUri = Utils.getFileUri(
+                context = context,
+                fileName = attachment.uri,
+                subFolder = subFolder
+            )
+            if (attachment.type == Constants.AttachmentType.IMAGE.type) {
 
-                    val parcelFileDescriptor =
-                        context.contentResolver.openFileDescriptor(contentUri, "r")
+                val inputStream = context.contentResolver.openInputStream(fileUri)
 
-                    val fileInputStream = FileInputStream(parcelFileDescriptor!!.fileDescriptor)
+                callback.onDataReady(inputStream)
+            }
 
-                    callback.onDataReady(fileInputStream)
-                }
+            if (attachment.type == Constants.AttachmentType.VIDEO.type) {
+                callback.onDataReady(FileManager.getThumbnailFromVideo(fileUri.toString()))
             }
         } catch (e: Exception) {
             callback.onLoadFailed(e)

@@ -1,39 +1,35 @@
 package com.naposystems.pepito.ui.conversationCamera
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Size
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.camera.core.*
+import androidx.camera.core.impl.VideoCaptureConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationCameraFragmentBinding
+import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
-import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
-import com.naposystems.pepito.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import javax.inject.Inject
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
@@ -42,58 +38,48 @@ import kotlin.math.min
 /** Helper type alias used for analysis use case callbacks */
 typealias LumaListener = (luma: Double) -> Unit
 
+@SuppressLint("RestrictedApi")
 class ConversationCameraFragment : Fragment() {
 
-    private val subFolder by lazy {
-        "conversations/${args.userId}_${args.contactId}"
-    }
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private lateinit var viewModel: ConversationShareViewModel
     private lateinit var binding: ConversationCameraFragmentBinding
     private lateinit var analysisExecutor: Executor
     private lateinit var mainExecutor: Executor
+
+    /** Blocking camera operations are performed using this executor */
+    private lateinit var cameraExecutor: ExecutorService
     private lateinit var photoFile: File
     private lateinit var path: File
+    private lateinit var videoFile: File
     private lateinit var fileName: String
+    private var recordingTime: Long = 0
+    private var mStartToRecordRunnable: Runnable = Runnable { startRecording() }
+    private lateinit var mRecordingTimeRunnable: Runnable
 
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
+    private var videoCapture: VideoCapture? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var torchEnable = false
+    private var isRecording: Boolean = false
+    private val mHandler: Handler by lazy {
+        Handler()
+    }
     private val args: ConversationCameraFragmentArgs by navArgs()
 
     companion object {
 
         private const val PHOTO_EXTENSION = ".jpg"
+        private const val VIDEO_EXTENSION = ".mp4"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
-    }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainExecutor = ContextCompat.getMainExecutor(requireContext())
         analysisExecutor = Executors.newSingleThreadExecutor()
-
-        viewModel = ViewModelProviders.of(activity!!, viewModelFactory)
-            .get(ConversationShareViewModel::class.java)
-
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if (binding.viewSwitcher.currentView.id == binding.containerPreview.id) {
-                backToCamera()
-            } else {
-                findNavController().navigateUp()
-            }
-        }
     }
 
     override fun onCreateView(
@@ -107,12 +93,18 @@ class ConversationCameraFragment : Fragment() {
             false
         )
 
+        return binding.root
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Initialize our background executor
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
         binding.viewFinder.post {
             startCamera()
-        }
-
-        binding.imageButtonBack.setOnClickListener {
-            backToCamera()
         }
 
         binding.imageButtonSwitchCamera.setOnClickListener {
@@ -136,67 +128,29 @@ class ConversationCameraFragment : Fragment() {
             )
         }
 
-        binding.imageButtonCamera.setOnClickListener {
-            // Create output file to hold the image
-            photoFile = createFile()
-            val test = ImageCapture.OutputFileOptions.Builder(photoFile)
-                .setMetadata(ImageCapture.Metadata().apply {
-                    isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
-                }).build()
-
-            imageCapture!!.takePicture(
-                test,
-                mainExecutor,
-                object : ImageCapture.OnImageSavedCallback {
-                    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                        val uri = FileProvider.getUriForFile(
-                            context!!,
-                            "com.naposystems.pepito.provider",
-                            photoFile
-                        )
-
-                        Glide.with(binding.imageViewPreview)
-                            .load(uri)
-                            .into(binding.imageViewPreview)
-
-                        if (binding.viewSwitcher.currentView.id == binding.containerCamera.id) {
-                            binding.viewSwitcher.showNext()
-                        }
-
-                        viewModel.setMediaUri(photoFile.absolutePath)
-
-                        GlobalScope.launch {
-                            viewModel.setMediaBase64(Utils.convertImageFileToBase64(photoFile))
-                        }
-
-                        Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
-                    }
-
-                    override fun onError(exception: ImageCaptureException) {
-                        Timber.e("Photo capture failed: $exception")
-                    }
-                })
+        binding.imageButtonCamera.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                mHandler.postDelayed(mStartToRecordRunnable, 500)
+            } else if (event.action == MotionEvent.ACTION_UP) {
+                mHandler.removeCallbacks(mStartToRecordRunnable)
+                if (!isRecording) {
+                    takePhoto()
+                }
+                stopRecording()
+            }
+            true
         }
-
-        binding.inputPanel.getFloatingActionButton().setOnClickListener {
-            viewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
-            viewModel.setCameraSendClicked()
-            viewModel.resetCameraSendClicked()
-            viewModel.resetMessage()
-            this.findNavController().navigateUp()
-        }
-
-        return binding.root
     }
 
-    private fun backToCamera() {
-        if (binding.viewSwitcher.currentView.id == binding.containerPreview.id) {
-            if (photoFile.exists()) {
-                photoFile.delete()
-            }
-            viewModel.setMediaBase64("")
-            binding.viewSwitcher.showNext()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        cameraExecutor.shutdown()
+        videoCapture?.stopRecording()
+        videoCapture?.clear()
+        if (::mRecordingTimeRunnable.isInitialized) {
+            mHandler.removeCallbacks(mRecordingTimeRunnable)
         }
+        mHandler.removeCallbacks(mStartToRecordRunnable)
     }
 
     private fun startCamera() {
@@ -235,6 +189,11 @@ class ConversationCameraFragment : Fragment() {
                 .setTargetRotation(rotation)
                 .build()
 
+            // VideoCapture
+            videoCapture = VideoCaptureConfig.Builder()
+                .setTargetRotation(rotation)
+                .build()
+
             // ImageAnalysis
             imageAnalyzer = ImageAnalysis.Builder()
                 // We request aspect ratio but no resolution
@@ -259,13 +218,138 @@ class ConversationCameraFragment : Fragment() {
                 // A variable number of use-cases can be passed here -
                 // camera provides access to CameraControl & CameraInfo
                 camera = cameraProvider.bindToLifecycle(
-                    this as LifecycleOwner, cameraSelector, preview, imageCapture, imageAnalyzer
+                    this,
+                    cameraSelector,
+                    preview,
+                    imageCapture,
+                    videoCapture
                 )
             } catch (exc: Exception) {
-                Timber.e("Use case binding failed")
+                Timber.e("Use case binding failed, exc: $exc")
             }
 
-        }, mainExecutor)
+        }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun takePhoto() {
+        photoFile = createFile(PHOTO_EXTENSION)
+        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+            .setMetadata(ImageCapture.Metadata().apply {
+                isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+            }).build()
+
+        imageCapture!!.takePicture(
+            outputFileOptions,
+            mainExecutor,
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+
+                    val attachment = Attachment(
+                        id = 0,
+                        messageId = 0,
+                        webId = "",
+                        messageWebId = "",
+                        type = Constants.AttachmentType.IMAGE.type,
+                        body = "",
+                        uri = photoFile.name,
+                        origin = Constants.AttachmentOrigin.CAMERA.origin,
+                        thumbnailUri = "",
+                        status = Constants.AttachmentStatus.SENDING.status
+                    )
+
+                    findNavController().navigate(
+                        ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
+                            attachment,
+                            0
+                        )
+                    )
+
+                    Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    Timber.e("Photo capture failed: $exception")
+                }
+            })
+    }
+
+    private fun startRecording() {
+        isRecording = true
+        binding.imageButtonCamera.setBackgroundResource(R.drawable.bg_button_recoding)
+        binding.imageButtonCamera.setImageResource(android.R.color.transparent)
+        videoFile = createFile(VIDEO_EXTENSION)
+        videoCapture?.startRecording(
+            videoFile,
+            mainExecutor,
+            object : VideoCapture.OnVideoSavedCallback {
+                override fun onVideoSaved(file: File) {
+
+                    val attachment = Attachment(
+                        id = 0,
+                        messageId = 0,
+                        webId = "",
+                        messageWebId = "",
+                        type = Constants.AttachmentType.VIDEO.type,
+                        body = "",
+                        uri = videoFile.name,
+                        origin = Constants.AttachmentOrigin.CAMERA.origin,
+                        thumbnailUri = "",
+                        status = Constants.AttachmentStatus.SENDING.status
+                    )
+
+                    videoCapture?.clear()
+                    isRecording = false
+                    mHandler.removeCallbacks(mRecordingTimeRunnable)
+                    hideRecordingTime()
+
+                    findNavController().navigate(
+                        ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
+                            attachment,
+                            0
+                        )
+                    )
+                }
+
+                override fun onError(
+                    videoCaptureError: Int,
+                    message: String,
+                    cause: Throwable?
+                ) {
+                    mHandler.removeCallbacks(mRecordingTimeRunnable)
+                    hideRecordingTime()
+                    Timber.e("Video Error: $message")
+                }
+            })
+
+        mRecordingTimeRunnable = Runnable {
+            binding.lottieRecording.visibility = View.VISIBLE
+            binding.textViewRecordingTime.apply {
+                visibility = View.VISIBLE
+                text = Utils.getDuration(recordingTime, showHours = false)
+            }
+
+            val oneSecond = TimeUnit.SECONDS.toMillis(1)
+            recordingTime += oneSecond
+            mHandler.postDelayed(mRecordingTimeRunnable, oneSecond)
+        }
+        mHandler.postDelayed(mRecordingTimeRunnable, 0)
+    }
+
+    private fun hideRecordingTime() {
+        binding.lottieRecording.visibility = View.GONE
+        binding.textViewRecordingTime.visibility = View.GONE
+    }
+
+    private fun stopRecording() {
+        binding.imageButtonCamera.setBackgroundColor(
+            resources.getColor(
+                android.R.color.transparent,
+                context!!.theme
+            )
+        )
+        videoCapture?.stopRecording()
+        isRecording = false
+        Timber.i("Video File stopped")
     }
 
     private fun aspectRatio(width: Int, height: Int): Int {
@@ -276,11 +360,17 @@ class ConversationCameraFragment : Fragment() {
         return AspectRatio.RATIO_16_9
     }
 
-    private fun createFile(): File {
+    private fun createFile(extension: String): File {
         val timeStamp: String = System.currentTimeMillis().toString()
 
-        fileName = "${timeStamp}$PHOTO_EXTENSION"
-        path = File(context!!.externalCacheDir!!, subFolder)
+        val subFolder = when (extension) {
+            PHOTO_EXTENSION -> Constants.NapoleonCacheDirectories.IMAGES.folder
+            VIDEO_EXTENSION -> Constants.NapoleonCacheDirectories.VIDEOS.folder
+            else -> ""
+        }
+
+        fileName = "${timeStamp}$extension"
+        path = File(context!!.cacheDir!!, subFolder)
         if (!path.exists())
             path.mkdirs()
 

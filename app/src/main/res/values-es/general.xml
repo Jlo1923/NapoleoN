@@ -39,5 +39,6 @@
     </plurals>
     <string name="text_delete_conversation">Eliminar conversación</string>
     <string name="text_block_contact">Bloquear contacto</string>
+    <string name="text_attachment_document_name">Documento.%1$s</string>
 
 </resources>

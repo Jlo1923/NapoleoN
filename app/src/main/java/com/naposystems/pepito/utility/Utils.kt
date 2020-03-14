@@ -118,8 +118,8 @@ class Utils {
             context.startActivity(intent)
         }
 
-        fun getCacheImagePath(context: Context, fileName: String, subFolder: String): Uri {
-            val path = File(context.externalCacheDir!!, subFolder)
+        fun getFileUri(context: Context, fileName: String, subFolder: String): Uri {
+            val path = File(context.cacheDir!!, subFolder)
             if (!path.exists())
                 path.mkdirs()
             val image = File(path, fileName)
@@ -304,13 +304,35 @@ class Utils {
             }
         }
 
+        suspend fun copyFile(
+            context: Context,
+            fileInputStream: FileInputStream,
+            subFolder: String,
+            fileName: String
+        ): File {
+            val path = File(context.cacheDir!!, subFolder)
+            if (!path.exists())
+                path.mkdirs()
+            val file = File(path, fileName)
+
+            file.outputStream().use { fileOut ->
+                fileInputStream.copyTo(fileOut)
+                fileOut.flush()
+                fileOut.close()
+            }
+
+            fileInputStream.close()
+
+            return file
+        }
+
         fun copyEncryptedFile(
             context: Context,
             fileInputStream: FileInputStream,
             subFolder: String,
             fileName: String
         ): File {
-            val path = File(context.externalCacheDir!!, subFolder)
+            val path = File(context.cacheDir!!, subFolder)
             if (!path.exists())
                 path.mkdirs()
             val audioFile = File(path, fileName)
@@ -336,6 +358,25 @@ class Utils {
             return audioFile
         }
 
+        fun createTempFileFromEncryptedFile(
+            context: Context,
+            file: File,
+            extension: String
+        ): File {
+            val tempFile = File.createTempFile("NNS", extension)
+            val encryptedFile = getEncryptedFile(context, file)
+
+            tempFile.outputStream().use { fileOut ->
+                encryptedFile.openFileInput().copyTo(fileOut)
+                fileOut.flush()
+                fileOut.close()
+            }
+
+            tempFile.inputStream().close()
+
+            return tempFile
+        }
+
         fun getEncryptedFile(context: Context, file: File): EncryptedFile {
             val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
             val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
@@ -358,6 +399,17 @@ class Utils {
                 Timber.e(e)
                 null
             }
+        }
+
+        fun convertFileInputStreamToByteArray(fileInputStream: FileInputStream): ByteArray{
+            val outputStream = ByteArrayOutputStream()
+            fileInputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            return outputStream.toByteArray()
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.naposystems.pepito.repository.conversation
 
+import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
+import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
@@ -10,6 +12,7 @@ import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessage422DTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
@@ -24,9 +27,7 @@ import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
-import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.SharedPreferencesManager
-import com.naposystems.pepito.utility.WebServiceUtils
+import com.naposystems.pepito.utility.*
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
@@ -37,7 +38,9 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import javax.inject.Inject
 
 
@@ -128,16 +131,30 @@ class ConversationRepository @Inject constructor(
         return napoleonApi.sendMessage(messageReqDTO)
     }
 
+    override suspend fun sendMessageAttachment(attachment: Attachment): Response<AttachmentResDTO> {
+
+        val requestBodyMessageId = createPartFromString(attachment.messageWebId)
+        val requestBodyType = createPartFromString(attachment.type)
+        val requestBodyFilePart = createPartFromFile(attachment)
+
+        return napoleonApi.sendMessageAttachment(
+            messageId = requestBodyMessageId,
+            attachmentType = requestBodyType,
+            file = requestBodyFilePart
+        )
+    }
+
     override suspend fun sendMessageTest(
         userDestination: Int,
         quoted: String,
         body: String,
         attachmentType: String,
-        uriString: String
-    ): Response<MessageResDTO> {
-        val listParts: MutableList<MultipartBody.Part> = ArrayList()
+        uriString: String,
+        origin: Int
+    ): Response<MessageResDTO>? {
+        /*val listParts: MutableList<MultipartBody.Part> = ArrayList()
 
-        listParts.add(createPartFromFile(uriString))
+        listParts.add(createPartFromFile(uriString, origin, attachmentType))
 
         val requestBodyUserDestination = createPartFromString(userDestination.toString())
         val requestBodyQuoted = createPartFromString(quoted)
@@ -150,28 +167,73 @@ class ConversationRepository @Inject constructor(
             body = requestBodyBody,
             attachmentType = requestBodyAttachmentType,
             files = listParts
-        )
+        )*/
+        return null
     }
 
     private fun createPartFromString(string: String): RequestBody {
         return RequestBody.create(MultipartBody.FORM, string)
     }
 
-    private fun createPartFromFile(uriString: String): MultipartBody.Part {
-        val file = File(uriString)
+    private fun createPartFromFile(attachment: Attachment): MultipartBody.Part {
 
-        var type: String? = null
-        val extension = MimeTypeMap.getFileExtensionFromUrl(uriString)
-        if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-        }
+        val subfolder = FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
 
-        val requestFile: RequestBody = RequestBody.create(
-            MediaType.parse(type!!),
-            file
+        val fileUri = Utils.getFileUri(
+            context = context, fileName = attachment.uri, subFolder = subfolder
         )
 
-        return MultipartBody.Part.createFormData("attachments[]", file.name, requestFile)
+        val file = File(fileUri.path!!)
+
+        val stream = context.contentResolver.openInputStream(fileUri)
+        val byteArrayStream = ByteArrayOutputStream()
+        val buffer = ByteArray(1024)
+
+        var i: Int
+
+        while (stream!!.read(buffer, 0, buffer.size).also { i = it } > 0) {
+            byteArrayStream.write(buffer, 0, i)
+        }
+
+//        val byteArray = Utils.convertFileInputStreamToByteArray(file.inputStream())
+        val byteArray = byteArrayStream.toByteArray()
+
+        val extension = MimeTypeMap.getFileExtensionFromUrl(file.toString())
+
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+
+        val requestFile: RequestBody = RequestBody.create(
+            MediaType.parse(mimeType!!),
+            byteArray
+        )
+
+        return MultipartBody.Part.createFormData(
+            "body",
+            "${System.currentTimeMillis()}.$extension",
+            requestFile
+        )
+    }
+
+    private fun getFileFromMediaStore(uri: String): ByteArray {
+
+        val contentUri = ContentUris.withAppendedId(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            ContentUris.parseId(Uri.parse(uri))
+        )
+
+        val parcelFileDescriptor =
+            context.contentResolver.openFileDescriptor(contentUri, "r")
+
+        val fileInputStream = FileInputStream(parcelFileDescriptor!!.fileDescriptor)
+
+        return Utils.convertFileInputStreamToByteArray(fileInputStream)
+    }
+
+    private fun getFileFromContentProvider(uriString: String): ByteArray {
+        val file = File(uriString)
+        val fileInputStream = file.inputStream()
+
+        return Utils.convertFileInputStreamToByteArray(fileInputStream)
     }
 
     override fun getLocalContact(idContact: Int): LiveData<Contact> {
@@ -236,18 +298,8 @@ class ConversationRepository @Inject constructor(
         return attachmentLocalDataSource.insertAttachments(listAttachment)
     }
 
-    override fun updateAttachments(
-        listAttachmentsIds: List<Long>,
-        attachments: List<AttachmentResDTO>
-    ) {
-        for ((index, attachmentResDTO) in attachments.withIndex()) {
-            attachmentLocalDataSource.updateAttachments(
-                listAttachmentsIds[index],
-                attachmentResDTO.id,
-                attachmentResDTO.messageId,
-                attachmentResDTO.body
-            )
-        }
+    override fun updateAttachment(attachment: Attachment) {
+        attachmentLocalDataSource.updateAttachment(attachment)
     }
 
     override suspend fun updateStateSelectionMessage(

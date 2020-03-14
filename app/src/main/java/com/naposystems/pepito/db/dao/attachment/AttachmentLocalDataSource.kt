@@ -15,12 +15,7 @@ class AttachmentLocalDataSource @Inject constructor(
         return attachmentDao.insertAttachments(listAttachment)
     }
 
-    override fun updateAttachments(
-        attachmentId: Long,
-        webId: String,
-        messageWebId: String,
-        body: String
-    ) {
-        attachmentDao.updateAttachments(attachmentId, webId, messageWebId, body)
+    override fun updateAttachment(attachment: Attachment) {
+        attachmentDao.updateAttachment(attachment)
     }
 }

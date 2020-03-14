@@ -1,30 +1,36 @@
 package com.naposystems.pepito.ui.attachmentGallery
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AttachmentGalleryFragmentBinding
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 import com.naposystems.pepito.ui.attachmentGallery.adapter.AttachmentGalleryAdapter
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileInputStream
 import javax.inject.Inject
 
-class AttachmentGalleryFragment : Fragment() {
+class AttachmentGalleryFragment : Fragment(), AttachmentGalleryAdapter.ClickListener {
 
     companion object {
         fun newInstance() = AttachmentGalleryFragment()
@@ -39,6 +45,7 @@ class AttachmentGalleryFragment : Fragment() {
 
     private lateinit var binding: AttachmentGalleryFragmentBinding
     private lateinit var adapter: AttachmentGalleryAdapter
+    private lateinit var attachmentSelected: File
     private val args: AttachmentGalleryFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
@@ -77,23 +84,60 @@ class AttachmentGalleryFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = AttachmentGalleryAdapter(object : AttachmentGalleryAdapter.ClickListener {
-            override fun onClick(galleryItem: GalleryItem, imageView: ImageView) {
-                val extras = FragmentNavigatorExtras(
-                    imageView to imageView.transitionName
-                )
-
-                this@AttachmentGalleryFragment.findNavController().navigate(
-                    AttachmentGalleryFragmentDirections.actionAttachmentGalleryFragmentToAttachmentPreviewFragment(
-                        args.contact,
-                        galleryItem
-                    ),
-                    extras
-                )
-            }
-        })
+        adapter = AttachmentGalleryAdapter(this)
 
         binding.recyclerViewGalleryItems.adapter = adapter
     }
+
+    //region Implementation AttachmentGalleryAdapter.ClickListener
+    override fun onClick(galleryItem: GalleryItem, imageView: ImageView) {
+
+        lifecycleScope.launch {
+            val extras = FragmentNavigatorExtras(
+                imageView to imageView.transitionName
+            )
+
+            val parcelFileDescriptor =
+                context!!.contentResolver.openFileDescriptor(galleryItem.contentUri!!, "r")
+
+            val fileInputStream = FileInputStream(parcelFileDescriptor!!.fileDescriptor)
+
+            if (galleryItem.attachmentType == Constants.AttachmentType.IMAGE.type) {
+                attachmentSelected = FileManager.compressImageFromFileInputStream(
+                    context!!, fileInputStream
+                )
+            } else if (galleryItem.attachmentType == Constants.AttachmentType.VIDEO.type) {
+
+                attachmentSelected = FileManager.copyFile(
+                    context!!,
+                    fileInputStream,
+                    Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                    "${System.currentTimeMillis()}.mp4"
+                )
+            }
+
+            val attachment = Attachment(
+                id = 0,
+                messageId = 0,
+                webId = "",
+                messageWebId = "",
+                type = galleryItem.attachmentType,
+                body = "",
+                uri = attachmentSelected.name,
+                origin = Constants.AttachmentOrigin.GALLERY.origin,
+                thumbnailUri = "",
+                status = Constants.AttachmentStatus.SENDING.status
+            )
+
+            this@AttachmentGalleryFragment.findNavController().navigate(
+                AttachmentGalleryFragmentDirections.actionAttachmentGalleryFragmentToAttachmentPreviewFragment(
+                    attachment,
+                    galleryItem.id
+                ),
+                extras
+            )
+        }
+    }
+    //endregion
 
 }

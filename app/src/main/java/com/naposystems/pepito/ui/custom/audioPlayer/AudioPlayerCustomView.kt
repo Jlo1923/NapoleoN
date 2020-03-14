@@ -17,7 +17,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     private var mTintColor: Int = 0
     private var mIsEncryptedFile: Boolean = false
-    private var mAbsolutePath: String? = ""
+    private var mAudioFileUri: Uri? = null
     private var mAudioId: Int = 0
     private var mSeekbarProgressBackgroundTint: Int = 0
     private var mSeekbarProgressTint: Int = 0
@@ -60,7 +60,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     false
                 )
 
-                mAbsolutePath = getString(R.styleable.AudioPlayerCustomView_absolutePath)
+//                mAudioFileUri = getString(R.styleable.AudioPlayerCustomView_absolutePath)
                 mAudioId = getInt(R.styleable.AudioPlayerCustomView_audioId, 0)
                 mSeekbarProgressBackgroundTint = getResourceId(
                     R.styleable.AudioPlayerCustomView_seekbarProgressBackgroundTint,
@@ -114,10 +114,12 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             mediaPlayerManager?.setImageButtonSpeed(binding.imageButtonSpeed)
             mediaPlayerManager?.setTextViewDuration(binding.textViewDuration)
 
-            mediaPlayerManager?.playAudio(
-                audioId = mAudioId,
-                uri = Uri.parse(mAbsolutePath)
-            )
+            mAudioFileUri?.let {
+                mediaPlayerManager?.playAudio(
+                    audioId = mAudioId,
+                    uri = it
+                )
+            }
         }
 
         binding.imageButtonRewind.setOnClickListener {
@@ -148,8 +150,8 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         setListeners()
     }
 
-    override fun setAbsolutePath(absolutePath: String) {
-        this.mAbsolutePath = absolutePath
+    override fun setAudioFileUri(uri: Uri) {
+        this.mAudioFileUri = uri
     }
 
     override fun setAudioId(id: Int) {

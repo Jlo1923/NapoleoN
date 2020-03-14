@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="conversation"
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+
+        <variable
+            name="isFirst"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_my_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
+        android:paddingTop="@dimen/x_x_small_padding"
+        android:paddingEnd="@dimen/small_padding"
+        android:paddingBottom="@dimen/x_x_small_padding">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_my_message"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingTop="@dimen/x_small_padding"
+            android:paddingEnd="20dp"
+            android:paddingBottom="@dimen/x_small_padding"
+            app:isFirstMyMessage="@{isFirst}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.7">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_document_type"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:attachmentDocumentIcon="@{conversation}"
+                app:layout_constraintEnd_toStartOf="@id/textView_document_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorTextMyMessage"
+                tools:src="@drawable/ic_attachment_doc" />
+
+            <TextView
+                android:id="@+id/textView_document_name"
+                style="@style/MyMessageTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                app:attachmentDocumentName="@{conversation}"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_document_type"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_document_type"
+                app:layout_constraintTop_toTopOf="@id/imageView_document_type"
+                tools:text="El mero packistan.pdf" />
+
+            <TextView
+                style="@style/MyMessageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
+                app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
+                app:layout_constraintTop_toTopOf="@id/imageView_message_status"
+                app:messageDate="@{conversation.message.createdAt}"
+                tools:text="10:34"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_message_status"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView_document_type"
+                app:messageStatus="@{conversation.message.status}"
+                tools:srcCompat="@drawable/ic_access_time_black" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
