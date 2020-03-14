@@ -3,8 +3,10 @@ package com.naposystems.pepito.ui.mainActivity
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
@@ -12,6 +14,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -69,7 +73,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -82,15 +85,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
 
-        //viewModel.getTheme()
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
             accountStatus = it
         })
 
-        val ola = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
-        when (ola) {
-            1 -> setTheme(R.style.AppTheme)
+        val theme = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        when(theme) {
+            2 -> AppCompatDelegate.setDefaultNightMode(theme)
             3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
             4 -> setTheme(R.style.AppThemeColdOcean)
             5 -> setTheme(R.style.AppThemeCamouflage)
@@ -203,28 +206,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        viewModel.theme.observe(this, Observer {
-/*            when(it) {
-                1 ->{
-                    setTheme(R.style.AppTheme)
-                }
-                6 ->{
-                    setTheme(R.style.AppThemePink)
-                }
-            }*/
-/*            val theme = when (it) {
-                Constants.ColorScheme.LIGHT_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_NO
-                Constants.ColorScheme.DARK_THEME.scheme -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_NO
-            }
-
-            AppCompatDelegate.setDefaultNightMode(theme)*/
-        })
-
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
-
     }
 
     private fun openMenu() {
@@ -311,8 +295,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun showToolbar() {
         resetToolbar()
+
+        val value = TypedValue()
+        this.theme.resolveAttribute(R.attr.attrBackgroundTintIconToolbar, value, true)
+
         val fourDp = Utils.dpToPx(this, 4f).toFloat()
         binding.toolbar.apply {
+            overflowIcon?.setColorFilter(
+                    ContextCompat.getColor(context, value.resourceId), PorterDuff.Mode.SRC_IN
+            )
             visibility = View.VISIBLE
             elevation = fourDp
         }
@@ -403,8 +394,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             validLockTime()
         }
     }
-
-
 
     override fun onPause() {
         super.onPause()

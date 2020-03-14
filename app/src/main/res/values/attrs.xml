@@ -44,7 +44,12 @@
     <!--//Background-->
     <attr name="attrBackgroundColorPrimary" format ="reference"/>
     <attr name="attrBackgroundSectionColor" format ="reference"/>
+    <attr name="attrBackgroundSectionOtherColor" format ="reference"/>
     <attr name="attrBackgroundColorBackground" format ="reference"/>
+    <attr name="attrBackgroundColorBackgroundDialog" format ="reference"/>
+    <attr name="attrColorTextButtonTintCamera" format ="reference"/>
+    <attr name="attrBackgroundColorActionMode" format ="reference"/>
+    <attr name="attrBackgroundBatchMessage" format ="reference"/>
 
     <!--//Tint-->
     <attr name="attrTintColorSecondaryDark" format ="reference"/>
@@ -55,11 +60,20 @@
     <attr name="attrTextColorButtonTint" format ="reference"/>
     <attr name="attrTextColorRed" format ="reference"/>
     <attr name="attrTextColorWhite" format ="reference"/>
+    <attr name="attrTextColorMessageAndTimeHome" format ="reference"/>
     <attr name="attrTextColorColorTextMyMessage" format ="reference"/>
     <attr name="attrTextColorColorTextIncomingMessage" format ="reference"/>
     <attr name="attrTextColorLinkTextColor" format ="reference"/>
     <attr name="attrTextColorColorError" format ="reference"/>
     <attr name="attrTextColorColorPrimary" format ="reference"/>
+    <attr name="attrTextColorHint" format ="reference"/>
+    <attr name="attrTextColorNameConversation" format ="reference"/>
+    <attr name="attrTextColorNicknameConversation" format ="reference"/>
+    <attr name="attrTextColorHintConversationInputPanel" format ="reference"/>
+    <attr name="attrTextColorConversationInputPanel" format ="reference"/>
+
+    <!--ActionBarItem-->
+    <attr name="attrActionBarItemBackground" format ="reference"/>
 
     <!--HintTextColor-->
     <attr name="attrHintTextColorSecondaryTextColor" format ="reference"/>
@@ -70,7 +84,7 @@
     <!--BackgroundTint-->
     <attr name="attrBackgroundTintColorSecondary" format ="reference"/>
     <attr name="attrBackgroundTintButtonTint" format ="reference"/>
-
+    <attr name="attrBackgroundTintIconToolbar" format ="reference"/>
 
     <!--StrokeColor-->
     <attr name="attrStrokeColorButtonTint" format ="reference"/>
@@ -92,6 +106,12 @@
     <!--errorIconTint-->
     <attr name="attrErrorIconTintColorError" format ="reference"/>
 
+    <!--fabIconColor-->
+    <attr name="attrFabIconColor" format ="reference"/>
+
+    <!--conversationIconColor-->
+    <attr name="attrConversationIconColor" format ="reference"/>
+
     <!--Color-->
     <attr name="attrColorButtonTint" format ="reference"/>
 
@@ -100,6 +120,9 @@
 
     <!--Separator-->
     <attr name="attrSeparatorColor" format ="reference"/>
+
+    <!--Drawer-->
+    <attr name="attrIconAndTextColorDrawer" format ="reference"/>
 
 
 </resources>

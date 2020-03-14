@@ -57,4 +57,10 @@ interface ContactDao {
 
     @Delete
     suspend fun deleteContacts(contacts: List<Contact>)
+
+    @Query("UPDATE contact SET self_destruct_time=:selfDestructTime WHERE id=:contactId ")
+    suspend fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int)
+
+    @Query("SELECT self_destruct_time FROM contact WHERE id=:contactId ")
+    fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int>
 }

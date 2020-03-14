@@ -156,9 +156,17 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
 
     private fun addEditText(context: Context) {
 
+        val value = TypedValue()
+        context.theme.resolveAttribute(R.attr.attrTextColorHintConversationInputPanel, value, true)
+
+        val valueTextColor = TypedValue()
+        context.theme.resolveAttribute(R.attr.attrTextColorConversationInputPanel, valueTextColor, true)
+
         editText.apply {
             background = resources.getDrawable(android.R.color.transparent, context.theme)
             hint = resources.getString(R.string.text_write_message)
+            setHintTextColor(resources.getColor(value.resourceId))
+            setTextColor(resources.getColor(valueTextColor.resourceId))
             maxLines = 4
         }
 
@@ -188,11 +196,14 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
         val outValue = TypedValue()
         getContext().theme.resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true)
 
+        val outValueBackgroundTint = TypedValue()
+        getContext().theme.resolveAttribute(R.attr.attrActionBarItemBackground, outValueBackgroundTint, true)
+
         imageButton.apply {
             setImageResource(drawable)
             setBackgroundResource(outValue.resourceId)
             setColorFilter(
-                ContextCompat.getColor(context, R.color.secondaryTextColor),
+                ContextCompat.getColor(context, outValueBackgroundTint.resourceId),
                 android.graphics.PorterDuff.Mode.SRC_IN
             )
             gravity = Gravity.CENTER_VERTICAL

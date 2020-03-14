@@ -6,6 +6,7 @@
         android:id="@+id/menu_item_schedule"
         android:icon="@drawable/ic_schedule_white"
         android:title="@string/text_schedule"
+        app:iconTint="?attr/attrBackgroundTintIconToolbar"
         app:showAsAction="ifRoom" />
 
     <item

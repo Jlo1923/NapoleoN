@@ -105,6 +105,7 @@ class ConversationViewModel @Inject constructor(
         body: String,
         quoted: String,
         contact: Contact,
+        selfDestructTime : Int,
         isMine: Int
     ) {
         viewModelScope.launch {
@@ -127,6 +128,7 @@ class ConversationViewModel @Inject constructor(
                     contact.id,
                     quoted,
                     body,
+                    selfDestructTime,
                     emptyList()
                 )
 
@@ -146,6 +148,7 @@ class ConversationViewModel @Inject constructor(
         isMine: Int,
         base64: String,
         uri: String,
+        selfDestructTime: Int,
         origin: Int
     ) {
         viewModelScope.launch {
@@ -187,6 +190,7 @@ class ConversationViewModel @Inject constructor(
                     contact.id,
                     quoted,
                     body,
+                    selfDestructTime,
                     Attachment.toListAttachmentDTO(listAttachment)
                 )
 
@@ -199,7 +203,8 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio) {
+    override fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio,
+                                                selfDestructTime: Int) {
         viewModelScope.launch {
             val fileDescriptor = context.contentResolver
                 .openFileDescriptor(mediaStoreAudio.contentUri, "r")
@@ -251,6 +256,7 @@ class ConversationViewModel @Inject constructor(
                         contact.id,
                         "",
                         "",
+                        selfDestructTime,
                         listOf(Attachment.toAttachmentDTO(attachment))
                     )
 
@@ -321,9 +327,9 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun deleteMessagesSelected(idContact: Int) {
+    override fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
-            repository.deleteMessagesSelected(idContact)
+            repository.deleteMessagesSelected(idContact, listMessages)
             _responseDeleteLocalMessages.value = true
         }
     }
@@ -331,6 +337,7 @@ class ConversationViewModel @Inject constructor(
     override fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
             try {
+
                 val response =
                     repository.deleteMessagesForAll(
                         buildObjectDeleteMessages(
@@ -340,7 +347,7 @@ class ConversationViewModel @Inject constructor(
                     )
 
                 if (response.isSuccessful) {
-                    repository.deleteMessagesSelected(idContact)
+                    repository.deleteMessagesSelected(idContact, listMessages)
                     _responseDeleteLocalMessages.value = true
                 } else {
                     when (response.code()) {

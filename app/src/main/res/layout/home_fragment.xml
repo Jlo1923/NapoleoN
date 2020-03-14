@@ -64,7 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_status"
-                android:backgroundTint="@color/sectionColor"
+                android:backgroundTint="?attr/attrBackgroundSectionColor"
                 android:padding="@dimen/small_padding"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -82,6 +82,8 @@
                 <ImageButton
                     android:id="@+id/imageButton_status_end_icon"
                     style="@style/OptionEndIcon"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:tint="?attr/attrTintColorSecondaryDark"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -157,6 +159,6 @@
             android:layout_margin="16dp"
             app:borderWidth="0dp"
             app:srcCompat="@drawable/ic_person_black"
-            app:tint="@color/fabIconColor" />
+            app:tint="?attr/attrFabIconColor" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

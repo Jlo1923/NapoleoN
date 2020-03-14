@@ -11,7 +11,7 @@
         android:id="@+id/container_header"
         android:layout_width="0dp"
         android:layout_height="120dp"
-        android:background="@color/colorPrimary"
+        android:background="?attr/attrBackgroundColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -55,7 +55,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_accept"
-            style="@style/AppPrimaryButtonText.Primary"
+            style="@style/AppPrimaryButtonText.Primary.Camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_margin"
@@ -66,7 +66,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_cancel"
-            style="@style/AppPrimaryButtonText.Primary"
+            style="@style/AppPrimaryButtonText.Primary.Camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"

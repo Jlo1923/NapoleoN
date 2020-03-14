@@ -12,6 +12,7 @@ import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Base64
 import android.util.Base64OutputStream
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
@@ -25,6 +26,7 @@ import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
+import com.naposystems.pepito.utility.Constants.SelfDestructTime.*
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -202,7 +204,10 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+            val valueColorFab = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+
+            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
             positiveButton.isAllCaps = false
@@ -237,7 +242,10 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = childFragmentManager.resources.getColor(R.color.colorButtonAlertDialog)
+            val valueColorFab = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+
+            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
@@ -265,6 +273,21 @@ class Utils {
                 0
             } else {
                 1
+            }
+        }
+
+        fun convertItemOfTimeInSeconds(item : Int) : Int{
+            return when(item){
+                EVERY_FIVE_SECONDS.time -> 5
+                EVERY_FIFTEEN_SECONDS.time -> 15
+                EVERY_THIRTY_SECONDS.time -> 30
+                EVERY_ONE_MINUTE.time -> 60
+                EVERY_TEN_MINUTES.time -> 600
+                EVERY_THIRTY_MINUTES.time -> 1800
+                EVERY_ONE_HOUR.time -> 3600
+                EVERY_TWELVE_HOURS.time -> 43200
+                EVERY_ONE_DAY.time -> 86400
+                else -> 604800
             }
         }
 

@@ -39,6 +39,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.7">
 
+            <TextView
+                android:id="@+id/textView_count_down"
+                style="@style/MyMessageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/x_small_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="10:34"
+                tools:visibility="visible" />
+
             <com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
                 android:id="@+id/audio_player"
                 android:layout_width="0dp"
@@ -47,7 +58,7 @@
                 app:isEncryptedFile="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_count_down"
                 app:seekbarProgressBackgroundTint="@color/black"
                 app:seekbarProgressTint="@color/colorSecondaryLight"
                 app:seekbarThumbTint="@color/colorSecondary" />

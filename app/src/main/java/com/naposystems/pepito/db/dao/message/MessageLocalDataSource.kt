@@ -5,11 +5,14 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MessageLocalDataSource @Inject constructor(
     private val messageDao: MessageDao
-) : MessageDataSource {
+    ) : MessageDataSource {
 
     override fun getMessages(
         contactId: Int,
@@ -49,8 +52,10 @@ class MessageLocalDataSource @Inject constructor(
         messageDao.cleanSelectionMessages(idContact)
     }
 
-    override suspend fun deleteMessagesSelected(idContact: Int) {
-        messageDao.deleteMessagesSelected(idContact)
+    override suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
+        listMessages.forEach {messageAndAttachment ->
+            messageDao.deleteMessagesSelected(idContact, messageAndAttachment.message.id)
+        }
     }
 
     override suspend fun getLastMessageByContact(idContact: Int): MessageAndAttachment {
@@ -66,8 +71,19 @@ class MessageLocalDataSource @Inject constructor(
     }
 
     override fun updateMessageStatus(messagesWebIds: List<String>, status: Int) {
-        for (messageWebId in messagesWebIds) {
-            messageDao.updateMessageStatus(messageWebId, status)
+        messagesWebIds.forEach {messageWebId ->
+            when(status) {
+                Constants.MessageStatus.READED.status -> {
+                    val timeByMessage = messageDao.getSelfDestructTimeByMessage(messageWebId)
+                    val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+                    val time = currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
+
+                    messageDao.updateMessageStatus(messageWebId, currentTime, time, status)
+                }
+                else -> {
+                    messageDao.updateMessageStatus(messageWebId, 0, 0, status)
+                }
+            }
         }
     }
 
@@ -77,6 +93,10 @@ class MessageLocalDataSource @Inject constructor(
 
     override suspend fun deleteMessages(idContact: Int) {
         messageDao.deleteMessages(idContact)
+    }
+
+    override suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int) {
+        messageDao.setSelfDestructTimeByMessages(selfDestructTime, contactId)
     }
 
     override suspend fun deletedMessages(listWebIdMessages: List<String>) {
