@@ -527,7 +527,7 @@
         <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
     </style>
 
-    <style name="IncomingMessageTextView" parent="BodyTextView">
+    <style name="IncomingMessageTextView" parent="SmallBodyTextView">
         <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
     </style>
 

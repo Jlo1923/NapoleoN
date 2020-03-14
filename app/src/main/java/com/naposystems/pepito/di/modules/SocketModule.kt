@@ -5,6 +5,7 @@ import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.repository.socket.SocketRepository
+import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import dagger.Module

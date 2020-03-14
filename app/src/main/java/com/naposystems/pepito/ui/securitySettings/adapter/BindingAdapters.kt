@@ -11,11 +11,20 @@ fun bindSelfDestructTime(textView: TextView, selfDestructTime: Int) {
     val context = textView.context
 
     val newSelfDestructTime = when (selfDestructTime) {
-        Constants.SelfDestructTime.EVERY_FIVE_MINUTES.time ->
-            context.getString(R.string.text_every_five_minutes)
+        Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time ->
+            context.getString(R.string.text_every_five_seconds)
 
-        Constants.SelfDestructTime.EVERY_FIFTEEN_MINUTES.time ->
-            context.getString(R.string.text_every_fifteen_minutes)
+        Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time ->
+            context.getString(R.string.text_every_fifteen_seconds)
+
+        Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time ->
+            context.getString(R.string.text_every_thirty_seconds)
+
+        Constants.SelfDestructTime.EVERY_ONE_MINUTE.time ->
+            context.getString(R.string.text_every_one_minute)
+
+        Constants.SelfDestructTime.EVERY_TEN_MINUTES.time ->
+            context.getString(R.string.text_every_ten_minutes)
 
         Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time ->
             context.getString(R.string.text_every_thirty_minutes)
@@ -23,13 +32,16 @@ fun bindSelfDestructTime(textView: TextView, selfDestructTime: Int) {
         Constants.SelfDestructTime.EVERY_ONE_HOUR.time ->
             context.getString(R.string.text_every_one_hour)
 
-        Constants.SelfDestructTime.EVERY_SIX_HOURS.time ->
-            context.getString(R.string.text_every_six_hours)
+        Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time ->
+            context.getString(R.string.text_every_twelve_hours)
 
-        Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS.time ->
-            context.getString(R.string.text_every_twenty_four_hours)
+        Constants.SelfDestructTime.EVERY_ONE_DAY.time ->
+            context.getString(R.string.text_every_one_day)
 
-        else -> context.getString(R.string.text_every_twenty_four_hours)
+        Constants.SelfDestructTime.EVERY_SEVEN_DAY.time ->
+            context.getString(R.string.text_every_seven_days)
+
+        else -> context.getString(R.string.text_every_seven_days)
     }
 
     textView.text = newSelfDestructTime

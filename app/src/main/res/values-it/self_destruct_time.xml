@@ -9,4 +9,11 @@
     <string name="text_every_twenty_four_hours">24 ore</string>
     <string name="text_info_message_self_destruction">I messaggi inviati e ricevuti in questa conversazione verranno eliminati dopo l\'orario selezionato.</string>
     <string name="text_every_seven_days">7 días</string>
+    <string name="text_every_five_seconds">5 secondi</string>
+    <string name="text_every_fifteen_seconds">15 secondi</string>
+    <string name="text_every_thirty_seconds">30 secondi</string>
+    <string name="text_every_one_minute">1 minuto</string>
+    <string name="text_every_ten_minutes">10 minuti</string>
+    <string name="text_every_twelve_hours">12 ore</string>
+    <string name="text_every_one_day">1 giorno</string>
 </resources>

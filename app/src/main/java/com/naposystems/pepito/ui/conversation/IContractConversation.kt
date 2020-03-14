@@ -22,7 +22,14 @@ interface IContractConversation {
         fun getUser(): User
         fun setContact(contact: Contact)
         fun getLocalMessages()
-        fun saveMessageLocally(body: String, quoted: String, contact: Contact, isMine: Int)
+        fun saveMessageLocally(
+            body: String,
+            quoted: String,
+            contact: Contact,
+            selfDestructTime: Int,
+            isMine: Int
+        )
+
         fun saveMessageWithAttachmentLocally(
             body: String,
             quoted: String,
@@ -30,9 +37,15 @@ interface IContractConversation {
             isMine: Int,
             base64: String,
             uri: String,
+            selfDestructTime: Int,
             origin: Int
         )
-        fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio)
+
+        fun saveMessageWithAudioAttachment(
+            mediaStoreAudio: MediaStoreAudio,
+            selfDestructTime: Int
+        )
+
         fun sendMessage(
             messageId: Int,
             messageReqDTO: MessageReqDTO,
@@ -44,14 +57,14 @@ interface IContractConversation {
         fun getLocalContact(idContact: Int)
         fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Boolean)
         fun cleanSelectionMessages(idContact: Int)
-        fun deleteMessagesSelected(idContact: Int)
+        fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
         fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>)
         fun copyMessagesSelected(idContact: Int)
-        fun parsingListByTextBlock(listBody: List<String>) : String
+        fun parsingListByTextBlock(listBody: List<String>): String
         fun getMessagesSelected(idContact: Int)
         fun resetListStringCopy()
-        fun setCountOldMessages(count : Int)
-        fun getCountOldMessages() : Int
+        fun setCountOldMessages(count: Int)
+        fun getCountOldMessages(): Int
     }
 
     interface Repository {
@@ -83,10 +96,10 @@ interface IContractConversation {
         fun getLocalContact(idContact: Int): LiveData<Contact>
         suspend fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Int)
         suspend fun cleanSelectionMessages(idContact: Int)
-        suspend fun deleteMessagesSelected(idContact: Int)
-        suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO) : Response<DeleteMessagesResDTO>
-        suspend fun copyMessagesSelected(idContact: Int) : List<String>
-        suspend fun getMessagesSelected(idContact: Int) : LiveData<List<MessageAndAttachment>>
+        suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
+        suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
+        suspend fun copyMessagesSelected(idContact: Int): List<String>
+        suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>>
 
     }
 }

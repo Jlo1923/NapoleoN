@@ -165,31 +165,29 @@ class SocketRepository @Inject constructor(
     override fun getDeletedMessages() {
         GlobalScope.launch {
             val response = napoleonApi.getDeletedMessages()
-            if(response.isSuccessful) {
-                if(response.body()!!.count() > 0){
-                    val contactId = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
-                    messageLocalDataSource.deletedMessages(response.body()!!)
-                    when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(contactId)) {
-                        null -> {
-                            conversationLocalDataSource.cleanConversation(contactId)
-                        }
-                        else -> {
-                            conversationLocalDataSource.getQuantityUnreads(contactId).let { quantityUnreads->
-                                if (quantityUnreads > 0) {
-                                    conversationLocalDataSource.updateConversationByContact(
-                                        contactId,
-                                        messageAndAttachment.message.body,
-                                        messageAndAttachment.message.createdAt,
-                                        messageAndAttachment.message.status,
-                                        quantityUnreads - response.body()!!.count())
-                                } else {
-                                    conversationLocalDataSource.updateConversationByContact(
-                                        contactId,
-                                        messageAndAttachment.message.body,
-                                        messageAndAttachment.message.createdAt,
-                                        messageAndAttachment.message.status,
-                                        0)
-                                }
+            if(response.isSuccessful && (response.body()!!.count() > 0)) {
+                val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
+                messageLocalDataSource.deletedMessages(response.body()!!)
+                when(val messageAndAttachment=  messageLocalDataSource.getLastMessageByContact(idContact)) {
+                    null -> {
+                        conversationLocalDataSource.cleanConversation(idContact)
+                    }
+                    else -> {
+                        conversationLocalDataSource.getQuantityUnreads(idContact).let { quantityUnreads->
+                            if (quantityUnreads > 0) {
+                                conversationLocalDataSource.updateConversationByContact(
+                                    idContact,
+                                    messageAndAttachment.message.body,
+                                    messageAndAttachment.message.createdAt,
+                                    messageAndAttachment.message.status,
+                                    quantityUnreads - response.body()!!.count())
+                            } else {
+                                conversationLocalDataSource.updateConversationByContact(
+                                    idContact,
+                                    messageAndAttachment.message.body,
+                                    messageAndAttachment.message.createdAt,
+                                    messageAndAttachment.message.status,
+                                    0)
                             }
                         }
                     }

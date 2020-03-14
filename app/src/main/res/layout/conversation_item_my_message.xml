@@ -42,14 +42,12 @@
             app:layout_constraintWidth_percent="0.7">
 
             <TextView
-                android:id="@+id/textView_CountDown"
+                android:id="@+id/textView_count_down"
                 style="@style/MyMessageDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:messageDate="@{conversation.message.createdAt}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 
@@ -62,7 +60,7 @@
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_CountDown"
+                app:layout_constraintTop_toBottomOf="@+id/textView_count_down"
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 

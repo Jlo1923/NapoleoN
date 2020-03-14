@@ -26,6 +26,7 @@ import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
+import com.naposystems.pepito.utility.Constants.SelfDestructTime.*
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -272,6 +273,21 @@ class Utils {
                 0
             } else {
                 1
+            }
+        }
+
+        fun convertItemOfTimeInSeconds(item : Int) : Int{
+            return when(item){
+                EVERY_FIVE_SECONDS.time -> 5
+                EVERY_FIFTEEN_SECONDS.time -> 15
+                EVERY_THIRTY_SECONDS.time -> 30
+                EVERY_ONE_MINUTE.time -> 60
+                EVERY_TEN_MINUTES.time -> 600
+                EVERY_THIRTY_MINUTES.time -> 1800
+                EVERY_ONE_HOUR.time -> 3600
+                EVERY_TWELVE_HOURS.time -> 43200
+                EVERY_ONE_DAY.time -> 86400
+                else -> 604800
             }
         }
 

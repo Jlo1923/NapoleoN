@@ -3,7 +3,6 @@ package com.naposystems.pepito.ui.selfDestructTime
 import android.content.Context
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SelfDestructTimeDialogFragmentBinding
 import com.naposystems.pepito.utility.Constants
@@ -21,12 +19,21 @@ import javax.inject.Inject
 
 class SelfDestructTimeDialogFragment : DialogFragment() {
 
+    private var contactId: Int = 0
+
     companion object {
-        fun newInstance() = SelfDestructTimeDialogFragment()
+
+        private const val CONTACT_ID: String = "CONTACT_ID"
+
+        fun newInstance(contactId : Int) = SelfDestructTimeDialogFragment().apply {
+            arguments = Bundle().apply {
+                putInt(CONTACT_ID, contactId)
+            }
+        }
     }
 
     interface SelfDestructTimeListener {
-        fun onSelfDestructTimeChange()
+        fun onSelfDestructTimeChange(selfDestructTimeSelected : Int)
     }
 
     @Inject
@@ -50,15 +57,22 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
             inflater, R.layout.self_destruct_time_dialog_fragment, container, false
         )
 
+        arguments.let {
+            contactId = it!!.getInt(CONTACT_ID)
+        }
+
         binding.radioGroupOptions.setOnCheckedChangeListener { _, checkedId ->
             selfDestructTime = when (checkedId) {
-                R.id.radioButton_five_minutes -> Constants.SelfDestructTime.EVERY_FIVE_MINUTES.time
-                R.id.radioButton_fifteen_minutes -> Constants.SelfDestructTime.EVERY_FIFTEEN_MINUTES.time
+                R.id.radioButton_five_seconds -> Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time
+                R.id.radioButton_fifteen_seconds -> Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time
+                R.id.radioButton_thirty_seconds -> Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time
+                R.id.radioButton_one_minute -> Constants.SelfDestructTime.EVERY_ONE_MINUTE.time
+                R.id.radioButton_ten_minutes -> Constants.SelfDestructTime.EVERY_TEN_MINUTES.time
                 R.id.radioButton_thirty_minutes -> Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time
                 R.id.radioButton_one_hour -> Constants.SelfDestructTime.EVERY_ONE_HOUR.time
-                R.id.radioButton_six_hours -> Constants.SelfDestructTime.EVERY_SIX_HOURS.time
-                R.id.radioButton_twenty_four_hours -> Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS.time
-                else -> Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS.time
+                R.id.radioButton_twelve_hours -> Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time
+                R.id.radioButton_one_day -> Constants.SelfDestructTime.EVERY_ONE_DAY.time
+                else -> Constants.SelfDestructTime.EVERY_SEVEN_DAY.time
             }
         }
 
@@ -67,8 +81,10 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
         }
 
         binding.buttonAccept.setOnClickListener {
-            viewModel.setSelfDestructTime(this.selfDestructTime)
-            listener.onSelfDestructTimeChange()
+            if(contactId == 0) {
+                viewModel.setSelfDestructTime(this.selfDestructTime)
+            }
+            listener.onSelfDestructTimeChange(this.selfDestructTime)
             dismiss()
         }
 
@@ -85,31 +101,52 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(SelfDestructTimeViewModel::class.java)
 
+        viewModel.getSelfDestructTimeByContact(contactId)
+
         viewModel.getSelfDestructTime()
 
-        viewModel.selfDestructTime.observe(viewLifecycleOwner, Observer {
-            this.selfDestructTime = it
-            when (it) {
-                Constants.SelfDestructTime.EVERY_FIVE_MINUTES.time ->
-                    binding.radioButtonFiveMinutes.isChecked = true
+        viewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {timeByContact ->
 
-                Constants.SelfDestructTime.EVERY_FIFTEEN_MINUTES.time ->
-                    binding.radioButtonFifteenMinutes.isChecked = true
+                this.selfDestructTime = if(contactId == 0)
+                    viewModel.selfDestructTimeGlobal
+                else {
+                    if(timeByContact < 0)
+                        viewModel.selfDestructTimeGlobal
+                    else
+                        timeByContact
+                }
+                when (this.selfDestructTime) {
+                    Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time ->
+                        binding.radioButtonFiveSeconds.isChecked = true
 
-                Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time ->
-                    binding.radioButtonThirtyMinutes.isChecked = true
+                    Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time ->
+                        binding.radioButtonFifteenSeconds.isChecked = true
 
-                Constants.SelfDestructTime.EVERY_ONE_HOUR.time ->
-                    binding.radioButtonOneHour.isChecked = true
+                    Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time ->
+                        binding.radioButtonThirtySeconds.isChecked = true
 
-                Constants.SelfDestructTime.EVERY_SIX_HOURS.time ->
-                    binding.radioButtonSixHours.isChecked = true
+                    Constants.SelfDestructTime.EVERY_ONE_MINUTE.time ->
+                        binding.radioButtonOneMinute.isChecked = true
 
-                Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS.time ->
-                    binding.radioButtonTwentyFourHours.isChecked = true
-            }
+                    Constants.SelfDestructTime.EVERY_TEN_MINUTES.time ->
+                        binding.radioButtonTenMinutes.isChecked = true
+
+                    Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time ->
+                        binding.radioButtonThirtyMinutes.isChecked = true
+
+                    Constants.SelfDestructTime.EVERY_ONE_HOUR.time ->
+                        binding.radioButtonOneHour.isChecked = true
+
+                    Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time ->
+                        binding.radioButtonTwelveHours.isChecked = true
+
+                    Constants.SelfDestructTime.EVERY_ONE_DAY.time ->
+                        binding.radioButtonOneDay.isChecked = true
+
+                    Constants.SelfDestructTime.EVERY_SEVEN_DAY.time ->
+                        binding.radioButtonSevenDays.isChecked = true
+                }
         })
-
     }
 
     fun setListener(listener: SelfDestructTimeListener) {

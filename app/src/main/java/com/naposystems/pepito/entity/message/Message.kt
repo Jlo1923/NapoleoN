@@ -2,7 +2,6 @@ package com.naposystems.pepito.entity.message
 
 import androidx.room.*
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.conversation.Conversation
 
 @Entity(
     tableName = "message", foreignKeys = [
@@ -26,8 +25,10 @@ data class Message(
     @ColumnInfo(name = "created_at") val createdAt: Int,
     @ColumnInfo(name = "is_mine") val isMine: Int,
     @ColumnInfo(name = "status") val status: Int,
-    @ColumnInfo(name = "is_selected") val isSelected:  Boolean = false
-) {
+    @ColumnInfo(name = "is_selected") val isSelected: Boolean = false,
+    @ColumnInfo(name = "self_destruction_at") val selfDestructionAt: Int = -1,
+    @ColumnInfo(name = "total_self_destruction_at") val totalSelfDestructionAt: Int = 0
+    ) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
