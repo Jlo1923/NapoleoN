@@ -148,10 +148,15 @@ class HomeFragment : Fragment() {
         if (System.currentTimeMillis() > freeTrial){
             if (System.currentTimeMillis() > subscriptionTime && subscriptionTime == 0L){
                 binding.textViewMessageSubscription.text = getString(R.string.text_free_trial_expired)
+                binding.containerSubscription.isVisible = true
             } else {
-                binding.textViewMessageSubscription.text = getString(R.string.text_expired_subscription)
+                if (subscriptionTime > System.currentTimeMillis()){
+                    binding.containerSubscription.isVisible = false
+                } else {
+                    binding.textViewMessageSubscription.text = getString(R.string.text_expired_subscription)
+                    binding.containerSubscription.isVisible = true
+                }
             }
-            binding.containerSubscription.isVisible = true
         } else {
             binding.containerSubscription.isVisible = false
         }

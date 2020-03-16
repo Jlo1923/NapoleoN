@@ -28,13 +28,20 @@ class SubscriptionRepository @Inject constructor(
     }
 
     override fun getSubscription(): SubscriptionUser {
+        val subscriptionTime = sharedPreferencesManager.getLong(
+            Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
+        )
+        if (subscriptionTime != 0L){
+            sharedPreferencesManager.putLong(
+                Constants.SharedPreferences.PREF_FREE_TRIAL, 0
+            )
+        }
+
         return SubscriptionUser(
             sharedPreferencesManager.getInt(
                 Constants.SharedPreferences.PREF_TYPE_SUBSCRIPTION
             ),
-            sharedPreferencesManager.getLong(
-                Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
-            )
+            subscriptionTime
         )
     }
 
