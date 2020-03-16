@@ -90,8 +90,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             accountStatus = it
         })
 
-        val theme = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
-        when(theme) {
+        when(sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
             4 -> setTheme(R.style.AppThemeColdOcean)

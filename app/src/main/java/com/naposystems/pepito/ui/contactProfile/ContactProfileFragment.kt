@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
-import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -25,6 +24,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactProfileFragmentBinding
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
@@ -209,7 +209,14 @@ class ContactProfileFragment : BaseFragment() {
                 true,
                 childFragmentManager
             ) {
-                shareContactViewModel.sendBlockedContact(viewModel.contact.value!!)
+                viewModel.contact.value?.let {contact ->
+                    if(contact.statusBlocked){
+                        shareContactViewModel.unblockContact(contact.id)
+                    } else {
+                        shareContactViewModel.sendBlockedContact(contact)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                    }
+                }
             }
         }
 
@@ -219,16 +226,6 @@ class ContactProfileFragment : BaseFragment() {
         }
 
         return binding.root
-    }
-
-    private fun actionVectorView(animatedThreeEditText: AnimatedThreeVectorView, editText: EditText) {
-        animatedThreeEditText.apply {
-            if (!hasBeenInitialized) {
-                editToCancel(editText)
-            } else {
-                cancelToEdit(editText)
-            }
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -267,14 +264,10 @@ class ContactProfileFragment : BaseFragment() {
             }
         })
 
-        viewModel.contact.observe(viewLifecycleOwner, Observer {
-            checkSilenceConversation(it.silenced)
-            val text = if (it.displayNameFake.isNotEmpty()) {
-                it.displayNameFake
-            } else {
-                it.displayName
-            }
-            setTextToolbar(text)
+        viewModel.contact.observe(viewLifecycleOwner, Observer {contact ->
+            checkSilenceConversation(contact.silenced)
+            setTextToolbar(contact)
+            setTextBlockedContact(contact.statusBlocked)
         })
     }
 
@@ -316,12 +309,25 @@ class ContactProfileFragment : BaseFragment() {
             }
         }
 
+    private fun setTextBlockedContact(blocked : Boolean) {
+        if(blocked) {
+            binding.textViewLabelBlockContact.text = context?.getString(R.string.text_unblock_contact)
+        } else {
+            binding.textViewLabelBlockContact.text = context?.getString(R.string.text_block_contact)
+        }
+    }
+
     private fun checkSilenceConversation(silenced: Boolean) {
         binding.switchSilenceConversation.isChecked = silenced
         contactSilenced = silenced
     }
 
-    private fun setTextToolbar(text: String) {
+    private fun setTextToolbar(contact: Contact) {
+        val text = if (contact.displayNameFake.isNotEmpty()) {
+            contact.displayNameFake
+        } else {
+            contact.displayName
+        }
         (activity as MainActivity).supportActionBar?.title = text
     }
 

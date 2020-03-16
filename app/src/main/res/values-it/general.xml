@@ -34,8 +34,8 @@
     <string name="text_title_delete_conversation">Elimina la conversazione</string>
     <string name="text_mute_conversation">Conversazione muta</string>
     <string name="text_block_contact">Blocca contatto</string>
+    <string name="text_unblock_contact">Sblocca contatto</string>
     <string name="text_field_cannot_be_empty">Il campo non può essere vuoto</string>
-
     <string name="text_send_to">Invia ad %1$s</string>
     <string name="text_error_playing_audio">Un errore si è verificato per l\'audio gioco</string>
     <string name="text_attachment_document_name">Documento.%1$s</string>
