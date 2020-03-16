@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
@@ -60,7 +61,9 @@ class ColorSchemeFragment : Fragment() {
 
         binding.imageButtonSaveConfiguration.setOnClickListener {
             viewModel.setTheme(theme)
-            viewModel.getActualTheme()
+            if(theme == Constants.ThemesApplication.DARK_NAPOLEON.theme){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
             activity?.recreate()
         }
 

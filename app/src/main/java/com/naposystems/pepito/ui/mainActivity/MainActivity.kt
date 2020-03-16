@@ -91,9 +91,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         val theme = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         when(theme) {
-            2 -> AppCompatDelegate.setDefaultNightMode(theme)
+            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
             4 -> setTheme(R.style.AppThemeColdOcean)
             5 -> setTheme(R.style.AppThemeCamouflage)
@@ -113,7 +112,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
         disposable.add(disposableNoInternetConnection)
-
 
         val disposableAccountAttack = RxBus.listen(RxEvent.AccountAttack::class.java)
             .observeOn(AndroidSchedulers.mainThread())
