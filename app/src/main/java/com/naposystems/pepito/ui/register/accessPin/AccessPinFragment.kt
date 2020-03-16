@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.register.accessPin
 
-import android.app.ActionBar
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,15 +9,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.appbar.MaterialToolbar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AccessPinFragmentBinding
 import com.naposystems.pepito.dto.accessPin.CreateAccountReqDTO
-import com.naposystems.pepito.ui.mainActivity.MainActivity
-import com.naposystems.pepito.utility.*
+import com.naposystems.pepito.utility.FieldsValidator
+import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.utility.SnackbarUtils
+import com.naposystems.pepito.utility.Utils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -72,8 +71,8 @@ class AccessPinFragment : Fragment() {
         recoveredAccount = args.isRecoveredAccount
 
         if (recoveredAccount) {
-            binding.textViewTitle.text = "Restablecer Pin de Acceso!!"
-            binding.buttonRegister.text = "Recuperar cuenta!!"
+            binding.textViewTitle.text = "Restablecer Pin de Acceso|!!"
+            binding.buttonRegister.text = getString(R.string.text_recovery_account)
         }
 
         binding.buttonRegister.setOnClickListener {

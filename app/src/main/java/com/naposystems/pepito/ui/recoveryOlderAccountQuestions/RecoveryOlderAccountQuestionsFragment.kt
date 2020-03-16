@@ -15,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RecoveryOlderAccountQuestionsFragmentBinding
 import com.naposystems.pepito.utility.SnackbarUtils
-import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -102,19 +101,17 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         })
 
         viewModel.recoveryOlderQuestionsCreatingError.observe(viewLifecycleOwner, Observer {
-            binding.viewSwitcherProgressRecovery.showNext()
+            binding.viewSwitcherRecoveryAccount.showNext()
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
             snackbarUtils.showSnackbar()
         })
 
         viewModel.recoveryAnswersCreatingErrors.observe(viewLifecycleOwner, Observer {
-            binding.viewSwitcherProgressRecovery.showNext()
-//            snackbarUtils = SnackbarUtils(binding.coordinator, it)
-//            snackbarUtils.showSnackbar()
+            binding.viewSwitcherRecoveryAccount.showPrevious()
             viewModel.setAttemptPref()
             generalDialog(
-                "Error!!",
-                "Error en las con los datos!!",
+                getString(R.string.text_alert_failure),
+                getString(R.string.text_answers_incorrect),
                 false,
                 childFragmentManager
             ) {
@@ -123,7 +120,7 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         })
 
         viewModel.recoveryOlderAnswersCreatingError.observe(viewLifecycleOwner, Observer {
-            binding.viewSwitcherProgressRecovery.showNext()
+            binding.viewSwitcherRecoveryAccount.showNext()
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
             snackbarUtils.showSnackbar()
         })

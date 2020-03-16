@@ -4,10 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountResDTO
 import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.pepito.model.recoveryAccount.RecoveryAccountUserType
-import com.naposystems.pepito.model.recoveryAccount.RecoveryQuestions
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,17 +14,13 @@ class RecoveryAccountViewModel @Inject constructor(
     private val repository: IContractRecoveryAccount.Repository
 ) : ViewModel(), IContractRecoveryAccount.ViewModel {
 
-    /*private val _recoveryQuestions = MutableLiveData<List<RecoveryQuestions>>()
-    val recoveryQuestions: LiveData<List<RecoveryQuestions>>
-        get() = _recoveryQuestions*/
-
     private val _userType = MutableLiveData<RecoveryAccountUserType>()
     val userType: LiveData<RecoveryAccountUserType>
         get() = _userType
 
-    private val _recoveryAttempts = MutableLiveData<Int>()
-    val recoveryAttempts: LiveData<Int>
-        get() = _recoveryAttempts
+    private val _recoveryErrorForAttempts = MutableLiveData<List<String>>()
+    val recoveryErrorForAttempts: LiveData<List<String>>
+        get() = _recoveryErrorForAttempts
 
     private val _recoveryQuestionsCreatingError = MutableLiveData<List<String>>()
     val recoveryQuestionsCreatingError: LiveData<List<String>>
@@ -42,7 +36,9 @@ class RecoveryAccountViewModel @Inject constructor(
 
                 } else {
                     when (response.code()) {
-                        422 -> {}
+                        403 -> {
+                            _recoveryErrorForAttempts.value = repository.getError(response.errorBody()!!)
+                        }
                         else -> {
                             _recoveryQuestionsCreatingError.value =
                                 repository.getError(response.errorBody()!!)
@@ -53,12 +49,6 @@ class RecoveryAccountViewModel @Inject constructor(
             } catch (e: Exception) {
                 Timber.e(e)
             }
-        }
-    }
-
-    override fun getRecoveryAttempts() {
-        viewModelScope.launch {
-            _recoveryAttempts.value = repository.getRecoveryAttempts()
         }
     }
 

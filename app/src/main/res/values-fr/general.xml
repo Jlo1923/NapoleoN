@@ -39,6 +39,7 @@
     <string name="text_send_to">Envoyer à %1$s</string>
     <string name="text_error_playing_audio">Une erreur est survenue à l\'audio de jeu</string>
     <string name="text_attachment_document_name">Document.%1$s</string>
+    <string name="text_alert_failure">Advertencia</string>
     <plurals name="text_selected">
         <item quantity="one">%d sélectionné</item>
         <item quantity="other">%d sélectionné</item>
