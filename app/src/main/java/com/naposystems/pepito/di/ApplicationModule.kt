@@ -73,7 +73,7 @@ class ApplicationModule {
             .readTimeout(60, TimeUnit.SECONDS)
             .connectTimeout(60, TimeUnit.SECONDS)
 
-        //httpClient.addNetworkInterceptor(StethoInterceptor())
+        httpClient.addNetworkInterceptor(StethoInterceptor())
 
 //        httpClient.addInterceptor(NetworkConnectionInterceptor(context))
         httpClient.addInterceptor { chain ->
