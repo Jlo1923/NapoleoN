@@ -40,10 +40,14 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.pepito.ui.conversation.test.ConversationViewPagerAdapter
+import com.naposystems.pepito.ui.conversation.test.TestFragment
+import com.naposystems.pepito.ui.conversationEmoji.ConversationEmojiFragment
+import com.naposystems.pepito.ui.emojiKeyboard.EmojiKeyboard
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
-import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -54,8 +58,9 @@ import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
+import com.vanniktech.emoji.EmojiPopup
 import dagger.android.support.AndroidSupportInjection
-import java.io.File
+import kotlinx.android.synthetic.main.conversation_fragment.view.*
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -166,16 +171,18 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 //Nothing
-                val text = binding.inputPanel.getEditTex().text.toString()
+                binding.inputPanel.apply {
+                    val text = getEditTex().text.toString()
 
-                if (text.isNotEmpty() && !isEditTextFilled) {
-                    binding.inputPanel.morphFloatingActionButtonIcon()
-                    isEditTextFilled = true
-                    binding.inputPanel.hideImageButtonCamera()
-                } else if (text.isEmpty()) {
-                    binding.inputPanel.morphFloatingActionButtonIcon()
-                    isEditTextFilled = false
-                    binding.inputPanel.showImageButtonCamera()
+                    if (text.isNotEmpty() && !isEditTextFilled) {
+                        morphFloatingActionButtonIcon()
+                        isEditTextFilled = true
+                        hideImageButtonCamera()
+                    } else if (text.isEmpty()) {
+                        morphFloatingActionButtonIcon()
+                        isEditTextFilled = false
+                        showImageButtonCamera()
+                    }
                 }
 
             }
@@ -260,6 +267,11 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     )
                 )
             }
+        }
+
+        binding.inputPanel.getImageButtonEmoji().setOnClickListener {
+            val emojiKeyboard = EmojiKeyboard(binding.coordinator, binding.inputPanel.getEditTex())
+            emojiKeyboard.toggle()
         }
 
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -400,17 +412,14 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         })
 
         viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                if (actionMode.mode != null) {
-                    actionMode.mode!!.finish()
-                }
+            if (it && actionMode.mode != null) {
+                actionMode.mode!!.finish()
             }
         })
     }
 
     private fun setupWidgets(sizePaddingTop: Int, visible: Int) {
         binding.containerStatus.visibility = visible
-        binding.imageViewBackground.setPadding(0, sizePaddingTop, 0, 0)
         binding.recyclerViewConversation.setPadding(0, sizePaddingTop, 0, 0)
     }
 

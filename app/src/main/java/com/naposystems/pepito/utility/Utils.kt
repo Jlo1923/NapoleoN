@@ -1,12 +1,14 @@
 package com.naposystems.pepito.utility
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.provider.Settings
@@ -210,7 +212,11 @@ class Utils {
             dialog.show()
 
             val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+            childFragmentManager.theme.resolveAttribute(
+                R.attr.attrTextColorButtonTint,
+                valueColorFab,
+                true
+            )
 
             val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -248,7 +254,11 @@ class Utils {
             dialog.show()
 
             val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+            childFragmentManager.theme.resolveAttribute(
+                R.attr.attrTextColorButtonTint,
+                valueColorFab,
+                true
+            )
 
             val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
 
@@ -281,8 +291,8 @@ class Utils {
             }
         }
 
-        fun convertItemOfTimeInSeconds(item : Int) : Int{
-            return when(item){
+        fun convertItemOfTimeInSeconds(item: Int): Int {
+            return when (item) {
                 EVERY_FIVE_SECONDS.time -> 5
                 EVERY_FIFTEEN_SECONDS.time -> 15
                 EVERY_THIRTY_SECONDS.time -> 30
@@ -438,6 +448,23 @@ class Utils {
             }
 
             return outputStream.toByteArray()
+        }
+
+        fun windowVisibleDisplayFrame(context: Activity): Rect {
+            val result = Rect()
+            context.window.decorView.getWindowVisibleDisplayFrame(result)
+            return result
+        }
+
+        @SuppressLint("DiscouragedPrivateApi")
+        fun getKeyboardHeight(context: Context): Int {
+            val imm = context.applicationContext
+                .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputMethodManagerClass: Class<*> = imm.javaClass
+            val visibleHeightMethod =
+                inputMethodManagerClass.getDeclaredMethod("getInputMethodWindowVisibleHeight")
+            visibleHeightMethod.isAccessible = true
+            return visibleHeightMethod.invoke(imm) as Int
         }
     }
 }

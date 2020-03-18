@@ -180,6 +180,14 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1') {
         transitive = true
     }
+
+    //Emoji Panel
+    implementation 'com.vanniktech:emoji-ios:0.6.0'
+
+    //EmojiCompat
+    implementation 'androidx.emoji:emoji:1.0.0'
+    implementation 'androidx.emoji:emoji-appcompat:1.0.0'
+    implementation 'androidx.emoji:emoji-bundled:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

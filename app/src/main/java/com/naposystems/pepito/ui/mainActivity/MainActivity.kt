@@ -43,6 +43,7 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import timber.log.Timber
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -90,8 +91,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             accountStatus = it
         })
 
-        val theme = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
-        when(theme) {
+        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
             4 -> setTheme(R.style.AppThemeColdOcean)
@@ -301,7 +301,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val fourDp = Utils.dpToPx(this, 4f).toFloat()
         binding.toolbar.apply {
             overflowIcon?.setColorFilter(
-                    ContextCompat.getColor(context, value.resourceId), PorterDuff.Mode.SRC_IN
+                ContextCompat.getColor(context, value.resourceId), PorterDuff.Mode.SRC_IN
             )
             visibility = View.VISIBLE
             elevation = fourDp
