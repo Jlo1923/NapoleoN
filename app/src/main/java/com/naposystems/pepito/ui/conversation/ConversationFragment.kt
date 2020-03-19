@@ -40,9 +40,6 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
-import com.naposystems.pepito.ui.conversation.test.ConversationViewPagerAdapter
-import com.naposystems.pepito.ui.conversation.test.TestFragment
-import com.naposystems.pepito.ui.conversationEmoji.ConversationEmojiFragment
 import com.naposystems.pepito.ui.emojiKeyboard.EmojiKeyboard
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
@@ -58,9 +55,7 @@ import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
-import com.vanniktech.emoji.EmojiPopup
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.conversation_fragment.view.*
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

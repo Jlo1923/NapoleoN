@@ -18,6 +18,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Crypto
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.utility.emojiManager.EmojiManager
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.webService.GzipRequestInterceptor
 import com.naposystems.pepito.webService.NapoleonApi

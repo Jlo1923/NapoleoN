@@ -1,5 +1,6 @@
 package com.naposystems.pepito.app
 
+import android.graphics.Color
 import androidx.core.provider.FontRequest
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
@@ -21,7 +22,7 @@ class NapoleonApplication : DaggerApplication() {
 
     companion object {
         /** Change this to `false` when you want to use the downloadable Emoji font.  */
-        private const val USE_BUNDLED_EMOJI = true
+        private const val USE_BUNDLED_EMOJI = false
     }
 
     @Inject
@@ -37,6 +38,7 @@ class NapoleonApplication : DaggerApplication() {
         Timber.plant(Timber.DebugTree())
         Fabric.with(this, Crashlytics())
         EmojiManager.install(IosEmojiProvider())
+        com.naposystems.pepito.utility.emojiManager.EmojiManager.instance.install()
         configEmojiCompat()
     }
 

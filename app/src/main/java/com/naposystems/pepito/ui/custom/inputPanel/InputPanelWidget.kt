@@ -174,7 +174,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
             setText(
                 EmojiCompat.get()
                     .process(
-                        "neutral face \uD83D\uDE10 \uD83D\uDE00 ${String(
+                        "\uD83E\uDD70 ${String(
                             Character.toChars(
                                 0x1F600
                             )

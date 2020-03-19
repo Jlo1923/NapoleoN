@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -11,14 +12,28 @@
         android:layout_height="match_parent"
         android:background="?attr/attrBackgroundColorBackground">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager_emoji_keyboard"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container_viewPager"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/container_bottom_navigation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" >
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                app:tabIndicatorHeight="0dp"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager_emoji_keyboard"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_bottom_navigation"
@@ -28,7 +43,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/viewPager_emoji_keyboard">
+            app:layout_constraintTop_toBottomOf="@id/container_viewPager">
 
             <!-- SEARCH ICON -->
             <androidx.appcompat.widget.AppCompatImageView
@@ -36,10 +51,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tint="?attr/attrActionBarItemBackground"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_search_white" />
+                app:srcCompat="@drawable/ic_search_white"
+                tools:visibility="visible" />
 
             <!-- EMOJIS -->
             <androidx.appcompat.widget.AppCompatImageView

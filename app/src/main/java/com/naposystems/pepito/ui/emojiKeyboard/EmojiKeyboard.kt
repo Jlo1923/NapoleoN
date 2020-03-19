@@ -36,6 +36,7 @@ class EmojiKeyboard constructor(
     init {
         popupWindowEmoji.apply {
             contentView = EmojiView(context)
+            (contentView as EmojiView).setupAdapter()
             inputMethodMode = PopupWindow.INPUT_METHOD_NOT_NEEDED
             setBackgroundDrawable(null)
         }

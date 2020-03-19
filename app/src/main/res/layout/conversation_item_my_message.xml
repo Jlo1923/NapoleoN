@@ -68,7 +68,7 @@
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 
-            <com.vanniktech.emoji.EmojiTextView
+            <androidx.emoji.widget.EmojiAppCompatTextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"
                 android:layout_width="0dp"
