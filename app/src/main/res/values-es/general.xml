@@ -42,5 +42,5 @@
     <string name="text_unblock_contact">Desbloquear Contacto</string>
     <string name="text_attachment_document_name">Documento.%1$s</string>
     <string name="text_alert_failure">Advertencia</string>
-
+    <string name="text_status_limit">Se permiten 4 estados personalizados, borra uno previamente guardado para agregar uno nuevo.</string>
 </resources>

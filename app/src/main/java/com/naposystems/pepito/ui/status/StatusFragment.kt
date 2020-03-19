@@ -1,21 +1,20 @@
 package com.naposystems.pepito.ui.status
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.StatusFragmentBinding
-import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
+import com.naposystems.pepito.entity.Status
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.status.adapter.StatusAdapter
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -67,48 +66,103 @@ class StatusFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        binding.textInputEditTextStatus.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewModel.updateStatus(UpdateUserInfoReqDTO(status = view.text.toString()))
-                view.clearFocus()
-                false
-            } else {
-                true
+        context?.let { context ->
+
+            binding.textInputEditTextStatus.setOnEditorActionListener { view, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (view.text.trim().isNotEmpty()) {
+                        viewModel.status.value?.let { listStatus ->
+                            if (listStatus.count() < 10) {
+                                viewModel.updateStatus(
+                                    context,
+                                    view.text.toString()
+                                )
+                                view.clearFocus()
+                            } else {
+                                Utils.alertDialogInformative(
+                                    R.string.text_status_limit,
+                                    true,
+                                    context,
+                                    R.string.text_accept,
+                                    clickTopButton = {
+
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    false
+                } else {
+                    true
+                }
             }
-        }
 
-        viewModel.user.value = args.user
+            viewModel.user.value = args.user
 
-        viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
-            adapter = StatusAdapter(statusList, StatusAdapter.StatusSelectionListener {
-                val status = context!!.getString(it.resourceId)
-                binding.textInputEditTextStatus!!.setText(status)
+            viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
+                if (statusList != null) {
+                    selectStatus(statusList)
+                    adapter = StatusAdapter(
+                        statusList,
+                        StatusAdapter.StatusSelectionListener(clickListener = { status ->
+                            val textStatus = if (status.resourceId > 0) {
+                                context.getString(status.resourceId)
+                            } else {
+                                status.customStatus
+                            }
 
-                val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
-                    status = status
-                )
+                            binding.textInputEditTextStatus.setText(textStatus)
+                            viewModel.updateStatus(context, textStatus)
+                        }, clickDelete = { status, view ->
+                            val popup = PopupMenu(context, view)
+                            popup.menuInflater.inflate(R.menu.menu_popup_status, popup.menu)
 
-                viewModel.updateStatus(updateUserInfoReqDTO)
-
+                            popup.setOnMenuItemClickListener {
+                                when (it.itemId) {
+                                    R.id.delete_status -> {
+                                        viewModel.deleteStatus(status)
+                                    }
+                                }
+                                true
+                            }
+                            popup.show()
+                        })
+                    )
+                    binding.recyclerViewStatus.adapter = adapter
+                }
             })
 
-            binding.recyclerViewStatus.adapter = adapter
-        })
+            viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
+                if (it == true) {
+                    val message = getString(R.string.text_error_getting_local_status)
 
-        viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                val message = getString(R.string.text_error_getting_local_status)
+                    Utils.showSimpleSnackbar(binding.coordinator, message, 3)
+                }
+            })
 
-                Utils.showSimpleSnackbar(binding.coordinator, message, 3)
-            }
-        })
-
-        viewModel.errorUpdatingStatus.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-                val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
-            }
-        })
+            viewModel.errorUpdatingStatus.observe(viewLifecycleOwner, Observer {
+                if (it.isNotEmpty()) {
+                    val snackbarUtils = SnackbarUtils(binding.coordinator, it)
+                    snackbarUtils.showSnackbar()
+                }
+            })
+        }
     }
 
+    private fun selectStatus(listStatus : List<Status>) {
+        viewModel.user.value?.let { user ->
+            context?.let {context ->
+                val statusOld = listStatus.find {
+                    (it.resourceId != 0) && (context.getString(it.resourceId).trim() == user.status.trim()) ||
+                    (it.resourceId == 0) && (it.customStatus.trim() == user.status.trim())
+                }
+
+                if (statusOld == null) {
+                    val statusByDefect = context.getString(listStatus[0].resourceId)
+                    viewModel.updateStatus(context, statusByDefect)
+                    binding.textInputEditTextStatus.setText(statusByDefect)
+                }
+            }
+        }
+    }
 }

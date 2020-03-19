@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.crashlytics.android.Crashlytics
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentBinding
 import com.naposystems.pepito.entity.Contact
@@ -28,7 +27,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
-
 
 class HomeFragment : Fragment() {
 
@@ -70,6 +68,7 @@ class HomeFragment : Fragment() {
         binding.containerStatus.setOnClickListener {
             goToStatus()
         }
+
         binding.imageButtonStatusEndIcon.setOnClickListener {
             goToStatus()
         }
@@ -103,6 +102,8 @@ class HomeFragment : Fragment() {
             Timber.e(e)
         }
 
+        viewModel.getUserLiveData()
+
         viewModel.getContactsAndMessages()
 
         viewModel.getDeletedMessages()
@@ -120,6 +121,10 @@ class HomeFragment : Fragment() {
         viewModel.insertSubscription()
 
         validateSubscriptionTime()
+
+        viewModel.user.observe(viewLifecycleOwner, Observer {
+            binding.textViewStatus.text = it.status
+        })
 
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
@@ -186,9 +191,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun goToStatus() {
-        findNavController().navigate(
-            HomeFragmentDirections.actionHomeFragmentToStatusFragment(viewModel.getUser())
-        )
+        viewModel.user.value?.let {user ->
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToStatusFragment(user)
+            )
+        }
     }
 
     private fun setAdapter() {

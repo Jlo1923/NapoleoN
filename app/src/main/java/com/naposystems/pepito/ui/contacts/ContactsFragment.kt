@@ -25,7 +25,6 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-
 class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
     companion object {

@@ -1,6 +1,6 @@
 package com.naposystems.pepito.repository.editAccessPin
 
-import com.naposystems.pepito.db.dao.user.UserDatasource
+import com.naposystems.pepito.db.dao.user.UserDataSource
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.editAccessPin.IContractEditAccessPin
 import com.naposystems.pepito.utility.Constants
@@ -8,7 +8,7 @@ import com.naposystems.pepito.utility.SharedPreferencesManager
 import javax.inject.Inject
 
 class EditAccessPinRepository @Inject constructor(
-    private val userLocalDataSource: UserDatasource,
+    private val userLocalDataSource: UserDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractEditAccessPin.Repository {
 

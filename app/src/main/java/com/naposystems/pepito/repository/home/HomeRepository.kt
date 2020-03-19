@@ -15,7 +15,6 @@ import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
-import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 import com.naposystems.pepito.ui.home.IContractHome
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -73,11 +72,11 @@ class HomeRepository @Inject constructor(
         socketService.subscribe(SocketReqDTO.toJSONObject(socketReqDTO))
     }
 
-    override suspend fun getUser(): User {
+    override suspend fun getUserLiveData(): LiveData<User> {
         val firebaseId = sharedPreferencesManager.getString(
             Constants.SharedPreferences.PREF_FIREBASE_ID, ""
         )
-        return userLocalDataSource.getUser(firebaseId)
+        return userLocalDataSource.getUserLiveData(firebaseId)
     }
 
     override fun getConversations(): LiveData<List<ConversationAndContact>> {

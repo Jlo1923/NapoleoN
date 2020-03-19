@@ -44,4 +44,5 @@
         <item quantity="one">%d sélectionné</item>
         <item quantity="other">%d sélectionné</item>
     </plurals>
+    <string name="text_status_limit">4 états personnalisés sont autorisés, supprimez un précédemment enregistré pour en ajouter un nouveau.</string>
 </resources>
