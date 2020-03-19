@@ -137,10 +137,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         setupActionMode()
         setupAdapter()
 
-        Handler().postDelayed({
-            binding.textViewUserStatus.isSelected = true
-        }, TimeUnit.SECONDS.toMillis(2))
-
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
                 viewModel.saveMessageLocally(
@@ -400,10 +396,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         })
 
         viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                if (actionMode.mode != null) {
-                    actionMode.mode!!.finish()
-                }
+            if (it && actionMode.mode != null) {
+                actionMode.mode!!.finish()
             }
         })
     }

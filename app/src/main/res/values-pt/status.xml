@@ -10,4 +10,6 @@
     <string name="text_status_sleeping">Adormecido</string>
     <string name="text_status_only_emergency">Apenas emergência</string>
     <string name="text_error_getting_local_status">Ocorreu um erro ao obter os estados, tente novamente</string>
+    <string name="text_delete_status">Eliminar estado</string>
+
 </resources>

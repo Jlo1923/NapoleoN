@@ -42,5 +42,6 @@
         <item quantity="one">%d ausgewählt</item>
         <item quantity="other">%d ausgewählt</item>
     </plurals>
+    <string name="text_status_limit">Es sind 4 benutzerdefinierte Status zulässig. Löschen Sie einen zuvor gespeicherten Status, um einen neuen hinzuzufügen.</string>
 
 </resources>

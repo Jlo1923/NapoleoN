@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
+import android.text.BoringLayout
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
@@ -90,15 +91,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             accountStatus = it
         })
 
-        val theme = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
-        when(theme) {
-            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
-            4 -> setTheme(R.style.AppThemeColdOcean)
-            5 -> setTheme(R.style.AppThemeCamouflage)
-            6 -> setTheme(R.style.AppThemePurpleBluebonnets)
-            7 -> setTheme(R.style.AppThemePinkDream)
-            8 -> setTheme(R.style.AppThemeClearSky)
+        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
+            1 -> setNewTheme(0)
+            3 -> setNewTheme(R.style.AppThemeBlackGoldAlloy)
+            4 -> setNewTheme(R.style.AppThemeColdOcean)
+            5 -> setNewTheme(R.style.AppThemeCamouflage)
+            6 -> setNewTheme(R.style.AppThemePurpleBluebonnets)
+            7 -> setNewTheme(R.style.AppThemePinkDream)
+            8 -> setNewTheme(R.style.AppThemeClearSky)
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -210,6 +210,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setMarginToNavigationView()
     }
 
+    private fun setNewTheme(style: Int) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        if(style != 0) setTheme(style)
+    }
+
     private fun openMenu() {
         binding.toolbar.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
@@ -301,7 +306,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val fourDp = Utils.dpToPx(this, 4f).toFloat()
         binding.toolbar.apply {
             overflowIcon?.setColorFilter(
-                    ContextCompat.getColor(context, value.resourceId), PorterDuff.Mode.SRC_IN
+                ContextCompat.getColor(context, value.resourceId), PorterDuff.Mode.SRC_IN
             )
             visibility = View.VISIBLE
             elevation = fourDp

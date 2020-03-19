@@ -1,6 +1,8 @@
 package com.naposystems.pepito.repository.status
 
+import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.status.StatusLocalDataSource
+import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.profile.UpdateUserInfo422DTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoErrorDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 class StatusRepository @Inject constructor(
     private val statusLocalDataSource: StatusLocalDataSource,
-    private val napoleonApi: NapoleonApi
+    private val napoleonApi: NapoleonApi,
+    private val userLocalDataSource: UserLocalDataSource
 ) :
     IContractStatus.Repository {
 
@@ -23,7 +26,7 @@ class StatusRepository @Inject constructor(
         Moshi.Builder().build()
     }
 
-    override suspend fun getStatus(): List<Status> {
+    override suspend fun getStatus(): LiveData<List<Status>> {
         return statusLocalDataSource.getStatus()
     }
 
@@ -32,7 +35,15 @@ class StatusRepository @Inject constructor(
     }
 
     override suspend fun updateLocalStatus(newStatus: String, firebaseId: String) {
-        statusLocalDataSource.updateStatus(newStatus, firebaseId)
+        userLocalDataSource.updateStatus(newStatus, firebaseId)
+    }
+
+    override suspend fun insertNewStatus(listStatus: List<Status>) {
+        statusLocalDataSource.insertNewStatus(listStatus)
+    }
+
+    override suspend fun deleteStatus(status: Status) {
+        statusLocalDataSource.deleteStatus(status)
     }
 
     fun get422Error(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {

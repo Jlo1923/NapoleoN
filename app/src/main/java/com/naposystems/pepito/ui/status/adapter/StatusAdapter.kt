@@ -1,6 +1,7 @@
 package com.naposystems.pepito.ui.status.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.StatusFragmentItemBinding
@@ -11,7 +12,6 @@ class StatusAdapter(
     private val clickListener: StatusSelectionListener
 ) :
     RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatusViewHolder {
         return StatusViewHolder.from(parent)
@@ -31,6 +31,10 @@ class StatusAdapter(
             binding.status = status
             binding.clickListener = clickListener
             binding.executePendingBindings()
+
+            binding.buttonMore.setOnClickListener {
+                clickListener.onMoreClick(status, it)
+            }
         }
 
         companion object {
@@ -46,7 +50,11 @@ class StatusAdapter(
         }
     }
 
-    class StatusSelectionListener(val clickListener: (status: Status) -> Unit) {
+    class StatusSelectionListener(
+        val clickListener: (status: Status) -> Unit,
+        val clickDelete: (status: Status, view: View) -> Unit
+    ) {
         fun onClick(status: Status) = clickListener(status)
+        fun onMoreClick(status: Status, view: View) = clickDelete(status, view)
     }
 }
