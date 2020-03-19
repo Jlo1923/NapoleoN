@@ -51,17 +51,28 @@
 
             </RadioGroup>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_next_step"
-                style="@style/AppPrimaryButton"
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="@string/text_next"
-                app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
+                app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
                 app:layout_constraintEnd_toEndOf="@id/guideline_end"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
-                app:layout_constraintWidth_percent="@dimen/width_app_button" />
+                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintWidth_percent="@dimen/width_app_button">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_next_step"
+                    style="@style/AppPrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/text_next" />
+
+                <ProgressBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </ViewSwitcher>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_start"

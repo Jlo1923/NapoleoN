@@ -566,7 +566,7 @@
     <fragment
         android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"
         android:name="com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment"
-        android:label="ValidatePasswordPreviousRecoveryAccountFragment"
+        android:label="@string/text_recovery_account"
         tools:layout="@layout/validate_password_previous_recovery_account_fragment">
         <action
             android:id="@+id/action_validatePasswordPreviousRecoveryAccountFragment_to_recoveryOlderAccountQuestionsFragment"
@@ -582,7 +582,7 @@
     <fragment
         android:id="@+id/recoveryOlderAccountQuestionsFragment"
         android:name="com.naposystems.pepito.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment"
-        android:label="RecoveryOlderAccountQuestionsFragment"
+        android:label="@string/text_recovery_account"
         tools:layout="@layout/recovery_older_account_questions_fragment">
         <action
             android:id="@+id/action_recoveryOlderAccountQuestionsFragment_to_accessPinFragment"

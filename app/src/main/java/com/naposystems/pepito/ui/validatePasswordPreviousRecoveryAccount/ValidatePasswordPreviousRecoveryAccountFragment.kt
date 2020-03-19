@@ -64,18 +64,16 @@ class ValidatePasswordPreviousRecoveryAccountFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 binding.buttonRecoveryAccount.isEnabled = s!!.length >= 4
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 //Nothing
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 //Nothing
             }
         })
 
         binding.buttonRecoveryAccount.setOnClickListener {
-            binding.viewSwitcherProgressRecovery.showNext()
+            binding.viewSwitcherRecoveryAccount.showNext()
             viewModel.sendPassword(nickname, binding.textInputEditTextPassword.text.toString())
         }
 
@@ -96,8 +94,8 @@ class ValidatePasswordPreviousRecoveryAccountFragment : Fragment() {
             } else {
                 viewModel.setAttemptPref()
                 generalDialog(
-                    "Title!!",
-                    "Error en los datos!!",
+                    getString(R.string.text_alert_failure),
+                    getString(R.string.text_password_incorrect),
                     false,
                     childFragmentManager
                 ) {
@@ -107,7 +105,7 @@ class ValidatePasswordPreviousRecoveryAccountFragment : Fragment() {
         })
 
         viewModel.recoveryOlderPasswordCreatingError.observe(viewLifecycleOwner, Observer {
-            binding.viewSwitcherProgressRecovery.showNext()
+            binding.viewSwitcherRecoveryAccount.showNext()
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
             snackbarUtils.showSnackbar()
         })

@@ -8,4 +8,6 @@
     <string name="text_placeholder_password">Inserisci la tua password</string>
     <string name="text_description_enter_password">Ingrese su Contraseña. È un momento di recupero su cuenta. Digita il número di contraseña di recupero di cuenta.</string>
     <string name="text_description_validate_old_answers">Domande sulla sicurezza. Sei più vicino al recupero del tuo account, ti preghiamo di aiutarci a confermare la tua identità. Rispondi correttamente alle seguenti domande di sicurezza</string>
+    <string name="text_password_incorrect">La password inserita non è corretta</string>
+    <string name="text_answers_incorrect">Le risposte inserite sono errate.</string>
 </resources>

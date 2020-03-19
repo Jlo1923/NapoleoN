@@ -55,7 +55,6 @@ import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewM
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import java.io.File
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -708,7 +707,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     )
                 )
             }
-        }, mediaPlayerManager, resources)
+        }, mediaPlayerManager)
 
         linearLayoutManager = LinearLayoutManager(context!!)
         linearLayoutManager.reverseLayout = true
