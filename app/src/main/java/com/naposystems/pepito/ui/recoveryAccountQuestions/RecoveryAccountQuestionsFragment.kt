@@ -18,7 +18,6 @@ import com.naposystems.pepito.databinding.RecoveryAccountQuestionsFragmentBindin
 import com.naposystems.pepito.model.recoveryAccount.RecoveryQuestions
 import com.naposystems.pepito.model.recoveryAccountQuestions.RecoveryAccountAnswers
 import com.naposystems.pepito.utility.SnackbarUtils
-import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -71,7 +70,7 @@ class RecoveryAccountQuestionsFragment : Fragment() {
                 R.string.text_count_questions_recovery_account, indexQuestion + 1, maxQuestions
             )
 
-        if (questions.isNotEmpty()) {//Obtener Preguntas y respuestas por primera vez
+        if (questions.isNotEmpty()) {
             getQuestionAndAnswers(inflater, container)
         }
 
@@ -92,6 +91,7 @@ class RecoveryAccountQuestionsFragment : Fragment() {
             } else {
                 saveQuestionAndAnswers(question.questionId, selectedAnswer)
                 viewModel.sendRecoveryAnswers(args.nickname)
+                binding.viewSwitcher.showNext()
                 disableRadioGroup()
             }
 
@@ -124,6 +124,7 @@ class RecoveryAccountQuestionsFragment : Fragment() {
         })
 
         viewModel.recoveryAnswerCreatingErrors.observe(viewLifecycleOwner, Observer {
+            binding.viewSwitcher.showPrevious()
             val errors = it
             for (error in errors) {
                 Toast.makeText(context, error, Toast.LENGTH_LONG).show()
