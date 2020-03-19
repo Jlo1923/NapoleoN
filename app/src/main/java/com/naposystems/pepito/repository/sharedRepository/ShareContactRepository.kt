@@ -38,8 +38,8 @@ class ShareContactRepository @Inject constructor(
         deleteConversation(contact.id)
     }
 
-    override suspend fun unblockContact(contact: Contact): Response<UnblockContactResDTO> {
-        return napoleonApi.putUnblockContact(contact.id.toString())
+    override suspend fun unblockContact(contactId: Int): Response<UnblockContactResDTO> {
+        return napoleonApi.putUnblockContact(contactId.toString())
     }
 
     override suspend fun unblockContactLocal(contactId: Int) {

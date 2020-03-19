@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
-import android.content.res.Resources
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
@@ -11,17 +10,17 @@ import com.naposystems.pepito.utility.Utils
 import java.util.concurrent.TimeUnit
 
 open class ConversationViewHolder constructor(
-    view: View,
-    var countDownTimer: CountDownTimer?
+    view: View
 ) : RecyclerView.ViewHolder(view) {
 
+    private var countDownTimer: CountDownTimer? = null
+
     fun countDown (item: MessageAndAttachment,
-             endTime: Long,
              textView: TextView,
-             resources: Resources,
              itemToEliminate: (MessageAndAttachment) -> Unit) {
 
         countDownTimer?.cancel()
+        val endTime = item.message.totalSelfDestructionAt.toLong()
         if (endTime > 0) {
             val remainingTime =
                 (endTime - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
@@ -29,7 +28,7 @@ open class ConversationViewHolder constructor(
                 val timeInDays = TimeUnit.SECONDS.toDays(time).toInt()
                 when {
                     TimeUnit.SECONDS.toDays(time) >= 1 -> {
-                        textView.text = resources.getQuantityString(
+                        textView.text = textView.resources.getQuantityString(
                             R.plurals.text_self_destruct_time_days, timeInDays, timeInDays
                         )
                     }

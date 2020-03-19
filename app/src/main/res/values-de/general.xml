@@ -34,6 +34,7 @@
     <string name="text_title_delete_conversation">Konversation löschen</string>
     <string name="text_mute_conversation">Gespräch stumm schalten</string>
     <string name="text_block_contact">Kontakt blockieren</string>
+    <string name="text_unblock_contact">Kontakt entsperren</string>
     <string name="text_field_cannot_be_empty">Das Feld darf nicht leer sein</string>
     <string name="text_send_to">Schicken %1$s</string>
     <string name="text_error_playing_audio">Ein Fehler ist auf das Spiel Audio aufgetreten</string>
