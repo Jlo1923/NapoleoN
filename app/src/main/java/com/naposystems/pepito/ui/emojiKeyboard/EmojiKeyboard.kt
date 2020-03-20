@@ -8,11 +8,15 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
+import androidx.emoji.widget.EmojiAppCompatEditText
+import com.naposystems.pepito.ui.emojiKeyboard.view.EmojiView
+import com.naposystems.pepito.ui.emojiKeyboardPage.adapter.EmojiKeyboardPageAdapter
 import com.naposystems.pepito.utility.Utils
 
 class EmojiKeyboard constructor(
     private val rootView: View,
-    private val editText: EditText
+    private val editText: EmojiAppCompatEditText,
+    private val listener: EmojiKeyboardPageAdapter.EmojiKeyboardPageListener
 ) : IContractEmojiKeyboard {
 
     companion object {
@@ -36,7 +40,11 @@ class EmojiKeyboard constructor(
     init {
         popupWindowEmoji.apply {
             contentView = EmojiView(context)
-            (contentView as EmojiView).setupAdapter()
+            (contentView as EmojiView).apply {
+                setListener(listener)
+                setEditText(editText)
+            }
+
             inputMethodMode = PopupWindow.INPUT_METHOD_NOT_NEEDED
             setBackgroundDrawable(null)
         }

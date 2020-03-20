@@ -1,11 +1,9 @@
 package com.naposystems.pepito.ui.custom.inputPanel
 
 import android.text.TextWatcher
-import android.widget.EditText
 import android.widget.ImageButton
 import androidx.emoji.widget.EmojiAppCompatEditText
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.vanniktech.emoji.EmojiEditText
 
 interface IContractInputPanel {
 
@@ -13,7 +11,7 @@ interface IContractInputPanel {
 
     fun morphFloatingActionButtonIcon()
 
-    fun getEditTex(): EmojiEditText
+    fun getEditTex(): EmojiAppCompatEditText
 
     fun getFloatingActionButton(): FloatingActionButton
 

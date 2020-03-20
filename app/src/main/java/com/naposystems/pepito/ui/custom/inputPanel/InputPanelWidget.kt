@@ -16,7 +16,6 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.widget.EmojiAppCompatEditText
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.FabSend
-import com.vanniktech.emoji.EmojiEditText
 
 class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs),
     IContractInputPanel {
@@ -46,8 +45,8 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
         FabSend(context)
     }
 
-    private val mEditText: EmojiEditText by lazy {
-        EmojiEditText(ContextThemeWrapper(context, R.style.EditTextInputPanel))
+    private val mEditText: EmojiAppCompatEditText by lazy {
+        EmojiAppCompatEditText(ContextThemeWrapper(context, R.style.EditTextInputPanel))
     }
 
     private lateinit var imageButtonEmoji: ImageButton
@@ -171,18 +170,8 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
         mEditText.apply {
             background = resources.getDrawable(android.R.color.transparent, context.theme)
             hint = resources.getString(R.string.text_write_message)
-            setText(
-                EmojiCompat.get()
-                    .process(
-                        "\uD83E\uDD70 ${String(
-                            Character.toChars(
-                                0x1F600
-                            )
-                        )}"
-                    )
-            )
-            setHintTextColor(resources.getColor(value.resourceId))
-            setTextColor(resources.getColor(valueTextColor.resourceId))
+            setHintTextColor(resources.getColor(value.resourceId, context.theme))
+            setTextColor(resources.getColor(valueTextColor.resourceId, context.theme))
             maxLines = 4
         }
 

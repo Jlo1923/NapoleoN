@@ -20,13 +20,15 @@
             app:layout_constraintBottom_toTopOf="@+id/container_bottom_navigation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
-                app:tabIndicatorHeight="0dp"/>
+                android:layout_height="26dp"
+                android:background="?attr/attrBackgroundColorBackground"
+                app:tabBackground="?attr/attrBackgroundColorBackground"
+                app:tabIndicatorHeight="0dp" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager_emoji_keyboard"
@@ -51,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tint="?attr/attrActionBarItemBackground"
-                android:visibility="gone"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

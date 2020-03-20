@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.EmojiKeyboardPageFragmentItemBinding
 import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import timber.log.Timber
+import java.io.Serializable
 import java.nio.charset.Charset
 
-class EmojiKeyboardPageAdapter :
+class EmojiKeyboardPageAdapter constructor(private val listener: EmojiKeyboardPageListener) :
     ListAdapter<Emoji, EmojiKeyboardPageAdapter.EmojiViewHolder>(Emoji.DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmojiViewHolder {
@@ -20,19 +21,18 @@ class EmojiKeyboardPageAdapter :
 
     override fun onBindViewHolder(holder: EmojiViewHolder, position: Int) {
         val emoji = getItem(position)
-        holder.bind(emoji)
+        holder.bind(emoji, listener)
     }
 
     class EmojiViewHolder constructor(private val binding: EmojiKeyboardPageFragmentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(emoji: Emoji) {
+        fun bind(emoji: Emoji, listener: EmojiKeyboardPageListener) {
             binding.textViewEmoji.text =
                 EmojiCompat.get().process(String(Character.toChars(emoji.code)))
 
             binding.textViewEmoji.setOnClickListener {
-                Timber.d(emoji.toString())
-                Toast.makeText(binding.textViewEmoji.context, emoji.name, Toast.LENGTH_SHORT).show()
+                listener.onEmojiClick(emoji)
             }
             binding.executePendingBindings()
         }
@@ -48,6 +48,9 @@ class EmojiKeyboardPageAdapter :
                 return EmojiViewHolder(binding)
             }
         }
+    }
 
+    interface EmojiKeyboardPageListener : Serializable {
+        fun onEmojiClick(emoji: Emoji)
     }
 }

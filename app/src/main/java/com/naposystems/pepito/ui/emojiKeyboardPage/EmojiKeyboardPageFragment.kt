@@ -17,10 +17,15 @@ class EmojiKeyboardPageFragment : Fragment() {
     companion object {
 
         const val CATEGORY_KEY: String = "category"
+        const val LISTENER_KEY: String = "listener"
 
-        fun newInstance(category: EmojiCategory) = EmojiKeyboardPageFragment().apply {
+        fun newInstance(
+            category: EmojiCategory,
+            listener: EmojiKeyboardPageAdapter.EmojiKeyboardPageListener
+        ) = EmojiKeyboardPageFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(CATEGORY_KEY, category)
+                putSerializable(LISTENER_KEY, listener)
             }
         }
     }
@@ -42,7 +47,12 @@ class EmojiKeyboardPageFragment : Fragment() {
                 val categoryValue = bundle.getSerializable(CATEGORY_KEY)
                 categoryValue?.let { category ->
                     emojiCategory = category as EmojiCategory
-                    setupAdapter()
+                    if (bundle.containsKey(LISTENER_KEY)) {
+                        val listenerValue = bundle.getSerializable(LISTENER_KEY)
+                        listenerValue?.let { listener ->
+                            setupAdapter(listener as EmojiKeyboardPageAdapter.EmojiKeyboardPageListener)
+                        }
+                    }
                 }
             }
         }
@@ -50,9 +60,9 @@ class EmojiKeyboardPageFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupAdapter() {
+    private fun setupAdapter(listener: EmojiKeyboardPageAdapter.EmojiKeyboardPageListener) {
         emojiCategory?.let {
-            val adapter = EmojiKeyboardPageAdapter()
+            val adapter = EmojiKeyboardPageAdapter(listener)
             adapter.submitList(it.emojiList)
 
             binding.recyclerViewEmojis.adapter = adapter

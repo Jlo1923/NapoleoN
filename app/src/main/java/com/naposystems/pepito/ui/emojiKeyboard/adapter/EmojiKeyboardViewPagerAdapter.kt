@@ -5,8 +5,12 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.naposystems.pepito.model.emojiKeyboard.EmojiCategory
 import com.naposystems.pepito.ui.emojiKeyboardPage.EmojiKeyboardPageFragment
+import com.naposystems.pepito.ui.emojiKeyboardPage.adapter.EmojiKeyboardPageAdapter
 
-class EmojiKeyboardViewPagerAdapter constructor(fragmentActivity: FragmentActivity) :
+class EmojiKeyboardViewPagerAdapter constructor(
+    fragmentActivity: FragmentActivity,
+    private val listener: EmojiKeyboardPageAdapter.EmojiKeyboardPageListener
+) :
     FragmentStateAdapter(fragmentActivity) {
 
     private val mListCategories = mutableListOf<EmojiCategory>()
@@ -16,7 +20,7 @@ class EmojiKeyboardViewPagerAdapter constructor(fragmentActivity: FragmentActivi
     override fun createFragment(position: Int): Fragment {
         val emojiCategory = mListCategories[position]
 
-        return EmojiKeyboardPageFragment.newInstance(emojiCategory)
+        return EmojiKeyboardPageFragment.newInstance(emojiCategory, listener)
     }
 
     fun addCategories(listEmojiCategory: List<EmojiCategory>) {

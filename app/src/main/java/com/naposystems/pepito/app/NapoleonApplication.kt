@@ -1,6 +1,5 @@
 package com.naposystems.pepito.app
 
-import android.graphics.Color
 import androidx.core.provider.FontRequest
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
@@ -9,9 +8,8 @@ import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.naposystems.pepito.R
 import com.naposystems.pepito.di.DaggerApplicationComponent
+import com.naposystems.pepito.utility.emojiManager.EmojiManager
 import com.naposystems.pepito.webService.socket.SocketService
-import com.vanniktech.emoji.EmojiManager
-import com.vanniktech.emoji.ios.IosEmojiProvider
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import io.fabric.sdk.android.Fabric
@@ -37,8 +35,7 @@ class NapoleonApplication : DaggerApplication() {
         Stetho.initializeWithDefaults(this)
         Timber.plant(Timber.DebugTree())
         Fabric.with(this, Crashlytics())
-        EmojiManager.install(IosEmojiProvider())
-        com.naposystems.pepito.utility.emojiManager.EmojiManager.instance.install()
+        EmojiManager.instance.install()
         configEmojiCompat()
     }
 

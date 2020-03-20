@@ -21,6 +21,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.databinding.DataBindingUtil
+import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -37,10 +38,12 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.emojiKeyboard.EmojiKeyboard
+import com.naposystems.pepito.ui.emojiKeyboardPage.adapter.EmojiKeyboardPageAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
@@ -265,7 +268,23 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         }
 
         binding.inputPanel.getImageButtonEmoji().setOnClickListener {
-            val emojiKeyboard = EmojiKeyboard(binding.coordinator, binding.inputPanel.getEditTex())
+            val emojiKeyboard = EmojiKeyboard(
+                binding.coordinator,
+                binding.inputPanel.getEditTex(),
+                object : EmojiKeyboardPageAdapter.EmojiKeyboardPageListener {
+                    override fun onEmojiClick(emoji: Emoji) {
+                        binding.inputPanel.getEditTex().text?.append(
+                            EmojiCompat.get().process(
+                                String(
+                                    Character.toChars(
+                                        emoji.code
+                                    )
+                                )
+                            )
+                        )
+                    }
+                }
+            )
             emojiKeyboard.toggle()
         }
 
