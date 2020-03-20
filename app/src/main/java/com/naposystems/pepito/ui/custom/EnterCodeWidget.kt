@@ -17,6 +17,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.naposystems.pepito.R
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 
 
@@ -203,7 +204,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
         linearTextInputs.startAnimation(
             AnimationUtils.loadAnimation(context, R.anim.shake)
         )
-        vibratePhone()
+        Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type)
     }
 
     private fun changeBackgroundAllTextInputs(drawable: Int) {
@@ -241,14 +242,5 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
         textViews[position].text = ""
         textViews[position].background =
             resources.getDrawable(R.drawable.bg_enter_code, context!!.theme)
-    }
-
-    private fun vibratePhone() {
-        val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(400, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            vibrator.vibrate(400)
-        }
     }
 }

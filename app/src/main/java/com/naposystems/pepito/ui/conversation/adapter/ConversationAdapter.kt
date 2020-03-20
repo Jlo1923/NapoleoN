@@ -43,7 +43,9 @@ class ConversationAdapter constructor(
             oldItem: MessageAndAttachment,
             newItem: MessageAndAttachment
         ): Boolean {
-            return oldItem.message.id == newItem.message.id && oldItem.message.status == newItem.message.status && oldItem.message.isSelected == newItem.message.isSelected
+            return oldItem.message.id == newItem.message.id &&
+                    oldItem.message.status == newItem.message.status &&
+                    oldItem.message.isSelected == newItem.message.isSelected
         }
 
         override fun areContentsTheSame(
@@ -54,6 +56,10 @@ class ConversationAdapter constructor(
         }
     }
 
+    fun getMessageAndAttachment(position: Int): MessageAndAttachment? {
+        return getItem(position)
+    }
+
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
 
@@ -61,39 +67,34 @@ class ConversationAdapter constructor(
             return if (conversation.attachmentList.isNotEmpty()) {
                 when (conversation.attachmentList[0].type) {
                     Constants.AttachmentType.IMAGE.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE
-                        } else {
+                        else
                             TYPE_INCOMING_MESSAGE
-                        }
                     }
                     Constants.AttachmentType.AUDIO.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE_AUDIO
-                        } else {
+                        else
                             TYPE_INCOMING_MESSAGE_AUDIO
-                        }
                     }
                     Constants.AttachmentType.VIDEO.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE_VIDEO
-                        } else {
+                        else
                             TYPE_INCOMING_MESSAGE_VIDEO
-                        }
                     }
                     Constants.AttachmentType.DOCUMENT.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE_DOCUMENT
-                        } else {
+                        else
                             TYPE_INCOMING_MESSAGE_DOCUMENT
-                        }
                     }
                     else -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE
-                        } else {
+                        else
                             TYPE_INCOMING_MESSAGE
-                        }
                     }
                 }
             } else {

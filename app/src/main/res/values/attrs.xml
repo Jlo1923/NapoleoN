@@ -6,13 +6,6 @@
         <attr name="errorText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="InputPanelWidget">
-        <attr name="showEmojiIcon" format="boolean" />
-        <attr name="showCameraIcon" format="boolean" />
-        <attr name="showAttachmentIcon" format="boolean" />
-        <attr name="showOnlySendIcon" format="boolean" />
-    </declare-styleable>
-
     <declare-styleable name="FabIconSend">
         <attr name="showOnlySendIcon1" format="boolean" />
     </declare-styleable>
@@ -24,6 +17,18 @@
 
     <declare-styleable name="NumericKeyboardCustomView">
         <attr name="showBiometric" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="InputPanelWidget">
+        <attr name="showEmojiIcon" format="boolean" />
+        <attr name="showCameraIcon" format="boolean" />
+        <attr name="showAttachmentIcon" format="boolean" />
+        <attr name="showOnlySendIcon" format="boolean" />
+        <attr name="showQuote" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="Quote">
+        <attr name="test" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="AnimatedTwoVectorView">

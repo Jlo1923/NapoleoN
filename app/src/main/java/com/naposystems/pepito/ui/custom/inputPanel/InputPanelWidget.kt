@@ -1,56 +1,32 @@
 package com.naposystems.pepito.ui.custom.inputPanel
 
 import android.content.Context
+import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.TypedValue
-import android.view.ContextThemeWrapper
-import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.LinearLayout.HORIZONTAL
-import android.widget.RelativeLayout
-import androidx.core.content.ContextCompat
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.DataBindingUtil
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.naposystems.pepito.R
+import com.naposystems.pepito.databinding.InputPanelWidgetBinding
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.custom.FabSend
+import com.naposystems.pepito.utility.Utils
+import java.util.*
+import java.util.logging.Handler
 
-class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs),
+class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
     IContractInputPanel {
 
+    private var binding: InputPanelWidgetBinding
     private var showEmojiIcon: Boolean = true
     private var showCameraIcon: Boolean = true
     private var showAttachmentIcon: Boolean = true
     private var showOnlySendIcon: Boolean = true
-
-    private val normalMargin by lazy {
-        resources.getDimension(R.dimen.normal_margin).toInt()
-    }
-
-    private val smallMargin by lazy {
-        resources.getDimension(R.dimen.small_margin).toInt()
-    }
-
-    private val linearLayoutContainer: LinearLayout by lazy {
-        LinearLayout(context)
-    }
-
-    private val linearLayoutInputPanel: LinearLayout by lazy {
-        LinearLayout(context)
-    }
-
-    private val floatingButton: FabSend by lazy {
-        FabSend(context)
-    }
-
-    private val editText: EditText by lazy {
-        EditText(ContextThemeWrapper(context, R.style.EditTextInputPanel))
-    }
-
-    private lateinit var imageButtonEmoji: ImageButton
-    private lateinit var imageButtonAttachment: ImageButton
-    private lateinit var imageButtonCamera: ImageButton
 
     init {
         context.theme.obtainStyledAttributes(
@@ -59,38 +35,27 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
             0, 0
         ).apply {
             try {
+                val infService = Context.LAYOUT_INFLATER_SERVICE
+                val layoutInflater = getContext().getSystemService(infService) as LayoutInflater
+                binding = DataBindingUtil.inflate(
+                    layoutInflater,
+                    R.layout.input_panel_widget,
+                    this@InputPanelWidget,
+                    true
+                )
+
                 showEmojiIcon = getBoolean(R.styleable.InputPanelWidget_showEmojiIcon, true)
                 showAttachmentIcon =
                     getBoolean(R.styleable.InputPanelWidget_showAttachmentIcon, true)
                 showCameraIcon = getBoolean(R.styleable.InputPanelWidget_showCameraIcon, true)
                 showOnlySendIcon = getBoolean(R.styleable.InputPanelWidget_showOnlySendIcon, false)
 
-                linearLayoutContainer.apply {
-                    orientation = HORIZONTAL
-                    gravity = Gravity.CENTER_VERTICAL
-                }
-
-                addView(linearLayoutContainer)
-
-                with(linearLayoutContainer) {
-                    val linearLayoutParams = LayoutParams(linearLayoutContainer.layoutParams)
-
-                    linearLayoutParams.apply {
-                        addRule(ALIGN_PARENT_START)
-                        addRule(ALIGN_PARENT_END)
-                    }
-
-                    layoutParams = linearLayoutParams
-                }
-
-                createLinearInputPanel(context)
-
-                createFloatingButton()
-
-                imageButtonEmoji.visibility = if (showEmojiIcon) View.VISIBLE else View.GONE
-                imageButtonAttachment.visibility =
+                binding.imageButtonEmoji.visibility = if (showEmojiIcon) View.VISIBLE else View.GONE
+                binding.imageButtonAttachment.visibility =
                     if (showAttachmentIcon) View.VISIBLE else View.GONE
-                imageButtonCamera.visibility = if (showCameraIcon) View.VISIBLE else View.GONE
+                binding.imageButtonCamera.visibility = if (showCameraIcon) View.VISIBLE else View.GONE
+
+                binding.floatingActionButtonSend.setShowOnlySendIcon(showOnlySendIcon)
 
             } finally {
                 recycle()
@@ -98,155 +63,55 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
         }
     }
 
-    private fun createLinearInputPanel(context: Context) {
-
-        linearLayoutInputPanel.apply {
-            id = View.generateViewId()
-            background = resources.getDrawable(R.drawable.bg_input_panel, context.theme)
-            orientation = HORIZONTAL
-        }
-
-        linearLayoutContainer.addView(linearLayoutInputPanel)
-
-        with(linearLayoutInputPanel) {
-            val linearLayoutParams = LinearLayout.LayoutParams(this.layoutParams)
-
-            linearLayoutParams.apply {
-                width = 0
-                weight = 1f
-                setMargins(normalMargin, smallMargin, normalMargin, smallMargin)
-            }
-
-            layoutParams = linearLayoutParams
-        }
-
-        imageButtonEmoji =
-            addImageButton(context, smallMargin, 0, R.drawable.ic_insert_emoticon_black)
-
-        addEditText(context)
-
-        imageButtonAttachment =
-            addImageButton(context, 0, normalMargin, R.drawable.ic_attachment_black)
-
-        imageButtonCamera =
-            addImageButton(context, smallMargin, normalMargin, R.drawable.ic_camera_primary)
-    }
-
-    private fun createFloatingButton() {
-
-        floatingButton.apply {
-            gravity = Gravity.CENTER_VERTICAL
-        }
-
-        floatingButton.setShowOnlySendIcon(showOnlySendIcon)
-
-        linearLayoutContainer.addView(floatingButton)
-
-        with(floatingButton) {
-            val fabLinearParams = LinearLayout.LayoutParams(floatingButton.layoutParams)
-
-            fabLinearParams.apply {
-                marginEnd = smallMargin
-                setVerticalGravity(Gravity.CENTER)
-            }
-
-            layoutParams = fabLinearParams
-        }
-    }
-
-    private fun addEditText(context: Context) {
-
-        val value = TypedValue()
-        context.theme.resolveAttribute(R.attr.attrTextColorHintConversationInputPanel, value, true)
-
-        val valueTextColor = TypedValue()
-        context.theme.resolveAttribute(R.attr.attrTextColorConversationInputPanel, valueTextColor, true)
-
-        editText.apply {
-            background = resources.getDrawable(android.R.color.transparent, context.theme)
-            hint = resources.getString(R.string.text_write_message)
-            setHintTextColor(resources.getColor(value.resourceId))
-            setTextColor(resources.getColor(valueTextColor.resourceId))
-            maxLines = 4
-        }
-
-        linearLayoutInputPanel.addView(editText)
-
-        with(editText) {
-            val editTextLayoutParams = LinearLayout.LayoutParams(layoutParams)
-
-            editTextLayoutParams.apply {
-                width = 0
-                weight = 1f
-                setMargins(smallMargin, 0, 0, 0)
-            }
-
-            layoutParams = editTextLayoutParams
-        }
-    }
-
-    private fun addImageButton(
-        context: Context,
-        leftMargin: Int,
-        rightMargin: Int,
-        drawable: Int
-    ): ImageButton {
-        val imageButton = ImageButton(context)
-
-        val outValue = TypedValue()
-        getContext().theme.resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true)
-
-        val outValueBackgroundTint = TypedValue()
-        getContext().theme.resolveAttribute(R.attr.attrActionBarItemBackground, outValueBackgroundTint, true)
-
-        imageButton.apply {
-            setImageResource(drawable)
-            setBackgroundResource(outValue.resourceId)
-            setColorFilter(
-                ContextCompat.getColor(context, outValueBackgroundTint.resourceId),
-                android.graphics.PorterDuff.Mode.SRC_IN
-            )
-            gravity = Gravity.CENTER_VERTICAL
-        }
-
-        linearLayoutInputPanel.addView(imageButton)
-
-        with(imageButton) {
-            val imgButtonLayoutParams = LinearLayout.LayoutParams(layoutParams)
-
-            imgButtonLayoutParams.apply {
-                setMargins(leftMargin, 0, rightMargin, 0)
-            }
-
-            layoutParams = imgButtonLayoutParams
-        }
-
-        return imageButton
-    }
-
-    //region Implementation IContractInputPanel
     override fun setEditTextWatcher(textWatcher: TextWatcher) {
-        editText.addTextChangedListener(textWatcher)
+        binding.textInputEditTextInput.addTextChangedListener(textWatcher)
     }
 
-    override fun morphFloatingActionButtonIcon() = floatingButton.morph()
+    override fun getFloatingActionButton(): FabSend {
+        return binding.floatingActionButtonSend
+    }
 
-    override fun getEditTex() = editText
+    override fun morphFloatingActionButtonIcon() {
+        binding.floatingActionButtonSend.morph()
+    }
 
-    override fun getFloatingActionButton() = floatingButton
+    override fun getIsShowingMic() {
+        binding.floatingActionButtonSend.isShowingMic()
+    }
 
-    override fun getImageButtonEmoji() = imageButtonEmoji
+    override fun getEditTex(): EditText {
+        return binding.textInputEditTextInput
+    }
 
-    override fun getImageButtonAttachment() = imageButtonAttachment
+    override fun getImageButtonAttachment(): ImageButton {
+        return binding.imageButtonAttachment
+    }
 
-    override fun getImageButtonCamera() = imageButtonCamera
+    override fun getImageButtonCamera(): ImageButton {
+        return binding.imageButtonCamera
+    }
+
+    override fun getImageButtonEmoji(): ImageButton {
+        return binding.imageButtonEmoji
+    }
 
     override fun hideImageButtonCamera() {
-        imageButtonCamera.visibility = View.GONE
+        binding.imageButtonCamera.visibility = View.GONE
     }
 
     override fun showImageButtonCamera() {
-        imageButtonCamera.visibility = View.VISIBLE
+        binding.imageButtonCamera.visibility = View.VISIBLE
+    }
+
+    override fun openQuote(messageAndAttachment: MessageAndAttachment) {
+        binding.textInputEditTextInput.requestFocus()
+        binding.layoutQuote.openQuote()
+        binding.layoutQuote.setupMessageAndAttachment(messageAndAttachment)
+        Utils.openKeyboard(binding.textInputEditTextInput)
+    }
+
+    fun resetImage() {
+        binding.layoutQuote.resetImage()
     }
 
     //endregion

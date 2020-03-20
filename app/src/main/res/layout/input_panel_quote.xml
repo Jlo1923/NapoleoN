@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="messageAndAttachment"
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="false"
+        tools:context=".ui.custom.inputPanel.InputPanelQuote">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_quote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_quote"
+            android:paddingStart="@dimen/normal_padding"
+            android:paddingEnd="0dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView_title_quote"
+                style="@style/SmallBodyTextView.WhiteBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:text="User"
+                android:textColor="@color/red"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView_type_quote"
+                android:layout_width="16dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="4dp"
+                android:src="@drawable/ic_insert_emoticon_black"
+                android:visibility="visible"
+                app:layout_constraintEnd_toStartOf="@id/textView_message_quote"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView_message_quote"
+                app:tint="@color/secondaryTextColor"
+                tools:src="@drawable/ic_insert_emoticon_black" />
+
+            <TextView
+                android:id="@+id/textView_message_quote"
+                style="@style/SmallBodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginBottom="@dimen/small_margin"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:text="@{messageAndAttachment.message.body}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageView_quote"
+                app:layout_constraintStart_toEndOf="@id/imageView_type_quote"
+                app:layout_constraintTop_toBottomOf="@id/textView_title_quote"
+                tools:text="@tools:sample/lorem[25]" />
+
+            <ImageView
+                android:id="@+id/imageView_quote"
+                android:layout_width="64dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:imageAttachment="@{messageAndAttachment}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/vertical_photo" />
+            <!--    app:imageQuote='@{""}'-->
+
+
+            <ImageButton
+                android:id="@+id/imageButton_close_quote"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_rounded"
+                android:padding="@dimen/normal_padding"
+                android:src="@drawable/ic_close_black_24"
+                android:tint="@color/gray_8B8989"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

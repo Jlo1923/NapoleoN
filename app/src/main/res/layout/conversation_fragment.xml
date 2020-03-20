@@ -82,7 +82,8 @@
                 android:layout_height="0dp"
                 android:alpha="0.4"
                 android:scaleType="fitCenter"
-                app:layout_constraintBottom_toTopOf="@id/container_editText_message"
+                android:background="@drawable/vertical_photo"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/container_status"
@@ -108,7 +109,6 @@
                 android:id="@+id/container_editText_message"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="?attr/attrBackgroundColorBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -119,7 +119,9 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

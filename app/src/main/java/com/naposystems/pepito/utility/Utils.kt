@@ -7,7 +7,11 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.effect.Effect
 import android.net.Uri
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Base64
@@ -120,6 +124,36 @@ class Utils {
             context.startActivity(intent)
         }
 
+
+        fun vibratePhone(context: Context?, effect: Int) {
+            val vibrator = context?.let {
+                it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            }
+            vibrator?.let {
+                if (Build.VERSION.SDK_INT >= 26) {
+                    when (effect) {
+                        Constants.Vibrate.SOFT.type ->
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    20,
+                                    VibrationEffect.EFFECT_TICK
+                                )
+                            )
+                        else ->
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    400,
+                                    VibrationEffect.DEFAULT_AMPLITUDE
+                                )
+                            )
+                    }
+                } else {
+                    if (effect == Constants.Vibrate.DEFAULT.type)
+                        vibrator.vibrate(400)
+                }
+            }
+        }
+
         fun getFileUri(context: Context, fileName: String, subFolder: String): Uri {
             return try {
                 val path = File(context.cacheDir!!, subFolder)
@@ -210,7 +244,11 @@ class Utils {
             dialog.show()
 
             val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+            childFragmentManager.theme.resolveAttribute(
+                R.attr.attrTextColorButtonTint,
+                valueColorFab,
+                true
+            )
 
             val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -248,7 +286,11 @@ class Utils {
             dialog.show()
 
             val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColorFab, true)
+            childFragmentManager.theme.resolveAttribute(
+                R.attr.attrTextColorButtonTint,
+                valueColorFab,
+                true
+            )
 
             val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
 
@@ -281,8 +323,8 @@ class Utils {
             }
         }
 
-        fun convertItemOfTimeInSeconds(item : Int) : Int{
-            return when(item){
+        fun convertItemOfTimeInSeconds(item: Int): Int {
+            return when (item) {
                 EVERY_FIVE_SECONDS.time -> 5
                 EVERY_FIFTEEN_SECONDS.time -> 15
                 EVERY_THIRTY_SECONDS.time -> 30

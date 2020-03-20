@@ -112,6 +112,7 @@
                 tools:text="10:34" />
         </LinearLayout>
 
+
         <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget
             android:id="@+id/inputPanel"
             android:layout_width="0dp"
@@ -123,7 +124,7 @@
             app:showAttachmentIcon="false"
             app:showCameraIcon="false"
             app:showEmojiIcon="false"
-            app:showOnlySendIcon="true" />
+            app:showOnlySendIcon="true"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

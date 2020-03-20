@@ -1,11 +1,14 @@
 package com.naposystems.pepito.ui.conversation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -27,6 +30,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -41,9 +46,9 @@ import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
-import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -55,12 +60,12 @@ import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewM
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import java.io.File
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
+class ConversationFragment : Fragment(),
+    MediaPlayerManager.Listener {
 
     companion object {
         fun newInstance() = ConversationFragment()
@@ -97,6 +102,9 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private var clipboard: ClipboardManager? = null
     private var clipData: ClipData? = null
 
+    private var swipeBack = false
+
+
     private val animationScaleUp: Animation by lazy {
         AnimationUtils.loadAnimation(
             context!!,
@@ -114,10 +122,147 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         MediaPlayerManager(context!!)
     }
 
+
+    private val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, RIGHT) {
+        override fun getMovementFlags(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder
+        ): Int {
+            return ItemTouchHelper.Callback.makeMovementFlags(0, RIGHT)
+        }
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            //Nothing
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+            /*val position = viewHolder.adapterPosition
+
+            when (direction) {
+                RIGHT -> {
+                    binding.inputPanel.resetImage()
+                    Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
+                    conversationAdapter
+                        .getMessageAndAttachment(position)?.let { messageAndAttachment ->
+                            Toast.makeText(
+                                context,
+                                "Swipe ${messageAndAttachment.message.body}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            binding.inputPanel.openQuote(messageAndAttachment)
+                        }
+                }
+            }*/
+        }
+
+        override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int {
+            if (swipeBack) {
+                swipeBack = false
+                return 0
+            }
+            return super.convertToAbsoluteDirection(flags, layoutDirection)
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onChildDraw(
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            dX: Float,
+            dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
+        ) {
+            val icon = resources.getDrawable(R.drawable.ic_quote, null)
+
+            /*val maxWidthSwipe = recyclerView.width / 3
+            if (dX > maxWidthSwipe.toFloat()) {
+                if (vibrateTop){
+                    Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
+                    vibrateTop = false
+                }
+            }*/
+
+            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                recyclerView.setOnTouchListener { _, event ->
+                    swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
+                            event?.action == MotionEvent.ACTION_UP
+                    if (swipeBack && dX > recyclerView.width / 3) {
+                        val position = viewHolder.adapterPosition
+                        binding.inputPanel.resetImage()
+                        conversationAdapter
+                            .getMessageAndAttachment(position)?.let { messageAndAttachment ->
+                                Toast.makeText(
+                                    context,
+                                    "Swipe ${messageAndAttachment.message.body}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                binding.inputPanel.openQuote(messageAndAttachment)
+                            }
+                    }
+                    false
+                }
+            }
+
+
+
+            /*if (dX > recyclerView.width / 3) {
+                val position = viewHolder.adapterPosition
+                binding.inputPanel.resetImage()
+                Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
+                conversationAdapter
+                    .getMessageAndAttachment(position)?.let { messageAndAttachment ->
+                        Toast.makeText(
+                            context,
+                            "Swipe ${messageAndAttachment.message.body}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.inputPanel.openQuote(messageAndAttachment)
+                    }
+            }*/
+
+
+
+
+            c.clipRect(
+                -20f, viewHolder.itemView.top.toFloat(),
+                dX, viewHolder.itemView.bottom.toFloat()
+            )
+
+            val textMargin = 24
+
+            icon.bounds = Rect(
+                textMargin,
+                viewHolder.itemView.top + textMargin,
+                textMargin + icon.intrinsicWidth,
+                viewHolder.itemView.top + icon.intrinsicHeight + textMargin
+            )
+
+            icon.draw(c)
+
+            super.onChildDraw(
+                c,
+                recyclerView,
+                viewHolder,
+                dX / 4,
+                dY,
+                actionState,
+                isCurrentlyActive
+            )
+        }
+    }
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -400,10 +545,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         })
 
         viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                if (actionMode.mode != null) {
-                    actionMode.mode!!.finish()
-                }
+            if (it && actionMode.mode != null) {
+                actionMode.mode!!.finish()
             }
         })
     }
@@ -525,7 +668,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             args.contact.id, args.contact.silenced
         )
         dialog.setListener(object : MuteConversationDialogFragment.MuteConversationListener {
-            override fun onMuteConversationChange() {}
+            override fun onMuteConversationChange() = Unit
         })
         dialog.show(childFragmentManager, "MuteConversation")
     }
@@ -683,7 +826,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         }
                     }
                 }
-
             }
 
             override fun onLongClick(item: Message) {
@@ -743,6 +885,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 super.onScrolled(recyclerView, dx, dy)
             }
         })
+        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerViewConversation)
     }
 
     private fun showFabScroll(visible: Int, animation: Animation) {
@@ -780,7 +924,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             intent.setDataAndType(uri, mimeType)
         }
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        // custom message for the intent
         // custom message for the intent
         startActivity(Intent.createChooser(intent, "Choose an Application:"))
     }

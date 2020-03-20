@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.KeyEvent.*
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.CustomViewNumericKeyboardBinding

@@ -72,6 +72,11 @@ object Constants {
         FALSE(0)
     }
 
+    enum class Vibrate constructor(val type: Int){
+        DEFAULT(0),
+        SOFT(1)
+    }
+
     enum class AccountStatus constructor(val id: Int) {
         CODE_VALIDATED(1),
         ACCOUNT_CREATED(2),

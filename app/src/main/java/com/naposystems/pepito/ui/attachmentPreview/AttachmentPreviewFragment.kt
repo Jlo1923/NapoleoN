@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.attachmentPreview
 
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.transition.TransitionInflater
@@ -136,12 +135,6 @@ class AttachmentPreviewFragment : Fragment() {
                 resetMessage()
                 hasSentAttachment = true
             }
-            /*conversationShareViewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
-            conversationShareViewModel.setAttachmentSelected(args.attachment)
-            conversationShareViewModel.setAttachmentOrigin(attachment.origin)
-            conversationShareViewModel.setGalleryTypeSelected(attachment.type)
-            conversationShareViewModel.resetGalleryTypeSelected()
-            conversationShareViewModel.resetMessage()*/
             this.findNavController().popBackStack(R.id.conversationFragment, false)
         }
 
