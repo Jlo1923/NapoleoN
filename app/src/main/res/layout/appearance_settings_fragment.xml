@@ -35,6 +35,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <ImageView
+                    android:id="@+id/imageView_option_color_scheme_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_color_lens_black" />
+
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_color_option_end_icon"
@@ -52,6 +60,7 @@
                 <TextView
                     android:id="@+id/textView_label_color"
                     style="@style/BodyTextView.Bold"
+                    android:layout_marginStart="@dimen/small_padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/normal_margin"
@@ -61,7 +70,7 @@
                     android:text="@string/text_color_scheme"
                     app:layout_constraintBottom_toTopOf="@id/textView_color_selected"
                     app:layout_constraintEnd_toStartOf="@id/imageButton_color_option_end_icon"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_option_color_scheme_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- COLOR SCHEME SELECTED -->
@@ -78,7 +87,7 @@
                     app:colorScheme="@{viewModel.colorScheme}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/textView_label_color"
-                    app:layout_constraintStart_toStartOf="@id/textView_label_color"
+                    app:layout_constraintStart_toStartOf="@+id/textView_label_color"
                     app:layout_constraintTop_toBottomOf="@id/textView_label_color"
                     tools:text="Tema claro" />
 
@@ -98,6 +107,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/option_color_scheme">
 
+                <ImageView
+                    android:id="@+id/imageView_option_display_format_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_person_black" />
+
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_user_display_option_end_icon"
@@ -115,6 +132,7 @@
                 <TextView
                     android:id="@+id/textView_user_display_color"
                     style="@style/BodyTextView.Bold"
+                    android:layout_marginStart="@dimen/small_padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/normal_margin"
@@ -124,7 +142,7 @@
                     android:text="@string/text_user_display_format"
                     app:layout_constraintBottom_toTopOf="@id/textView_user_display_selected"
                     app:layout_constraintEnd_toStartOf="@id/imageButton_user_display_option_end_icon"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_option_display_format_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- COLOR SCHEME SELECTED -->
@@ -161,6 +179,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/option_display_format">
 
+                <ImageView
+                    android:id="@+id/imageView_option_language_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_language_black" />
+
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_language_option_end_icon"
@@ -178,6 +204,7 @@
                 <TextView
                     android:id="@+id/textView_language_color"
                     style="@style/BodyTextView.Bold"
+                    android:layout_marginStart="@dimen/small_padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/normal_margin"
@@ -187,7 +214,7 @@
                     android:text="@string/text_language"
                     app:layout_constraintBottom_toTopOf="@id/textView_language_selected"
                     app:layout_constraintEnd_toStartOf="@id/imageButton_language_option_end_icon"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_option_language_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- COLOR SCHEME SELECTED -->
@@ -223,6 +250,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/option_language">
 
+                <ImageView
+                    android:id="@+id/imageView_option_chat_background_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_panorama_black" />
+
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_chat_background_option_end_icon"
@@ -240,6 +275,7 @@
                 <TextView
                     android:id="@+id/textView_chat_background"
                     style="@style/BodyTextView.Bold"
+                    android:layout_marginStart="@dimen/small_padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/normal_margin"
@@ -248,7 +284,7 @@
                     android:text="@string/text_conversation_background"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/imageButton_chat_background_option_end_icon"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_option_chat_background_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

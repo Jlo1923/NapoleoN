@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class ContactsViewModel @Inject constructor(private val repository: IContractContacts.Repository) :
     ViewModel(), IContractContacts.ViewModel {
 

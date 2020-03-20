@@ -12,7 +12,7 @@ import retrofit2.Response
 interface IContractShareContact {
     interface ViewModel {
         fun sendBlockedContact(contact: Contact)
-        fun unblockContact(contact: Contact)
+        fun unblockContact(contactId: Int)
         fun sendDeleteContact(contact: Contact)
         fun deleteConversation(contactId: Int)
         fun muteConversation(contactId: Int, contactSilenced: Boolean)
@@ -24,7 +24,7 @@ interface IContractShareContact {
         suspend fun blockContactLocal(contact: Contact)
         //endregion
         //region Unblock Contact
-        suspend fun unblockContact(contact: Contact): Response<UnblockContactResDTO>
+        suspend fun unblockContact(contactId: Int): Response<UnblockContactResDTO>
         suspend fun unblockContactLocal(contactId: Int)
         //endregion
         //region Delete Contact

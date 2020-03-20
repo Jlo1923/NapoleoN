@@ -202,13 +202,15 @@ class ProfileFragment : BaseFragment() {
 
                 when (subFolder) {
                     AVATAR_SUBFOLDER -> {
-                        val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
-                            avatar = Utils.convertBitmapToBase64(bitmap!!)!!
-                        )
+                        viewModel.user.value?.let {user ->
+                            val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
+                                displayName = user.displayName,
+                                avatar = Utils.convertBitmapToBase64(bitmap!!)
+                            )
 
-                        showAvatarProgress()
-                        viewModel.updateAvatar(updateUserInfoReqDTO)
-
+                            showAvatarProgress()
+                            viewModel.updateAvatar(updateUserInfoReqDTO)
+                        }
                     }
                     HEADER_SUBFOLDER -> {
                         val viewModelUser = viewModel.user.value!!

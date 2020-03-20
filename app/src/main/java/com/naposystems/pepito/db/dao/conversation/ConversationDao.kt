@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.naposystems.pepito.entity.conversation.Conversation
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
-import com.naposystems.pepito.entity.message.Message
 
 @Dao
 interface ConversationDao {

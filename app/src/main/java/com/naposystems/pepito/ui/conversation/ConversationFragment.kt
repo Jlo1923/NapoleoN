@@ -282,10 +282,6 @@ class ConversationFragment : Fragment(),
         setupActionMode()
         setupAdapter()
 
-        Handler().postDelayed({
-            binding.textViewUserStatus.isSelected = true
-        }, TimeUnit.SECONDS.toMillis(2))
-
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
                 viewModel.saveMessageLocally(
@@ -856,7 +852,7 @@ class ConversationFragment : Fragment(),
                     )
                 )
             }
-        }, mediaPlayerManager, resources)
+        }, mediaPlayerManager)
 
         linearLayoutManager = LinearLayoutManager(context!!)
         linearLayoutManager.reverseLayout = true

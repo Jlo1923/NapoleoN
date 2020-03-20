@@ -10,73 +10,73 @@ import com.naposystems.pepito.utility.Constants
 fun bindSelfDestructTime(textView: TextView, selfDestructTime: Int) {
     val context = textView.context
 
-    val newSelfDestructTime = when (selfDestructTime) {
+    val idText = when (selfDestructTime) {
         Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time ->
-            context.getString(R.string.text_every_five_seconds)
+            R.string.text_every_five_seconds
 
         Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time ->
-            context.getString(R.string.text_every_fifteen_seconds)
+            R.string.text_every_fifteen_seconds
 
         Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time ->
-            context.getString(R.string.text_every_thirty_seconds)
+            R.string.text_every_thirty_seconds
 
         Constants.SelfDestructTime.EVERY_ONE_MINUTE.time ->
-            context.getString(R.string.text_every_one_minute)
+            R.string.text_every_one_minute
 
         Constants.SelfDestructTime.EVERY_TEN_MINUTES.time ->
-            context.getString(R.string.text_every_ten_minutes)
+            R.string.text_every_ten_minutes
 
         Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time ->
-            context.getString(R.string.text_every_thirty_minutes)
+            R.string.text_every_thirty_minutes
 
         Constants.SelfDestructTime.EVERY_ONE_HOUR.time ->
-            context.getString(R.string.text_every_one_hour)
+            R.string.text_every_one_hour
 
         Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time ->
-            context.getString(R.string.text_every_twelve_hours)
+            R.string.text_every_twelve_hours
 
         Constants.SelfDestructTime.EVERY_ONE_DAY.time ->
-            context.getString(R.string.text_every_one_day)
+            R.string.text_every_one_day
 
         Constants.SelfDestructTime.EVERY_SEVEN_DAY.time ->
-            context.getString(R.string.text_every_seven_days)
+            R.string.text_every_seven_days
 
-        else -> context.getString(R.string.text_every_seven_days)
+        else -> R.string.text_every_seven_days
     }
 
-    textView.text = newSelfDestructTime
+    textView.text = context.getString(idText)
 }
 
 @BindingAdapter("timeRequestAccessPin")
 fun bindTimeRequestAccessPin(textView: TextView, time: Int) {
     val context = textView.context
 
-    val newTime = when (time) {
+    val idText = when (time) {
         Constants.TimeRequestAccessPin.IMMEDIATELY.time ->
-            context.getString(R.string.text_immediately)
+            R.string.text_immediately
 
         Constants.TimeRequestAccessPin.TEN_SECONDS.time ->
-            context.getString(R.string.text_ten_seconds)
+            R.string.text_ten_seconds
 
         Constants.TimeRequestAccessPin.ONE_MINUTE.time ->
-            context.getString(R.string.text_one_minute)
+            R.string.text_one_minute
 
         Constants.TimeRequestAccessPin.FIVE_MINUTES.time ->
-            context.getString(R.string.text_five_minutes)
+            R.string.text_five_minutes
 
         Constants.TimeRequestAccessPin.ONE_HOUR.time ->
-            context.getString(R.string.text_one_hour)
+            R.string.text_one_hour
 
         Constants.TimeRequestAccessPin.ONE_DAY.time ->
-            context.getString(R.string.text_one_day)
+            R.string.text_one_day
 
         Constants.TimeRequestAccessPin.NEVER.time ->
-            context.getString(R.string.text_never)
+            R.string.text_never
 
-        else -> context.getString(R.string.text_thirty_seconds)
+        else -> R.string.text_thirty_seconds
     }
 
-    textView.text = newTime
+    textView.text = context.getString(idText)
 }
 
 @BindingAdapter("allowDownload")

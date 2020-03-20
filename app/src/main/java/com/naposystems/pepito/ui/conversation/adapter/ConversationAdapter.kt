@@ -1,9 +1,7 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import android.graphics.Color
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +18,7 @@ import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 
 class ConversationAdapter constructor(
     private val clickListener: ClickListener,
-    private val mediaPlayerManager: MediaPlayerManager,
-    private val resources: Resources
+    private val mediaPlayerManager: MediaPlayerManager
 ) :
     PagedListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
@@ -114,21 +111,18 @@ class ConversationAdapter constructor(
         viewType: Int
     ): RecyclerView.ViewHolder {
 
-        val countDownTimer: CountDownTimer? = null
-
         return when (viewType) {
-            TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent, countDownTimer)
-            TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent, countDownTimer)
-            TYPE_MY_MESSAGE_AUDIO -> MyMessageAudioViewHolder.from(parent, countDownTimer)
+            TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent)
+            TYPE_MY_MESSAGE_AUDIO -> MyMessageAudioViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(
-                parent,
-                countDownTimer
+                parent
             )
             TYPE_MY_MESSAGE_VIDEO -> MyMessageVideoViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_VIDEO -> IncomingMessageVideoViewHolder.from(parent)
             TYPE_MY_MESSAGE_DOCUMENT -> MyMessageDocumentViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_DOCUMENT -> IncomingMessageDocumentViewHolder.from(parent)
-            else -> MyMessageViewHolder.from(parent, countDownTimer)
+            else -> MyMessageViewHolder.from(parent)
         }
     }
 
@@ -142,13 +136,13 @@ class ConversationAdapter constructor(
         item?.let {
             when (getItemViewType(position)) {
                 TYPE_MY_MESSAGE -> (holder as MyMessageViewHolder)
-                    .bind(item, clickListener, isFirst, resources)
+                    .bind(item, clickListener, isFirst)
                 TYPE_INCOMING_MESSAGE -> (holder as IncomingMessageViewHolder)
-                    .bind(item, clickListener, isFirst, resources)
+                    .bind(item, clickListener, isFirst)
                 TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager, resources)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager)
                 TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager, resources)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager)
                 TYPE_MY_MESSAGE_VIDEO -> (holder as MyMessageVideoViewHolder)
                     .bind(item, clickListener, isFirst)
                 TYPE_INCOMING_MESSAGE_VIDEO -> (holder as IncomingMessageVideoViewHolder)
@@ -162,17 +156,15 @@ class ConversationAdapter constructor(
     }
 
     class MyMessageViewHolder constructor(
-        private val binding: ConversationItemMyMessageBinding,
-        countDownTimer: CountDownTimer?
+        private val binding: ConversationItemMyMessageBinding
     ) :
-        ConversationViewHolder(binding.root, countDownTimer) {
+        ConversationViewHolder(binding.root) {
 
         @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean,
-            resources: Resources
+            isFirst: Boolean
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
@@ -181,9 +173,7 @@ class ConversationAdapter constructor(
 
             countDown(
                 item,
-                item.message.totalSelfDestructionAt.toLong(),
                 binding.textViewCountDown,
-                resources,
                 itemToEliminate = { messageAndAttachment ->
                     clickListener.messageToEliminate(messageAndAttachment)
                 })
@@ -206,30 +196,28 @@ class ConversationAdapter constructor(
         }
 
         companion object {
-            fun from(parent: ViewGroup, countDownTimer: CountDownTimer?): MyMessageViewHolder {
+            fun from(parent: ViewGroup): MyMessageViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemMyMessageBinding.inflate(
                     layoutInflater,
                     parent,
                     false
                 )
-                return MyMessageViewHolder(binding, countDownTimer)
+                return MyMessageViewHolder(binding)
             }
         }
     }
 
     class IncomingMessageViewHolder constructor(
-        private val binding: ConversationItemIncomingMessageBinding,
-        countDownTimer: CountDownTimer?
+        private val binding: ConversationItemIncomingMessageBinding
     ) :
-        ConversationViewHolder(binding.root, countDownTimer) {
+        ConversationViewHolder(binding.root) {
 
         @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean,
-            resources: Resources
+            isFirst: Boolean
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
@@ -238,9 +226,7 @@ class ConversationAdapter constructor(
 
             countDown(
                 item,
-                item.message.totalSelfDestructionAt.toLong(),
                 binding.textViewCountDown,
-                resources,
                 itemToEliminate = { messageAndAttachment ->
                     clickListener.messageToEliminate(messageAndAttachment)
                 })
@@ -267,8 +253,7 @@ class ConversationAdapter constructor(
 
         companion object {
             fun from(
-                parent: ViewGroup,
-                countDownTimer: CountDownTimer?
+                parent: ViewGroup
             ): IncomingMessageViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemIncomingMessageBinding.inflate(
@@ -276,23 +261,21 @@ class ConversationAdapter constructor(
                     parent,
                     false
                 )
-                return IncomingMessageViewHolder(binding, countDownTimer)
+                return IncomingMessageViewHolder(binding)
             }
         }
     }
 
     class MyMessageAudioViewHolder constructor(
-        private val binding: ConversationItemMyMessageWithAudioBinding,
-        countDownTimer: CountDownTimer?
+        private val binding: ConversationItemMyMessageWithAudioBinding
     ) :
-        ConversationViewHolder(binding.root, countDownTimer) {
+        ConversationViewHolder(binding.root) {
 
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
             isFirst: Boolean,
-            mediaPlayerManager: MediaPlayerManager,
-            resources: Resources
+            mediaPlayerManager: MediaPlayerManager
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
@@ -300,9 +283,7 @@ class ConversationAdapter constructor(
 
             countDown(
                 item,
-                item.message.totalSelfDestructionAt.toLong(),
                 binding.textViewCountDown,
-                resources,
                 itemToEliminate = { messageAndAttachment ->
                     clickListener.messageToEliminate(messageAndAttachment)
                 })
@@ -332,30 +313,28 @@ class ConversationAdapter constructor(
         }
 
         companion object {
-            fun from(parent: ViewGroup, countDownTimer: CountDownTimer?): MyMessageAudioViewHolder {
+            fun from(parent: ViewGroup): MyMessageAudioViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemMyMessageWithAudioBinding.inflate(
                     layoutInflater,
                     parent,
                     false
                 )
-                return MyMessageAudioViewHolder(binding, countDownTimer)
+                return MyMessageAudioViewHolder(binding)
             }
         }
     }
 
     class IncomingMessageAudioViewHolder constructor(
-        private val binding: ConversationItemIncomingMessageWithAudioBinding,
-        countDownTimer: CountDownTimer?
+        private val binding: ConversationItemIncomingMessageWithAudioBinding
     ) :
-        ConversationViewHolder(binding.root, countDownTimer) {
+        ConversationViewHolder(binding.root) {
 
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
             isFirst: Boolean,
-            mediaPlayerManager: MediaPlayerManager,
-            resources: Resources
+            mediaPlayerManager: MediaPlayerManager
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
@@ -363,9 +342,7 @@ class ConversationAdapter constructor(
 
             countDown(
                 item,
-                item.message.totalSelfDestructionAt.toLong(),
                 binding.textViewCountDown,
-                resources,
                 itemToEliminate = { messageAndAttachment ->
                     clickListener.messageToEliminate(messageAndAttachment)
                 })
@@ -395,8 +372,7 @@ class ConversationAdapter constructor(
 
         companion object {
             fun from(
-                parent: ViewGroup,
-                countDownTimer: CountDownTimer?
+                parent: ViewGroup
             ): IncomingMessageAudioViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ConversationItemIncomingMessageWithAudioBinding.inflate(
@@ -404,7 +380,7 @@ class ConversationAdapter constructor(
                     parent,
                     false
                 )
-                return IncomingMessageAudioViewHolder(binding, countDownTimer)
+                return IncomingMessageAudioViewHolder(binding/*, countDownTimer*/)
             }
         }
     }

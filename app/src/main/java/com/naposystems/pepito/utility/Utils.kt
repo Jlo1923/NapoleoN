@@ -243,14 +243,10 @@ class Utils {
 
             dialog.show()
 
-            val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(
-                R.attr.attrTextColorButtonTint,
-                valueColorFab,
-                true
-            )
+            val valueColor = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
 
-            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
+            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
             positiveButton.isAllCaps = false
@@ -285,14 +281,10 @@ class Utils {
 
             dialog.show()
 
-            val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(
-                R.attr.attrTextColorButtonTint,
-                valueColorFab,
-                true
-            )
+            val valueColor= TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
 
-            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
+            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
@@ -301,6 +293,33 @@ class Utils {
             val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
             negativeButton.setTextColor(textColorButton)
             negativeButton.isAllCaps = false
+        }
+
+        fun alertDialogInformative(
+            message: Int,
+            isCancelable: Boolean,
+            childFragmentManager: Context,
+            titleButton: Int,
+            clickTopButton: (Boolean) -> Unit
+        ) {
+            val dialog = AlertDialog.Builder(childFragmentManager)
+                .setMessage(message)
+                .setCancelable(isCancelable)
+                .setPositiveButton(titleButton) { _, _ ->
+                    clickTopButton(true)
+                }
+                .create()
+
+            dialog.show()
+
+            val valueColor = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
+
+            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
+
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(textColorButton)
+            positiveButton.isAllCaps = false
         }
 
         fun queryName(resolver: ContentResolver, uri: Uri): String {

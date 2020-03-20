@@ -10,4 +10,6 @@
     <string name="text_status_sleeping">Schlafen</string>
     <string name="text_status_only_emergency">Nur für Notfälle</string>
     <string name="text_error_getting_local_status">Beim Abrufen der Status ist ein Fehler aufgetreten. Versuchen Sie es erneut</string>
+    <string name="text_delete_status">Status löschen</string>
+
 </resources>

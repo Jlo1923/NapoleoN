@@ -14,7 +14,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val repository: IContractHome.Repository) :
     ViewModel(), IContractHome.ViewModel {
 
-    private val _user = MutableLiveData<User>()
+    private lateinit var _user: LiveData<User>
     val user: LiveData<User>
         get() = _user
 
@@ -50,11 +50,10 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
         }
     }
 
-    override fun getUser(): User {
+    override fun getUserLiveData() {
         viewModelScope.launch {
-            _user.value = repository.getUser()
+            _user = repository.getUserLiveData()
         }
-        return _user.value!!
     }
 
     override fun subscribeToGeneralSocketChannel() {
