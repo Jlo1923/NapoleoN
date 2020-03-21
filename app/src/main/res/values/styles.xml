@@ -410,6 +410,11 @@
         <item name="color">?attr/attrBackgroundTintIconToolbar</item>
     </style>
 
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">?attr/attrBackgroundColorBackgroundDialog</item>
+        <item name="android:textColorPrimary">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
     <style name="AppPrimaryButton" parent="Widget.MaterialComponents.Button">
         <item name="android:background">?attr/attrBackgroundColorPrimary</item>
         <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>

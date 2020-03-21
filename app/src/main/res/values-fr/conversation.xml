@@ -14,6 +14,10 @@
     <string name="text_delete_message_for_me">Elimina per me</string>
     <string name="text_delete_message_for_all">Supprimer pour tous</string>
     <string name="text_message_copied">Message copié</string>
+    <string name="text_title_delete_unread_messages">Supprimer non lu</string>
+    <string name="text_title_delete_messages_unreceived">Supprimer les messages ayant échoué</string>
+    <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
+    <string name="text_delete_messages_conversation">Supprimer des messages</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d jour</item>
         <item quantity="other">%d jours</item>

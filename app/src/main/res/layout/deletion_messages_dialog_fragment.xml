@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/attrBackgroundColorBackgroundDialog"
+        tools:context=".ui.deletionDialog.DeletionMessagesDialogFragment">
+
+        <View
+            android:id="@+id/view_indicator"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:background="@drawable/bg_bottom_sheet_indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_delete_conversation"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_indicator">
+
+            <ImageView
+                android:id="@+id/imageView_delete_conversation"
+                style="@style/OptionStartIcon"
+                app:layout_constraintBottom_toBottomOf="@+id/textView_title_delete_conversation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView_title_delete_conversation"
+                app:srcCompat="@drawable/ic_delete_black" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_conversation"
+                style="@style/OptionTitle"
+                android:text="@string/text_title_delete_conversation"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_delete_conversation"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_delete_unread_messages"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/option_delete_conversation">
+
+            <ImageView
+                android:id="@+id/imageView_delete_unread_messages"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@+id/textView_title_delete_unread_messages"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView_title_delete_unread_messages"
+                app:srcCompat="@drawable/ic_message_unread" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_unread_messages"
+                style="@style/OptionTitle"
+                android:text="@string/text_title_delete_unread_messages"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_delete_unread_messages"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_delete_messages_unreceived"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/option_delete_unread_messages">
+
+            <ImageView
+                android:id="@+id/imageView_delete_messages_unreceived"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@+id/textView_title_delete_messages_unreceived"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView_title_delete_messages_unreceived"
+                app:srcCompat="@drawable/ic_message_sent" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_messages_unreceived"
+                style="@style/OptionTitle"
+                android:text="@string/text_title_delete_messages_unreceived"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_delete_messages_unreceived"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/option_delete_filed_messages"
+            style="@style/Option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/option_delete_messages_unreceived">
+
+            <!-- START ICON -->
+            <ImageView
+                android:id="@+id/imageView_delete_filed_messages"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@+id/textView_title_delete_filed_messages"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView_title_delete_filed_messages"
+                app:srcCompat="@drawable/ic_error_outline_black" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_filed_messages"
+                style="@style/OptionTitle"
+                android:text="@string/text_title_delete_failed_messages"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_delete_filed_messages"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -40,6 +40,7 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -56,7 +57,6 @@ import com.naposystems.pepito.utility.sharedViewModels.conversation.Conversation
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
@@ -92,21 +92,16 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private lateinit var actionMode: ActionModeMenu
     private var contactSilenced: Boolean = false
     private lateinit var menuOptionsContact: Menu
+    private lateinit var deletionMessagesDialog : DeletionMessagesDialogFragment
 
     private var clipboard: ClipboardManager? = null
     private var clipData: ClipData? = null
 
     private val animationScaleUp: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            context!!,
-            R.anim.scale_up
-        )
+        AnimationUtils.loadAnimation(context!!, R.anim.scale_up)
     }
     private val animationScaleDown: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            context!!,
-            R.anim.scale_down
-        )
+        AnimationUtils.loadAnimation(context!!, R.anim.scale_down)
     }
 
     private val mediaPlayerManager: MediaPlayerManager by lazy {
@@ -363,7 +358,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         })
 
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
-
             conversationAdapter.submitList(conversationList)
 
             if (conversationList.isNotEmpty()) {
@@ -438,11 +432,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         inflater.inflate(R.menu.menu_conversation, menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        //setOptionSilenceMenu()
-        super.onPrepareOptionsMenu(menu)
-    }
-
     override fun onResume() {
         super.onResume()
         mediaPlayerManager.registerProximityListener()
@@ -484,10 +473,9 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     deactiveSilence()
                 else
                     silenceConversation()
-
             }
-            R.id.menu_item_delete_conversation -> {
-                deleteConversation(args.contact)
+            R.id.menu_item_delete_messages -> {
+                optionDeleteMessagesClickListener()
             }
         }
 
@@ -527,17 +515,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         shareContactViewModel.muteConversation(args.contact.id, args.contact.silenced)
     }
 
-    private fun deleteConversation(contact: Contact) {
+    private fun deleteConversation() {
         generalDialog(
-            getString(R.string.text_delete_contact),
-            getString(
-                R.string.text_wish_delete_contact,
-                if (contact.displayNameFake.isEmpty()) {
-                    contact.displayName
-                } else {
-                    contact.displayNameFake
-                }
-            ),
+            getString(R.string.text_title_delete_conversation),
+            getString(R.string.text_want_delete_conversation),
             true,
             childFragmentManager
         ) {
@@ -613,47 +594,72 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             },
             clickDelete = { moreMessagesOtherContact ->
                 if (moreMessagesOtherContact) {
-                    Utils.alertDialogWithoutNeutralButton(
-                        R.string.text_delete_messages,
-                        false, context!!,
-                        R.string.text_delete_message_for_me,
-                        R.string.text_cancel,
-                        clickTopButton = { clickTopButton ->
-                            if (clickTopButton) {
-                                viewModel.deleteMessagesSelected(
-                                    args.contact.id,
-                                    viewModel.messagesSelected.value!!
-                                )
-                            }
-                        })
+                    dialogWithoutNeutralButton(Constants.DeleteMessages.BY_SELECTION.option)
                 } else {
-                    Utils.alertDialogWithNeutralButton(
-                        R.string.text_delete_messages,
-                        false, context!!,
-                        R.string.text_delete_message_for_me,
-                        R.string.text_cancel,
-                        R.string.text_delete_message_for_all,
-                        clickTopButton = { clickTopButton ->
-                            if (clickTopButton) {
-                                viewModel.deleteMessagesSelected(
-                                    args.contact.id,
-                                    viewModel.messagesSelected.value!!
-                                )
-                            }
-                        },
-                        clickDownButton = { clickDowButton ->
-                            if (clickDowButton) {
-                                viewModel.deleteMessagesForAll(
-                                    args.contact.id,
-                                    viewModel.messagesSelected.value!!
-                                )
-                            }
-                        })
+                    dialogWithNeutralButton(Constants.DeleteMessages.BY_SELECTION.option)
                 }
-
             }, clickBack = {
                 cleanSelectionMessages()
             })
+    }
+
+    private fun dialogWithNeutralButton(status : Int) {
+        viewModel.messagesSelected.value?.let {messagesSelected ->
+            Utils.alertDialogWithNeutralButton(
+                R.string.text_delete_messages,
+                false, context!!,
+                R.string.text_delete_message_for_me,
+                R.string.text_cancel,
+                R.string.text_delete_message_for_all,
+                clickTopButton = { _ ->
+                    when(status) {
+                        Constants.DeleteMessages.BY_SELECTION.option -> {
+                            viewModel.deleteMessagesSelected(args.contact.id, messagesSelected)
+                        }
+                        Constants.DeleteMessages.BY_UNREADS.option -> {
+                            viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                        }
+                        Constants.DeleteMessages.BY_UNRECEIVED.option -> {
+                            viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                        }
+                    }
+                },
+                clickDownButton = { _ ->
+                    when(status) {
+                        Constants.DeleteMessages.BY_SELECTION.option -> {
+                            viewModel.deleteMessagesForAll(args.contact.id, messagesSelected)
+                        }
+                        Constants.DeleteMessages.BY_UNREADS.option -> {
+                            viewModel.deleteMessagesByStatusForAll(args.contact.id, status)
+                        }
+                        Constants.DeleteMessages.BY_UNRECEIVED.option -> {
+                            viewModel.deleteMessagesByStatusForAll(args.contact.id, status)
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    private fun dialogWithoutNeutralButton(status : Int) {
+        viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
+            Utils.alertDialogWithoutNeutralButton(
+                R.string.text_delete_messages,
+                false, context!!,
+                R.string.text_accept,
+                R.string.text_cancel,
+                clickTopButton = { _ ->
+                    when (status) {
+                        Constants.DeleteMessages.BY_SELECTION.option -> {
+                            viewModel.deleteMessagesSelected(args.contact.id, listMessagesAndAttachments)
+                        }
+                        Constants.DeleteMessages.BY_FAILED.option -> {
+                            viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                        }
+                    }
+                }
+            )
+        }
     }
 
     private fun setupAdapter() {
@@ -785,6 +791,23 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
+    }
+
+    private fun optionDeleteMessagesClickListener() {
+        deletionMessagesDialog = DeletionMessagesDialogFragment(clickDeleteConversation = {
+            deletionMessagesDialog.dismiss()
+            deleteConversation()
+        }, clickDeleteUnreads = {
+            deletionMessagesDialog.dismiss()
+            dialogWithNeutralButton(Constants.DeleteMessages.BY_UNREADS.option)
+        }, clickDeleteUnreceived = {
+            deletionMessagesDialog.dismiss()
+            dialogWithNeutralButton(Constants.DeleteMessages.BY_UNRECEIVED.option)
+        }, clickDeleteFiled = {
+            deletionMessagesDialog.dismiss()
+            dialogWithoutNeutralButton(Constants.DeleteMessages.BY_FAILED.option)
+        })
+        deletionMessagesDialog.show(childFragmentManager, "DeletionMessages")
     }
 
     //region Implementation MediaPlayerManager.Listener

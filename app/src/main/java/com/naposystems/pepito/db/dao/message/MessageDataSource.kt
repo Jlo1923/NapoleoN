@@ -9,25 +9,29 @@ interface MessageDataSource {
 
     fun getMessages(contactId: Int, pageSize: Int): LiveData<PagedList<MessageAndAttachment>>
 
+    fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
+
     fun insertMessage(message: Message): Long
 
     fun insertListMessage(messageList: List<Message>)
 
     fun updateMessage(message: Message)
 
-    suspend fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected : Int)
+    suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected : Int)
 
-    suspend fun cleanSelectionMessages(idContact: Int)
+    suspend fun cleanSelectionMessages(contactId: Int)
 
-    suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
+    suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)
 
-    suspend fun copyMessagesSelected(idContact: Int): List<String>
+    suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
 
-    suspend fun getLastMessageByContact(idContact: Int): MessageAndAttachment
+    suspend fun copyMessagesSelected(contactId: Int): List<String>
+
+    suspend fun getLastMessageByContact(contactId: Int): MessageAndAttachment
 
     suspend fun getIdContactWithWebId(ListWebId: List<String>): Int
 
-    suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>>
+    suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
 
     suspend fun deletedMessages(listWebIdMessages: List<String>)
 
@@ -35,7 +39,7 @@ interface MessageDataSource {
 
     suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
 
-    suspend fun deleteMessages(idContact: Int)
+    suspend fun deleteMessages(contactId: Int)
 
     suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
 }

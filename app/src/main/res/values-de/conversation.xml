@@ -14,6 +14,10 @@
     <string name="text_delete_message_for_me">Für mich löschen</string>
     <string name="text_delete_message_for_all">Für alle löschen</string>
     <string name="text_message_copied">Nachricht kopiert</string>
+    <string name="text_title_delete_unread_messages">Ungelesen löschen</string>
+    <string name="text_title_delete_messages_unreceived">Empfangene Nachrichten löschen</string>
+    <string name="text_title_delete_failed_messages">Löschen Sie fehlgeschlagene Nachrichten</string>
+    <string name="text_delete_messages_conversation">Nachrichten löschen</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>

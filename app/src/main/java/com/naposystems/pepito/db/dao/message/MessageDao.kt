@@ -12,6 +12,9 @@ interface MessageDao {
     @Query("SELECT * FROM message WHERE contact_id=:contact ORDER BY id DESC")
     fun getMessagesAndAttachments(contact: Int): DataSource.Factory<Int, MessageAndAttachment>
 
+    @Query("SELECT * FROM message WHERE contact_id=:contact AND status =:status ORDER BY id DESC")
+    fun getLocalMessagesByStatus(contact: Int, status: Int): List<MessageAndAttachment>
+
     @Query("UPDATE message SET is_selected =:isSelected WHERE contact_id=:contact AND id =:idMessage")
     suspend fun updateMessagesSelected(contact: Int, idMessage: Int, isSelected: Int)
 
@@ -20,6 +23,9 @@ interface MessageDao {
 
     @Query("DELETE FROM message WHERE contact_id = :contactId AND id =:messageId")
     suspend fun deleteMessagesSelected(contactId: Int, messageId : Int)
+
+    @Query("DELETE FROM message WHERE contact_id = :contactId AND status =:status AND is_mine = 1")
+    suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
 
     @Query("SELECT body FROM message WHERE contact_id=:contactId AND is_selected = 1 ORDER BY id ASC")
     suspend fun copyMessagesSelected(contactId: Int): List<String>

@@ -32,6 +32,10 @@ class MessageLocalDataSource @Inject constructor(
         ).build()
     }
 
+    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {
+        return messageDao.getLocalMessagesByStatus(contactId, status)
+    }
+
     override fun insertMessage(message: Message): Long {
         return messageDao.insertMessage(message)
     }
@@ -44,30 +48,34 @@ class MessageLocalDataSource @Inject constructor(
         messageDao.updateMessage(message)
     }
 
-    override suspend fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected : Int) {
-        messageDao.updateMessagesSelected(idContact, idMessage, isSelected)
+    override suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected : Int) {
+        messageDao.updateMessagesSelected(contactId, idMessage, isSelected)
     }
 
-    override suspend fun cleanSelectionMessages(idContact: Int) {
-        messageDao.cleanSelectionMessages(idContact)
+    override suspend fun cleanSelectionMessages(contactId: Int) {
+        messageDao.cleanSelectionMessages(contactId)
     }
 
-    override suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
+    override suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>) {
         listMessages.forEach {messageAndAttachment ->
-            messageDao.deleteMessagesSelected(idContact, messageAndAttachment.message.id)
+            messageDao.deleteMessagesSelected(contactId, messageAndAttachment.message.id)
         }
     }
 
-    override suspend fun getLastMessageByContact(idContact: Int): MessageAndAttachment {
-        return messageDao.getLastMessageByContact(idContact)
+    override suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int) {
+        messageDao.deleteMessagesByStatusForMe(contactId, status)
     }
 
-    override suspend fun copyMessagesSelected(idContact: Int) : List<String> {
-        return messageDao.copyMessagesSelected(idContact)
+    override suspend fun getLastMessageByContact(contactId: Int): MessageAndAttachment {
+        return messageDao.getLastMessageByContact(contactId)
     }
 
-    override suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>> {
-        return messageDao.getMessagesSelected(idContact)
+    override suspend fun copyMessagesSelected(contactId: Int) : List<String> {
+        return messageDao.copyMessagesSelected(contactId)
+    }
+
+    override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>> {
+        return messageDao.getMessagesSelected(contactId)
     }
 
     override fun updateMessageStatus(messagesWebIds: List<String>, status: Int) {
@@ -91,8 +99,8 @@ class MessageLocalDataSource @Inject constructor(
         return messageDao.getMessagesByStatus(contactId, status)
     }
 
-    override suspend fun deleteMessages(idContact: Int) {
-        messageDao.deleteMessages(idContact)
+    override suspend fun deleteMessages(contactId: Int) {
+        messageDao.deleteMessages(contactId)
     }
 
     override suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int) {
