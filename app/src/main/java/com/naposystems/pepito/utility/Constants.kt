@@ -192,6 +192,7 @@ object Constants {
         AUDIO("audio"),
         VIDEO("video"),
         DOCUMENT("document"),
+        GIF("gif"),
     }
 
     enum class FriendShipRequestType(val type: Int) {
@@ -259,6 +260,16 @@ object Constants {
         THREE_MONTHS(3)
     }
 
+    enum class EmojiCategory(val category: Int){
+        SMILES_AND_PEOPLE(1),
+        ANIMALS_AND_NATURE(2),
+        FOOD_AND_DRINK(3),
+        ACTIVITY(4),
+        TRAVEL_AND_PLACES(5),
+        OBJECTS(6),
+        SYMBOLS(7),
+        FLAGS(8)
+    }
 
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"

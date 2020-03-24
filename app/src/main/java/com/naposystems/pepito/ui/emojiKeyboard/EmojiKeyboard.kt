@@ -1,26 +1,31 @@
 package com.naposystems.pepito.ui.emojiKeyboard
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
-import android.view.ViewTreeObserver
+import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
+import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_HIDDEN
+import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_SHOWN
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.emoji.widget.EmojiAppCompatEditText
 import com.naposystems.pepito.ui.emojiKeyboard.view.EmojiView
 import com.naposystems.pepito.ui.emojiKeyboardPage.adapter.EmojiKeyboardPageAdapter
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.emojiManager.EmojiResultReceiver
 
 class EmojiKeyboard constructor(
     private val rootView: View,
     private val editText: EmojiAppCompatEditText,
     private val listener: EmojiKeyboardPageAdapter.EmojiKeyboardPageListener
-) : IContractEmojiKeyboard {
+) : IContractEmojiKeyboard, EmojiResultReceiver.Listener {
 
     companion object {
-        const val MIN_KEYBOARD_HEIGHT = 50
+        const val MIN_KEYBOARD_HEIGHT: Int = 50
     }
 
     private val context: AppCompatActivity by lazy {
@@ -33,9 +38,21 @@ class EmojiKeyboard constructor(
 
     private var isPendingOpen = false
     private var isKeyboardOpen = false
+    private var popupWindowHeight: Int = 0
 
-    private val onGlobalLayoutListener =
-        ViewTreeObserver.OnGlobalLayoutListener { updateKeyboardState() }
+    private val onAttachStateChangeListener = object : View.OnAttachStateChangeListener {
+        override fun onViewDetachedFromWindow(v: View?) {
+            start()
+        }
+
+        override fun onViewAttachedToWindow(v: View?) {
+            stop()
+
+            rootView.removeOnAttachStateChangeListener(this)
+        }
+    }
+
+    private val emojiResultReceiver = EmojiResultReceiver(Handler(Looper.getMainLooper()))
 
     init {
         popupWindowEmoji.apply {
@@ -49,22 +66,13 @@ class EmojiKeyboard constructor(
             setBackgroundDrawable(null)
         }
 
-        rootView.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
-    }
-
-    private fun updateKeyboardState() {
-
-        val keyboardHeight = Utils.getKeyboardHeight(context)
-
-        if (keyboardHeight > Utils.dpToPx(context, MIN_KEYBOARD_HEIGHT.toFloat())) {
-            updateKeyboardStateOpened(keyboardHeight)
-        } else {
-            updateKeyboardStateClosed()
-        }
+        rootView.addOnAttachStateChangeListener(onAttachStateChangeListener)
     }
 
     private fun updateKeyboardStateOpened(keyboardHeight: Int) {
-        if (popupWindowEmoji.height != keyboardHeight) {
+        if (popupWindowHeight > 0 && popupWindowEmoji.height != popupWindowHeight) {
+            popupWindowEmoji.height = popupWindowHeight
+        } else if (popupWindowHeight == 0 && popupWindowEmoji.height != keyboardHeight) {
             popupWindowEmoji.height = keyboardHeight
         }
 
@@ -100,11 +108,49 @@ class EmojiKeyboard constructor(
 
     private fun dismiss() {
         popupWindowEmoji.dismiss()
+        emojiResultReceiver.setListener(null)
+    }
+
+    private fun start() {
+        context.window.decorView
+            .setOnApplyWindowInsetsListener(object : View.OnApplyWindowInsetsListener {
+                var previousOffset = 0
+                override fun onApplyWindowInsets(
+                    v: View,
+                    insets: WindowInsets
+                ): WindowInsets {
+                    val offset: Int =
+                        if (insets.systemWindowInsetBottom < insets.stableInsetBottom) {
+                            insets.systemWindowInsetBottom
+                        } else {
+                            insets.systemWindowInsetBottom - insets.stableInsetBottom
+                        }
+                    if (offset != previousOffset || offset == 0) {
+                        previousOffset = offset
+                        if (offset > Utils.dpToPx(
+                                context,
+                                MIN_KEYBOARD_HEIGHT.toFloat()
+                            )
+                        ) {
+                            updateKeyboardStateOpened(offset)
+                        } else {
+                            updateKeyboardStateClosed()
+                        }
+                    }
+                    return context.window.decorView.onApplyWindowInsets(insets)
+                }
+            })
+    }
+
+    private fun stop() {
+        dismiss()
+        context.window.decorView.setOnApplyWindowInsetsListener(null)
     }
 
     //region Implementation IContractEmojiKeyboard
     override fun toggle() {
         if (!popupWindowEmoji.isShowing) {
+            start()
             editText.isFocusableInTouchMode = true
             editText.requestFocus()
             val inputMethodManager = context
@@ -112,9 +158,11 @@ class EmojiKeyboard constructor(
 
             isPendingOpen = true
 
+            emojiResultReceiver.setListener(this)
             inputMethodManager.showSoftInput(
                 editText,
-                InputMethodManager.RESULT_UNCHANGED_SHOWN
+                RESULT_UNCHANGED_SHOWN,
+                emojiResultReceiver
             )
         } else {
             dismiss()
@@ -123,5 +171,14 @@ class EmojiKeyboard constructor(
 
     override fun isShowing() = popupWindowEmoji.isShowing
 
+    //endregion
+
+    /** [EmojiResultReceiver.Listener] */
+    //region Implementation EmojiResultReceiver.Listener
+    override fun onReceivedResult(resultCode: Int, data: Bundle?) {
+        if (resultCode == RESULT_UNCHANGED_SHOWN || resultCode == RESULT_UNCHANGED_HIDDEN) {
+            showAtBottom()
+        }
+    }
     //endregion
 }

@@ -117,6 +117,20 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         MediaPlayerManager(context!!)
     }
 
+    private val emojiKeyboard by lazy {
+        EmojiKeyboard(
+            binding.coordinator,
+            binding.inputPanel.getEditTex(),
+            object : EmojiKeyboardPageAdapter.EmojiKeyboardPageListener {
+                override fun onEmojiClick(emoji: Emoji) {
+                    binding.inputPanel.getEditTex().text?.append(
+                        EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
+                    )
+                }
+            }
+        )
+    }
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -268,23 +282,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         }
 
         binding.inputPanel.getImageButtonEmoji().setOnClickListener {
-            val emojiKeyboard = EmojiKeyboard(
-                binding.coordinator,
-                binding.inputPanel.getEditTex(),
-                object : EmojiKeyboardPageAdapter.EmojiKeyboardPageListener {
-                    override fun onEmojiClick(emoji: Emoji) {
-                        binding.inputPanel.getEditTex().text?.append(
-                            EmojiCompat.get().process(
-                                String(
-                                    Character.toChars(
-                                        emoji.code
-                                    )
-                                )
-                            )
-                        )
-                    }
-                }
-            )
             emojiKeyboard.toggle()
         }
 

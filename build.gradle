@@ -49,6 +49,7 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url 'https://s3.amazonaws.com/fabric-artifacts-private/internal-snapshots' }
         maven { url 'https://maven.fabric.io/public' }
+        maven { url "http://giphy.bintray.com/giphy-sdk" }
     }
 }
 

@@ -19,8 +19,7 @@ import javax.inject.Inject
 class NapoleonApplication : DaggerApplication() {
 
     companion object {
-        /** Change this to `false` when you want to use the downloadable Emoji font.  */
-        private const val USE_BUNDLED_EMOJI = false
+        private const val USE_BUNDLED_EMOJI = true
     }
 
     @Inject

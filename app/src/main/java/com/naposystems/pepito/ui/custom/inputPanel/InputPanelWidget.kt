@@ -14,6 +14,7 @@ import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.widget.EmojiAppCompatEditText
+import androidx.emoji.widget.EmojiEditText
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.FabSend
 

@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.emojiKeyboard.view
 
-import android.app.Instrumentation
 import android.content.Context
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -13,6 +12,7 @@ import com.naposystems.pepito.databinding.EmojiKeyboardBinding
 import com.naposystems.pepito.ui.emojiKeyboard.adapter.EmojiKeyboardViewPagerAdapter
 import com.naposystems.pepito.ui.emojiKeyboardPage.adapter.EmojiKeyboardPageAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.emojiManager.EmojiManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -36,10 +36,18 @@ class EmojiView constructor(context: Context) : ConstraintLayout(context), ICont
 
         binding.imageViewBackspace.setOnClickListener {
             if (::emojiEditText.isInitialized) {
-                GlobalScope.launch {
-                    val instrumentation = Instrumentation()
-                    instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_DEL)
-                }
+                val event = KeyEvent(
+                    0,
+                    0,
+                    0,
+                    KeyEvent.KEYCODE_DEL,
+                    0,
+                    0,
+                    0,
+                    0,
+                    KeyEvent.KEYCODE_ENDCALL
+                )
+                emojiEditText.dispatchKeyEvent(event)
             }
         }
     }
@@ -51,12 +59,24 @@ class EmojiView constructor(context: Context) : ConstraintLayout(context), ICont
     }
 
     private fun setupAdapter(listener: EmojiKeyboardPageAdapter.EmojiKeyboardPageListener) {
+        val categories = EmojiManager.instance.getEmojiCategories()
         val adapter = EmojiKeyboardViewPagerAdapter(context as MainActivity, listener)
-        adapter.addCategories(EmojiManager.instance.getEmojiCategories())
+        adapter.addCategories(categories)
         binding.viewPagerEmojiKeyboard.adapter = adapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewPagerEmojiKeyboard) { tab, position ->
-            tab.setIcon(R.drawable.ic_camera_primary)
+            val icon = when (categories[position].id) {
+                Constants.EmojiCategory.SMILES_AND_PEOPLE.category -> R.drawable.emoji_category_smileysandpeople
+                Constants.EmojiCategory.ANIMALS_AND_NATURE.category -> R.drawable.emoji_category_animalsandnature
+                Constants.EmojiCategory.FOOD_AND_DRINK.category -> R.drawable.emoji_category_foodanddrink
+                Constants.EmojiCategory.ACTIVITY.category -> R.drawable.emoji_category_activities
+                Constants.EmojiCategory.TRAVEL_AND_PLACES.category -> R.drawable.emoji_category_travelandplaces
+                Constants.EmojiCategory.OBJECTS.category -> R.drawable.emoji_category_objects
+                Constants.EmojiCategory.SYMBOLS.category -> R.drawable.emoji_category_symbols
+                Constants.EmojiCategory.FLAGS.category -> R.drawable.emoji_category_flags
+                else -> R.drawable.ic_notification_icon
+            }
+            tab.setIcon(icon)
         }.attach()
     }
 

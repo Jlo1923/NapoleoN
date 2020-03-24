@@ -29,7 +29,7 @@ class EmojiKeyboardPageAdapter constructor(private val listener: EmojiKeyboardPa
 
         fun bind(emoji: Emoji, listener: EmojiKeyboardPageListener) {
             binding.textViewEmoji.text =
-                EmojiCompat.get().process(String(Character.toChars(emoji.code)))
+                EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
 
             binding.textViewEmoji.setOnClickListener {
                 listener.onEmojiClick(emoji)
