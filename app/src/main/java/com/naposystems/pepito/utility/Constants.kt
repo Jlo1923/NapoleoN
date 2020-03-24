@@ -72,6 +72,13 @@ object Constants {
         FALSE(0)
     }
 
+    enum class DeleteMessages constructor(val option: Int) {
+        BY_SELECTION(1),
+        BY_UNRECEIVED(2),
+        BY_UNREADS(3),
+        BY_FAILED(5)
+    }
+
     enum class AccountStatus constructor(val id: Int) {
         CODE_VALIDATED(1),
         ACCOUNT_CREATED(2),

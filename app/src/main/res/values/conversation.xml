@@ -4,7 +4,6 @@
     <string name="text_video_call">Video call</string>
     <string name="text_schedule">Schedule</string>
     <string name="text_see_contact">See contact</string>
-    <string name="text_mute_conversation">Mute conversation</string>
     <string name="text_write_message">Write message</string>
     <string name="text_start_chat">Start chat</string>
     <string name="text_view_profile">View profile</string>
@@ -15,6 +14,10 @@
     <string name="text_delete_message_for_me">Delete for me</string>
     <string name="text_delete_message_for_all">Delete for all</string>
     <string name="text_message_copied">Message copied</string>
+    <string name="text_title_delete_unread_messages">Delete unreads</string>
+    <string name="text_title_delete_messages_unreceived">Delete unreceived</string>
+    <string name="text_title_delete_failed_messages">Delete failed</string>
+    <string name="text_delete_messages_conversation">Delete messages</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>

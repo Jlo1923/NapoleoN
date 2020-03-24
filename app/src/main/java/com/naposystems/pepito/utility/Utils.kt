@@ -7,6 +7,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.provider.Settings
@@ -193,7 +194,7 @@ class Utils {
             clickTopButton: (Boolean) -> Unit,
             clickDownButton: (Boolean) -> Unit
         ) {
-            val dialog = AlertDialog.Builder(childFragmentManager)
+            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titleTopButton) { _, _ ->
@@ -215,14 +216,17 @@ class Utils {
             val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
+            positiveButton.setBackgroundColor(Color.TRANSPARENT)
             positiveButton.isAllCaps = false
 
             val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
             neutralButton.setTextColor(textColorButton)
+            neutralButton.setBackgroundColor(Color.TRANSPARENT)
             neutralButton.isAllCaps = false
 
             val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
             negativeButton.setTextColor(textColorButton)
+            negativeButton.setBackgroundColor(Color.TRANSPARENT)
             negativeButton.isAllCaps = false
         }
 
@@ -234,7 +238,7 @@ class Utils {
             titleNegativeButton: Int,
             clickTopButton: (Boolean) -> Unit
         ) {
-            val dialog = AlertDialog.Builder(childFragmentManager)
+            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titlePositiveButton) { _, _ ->
@@ -254,10 +258,12 @@ class Utils {
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
+            positiveButton.setBackgroundColor(Color.TRANSPARENT)
             positiveButton.isAllCaps = false
 
             val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
             negativeButton.setTextColor(textColorButton)
+            negativeButton.setBackgroundColor(Color.TRANSPARENT)
             negativeButton.isAllCaps = false
         }
 
@@ -268,7 +274,7 @@ class Utils {
             titleButton: Int,
             clickTopButton: (Boolean) -> Unit
         ) {
-            val dialog = AlertDialog.Builder(childFragmentManager)
+            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titleButton) { _, _ ->
@@ -285,6 +291,7 @@ class Utils {
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
+            positiveButton.setBackgroundColor(Color.TRANSPARENT)
             positiveButton.isAllCaps = false
         }
 

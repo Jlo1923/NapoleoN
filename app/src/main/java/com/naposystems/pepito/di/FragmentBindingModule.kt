@@ -15,6 +15,7 @@ import com.naposystems.pepito.ui.contactUs.ContactUsFragment
 import com.naposystems.pepito.ui.contacts.ContactsFragment
 import com.naposystems.pepito.ui.conversation.ConversationFragment
 import com.naposystems.pepito.ui.conversationCamera.ConversationCameraFragment
+import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.enterPin.EnterPinFragment
@@ -166,5 +167,6 @@ abstract class FragmentBindingModule {
     @ContributesAndroidInjector
     abstract fun bindSubscriptionFragment(): SubscriptionFragment
 
-
+    @ContributesAndroidInjector
+    abstract fun bindDeletionMessagesDialogFragment(): DeletionMessagesDialogFragment
 }

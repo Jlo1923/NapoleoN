@@ -4,7 +4,6 @@
     <string name="text_video_call">Videollamada</string>
     <string name="text_schedule">Programar</string>
     <string name="text_see_contact">Ver contacto</string>
-    <string name="text_mute_conversation">Silenciar conversación</string>
     <string name="text_write_message">Escribir mensaje</string>
     <string name="text_start_chat">Iniciar chat</string>
     <string name="text_view_profile">Ver perfil</string>
@@ -15,6 +14,10 @@
     <string name="text_delete_message_for_me">Eliminar para mí</string>
     <string name="text_delete_message_for_all">Eliminar para todos</string>
     <string name="text_message_copied">Mensaje copiado</string>
+    <string name="text_title_delete_unread_messages">Eliminar no leídos</string>
+    <string name="text_title_delete_messages_unreceived">Eliminar no recibidos</string>
+    <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
+    <string name="text_delete_messages_conversation">Eliminar mensajes</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>

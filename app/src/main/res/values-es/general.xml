@@ -30,6 +30,7 @@
     <string name="text_sent">Enviado</string>
     <string name="text_refuse">Rechazar</string>
     <string name="text_information">INFORMACIÓN</string>
+    <string name="text_mute_conversation">Silenciar conversación</string>
     <string name="text_field_cannot_be_empty">El campo no puede estar vacío</string>
     <string name="text_send_to">Enviar a %1$s</string>
     <string name="text_error_playing_audio">Ha ocurrido un error al reproducir el audio</string>
