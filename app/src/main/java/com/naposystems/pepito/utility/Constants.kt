@@ -1,7 +1,5 @@
 package com.naposystems.pepito.utility
 
-import java.util.*
-
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
@@ -49,7 +47,6 @@ object Constants {
         const val GET_QUESTIONS_OLD_USER  = "inforecovery/getanswersinforecoveryolduser/{nick}"
         const val VALIDATE_ANSWERS_OLD_USER = "inforecovery/validateanswersolduser"
         const val BLOCK_ATTACKER = "inforecovery/blockattacker"
-
         const val GET_SUBSCRIPTION_USER = "payments/ultimatepayment"
         const val TYPE_SUBSCRIPTIONS = "subscriptions"
         const val SEND_SELECTED_SUBSCRIPTION = "paypal/createpayment"
@@ -120,6 +117,11 @@ object Constants {
         EVERY_TWELVE_HOURS(7),
         EVERY_ONE_DAY(8),
         EVERY_SEVEN_DAY(9)
+    }
+
+    enum class SelfDestructTimeByError constructor(val time: Int) {
+        EVERY_TWENTY_FOUR_HOURS(1),
+        EVERY_SEVEN_DAYS(2)
     }
 
     enum class MessageSelfDestructTimeNotSent constructor(val time: Int) {

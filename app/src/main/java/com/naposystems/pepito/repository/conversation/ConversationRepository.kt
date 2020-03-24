@@ -41,6 +41,7 @@ import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -261,7 +262,21 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun updateMessage(message: Message) {
-        messageLocalDataSource.updateMessage(message)
+        when(message.status) {
+            Constants.MessageStatus.ERROR.status -> {
+                val selfDestructTime = sharedPreferencesManager.getInt(
+                    Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+                )
+                val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+                message.updatedAt = currentTime
+                message.selfDestructionAt = selfDestructTime
+                message.totalSelfDestructionAt = currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+                messageLocalDataSource.updateMessage(message)
+            }
+            else -> {
+                messageLocalDataSource.updateMessage(message)
+            }
+        }
     }
 
     override suspend fun sendMessagesRead(contactId: Int) {
