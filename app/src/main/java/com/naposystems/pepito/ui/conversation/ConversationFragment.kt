@@ -544,7 +544,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
     private fun obtainTimeSelfDestruct(): Int {
         return if (selfDestructTimeViewModel.selfDestructTimeByContact!! < 0) {
-            selfDestructTimeViewModel.selfDestructTimeGlobal
+            selfDestructTimeViewModel.selfDestructTimeGlobal.value!!
         } else {
             selfDestructTimeViewModel.selfDestructTimeByContact!!
         }

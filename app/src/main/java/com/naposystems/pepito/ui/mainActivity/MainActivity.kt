@@ -6,7 +6,6 @@ import android.content.res.Resources
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
-import android.text.BoringLayout
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
@@ -92,7 +91,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-            1 -> setNewTheme(0)
+            1 -> setNewTheme(Constants.ColorScheme.LIGHT_THEME.scheme)
+            2 -> setNewTheme(Constants.ColorScheme.DARK_THEME.scheme)
             3 -> setNewTheme(R.style.AppThemeBlackGoldAlloy)
             4 -> setNewTheme(R.style.AppThemeColdOcean)
             5 -> setNewTheme(R.style.AppThemeCamouflage)
@@ -211,8 +211,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setNewTheme(style: Int) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        if(style != 0) setTheme(style)
+        if(style != Constants.ColorScheme.DARK_THEME.scheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            setTheme(style)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
     }
 
     private fun openMenu() {

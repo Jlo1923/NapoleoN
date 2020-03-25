@@ -10,28 +10,23 @@ import javax.inject.Inject
 class SelfDestructTimeViewModel @Inject constructor(private val repository: IContractSelfDestructTime.Repository) :
     ViewModel(), IContractSelfDestructTime.ViewModel {
 
-    private val _selfDestructTime = MutableLiveData<Int>()
-    val selfDestructTime: LiveData<Int>
-        get() = _selfDestructTime
-
     lateinit var getDestructTimeByContact: LiveData<Int>
     var selfDestructTimeByContact: Int? = -1
 
-    var selfDestructTimeGlobal: Int = 0
+    private val _selfDestructTimeGlobal = MutableLiveData<Int>()
+    val selfDestructTimeGlobal: LiveData<Int>
+        get() = _selfDestructTimeGlobal
 
-    init {
-        _selfDestructTime.value = null
-    }
+    private val _messageSelfDestructTimeNotSent = MutableLiveData<Int>()
+    val messageSelfDestructTimeNotSent: LiveData<Int>
+        get() = _messageSelfDestructTimeNotSent
 
     //region IContractSelfDestructTime.ViewMode
     override fun getSelfDestructTime() {
-        val selfDestructTime = repository.getSelfDestructTime()
-        _selfDestructTime.value = selfDestructTime
-        selfDestructTimeGlobal = selfDestructTime
+        _selfDestructTimeGlobal.value = repository.getSelfDestructTime()
     }
 
     override fun setSelfDestructTime(selfDestructTime: Int) {
-        _selfDestructTime.value = selfDestructTime
         repository.setSelfDestructTime(selfDestructTime)
     }
 
@@ -46,6 +41,10 @@ class SelfDestructTimeViewModel @Inject constructor(private val repository: ICon
             val selfDestructTime= repository.getSelfDestructTimeByContact(contactId)
             getDestructTimeByContact = selfDestructTime
         }
+    }
+
+    override fun getMessageSelfDestructTimeNotSent() {
+        _messageSelfDestructTimeNotSent.value = repository.getMessageSelfDestructTimeNotSent()
     }
     //endregion
 

@@ -35,6 +35,7 @@ import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class Utils {
@@ -317,16 +318,23 @@ class Utils {
 
         fun convertItemOfTimeInSeconds(item : Int) : Int{
             return when(item){
-                EVERY_FIVE_SECONDS.time -> 5
-                EVERY_FIFTEEN_SECONDS.time -> 15
-                EVERY_THIRTY_SECONDS.time -> 30
-                EVERY_ONE_MINUTE.time -> 60
-                EVERY_TEN_MINUTES.time -> 600
-                EVERY_THIRTY_MINUTES.time -> 1800
-                EVERY_ONE_HOUR.time -> 3600
-                EVERY_TWELVE_HOURS.time -> 43200
-                EVERY_ONE_DAY.time -> 86400
-                else -> 604800
+                EVERY_FIVE_SECONDS.time -> TimeUnit.SECONDS.toSeconds(5).toInt()
+                EVERY_FIFTEEN_SECONDS.time -> TimeUnit.SECONDS.toSeconds(15).toInt()
+                EVERY_THIRTY_SECONDS.time -> TimeUnit.SECONDS.toSeconds(30).toInt()
+                EVERY_ONE_MINUTE.time -> TimeUnit.MINUTES.toSeconds(1).toInt()
+                EVERY_TEN_MINUTES.time -> TimeUnit.MINUTES.toSeconds(10).toInt()
+                EVERY_THIRTY_MINUTES.time -> TimeUnit.MINUTES.toSeconds(30).toInt()
+                EVERY_ONE_HOUR.time -> TimeUnit.HOURS.toSeconds(1).toInt()
+                EVERY_TWELVE_HOURS.time -> TimeUnit.HOURS.toSeconds(12).toInt()
+                EVERY_ONE_DAY.time -> TimeUnit.DAYS.toSeconds(1).toInt()
+                else -> TimeUnit.DAYS.toSeconds(7).toInt()
+            }
+        }
+
+        fun convertItemOfTimeInSecondsByError(item : Int) : Int{
+            return when(item){
+                Constants.SelfDestructTimeByError.EVERY_TWENTY_FOUR_HOURS.time -> TimeUnit.HOURS.toSeconds(24).toInt()
+                else -> TimeUnit.DAYS.toSeconds(7).toInt()
             }
         }
 

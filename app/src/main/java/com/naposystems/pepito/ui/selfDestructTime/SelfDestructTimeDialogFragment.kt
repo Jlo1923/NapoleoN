@@ -107,11 +107,12 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
 
         viewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {timeByContact ->
 
+            viewModel.selfDestructTimeGlobal.value?.let { selfDestructTimeGlobal ->
                 this.selfDestructTime = if(contactId == 0)
-                    viewModel.selfDestructTimeGlobal
+                    selfDestructTimeGlobal
                 else {
                     if(timeByContact < 0)
-                        viewModel.selfDestructTimeGlobal
+                        selfDestructTimeGlobal
                     else
                         timeByContact
                 }
@@ -146,6 +147,7 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
                     Constants.SelfDestructTime.EVERY_SEVEN_DAY.time ->
                         binding.radioButtonSevenDays.isChecked = true
                 }
+            }
         })
     }
 
