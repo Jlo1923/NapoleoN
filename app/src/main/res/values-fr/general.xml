@@ -34,13 +34,15 @@
     <string name="text_title_delete_conversation">Supprimer la conversation</string>
     <string name="text_mute_conversation">Conversation muette</string>
     <string name="text_block_contact">Bloquer le contact</string>
+    <string name="text_unblock_contact">Déverrouiller le contact</string>
     <string name="text_field_cannot_be_empty">Le champ ne peut pas être vide</string>
-
     <string name="text_send_to">Envoyer à %1$s</string>
     <string name="text_error_playing_audio">Une erreur est survenue à l\'audio de jeu</string>
     <string name="text_attachment_document_name">Document.%1$s</string>
+    <string name="text_alert_failure">Advertencia</string>
     <plurals name="text_selected">
         <item quantity="one">%d sélectionné</item>
         <item quantity="other">%d sélectionné</item>
     </plurals>
+    <string name="text_status_limit">4 états personnalisés sont autorisés, supprimez un précédemment enregistré pour en ajouter un nouveau.</string>
 </resources>

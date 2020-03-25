@@ -8,4 +8,6 @@
     <string name="text_placeholder_password">Enter your Password</string>
     <string name="text_description_enter_password">Enter your Password. You are one step away from recovering your account. Enter your account recovery password number.</string>
     <string name="text_description_validate_old_answers">Security questions. You are closer to recovering your account, please help us confirm your identity. Answer the following security questions correctly</string>
+    <string name="text_password_incorrect">The password entered is incorrect</string>
+    <string name="text_answers_incorrect">The answers entered are incorrect.</string>
 </resources>

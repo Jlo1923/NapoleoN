@@ -104,8 +104,8 @@ class ConversationViewModel @Inject constructor(
         this.contact = contact
     }
 
-    override fun getLocalContact(idContact: Int) {
-        contactProfile = repository.getLocalContact(idContact)
+    override fun getLocalContact(contactId: Int) {
+        contactProfile = repository.getLocalContact(contactId)
     }
 
     override fun getLocalMessages() {
@@ -278,43 +278,39 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Boolean) {
+    override fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Boolean) {
         viewModelScope.launch {
             repository.updateStateSelectionMessage(
-                idContact,
+                contactId,
                 idMessage,
                 Utils.convertBooleanToInvertedInt(isSelected)
             )
         }
     }
 
-    override fun cleanSelectionMessages(idContact: Int) {
+    override fun cleanSelectionMessages(contactId: Int) {
         viewModelScope.launch {
-            repository.cleanSelectionMessages(idContact)
+            repository.cleanSelectionMessages(contactId)
         }
     }
 
-    override fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
+    override fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
-            repository.deleteMessagesSelected(idContact, listMessages)
+            repository.deleteMessagesSelected(contactId, listMessages)
             _responseDeleteLocalMessages.value = true
         }
     }
 
-    override fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>) {
+    override fun deleteMessagesForAll(contactId: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
             try {
 
-                val response =
-                    repository.deleteMessagesForAll(
-                        buildObjectDeleteMessages(
-                            idContact,
-                            listMessages
-                        )
-                    )
+                val response = repository.deleteMessagesForAll(
+                    buildObjectDeleteMessages(contactId, listMessages)
+                )
 
                 if (response.isSuccessful) {
-                    repository.deleteMessagesSelected(idContact, listMessages)
+                    repository.deleteMessagesSelected(contactId, listMessages)
                     _responseDeleteLocalMessages.value = true
                 } else {
                     when (response.code()) {
@@ -337,9 +333,24 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun copyMessagesSelected(idContact: Int) {
+    override fun deleteMessagesByStatusForMe(contactId: Int, status: Int) {
         viewModelScope.launch {
-            _stringsCopy.value = repository.copyMessagesSelected(idContact)
+            repository.deleteMessagesByStatusForMe(contactId, status)
+        }
+    }
+
+    override fun deleteMessagesByStatusForAll(contactId: Int, status: Int) {
+        viewModelScope.launch {
+            val messagesUnread = repository.getLocalMessagesByStatus(contactId, status)
+            if (messagesUnread.count() > 0) {
+                deleteMessagesForAll(contactId, messagesUnread)
+            }
+        }
+    }
+
+    override fun copyMessagesSelected(contactId: Int) {
+        viewModelScope.launch {
+            _stringsCopy.value = repository.copyMessagesSelected(contactId)
         }
     }
 
@@ -355,9 +366,9 @@ class ConversationViewModel @Inject constructor(
         return countOldMessages
     }
 
-    override fun getMessagesSelected(idContact: Int) {
+    override fun getMessagesSelected(contactId: Int) {
         viewModelScope.launch {
-            _messagesSelected = repository.getMessagesSelected(idContact)
+            _messagesSelected = repository.getMessagesSelected(contactId)
         }
     }
 

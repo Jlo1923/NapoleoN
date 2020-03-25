@@ -10,4 +10,5 @@
     <string name="text_status_sleeping">Addormentato</string>
     <string name="text_status_only_emergency">Solo emergenza</string>
     <string name="text_error_getting_local_status">Si è verificato un errore durante il recupero degli stati, riprovare</string>
+    <string name="text_delete_status">Elimina stato</string>
 </resources>

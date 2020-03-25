@@ -34,13 +34,16 @@
     <string name="text_title_delete_conversation">Konversation löschen</string>
     <string name="text_mute_conversation">Gespräch stumm schalten</string>
     <string name="text_block_contact">Kontakt blockieren</string>
+    <string name="text_unblock_contact">Kontakt entsperren</string>
     <string name="text_field_cannot_be_empty">Das Feld darf nicht leer sein</string>
     <string name="text_send_to">Schicken %1$s</string>
     <string name="text_error_playing_audio">Ein Fehler ist auf das Spiel Audio aufgetreten</string>
     <string name="text_attachment_document_name">Dokument.%1$s</string>
+    <string name="text_alert_failure">Advertencia</string>
     <plurals name="text_selected">
         <item quantity="one">%d ausgewählt</item>
         <item quantity="other">%d ausgewählt</item>
     </plurals>
+    <string name="text_status_limit">Es sind 4 benutzerdefinierte Status zulässig. Löschen Sie einen zuvor gespeicherten Status, um einen neuen hinzuzufügen.</string>
 
 </resources>

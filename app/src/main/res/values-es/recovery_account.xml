@@ -8,4 +8,6 @@
     <string name="text_placeholder_password">Ingrese su Contraseña</string>
     <string name="text_description_enter_password">Ingrese su Contraseña. Está a un paso de recuperar su cuenta. Digita el número de su contraseña de recuperación de cuenta.</string>
     <string name="text_description_validate_old_answers">Preguntas de Seguridad. Está más cerca de recuperar su cuenta, ayúdanos a confirmar su identidad. Responde de manera correcta las siguientes preguntas de seguridad</string>
+    <string name="text_password_incorrect">La contraseña ingresada es incorrecta</string>
+    <string name="text_answers_incorrect">Las respuestas ingresadas son incorrectas.</string>
 </resources>

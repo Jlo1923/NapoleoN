@@ -37,30 +37,17 @@
                     app:srcCompat="@drawable/image_recovery_account" />
 
                 <TextView
-                    android:id="@+id/textView_attempts"
-                    style="@style/BodyTextView.Tint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/large_margin"
-                    android:text="@string/text_number_attempts"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toTopOf="@id/textView_description"
-                    app:layout_constraintEnd_toStartOf="@id/guideline_end"
-                    app:layout_constraintTop_toBottomOf="@id/imageView_section"
-                    app:layout_constraintVertical_chainStyle="packed"/>
-
-                <TextView
                     android:id="@+id/textView_description"
                     style="@style/BodyTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/normal_margin"
                     android:text="@string/text_description_recovery"
                     android:textAlignment="center"
                     app:layout_constraintBottom_toTopOf="@id/textInputLayout_nickname"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
-                    app:layout_constraintTop_toBottomOf="@id/textView_attempts" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageView_section"
+                    app:layout_constraintVertical_chainStyle="packed" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayout_nickname"
@@ -70,7 +57,7 @@
                     android:layout_marginTop="@dimen/normal_margin"
                     android:hint="@string/text_nickname_with_asterisk"
                     app:errorEnabled="true"
-                    app:layout_constraintBottom_toTopOf="@+id/button_recovery_account"
+                    app:layout_constraintBottom_toTopOf="@+id/viewSwitcher_recovery_account"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toBottomOf="@id/textView_description">
@@ -86,17 +73,27 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_recovery_account"
-                    style="@style/AppPrimaryButton"
+                <ViewSwitcher
+                    android:id="@+id/viewSwitcher_recovery_account"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:text="@string/text_btn_recovery"
                     app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
-                    app:layout_constraintWidth_percent="@dimen/width_app_button" />
+                    app:layout_constraintWidth_percent="@dimen/width_app_button">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_recovery_account"
+                        style="@style/AppPrimaryButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:text="@string/text_btn_recovery" />
+
+                    <ProgressBar
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </ViewSwitcher>
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline_start"

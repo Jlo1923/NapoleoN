@@ -92,13 +92,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            3 -> setTheme(R.style.AppThemeBlackGoldAlloy)
-            4 -> setTheme(R.style.AppThemeColdOcean)
-            5 -> setTheme(R.style.AppThemeCamouflage)
-            6 -> setTheme(R.style.AppThemePurpleBluebonnets)
-            7 -> setTheme(R.style.AppThemePinkDream)
-            8 -> setTheme(R.style.AppThemeClearSky)
+            1 -> setNewTheme(Constants.ColorScheme.LIGHT_THEME.scheme)
+            2 -> setNewTheme(Constants.ColorScheme.DARK_THEME.scheme)
+            3 -> setNewTheme(R.style.AppThemeBlackGoldAlloy)
+            4 -> setNewTheme(R.style.AppThemeColdOcean)
+            5 -> setNewTheme(R.style.AppThemeCamouflage)
+            6 -> setNewTheme(R.style.AppThemePurpleBluebonnets)
+            7 -> setNewTheme(R.style.AppThemePinkDream)
+            8 -> setNewTheme(R.style.AppThemeClearSky)
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -208,6 +209,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
+    }
+
+    private fun setNewTheme(style: Int) {
+        if(style != Constants.ColorScheme.DARK_THEME.scheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            setTheme(style)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
     }
 
     private fun openMenu() {

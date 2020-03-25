@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,6 +15,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.pepito.utility.Constants
@@ -31,6 +33,10 @@ class SecuritySettingsFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SecuritySettingsViewModel
     private lateinit var binding: SecuritySettingsFragmentBinding
+
+    private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
+        viewModelFactory
+    }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -95,8 +101,11 @@ class SecuritySettingsFragment : Fragment() {
             .get(SecuritySettingsViewModel::class.java)
 
         binding.viewModel = viewModel
+        binding.selfDestructViewModel = selfDestructTimeViewModel
 
-        viewModel.getSelfDestructTime()
+
+        selfDestructTimeViewModel.getSelfDestructTime()
+        selfDestructTimeViewModel.getMessageSelfDestructTimeNotSent()
         viewModel.getTimeRequestAccessPin()
         viewModel.getAllowDownload()
         viewModel.getBiometricsOption()
@@ -112,7 +121,7 @@ class SecuritySettingsFragment : Fragment() {
         val dialog = SelfDestructTimeDialogFragment.newInstance(0)
         dialog.setListener(object : SelfDestructTimeDialogFragment.SelfDestructTimeListener {
             override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
-                viewModel.getSelfDestructTime()
+                selfDestructTimeViewModel.getSelfDestructTime()
             }
         })
         dialog.show(childFragmentManager, "SelfDestructTime")
@@ -145,7 +154,7 @@ class SecuritySettingsFragment : Fragment() {
         dialog.setListener(
             object : SelfDestructTimeMessageNotSentDialogFragment.MessageSelfDestructTimeNotSentListener {
                 override fun onDestructMessageChange() {
-                    viewModel.getMessageSelfDestructTimeNotSent()
+                    selfDestructTimeViewModel.getMessageSelfDestructTimeNotSent()
                 }
             })
         dialog.show(childFragmentManager, "MessageSelfDestructTimeNotSent")

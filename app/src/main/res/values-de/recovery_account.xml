@@ -8,4 +8,6 @@
     <string name="text_placeholder_password">Geben Sie Ihr Passwort ein</string>
     <string name="text_description_enter_password">Geben Sie Ihr Passwort ein. Sie sind einen Schritt von der Wiederherstellung Ihres Kontos entfernt. Geben Sie Ihr Kennwort für die Kontowiederherstellung ein.</string>
     <string name="text_description_validate_old_answers">Sicherheitsfragen. Sie sind näher an der Wiederherstellung Ihres Kontos. Bitte helfen Sie uns, Ihre Identität zu bestätigen. Beantworten Sie die folgenden Sicherheitsfragen richtig</string>
+    <string name="text_password_incorrect">Das eingegebene Passwort ist falsch</string>
+    <string name="text_answers_incorrect">Die eingegebenen Antworten sind falsch.</string>
 </resources>

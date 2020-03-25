@@ -1,6 +1,8 @@
 package com.naposystems.pepito.db.dao.status
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.naposystems.pepito.entity.Status
@@ -12,8 +14,8 @@ interface StatusDao {
     fun insertStatus(status: List<Status>)
 
     @Query("SELECT * FROM status")
-    suspend fun getStatus(): List<Status>
+    fun getStatus(): LiveData<List<Status>>
 
-    @Query("UPDATE user SET status=:newStatus WHERE firebase_id=:firebaseId")
-    suspend fun updateStatus(newStatus: String, firebaseId: String)
+    @Delete
+    fun deleteStatus(status: Status)
 }

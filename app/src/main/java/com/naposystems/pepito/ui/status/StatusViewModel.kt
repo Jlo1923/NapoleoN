@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.status
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +20,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
 
     val user = MutableLiveData<User>()
 
-    private val _status = MutableLiveData<List<Status>>()
+    private lateinit var _status: LiveData<List<Status>>
     val status: LiveData<List<Status>>
         get() = _status
 
@@ -32,7 +33,6 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         get() = _errorUpdatingStatus
 
     init {
-        _status.value = emptyList()
         _errorGettingStatus.value = false
         _errorUpdatingStatus.value = emptyList()
         getStatus()
@@ -42,7 +42,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     override fun getStatus() {
         viewModelScope.launch {
             try {
-                _status.value = repository.getStatus()
+                _status = repository.getStatus()
             } catch (ex: Exception) {
                 _errorGettingStatus.value = true
                 Timber.d(ex)
@@ -50,30 +50,58 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         }
     }
 
-    override fun updateStatus(updateUserInfoReqDTO: UpdateUserInfoReqDTO) {
+    override fun updateStatus(context: Context, textStatus: String) {
         viewModelScope.launch {
             try {
-                val response = repository.updateRemoteStatus(updateUserInfoReqDTO)
 
-                if (response.isSuccessful) {
-                    repository.updateLocalStatus(
-                        updateUserInfoReqDTO.status,
-                        user.value!!.firebaseId
+                user.value?.let {user ->
+                    val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
+                        displayName = user.displayName,
+                        status = textStatus
                     )
 
-                    user.value!!.status = updateUserInfoReqDTO.status
-                } else {
-                    when (response.code()) {
-                        401, 500 -> _errorUpdatingStatus.value =
-                            repository.getDefaultError(response)
-                        422 -> _errorUpdatingStatus.value = repository.get422Error(response)
-                        else -> _errorUpdatingStatus.value = repository.getDefaultError(response)
+                    val response = repository.updateRemoteStatus(updateUserInfoReqDTO)
+
+                    if (response.isSuccessful) {
+                        status.value?.let { listStatus ->
+                            if(listStatus.count() < 10){
+                                val status = listStatus.find {
+                                    (it.resourceId != 0) && (context.getString(it.resourceId).trim() == updateUserInfoReqDTO.status.trim()) ||
+                                    (it.resourceId == 0) && (it.customStatus.trim() == updateUserInfoReqDTO.status.trim())
+                                }
+
+                                if (status == null) {
+                                    val list = arrayListOf<Status>()
+                                    list.add(Status(0, customStatus = updateUserInfoReqDTO.status))
+                                    repository.insertNewStatus(list)
+                                }
+                            }
+                        }
+
+                        repository.updateLocalStatus(
+                            updateUserInfoReqDTO.status,
+                            user.firebaseId
+                        )
+                        user.status = updateUserInfoReqDTO.status
+                    } else {
+                        when (response.code()) {
+                            401, 500 -> _errorUpdatingStatus.value =
+                                repository.getDefaultError(response)
+                            422 -> _errorUpdatingStatus.value = repository.get422Error(response)
+                            else -> _errorUpdatingStatus.value = repository.getDefaultError(response)
+                        }
                     }
                 }
             } catch (ex: Exception) {
                 Timber.d(ex)
                 _errorUpdatingStatus.value = emptyList()
             }
+        }
+    }
+
+    override fun deleteStatus(status: Status) {
+        viewModelScope.launch {
+            repository.deleteStatus(status)
         }
     }
 

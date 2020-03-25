@@ -1,10 +1,13 @@
 package com.naposystems.pepito.db.dao.status
 
+import androidx.lifecycle.LiveData
 import com.naposystems.pepito.entity.Status
 
 interface StatusDataSource {
 
-    suspend fun getStatus(): List<Status>
+    suspend fun insertNewStatus(listStatus: List<Status>)
 
-    suspend fun updateStatus(newStatus: String, firebaseId: String)
+    suspend fun getStatus(): LiveData<List<Status>>
+
+    suspend fun deleteStatus(status: Status)
 }

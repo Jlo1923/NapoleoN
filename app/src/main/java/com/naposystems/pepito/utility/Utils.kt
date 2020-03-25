@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
+import android.graphics.Color
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.provider.Settings
@@ -36,6 +37,7 @@ import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class Utils {
@@ -195,7 +197,7 @@ class Utils {
             clickTopButton: (Boolean) -> Unit,
             clickDownButton: (Boolean) -> Unit
         ) {
-            val dialog = AlertDialog.Builder(childFragmentManager)
+            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titleTopButton) { _, _ ->
@@ -211,24 +213,23 @@ class Utils {
 
             dialog.show()
 
-            val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(
-                R.attr.attrTextColorButtonTint,
-                valueColorFab,
-                true
-            )
+            val valueColor = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
 
-            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
+            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
+            positiveButton.setBackgroundColor(Color.TRANSPARENT)
             positiveButton.isAllCaps = false
 
             val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
             neutralButton.setTextColor(textColorButton)
+            neutralButton.setBackgroundColor(Color.TRANSPARENT)
             neutralButton.isAllCaps = false
 
             val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
             negativeButton.setTextColor(textColorButton)
+            negativeButton.setBackgroundColor(Color.TRANSPARENT)
             negativeButton.isAllCaps = false
         }
 
@@ -240,7 +241,7 @@ class Utils {
             titleNegativeButton: Int,
             clickTopButton: (Boolean) -> Unit
         ) {
-            val dialog = AlertDialog.Builder(childFragmentManager)
+            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titlePositiveButton) { _, _ ->
@@ -253,22 +254,48 @@ class Utils {
 
             dialog.show()
 
-            val valueColorFab = TypedValue()
-            childFragmentManager.theme.resolveAttribute(
-                R.attr.attrTextColorButtonTint,
-                valueColorFab,
-                true
-            )
+            val valueColor= TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
 
-            val textColorButton = childFragmentManager.resources.getColor(valueColorFab.resourceId)
+            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
+            positiveButton.setBackgroundColor(Color.TRANSPARENT)
             positiveButton.isAllCaps = false
 
             val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
             negativeButton.setTextColor(textColorButton)
+            negativeButton.setBackgroundColor(Color.TRANSPARENT)
             negativeButton.isAllCaps = false
+        }
+
+        fun alertDialogInformative(
+            message: Int,
+            isCancelable: Boolean,
+            childFragmentManager: Context,
+            titleButton: Int,
+            clickTopButton: (Boolean) -> Unit
+        ) {
+            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
+                .setMessage(message)
+                .setCancelable(isCancelable)
+                .setPositiveButton(titleButton) { _, _ ->
+                    clickTopButton(true)
+                }
+                .create()
+
+            dialog.show()
+
+            val valueColor = TypedValue()
+            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
+
+            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
+
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setTextColor(textColorButton)
+            positiveButton.setBackgroundColor(Color.TRANSPARENT)
+            positiveButton.isAllCaps = false
         }
 
         fun queryName(resolver: ContentResolver, uri: Uri): String {
@@ -291,18 +318,25 @@ class Utils {
             }
         }
 
-        fun convertItemOfTimeInSeconds(item: Int): Int {
-            return when (item) {
-                EVERY_FIVE_SECONDS.time -> 5
-                EVERY_FIFTEEN_SECONDS.time -> 15
-                EVERY_THIRTY_SECONDS.time -> 30
-                EVERY_ONE_MINUTE.time -> 60
-                EVERY_TEN_MINUTES.time -> 600
-                EVERY_THIRTY_MINUTES.time -> 1800
-                EVERY_ONE_HOUR.time -> 3600
-                EVERY_TWELVE_HOURS.time -> 43200
-                EVERY_ONE_DAY.time -> 86400
-                else -> 604800
+        fun convertItemOfTimeInSeconds(item : Int) : Int{
+            return when(item){
+                EVERY_FIVE_SECONDS.time -> TimeUnit.SECONDS.toSeconds(5).toInt()
+                EVERY_FIFTEEN_SECONDS.time -> TimeUnit.SECONDS.toSeconds(15).toInt()
+                EVERY_THIRTY_SECONDS.time -> TimeUnit.SECONDS.toSeconds(30).toInt()
+                EVERY_ONE_MINUTE.time -> TimeUnit.MINUTES.toSeconds(1).toInt()
+                EVERY_TEN_MINUTES.time -> TimeUnit.MINUTES.toSeconds(10).toInt()
+                EVERY_THIRTY_MINUTES.time -> TimeUnit.MINUTES.toSeconds(30).toInt()
+                EVERY_ONE_HOUR.time -> TimeUnit.HOURS.toSeconds(1).toInt()
+                EVERY_TWELVE_HOURS.time -> TimeUnit.HOURS.toSeconds(12).toInt()
+                EVERY_ONE_DAY.time -> TimeUnit.DAYS.toSeconds(1).toInt()
+                else -> TimeUnit.DAYS.toSeconds(7).toInt()
+            }
+        }
+
+        fun convertItemOfTimeInSecondsByError(item : Int) : Int{
+            return when(item){
+                Constants.SelfDestructTimeByError.EVERY_TWENTY_FOUR_HOURS.time -> TimeUnit.HOURS.toSeconds(24).toInt()
+                else -> TimeUnit.DAYS.toSeconds(7).toInt()
             }
         }
 

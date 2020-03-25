@@ -41,6 +41,7 @@ import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -125,6 +126,10 @@ class ConversationRepository @Inject constructor(
         pageSize: Int
     ): LiveData<PagedList<MessageAndAttachment>> {
         return messageLocalDataSource.getMessages(contactId, pageSize)
+    }
+
+    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {
+        return messageLocalDataSource.getLocalMessagesByStatus(contactId, status)
     }
 
     override suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
@@ -236,8 +241,8 @@ class ConversationRepository @Inject constructor(
         return Utils.convertFileInputStreamToByteArray(fileInputStream)
     }
 
-    override fun getLocalContact(idContact: Int): LiveData<Contact> {
-        return contactDataSource.getContact(idContact)
+    override fun getLocalContact(contactId: Int): LiveData<Contact> {
+        return contactDataSource.getContact(contactId)
     }
 
     override suspend fun getLocalUser(): User {
@@ -257,7 +262,21 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun updateMessage(message: Message) {
-        messageLocalDataSource.updateMessage(message)
+        when(message.status) {
+            Constants.MessageStatus.ERROR.status -> {
+                val selfDestructTime = sharedPreferencesManager.getInt(
+                    Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+                )
+                val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+                message.updatedAt = currentTime
+                message.selfDestructionAt = selfDestructTime
+                message.totalSelfDestructionAt = currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+                messageLocalDataSource.updateMessage(message)
+            }
+            else -> {
+                messageLocalDataSource.updateMessage(message)
+            }
+        }
     }
 
     override suspend fun sendMessagesRead(contactId: Int) {
@@ -303,30 +322,30 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun updateStateSelectionMessage(
-        idContact: Int,
+        contactId: Int,
         idMessage: Int,
         isSelected: Int
     ) {
-        messageLocalDataSource.updateStateSelectionMessage(idContact, idMessage, isSelected)
+        messageLocalDataSource.updateStateSelectionMessage(contactId, idMessage, isSelected)
     }
 
-    override suspend fun cleanSelectionMessages(idContact: Int) {
-        messageLocalDataSource.cleanSelectionMessages(idContact)
+    override suspend fun cleanSelectionMessages(contactId: Int) {
+        messageLocalDataSource.cleanSelectionMessages(contactId)
     }
 
-    override suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
-        messageLocalDataSource.deleteMessagesSelected(idContact, listMessages)
-        val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(idContact)
+    override suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>) {
+        messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
+        val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(contactId)
         if (messageAndAttachment != null) {
             conversationLocalDataSource.updateConversationByContact(
-                idContact,
+                contactId,
                 messageAndAttachment.message.body,
                 messageAndAttachment.message.createdAt,
                 messageAndAttachment.message.status,
                 0
             )
         } else {
-            conversationLocalDataSource.cleanConversation(idContact)
+            conversationLocalDataSource.cleanConversation(contactId)
         }
     }
 
@@ -334,12 +353,16 @@ class ConversationRepository @Inject constructor(
         return napoleonApi.deleteMessagesForAll(deleteMessagesReqDTO)
     }
 
-    override suspend fun copyMessagesSelected(idContact: Int): List<String> {
-        return messageLocalDataSource.copyMessagesSelected(idContact)
+    override suspend fun copyMessagesSelected(contactId: Int): List<String> {
+        return messageLocalDataSource.copyMessagesSelected(contactId)
     }
 
-    override suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>> {
-        return messageLocalDataSource.getMessagesSelected(idContact)
+    override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessagesSelected(contactId)
+    }
+
+    override suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int) {
+        messageLocalDataSource.deleteMessagesByStatusForMe(contactId, status)
     }
 
     override fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {

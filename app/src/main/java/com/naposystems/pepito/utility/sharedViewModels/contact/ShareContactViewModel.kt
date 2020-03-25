@@ -42,14 +42,13 @@ class ShareContactViewModel @Inject constructor(
         }
     }
 
-    override fun unblockContact(contact: Contact) {
+    override fun unblockContact(contactId: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.unblockContact(contact)
+                val response = repository.unblockContact(contactId)
 
                 if (response.isSuccessful) {
-                    contact.statusBlocked = false
-                    repository.unblockContactLocal(contact.id)
+                    repository.unblockContactLocal(contactId)
                 } else {
                     _webServiceErrors.value = repository.getDefaultUnblockError(response)
                 }
