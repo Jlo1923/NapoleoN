@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
@@ -26,9 +27,19 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val quantityFriendshipRequest: LiveData<Int>
         get() = _quantityFriendshipRequest
 
+    private val _jsonNotification = MutableLiveData<String>()
+    val jsonNotification: LiveData<String>
+        get() = _jsonNotification
+
+    private val _contact = MutableLiveData<Contact>()
+    val contact: LiveData<Contact>
+        get() = _contact
+
     val conversations: LiveData<List<ConversationAndContact>> = repository.getConversations()
 
     init {
+        _contact.value = null
+        _jsonNotification.value = null
         _quantityFriendshipRequest.value = -1
     }
 
@@ -95,6 +106,24 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
 
     override fun getSubscriptionTime(): Long {
         return repository.getSubscriptionTime()
+    }
+
+    override fun getJsonNotification() {
+        _jsonNotification.value = repository.getJsonNotification()
+    }
+
+    override fun getContact(contactId : Int) {
+        viewModelScope.launch {
+            _contact.value = repository.getContact(contactId)
+        }
+    }
+
+    override fun cleanJsonNotification() {
+        viewModelScope.launch {
+            _contact.value = null
+            _jsonNotification.value = null
+            repository.cleanJsonNotification()
+        }
     }
     //endregion
 }

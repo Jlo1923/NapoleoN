@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,12 +19,14 @@ import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.home.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -112,6 +114,10 @@ class HomeFragment : Fragment() {
 
         viewModel.subscribeToGeneralSocketChannel()
 
+        viewModel.conversations.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
+
         viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
             if (it != -1) {
                 setupBadge(it)
@@ -126,8 +132,38 @@ class HomeFragment : Fragment() {
             binding.textViewStatus.text = it.status
         })
 
-        viewModel.conversations.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+        viewModel.getJsonNotification()
+
+        viewModel.jsonNotification.observe(viewLifecycleOwner, Observer {json ->
+            if (!json.isNullOrEmpty()) {
+                val jsonNotification = JSONObject(json)
+                when(jsonNotification.get("type_notification")) {
+                    Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
+                        viewModel.getContact(jsonNotification.get("contact").toString().toInt())
+                    }
+                    Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
+                        viewModel.cleanJsonNotification()
+                        findNavController().navigate(
+                            HomeFragmentDirections.actionHomeFragmentToAddContactFragment()
+                        )
+                    }
+                    Constants.NotificationType.FRIEND_REQUEST_ACCEPTED.type -> {
+                        viewModel.cleanJsonNotification()
+                        findNavController().navigate(
+                            HomeFragmentDirections.actionHomeFragmentToContactsFragment()
+                        )
+                    }
+                }
+            }
+        })
+
+        viewModel.contact.observe(viewLifecycleOwner, Observer {
+            it?.let { contact ->
+                viewModel.cleanJsonNotification()
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
+                )
+            }
         })
 
         (activity as MainActivity).getUser()

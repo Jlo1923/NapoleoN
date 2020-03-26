@@ -46,6 +46,7 @@
     <string name="text_refuse">Refuse</string>
     <string name="text_information">INFORMATION</string>
     <string name="text_mute_conversation">Mute conversation</string>
+    <string name="text_unmuted_conversation">Unmuted conversation</string>
     <string name="text_field_cannot_be_empty">The field cannot be empty</string>
     <string name="text_send_to">Send to %1$s</string>
     <string name="text_error_playing_audio">An error occurred while playing the audio</string>
