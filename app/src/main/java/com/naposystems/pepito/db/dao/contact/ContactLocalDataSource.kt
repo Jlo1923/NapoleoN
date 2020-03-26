@@ -7,24 +7,28 @@ import javax.inject.Inject
 class ContactLocalDataSource @Inject constructor(private val contactDao: ContactDao) :
     ContactDataSource {
 
-    override suspend fun updateNicknameFakeContact(idContact: Int, nicknameFake: String) {
-        contactDao.updateNickNameFakeContact(idContact, nicknameFake)
+    override suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String) {
+        contactDao.updateNickNameFakeContact(contactId, nicknameFake)
     }
 
-    override suspend fun updateNameFakeContact(idContact: Int, nameFake: String) {
-        contactDao.updateNameFakeContact(idContact, nameFake)
+    override suspend fun updateNameFakeContact(contactId: Int, nameFake: String) {
+        contactDao.updateNameFakeContact(contactId, nameFake)
     }
 
-    override suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String) {
-        contactDao.updateAvatarFakeContact(idContact, avatarFake)
+    override suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
+        contactDao.updateAvatarFakeContact(contactId, avatarFake)
     }
 
-    override suspend fun restoreContact(idContact: Int) {
-        contactDao.restoreContact(idContact)
+    override suspend fun restoreContact(contactId: Int) {
+        contactDao.restoreContact(contactId)
     }
 
-    override fun getContact(idContact : Int): LiveData<Contact> {
-        return contactDao.getContact(idContact)
+    override fun getContact(contactId : Int): LiveData<Contact> {
+        return contactDao.getContact(contactId)
+    }
+
+    override fun getContactById(contactId: Int): Contact {
+        return contactDao.getContactById(contactId)
     }
 
     override suspend fun getContacts(): LiveData<List<Contact>> {

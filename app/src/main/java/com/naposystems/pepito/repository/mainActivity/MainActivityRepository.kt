@@ -45,6 +45,12 @@ class MainActivityRepository @Inject constructor(
         )
     }
 
+    override fun setJsonNotification(json: String) {
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_JSON_NOTIFICATION, json
+        )
+    }
+
     override suspend fun setLockStatus(state: Int) {
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_LOCK_STATUS, state

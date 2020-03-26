@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -43,6 +44,7 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import org.json.JSONObject
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -77,13 +79,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
+        viewModel = ViewModelProvider(this, viewModelFactory)
+            .get(MainActivityViewModel::class.java)
+
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
         )
-
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(MainActivityViewModel::class.java)
 
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
@@ -204,6 +206,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Utils.showSimpleSnackbar(binding.coordinator, message, 2)
             }
         })
+
+        intent.extras?.let { args ->
+            if (args.containsKey("type_notification")) {
+                val jsonNotification = JSONObject()
+                jsonNotification.put("type_notification", args.getString("type_notification")?.toInt()!!)
+                if(args.getString("type_notification")?.toInt() == Constants.NotificationType.ENCRYPTED_MESSAGE.type){
+                    jsonNotification.put("contact", args.getString("contact")?.toInt()!!)
+                }
+                viewModel.setJsonNotification(jsonNotification.toString())
+            }
+        }
 
         binding.navView.setNavigationItemSelectedListener(this)
 

@@ -79,6 +79,12 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
         }
     }
 
+    override fun setJsonNotification(json: String) {
+        viewModelScope.launch {
+            repository.setJsonNotification(json)
+        }
+    }
+
     override fun getLockTimeApp(): Long {
         var lockTime = 0L
         viewModelScope.launch {

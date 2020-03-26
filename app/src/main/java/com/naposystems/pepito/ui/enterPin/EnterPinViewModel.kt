@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.utility.Constants
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 class EnterPinViewModel @Inject constructor(

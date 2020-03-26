@@ -13,6 +13,7 @@ import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.ui.home.IContractHome
@@ -220,6 +221,22 @@ class HomeRepository @Inject constructor(
     override fun getSubscriptionTime(): Long {
         return sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
+        )
+    }
+
+    override fun getJsonNotification(): String {
+        return sharedPreferencesManager.getString(
+            Constants.SharedPreferences.PREF_JSON_NOTIFICATION, ""
+        )
+    }
+
+    override fun getContact(contactId: Int): Contact {
+        return contactLocalDataSource.getContactById(contactId)
+    }
+
+    override fun cleanJsonNotification() {
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_JSON_NOTIFICATION, ""
         )
     }
 }

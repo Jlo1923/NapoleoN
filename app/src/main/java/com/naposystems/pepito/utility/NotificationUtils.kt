@@ -29,9 +29,9 @@ object NotificationUtils {
         )
 
         val builder = NotificationCompat.Builder(
-                context,
-                channelId
-            )
+            context,
+            channelId
+        )
             .setLargeIcon(iconBitmap)
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setContentTitle(title)
@@ -43,7 +43,7 @@ object NotificationUtils {
 
         if (data.isNotEmpty() && data.containsKey("type_notification")) {
             when (data.getValue("type_notification").toInt()) {
-                4, 5 -> {
+                Constants.NotificationType.VERIFICATION_CODE.type, Constants.NotificationType.SUBSCRIPTION.type -> {
                     with(NotificationManagerCompat.from(context)) {
                         notify(Random().nextInt(), builder.build())
                     }
