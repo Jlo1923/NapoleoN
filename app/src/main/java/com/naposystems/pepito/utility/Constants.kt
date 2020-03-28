@@ -5,6 +5,8 @@ object Constants {
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
     const val GIPHY_API_KEY = "3nvsXqW9PgR068WGKRFSRnhV22QnM8iT"
     const val DATA_CRYPT = "datacrypt"
+    const val TYPE_NOTIFICATION = "type_notification"
+    const val TYPE_NOTIFICATION_WITH_CONTACT = "contact"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 1
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
@@ -222,7 +224,12 @@ object Constants {
     }
 
     enum class NotificationType(val type: Int) {
+        WITHOUT_NOTIFICATION(0),
+        ENCRYPTED_MESSAGE(1),
         NEW_FRIENDSHIP_REQUEST(2),
+        FRIEND_REQUEST_ACCEPTED(3),
+        VERIFICATION_CODE(4),
+        SUBSCRIPTION(5),
         ACCOUNT_ATTACK(6)
     }
 
@@ -307,7 +314,7 @@ object Constants {
         const val PREF_FREE_TRIAL = "free_trial"
         const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
         const val PREF_SUBSCRIPTION_TIME = "subscription_time"
-
+        const val PREF_JSON_NOTIFICATION = "json_notification"
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"

@@ -95,8 +95,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private var isEditTextFilled: Boolean = false
     private lateinit var actionMode: ActionModeMenu
     private var contactSilenced: Boolean = false
-    private lateinit var menuOptionsContact: Menu
-    private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
+    private var menuOptionsContact: Menu? = null
+    private lateinit var deletionMessagesDialog : DeletionMessagesDialogFragment
 
     private var clipboard: ClipboardManager? = null
     private var clipData: ClipData? = null
@@ -135,7 +135,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         inflateCustomActionBar(inflater)
 
         binding = DataBindingUtil.inflate(
@@ -379,16 +378,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     private fun observeContactProfile() {
-        viewModel.contactProfile.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                actionBarCustomView.contact = it
-                if (it.silenced) {
-                    menuOptionsContact.findItem(R.id.menu_item_mute_conversation).title =
-                        "Desilenciar!!"
-                } else {
-                    menuOptionsContact.findItem(R.id.menu_item_mute_conversation).title =
-                        "Silenciar!!"
-                }
+        viewModel.contactProfile.observe(viewLifecycleOwner, Observer { contact ->
+            if (contact != null) {
+                actionBarCustomView.contact = contact
+                setTextSilenceOfMenu(contact)
             }
         })
     }
@@ -428,6 +421,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     it.message.isMine == 0
                 }.toList().count()
 
+                val quantityMessagesFailed = listMessageAndAttachment.filter {
+                    it.message.status == Constants.MessageStatus.ERROR.status
+                }.toList().count()
+
                 actionMode.hideCopyButton = false
 
                 setupWidgets(0, View.GONE)
@@ -446,11 +443,13 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                             }
                         }
                         actionMode.quantityMessageOtherUser = quantityMessagesOtherUser
+                        actionMode.quantityMessagesFailed = quantityMessagesFailed
                     }
 
                     else -> {
                         actionMode.hideCopyButton = true
                         actionMode.quantityMessageOtherUser = quantityMessagesOtherUser
+                        actionMode.quantityMessagesFailed = quantityMessagesFailed
                     }
                 }
                 actionMode.mode?.invalidate()
@@ -492,6 +491,21 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menuOptionsContact = menu
         inflater.inflate(R.menu.menu_conversation, menu)
+        viewModel.contactProfile.value?.let { contact ->
+            setTextSilenceOfMenu(contact)
+        }
+    }
+
+    private fun setTextSilenceOfMenu(contact : Contact) {
+        menuOptionsContact?.let { menuOptions ->
+            if (contact.silenced) {
+                menuOptions.findItem(R.id.menu_item_mute_conversation).title =
+                    context?.getString(R.string.text_unmuted_conversation)
+            } else {
+                menuOptions.findItem(R.id.menu_item_mute_conversation).title =
+                    context?.getString(R.string.text_mute_conversation)
+            }
+        }
     }
 
     override fun onResume() {
@@ -531,10 +545,12 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 blockContact(args.contact)
             }
             R.id.menu_item_mute_conversation -> {
-                if (args.contact.silenced)
-                    deactiveSilence()
-                else
-                    silenceConversation()
+                viewModel.contactProfile.value?.let { contact ->
+                    if (contact.silenced)
+                        desactiveSilence()
+                    else
+                        silenceConversation()
+                }
             }
             R.id.menu_item_delete_messages -> {
                 optionDeleteMessagesClickListener()
@@ -564,19 +580,23 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     private fun silenceConversation() {
-        val dialog = MuteConversationDialogFragment.newInstance(
-            args.contact.id, args.contact.silenced
-        )
-        dialog.setListener(object : MuteConversationDialogFragment.MuteConversationListener {
-            override fun onMuteConversationChange() {
-                // Intentionally empty
-            }
-        })
-        dialog.show(childFragmentManager, "MuteConversation")
+        viewModel.contactProfile.value?.let { contact ->
+            val dialog = MuteConversationDialogFragment.newInstance(
+                args.contact.id, contact.silenced
+                )
+            dialog.setListener(object : MuteConversationDialogFragment.MuteConversationListener {
+                override fun onMuteConversationChange() {
+                    // Intentionally empty
+                }
+            })
+            dialog.show(childFragmentManager, "MuteConversation")
+        }
     }
 
-    private fun deactiveSilence() {
-        shareContactViewModel.muteConversation(args.contact.id, args.contact.silenced)
+    private fun desactiveSilence() {
+        viewModel.contactProfile.value?.let { contact ->
+            shareContactViewModel.muteConversation(args.contact.id, contact.silenced)
+        }
     }
 
     private fun deleteConversation() {

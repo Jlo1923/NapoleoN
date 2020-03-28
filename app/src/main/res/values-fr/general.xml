@@ -33,6 +33,7 @@
     <string name="text_nickname">Surnom</string>
     <string name="text_title_delete_conversation">Supprimer la conversation</string>
     <string name="text_mute_conversation">Conversation muette</string>
+    <string name="text_unmuted_conversation">Conversation sans sourdine</string>
     <string name="text_block_contact">Bloquer le contact</string>
     <string name="text_unblock_contact">Déverrouiller le contact</string>
     <string name="text_field_cannot_be_empty">Le champ ne peut pas être vide</string>

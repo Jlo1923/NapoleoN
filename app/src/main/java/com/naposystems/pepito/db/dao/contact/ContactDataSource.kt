@@ -11,6 +11,8 @@ interface ContactDataSource {
 
     fun getContact(idContact : Int): LiveData<Contact>
 
+    fun getContactById(idContact : Int): Contact
+
     suspend fun restoreContact(idContact: Int)
 
     suspend fun updateNameFakeContact(idContact: Int, nameFake: String)
