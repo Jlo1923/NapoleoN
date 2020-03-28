@@ -208,11 +208,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         intent.extras?.let { args ->
-            if (args.containsKey("type_notification")) {
+            if (args.containsKey(Constants.TYPE_NOTIFICATION)) {
                 val jsonNotification = JSONObject()
-                jsonNotification.put("type_notification", args.getString("type_notification")?.toInt()!!)
-                if(args.getString("type_notification")?.toInt() == Constants.NotificationType.ENCRYPTED_MESSAGE.type){
-                    jsonNotification.put("contact", args.getString("contact")?.toInt()!!)
+                jsonNotification.put(Constants.TYPE_NOTIFICATION, args.getString(Constants.TYPE_NOTIFICATION)?.toInt()!!)
+                if(args.getString(Constants.TYPE_NOTIFICATION)?.toInt() == Constants.NotificationType.ENCRYPTED_MESSAGE.type){
+                    jsonNotification.put(Constants.TYPE_NOTIFICATION_WITH_CONTACT, args.getString(Constants.TYPE_NOTIFICATION_WITH_CONTACT)?.toInt()!!)
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }

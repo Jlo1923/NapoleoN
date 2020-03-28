@@ -4,6 +4,8 @@ object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
     const val DATA_CRYPT = "datacrypt"
+    const val TYPE_NOTIFICATION = "type_notification"
+    const val TYPE_NOTIFICATION_WITH_CONTACT = "contact"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 1
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
