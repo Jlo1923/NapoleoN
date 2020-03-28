@@ -137,9 +137,9 @@ class HomeFragment : Fragment() {
         viewModel.jsonNotification.observe(viewLifecycleOwner, Observer {json ->
             if (!json.isNullOrEmpty()) {
                 val jsonNotification = JSONObject(json)
-                when(jsonNotification.get("type_notification")) {
+                when(jsonNotification.get(Constants.TYPE_NOTIFICATION)) {
                     Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                        viewModel.getContact(jsonNotification.get("contact").toString().toInt())
+                        viewModel.getContact(jsonNotification.get(Constants.TYPE_NOTIFICATION_WITH_CONTACT).toString().toInt())
                     }
                     Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
                         viewModel.cleanJsonNotification()
