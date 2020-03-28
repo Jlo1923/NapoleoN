@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.attachmentPreview
 
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.transition.TransitionInflater
@@ -13,7 +12,6 @@ import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
@@ -30,7 +28,6 @@ class AttachmentPreviewFragment : Fragment() {
         fun newInstance() = AttachmentPreviewFragment()
     }
 
-    private val viewModel: AttachmentPreviewViewModel by viewModels()
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
 
     private lateinit var binding: AttachmentPreviewFragmentBinding
@@ -75,7 +72,9 @@ class AttachmentPreviewFragment : Fragment() {
         binding.galleryItemId = args.galleryItemId
 
         when (attachment.type) {
-            Constants.AttachmentType.IMAGE.type -> {
+            Constants.AttachmentType.IMAGE.type,
+            Constants.AttachmentType.GIF.type,
+            Constants.AttachmentType.GIF_NN.type -> {
                 if (binding.viewSwitcher.currentView.id == binding.containerVideoView.id) {
                     binding.viewSwitcher.showNext()
                 }
@@ -136,12 +135,6 @@ class AttachmentPreviewFragment : Fragment() {
                 resetMessage()
                 hasSentAttachment = true
             }
-            /*conversationShareViewModel.setMessage(binding.inputPanel.getEditTex().text.toString())
-            conversationShareViewModel.setAttachmentSelected(args.attachment)
-            conversationShareViewModel.setAttachmentOrigin(attachment.origin)
-            conversationShareViewModel.setGalleryTypeSelected(attachment.type)
-            conversationShareViewModel.resetGalleryTypeSelected()
-            conversationShareViewModel.resetMessage()*/
             this.findNavController().popBackStack(R.id.conversationFragment, false)
         }
 
@@ -174,11 +167,11 @@ class AttachmentPreviewFragment : Fragment() {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
+                // Intentionally empty.
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
+                // Intentionally empty.
             }
         })
 

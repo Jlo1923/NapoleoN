@@ -21,6 +21,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.databinding.DataBindingUtil
+import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -37,14 +38,17 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
+import com.naposystems.pepito.ui.napoleonKeyboard.NapoleonKeyboard
+import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
-import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -108,6 +112,20 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         MediaPlayerManager(context!!)
     }
 
+    private val emojiKeyboard by lazy {
+        NapoleonKeyboard(
+            binding.coordinator,
+            binding.inputPanel.getEditTex(),
+            object : NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener {
+                override fun onEmojiClick(emoji: Emoji) {
+                    binding.inputPanel.getEditTex().text?.append(
+                        EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
+                    )
+                }
+            }
+        )
+    }
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -155,16 +173,18 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 //Nothing
-                val text = binding.inputPanel.getEditTex().text.toString()
+                binding.inputPanel.apply {
+                    val text = getEditTex().text.toString()
 
-                if (text.isNotEmpty() && !isEditTextFilled) {
-                    binding.inputPanel.morphFloatingActionButtonIcon()
-                    isEditTextFilled = true
-                    binding.inputPanel.hideImageButtonCamera()
-                } else if (text.isEmpty()) {
-                    binding.inputPanel.morphFloatingActionButtonIcon()
-                    isEditTextFilled = false
-                    binding.inputPanel.showImageButtonCamera()
+                    if (text.isNotEmpty() && !isEditTextFilled) {
+                        morphFloatingActionButtonIcon()
+                        isEditTextFilled = true
+                        hideImageButtonCamera()
+                    } else if (text.isEmpty()) {
+                        morphFloatingActionButtonIcon()
+                        isEditTextFilled = false
+                        showImageButtonCamera()
+                    }
                 }
 
             }
@@ -204,7 +224,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
 
                 override fun locationPressed() {
-
+                    // Intentionally empty
                 }
 
                 override fun audioPressed() {
@@ -251,6 +271,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             }
         }
 
+        binding.inputPanel.getImageButtonEmoji().setOnClickListener {
+            emojiKeyboard.toggle()
+        }
+
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
         return binding.root
@@ -283,6 +307,17 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 )
             }
         })
+
+        shareViewModel.gifSelected.observe(activity!!, Observer { gifAttachment ->
+            if (gifAttachment != null) {
+                findNavController().navigate(
+                    ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
+                        gifAttachment,
+                        0
+                    )
+                )
+            }
+        })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -308,6 +343,77 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             selfDestructTimeViewModel.selfDestructTimeByContact = it
         })
 
+        observeMessagesSelected()
+
+        observeWebServiceError()
+
+        observeDeleteMessagesForAllWsError()
+
+        observeMessageMessages()
+
+        observeContactProfile()
+
+        observeStringsCopy()
+
+        observeResponseDeleteLocalMessages()
+    }
+
+    private fun observeResponseDeleteLocalMessages() {
+        viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
+            if (it && actionMode.mode != null) {
+                actionMode.mode!!.finish()
+            }
+        })
+    }
+
+    private fun observeStringsCopy() {
+        viewModel.stringsCopy.observe(viewLifecycleOwner, Observer {
+            if (it.count() == 1) {
+                copyDataInClipboard(viewModel.parsingListByTextBlock(it))
+                viewModel.resetListStringCopy()
+                Toast.makeText(context, R.string.text_message_copied, Toast.LENGTH_LONG).show()
+                actionMode.mode!!.finish()
+            }
+        })
+    }
+
+    private fun observeContactProfile() {
+        viewModel.contactProfile.observe(viewLifecycleOwner, Observer { contact ->
+            if (contact != null) {
+                actionBarCustomView.contact = contact
+                setTextSilenceOfMenu(contact)
+            }
+        })
+    }
+
+    private fun observeMessageMessages() {
+        viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
+            conversationAdapter.submitList(conversationList)
+
+            if (conversationList.isNotEmpty()) {
+                viewModel.sendMessagesRead()
+            }
+
+        })
+    }
+
+    private fun observeDeleteMessagesForAllWsError() {
+        viewModel.deleteMessagesForAllWsError.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+                showSnackbar(it)
+            }
+        })
+    }
+
+    private fun observeWebServiceError() {
+        viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+                showSnackbar(it)
+            }
+        })
+    }
+
+    private fun observeMessagesSelected() {
         viewModel.messagesSelected.observe(
             viewLifecycleOwner, Observer { listMessageAndAttachment ->
 
@@ -349,54 +455,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 actionMode.mode?.invalidate()
                 actionMode.changeTitle(listMessageAndAttachment.count().toString())
             })
-
-        viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-                showSnackbar(it)
-            }
-        })
-
-        viewModel.deleteMessagesForAllWsError.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-                showSnackbar(it)
-            }
-        })
-
-        viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
-            conversationAdapter.submitList(conversationList)
-
-            if (conversationList.isNotEmpty()) {
-                viewModel.sendMessagesRead()
-            }
-
-        })
-
-        viewModel.contactProfile.observe(viewLifecycleOwner, Observer {contact ->
-            if (contact != null) {
-                actionBarCustomView.contact = contact
-                setTextSilenceOfMenu(contact)
-            }
-        })
-
-        viewModel.stringsCopy.observe(viewLifecycleOwner, Observer {
-            if (it.count() == 1) {
-                copyDataInClipboard(viewModel.parsingListByTextBlock(it))
-                viewModel.resetListStringCopy()
-                Toast.makeText(context, R.string.text_message_copied, Toast.LENGTH_LONG).show()
-                actionMode.mode!!.finish()
-            }
-        })
-
-        viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
-            if (it && actionMode.mode != null) {
-                actionMode.mode!!.finish()
-            }
-        })
     }
 
     private fun setupWidgets(sizePaddingTop: Int, visible: Int) {
         binding.containerStatus.visibility = visible
-        binding.imageViewBackground.setPadding(0, sizePaddingTop, 0, 0)
         binding.recyclerViewConversation.setPadding(0, sizePaddingTop, 0, 0)
     }
 
@@ -523,7 +585,9 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 args.contact.id, contact.silenced
                 )
             dialog.setListener(object : MuteConversationDialogFragment.MuteConversationListener {
-                override fun onMuteConversationChange() {}
+                override fun onMuteConversationChange() {
+                    // Intentionally empty
+                }
             })
             dialog.show(childFragmentManager, "MuteConversation")
         }
@@ -623,8 +687,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             })
     }
 
-    private fun dialogWithNeutralButton(status : Int) {
-        viewModel.messagesSelected.value?.let {messagesSelected ->
+    private fun dialogWithNeutralButton(status: Int) {
+        viewModel.messagesSelected.value?.let { messagesSelected ->
             Utils.alertDialogWithNeutralButton(
                 R.string.text_delete_messages,
                 false, context!!,
@@ -632,7 +696,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 R.string.text_cancel,
                 R.string.text_delete_message_for_all,
                 clickTopButton = { _ ->
-                    when(status) {
+                    when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
                             viewModel.deleteMessagesSelected(args.contact.id, messagesSelected)
                         }
@@ -645,7 +709,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     }
                 },
                 clickDownButton = { _ ->
-                    when(status) {
+                    when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
                             viewModel.deleteMessagesForAll(args.contact.id, messagesSelected)
                         }
@@ -661,7 +725,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         }
     }
 
-    private fun dialogWithoutNeutralButton(status : Int) {
+    private fun dialogWithoutNeutralButton(status: Int) {
         viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
             Utils.alertDialogWithoutNeutralButton(
                 R.string.text_delete_messages,
@@ -671,7 +735,10 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 clickTopButton = { _ ->
                     when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
-                            viewModel.deleteMessagesSelected(args.contact.id, listMessagesAndAttachments)
+                            viewModel.deleteMessagesSelected(
+                                args.contact.id,
+                                listMessagesAndAttachments
+                            )
                         }
                         Constants.DeleteMessages.BY_FAILED.option -> {
                             viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
@@ -685,24 +752,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
             override fun onClick(item: MessageAndAttachment) {
-                if (actionMode.mode != null) {
-                    updateStateSelectionMessage(item.message)
-                }
-
-                if (item.attachmentList.isNotEmpty()) {
-                    val firstAttachment = item.attachmentList.first()
-
-                    if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
-                        openAttachmentDocument(firstAttachment)
-                    }
-
-                    if (firstAttachment.status == Constants.AttachmentStatus.ERROR.status) {
-                        when (firstAttachment.type) {
-
-                        }
-                    }
-                }
-
+                conversationAdapterOnClickEvent(item)
             }
 
             override fun onLongClick(item: Message) {
@@ -762,6 +812,20 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 super.onScrolled(recyclerView, dx, dy)
             }
         })
+    }
+
+    private fun conversationAdapterOnClickEvent(item: MessageAndAttachment) {
+        if (actionMode.mode != null) {
+            updateStateSelectionMessage(item.message)
+        }
+
+        if (item.attachmentList.isNotEmpty()) {
+            val firstAttachment = item.attachmentList.first()
+
+            if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
+                openAttachmentDocument(firstAttachment)
+            }
+        }
     }
 
     private fun showFabScroll(visible: Int, animation: Animation) {

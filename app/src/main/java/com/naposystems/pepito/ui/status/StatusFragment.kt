@@ -2,13 +2,13 @@ package com.naposystems.pepito.ui.status
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
@@ -67,70 +67,11 @@ class StatusFragment : Fragment() {
         binding.viewModel = viewModel
 
         context?.let { context ->
-
-            binding.textInputEditTextStatus.setOnEditorActionListener { view, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (view.text.trim().isNotEmpty()) {
-                        viewModel.status.value?.let { listStatus ->
-                            if (listStatus.count() < 10) {
-                                viewModel.updateStatus(
-                                    context,
-                                    view.text.toString()
-                                )
-                                view.clearFocus()
-                            } else {
-                                Utils.alertDialogInformative(
-                                    R.string.text_status_limit,
-                                    true,
-                                    context,
-                                    R.string.text_accept,
-                                    clickTopButton = {
-
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    false
-                } else {
-                    true
-                }
-            }
+            textInputEditTextStatusSetOnEditorActionListener(context)
 
             viewModel.user.value = args.user
 
-            viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
-                if (statusList != null) {
-                    selectStatus(statusList)
-                    adapter = StatusAdapter(
-                        statusList,
-                        StatusAdapter.StatusSelectionListener(clickListener = { status ->
-                            val textStatus = if (status.resourceId > 0) {
-                                context.getString(status.resourceId)
-                            } else {
-                                status.customStatus
-                            }
-
-                            binding.textInputEditTextStatus.setText(textStatus)
-                            viewModel.updateStatus(context, textStatus)
-                        }, clickDelete = { status, view ->
-                            val popup = PopupMenu(context, view)
-                            popup.menuInflater.inflate(R.menu.menu_popup_status, popup.menu)
-
-                            popup.setOnMenuItemClickListener {
-                                when (it.itemId) {
-                                    R.id.delete_status -> {
-                                        viewModel.deleteStatus(status)
-                                    }
-                                }
-                                true
-                            }
-                            popup.show()
-                        })
-                    )
-                    binding.recyclerViewStatus.adapter = adapter
-                }
-            })
+            observeStatus(context)
 
             viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
                 if (it == true) {
@@ -146,6 +87,72 @@ class StatusFragment : Fragment() {
                     snackbarUtils.showSnackbar()
                 }
             })
+        }
+    }
+
+    private fun observeStatus(context: Context) {
+        viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
+            if (statusList != null) {
+                selectStatus(statusList)
+                adapter = StatusAdapter(
+                    statusList,
+                    StatusAdapter.StatusSelectionListener(clickListener = { status ->
+                        val textStatus = if (status.resourceId > 0) {
+                            context.getString(status.resourceId)
+                        } else {
+                            status.customStatus
+                        }
+
+                        binding.textInputEditTextStatus.setText(textStatus)
+                        viewModel.updateStatus(context, textStatus)
+                    }, clickDelete = { status, view ->
+                        val popup = PopupMenu(context, view)
+                        popup.menuInflater.inflate(R.menu.menu_popup_status, popup.menu)
+
+                        popup.setOnMenuItemClickListener {
+                            when (it.itemId) {
+                                R.id.delete_status -> {
+                                    viewModel.deleteStatus(status)
+                                }
+                            }
+                            true
+                        }
+                        popup.show()
+                    })
+                )
+                binding.recyclerViewStatus.adapter = adapter
+            }
+        })
+    }
+
+    private fun textInputEditTextStatusSetOnEditorActionListener(context: Context) {
+        binding.textInputEditTextStatus.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (view.text.trim().isNotEmpty()) {
+                    viewModel.status.value?.let { listStatus ->
+                        if (listStatus.count() < 10) {
+                            viewModel.updateStatus(
+                                context,
+                                view.text.toString()
+                            )
+                            view.clearFocus()
+                        } else {
+                            Utils.alertDialogInformative(
+                                R.string.text_status_limit,
+                                true,
+                                context,
+                                R.string.text_accept,
+                                clickTopButton = {
+
+                                }
+                            )
+                        }
+                    }
+                }
+                false
+            } else {
+                true
+            }
         }
     }
 

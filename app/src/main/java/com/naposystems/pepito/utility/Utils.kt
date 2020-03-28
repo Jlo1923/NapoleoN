@@ -1,6 +1,7 @@
 package com.naposystems.pepito.utility
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
@@ -8,6 +9,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Rect
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.provider.Settings
@@ -56,10 +58,7 @@ class Utils {
 
             val inputManager: InputMethodManager =
                 context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.hideSoftInputFromWindow(
-                view.windowToken,
-                InputMethodManager.SHOW_FORCED
-            )
+            inputManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
         /**
@@ -480,6 +479,23 @@ class Utils {
             }
 
             return outputStream.toByteArray()
+        }
+
+        fun windowVisibleDisplayFrame(context: Activity): Rect {
+            val result = Rect()
+            context.window.decorView.getWindowVisibleDisplayFrame(result)
+            return result
+        }
+
+        @SuppressLint("DiscouragedPrivateApi")
+        fun getKeyboardHeight(context: Context): Int {
+            val imm = context.applicationContext
+                .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputMethodManagerClass: Class<*> = imm.javaClass
+            val visibleHeightMethod =
+                inputMethodManagerClass.getDeclaredMethod("getInputMethodWindowVisibleHeight")
+            visibleHeightMethod.isAccessible = true
+            return visibleHeightMethod.invoke(imm) as Int
         }
     }
 }

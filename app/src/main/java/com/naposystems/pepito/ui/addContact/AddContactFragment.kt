@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AddContactFragmentBinding
 import com.naposystems.pepito.entity.Contact
@@ -34,7 +34,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: AddContactViewModel
+    private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
     private lateinit var binding: AddContactFragmentBinding
     private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
@@ -91,31 +91,53 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(AddContactViewModel::class.java)
 
         viewModel.getFriendshipRequests()
 
-        viewModel.users.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-            if (it.isNotEmpty()) {
-                if (binding.viewSwitcherSearch.currentView.id == binding.containerEmptyStateSearch.id) {
-                    binding.viewSwitcherSearch.showNext()
-                }
-            } else {
-                if (binding.viewSwitcherSearch.currentView.id == binding.recyclerViewContacts.id) {
-                    binding.viewSwitcherSearch.showNext()
-                }
-            }
-        })
+        observeUsers()
 
-        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, Observer {
+        observeFriendShipRequestSend()
+
+        observeFriendshipRequests()
+
+        observeFriendshipRequestPutSuccessfully()
+
+        observeFriendshipRequestWsError()
+
+        observeFriendshipRequestAcceptedSuccessfully()
+    }
+
+    private fun observeFriendshipRequestAcceptedSuccessfully() {
+        viewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                val index = viewModel.users.value!!.indexOf(viewModel.lastFriendshipRequest)
-                adapter.updateContact(index)
+                viewModel.getFriendshipRequests()
             }
         })
+    }
 
+    private fun observeFriendshipRequestWsError() {
+        viewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+
+                val list = ArrayList<String>()
+                list.add(it)
+
+                val snackbarUtils = SnackbarUtils(binding.coordinator, list)
+
+                snackbarUtils.showSnackbar()
+            }
+        })
+    }
+
+    private fun observeFriendshipRequestPutSuccessfully() {
+        viewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                viewModel.getFriendshipRequests()
+            }
+        })
+    }
+
+    private fun observeFriendshipRequests() {
         viewModel.friendshipRequests.observe(viewLifecycleOwner, Observer {
             friendshipRequestsAdapter.submitList(it)
             binding.swipeRefresh.isRefreshing = false
@@ -129,28 +151,28 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 }
             }
         })
+    }
 
-        viewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, Observer {
+    private fun observeFriendShipRequestSend() {
+        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                viewModel.getFriendshipRequests()
+                val index = viewModel.users.value!!.indexOf(viewModel.lastFriendshipRequest)
+                adapter.updateContact(index)
             }
         })
+    }
 
-        viewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
+    private fun observeUsers() {
+        viewModel.users.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
             if (it.isNotEmpty()) {
-
-                val list = ArrayList<String>()
-                list.add(it)
-
-                val snackbarUtils = SnackbarUtils(binding.coordinator, list)
-
-                snackbarUtils.showSnackbar()
-            }
-        })
-
-        viewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                viewModel.getFriendshipRequests()
+                if (binding.viewSwitcherSearch.currentView.id == binding.containerEmptyStateSearch.id) {
+                    binding.viewSwitcherSearch.showNext()
+                }
+            } else {
+                if (binding.viewSwitcherSearch.currentView.id == binding.recyclerViewContacts.id) {
+                    binding.viewSwitcherSearch.showNext()
+                }
             }
         })
     }

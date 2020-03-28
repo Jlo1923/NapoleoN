@@ -29,7 +29,7 @@ interface MessageDataSource {
 
     suspend fun getLastMessageByContact(contactId: Int): MessageAndAttachment
 
-    suspend fun getIdContactWithWebId(ListWebId: List<String>): Int
+    suspend fun getIdContactWithWebId(listWebId: List<String>): Int
 
     suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
 

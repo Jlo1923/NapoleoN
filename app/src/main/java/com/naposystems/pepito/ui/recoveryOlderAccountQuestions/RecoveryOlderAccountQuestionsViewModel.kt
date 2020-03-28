@@ -48,6 +48,7 @@ class RecoveryOlderAccountQuestionsViewModel @Inject constructor(
                 } else {
                     when (response.code()) {
                         422 -> {
+                            // Intentionally empty
                         }
                         else -> {
                             _recoveryOlderQuestionsCreatingError.value =

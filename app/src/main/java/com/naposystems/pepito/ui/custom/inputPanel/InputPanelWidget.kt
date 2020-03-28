@@ -7,12 +7,14 @@ import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.widget.EmojiAppCompatEditText
+import androidx.emoji.widget.EmojiEditText
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.FabSend
 
@@ -44,8 +46,8 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
         FabSend(context)
     }
 
-    private val editText: EditText by lazy {
-        EditText(ContextThemeWrapper(context, R.style.EditTextInputPanel))
+    private val mEditText: EmojiAppCompatEditText by lazy {
+        EmojiAppCompatEditText(ContextThemeWrapper(context, R.style.EditTextInputPanel))
     }
 
     private lateinit var imageButtonEmoji: ImageButton
@@ -160,19 +162,23 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
         context.theme.resolveAttribute(R.attr.attrTextColorHintConversationInputPanel, value, true)
 
         val valueTextColor = TypedValue()
-        context.theme.resolveAttribute(R.attr.attrTextColorConversationInputPanel, valueTextColor, true)
+        context.theme.resolveAttribute(
+            R.attr.attrTextColorConversationInputPanel,
+            valueTextColor,
+            true
+        )
 
-        editText.apply {
+        mEditText.apply {
             background = resources.getDrawable(android.R.color.transparent, context.theme)
             hint = resources.getString(R.string.text_write_message)
-            setHintTextColor(resources.getColor(value.resourceId))
-            setTextColor(resources.getColor(valueTextColor.resourceId))
+            setHintTextColor(resources.getColor(value.resourceId, context.theme))
+            setTextColor(resources.getColor(valueTextColor.resourceId, context.theme))
             maxLines = 4
         }
 
-        linearLayoutInputPanel.addView(editText)
+        linearLayoutInputPanel.addView(mEditText)
 
-        with(editText) {
+        with(mEditText) {
             val editTextLayoutParams = LinearLayout.LayoutParams(layoutParams)
 
             editTextLayoutParams.apply {
@@ -197,7 +203,11 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
         getContext().theme.resolveAttribute(android.R.attr.actionBarItemBackground, outValue, true)
 
         val outValueBackgroundTint = TypedValue()
-        getContext().theme.resolveAttribute(R.attr.attrActionBarItemBackground, outValueBackgroundTint, true)
+        getContext().theme.resolveAttribute(
+            R.attr.attrActionBarItemBackground,
+            outValueBackgroundTint,
+            true
+        )
 
         imageButton.apply {
             setImageResource(drawable)
@@ -226,12 +236,12 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : RelativeLayout(c
 
     //region Implementation IContractInputPanel
     override fun setEditTextWatcher(textWatcher: TextWatcher) {
-        editText.addTextChangedListener(textWatcher)
+        mEditText.addTextChangedListener(textWatcher)
     }
 
     override fun morphFloatingActionButtonIcon() = floatingButton.morph()
 
-    override fun getEditTex() = editText
+    override fun getEditTex() = mEditText
 
     override fun getFloatingActionButton() = floatingButton
 

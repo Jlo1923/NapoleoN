@@ -1,51 +1,35 @@
 package com.naposystems.pepito.ui.previewMedia.adapter
 
-import android.content.ContentUris
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.GlideManager
+import timber.log.Timber
 
-@BindingAdapter("conversationPreviewImage")
-fun bindConversationPreviewImage(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+@BindingAdapter("previewImage")
+fun bindPreviewImage(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+    try {
+        if (messageAndAttachment.attachmentList.isNotEmpty()) {
+            imageView.visibility = View.VISIBLE
+            val firstAttachment = messageAndAttachment.attachmentList[0]
 
-    val context = imageView.context
-
-    if (messageAndAttachment.attachmentList.isNotEmpty()) {
-        val firstAttachment = messageAndAttachment.attachmentList[0]
-
-        if (firstAttachment.type == Constants.AttachmentType.IMAGE.type) {
-            val contentUri = ContentUris.withAppendedId(
-                MediaStore.Files.getContentUri("external"),
-                ContentUris.parseId(Uri.parse(firstAttachment.uri))
-            )
-
-            var bitmap: Bitmap
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ImageDecoder.createSource(context.contentResolver, contentUri)
-                    .also { source ->
-                        ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
-                            bitmap = bitmapDecoded
-                        }
-                    }
-            } else {
-                bitmap =
-                    MediaStore.Images.Media.getBitmap(
-                        context.contentResolver,
-                        contentUri
-                    )
+            when (firstAttachment.type) {
+                Constants.AttachmentType.IMAGE.type -> {
+                    Glide.with(imageView)
+                        .load(firstAttachment)
+                        .into(imageView)
+                }
+                Constants.AttachmentType.GIF.type -> {
+                    Glide.with(imageView)
+                        .asGif()
+                        .load(firstAttachment)
+                        .into(imageView)
+                }
             }
-
-            GlideManager.loadBitmap(
-                imageView,
-                bitmap
-            )
         }
+    } catch (e: Exception) {
+        Timber.e(e)
     }
 }

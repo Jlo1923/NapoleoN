@@ -2,17 +2,16 @@ package com.naposystems.pepito.ui.conversation
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.pepito.dto.conversation.attachment.AttachmentReqDTO
-import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.message.Message
-import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -58,15 +57,6 @@ interface IContractConversation {
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
         suspend fun sendMessageAttachment(attachment: Attachment): Response<AttachmentResDTO>
-        suspend fun sendMessageTest(
-            userDestination: Int,
-            quoted: String,
-            body: String,
-            attachmentType: String,
-            uriString: String,
-            origin: Int
-        ): Response<MessageResDTO>?
-
         suspend fun getLocalUser(): User
         fun insertMessage(message: Message): Long
         fun insertListMessage(messageList: List<Message>)

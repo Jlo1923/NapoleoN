@@ -3,12 +3,15 @@ package com.naposystems.pepito.ui.mainActivity
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Point
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Display
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
@@ -123,7 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 dialog.show(supportFragmentManager, "AttackDialog")
             }
 
-        disposable.add(disposableNoInternetConnection)
+        disposable.add(disposableAccountAttack)
 
         setSupportActionBar(binding.toolbar)
 
@@ -224,7 +227,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setNewTheme(style: Int) {
-        if(style != Constants.ColorScheme.DARK_THEME.scheme) {
+        if (style != Constants.ColorScheme.DARK_THEME.scheme) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             setTheme(style)
         } else {
@@ -343,6 +346,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun enableDrawer() {
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
+
+    fun getNavController() = this.navController
+
+    fun changeLayoutHeight(height: Int) {
+        val display: Display = windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+
+        val layoutParams = binding.root.layoutParams
+        layoutParams.height = size.y - height
+        binding.root.layoutParams = layoutParams
+    }
+
+    fun resetLayoutHeight() {
+        val layoutParams = binding.root.layoutParams
+        layoutParams.height = MATCH_PARENT
+        binding.root.layoutParams = layoutParams
     }
 
     override fun onSupportNavigateUp() =

@@ -1,11 +1,8 @@
 package com.naposystems.pepito.ui.previewMedia
 
-import android.annotation.SuppressLint
-import android.content.ContentUris
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,16 +11,13 @@ import android.view.animation.AnimationUtils
 import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
@@ -40,10 +34,8 @@ class PreviewMediaFragment : Fragment() {
         fun newInstance() = PreviewMediaFragment()
     }
 
-    private val viewModel: PreviewMediaViewModel by viewModels()
     private lateinit var binding: PreviewMediaFragmentBinding
 
-    //    private lateinit var tempFile: File
     private val args: PreviewMediaFragmentArgs by navArgs()
     private var isPlayingVideo: Boolean = false
     private var isUIVisible: Boolean = true
@@ -94,13 +86,10 @@ class PreviewMediaFragment : Fragment() {
         val firstAttachment = messageAndAttachment.attachmentList[0]
 
         when (firstAttachment.type) {
-            Constants.AttachmentType.IMAGE.type -> {
+            Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.GIF.type -> {
                 if (binding.viewSwitcher.currentView.id == binding.containerVideoView.id) {
                     binding.viewSwitcher.showNext()
                 }
-                Glide.with(binding.imageViewPreview)
-                    .load(firstAttachment)
-                    .into(binding.imageViewPreview)
             }
             Constants.AttachmentType.VIDEO.type -> {
                 try {
@@ -143,11 +132,11 @@ class PreviewMediaFragment : Fragment() {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
+                // Intenionally empty
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
+                // Intenionally empty
             }
         })
 
@@ -278,30 +267,6 @@ class PreviewMediaFragment : Fragment() {
         isUIVisible = !isUIVisible
     }
 
-    private fun startVideo() {
-        binding.imageButtonPlay.playAnimation()
-        hideUI()
-        exoplayer.playWhenReady = true
-//        mHandler.postDelayed(mRunnable, 0)
-    }
-
-    @SuppressLint("InlinedApi")
-    private fun hideSystemUi() {
-        binding.videoView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LOW_PROFILE
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        /*if (tempFile.exists()) {
-            tempFile.delete()
-        }*/
-    }
-
     override fun onStart() {
         super.onStart()
         if (Util.SDK_INT >= 24) {
@@ -311,7 +276,6 @@ class PreviewMediaFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        hideSystemUi()
         if ((Util.SDK_INT < 24)) {
             initializePlayer()
         }

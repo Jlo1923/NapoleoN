@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
-import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,11 +11,8 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
-import java.io.File
-import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -92,24 +88,6 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
     }
 }
 
-@BindingAdapter("audioDuration")
-fun bindAudioDuration(textView: TextView, messageAndAttachment: MessageAndAttachment) {
-
-    if (messageAndAttachment.attachmentList.isNotEmpty()) {
-        val firstAudio = messageAndAttachment.attachmentList.first()
-        val context = textView.context
-
-        if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
-            val fileDescriptor = context.contentResolver
-                .openFileDescriptor(Uri.parse(firstAudio.uri), "r")
-
-            val fileInputStream = FileInputStream(fileDescriptor!!.fileDescriptor)
-        }
-    } else {
-        textView.visibility = View.GONE
-    }
-}
-
 @BindingAdapter("isFirstMyMessage")
 fun bindIsFirstMyMessage(constraintLayout: ConstraintLayout, isFirst: Boolean) {
     val context = constraintLayout.context
@@ -138,20 +116,29 @@ fun bindImageAttachment(imageView: ImageView, messageAndAttachment: MessageAndAt
             imageView.visibility = View.VISIBLE
             val firstAttachment = messageAndAttachment.attachmentList[0]
 
-            if (firstAttachment.type == Constants.AttachmentType.IMAGE.type) {
-                Glide.with(imageView)
-                    .load(firstAttachment)
-                    .into(imageView)
-            } else if (firstAttachment.type == Constants.AttachmentType.VIDEO.type) {
-                val uri = Utils.getFileUri(
-                    imageView.context,
-                    firstAttachment.uri,
-                    Constants.NapoleonCacheDirectories.VIDEOS.folder
-                )
-                Glide.with(imageView)
-                    .load(uri)
-                    .thumbnail(0.1f)
-                    .into(imageView)
+            when (firstAttachment.type) {
+                Constants.AttachmentType.IMAGE.type -> {
+                    Glide.with(imageView)
+                        .load(firstAttachment)
+                        .into(imageView)
+                }
+                Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
+                    Glide.with(imageView)
+                        .asGif()
+                        .load(firstAttachment)
+                        .into(imageView)
+                }
+                Constants.AttachmentType.VIDEO.type -> {
+                    val uri = Utils.getFileUri(
+                        imageView.context,
+                        firstAttachment.uri,
+                        Constants.NapoleonCacheDirectories.VIDEOS.folder
+                    )
+                    Glide.with(imageView)
+                        .load(uri)
+                        .thumbnail(0.1f)
+                        .into(imageView)
+                }
             }
         }
     } catch (e: Exception) {

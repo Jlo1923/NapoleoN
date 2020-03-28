@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -34,7 +35,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: BlockedContactsViewModel
+    private val viewModel: BlockedContactsViewModel by viewModels { viewModelFactory }
     private lateinit var shareContactViewModel: ShareContactViewModel
     private lateinit var binding: BlockedContactsFragmentBinding
     private lateinit var adapter: BlockedContactsAdapter
@@ -77,34 +78,25 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(BlockedContactsViewModel::class.java)
-
         try {
             shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
                 .get(ShareContactViewModel::class.java)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
 
         viewModel.getBlockedContacts()
-        viewModel.blockedContacts.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-            if (it.isNotEmpty()) {
-                if (binding.viewSwitcher.currentView.id == binding.containerEmptyStateBlockedContacts.id) {
-                    binding.viewSwitcher.showNext()
-                }
-            } else {
-                if (binding.viewSwitcher.currentView.id == binding.viewSwitcherRecycler.id) {
-                    binding.viewSwitcher.showNext()
-                }
-            }
-        })
+
+        observeBlockedContacts()
 
         viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
             SnackbarUtils(binding.coordinator, it).showSnackbar()
         })
 
+        observeListBlockedContacts()
+    }
+
+    private fun observeListBlockedContacts() {
         viewModel.listBlockedContacts.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
 
@@ -115,6 +107,21 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
             } else {
                 if (binding.viewSwitcherRecycler.currentView.id == binding.containerRecyclerViewBlockedContacts.id) {
                     binding.viewSwitcherRecycler.showNext()
+                }
+            }
+        })
+    }
+
+    private fun observeBlockedContacts() {
+        viewModel.blockedContacts.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+            if (it.isNotEmpty()) {
+                if (binding.viewSwitcher.currentView.id == binding.containerEmptyStateBlockedContacts.id) {
+                    binding.viewSwitcher.showNext()
+                }
+            } else {
+                if (binding.viewSwitcher.currentView.id == binding.viewSwitcherRecycler.id) {
+                    binding.viewSwitcher.showNext()
                 }
             }
         })
@@ -195,7 +202,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
                 } else {
                     contact.displayNameFake
                 }
-                ),
+            ),
             true,
             childFragmentManager
         ) {

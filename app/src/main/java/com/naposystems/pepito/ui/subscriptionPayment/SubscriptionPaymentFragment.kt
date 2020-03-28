@@ -1,10 +1,7 @@
 package com.naposystems.pepito.ui.subscriptionPayment
 
-import android.content.Context
 import android.graphics.Bitmap
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,12 +10,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-
 import com.naposystems.pepito.R
-import com.naposystems.pepito.databinding.SubscriptionFragmentBinding
 import com.naposystems.pepito.databinding.SubscriptionPaymentFragmentBinding
-import dagger.android.support.AndroidSupportInjection
 
 class SubscriptionPaymentFragment : Fragment() {
 
@@ -26,7 +21,6 @@ class SubscriptionPaymentFragment : Fragment() {
         fun newInstance() = SubscriptionPaymentFragment()
     }
 
-    private lateinit var viewModel: SubscriptionPaymentViewModel
     private lateinit var binding: SubscriptionPaymentFragmentBinding
     private val args: SubscriptionPaymentFragmentArgs by navArgs()
 
@@ -64,14 +58,6 @@ class SubscriptionPaymentFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this)
-            .get(SubscriptionPaymentViewModel::class.java)
-
-
     }
 
 }
