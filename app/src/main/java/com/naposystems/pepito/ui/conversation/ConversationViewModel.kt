@@ -2,18 +2,23 @@ package com.naposystems.pepito.ui.conversation
 
 import android.content.Context
 import android.os.ParcelFileDescriptor
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import com.naposystems.pepito.R
+import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.message.Message
-import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,11 +26,8 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
-import javax.inject.Inject
-import androidx.lifecycle.LiveData
-import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
-import com.naposystems.pepito.utility.FileManager
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class ConversationViewModel @Inject constructor(
     private val context: Context,
@@ -71,13 +73,6 @@ class ConversationViewModel @Inject constructor(
     private suspend fun copyAudioToAppFolder(fileDescriptor: ParcelFileDescriptor): File {
 
         val fileInputStream = FileInputStream(fileDescriptor.fileDescriptor)
-
-        /*return Utils.copyEncryptedFile(
-            context,
-            fileInputStream,
-            subFolder,
-            "${System.currentTimeMillis()}.${mediaStoreAudio.extension}"
-        )*/
 
         return FileManager.copyFile(
             context,
@@ -320,7 +315,7 @@ class ConversationViewModel @Inject constructor(
                         }
                         else -> {
                             _deleteMessagesForAllWsError.value =
-                                repository.get422ErrorDeleteMessagesForAll(response.errorBody()!!)
+                                repository.getErrorDeleteMessagesForAll(response.errorBody()!!)
                         }
                     }
                 }

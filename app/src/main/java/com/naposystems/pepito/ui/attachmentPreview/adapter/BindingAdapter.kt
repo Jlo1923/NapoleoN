@@ -5,8 +5,6 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.GlideManager
-import java.io.File
 
 @BindingAdapter("attachmentImage")
 fun bindGalleryImage(imageView: ImageView, attachment: Attachment) {
@@ -15,6 +13,14 @@ fun bindGalleryImage(imageView: ImageView, attachment: Attachment) {
         Constants.AttachmentType.IMAGE.type -> {
             Glide.with(imageView)
                 .load(attachment)
+                .centerInside()
+                .into(imageView)
+        }
+        Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
+            Glide.with(imageView)
+                .asGif()
+                .load(attachment)
+                .centerInside()
                 .into(imageView)
         }
     }

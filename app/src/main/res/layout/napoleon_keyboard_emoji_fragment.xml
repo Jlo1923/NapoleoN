@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        tools:context=".ui.napoleonKeyboardEmoji.NapoleonKeyboardEmojiFragment">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:background="?attr/attrBackgroundColorBackground"
+            app:tabBackground="?attr/attrBackgroundColorBackground"
+            app:tabIndicatorHeight="0dp" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager_emoji_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/white" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

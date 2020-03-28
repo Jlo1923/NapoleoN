@@ -67,48 +67,8 @@ class SubscriptionFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.getTypeSubscription()
-        viewModel.typeSubscription.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                val netDate: Date
-                subscriptionUser = viewModel.getSubscription()
 
-                if (System.currentTimeMillis() > viewModel.getFreeTrial()) {
-                    if (subscriptionUser?.dateExpires != 0L) {
-                        if (System.currentTimeMillis() > subscriptionUser!!.dateExpires) {
-                            binding.textViewSubscriptionActual.text = getString(R.string.text_expired_subscription)
-                        } else {
-                            val currentSubscription = it.find { typeSubscription ->
-                                typeSubscription.id == subscriptionUser?.subscriptionId
-                            }?.description
-                            binding.textViewSubscriptionActual.text = currentSubscription
-                        }
-                    } else {
-                        binding.textViewSubscriptionActual.text = getString(R.string.text_free_trial_expired)
-                    }
-                    netDate = Date(subscriptionUser!!.dateExpires)
-                } else {
-                    netDate = Date(viewModel.getFreeTrial())
-                    binding.textViewSubscriptionActual.text = getString(R.string.text_trial_period)
-                }
-
-                binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
-
-                val selectSubscription = getString(R.string.text_select_subscription)
-                val newListSubscription = it.toMutableList()
-
-                newListSubscription.add(0, TypeSubscription(0, selectSubscription, 0, 0, 0))
-
-                val adapter = ArrayAdapter(
-                    context!!,
-                    R.layout.subscription_item,
-                    R.id.textView_subscription_item,
-                    newListSubscription
-                )
-
-                binding.spinnerPayment.adapter = adapter
-            }
-        })
+        observeTypeSubscription()
 
         viewModel.getTypeSubscriptionError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -132,6 +92,53 @@ class SubscriptionFragment : Fragment() {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
             snackbarUtils.showSnackbar()
             binding.viewSwitcher.showPrevious()
+        })
+    }
+
+    private fun observeTypeSubscription() {
+        viewModel.typeSubscription.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val netDate: Date
+                subscriptionUser = viewModel.getSubscription()
+
+                if (System.currentTimeMillis() > viewModel.getFreeTrial()) {
+                    if (subscriptionUser?.dateExpires != 0L) {
+                        if (System.currentTimeMillis() > subscriptionUser!!.dateExpires) {
+                            binding.textViewSubscriptionActual.text =
+                                getString(R.string.text_expired_subscription)
+                        } else {
+                            val currentSubscription = it.find { typeSubscription ->
+                                typeSubscription.id == subscriptionUser?.subscriptionId
+                            }?.description
+                            binding.textViewSubscriptionActual.text = currentSubscription
+                        }
+                    } else {
+                        binding.textViewSubscriptionActual.text =
+                            getString(R.string.text_free_trial_expired)
+                    }
+                    netDate = Date(subscriptionUser!!.dateExpires)
+                } else {
+                    netDate = Date(viewModel.getFreeTrial())
+                    binding.textViewSubscriptionActual.text = getString(R.string.text_trial_period)
+                }
+
+                binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+
+                val selectSubscription = getString(R.string.text_select_subscription)
+                val newListSubscription = it.toMutableList()
+
+                newListSubscription.add(0, TypeSubscription(0, selectSubscription, 0, 0, 0))
+
+                val adapter = ArrayAdapter(
+                    context!!,
+                    R.layout.subscription_item,
+                    R.id.textView_subscription_item,
+                    newListSubscription
+                )
+
+                binding.spinnerPayment.adapter = adapter
+            }
         })
     }
 

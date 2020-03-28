@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <ViewSwitcher
+            android:id="@+id/viewSwitcher"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:inAnimation="@anim/fade_in"
+            android:outAnimation="@anim/fade_out"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_giphy"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.giphy.sdk.ui.views.GiphySearchBar
+                    android:id="@+id/giphy_search_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.giphy.sdk.ui.views.GiphyGridView
+                    android:id="@+id/giphy_grid"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:gphCellPadding="12"
+                    app:gphDirection="vertical"
+                    app:gphShowCheckeredBackground="false"
+                    app:gphSpanCount="2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/giphy_search_bar" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.25"
+                    custom:progress="0"
+                    custom:progressBarThickness="@dimen/circle_progress_bar"
+                    custom:progressbarColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textView_progress"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%"
+                    app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                    app:layout_constraintEnd_toEndOf="@id/progressBar"
+                    app:layout_constraintStart_toStartOf="@id/progressBar"
+                    app:layout_constraintTop_toTopOf="@id/progressBar"
+                    tools:text="77%" />
+
+                <TextView
+                    android:id="@+id/textView_message"
+                    style="@style/BodyTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:text="Descargando Gif|!!"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/progressBar" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </ViewSwitcher>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

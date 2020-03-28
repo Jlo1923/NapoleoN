@@ -1,9 +1,6 @@
 package com.naposystems.pepito.repository.conversation
 
-import android.content.ContentUris
 import android.content.Context
-import android.net.Uri
-import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
@@ -40,7 +37,6 @@ import retrofit2.Response
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -149,33 +145,6 @@ class ConversationRepository @Inject constructor(
         )
     }
 
-    override suspend fun sendMessageTest(
-        userDestination: Int,
-        quoted: String,
-        body: String,
-        attachmentType: String,
-        uriString: String,
-        origin: Int
-    ): Response<MessageResDTO>? {
-        /*val listParts: MutableList<MultipartBody.Part> = ArrayList()
-
-        listParts.add(createPartFromFile(uriString, origin, attachmentType))
-
-        val requestBodyUserDestination = createPartFromString(userDestination.toString())
-        val requestBodyQuoted = createPartFromString(quoted)
-        val requestBodyBody = createPartFromString(body)
-        val requestBodyAttachmentType = createPartFromString(attachmentType)
-
-        return napoleonApi.sendMessageTest(
-            userDestination = requestBodyUserDestination,
-            quoted = requestBodyQuoted,
-            body = requestBodyBody,
-            attachmentType = requestBodyAttachmentType,
-            files = listParts
-        )*/
-        return null
-    }
-
     private fun createPartFromString(string: String): RequestBody {
         return RequestBody.create(MultipartBody.FORM, string)
     }
@@ -200,7 +169,6 @@ class ConversationRepository @Inject constructor(
             byteArrayStream.write(buffer, 0, i)
         }
 
-//        val byteArray = Utils.convertFileInputStreamToByteArray(file.inputStream())
         val byteArray = byteArrayStream.toByteArray()
 
         val extension = MimeTypeMap.getFileExtensionFromUrl(file.toString())
@@ -217,28 +185,6 @@ class ConversationRepository @Inject constructor(
             "${System.currentTimeMillis()}.$extension",
             requestFile
         )
-    }
-
-    private fun getFileFromMediaStore(uri: String): ByteArray {
-
-        val contentUri = ContentUris.withAppendedId(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            ContentUris.parseId(Uri.parse(uri))
-        )
-
-        val parcelFileDescriptor =
-            context.contentResolver.openFileDescriptor(contentUri, "r")
-
-        val fileInputStream = FileInputStream(parcelFileDescriptor!!.fileDescriptor)
-
-        return Utils.convertFileInputStreamToByteArray(fileInputStream)
-    }
-
-    private fun getFileFromContentProvider(uriString: String): ByteArray {
-        val file = File(uriString)
-        val fileInputStream = file.inputStream()
-
-        return Utils.convertFileInputStreamToByteArray(fileInputStream)
     }
 
     override fun getLocalContact(contactId: Int): LiveData<Contact> {

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -40,7 +41,7 @@ class EnterCodeFragment :
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: EnterCodeViewModel
+    private val viewModel: EnterCodeViewModel by viewModels { viewModelFactory }
     private lateinit var binding: EnterCodeFragmentBinding
     private lateinit var errorList: List<String>
     private lateinit var snackbar: Snackbar
@@ -57,48 +58,29 @@ class EnterCodeFragment :
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(EnterCodeViewModel::class.java)
-
         binding = DataBindingUtil.inflate(
             layoutInflater, R.layout.enter_code_fragment, container, false
         )
 
-        viewModel.attempts.observe(viewLifecycleOwner, Observer {
-            binding.textViewAttempts.apply {
-                text = resources.getString(R.string.text_number_attempts, it, MAX_ATTEMPTS)
-                visibility = if (it >= 1) View.VISIBLE else {View.GONE}
-            }
-            if (it == MAX_ATTEMPTS) {
-                disableAllWidgets()
-            } else {
-                if (it >= 1) {
-                    disableAllWidgets()
-                    timerToEnableWidgets()
-                }
-            }
-        })
+        observeAttempts()
 
-        viewModel.showInvalidCode.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                binding.viewSwitcher.showPrevious()
-                viewModel.increaseAttempts()
-                binding.enterCodeWidget.showError()
-                binding.numericKeyboard.disableKeyboard()
-            }
-        })
+        observeShowInvalidCode()
 
-        viewModel.showErrors.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-                binding.viewSwitcher.showPrevious()
-                viewModel.increaseAttempts()
-                binding.enterCodeWidget.showError()
-                errorList = it
-                hasFinishedShowingErrors = false
-                showSnackbar()
-            }
-        })
+        observeShowErrors()
 
+        observeItsCodeOk()
+
+        binding.enterCodeWidget.setListener(this)
+        binding.numericKeyboard.setListener(this)
+
+        binding.buttonContinue.setOnClickListener {
+            sendCodeToWs(binding.enterCodeWidget.getCode())
+        }
+
+        return binding.root
+    }
+
+    private fun observeItsCodeOk() {
         viewModel.itsCodeOk.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 sharedPreferencesManager.putInt(
@@ -110,15 +92,49 @@ class EnterCodeFragment :
                 )
             }
         })
+    }
 
-        binding.enterCodeWidget.setListener(this)
-        binding.numericKeyboard.setListener(this)
+    private fun observeShowErrors() {
+        viewModel.showErrors.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+                binding.viewSwitcher.showPrevious()
+                viewModel.increaseAttempts()
+                binding.enterCodeWidget.showError()
+                errorList = it
+                hasFinishedShowingErrors = false
+                showSnackbar()
+            }
+        })
+    }
 
-        binding.buttonContinue.setOnClickListener {
-            sendCodeToWs(binding.enterCodeWidget.getCode())
-        }
+    private fun observeShowInvalidCode() {
+        viewModel.showInvalidCode.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                binding.viewSwitcher.showPrevious()
+                viewModel.increaseAttempts()
+                binding.enterCodeWidget.showError()
+                binding.numericKeyboard.disableKeyboard()
+            }
+        })
+    }
 
-        return binding.root
+    private fun observeAttempts() {
+        viewModel.attempts.observe(viewLifecycleOwner, Observer {
+            binding.textViewAttempts.apply {
+                text = resources.getString(R.string.text_number_attempts, it, MAX_ATTEMPTS)
+                visibility = if (it >= 1) View.VISIBLE else {
+                    View.GONE
+                }
+            }
+            if (it == MAX_ATTEMPTS) {
+                disableAllWidgets()
+            } else {
+                if (it >= 1) {
+                    disableAllWidgets()
+                    timerToEnableWidgets()
+                }
+            }
+        })
     }
 
     override fun onDestroy() {

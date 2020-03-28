@@ -3,7 +3,9 @@ package com.naposystems.pepito.utility
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
+    const val GIPHY_API_KEY = "3nvsXqW9PgR068WGKRFSRnhV22QnM8iT"
     const val DATA_CRYPT = "datacrypt"
+    const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 1
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
@@ -44,7 +46,7 @@ object Constants {
         const val DELETE_MESSAGES_FOR_ALL = "destroymessages"
         const val PUT_UNBLOCK_CONTACT = "friendship/unblockuser/{id}"
         const val VALIDATE_PASSWORD_OLD_ACCOUNT = "inforecovery/validateoldpassword"
-        const val GET_QUESTIONS_OLD_USER  = "inforecovery/getanswersinforecoveryolduser/{nick}"
+        const val GET_QUESTIONS_OLD_USER = "inforecovery/getanswersinforecoveryolduser/{nick}"
         const val VALIDATE_ANSWERS_OLD_USER = "inforecovery/validateanswersolduser"
         const val BLOCK_ATTACKER = "inforecovery/blockattacker"
         const val GET_SUBSCRIPTION_USER = "payments/ultimatepayment"
@@ -204,6 +206,7 @@ object Constants {
         VIDEO("video"),
         DOCUMENT("document"),
         GIF("gif"),
+        GIF_NN("gifNN")
     }
 
     enum class FriendShipRequestType(val type: Int) {
@@ -244,24 +247,25 @@ object Constants {
         DOWNLOADED(4)
     }
 
-    enum class NapoleonCacheDirectories(val folder: String){
+    enum class NapoleonCacheDirectories(val folder: String) {
         IMAGES("Images"),
         VIDEOS("Videos"),
         AUDIOS("Audios"),
-        DOCUMENTOS("Documentos")
+        DOCUMENTOS("Documentos"),
+        GIFS("Gifs")
     }
 
-    enum class ExistingAttack(val type: Int ) {
+    enum class ExistingAttack(val type: Int) {
         NOT_EXISTING(1),
         EXISTING(2)
     }
 
-    enum class UserType(val type: Int){
+    enum class UserType(val type: Int) {
         NEW_USER(1),
         OLD_USER(2)
     }
 
-    enum class TypeSubscription(val type: Int){
+    enum class TypeSubscription(val type: Int) {
         ONE_MONTH(1),
         ONE_YEAR(2)
     }
@@ -271,7 +275,7 @@ object Constants {
         THREE_MONTHS(3)
     }
 
-    enum class EmojiCategory(val category: Int){
+    enum class EmojiCategory(val category: Int) {
         SMILES_AND_PEOPLE(1),
         ANIMALS_AND_NATURE(2),
         FOOD_AND_DRINK(3),

@@ -78,7 +78,7 @@ class AddContactViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _users.value = ContactResDTO.toEntityList(response.body()!!)
                 } else {
-
+                    _friendshipRequestWsError.value = context.getString(R.string.text_fail)
                 }
             } catch (ex: Exception) {
                 _friendshipRequestWsError.value = context.getString(R.string.text_fail)

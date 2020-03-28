@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -33,7 +34,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ContactsViewModel
+    private val viewModel: ContactsViewModel by viewModels { viewModelFactory }
     private lateinit var shareContactViewModel: ShareContactViewModel
     private lateinit var binding: ContactsFragmentBinding
     private lateinit var adapter: ContactsAdapter
@@ -72,9 +73,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(ContactsViewModel::class.java)
-
         try {
             shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
                 .get(ShareContactViewModel::class.java)
@@ -86,18 +84,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
         viewModel.getContacts()
 
-        viewModel.contacts.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-            if (it.isNotEmpty()) {
-                if (binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
-                    binding.viewSwitcher.showNext()
-                }
-            } else {
-                if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
-                    binding.viewSwitcher.showNext()
-                }
-            }
-        })
+        observeContacts()
 
         viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
             SnackbarUtils(binding.coordinator, it).showSnackbar()
@@ -109,6 +96,10 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
             }
         })
 
+        observeContactsForSearch()
+    }
+
+    private fun observeContactsForSearch() {
         viewModel.contactsForSearch.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
             if (it.isNotEmpty()) {
@@ -118,6 +109,21 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
             } else {
                 if (binding.viewSwitcherSearchContact.currentView.id == binding.recyclerViewContacts.id) {
                     binding.viewSwitcherSearchContact.showNext()
+                }
+            }
+        })
+    }
+
+    private fun observeContacts() {
+        viewModel.contacts.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+            if (it.isNotEmpty()) {
+                if (binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
+                    binding.viewSwitcher.showNext()
+                }
+            } else {
+                if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
+                    binding.viewSwitcher.showNext()
                 }
             }
         })

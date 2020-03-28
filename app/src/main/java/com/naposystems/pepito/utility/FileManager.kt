@@ -5,7 +5,9 @@ import android.graphics.Bitmap
 import android.media.ThumbnailUtils
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import com.naposystems.pepito.entity.message.attachments.Attachment
+import androidx.lifecycle.MutableLiveData
+import com.naposystems.pepito.utility.Constants.AttachmentType.*
+import com.naposystems.pepito.utility.Constants.NapoleonCacheDirectories.*
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.quality
 import id.zelory.compressor.constraint.resolution
@@ -14,8 +16,6 @@ import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import timber.log.Timber
 import java.io.*
-import com.naposystems.pepito.utility.Constants.AttachmentType.*
-import com.naposystems.pepito.utility.Constants.NapoleonCacheDirectories.*
 
 class FileManager {
     companion object {
@@ -29,7 +29,7 @@ class FileManager {
             val file = copyFile(
                 context,
                 fileInputStream,
-                Constants.NapoleonCacheDirectories.IMAGES.folder,
+                IMAGES.folder,
                 fileName
             )
 
@@ -102,39 +102,42 @@ class FileManager {
         }
 
 
-        fun saveToDisk(context: Context, body: ResponseBody, attachment: Attachment): String {
+        fun saveToDisk(
+            context: Context,
+            body: ResponseBody,
+            type: String,
+            extension: String,
+            progressLiveData: MutableLiveData<Float>? = null
+        ): String {
             try {
+
                 var folder = ""
 
-                when (attachment.type) {
-                    Constants.AttachmentType.IMAGE.type -> {
-                        folder = Constants.NapoleonCacheDirectories.IMAGES.folder
+                when (type) {
+                    IMAGE.type -> {
+                        folder = IMAGES.folder
                     }
-                    Constants.AttachmentType.AUDIO.type -> {
-                        folder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                    AUDIO.type -> {
+                        folder = AUDIOS.folder
                     }
-                    Constants.AttachmentType.VIDEO.type -> {
-                        folder = Constants.NapoleonCacheDirectories.VIDEOS.folder
+                    VIDEO.type -> {
+                        folder = VIDEOS.folder
                     }
-                    Constants.AttachmentType.DOCUMENT.type -> {
-                        folder = Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                    DOCUMENT.type -> {
+                        folder = DOCUMENTOS.folder
+                    }
+                    GIF.type -> {
+                        folder = GIFS.folder
+                    }
+                    GIF_NN.type -> {
+                        folder = GIFS.folder
                     }
                 }
 
                 val path = File(context.cacheDir!!, folder)
                 if (!path.exists())
                     path.mkdirs()
-                val file = File(path, "${attachment.webId}.${attachment.extension}")
-
-                /*val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
-                val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
-
-                val encryptedFile = EncryptedFile.Builder(
-                    audioFile,
-                    context,
-                    masterKeyAlias,
-                    EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-                ).build()*/
+                val file = File(path, "${System.currentTimeMillis()}.${extension}")
 
                 var inputStream: InputStream? = null
                 var outputStream: OutputStream? = null
@@ -149,6 +152,7 @@ class FileManager {
                     while (inputStream.read(data).also { count = it } != -1) {
                         outputStream.write(data, 0, count)
                         progress += count
+                        progressLiveData?.value = progress.toFloat() / body.contentLength()
                         Timber.d(
                             "Progress: " + progress + "/" + body.contentLength() + " >>>> " + progress.toFloat() / body.contentLength()
                         )
@@ -178,8 +182,18 @@ class FileManager {
                 AUDIO.type -> AUDIOS.folder
                 VIDEO.type -> VIDEOS.folder
                 DOCUMENT.type -> DOCUMENTOS.folder
+                GIF.type, GIF_NN.type -> GIFS.folder
                 else -> throw IllegalArgumentException("El archivo a enviar no tiene un tipo")
             }
+        }
+
+        fun createFile(context: Context, fileName: String, folder: String): File {
+
+            val path = File(context.cacheDir!!, folder)
+            if (!path.exists())
+                path.mkdirs()
+
+            return File(path, fileName)
         }
     }
 }

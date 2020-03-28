@@ -78,7 +78,7 @@ class Crypto {
         iv: String
     ): String {
         val bytes =
-            encryptDecrypt(plainText, SHA256(key, 32), EncryptMode.ENCRYPT, iv)
+            encryptDecrypt(plainText, getSHA256(key, 32), EncryptMode.ENCRYPT, iv)
         return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
@@ -89,7 +89,7 @@ class Crypto {
         iv: String
     ): String {
         val bytes =
-            encryptDecrypt(cipherText, SHA256(key, 32), EncryptMode.DECRYPT, iv)
+            encryptDecrypt(cipherText, getSHA256(key, 32), EncryptMode.DECRYPT, iv)
         return String(bytes)
     }
 
@@ -97,7 +97,7 @@ class Crypto {
     fun encryptPlainTextWithRandomIV(plainText: String, key: String): String {
         val bytes = encryptDecrypt(
             generateRandomIV16() + plainText,
-            SHA256(key, 32),
+            getSHA256(key, 32),
             EncryptMode.ENCRYPT,
             generateRandomIV16()
         )
@@ -111,7 +111,7 @@ class Crypto {
     ): String {
         val bytes = encryptDecrypt(
             cipherText,
-            SHA256(key, 32),
+            getSHA256(key, 32),
             EncryptMode.DECRYPT,
             generateRandomIV16()
         )
@@ -148,7 +148,7 @@ class Crypto {
          * @throws UnsupportedEncodingException
          */
         @Throws(NoSuchAlgorithmException::class, UnsupportedEncodingException::class)
-        private fun SHA256(text: String, length: Int): String {
+        private fun getSHA256(text: String, length: Int): String {
             val resultString: String
             val md: MessageDigest = MessageDigest.getInstance("SHA-256")
             md.update(text.toByteArray(charset("UTF-8")))

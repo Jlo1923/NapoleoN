@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
                     _quantityFriendshipRequest.value = friendshipRequestReceived
                 }
             } catch (ex: Exception) {
-
+                Timber.e(ex)
             }
         }
     }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="progressbarColor" format="reference" />
+
     <declare-styleable name="EnterCodeWidget">
         <attr name="numBoxes" format="integer" />
         <attr name="isSecureText" format="boolean" />
@@ -42,38 +45,38 @@
     </declare-styleable>
 
     <!--//Background-->
-    <attr name="attrBackgroundColorPrimary" format ="reference"/>
-    <attr name="attrBackgroundSectionColor" format ="reference"/>
-    <attr name="attrBackgroundSectionOtherColor" format ="reference"/>
-    <attr name="attrBackgroundColorBackground" format ="reference"/>
-    <attr name="attrBackgroundColorBackgroundDialog" format ="reference"/>
-    <attr name="attrColorTextButtonTintCamera" format ="reference"/>
-    <attr name="attrBackgroundColorActionMode" format ="reference"/>
-    <attr name="attrBackgroundBatchMessage" format ="reference"/>
+    <attr name="attrBackgroundColorPrimary" format="reference" />
+    <attr name="attrBackgroundSectionColor" format="reference" />
+    <attr name="attrBackgroundSectionOtherColor" format="reference" />
+    <attr name="attrBackgroundColorBackground" format="reference" />
+    <attr name="attrBackgroundColorBackgroundDialog" format="reference" />
+    <attr name="attrColorTextButtonTintCamera" format="reference" />
+    <attr name="attrBackgroundColorActionMode" format="reference" />
+    <attr name="attrBackgroundBatchMessage" format="reference" />
 
     <!--//Tint-->
     <attr name="attrTintColorSecondaryDark" format="reference" />
 
     <!--TextColor-->
-    <attr name="attrTextColorPrimaryTextColor" format ="reference"/>
-    <attr name="attrTextColorSecondaryTextColor" format ="reference"/>
-    <attr name="attrTextColorButtonTint" format ="reference"/>
-    <attr name="attrTextColorRed" format ="reference"/>
-    <attr name="attrTextColorWhite" format ="reference"/>
-    <attr name="attrTextColorMessageAndTimeHome" format ="reference"/>
-    <attr name="attrTextColorColorTextMyMessage" format ="reference"/>
-    <attr name="attrTextColorColorTextIncomingMessage" format ="reference"/>
-    <attr name="attrTextColorLinkTextColor" format ="reference"/>
-    <attr name="attrTextColorColorError" format ="reference"/>
-    <attr name="attrTextColorColorPrimary" format ="reference"/>
-    <attr name="attrTextColorHint" format ="reference"/>
-    <attr name="attrTextColorNameConversation" format ="reference"/>
-    <attr name="attrTextColorNicknameConversation" format ="reference"/>
-    <attr name="attrTextColorHintConversationInputPanel" format ="reference"/>
-    <attr name="attrTextColorConversationInputPanel" format ="reference"/>
+    <attr name="attrTextColorPrimaryTextColor" format="reference" />
+    <attr name="attrTextColorSecondaryTextColor" format="reference" />
+    <attr name="attrTextColorButtonTint" format="reference" />
+    <attr name="attrTextColorRed" format="reference" />
+    <attr name="attrTextColorWhite" format="reference" />
+    <attr name="attrTextColorMessageAndTimeHome" format="reference" />
+    <attr name="attrTextColorColorTextMyMessage" format="reference" />
+    <attr name="attrTextColorColorTextIncomingMessage" format="reference" />
+    <attr name="attrTextColorLinkTextColor" format="reference" />
+    <attr name="attrTextColorColorError" format="reference" />
+    <attr name="attrTextColorColorPrimary" format="reference" />
+    <attr name="attrTextColorHint" format="reference" />
+    <attr name="attrTextColorNameConversation" format="reference" />
+    <attr name="attrTextColorNicknameConversation" format="reference" />
+    <attr name="attrTextColorHintConversationInputPanel" format="reference" />
+    <attr name="attrTextColorConversationInputPanel" format="reference" />
 
     <!--ActionBarItem-->
-    <attr name="attrActionBarItemBackground" format ="reference"/>
+    <attr name="attrActionBarItemBackground" format="reference" />
 
     <!--HintTextColor-->
     <attr name="attrHintTextColorSecondaryTextColor" format="reference" />
@@ -82,9 +85,9 @@
     <attr name="attrIconTintWhite" format="reference" />
 
     <!--BackgroundTint-->
-    <attr name="attrBackgroundTintColorSecondary" format ="reference"/>
-    <attr name="attrBackgroundTintButtonTint" format ="reference"/>
-    <attr name="attrBackgroundTintIconToolbar" format ="reference"/>
+    <attr name="attrBackgroundTintColorSecondary" format="reference" />
+    <attr name="attrBackgroundTintButtonTint" format="reference" />
+    <attr name="attrBackgroundTintIconToolbar" format="reference" />
 
     <!--StrokeColor-->
     <attr name="attrStrokeColorButtonTint" format="reference" />
@@ -107,10 +110,10 @@
     <attr name="attrErrorIconTintColorError" format="reference" />
 
     <!--fabIconColor-->
-    <attr name="attrFabIconColor" format ="reference"/>
+    <attr name="attrFabIconColor" format="reference" />
 
     <!--conversationIconColor-->
-    <attr name="attrConversationIconColor" format ="reference"/>
+    <attr name="attrConversationIconColor" format="reference" />
 
     <!--Color-->
     <attr name="attrColorButtonTint" format="reference" />
@@ -122,11 +125,23 @@
     <attr name="attrSeparatorColor" format="reference" />
 
     <!--Drawer-->
-    <attr name="attrIconAndTextColorDrawer" format ="reference"/>
+    <attr name="attrIconAndTextColorDrawer" format="reference" />
 
     <!-- Seekbar Progress Tint -->
     <attr name="attrSeekbarProgressTint" format="reference" />
 
     <!-- Seekbar Thumb Tint -->
     <attr name="attrSeekbarThumbTint" format="reference" />
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="min" format="integer" />
+        <attr name="max" format="integer" />
+        <attr name="progress" format="integer" />
+        <attr name="progressbarColor" />
+        <attr name="progressBarThickness" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ImageViewProgress">
+        <attr name="progressbarColor" />
+    </declare-styleable>
 </resources>

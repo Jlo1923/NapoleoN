@@ -70,7 +70,7 @@ class GalleryItemDataSource constructor(
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, GalleryItem>) {
-
+        // Intentionally empty
     }
 
     private fun updateState(state: State) {

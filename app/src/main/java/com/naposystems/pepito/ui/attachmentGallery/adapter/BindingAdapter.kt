@@ -1,7 +1,5 @@
 package com.naposystems.pepito.ui.attachmentGallery.adapter
 
-import android.provider.MediaStore
-import android.util.Size
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
@@ -15,15 +13,6 @@ fun binGalleryItemThumbnail(imageView: ImageView, galleryItem: GalleryItem) {
     Glide.with(imageView)
         .load(galleryItem)
         .into(imageView)
-
-    /*val context = imageView.context
-
-    val bitmap =
-        context.contentResolver.loadThumbnail(galleryItem.contentUri!!, Size(512, 512), null)
-
-    Glide.with(imageView)
-        .load((bitmap))
-        .into(imageView)*/
 }
 
 @BindingAdapter("mediaTypeIcon")

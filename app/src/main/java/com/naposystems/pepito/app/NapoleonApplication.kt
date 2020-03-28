@@ -6,8 +6,10 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
+import com.giphy.sdk.ui.Giphy
 import com.naposystems.pepito.R
 import com.naposystems.pepito.di.DaggerApplicationComponent
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.emojiManager.EmojiManager
 import com.naposystems.pepito.webService.socket.SocketService
 import dagger.android.AndroidInjector
@@ -36,6 +38,7 @@ class NapoleonApplication : DaggerApplication() {
         Fabric.with(this, Crashlytics())
         EmojiManager.instance.install()
         configEmojiCompat()
+        Giphy.configure(this, Constants.GIPHY_API_KEY)
     }
 
     private fun configEmojiCompat() {

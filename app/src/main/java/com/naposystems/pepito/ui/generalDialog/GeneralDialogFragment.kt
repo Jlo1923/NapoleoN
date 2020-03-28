@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.generalDialog
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,6 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.GeneralDialogFragmentBinding
 
@@ -39,8 +37,6 @@ class GeneralDialogFragment : DialogFragment() {
     interface OnGeneralDialog {
         fun onAccept()
     }
-
-    private lateinit var viewModel: GeneralDialogViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,9 +74,6 @@ class GeneralDialogFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this)
-            .get(GeneralDialogViewModel::class.java)
-
         dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog?.window?.setLayout(
             LinearLayout.LayoutParams.MATCH_PARENT,

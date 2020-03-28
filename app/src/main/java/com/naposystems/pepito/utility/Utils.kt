@@ -8,8 +8,8 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Rect
 import android.graphics.Color
+import android.graphics.Rect
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.provider.Settings
@@ -58,10 +58,7 @@ class Utils {
 
             val inputManager: InputMethodManager =
                 context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.hideSoftInputFromWindow(
-                view.windowToken,
-                InputMethodManager.SHOW_FORCED
-            )
+            inputManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
         /**

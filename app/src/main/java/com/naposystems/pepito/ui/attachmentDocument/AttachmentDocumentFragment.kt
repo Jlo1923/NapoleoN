@@ -6,12 +6,10 @@ import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
-import android.webkit.MimeTypeMap
 import android.widget.ListView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.ListFragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
@@ -36,7 +34,6 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
     }
 
     private lateinit var mAdapter: AttachmentDocumentAdapter
-    private val viewModel: AttachmentDocumentViewModel by viewModels()
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
     private lateinit var binding: AttachmentDocumentFragmentBinding
 
