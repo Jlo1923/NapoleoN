@@ -12,6 +12,9 @@ interface IContractConversationShareViewModel {
     fun resetAttachmentSelected()
     fun setGifSelected(attachment: Attachment)
     fun resetGifSelected()
+    fun getQuoteWebId(): String?
+    fun setQuoteWebId(webId: String)
+    fun resetQuoteWebId()
 
     interface AudioAttachment {
         fun setAudiosSelected(listMediaStoreAudio: List<MediaStoreAudio>)

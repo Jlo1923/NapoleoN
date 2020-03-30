@@ -22,15 +22,22 @@ interface IContractConversation {
         fun getUser(): User
         fun setContact(contact: Contact)
         fun getLocalMessages()
-        fun saveMessageLocally(body: String, selfDestructTime: Int)
+
+        fun saveMessageLocally(body: String, selfDestructTime: Int, quote: String)
         fun saveMessageAndAttachment(
             messageString: String,
             attachment: Attachment?,
             numberAttachments: Int,
-            selfDestructTime: Int
+            selfDestructTime: Int,
+            quote: String
         )
 
-        fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio, selfDestructTime: Int)
+        fun saveMessageWithAudioAttachment(
+            mediaStoreAudio: MediaStoreAudio,
+            selfDestructTime: Int,
+            quote: String
+        )
+
         fun sendMessagesRead()
         fun getLocalContact(contactId: Int)
         fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Boolean)
@@ -45,15 +52,14 @@ interface IContractConversation {
         fun resetListStringCopy()
         fun setCountOldMessages(count: Int)
         fun getCountOldMessages(): Int
+        fun getMessagePosition(messageAndAttachment: MessageAndAttachment): Int
     }
 
     interface Repository {
         suspend fun subscribeToChannel(userToChat: Contact): String
         fun unSubscribeToChannel(userToChat: Contact, channelName: String)
-        fun getLocalMessages(
-            contactId: Int,
-            pageSize: Int
-        ): LiveData<PagedList<MessageAndAttachment>>
+        fun getLocalMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
+        suspend fun getQuoteId(quoteWebId: String): Int
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
         suspend fun sendMessageAttachment(attachment: Attachment): Response<AttachmentResDTO>
@@ -66,6 +72,7 @@ interface IContractConversation {
         fun insertAttachment(attachment: Attachment): Long
         fun insertAttachments(listAttachment: List<Attachment>): List<Long>
         fun updateAttachment(attachment: Attachment)
+        fun insertQuote(quoteWebId: String, message: Message)
         fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>

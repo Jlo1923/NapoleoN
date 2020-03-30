@@ -21,6 +21,7 @@ class AccessPinViewModel @Inject constructor(
     ViewModel(), IContractAccessPin.ViewModel {
 
     val accessPin = MutableLiveData<String>()
+
     val confirmAccessPin = MutableLiveData<String>()
 
     private val _webServiceError = MutableLiveData<List<String>>()

@@ -14,22 +14,14 @@ class MessageLocalDataSource @Inject constructor(
     private val messageDao: MessageDao
     ) : MessageDataSource {
 
-    override fun getMessages(
-        contactId: Int,
-        pageSize: Int
-    ): LiveData<PagedList<MessageAndAttachment>> {
+    override fun getMessageByWebId(webId: String) = messageDao.getMessageByWebId(webId)
 
-        val pagedListConfig = PagedList.Config.Builder()
-            .setEnablePlaceholders(true)
-            .setInitialLoadSizeHint(10)
-            .setPageSize(10 * 2)
-            .build()
+    override fun getMessages(contactId: Int): LiveData<List<MessageAndAttachment>> {
+        return messageDao.getMessagesAndAttachments(contactId)
+    }
 
-        val dataSourceFactory = messageDao.getMessagesAndAttachments(contactId)
-
-        return LivePagedListBuilder(
-            dataSourceFactory, pagedListConfig
-        ).build()
+    override fun getQuoteId(quoteWebId: String): Int {
+        return messageDao.getQuoteId(quoteWebId)
     }
 
     override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {

@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.naposystems.pepito.R
+import timber.log.Timber
 
 class FabSend : FloatingActionButton {
 
@@ -30,7 +31,7 @@ class FabSend : FloatingActionButton {
         ).apply {
             try {
 
-                showOnlySendIcon = getBoolean(R.styleable.FabIconSend_showOnlySendIcon1, false)
+                showOnlySendIcon = getBoolean(R.styleable.FabIconSend_showOnlySendIcon, false)
 
                 micToSend = AnimatedVectorDrawableCompat.create(context, R.drawable.anim_mic_send)
                 sendToMic = AnimatedVectorDrawableCompat.create(context, R.drawable.anim_send_mic)

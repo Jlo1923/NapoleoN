@@ -5,6 +5,7 @@ import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
@@ -16,6 +17,8 @@ import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.entity.message.Quote
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.home.IContractHome
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -35,7 +38,8 @@ class HomeRepository @Inject constructor(
     private val conversationLocalDataSource: ConversationDataSource,
     private val messageLocalDataSource: MessageDataSource,
     private val contactLocalDataSource: ContactDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource
+    private val attachmentLocalDataSource: AttachmentDataSource,
+    private val quoteDataSource: QuoteDataSource
 ) :
     IContractHome.Repository {
 
@@ -98,11 +102,15 @@ class HomeRepository @Inject constructor(
                         null, messageRes, Constants.IsMine.NO.value
                     )
 
-                    val conversationId = messageLocalDataSource.insertMessage(message)
+                    val messageId = messageLocalDataSource.insertMessage(message)
+
+                    if (messageRes.quoted.isNotEmpty()) {
+                        insertQuote(messageRes, messageId.toInt())
+                    }
 
                     attachmentLocalDataSource.insertAttachments(
                         AttachmentResDTO.toListConversationAttachment(
-                            conversationId.toInt(),
+                            messageId.toInt(),
                             messageRes.attachments
                         )
                     )
@@ -115,6 +123,30 @@ class HomeRepository @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
+        val originalMessage =
+            messageLocalDataSource.getMessageByWebId(messageRes.quoted)
+
+        var firstAttachment: Attachment? = null
+
+        if (originalMessage.attachmentList.isNotEmpty()) {
+            firstAttachment = originalMessage.attachmentList.first()
+        }
+
+        val quote = Quote(
+            id = 0,
+            messageId = messageId,
+            contactId = originalMessage.message.contactId,
+            body = originalMessage.message.body,
+            attachmentType = firstAttachment?.type ?: "",
+            thumbnailUri = firstAttachment?.uri ?: "",
+            messageParentId = originalMessage.message.id,
+            isMine = originalMessage.message.isMine
+        )
+
+        quoteDataSource.insertQuote(quote)
     }
 
     override suspend fun getContacts() {
@@ -141,19 +173,19 @@ class HomeRepository @Inject constructor(
         try {
             val response = napoleonApi.getDeletedMessages()
             if (response.isSuccessful && (response.body()!!.count() > 0)) {
-                val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
+                val contactId = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
                 when (val messageAndAttachment =
-                    messageLocalDataSource.getLastMessageByContact(idContact)) {
+                    messageLocalDataSource.getLastMessageByContact(contactId)) {
                     null -> {
-                        conversationLocalDataSource.cleanConversation(idContact)
+                        conversationLocalDataSource.cleanConversation(contactId)
                     }
                     else -> {
-                        conversationLocalDataSource.getQuantityUnreads(idContact)
+                        conversationLocalDataSource.getQuantityUnreads(contactId)
                             .let { quantityUnreads ->
                                 if (quantityUnreads > 0) {
                                     conversationLocalDataSource.updateConversationByContact(
-                                        idContact,
+                                        contactId,
                                         messageAndAttachment.message.body,
                                         messageAndAttachment.message.createdAt,
                                         messageAndAttachment.message.status,
@@ -161,7 +193,7 @@ class HomeRepository @Inject constructor(
                                     )
                                 } else {
                                     conversationLocalDataSource.updateConversationByContact(
-                                        idContact,
+                                        contactId,
                                         messageAndAttachment.message.body,
                                         messageAndAttachment.message.createdAt,
                                         messageAndAttachment.message.status,

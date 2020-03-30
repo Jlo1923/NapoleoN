@@ -1,11 +1,14 @@
 package com.naposystems.pepito.ui.conversation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -20,6 +23,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
+import androidx.core.graphics.toRect
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.Fragment
@@ -28,6 +32,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -54,6 +60,7 @@ import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
+import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
@@ -63,7 +70,8 @@ import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
 import javax.inject.Inject
 
-class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
+class ConversationFragment : Fragment(),
+    MediaPlayerManager.Listener {
 
     companion object {
         fun newInstance() = ConversationFragment()
@@ -101,6 +109,16 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
     private var clipboard: ClipboardManager? = null
     private var clipData: ClipData? = null
 
+    private var swipeBack = false
+    private val maxPositionSwipe = 3
+    private val maxPositionQuoteIcon = 400
+    private var leftReactF = 0f
+    private var rightReactF = 0f
+    private var heightItem = 0
+    private var verticalCenter = 0
+//    private var isVibrateTop = true
+
+
     private val animationScaleUp: Animation by lazy {
         AnimationUtils.loadAnimation(context!!, R.anim.scale_up)
     }
@@ -124,6 +142,59 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
             }
         )
+    }
+
+
+    private val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, RIGHT) {
+        override fun getMovementFlags(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder
+        ): Int {
+            return ItemTouchHelper.Callback.makeMovementFlags(0, RIGHT)
+        }
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            //Nothing
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            //Nothing
+        }
+
+        override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int {
+            if (swipeBack) {
+                swipeBack = false
+                return 0
+            }
+            return super.convertToAbsoluteDirection(flags, layoutDirection)
+        }
+
+        override fun onChildDraw(
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            dX: Float,
+            dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
+        ) {
+            actionSwipeQuote(actionState, recyclerView, dX, viewHolder, c)
+
+            super.onChildDraw(
+                c,
+                recyclerView,
+                viewHolder,
+                dX /2,
+                dY,
+                actionState,
+                isCurrentlyActive
+            )
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -150,9 +221,13 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
+
+                val quote = binding.inputPanel.getQuote()
+
                 viewModel.saveMessageLocally(
                     binding.inputPanel.getEditTex().text.toString(),
-                    obtainTimeSelfDestruct()
+                    obtainTimeSelfDestruct(),
+                    quote?.message?.webId ?: ""
                 )
 
                 with(binding.inputPanel.getEditTex()) {
@@ -160,6 +235,7 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 }
             }
             handlerGoDown()
+            binding.inputPanel.closeQuote()
         }
 
         binding.inputPanel.setEditTextWatcher(object : TextWatcher {
@@ -172,7 +248,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                //Nothing
                 binding.inputPanel.apply {
                     val text = getEditTex().text.toString()
 
@@ -186,7 +261,6 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         showImageButtonCamera()
                     }
                 }
-
             }
         })
 
@@ -202,7 +276,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     ) {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
-                                args.contact
+                                args.contact,
+                                binding.inputPanel.getWebIdQuote()
                             )
                         )
                     }
@@ -217,7 +292,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
                                 viewModel.getUser().id,
-                                args.contact.id
+                                args.contact.id,
+                                binding.inputPanel.getWebIdQuote()
                             )
                         )
                     }
@@ -265,7 +341,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 findNavController().navigate(
                     ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
                         viewModel.getUser().id,
-                        args.contact.id
+                        args.contact.id,
+                        binding.inputPanel.getWebIdQuote()
                     )
                 )
             }
@@ -291,7 +368,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
                     viewModel.saveMessageWithAudioAttachment(
                         mediaStoreAudio,
-                        obtainTimeSelfDestruct()
+                        obtainTimeSelfDestruct(),
+                        binding.inputPanel.getWebIdQuote()
                     )
                 }
             }
@@ -303,7 +381,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                     shareViewModel.getMessage() ?: "",
                     attachment,
                     1,
-                    obtainTimeSelfDestruct()
+                    obtainTimeSelfDestruct(),
+                    shareViewModel.getQuoteWebId() ?: ""
                 )
             }
         })
@@ -313,7 +392,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 findNavController().navigate(
                     ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                         gifAttachment,
-                        0
+                        0,
+                        shareViewModel.getQuoteWebId() ?: ""
                     )
                 )
             }
@@ -778,10 +858,21 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
 
             override fun onPreviewClick(item: MessageAndAttachment) {
                 findNavController().navigate(
-                    ConversationFragmentDirections.actionConversationFragmentToPreviewMediaFragment(
-                        item
-                    )
+                    ConversationFragmentDirections
+                        .actionConversationFragmentToPreviewMediaFragment(item)
                 )
+            }
+
+            override fun goToQuote(messageAndAttachment: MessageAndAttachment) {
+                val position = viewModel.getMessagePosition(messageAndAttachment)
+
+                if (position != -1) {
+                    binding.recyclerViewConversation.smoothScrollToPosition(position)
+                } else {
+                    Toast.makeText(
+                        context, "No se encuentra el mensaje original|!!", Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }, mediaPlayerManager)
 
@@ -812,6 +903,8 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
                 super.onScrolled(recyclerView, dx, dy)
             }
         })
+        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerViewConversation)
     }
 
     private fun conversationAdapterOnClickEvent(item: MessageAndAttachment) {
@@ -864,8 +957,66 @@ class ConversationFragment : Fragment(), MediaPlayerManager.Listener {
         }
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         // custom message for the intent
-        // custom message for the intent
         startActivity(Intent.createChooser(intent, "Choose an Application:"))
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun actionSwipeQuote(
+        actionState: Int,
+        recyclerView: RecyclerView,
+        dX: Float,
+        viewHolder: RecyclerView.ViewHolder,
+        c: Canvas
+    ) {
+        val icon = resources.getDrawable(R.drawable.ic_quote_new, null)
+        /*val maxWidthSwipe = recyclerView.width / 3
+            if (dX > maxWidthSwipe.toFloat() && isVibrateTop) {
+                Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
+                isVibrateTop = false
+            }*/
+
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            recyclerView.setOnTouchListener { _, event ->
+                swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
+                        event?.action == MotionEvent.ACTION_UP
+                if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
+                    val position = viewHolder.adapterPosition
+                    binding.inputPanel.resetImage()
+                    conversationAdapter
+                        .getMessageAndAttachment(position)?.let { messageAndAttachment ->
+                            if (messageAndAttachment.message.status == Constants.MessageStatus.ERROR.status){
+                                this.showToast("No se puede citar de un mensaje fallido|!!")
+                            } else {
+                                binding.inputPanel.openQuote(messageAndAttachment)
+                            }
+                        }
+                }
+                false
+            }
+        }
+
+        c.clipRect(
+            0f, viewHolder.itemView.top.toFloat(),
+            viewHolder.itemView.right.toFloat(), viewHolder.itemView.bottom.toFloat()
+        )
+
+        heightItem = viewHolder.itemView.bottom - viewHolder.itemView.top
+        verticalCenter =
+            (viewHolder.itemView.top + (heightItem / 2)) - (icon.intrinsicHeight / 2)
+
+        if (dX < maxPositionQuoteIcon) {
+            rightReactF = dX / maxPositionSwipe
+            leftReactF = rightReactF - icon.intrinsicWidth
+        }
+
+        icon.bounds = RectF(
+            leftReactF,
+            verticalCenter.toFloat(),
+            rightReactF,
+            (verticalCenter + icon.intrinsicHeight).toFloat()
+        ).toRect()
+
+        icon.draw(c)
     }
 
     override fun onPause() {

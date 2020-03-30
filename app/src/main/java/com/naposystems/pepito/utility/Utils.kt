@@ -8,9 +8,13 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.effect.Effect
 import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Base64
@@ -119,6 +123,36 @@ class Utils {
             )
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
+        }
+
+
+        fun vibratePhone(context: Context?, effect: Int) {
+            val vibrator = context?.let {
+                it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            }
+            vibrator?.let {
+                if (Build.VERSION.SDK_INT >= 26) {
+                    when (effect) {
+                        Constants.Vibrate.SOFT.type ->
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    20,
+                                    VibrationEffect.EFFECT_TICK
+                                )
+                            )
+                        else ->
+                            vibrator.vibrate(
+                                VibrationEffect.createOneShot(
+                                    400,
+                                    VibrationEffect.DEFAULT_AMPLITUDE
+                                )
+                            )
+                    }
+                } else {
+                    if (effect == Constants.Vibrate.DEFAULT.type)
+                        vibrator.vibrate(400)
+                }
+            }
         }
 
         fun getFileUri(context: Context, fileName: String, subFolder: String): Uri {

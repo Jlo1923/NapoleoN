@@ -42,8 +42,8 @@ class ConversationViewModel @Inject constructor(
     val webServiceError: LiveData<List<String>>
         get() = _webServiceError
 
-    private lateinit var _messageMessages: LiveData<PagedList<MessageAndAttachment>>
-    val messageMessages: LiveData<PagedList<MessageAndAttachment>>
+    private lateinit var _messageMessages: LiveData<List<MessageAndAttachment>>
+    val messageMessages: LiveData<List<MessageAndAttachment>>
         get() = _messageMessages
 
     private lateinit var _messagesSelected: LiveData<List<MessageAndAttachment>>
@@ -106,26 +106,27 @@ class ConversationViewModel @Inject constructor(
     override fun getLocalMessages() {
         viewModelScope.launch {
             user = repository.getLocalUser()
-            _messageMessages = repository.getLocalMessages(contact.id, 10)
+            _messageMessages = repository.getLocalMessages(contact.id)
         }
     }
 
-    override fun saveMessageLocally(body: String, selfDestructTime: Int) {
-        saveMessageAndAttachment(body, null, 0, selfDestructTime)
+    override fun saveMessageLocally(body: String, selfDestructTime: Int, quote: String) {
+        saveMessageAndAttachment(body, null, 0, selfDestructTime, quote)
     }
 
     override fun saveMessageAndAttachment(
         messageString: String,
         attachment: Attachment?,
         numberAttachments: Int,
-        selfDestructTime: Int
+        selfDestructTime: Int,
+        quote: String
     ) {
         viewModelScope.launch {
             val message = Message(
                 id = 0,
                 webId = "",
                 body = messageString,
-                quoted = "",
+                quoted = quote,
                 contactId = contact.id,
                 updatedAt = 0,
                 createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
@@ -145,18 +146,24 @@ class ConversationViewModel @Inject constructor(
                 attachment.id = attachmentId.toInt()
             }
 
+            if (message.quoted.isNotEmpty()) {
+                repository.insertQuote(quote, message)
+            }
+
             sendMessageAndAttachment(
                 attachment = attachment,
                 message = message,
                 numberAttachments = numberAttachments,
-                selfDestructTime = selfDestructTime
+                selfDestructTime = selfDestructTime,
+                quote = quote
             )
         }
     }
 
     override fun saveMessageWithAudioAttachment(
         mediaStoreAudio: MediaStoreAudio,
-        selfDestructTime: Int
+        selfDestructTime: Int,
+        quote: String
     ) {
         viewModelScope.launch {
             val fileDescriptor = context.contentResolver
@@ -184,7 +191,8 @@ class ConversationViewModel @Inject constructor(
                     messageString = "",
                     attachment = attachment,
                     numberAttachments = 1,
-                    selfDestructTime = selfDestructTime
+                    selfDestructTime = selfDestructTime,
+                    quote = quote
                 )
             }
         }
@@ -194,13 +202,14 @@ class ConversationViewModel @Inject constructor(
         attachment: Attachment?,
         message: Message,
         numberAttachments: Int,
-        selfDestructTime: Int
+        selfDestructTime: Int,
+        quote: String = ""
     ) {
         try {
 
             val messageReqDTO = MessageReqDTO(
                 userDestination = contact.id,
-                quoted = "",
+                quoted = quote,
                 body = message.body,
                 numberAttachments = numberAttachments,
                 destroy = selfDestructTime
@@ -300,9 +309,13 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             try {
 
-                val response = repository.deleteMessagesForAll(
-                    buildObjectDeleteMessages(contactId, listMessages)
-                )
+                val response =
+                    repository.deleteMessagesForAll(
+                        buildObjectDeleteMessages(
+                            contactId,
+                            listMessages
+                        )
+                    )
 
                 if (response.isSuccessful) {
                     repository.deleteMessagesSelected(contactId, listMessages)
@@ -385,7 +398,7 @@ class ConversationViewModel @Inject constructor(
     }
 
     private fun buildObjectDeleteMessages(
-        idContact: Int,
+        contactId: Int,
         listMessages: List<MessageAndAttachment>
     ): DeleteMessagesReqDTO {
         val listReturn = arrayListOf<String>()
@@ -393,9 +406,21 @@ class ConversationViewModel @Inject constructor(
             listReturn.add(it.message.webId)
         }
         return DeleteMessagesReqDTO(
-            userReceiver = idContact,
+            userReceiver = contactId,
             messagesId = listReturn
         )
+    }
+
+    override fun getMessagePosition(messageAndAttachment: MessageAndAttachment): Int {
+        var index = -1
+
+        messageAndAttachment.quote?.let { quote ->
+            messageMessages.value?.let { messagesList ->
+                index = messagesList.indexOfFirst { it.message.id == quote.messageParentId }
+            }
+        }
+
+        return index
     }
 
     //endregion

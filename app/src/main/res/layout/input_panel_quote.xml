@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="messageAndAttachment"
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="isFromInputPanel"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="false"
+        tools:context=".ui.custom.inputPanel.InputPanelQuote">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_quote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/normal_padding"
+            android:paddingEnd="0dp"
+            app:userBackground="@{messageAndAttachment}"
+            app:isFromInputPanelQuote="@{isFromInputPanel}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView_title_quote"
+                style="@style/SmallBodyTextView.WhiteBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:textColor="@color/red"
+                app:isFromInputPanelQuote="@{isFromInputPanel}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:userQuote="@{messageAndAttachment}"
+                tools:text="User" />
+
+            <ImageView
+                android:id="@+id/imageView_type_quote"
+                android:layout_width="16dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="4dp"
+                android:src="@drawable/ic_insert_emoticon_black"
+                android:visibility="gone"
+                app:attachmentTypeQuote="@{messageAndAttachment}"
+                app:isFromInputPanelQuote="@{isFromInputPanel}"
+                app:layout_constraintEnd_toStartOf="@id/textView_message_quote"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView_message_quote"
+                app:tint="@color/colorSecondaryDark"
+                tools:src="@drawable/ic_insert_emoticon_black"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/textView_message_quote"
+                style="@style/SmallBodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginBottom="@dimen/small_margin"
+                android:ellipsize="end"
+                android:maxLines="3"
+                app:bodyQuote="@{messageAndAttachment}"
+                app:isFromInputPanelQuote="@{isFromInputPanel}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageView_quote"
+                app:layout_constraintStart_toEndOf="@id/imageView_type_quote"
+                app:layout_constraintTop_toBottomOf="@id/textView_title_quote"
+                tools:text="@tools:sample/lorem[15]" />
+
+            <ImageView
+                android:id="@+id/imageView_quote"
+                android:layout_width="64dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:imageQuote="@{messageAndAttachment}"
+                app:isFromInputPanelQuote="@{isFromInputPanel}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/vertical_photo"
+                tools:visibility="visible" />
+            <!--    app:imageQuote='@{""}'-->
+
+
+            <ImageButton
+                android:id="@+id/imageButton_close_quote"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_rounded"
+                android:padding="@dimen/normal_padding"
+                android:src="@drawable/ic_close_black_24"
+                android:tint="@color/gray_8B8989"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

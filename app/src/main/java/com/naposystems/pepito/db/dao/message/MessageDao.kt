@@ -9,8 +9,14 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 @Dao
 interface MessageDao {
 
+    @Query("SELECT * FROM message WHERE web_id=:webId")
+    fun getMessageByWebId(webId: String): MessageAndAttachment
+
     @Query("SELECT * FROM message WHERE contact_id=:contact ORDER BY id DESC")
-    fun getMessagesAndAttachments(contact: Int): DataSource.Factory<Int, MessageAndAttachment>
+    fun getMessagesAndAttachments(contact: Int): LiveData<List<MessageAndAttachment>>
+
+    @Query("SELECT id FROM message WHERE web_id=:quoteWebId")
+    fun getQuoteId(quoteWebId: String): Int
 
     @Query("SELECT * FROM message WHERE contact_id=:contact AND status =:status ORDER BY id DESC")
     fun getLocalMessagesByStatus(contact: Int, status: Int): List<MessageAndAttachment>
@@ -22,7 +28,7 @@ interface MessageDao {
     suspend fun cleanSelectionMessages(contact: Int)
 
     @Query("DELETE FROM message WHERE contact_id = :contactId AND id =:messageId")
-    suspend fun deleteMessagesSelected(contactId: Int, messageId : Int)
+    suspend fun deleteMessagesSelected(contactId: Int, messageId: Int)
 
     @Query("DELETE FROM message WHERE contact_id = :contactId AND status =:status AND is_mine = 1")
     suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)

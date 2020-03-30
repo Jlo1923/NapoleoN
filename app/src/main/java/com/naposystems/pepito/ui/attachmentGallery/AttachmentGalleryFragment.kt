@@ -132,7 +132,8 @@ class AttachmentGalleryFragment : Fragment(), AttachmentGalleryAdapter.ClickList
             this@AttachmentGalleryFragment.findNavController().navigate(
                 AttachmentGalleryFragmentDirections.actionAttachmentGalleryFragmentToAttachmentPreviewFragment(
                     attachment,
-                    galleryItem.id
+                    galleryItem.id,
+                    args.quoteWebId
                 ),
                 extras
             )

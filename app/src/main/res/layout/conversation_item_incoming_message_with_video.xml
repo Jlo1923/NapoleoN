@@ -45,6 +45,32 @@
             app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.7">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_quote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="100dp"
+                android:visibility="gone"
+                android:layout_marginBottom="4dp"
+                android:onClick="@{() -> clickListener.goToQuote(conversation)}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/imageView_attachment"
+                tools:visibility="visible">
+
+                <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+                    android:id="@+id/quote"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:isGoTo="true" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_attachment"
                 android:layout_width="match_parent"
@@ -56,7 +82,8 @@
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_quote"
+                app:layout_constraintBottom_toTopOf="@id/textView_message"
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 

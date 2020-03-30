@@ -8,6 +8,7 @@ import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessage422DTO
@@ -22,6 +23,7 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
 import com.naposystems.pepito.utility.*
@@ -50,7 +52,8 @@ class ConversationRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
     private val conversationLocalDataSource: ConversationDataSource,
-    private val contactDataSource: ContactDataSource
+    private val contactDataSource: ContactDataSource,
+    private val quoteDataSource: QuoteDataSource
 ) :
     IContractConversation.Repository {
 
@@ -117,11 +120,12 @@ class ConversationRepository @Inject constructor(
         socketService.unSubscribe(SocketReqDTO.toJSONObject(socketReqDTO), channelName)
     }
 
-    override fun getLocalMessages(
-        contactId: Int,
-        pageSize: Int
-    ): LiveData<PagedList<MessageAndAttachment>> {
-        return messageLocalDataSource.getMessages(contactId, pageSize)
+    override fun getLocalMessages(contactId: Int): LiveData<List<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessages(contactId)
+    }
+
+    override suspend fun getQuoteId(quoteWebId: String): Int {
+        return messageLocalDataSource.getQuoteId(quoteWebId)
     }
 
     override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {
@@ -265,6 +269,31 @@ class ConversationRepository @Inject constructor(
 
     override fun updateAttachment(attachment: Attachment) {
         attachmentLocalDataSource.updateAttachment(attachment)
+    }
+
+    override fun insertQuote(quoteWebId: String, message: Message) {
+
+        val originalMessage =
+            messageLocalDataSource.getMessageByWebId(quoteWebId)
+
+        var firstAttachment: Attachment? = null
+
+        if (originalMessage.attachmentList.isNotEmpty()) {
+            firstAttachment = originalMessage.attachmentList.first()
+        }
+
+        val quote = Quote(
+            id = 0,
+            messageId = message.id,
+            contactId = originalMessage.message.contactId,
+            body = originalMessage.message.body,
+            attachmentType = firstAttachment?.type ?: "",
+            thumbnailUri = firstAttachment?.uri ?: "",
+            messageParentId = originalMessage.message.id,
+            isMine = originalMessage.message.isMine
+        )
+
+        quoteDataSource.insertQuote(quote)
     }
 
     override suspend fun updateStateSelectionMessage(

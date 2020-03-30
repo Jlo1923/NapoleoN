@@ -98,7 +98,6 @@
                 android:id="@+id/container_editText_message"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="?attr/attrBackgroundColorBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -109,7 +108,10 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:isCancelable="true"
+                    app:showOnlySendIcon="false"
+                    app:isGoTo="false"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

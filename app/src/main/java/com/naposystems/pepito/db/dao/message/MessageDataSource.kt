@@ -7,7 +7,11 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 
 interface MessageDataSource {
 
-    fun getMessages(contactId: Int, pageSize: Int): LiveData<PagedList<MessageAndAttachment>>
+    fun getMessageByWebId(webId: String): MessageAndAttachment
+
+    fun getMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
+
+    fun getQuoteId(quoteWebId: String): Int
 
     fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
 
@@ -35,7 +39,7 @@ interface MessageDataSource {
 
     suspend fun deletedMessages(listWebIdMessages: List<String>)
 
-    fun updateMessageStatus(messagesWebIds: List<String>, /*selfDestructTime: Int,*/ status: Int)
+    fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
 
     suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
 

@@ -7,12 +7,15 @@ import androidx.annotation.Nullable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
+import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -109,35 +112,39 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
 }
 
 @BindingAdapter("imageAttachment")
-fun bindImageAttachment(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+fun bindImageAttachment(imageView: ImageView, @Nullable messageAndAttachmentParam: MessageAndAttachment?) {
 
     try {
-        if (messageAndAttachment.attachmentList.isNotEmpty()) {
-            imageView.visibility = View.VISIBLE
-            val firstAttachment = messageAndAttachment.attachmentList[0]
+        messageAndAttachmentParam?.let { messageAndAttachment ->
+            if (messageAndAttachment.attachmentList.isNotEmpty()) {
+                imageView.visibility = View.VISIBLE
+                val firstAttachment = messageAndAttachment.attachmentList[0]
 
-            when (firstAttachment.type) {
-                Constants.AttachmentType.IMAGE.type -> {
-                    Glide.with(imageView)
-                        .load(firstAttachment)
-                        .into(imageView)
-                }
-                Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
-                    Glide.with(imageView)
-                        .asGif()
-                        .load(firstAttachment)
-                        .into(imageView)
-                }
-                Constants.AttachmentType.VIDEO.type -> {
-                    val uri = Utils.getFileUri(
-                        imageView.context,
-                        firstAttachment.uri,
-                        Constants.NapoleonCacheDirectories.VIDEOS.folder
-                    )
-                    Glide.with(imageView)
-                        .load(uri)
-                        .thumbnail(0.1f)
-                        .into(imageView)
+                when (firstAttachment.type) {
+                    Constants.AttachmentType.IMAGE.type -> {
+                        Glide.with(imageView)
+                            .load(firstAttachment)
+                            .transform(CenterCrop(), RoundedCorners(8))
+                            .into(imageView)
+                    }
+                    Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
+                        Glide.with(imageView)
+                            .asGif()
+                            .load(firstAttachment)
+                            .into(imageView)
+                    }
+                    Constants.AttachmentType.VIDEO.type -> {
+                        val uri = Utils.getFileUri(
+                            imageView.context,
+                            firstAttachment.uri,
+                            Constants.NapoleonCacheDirectories.VIDEOS.folder
+                        )
+                        Glide.with(imageView)
+                            .load(uri)
+                            .thumbnail(0.1f)
+                            .transform(CenterCrop(), RoundedCorners(8))
+                            .into(imageView)
+                    }
                 }
             }
         }

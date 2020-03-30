@@ -4,6 +4,7 @@ import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.home.HomeRepository
 import com.naposystems.pepito.ui.home.IContractHome
@@ -27,7 +28,8 @@ class HomeModule {
         conversationLocalDataSource: ConversationDataSource,
         messageLocalDataSource: MessageDataSource,
         contactLocalDataSource: ContactDataSource,
-        attachmentLocalDataSource: AttachmentDataSource
+        attachmentLocalDataSource: AttachmentDataSource,
+        quoteDataSource: QuoteDataSource
     ): IContractHome.Repository {
         return HomeRepository(
             napoleonApi,
@@ -37,7 +39,8 @@ class HomeModule {
             conversationLocalDataSource,
             messageLocalDataSource,
             contactLocalDataSource,
-            attachmentLocalDataSource
+            attachmentLocalDataSource,
+            quoteDataSource
         )
     }
 }

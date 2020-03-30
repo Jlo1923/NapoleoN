@@ -5,6 +5,7 @@ import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
+import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.conversation.ConversationRepository
 import com.naposystems.pepito.ui.conversation.IContractConversation
@@ -29,7 +30,8 @@ class ConversationModule {
         sharedPreferencesManager: SharedPreferencesManager,
         napoleonApi: NapoleonApi,
         conversationLocalDataSource: ConversationDataSource,
-        contactDataSource: ContactDataSource
+        contactDataSource: ContactDataSource,
+        quoteDataSource: QuoteDataSource
     ): IContractConversation.Repository {
         return ConversationRepository(
             context,
@@ -40,7 +42,8 @@ class ConversationModule {
             sharedPreferencesManager,
             napoleonApi,
             conversationLocalDataSource,
-            contactDataSource
+            contactDataSource,
+            quoteDataSource
         )
     }
 }
