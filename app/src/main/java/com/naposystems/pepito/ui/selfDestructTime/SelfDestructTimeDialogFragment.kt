@@ -1,7 +1,6 @@
 package com.naposystems.pepito.ui.selfDestructTime
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SelfDestructTimeDialogFragmentBinding
@@ -38,7 +38,7 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: SelfDestructTimeViewModel
+    private val viewModel: SelfDestructTimeViewModel by viewModels { viewModelFactory }
     private lateinit var binding: SelfDestructTimeDialogFragmentBinding
     private lateinit var listener: SelfDestructTimeListener
 
@@ -98,8 +98,6 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(SelfDestructTimeViewModel::class.java)
 
         viewModel.getSelfDestructTimeByContact(contactId)
 

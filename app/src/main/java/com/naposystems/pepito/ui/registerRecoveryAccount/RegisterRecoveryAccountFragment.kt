@@ -3,16 +3,15 @@ package com.naposystems.pepito.ui.registerRecoveryAccount
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RegisterRecoveryAccountBinding
 import com.naposystems.pepito.utility.Constants
@@ -32,7 +31,7 @@ class RegisterRecoveryAccountFragment : Fragment() {
 
     private lateinit var binding: RegisterRecoveryAccountBinding
 
-    private lateinit var viewModel: RegisterRecoveryAccountViewModel
+    private val viewModel: RegisterRecoveryAccountViewModel by viewModels { viewModelFactory }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -65,9 +64,6 @@ class RegisterRecoveryAccountFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(RegisterRecoveryAccountViewModel::class.java)
-
         viewModel.getRecoveryQuestionsPref()
         viewModel.recoveryQuestionsPref.observe(viewLifecycleOwner, Observer {
             if (it == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {

@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SendCodeFragmentBinding
@@ -32,7 +32,7 @@ class SendCodeFragment : Fragment() {
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
-    private lateinit var viewModel: SendCodeViewModel
+    private val viewModel: SendCodeViewModel by viewModels { viewModelFactory }
     private lateinit var binding: SendCodeFragmentBinding
 
     override fun onAttach(context: Context) {
@@ -44,10 +44,6 @@ class SendCodeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(SendCodeViewModel::class.java)
-
         binding = DataBindingUtil.inflate(
             layoutInflater, R.layout.send_code_fragment, container, false
         )

@@ -16,7 +16,7 @@ fun bindPreviewImage(imageView: ImageView, messageAndAttachment: MessageAndAttac
             val firstAttachment = messageAndAttachment.attachmentList[0]
 
             when (firstAttachment.type) {
-                Constants.AttachmentType.IMAGE.type -> {
+                Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
                     Glide.with(imageView)
                         .load(firstAttachment)
                         .into(imageView)

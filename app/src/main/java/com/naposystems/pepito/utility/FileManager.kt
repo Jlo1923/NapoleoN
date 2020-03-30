@@ -132,6 +132,9 @@ class FileManager {
                     GIF_NN.type -> {
                         folder = GIFS.folder
                     }
+                    LOCATION.type -> {
+                        folder = IMAGES.folder
+                    }
                 }
 
                 val path = File(context.cacheDir!!, folder)
@@ -183,6 +186,7 @@ class FileManager {
                 VIDEO.type -> VIDEOS.folder
                 DOCUMENT.type -> DOCUMENTOS.folder
                 GIF.type, GIF_NN.type -> GIFS.folder
+                LOCATION.type -> IMAGES.folder
                 else -> throw IllegalArgumentException("El archivo a enviar no tiene un tipo")
             }
         }
@@ -194,6 +198,27 @@ class FileManager {
                 path.mkdirs()
 
             return File(path, fileName)
+        }
+
+        fun createFileFromBitmap(
+            context: Context,
+            fileName: String,
+            folder: String,
+            bitmap: Bitmap
+        ): File? {
+            val file = createFile(context, fileName, folder)
+
+            return try {
+                val stream: OutputStream = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+                stream.flush()
+                stream.close()
+
+                file
+            } catch (e: IOException) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 }

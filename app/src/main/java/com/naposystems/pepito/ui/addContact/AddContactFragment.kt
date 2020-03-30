@@ -36,7 +36,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
     private lateinit var binding: AddContactFragmentBinding
-    private lateinit var mainActivity: MainActivity
+        private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
     private lateinit var adapter: AddContactAdapter
     private lateinit var friendshipRequestsAdapter: FriendshipRequestAdapter

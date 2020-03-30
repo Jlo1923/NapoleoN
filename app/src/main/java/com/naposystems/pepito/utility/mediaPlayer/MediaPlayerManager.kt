@@ -81,7 +81,7 @@ class MediaPlayerManager(private val context: Context) :
     }
 
     private fun setSeekbarProgress() {
-        mSeekBar?.progress = mediaPlayer!!.currentPosition
+        mSeekBar?.progress = mediaPlayer.currentPosition
     }
 
     private fun createTempFile(uri: Uri) {

@@ -42,7 +42,8 @@ class AttachmentDataFetcher constructor(
             when (attachment.type) {
                 Constants.AttachmentType.IMAGE.type,
                 Constants.AttachmentType.GIF.type,
-                Constants.AttachmentType.GIF_NN.type -> {
+                Constants.AttachmentType.GIF_NN.type,
+                Constants.AttachmentType.LOCATION.type -> {
                     val inputStream = context.contentResolver.openInputStream(fileUri)
 
                     callback.onDataReady(inputStream)

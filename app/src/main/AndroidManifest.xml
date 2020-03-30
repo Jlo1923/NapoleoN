@@ -7,6 +7,7 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -26,6 +27,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".ui.mainActivity.MainActivity"
             android:windowSoftInputMode="adjustResize">
@@ -34,42 +40,30 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- uCrop cropping activity -->
+        </activity> <!-- uCrop cropping activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-
-        <!-- FIREBASE -->
+            android:theme="@style/AppTheme" /> <!-- FIREBASE -->
         <service
             android:name=".firebase.NapoleonFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- DEFAULT FIREBASE NOTIFICATION ICON -->
+        </service> <!-- DEFAULT FIREBASE NOTIFICATION ICON -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification_icon" />
-
-        <!-- DEFAULT FIREBASE NOTIFICATION COLOR -->
+            android:resource="@drawable/ic_notification_icon" /> <!-- DEFAULT FIREBASE NOTIFICATION COLOR -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorPrimary" />
-
-        <!-- DEFAULT FIREBASE NOTIFICATION CHANNEL -->
+            android:resource="@color/colorPrimary" /> <!-- DEFAULT FIREBASE NOTIFICATION CHANNEL -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
         <meta-data
             android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-
-        <!-- CACHE DIRECTORY FILE PROVIDER PATHS -->
+            android:resource="@array/preloaded_fonts" /> <!-- CACHE DIRECTORY FILE PROVIDER PATHS -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.naposystems.pepito.provider"

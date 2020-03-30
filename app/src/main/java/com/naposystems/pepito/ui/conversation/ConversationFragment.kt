@@ -104,7 +104,7 @@ class ConversationFragment : Fragment(),
     private lateinit var actionMode: ActionModeMenu
     private var contactSilenced: Boolean = false
     private var menuOptionsContact: Menu? = null
-    private lateinit var deletionMessagesDialog : DeletionMessagesDialogFragment
+    private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
 
     private var clipboard: ClipboardManager? = null
     private var clipData: ClipData? = null
@@ -300,7 +300,15 @@ class ConversationFragment : Fragment(),
                 }
 
                 override fun locationPressed() {
-                    // Intentionally empty
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        drawableIconId = R.drawable.ic_location_on_primary,
+                        message = R.string.explanation_to_send_location_attachment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment()
+                        )
+                    }
                 }
 
                 override fun audioPressed() {
@@ -576,7 +584,7 @@ class ConversationFragment : Fragment(),
         }
     }
 
-    private fun setTextSilenceOfMenu(contact : Contact) {
+    private fun setTextSilenceOfMenu(contact: Contact) {
         menuOptionsContact?.let { menuOptions ->
             if (contact.silenced) {
                 menuOptions.findItem(R.id.menu_item_mute_conversation).title =
@@ -663,7 +671,7 @@ class ConversationFragment : Fragment(),
         viewModel.contactProfile.value?.let { contact ->
             val dialog = MuteConversationDialogFragment.newInstance(
                 args.contact.id, contact.silenced
-                )
+            )
             dialog.setListener(object : MuteConversationDialogFragment.MuteConversationListener {
                 override fun onMuteConversationChange() {
                     // Intentionally empty

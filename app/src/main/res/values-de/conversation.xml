@@ -18,6 +18,7 @@
     <string name="text_title_delete_messages_unreceived">Empfangene Nachrichten löschen</string>
     <string name="text_title_delete_failed_messages">Löschen Sie fehlgeschlagene Nachrichten</string>
     <string name="text_delete_messages_conversation">Nachrichten löschen</string>
+    <string name="explanation_to_send_location_attachment">Um einen Standort zu senden, erlauben NAPOLEON Zugriff auf Ihren Standort.</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>

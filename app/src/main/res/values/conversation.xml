@@ -18,6 +18,7 @@
     <string name="text_title_delete_messages_unreceived">Delete unreceived</string>
     <string name="text_title_delete_failed_messages">Delete failed</string>
     <string name="text_delete_messages_conversation">Delete messages</string>
+    <string name="explanation_to_send_location_attachment">To send a location, allow NAPOLEON access your location.</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>

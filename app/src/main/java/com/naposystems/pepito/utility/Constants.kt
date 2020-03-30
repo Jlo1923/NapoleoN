@@ -213,7 +213,8 @@ object Constants {
         VIDEO("video"),
         DOCUMENT("document"),
         GIF("gif"),
-        GIF_NN("gifNN")
+        GIF_NN("gifNN"),
+        LOCATION("location")
     }
 
     enum class FriendShipRequestType(val type: Int) {
@@ -256,7 +257,8 @@ object Constants {
         CAMERA(1),
         GALLERY(2),
         AUDIO_SELECTION(3),
-        DOWNLOADED(4)
+        DOWNLOADED(4),
+        LOCATION(5)
     }
 
     enum class NapoleonCacheDirectories(val folder: String) {

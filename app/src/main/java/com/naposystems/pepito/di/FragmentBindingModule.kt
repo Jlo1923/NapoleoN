@@ -7,6 +7,7 @@ import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment
 import com.naposystems.pepito.ui.attachmentAudio.AttachmentAudioFragment
 import com.naposystems.pepito.ui.attachmentGallery.AttachmentGalleryFragment
 import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFoldersFragment
+import com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationFragment
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment
@@ -173,4 +174,7 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindNapoleonKeyboardGifFragment(): NapoleonKeyboardGifFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindAttachmentLocationFragment(): AttachmentLocationFragment
 }

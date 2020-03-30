@@ -406,6 +406,9 @@
         <action
             android:id="@+id/action_conversationFragment_to_attachmentPreviewFragment"
             app:destination="@id/attachmentPreviewFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentLocationFragment"
+            app:destination="@id/attachmentLocationFragment" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
@@ -646,4 +649,9 @@
         android:name="com.naposystems.pepito.ui.attachmentDocument.AttachmentDocumentFragment"
         android:label="attachment_document_fragment"
         tools:layout="@layout/attachment_document_fragment" />
+    <fragment
+        android:id="@+id/attachmentLocationFragment"
+        android:name="com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationFragment"
+        tools:layout="@layout/attachment_location_fragment"
+        android:label="AttachmentLocationFragment" />
 </navigation>

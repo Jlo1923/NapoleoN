@@ -160,7 +160,8 @@
         <item name="attrBackgroundColorBackground">@color/color_E6F2FF</item>
         <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
         <item name="attrTextColorColorPrimary">@color/color_4AA3D9</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -217,7 +218,8 @@
         <item name="attrBackgroundColorBackground">@color/color_F2F2F2</item>
         <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
         <item name="attrTextColorColorPrimary">@color/color_7D366F</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -275,7 +277,8 @@
         <item name="attrBackgroundColorBackground">@color/color_001600</item>
         <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
         <item name="attrTextColorColorPrimary">@color/color_031E03</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -329,7 +332,8 @@
         <item name="attrBackgroundColorBackground">@color/color_121212</item>
         <item name="attrTintColorSecondaryDark">@color/color_D8A605</item>
         <item name="attrTextColorColorPrimary">@color/color_282828</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -384,7 +388,8 @@
         <item name="attrBackgroundColorBackground">@color/color_20202E</item>
         <item name="attrTintColorSecondaryDark">@color/color_59BC88</item>
         <item name="attrTextColorColorPrimary">@color/color_2A2C45</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -539,10 +544,14 @@
 
     <style name="MyMessageTextView" parent="BodyTextView">
         <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:textColorLink">?attr/attrTextColorColorTextMyMessage</item>
     </style>
 
     <style name="IncomingMessageTextView" parent="SmallBodyTextView">
         <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:textColorLink">?attr/attrTextColorColorTextIncomingMessage</item>
     </style>
 
     <style name="SmallBodyTextView">
