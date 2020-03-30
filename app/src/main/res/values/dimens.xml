@@ -27,6 +27,7 @@
     <dimen name="x_x_small_padding">2dp</dimen>
     <dimen name="text_size_audio_duration">12sp</dimen>
     <dimen name="circle_progress_bar">8dp</dimen>
+    <dimen name="text_size_self_destruct_time">12sp</dimen>
     <item name="width_app_button" format="float" type="dimen">0.8</item>
     <item name="alpha_drawer_header" format="float" type="dimen">0.25</item>
     <item name="max_length_nickname" format="integer" type="dimen">20</item>
