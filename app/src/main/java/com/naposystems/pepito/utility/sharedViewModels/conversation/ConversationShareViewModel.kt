@@ -27,6 +27,10 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
     val message: LiveData<String>
         get() = _message
 
+    private val _quoteWebId = MutableLiveData<String>()
+    val quoteWebId: LiveData<String>
+        get() = _quoteWebId
+
     init {
         _message.value = ""
     }
@@ -48,6 +52,16 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     override fun resetAttachmentSelected() {
         _attachmentSelected.value = null
+    }
+
+    override fun getQuoteWebId() = this._quoteWebId.value
+
+    override fun setQuoteWebId(webId: String) {
+        this._quoteWebId.value = webId
+    }
+
+    override fun resetQuoteWebId() {
+        this._quoteWebId.value = null
     }
 
     //endregion

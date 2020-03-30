@@ -8,6 +8,8 @@ import androidx.annotation.Nullable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
@@ -140,6 +142,7 @@ fun bindImageAttachment(imageView: ImageView, @Nullable messageAndAttachmentPara
                 if (firstAttachment.type == Constants.AttachmentType.IMAGE.type) {
                     Glide.with(imageView)
                         .load(firstAttachment)
+                        .transform(CenterCrop(), RoundedCorners(8))
                         .into(imageView)
                 } else if (firstAttachment.type == Constants.AttachmentType.VIDEO.type) {
                     val uri = Utils.getFileUri(
@@ -150,6 +153,7 @@ fun bindImageAttachment(imageView: ImageView, @Nullable messageAndAttachmentPara
                     Glide.with(imageView)
                         .load(uri)
                         .thumbnail(0.1f)
+                        .transform(CenterCrop(), RoundedCorners(8))
                         .into(imageView)
                 }
             }

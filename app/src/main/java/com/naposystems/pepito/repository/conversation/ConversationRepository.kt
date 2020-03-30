@@ -11,6 +11,7 @@ import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessage422DTO
@@ -25,6 +26,7 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
 import com.naposystems.pepito.utility.*
@@ -53,7 +55,8 @@ class ConversationRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
     private val conversationLocalDataSource: ConversationDataSource,
-    private val contactDataSource: ContactDataSource
+    private val contactDataSource: ContactDataSource,
+    private val quoteDataSource: QuoteDataSource
 ) :
     IContractConversation.Repository {
 
@@ -120,11 +123,12 @@ class ConversationRepository @Inject constructor(
         socketService.unSubscribe(SocketReqDTO.toJSONObject(socketReqDTO), channelName)
     }
 
-    override fun getLocalMessages(
-        contactId: Int,
-        pageSize: Int
-    ): LiveData<PagedList<MessageAndAttachment>> {
-        return messageLocalDataSource.getMessages(contactId, pageSize)
+    override fun getLocalMessages(contactId: Int): LiveData<List<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessages(contactId)
+    }
+
+    override suspend fun getQuoteId(quoteWebId: String): Int {
+        return messageLocalDataSource.getQuoteId(quoteWebId)
     }
 
     override suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
@@ -236,8 +240,8 @@ class ConversationRepository @Inject constructor(
         return Utils.convertFileInputStreamToByteArray(fileInputStream)
     }
 
-    override fun getLocalContact(idContact: Int): LiveData<Contact> {
-        return contactDataSource.getContact(idContact)
+    override fun getLocalContact(contactId: Int): LiveData<Contact> {
+        return contactDataSource.getContact(contactId)
     }
 
     override suspend fun getLocalUser(): User {
@@ -302,31 +306,59 @@ class ConversationRepository @Inject constructor(
         attachmentLocalDataSource.updateAttachment(attachment)
     }
 
+    override fun insertQuote(quoteWebId: String, message: Message) {
+
+        val originalMessage =
+            messageLocalDataSource.getMessageByWebId(quoteWebId)
+
+        var firstAttachment: Attachment? = null
+
+        if (originalMessage.attachmentList.isNotEmpty()) {
+            firstAttachment = originalMessage.attachmentList.first()
+        }
+
+        val quote = Quote(
+            id = 0,
+            messageId = message.id,
+            contactId = originalMessage.message.contactId,
+            body = originalMessage.message.body,
+            attachmentType = firstAttachment?.type ?: "",
+            thumbnailUri = firstAttachment?.uri ?: "",
+            messageParentId = originalMessage.message.id,
+            isMine = originalMessage.message.isMine
+        )
+
+        quoteDataSource.insertQuote(quote)
+    }
+
     override suspend fun updateStateSelectionMessage(
-        idContact: Int,
+        contactId: Int,
         idMessage: Int,
         isSelected: Int
     ) {
-        messageLocalDataSource.updateStateSelectionMessage(idContact, idMessage, isSelected)
+        messageLocalDataSource.updateStateSelectionMessage(contactId, idMessage, isSelected)
     }
 
-    override suspend fun cleanSelectionMessages(idContact: Int) {
-        messageLocalDataSource.cleanSelectionMessages(idContact)
+    override suspend fun cleanSelectionMessages(contactId: Int) {
+        messageLocalDataSource.cleanSelectionMessages(contactId)
     }
 
-    override suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>) {
-        messageLocalDataSource.deleteMessagesSelected(idContact, listMessages)
-        val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(idContact)
+    override suspend fun deleteMessagesSelected(
+        contactId: Int,
+        listMessages: List<MessageAndAttachment>
+    ) {
+        messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
+        val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(contactId)
         if (messageAndAttachment != null) {
             conversationLocalDataSource.updateConversationByContact(
-                idContact,
+                contactId,
                 messageAndAttachment.message.body,
                 messageAndAttachment.message.createdAt,
                 messageAndAttachment.message.status,
                 0
             )
         } else {
-            conversationLocalDataSource.cleanConversation(idContact)
+            conversationLocalDataSource.cleanConversation(contactId)
         }
     }
 
@@ -334,12 +366,12 @@ class ConversationRepository @Inject constructor(
         return napoleonApi.deleteMessagesForAll(deleteMessagesReqDTO)
     }
 
-    override suspend fun copyMessagesSelected(idContact: Int): List<String> {
-        return messageLocalDataSource.copyMessagesSelected(idContact)
+    override suspend fun copyMessagesSelected(contactId: Int): List<String> {
+        return messageLocalDataSource.copyMessagesSelected(contactId)
     }
 
-    override suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>> {
-        return messageLocalDataSource.getMessagesSelected(idContact)
+    override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessagesSelected(contactId)
     }
 
     override fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {

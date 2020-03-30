@@ -18,4 +18,8 @@ interface IContractInputPanel {
     fun hideImageButtonCamera()
     fun showImageButtonCamera()
     fun openQuote(messageAndAttachment: MessageAndAttachment)
+    fun getWebIdQuote(): String
+    fun closeQuote()
+    fun resetImage()
+    fun getQuote(): MessageAndAttachment?
 }

@@ -129,10 +129,12 @@ class AttachmentPreviewFragment : Fragment() {
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             with(conversationShareViewModel) {
+                setQuoteWebId(args.quote)
                 setMessage(binding.inputPanel.getEditTex().text.toString())
                 setAttachmentSelected(args.attachment)
                 resetAttachmentSelected()
                 resetMessage()
+                resetQuoteWebId()
                 hasSentAttachment = true
             }
             this.findNavController().popBackStack(R.id.conversationFragment, false)

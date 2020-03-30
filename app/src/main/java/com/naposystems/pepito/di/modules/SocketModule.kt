@@ -4,6 +4,7 @@ import android.content.Context
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.repository.socket.SocketRepository
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
@@ -22,8 +23,16 @@ class SocketModule {
         napoleonApi: NapoleonApi,
         conversationLocalDataSource: ConversationDataSource,
         messageLocalDataSource: MessageDataSource,
-        attachmentLocalDataSource: AttachmentDataSource
+        attachmentLocalDataSource: AttachmentDataSource,
+        quoteDataSource: QuoteDataSource
     ): IContractSocketService.Repository {
-        return SocketRepository(context, napoleonApi, conversationLocalDataSource, messageLocalDataSource, attachmentLocalDataSource)
+        return SocketRepository(
+            context,
+            napoleonApi,
+            conversationLocalDataSource,
+            messageLocalDataSource,
+            attachmentLocalDataSource,
+            quoteDataSource
+        )
     }
 }

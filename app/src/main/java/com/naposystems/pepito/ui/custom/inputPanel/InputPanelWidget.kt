@@ -26,7 +26,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     private var showEmojiIcon: Boolean = true
     private var showCameraIcon: Boolean = true
     private var showAttachmentIcon: Boolean = true
-    private var showOnlySendIcon: Boolean = true
+    private var showOnlySendIcon: Boolean = false
 
     init {
         context.theme.obtainStyledAttributes(
@@ -53,7 +53,8 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
                 binding.imageButtonEmoji.visibility = if (showEmojiIcon) View.VISIBLE else View.GONE
                 binding.imageButtonAttachment.visibility =
                     if (showAttachmentIcon) View.VISIBLE else View.GONE
-                binding.imageButtonCamera.visibility = if (showCameraIcon) View.VISIBLE else View.GONE
+                binding.imageButtonCamera.visibility =
+                    if (showCameraIcon) View.VISIBLE else View.GONE
 
                 binding.floatingActionButtonSend.setShowOnlySendIcon(showOnlySendIcon)
 
@@ -105,14 +106,23 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
 
     override fun openQuote(messageAndAttachment: MessageAndAttachment) {
         binding.textInputEditTextInput.requestFocus()
-        binding.layoutQuote.openQuote()
+        binding.layoutQuote.visibility = View.VISIBLE
         binding.layoutQuote.setupMessageAndAttachment(messageAndAttachment)
         Utils.openKeyboard(binding.textInputEditTextInput)
     }
 
-    fun resetImage() {
+    override fun getWebIdQuote() =
+        binding.layoutQuote.getMessageAndAttachment()?.message?.webId ?: ""
+
+    override fun closeQuote() {
+        binding.layoutQuote.closeQuote()
+    }
+
+    override fun resetImage() {
         binding.layoutQuote.resetImage()
     }
+
+    override fun getQuote() = binding.layoutQuote.getMessageAndAttachment()
 
     //endregion
 }

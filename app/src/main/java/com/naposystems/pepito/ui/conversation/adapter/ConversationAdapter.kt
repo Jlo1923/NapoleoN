@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.*
 import com.naposystems.pepito.entity.message.Message
@@ -20,7 +21,7 @@ class ConversationAdapter constructor(
     private val clickListener: ClickListener,
     private val mediaPlayerManager: MediaPlayerManager
 ) :
-    PagedListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
+    ListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         const val TYPE_MY_MESSAGE = 1
@@ -192,6 +193,14 @@ class ConversationAdapter constructor(
             binding.containerMyMessage.setOnClickListener {
                 clickListener.onClick(item)
             }
+
+            item.quote?.let {
+                binding.quote.setupMessageAndAttachment(item)
+                binding.containerQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 
@@ -247,6 +256,13 @@ class ConversationAdapter constructor(
             }
 
             binding.clickListener = clickListener
+
+            item.quote?.let {
+                binding.containerQuote.visibility = View.VISIBLE
+                binding.quote.setupMessageAndAttachment(item)
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
 
             binding.executePendingBindings()
         }
@@ -309,6 +325,13 @@ class ConversationAdapter constructor(
                 })
             }
 
+            item.quote?.let {
+                binding.quote.setupMessageAndAttachment(item)
+                binding.containerQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 
@@ -367,6 +390,13 @@ class ConversationAdapter constructor(
                 })
             }
 
+            item.quote?.let {
+                binding.quote.setupMessageAndAttachment(item)
+                binding.containerQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 
@@ -380,7 +410,7 @@ class ConversationAdapter constructor(
                     parent,
                     false
                 )
-                return IncomingMessageAudioViewHolder(binding/*, countDownTimer*/)
+                return IncomingMessageAudioViewHolder(binding)
             }
         }
     }
@@ -403,6 +433,14 @@ class ConversationAdapter constructor(
             } else {
                 binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
             }
+
+            item.quote?.let {
+                binding.quote.setupMessageAndAttachment(item)
+                binding.containerQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 
@@ -437,6 +475,14 @@ class ConversationAdapter constructor(
             } else {
                 binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
             }
+
+            item.quote?.let {
+                binding.quote.setupMessageAndAttachment(item)
+                binding.containerQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 
@@ -527,5 +573,6 @@ class ConversationAdapter constructor(
         fun messageToEliminate(item: MessageAndAttachment)
         fun errorPlayingAudio()
         fun onPreviewClick(item: MessageAndAttachment)
+        fun goToQuote(messageAndAttachment: MessageAndAttachment)
     }
 }

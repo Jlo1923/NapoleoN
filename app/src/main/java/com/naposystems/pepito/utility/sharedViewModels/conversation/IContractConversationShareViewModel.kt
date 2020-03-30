@@ -11,6 +11,9 @@ interface IContractConversationShareViewModel {
     fun resetMessage()
     fun setAttachmentSelected(attachment: Attachment)
     fun resetAttachmentSelected()
+    fun getQuoteWebId(): String?
+    fun setQuoteWebId(webId: String)
+    fun resetQuoteWebId()
 
     interface AudioAttachment {
         fun setAudiosSelected(listMediaStoreAudio: List<MediaStoreAudio>)

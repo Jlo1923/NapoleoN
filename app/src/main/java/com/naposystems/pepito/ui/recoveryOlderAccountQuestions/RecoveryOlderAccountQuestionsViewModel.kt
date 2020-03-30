@@ -48,6 +48,10 @@ class RecoveryOlderAccountQuestionsViewModel @Inject constructor(
                 } else {
                     when (response.code()) {
                         422 -> {
+                            response.errorBody()?.let {responseBody ->
+                                _recoveryOlderQuestionsCreatingError.value =
+                                    repository.get422Error(responseBody)
+                            }
                         }
                         else -> {
                             _recoveryOlderQuestionsCreatingError.value =

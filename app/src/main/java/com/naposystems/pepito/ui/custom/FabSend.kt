@@ -30,7 +30,7 @@ class FabSend : FloatingActionButton {
         ).apply {
             try {
 
-                showOnlySendIcon = getBoolean(R.styleable.FabIconSend_showOnlySendIcon1, false)
+                showOnlySendIcon = getBoolean(R.styleable.FabIconSend_showOnlySendIcon, false)
 
                 micToSend = AnimatedVectorDrawableCompat.create(context, R.drawable.anim_mic_send)
                 sendToMic = AnimatedVectorDrawableCompat.create(context, R.drawable.anim_send_mic)

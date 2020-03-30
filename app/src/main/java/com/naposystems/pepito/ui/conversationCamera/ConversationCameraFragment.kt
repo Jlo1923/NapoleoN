@@ -260,7 +260,8 @@ class ConversationCameraFragment : Fragment() {
                     findNavController().navigate(
                         ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
                             attachment,
-                            0
+                            0,
+                            args.quote
                         )
                     )
 
@@ -305,7 +306,8 @@ class ConversationCameraFragment : Fragment() {
                     findNavController().navigate(
                         ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
                             attachment,
-                            0
+                            0,
+                            args.quote
                         )
                     )
                 }

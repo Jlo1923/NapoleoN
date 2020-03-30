@@ -6,13 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
+import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
 import com.naposystems.pepito.databinding.InputPanelQuoteBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.utility.Constants
+import kotlinx.android.synthetic.main.language_selection_dialog_fragment_item.view.*
 
-class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
+class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
+    IContractInputPanelQuote {
 
     private var binding: InputPanelQuoteBinding
+    private var isCancelable: Boolean = false
+    private var isFromInputPanel: Boolean = false
+    private var messageAndAttachment: MessageAndAttachment? = null
+
 
     init {
         context.theme.obtainStyledAttributes(
@@ -30,12 +39,18 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                     true
                 )
 
+                isCancelable = getBoolean(R.styleable.Quote_isCancelable, false)
+                isFromInputPanel = getBoolean(R.styleable.Quote_isFromInputPanel, false)
+
+                binding.isFromInputPanel = isFromInputPanel
+
+
+                if (isCancelable) {
+                    binding.imageButtonCloseQuote.visibility = View.VISIBLE
+                }
+
                 binding.imageButtonCloseQuote.setOnClickListener {
-                    binding.containerQuote.visibility = View.GONE
-                    binding.imageViewQuote.apply {
-                        this.setImageBitmap(null)
-                        this.visibility = View.GONE
-                    }
+                    closeQuote()
                 }
             } finally {
                 recycle()
@@ -43,19 +58,30 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         }
     }
 
-    fun setupMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
+    override fun setupMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
+        this.messageAndAttachment = messageAndAttachment
         binding.messageAndAttachment = messageAndAttachment
+        binding.containerQuote.visibility = View.VISIBLE
         binding.executePendingBindings()
     }
 
-    fun openQuote() {
-        binding.containerQuote.visibility = View.VISIBLE
+    override fun closeQuote() {
+        binding.containerQuote.visibility = View.GONE
+        binding.imageViewQuote.apply {
+            this.setImageBitmap(null)
+            this.visibility = View.GONE
+        }
+        binding.textViewTitleQuote.text = null
+        binding.textViewMessageQuote.text = null
+        this.messageAndAttachment = null
     }
 
-    fun resetImage() {
+    override fun resetImage() {
         binding.imageViewQuote.apply {
             this.setImageBitmap(null)
             this.visibility = View.GONE
         }
     }
+
+    override fun getMessageAndAttachment() = this.messageAndAttachment
 }

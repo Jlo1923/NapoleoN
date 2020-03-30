@@ -504,6 +504,9 @@
         <action
             android:id="@+id/action_conversationCameraFragment_to_attachmentPreviewFragment"
             app:destination="@id/attachmentPreviewFragment" />
+        <argument
+            android:name="quote"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/contactProfileFragment"
@@ -532,6 +535,9 @@
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentGalleryFragment"
             app:destination="@id/attachmentGalleryFragment" />
+        <argument
+            android:name="quoteWebId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/attachmentGalleryFragment"
@@ -547,6 +553,9 @@
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentPreviewFragment"
             app:destination="@id/attachmentPreviewFragment" />
+        <argument
+            android:name="quoteWebId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/attachmentPreviewFragment"
@@ -562,6 +571,9 @@
         <argument
             android:name="galleryItemId"
             app:argType="integer" />
+        <argument
+            android:name="quote"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"

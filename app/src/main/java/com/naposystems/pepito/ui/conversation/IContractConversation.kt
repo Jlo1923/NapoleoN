@@ -23,36 +23,43 @@ interface IContractConversation {
         fun getUser(): User
         fun setContact(contact: Contact)
         fun getLocalMessages()
-        fun saveMessageLocally(body: String, selfDestructTime: Int)
+
+        fun saveMessageLocally(body: String, selfDestructTime: Int, quote: String)
         fun saveMessageAndAttachment(
             messageString: String,
             attachment: Attachment?,
             numberAttachments: Int,
-            selfDestructTime: Int
+            selfDestructTime: Int,
+            quote: String
         )
 
-        fun saveMessageWithAudioAttachment(mediaStoreAudio: MediaStoreAudio, selfDestructTime: Int)
+        fun saveMessageWithAudioAttachment(
+            mediaStoreAudio: MediaStoreAudio,
+            selfDestructTime: Int,
+            quote: String
+        )
+
         fun sendMessagesRead()
-        fun getLocalContact(idContact: Int)
-        fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Boolean)
-        fun cleanSelectionMessages(idContact: Int)
-        fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
-        fun deleteMessagesForAll(idContact: Int, listMessages: List<MessageAndAttachment>)
-        fun copyMessagesSelected(idContact: Int)
+        fun getLocalContact(contactId: Int)
+        fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Boolean)
+        fun cleanSelectionMessages(contactId: Int)
+        fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)
+        fun deleteMessagesForAll(contactId: Int, listMessages: List<MessageAndAttachment>)
+        fun copyMessagesSelected(contactId: Int)
         fun parsingListByTextBlock(listBody: List<String>): String
-        fun getMessagesSelected(idContact: Int)
+        fun getMessagesSelected(contactId: Int)
         fun resetListStringCopy()
         fun setCountOldMessages(count: Int)
         fun getCountOldMessages(): Int
+        fun getMessagePosition(messageAndAttachment: MessageAndAttachment): Int
     }
 
     interface Repository {
         suspend fun subscribeToChannel(userToChat: Contact): String
         fun unSubscribeToChannel(userToChat: Contact, channelName: String)
-        fun getLocalMessages(
-            contactId: Int,
-            pageSize: Int
-        ): LiveData<PagedList<MessageAndAttachment>>
+        fun getLocalMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
+
+        suspend fun getQuoteId(quoteWebId: String): Int
 
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
         suspend fun sendMessageAttachment(attachment: Attachment): Response<AttachmentResDTO>
@@ -74,17 +81,18 @@ interface IContractConversation {
         fun insertAttachment(attachment: Attachment): Long
         fun insertAttachments(listAttachment: List<Attachment>): List<Long>
         fun updateAttachment(attachment: Attachment)
+        fun insertQuote(quoteWebId: String, message: Message)
         fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>
         fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>
-        fun getLocalContact(idContact: Int): LiveData<Contact>
-        suspend fun updateStateSelectionMessage(idContact: Int, idMessage: Int, isSelected: Int)
-        suspend fun cleanSelectionMessages(idContact: Int)
-        suspend fun deleteMessagesSelected(idContact: Int, listMessages: List<MessageAndAttachment>)
+        fun getLocalContact(contactId: Int): LiveData<Contact>
+        suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
+        suspend fun cleanSelectionMessages(contactId: Int)
+        suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)
         suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
-        suspend fun copyMessagesSelected(idContact: Int): List<String>
-        suspend fun getMessagesSelected(idContact: Int): LiveData<List<MessageAndAttachment>>
+        suspend fun copyMessagesSelected(contactId: Int): List<String>
+        suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
 
     }
 }

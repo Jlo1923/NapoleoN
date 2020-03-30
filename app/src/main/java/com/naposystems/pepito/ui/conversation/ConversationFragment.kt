@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.Canvas
-import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -23,6 +23,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
+import androidx.core.graphics.toRect
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -54,6 +55,7 @@ import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
+import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
@@ -61,7 +63,6 @@ import com.naposystems.pepito.utility.sharedViewModels.conversation.Conversation
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ConversationFragment : Fragment(),
@@ -103,6 +104,13 @@ class ConversationFragment : Fragment(),
     private var clipData: ClipData? = null
 
     private var swipeBack = false
+    private val maxPositionSwipe = 3
+    private val maxPositionQuoteIcon = 400
+    private var leftReactF = 0f
+    private var rightReactF = 0f
+    private var heightItem = 0
+    private var verticalCenter = 0
+//    private var isVibrateTop = true
 
 
     private val animationScaleUp: Animation by lazy {
@@ -141,24 +149,7 @@ class ConversationFragment : Fragment(),
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-            /*val position = viewHolder.adapterPosition
-
-            when (direction) {
-                RIGHT -> {
-                    binding.inputPanel.resetImage()
-                    Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
-                    conversationAdapter
-                        .getMessageAndAttachment(position)?.let { messageAndAttachment ->
-                            Toast.makeText(
-                                context,
-                                "Swipe ${messageAndAttachment.message.body}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            binding.inputPanel.openQuote(messageAndAttachment)
-                        }
-                }
-            }*/
+            //Nothing
         }
 
         override fun convertToAbsoluteDirection(flags: Int, layoutDirection: Int): Int {
@@ -169,7 +160,6 @@ class ConversationFragment : Fragment(),
             return super.convertToAbsoluteDirection(flags, layoutDirection)
         }
 
-        @SuppressLint("ClickableViewAccessibility")
         override fun onChildDraw(
             c: Canvas,
             recyclerView: RecyclerView,
@@ -179,78 +169,13 @@ class ConversationFragment : Fragment(),
             actionState: Int,
             isCurrentlyActive: Boolean
         ) {
-            val icon = resources.getDrawable(R.drawable.ic_quote, null)
-
-            /*val maxWidthSwipe = recyclerView.width / 3
-            if (dX > maxWidthSwipe.toFloat()) {
-                if (vibrateTop){
-                    Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
-                    vibrateTop = false
-                }
-            }*/
-
-            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                recyclerView.setOnTouchListener { _, event ->
-                    swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
-                            event?.action == MotionEvent.ACTION_UP
-                    if (swipeBack && dX > recyclerView.width / 3) {
-                        val position = viewHolder.adapterPosition
-                        binding.inputPanel.resetImage()
-                        conversationAdapter
-                            .getMessageAndAttachment(position)?.let { messageAndAttachment ->
-                                Toast.makeText(
-                                    context,
-                                    "Swipe ${messageAndAttachment.message.body}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                binding.inputPanel.openQuote(messageAndAttachment)
-                            }
-                    }
-                    false
-                }
-            }
-
-
-
-            /*if (dX > recyclerView.width / 3) {
-                val position = viewHolder.adapterPosition
-                binding.inputPanel.resetImage()
-                Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
-                conversationAdapter
-                    .getMessageAndAttachment(position)?.let { messageAndAttachment ->
-                        Toast.makeText(
-                            context,
-                            "Swipe ${messageAndAttachment.message.body}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        binding.inputPanel.openQuote(messageAndAttachment)
-                    }
-            }*/
-
-
-
-
-            c.clipRect(
-                -20f, viewHolder.itemView.top.toFloat(),
-                dX, viewHolder.itemView.bottom.toFloat()
-            )
-
-            val textMargin = 24
-
-            icon.bounds = Rect(
-                textMargin,
-                viewHolder.itemView.top + textMargin,
-                textMargin + icon.intrinsicWidth,
-                viewHolder.itemView.top + icon.intrinsicHeight + textMargin
-            )
-
-            icon.draw(c)
+            actionSwipeQuote(actionState, recyclerView, dX, viewHolder, c)
 
             super.onChildDraw(
                 c,
                 recyclerView,
                 viewHolder,
-                dX / 4,
+                dX /2,
                 dY,
                 actionState,
                 isCurrentlyActive
@@ -262,7 +187,6 @@ class ConversationFragment : Fragment(),
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -284,9 +208,13 @@ class ConversationFragment : Fragment(),
 
         binding.inputPanel.getFloatingActionButton().setOnClickListener {
             if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
+
+                val quote = binding.inputPanel.getQuote()
+
                 viewModel.saveMessageLocally(
                     binding.inputPanel.getEditTex().text.toString(),
-                    obtainTimeSelfDestruct()
+                    obtainTimeSelfDestruct(),
+                    quote?.message?.webId ?: ""
                 )
 
                 with(binding.inputPanel.getEditTex()) {
@@ -294,6 +222,7 @@ class ConversationFragment : Fragment(),
                 }
             }
             handlerGoDown()
+            binding.inputPanel.closeQuote()
         }
 
         binding.inputPanel.setEditTextWatcher(object : TextWatcher {
@@ -306,19 +235,19 @@ class ConversationFragment : Fragment(),
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                //Nothing
-                val text = binding.inputPanel.getEditTex().text.toString()
+                binding.inputPanel.apply {
+                    val text = getEditTex().text.toString()
 
-                if (text.isNotEmpty() && !isEditTextFilled) {
-                    binding.inputPanel.morphFloatingActionButtonIcon()
-                    isEditTextFilled = true
-                    binding.inputPanel.hideImageButtonCamera()
-                } else if (text.isEmpty()) {
-                    binding.inputPanel.morphFloatingActionButtonIcon()
-                    isEditTextFilled = false
-                    binding.inputPanel.showImageButtonCamera()
+                    if (text.isNotEmpty() && !isEditTextFilled) {
+                        morphFloatingActionButtonIcon()
+                        isEditTextFilled = true
+                        hideImageButtonCamera()
+                    } else if (text.isEmpty()) {
+                        morphFloatingActionButtonIcon()
+                        isEditTextFilled = false
+                        showImageButtonCamera()
+                    }
                 }
-
             }
         })
 
@@ -334,7 +263,8 @@ class ConversationFragment : Fragment(),
                     ) {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
-                                args.contact
+                                args.contact,
+                                binding.inputPanel.getWebIdQuote()
                             )
                         )
                     }
@@ -349,7 +279,8 @@ class ConversationFragment : Fragment(),
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
                                 viewModel.getUser().id,
-                                args.contact.id
+                                args.contact.id,
+                                binding.inputPanel.getWebIdQuote()
                             )
                         )
                     }
@@ -397,7 +328,8 @@ class ConversationFragment : Fragment(),
                 findNavController().navigate(
                     ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
                         viewModel.getUser().id,
-                        args.contact.id
+                        args.contact.id,
+                        binding.inputPanel.getWebIdQuote()
                     )
                 )
             }
@@ -419,7 +351,8 @@ class ConversationFragment : Fragment(),
                 shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
                     viewModel.saveMessageWithAudioAttachment(
                         mediaStoreAudio,
-                        obtainTimeSelfDestruct()
+                        obtainTimeSelfDestruct(),
+                        binding.inputPanel.getWebIdQuote()
                     )
                 }
             }
@@ -431,7 +364,8 @@ class ConversationFragment : Fragment(),
                     shareViewModel.getMessage() ?: "",
                     attachment,
                     1,
-                    obtainTimeSelfDestruct()
+                    obtainTimeSelfDestruct(),
+                    shareViewModel.getQuoteWebId() ?: ""
                 )
             }
         })
@@ -512,7 +446,7 @@ class ConversationFragment : Fragment(),
 
             conversationAdapter.submitList(conversationList)
 
-            if (conversationList.isNotEmpty()) {
+            if (!conversationList.isNullOrEmpty()) {
                 viewModel.sendMessagesRead()
             }
 
@@ -805,6 +739,7 @@ class ConversationFragment : Fragment(),
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
             override fun onClick(item: MessageAndAttachment) {
+
                 if (actionMode.mode != null) {
                     updateStateSelectionMessage(item.message)
                 }
@@ -847,10 +782,21 @@ class ConversationFragment : Fragment(),
 
             override fun onPreviewClick(item: MessageAndAttachment) {
                 findNavController().navigate(
-                    ConversationFragmentDirections.actionConversationFragmentToPreviewMediaFragment(
-                        item
-                    )
+                    ConversationFragmentDirections
+                        .actionConversationFragmentToPreviewMediaFragment(item)
                 )
+            }
+
+            override fun goToQuote(messageAndAttachment: MessageAndAttachment) {
+                val position = viewModel.getMessagePosition(messageAndAttachment)
+
+                if (position != -1) {
+                    binding.recyclerViewConversation.smoothScrollToPosition(position)
+                } else {
+                    Toast.makeText(
+                        context, "No se encuentra el mensaje original|!!", Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }, mediaPlayerManager)
 
@@ -922,6 +868,65 @@ class ConversationFragment : Fragment(),
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         // custom message for the intent
         startActivity(Intent.createChooser(intent, "Choose an Application:"))
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun actionSwipeQuote(
+        actionState: Int,
+        recyclerView: RecyclerView,
+        dX: Float,
+        viewHolder: RecyclerView.ViewHolder,
+        c: Canvas
+    ) {
+        val icon = resources.getDrawable(R.drawable.ic_quote_new, null)
+        /*val maxWidthSwipe = recyclerView.width / 3
+            if (dX > maxWidthSwipe.toFloat() && isVibrateTop) {
+                Utils.vibratePhone(context, Constants.Vibrate.SOFT.type)
+                isVibrateTop = false
+            }*/
+
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            recyclerView.setOnTouchListener { _, event ->
+                swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
+                        event?.action == MotionEvent.ACTION_UP
+                if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
+                    val position = viewHolder.adapterPosition
+                    binding.inputPanel.resetImage()
+                    conversationAdapter
+                        .getMessageAndAttachment(position)?.let { messageAndAttachment ->
+                            if (messageAndAttachment.message.status == Constants.MessageStatus.ERROR.status){
+                                this.showToast("No se puede citar de un mensaje fallido|!!")
+                            } else {
+                                binding.inputPanel.openQuote(messageAndAttachment)
+                            }
+                        }
+                }
+                false
+            }
+        }
+
+        c.clipRect(
+            0f, viewHolder.itemView.top.toFloat(),
+            viewHolder.itemView.right.toFloat(), viewHolder.itemView.bottom.toFloat()
+        )
+
+        heightItem = viewHolder.itemView.bottom - viewHolder.itemView.top
+        verticalCenter =
+            (viewHolder.itemView.top + (heightItem / 2)) - (icon.intrinsicHeight / 2)
+
+        if (dX < maxPositionQuoteIcon) {
+            rightReactF = dX / maxPositionSwipe
+            leftReactF = rightReactF - icon.intrinsicWidth
+        }
+
+        icon.bounds = RectF(
+            leftReactF,
+            verticalCenter.toFloat(),
+            rightReactF,
+            (verticalCenter + icon.intrinsicHeight).toFloat()
+        ).toRect()
+
+        icon.draw(c)
     }
 
     override fun onPause() {

@@ -2,7 +2,6 @@ package com.naposystems.pepito.ui.attachmentAudio
 
 import android.content.ContentUris
 import android.content.Context
-import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
@@ -18,7 +17,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 class AttachmentAudioViewModel @Inject constructor(private val context: Context) :
     ViewModel(), IContractAttachmentAudio.ViewModel {

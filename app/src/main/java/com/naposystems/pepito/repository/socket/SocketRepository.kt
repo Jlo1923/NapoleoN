@@ -1,12 +1,13 @@
 package com.naposystems.pepito.repository.socket
 
 import android.content.Context
-import android.net.Uri
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
+import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
@@ -16,9 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
-import timber.log.Timber
-import java.io.*
 import javax.inject.Inject
 
 class SocketRepository @Inject constructor(
@@ -26,7 +24,8 @@ class SocketRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val conversationLocalDataSource: ConversationDataSource,
     private val messageLocalDataSource: MessageDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource
+    private val attachmentLocalDataSource: AttachmentDataSource,
+    private val quoteDataSource: QuoteDataSource
 ) : IContractSocketService.Repository {
 
     override fun getMyMessages() {
@@ -44,10 +43,14 @@ class SocketRepository @Inject constructor(
                             null, messageRes, Constants.IsMine.NO.value
                         )
 
-                        val conversationId = messageLocalDataSource.insertMessage(message)
+                        val messageId = messageLocalDataSource.insertMessage(message)
+
+                        if (messageRes.quoted.isNotEmpty()) {
+                            insertQuote(messageRes, messageId.toInt())
+                        }
 
                         val listAttachments = AttachmentResDTO.toListConversationAttachment(
-                            conversationId.toInt(),
+                            messageId.toInt(),
                             messageRes.attachments
                         )
 
@@ -84,6 +87,30 @@ class SocketRepository @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
+        val originalMessage =
+            messageLocalDataSource.getMessageByWebId(messageRes.quoted)
+
+        var firstAttachment: Attachment? = null
+
+        if (originalMessage.attachmentList.isNotEmpty()) {
+            firstAttachment = originalMessage.attachmentList.first()
+        }
+
+        val quote = Quote(
+            id = 0,
+            messageId = messageId,
+            contactId = originalMessage.message.contactId,
+            body = originalMessage.message.body,
+            attachmentType = firstAttachment?.type ?: "",
+            thumbnailUri = firstAttachment?.uri ?: "",
+            messageParentId = originalMessage.message.id,
+            isMine = originalMessage.message.isMine
+        )
+
+        quoteDataSource.insertQuote(quote)
     }
 
     override fun verifyMessagesReceived() {
