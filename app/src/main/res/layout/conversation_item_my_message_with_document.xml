@@ -23,14 +23,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(conversation)}"
-        android:paddingTop="@dimen/x_x_small_padding"
         android:paddingEnd="@dimen/small_padding"
-        android:paddingBottom="@dimen/x_x_small_padding">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
             android:background="@drawable/bg_my_message"
             android:paddingStart="@dimen/x_small_padding"
             android:paddingTop="@dimen/x_small_padding"
@@ -91,6 +94,22 @@
                 tools:srcCompat="@drawable/ic_access_time_black" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textView_count_down"
+            android:layout_width="55dp"
+            android:layout_height="15dp"
+            android:layout_marginEnd="@dimen/normal_margin"
+            android:background="@drawable/bg_self_destruct_time_my_message"
+            android:elevation="1dp"
+            android:gravity="center"
+            android:textColor="?attr/attrTextColorColorTextIncomingMessage"
+            android:textSize="@dimen/text_size_self_destruct_time"
+            app:layout_constraintBottom_toTopOf="@+id/container_message"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_message"
+            tools:text="10:34:20" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
