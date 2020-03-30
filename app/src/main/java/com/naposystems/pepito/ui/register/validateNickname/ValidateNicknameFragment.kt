@@ -12,9 +12,9 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -36,7 +36,7 @@ class ValidateNicknameFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: ValidateNicknameViewModel
+    private val viewModel: ValidateNicknameViewModel by viewModels { viewModelFactory }
     private lateinit var binding: ValidateNicknameFragmentBinding
 
     private var itsNicknameAvailable = true
@@ -58,9 +58,6 @@ class ValidateNicknameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(ValidateNicknameViewModel::class.java)
 
         binding =
             DataBindingUtil.inflate(

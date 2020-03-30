@@ -18,6 +18,7 @@
     <string name="text_title_delete_messages_unreceived">Eliminar no recibidos</string>
     <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
     <string name="text_delete_messages_conversation">Eliminar mensajes</string>
+    <string name="explanation_to_send_location_attachment">Para enviar una ubicación, permita que NapoleoN acceda a su ubicación.</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>

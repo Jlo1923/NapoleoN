@@ -86,7 +86,9 @@ class PreviewMediaFragment : Fragment() {
         val firstAttachment = messageAndAttachment.attachmentList[0]
 
         when (firstAttachment.type) {
-            Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.GIF.type -> {
+            Constants.AttachmentType.IMAGE.type,
+            Constants.AttachmentType.GIF.type,
+            Constants.AttachmentType.LOCATION.type -> {
                 if (binding.viewSwitcher.currentView.id == binding.containerVideoView.id) {
                     binding.viewSwitcher.showNext()
                 }

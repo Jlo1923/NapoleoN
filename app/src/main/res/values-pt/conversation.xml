@@ -18,6 +18,7 @@
     <string name="text_title_delete_messages_unreceived">Excluir não recebidas</string>
     <string name="text_title_delete_failed_messages">Excluir mensagens com falha</string>
     <string name="text_delete_messages_conversation">Excluir mensagens</string>
+    <string name="explanation_to_send_location_attachment">Para enviar um local, permitir o acesso NAPOLEON sua localização.</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d dia</item>
         <item quantity="other">%d dias</item>

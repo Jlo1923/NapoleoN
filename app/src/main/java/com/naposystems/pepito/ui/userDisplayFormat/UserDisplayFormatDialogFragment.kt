@@ -1,17 +1,15 @@
 package com.naposystems.pepito.ui.userDisplayFormat
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.UserDisplayFormatDialogFragmentBinding
 import com.naposystems.pepito.utility.Constants
@@ -32,7 +30,7 @@ class UserDisplayFormatDialogFragment : DialogFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: UserDisplayFormatDialogViewModel
+    private val viewModel: UserDisplayFormatDialogViewModel by viewModels { viewModelFactory }
     private lateinit var binding: UserDisplayFormatDialogFragmentBinding
     private lateinit var listener: UserDisplayFormatListener
     private var format: Int = 0
@@ -81,8 +79,6 @@ class UserDisplayFormatDialogFragment : DialogFragment() {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(UserDisplayFormatDialogViewModel::class.java)
 
         viewModel.getUserDisplayFormat()
 

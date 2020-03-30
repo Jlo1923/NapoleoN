@@ -16,8 +16,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
@@ -40,7 +40,6 @@ import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import javax.inject.Inject
 
 class ProfileFragment : BaseFragment() {
@@ -57,7 +56,7 @@ class ProfileFragment : BaseFragment() {
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
     private lateinit var binding: ProfileFragmentBinding
-    private lateinit var viewModel: ProfileViewModel
+    private val viewModel: ProfileViewModel by viewModels { viewModelFactory }
     private lateinit var fileName: String
     private lateinit var subFolder: String
     private lateinit var animatedThreeEditName: AnimatedThreeVectorView
@@ -155,9 +154,6 @@ class ProfileFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(ProfileViewModel::class.java)
-
         binding.viewModel = viewModel
 
         viewModelObservers()

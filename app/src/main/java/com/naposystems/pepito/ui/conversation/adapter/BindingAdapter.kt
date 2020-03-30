@@ -15,7 +15,6 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
-import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -112,7 +111,10 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
 }
 
 @BindingAdapter("imageAttachment")
-fun bindImageAttachment(imageView: ImageView, @Nullable messageAndAttachmentParam: MessageAndAttachment?) {
+fun bindImageAttachment(
+    imageView: ImageView,
+    @Nullable messageAndAttachmentParam: MessageAndAttachment?
+) {
 
     try {
         messageAndAttachmentParam?.let { messageAndAttachment ->
@@ -121,7 +123,7 @@ fun bindImageAttachment(imageView: ImageView, @Nullable messageAndAttachmentPara
                 val firstAttachment = messageAndAttachment.attachmentList[0]
 
                 when (firstAttachment.type) {
-                    Constants.AttachmentType.IMAGE.type -> {
+                    Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
                         Glide.with(imageView)
                             .load(firstAttachment)
                             .transform(CenterCrop(), RoundedCorners(8))

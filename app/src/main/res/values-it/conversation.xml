@@ -18,6 +18,7 @@
     <string name="text_title_delete_messages_unreceived">Elimina i messaggi non riusciti</string>
     <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
     <string name="text_delete_messages_conversation">Elimina i messaggi</string>
+    <string name="explanation_to_send_location_attachment">Per inviare una posizione, permettere l\'accesso NAPOLEON vostra posizione.</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d giorno</item>
         <item quantity="other">%d giorni</item>

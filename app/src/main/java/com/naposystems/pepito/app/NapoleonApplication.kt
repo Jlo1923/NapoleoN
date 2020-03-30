@@ -7,6 +7,7 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.giphy.sdk.ui.Giphy
+import com.google.android.libraries.places.api.Places
 import com.naposystems.pepito.R
 import com.naposystems.pepito.di.DaggerApplicationComponent
 import com.naposystems.pepito.utility.Constants
@@ -39,6 +40,7 @@ class NapoleonApplication : DaggerApplication() {
         EmojiManager.instance.install()
         configEmojiCompat()
         Giphy.configure(this, Constants.GIPHY_API_KEY)
+        Places.initialize(this, getString(R.string.google_maps_key))
     }
 
     private fun configEmojiCompat() {

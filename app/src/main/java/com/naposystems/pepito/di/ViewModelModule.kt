@@ -9,6 +9,7 @@ import com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel
 import com.naposystems.pepito.ui.attachmentAudio.AttachmentAudioViewModel
 import com.naposystems.pepito.ui.attachmentGallery.AttachmentGalleryViewModel
 import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFoldersViewModel
+import com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationViewModel
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
@@ -271,5 +272,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(NapoleonKeyboardGifViewModel::class)
     internal abstract fun bindNapoleonKeyboardGifViewModel(viewModel: NapoleonKeyboardGifViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AttachmentLocationViewModel::class)
+    internal abstract fun bindAttachmentLocationViewModel(viewModel: AttachmentLocationViewModel): ViewModel
 
 }
