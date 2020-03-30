@@ -9,15 +9,17 @@ interface ContactDataSource {
 
     suspend fun getLocaleContacts(): List<Contact>
 
-    fun getContact(idContact : Int): LiveData<Contact>
+    fun getContact(contactId : Int): LiveData<Contact>
 
-    suspend fun restoreContact(idContact: Int)
+    fun getContactById(contactId : Int): Contact
 
-    suspend fun updateNameFakeContact(idContact: Int, nameFake: String)
+    suspend fun restoreContact(contactId: Int)
 
-    suspend fun updateNicknameFakeContact(idContact: Int, nicknameFake: String)
+    suspend fun updateNameFakeContact(contactId: Int, nameFake: String)
 
-    suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String)
+    suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String)
+
+    suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String)
 
     suspend fun insertContact(contact: Contact)
 
@@ -33,7 +35,7 @@ interface ContactDataSource {
 
     suspend fun deleteContacts(contacts: List<Contact>)
 
-    suspend fun updateContactSilenced(idContact: Int, contactSilenced : Int)
+    suspend fun updateContactSilenced(contactId: Int, contactSilenced : Int)
 
     suspend fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int)
 

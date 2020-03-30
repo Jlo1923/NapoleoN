@@ -3,16 +3,17 @@ package com.naposystems.pepito.utility.glideModelLoaders.galleryItem
 import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import android.provider.MediaStore
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.FileManager
 import timber.log.Timber
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.FileInputStream
+import java.io.InputStream
 
 class GalleryItemDataFetcher constructor(
     private val context: Context,
@@ -23,7 +24,7 @@ class GalleryItemDataFetcher constructor(
     override fun getDataClass() = InputStream::class.java
 
     override fun cleanup() {
-        //TODO: Limpiar el InputStream close(), and clean()
+        // Intentionally empty
     }
 
     override fun getDataSource() = DataSource.LOCAL

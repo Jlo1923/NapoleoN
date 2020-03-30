@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
-import com.naposystems.pepito.utility.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,15 +40,6 @@ class AttachmentAudioViewModel @Inject constructor(private val context: Context)
                 MediaStore.Audio.Media.DURATION,
                 MediaStore.Audio.Media.ALBUM_ID,
                 MediaStore.Audio.Media.MIME_TYPE
-            )
-
-            //WHERE
-            val selection = "${MediaStore.Images.Media.DATE_ADDED} >= ?"
-
-            //WHERE ARGS
-            val selectionArgs = arrayOf(
-                // Release day of the G1. :)
-                Utils.dateToTimestamp(day = 22, month = 10, year = 2008).toString()
             )
 
             val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"

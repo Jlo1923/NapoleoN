@@ -15,7 +15,6 @@ import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 import com.naposystems.pepito.utility.Utils
@@ -110,10 +109,8 @@ class MediaPlayerManager(private val context: Context) :
     }
 
     private fun deleteTempFile() {
-        if (mIsEncryptedFile && ::tempFile.isInitialized) {
-            if (tempFile.exists()) {
-                tempFile.delete()
-            }
+        if (mIsEncryptedFile && ::tempFile.isInitialized && tempFile.exists()) {
+            tempFile.delete()
         }
     }
 
@@ -123,41 +120,7 @@ class MediaPlayerManager(private val context: Context) :
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        /*if (event?.sensor?.type != Sensor.TYPE_PROXIMITY) return
-
-        val audioContentType: Int =
-            if (event.values[0] < 5f && event.values[0] != mProximitySensor?.maximumRange) {
-                AudioManager.STREAM_VOICE_CALL
-            } else {
-                AudioManager.STREAM_MUSIC
-            }
-
-        if (audioContentType == AudioManager.STREAM_VOICE_CALL && mAudioContentType != audioContentType &&
-            mAudioManager.getDevices(GET_DEVICES_INPUTS).isNotEmpty()
-        ) {
-            wakeLock.acquire(mediaPlayer!!.duration.toLong())
-            *//*val position: Double = this.mediaPlayer!!.currentPosition.toDouble()
-            val duration: Double = this.mediaPlayer!!.duration.toDouble()
-            val progress = position / duration
-            mediaPlayer?.stop()
-            mediaPlayer?.release()
-            mediaPlayer = null
-            try {
-                playAudio(mPreviousAudioId!!, mPreviousUri!!)
-            } catch (e: Exception) {
-                Timber.e(e)
-            }*//*
-        } else if (audioContentType == AudioManager.STREAM_MUSIC
-            && mAudioContentType != audioContentType
-        ) {
-            *//*val position: Double = mediaPlayer!!.currentPosition.toDouble()
-            val duration: Double = mediaPlayer!!.duration.toDouble()*//*
-//            this.secondprogress = position / duration
-            try {
-                wakeLock.release()
-            } catch (th: Throwable) {
-            }
-        }*/
+        // Intentionally empty
     }
     //endregion
 
@@ -294,11 +257,11 @@ class MediaPlayerManager(private val context: Context) :
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
+                // Intentionally empty
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
+                // Intentionally empty
             }
         })
     }

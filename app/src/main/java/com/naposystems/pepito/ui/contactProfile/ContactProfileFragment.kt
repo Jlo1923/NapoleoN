@@ -88,18 +88,123 @@ class ContactProfileFragment : BaseFragment() {
         animatedThreeEditName = binding.imageButtonChangeNameEndIcon
         animatedThreeEditNickName = binding.imageButtonChangeNicknameEndIcon
 
-        binding.imageButtonChangeNameEndIcon.setOnClickListener {
-            animatedThreeEditName.apply {
-                if (hasBeenInitialized) {
-                    binding.imageButtonChangeNicknameEndIcon.isEnabled = true
-                    cancelToEdit(binding.editTextName)
+        imageButtonChangeNameEndIconClickListener()
+
+        setEditTextNameSetOnEditorActionListener()
+
+        setEditTextNicknameSetOnEditorActionListener()
+
+        imageButtonChangeNicknameEndIconClickListener()
+
+        binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
+
+        binding.optionRestoreContactChat.setOnClickListener(optionRestoreContactChatClickListener())
+
+        binding.optionDeleteConversation.setOnClickListener(optionDeleteConversationClickListener())
+
+        binding.optionBlockContact.setOnClickListener(optionBlockContactClickListener())
+
+        binding.imageButtonEditHeader.setOnClickListener {
+            subFolder = HEADER_SUBFOLDER
+            verifyCameraAndMediaPermission()
+        }
+
+        return binding.root
+    }
+
+    private fun optionBlockContactClickListener() = View.OnClickListener {
+        Utils.generalDialog(
+            getString(R.string.text_block_contact),
+            getString(
+                R.string.text_wish_block_contact,
+                if (viewModel.contact.value!!.displayNameFake.isEmpty()) {
+                    viewModel.contact.value!!.displayName
                 } else {
-                    binding.imageButtonChangeNicknameEndIcon.isEnabled = false
-                    editToCancel(binding.editTextName)
+                    viewModel.contact.value!!.displayNameFake
+                }
+            ),
+            true,
+            childFragmentManager
+        ) {
+            viewModel.contact.value?.let { contact ->
+                if (contact.statusBlocked) {
+                    shareContactViewModel.unblockContact(contact.id)
+                } else {
+                    shareContactViewModel.sendBlockedContact(contact)
+                    findNavController().popBackStack(R.id.homeFragment, false)
                 }
             }
         }
+    }
 
+    private fun optionDeleteConversationClickListener() = View.OnClickListener {
+        Utils.generalDialog(
+            getString(R.string.text_title_delete_conversation),
+            getString(R.string.text_want_delete_conversation),
+            true,
+            childFragmentManager
+        ) {
+            shareContactViewModel.deleteConversation(args.contactId)
+            findNavController().popBackStack(R.id.homeFragment, false)
+        }
+    }
+
+    private fun optionRestoreContactChatClickListener() = View.OnClickListener {
+        Utils.generalDialog(
+            getString(R.string.text_reset_contact),
+            getString(R.string.text_want_reset_contact),
+            true,
+            childFragmentManager
+        ) {
+            viewModel.restoreContact(args.contactId)
+        }
+    }
+
+    private fun imageButtonChangeNicknameEndIconClickListener() {
+        binding.imageButtonChangeNicknameEndIcon.setOnClickListener {
+            animatedThreeEditNickName.apply {
+                if (hasBeenInitialized) {
+                    binding.imageButtonChangeNameEndIcon.isEnabled = true
+                    cancelToEdit(binding.editTextNickname)
+                } else {
+                    binding.imageButtonChangeNameEndIcon.isEnabled = false
+                    editToCancel(binding.editTextNickname)
+                }
+            }
+        }
+    }
+
+    private fun setEditTextNicknameSetOnEditorActionListener() {
+        binding.editTextNickname.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (binding.editTextName.text?.count()!! < 3) {
+                    Utils.generalDialog(
+                        getString(R.string.text_nickname_invalid),
+                        getString(R.string.text_alert_nickname),
+                        true,
+                        childFragmentManager
+                    ) { }
+                } else {
+                    binding.editTextNickname.apply {
+                        isEnabled = false
+                    }
+
+                    animatedThreeEditNickName.cancelToHourglass()
+                    viewModel.updateNicknameFakeContact(args.contactId, view.text.toString())
+                    binding.editTextName.apply {
+                        isEnabled = true
+                    }
+
+                    binding.editTextName.isFocusable = true
+                    binding.imageButtonChangeNameEndIcon.isEnabled = true
+                }
+                false
+            } else
+                true
+        }
+    }
+
+    private fun setEditTextNameSetOnEditorActionListener() {
         binding.editTextName.setOnEditorActionListener { view, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
 
@@ -129,103 +234,20 @@ class ContactProfileFragment : BaseFragment() {
             } else
                 true
         }
+    }
 
-        binding.editTextNickname.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (binding.editTextName.text?.count()!! < 3) {
-                    Utils.generalDialog(
-                        getString(R.string.text_nickname_invalid),
-                        getString(R.string.text_alert_nickname),
-                        true,
-                        childFragmentManager
-                    ) { }
-                } else {
-                    binding.editTextNickname.apply {
-                        isEnabled = false
-                    }
-
-                    animatedThreeEditNickName.cancelToHourglass()
-                    viewModel.updateNicknameFakeContact(args.contactId, view.text.toString())
-                    binding.editTextName.apply {
-                        isEnabled = true
-                    }
-
-                    binding.editTextName.isFocusable = true
-                    binding.imageButtonChangeNameEndIcon.isEnabled = true
-                }
-                false
-            } else
-                true
-        }
-
-        binding.imageButtonChangeNicknameEndIcon.setOnClickListener {
-            animatedThreeEditNickName.apply {
+    private fun imageButtonChangeNameEndIconClickListener() {
+        binding.imageButtonChangeNameEndIcon.setOnClickListener {
+            animatedThreeEditName.apply {
                 if (hasBeenInitialized) {
-                    binding.imageButtonChangeNameEndIcon.isEnabled = true
-                    cancelToEdit(binding.editTextNickname)
+                    binding.imageButtonChangeNicknameEndIcon.isEnabled = true
+                    cancelToEdit(binding.editTextName)
                 } else {
-                    binding.imageButtonChangeNameEndIcon.isEnabled = false
-                    editToCancel(binding.editTextNickname)
+                    binding.imageButtonChangeNicknameEndIcon.isEnabled = false
+                    editToCancel(binding.editTextName)
                 }
             }
         }
-
-        binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
-
-        binding.optionRestoreContactChat.setOnClickListener {
-            Utils.generalDialog(
-                getString(R.string.text_reset_contact),
-                getString(R.string.text_want_reset_contact),
-                true,
-                childFragmentManager
-            ) {
-                viewModel.restoreContact(args.contactId)
-            }
-        }
-
-        binding.optionDeleteConversation.setOnClickListener {
-            Utils.generalDialog(
-                getString(R.string.text_title_delete_conversation),
-                getString(R.string.text_want_delete_conversation),
-                true,
-                childFragmentManager
-            ) {
-                shareContactViewModel.deleteConversation(args.contactId)
-                findNavController().popBackStack(R.id.homeFragment, false)
-            }
-        }
-
-        binding.optionBlockContact.setOnClickListener {
-            Utils.generalDialog(
-                getString(R.string.text_block_contact),
-                getString(
-                    R.string.text_wish_block_contact,
-                    if (viewModel.contact.value!!.displayNameFake.isEmpty()) {
-                        viewModel.contact.value!!.displayName
-                    } else {
-                        viewModel.contact.value!!.displayNameFake
-                    }
-                ),
-                true,
-                childFragmentManager
-            ) {
-                viewModel.contact.value?.let {contact ->
-                    if(contact.statusBlocked){
-                        shareContactViewModel.unblockContact(contact.id)
-                    } else {
-                        shareContactViewModel.sendBlockedContact(contact)
-                        findNavController().popBackStack(R.id.homeFragment, false)
-                    }
-                }
-            }
-        }
-
-        binding.imageButtonEditHeader.setOnClickListener {
-            subFolder = HEADER_SUBFOLDER
-            verifyCameraAndMediaPermission()
-        }
-
-        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -237,7 +259,7 @@ class ContactProfileFragment : BaseFragment() {
         try {
             shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
                 .get(ShareContactViewModel::class.java)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
 
@@ -264,7 +286,7 @@ class ContactProfileFragment : BaseFragment() {
             }
         })
 
-        viewModel.contact.observe(viewLifecycleOwner, Observer {contact ->
+        viewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
             checkSilenceConversation(contact.silenced)
             setTextToolbar(contact)
             setTextBlockedContact(contact.statusBlocked)
@@ -309,9 +331,10 @@ class ContactProfileFragment : BaseFragment() {
             }
         }
 
-    private fun setTextBlockedContact(blocked : Boolean) {
-        if(blocked) {
-            binding.textViewLabelBlockContact.text = context?.getString(R.string.text_unblock_contact)
+    private fun setTextBlockedContact(blocked: Boolean) {
+        if (blocked) {
+            binding.textViewLabelBlockContact.text =
+                context?.getString(R.string.text_unblock_contact)
         } else {
             binding.textViewLabelBlockContact.text = context?.getString(R.string.text_block_contact)
         }

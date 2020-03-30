@@ -54,22 +54,7 @@ class SocketRepository @Inject constructor(
                             messageRes.attachments
                         )
 
-                        withContext(Dispatchers.IO) {
-                            listAttachments.forEach { attachment ->
-
-                                val responseDownloadFile =
-                                    napoleonApi.downloadFileByUrl(attachment.body)
-
-                                if (responseDownloadFile.isSuccessful) {
-                                    attachment.uri =
-                                        FileManager.saveToDisk(
-                                            context,
-                                            responseDownloadFile.body()!!,
-                                            attachment
-                                        )
-                                }
-                            }
-                        }
+                        downloadFile(listAttachments)
 
                         attachmentLocalDataSource.insertAttachments(listAttachments)
 
@@ -84,6 +69,26 @@ class SocketRepository @Inject constructor(
                         )
                     }
 
+                }
+            }
+        }
+    }
+
+    private suspend fun downloadFile(listAttachments: List<Attachment>) {
+        withContext(Dispatchers.IO) {
+            listAttachments.forEach { attachment ->
+
+                val responseDownloadFile =
+                    napoleonApi.downloadFileByUrl(attachment.body)
+
+                if (responseDownloadFile.isSuccessful) {
+                    attachment.uri =
+                        FileManager.saveToDisk(
+                            context = context,
+                            body = responseDownloadFile.body()!!,
+                            type = attachment.type,
+                            extension = attachment.extension
+                        )
                 }
             }
         }

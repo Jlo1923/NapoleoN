@@ -1,9 +1,6 @@
 package com.naposystems.pepito.repository.conversation
 
-import android.content.ContentUris
 import android.content.Context
-import android.net.Uri
-import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
@@ -42,7 +39,7 @@ import retrofit2.Response
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -131,6 +128,10 @@ class ConversationRepository @Inject constructor(
         return messageLocalDataSource.getQuoteId(quoteWebId)
     }
 
+    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {
+        return messageLocalDataSource.getLocalMessagesByStatus(contactId, status)
+    }
+
     override suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
         return napoleonApi.sendMessage(messageReqDTO)
     }
@@ -146,33 +147,6 @@ class ConversationRepository @Inject constructor(
             attachmentType = requestBodyType,
             file = requestBodyFilePart
         )
-    }
-
-    override suspend fun sendMessageTest(
-        userDestination: Int,
-        quoted: String,
-        body: String,
-        attachmentType: String,
-        uriString: String,
-        origin: Int
-    ): Response<MessageResDTO>? {
-        /*val listParts: MutableList<MultipartBody.Part> = ArrayList()
-
-        listParts.add(createPartFromFile(uriString, origin, attachmentType))
-
-        val requestBodyUserDestination = createPartFromString(userDestination.toString())
-        val requestBodyQuoted = createPartFromString(quoted)
-        val requestBodyBody = createPartFromString(body)
-        val requestBodyAttachmentType = createPartFromString(attachmentType)
-
-        return napoleonApi.sendMessageTest(
-            userDestination = requestBodyUserDestination,
-            quoted = requestBodyQuoted,
-            body = requestBodyBody,
-            attachmentType = requestBodyAttachmentType,
-            files = listParts
-        )*/
-        return null
     }
 
     private fun createPartFromString(string: String): RequestBody {
@@ -199,7 +173,6 @@ class ConversationRepository @Inject constructor(
             byteArrayStream.write(buffer, 0, i)
         }
 
-//        val byteArray = Utils.convertFileInputStreamToByteArray(file.inputStream())
         val byteArray = byteArrayStream.toByteArray()
 
         val extension = MimeTypeMap.getFileExtensionFromUrl(file.toString())
@@ -216,28 +189,6 @@ class ConversationRepository @Inject constructor(
             "${System.currentTimeMillis()}.$extension",
             requestFile
         )
-    }
-
-    private fun getFileFromMediaStore(uri: String): ByteArray {
-
-        val contentUri = ContentUris.withAppendedId(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            ContentUris.parseId(Uri.parse(uri))
-        )
-
-        val parcelFileDescriptor =
-            context.contentResolver.openFileDescriptor(contentUri, "r")
-
-        val fileInputStream = FileInputStream(parcelFileDescriptor!!.fileDescriptor)
-
-        return Utils.convertFileInputStreamToByteArray(fileInputStream)
-    }
-
-    private fun getFileFromContentProvider(uriString: String): ByteArray {
-        val file = File(uriString)
-        val fileInputStream = file.inputStream()
-
-        return Utils.convertFileInputStreamToByteArray(fileInputStream)
     }
 
     override fun getLocalContact(contactId: Int): LiveData<Contact> {
@@ -261,7 +212,21 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun updateMessage(message: Message) {
-        messageLocalDataSource.updateMessage(message)
+        when(message.status) {
+            Constants.MessageStatus.ERROR.status -> {
+                val selfDestructTime = sharedPreferencesManager.getInt(
+                    Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+                )
+                val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+                message.updatedAt = currentTime
+                message.selfDestructionAt = selfDestructTime
+                message.totalSelfDestructionAt = currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+                messageLocalDataSource.updateMessage(message)
+            }
+            else -> {
+                messageLocalDataSource.updateMessage(message)
+            }
+        }
     }
 
     override suspend fun sendMessagesRead(contactId: Int) {
@@ -343,10 +308,7 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.cleanSelectionMessages(contactId)
     }
 
-    override suspend fun deleteMessagesSelected(
-        contactId: Int,
-        listMessages: List<MessageAndAttachment>
-    ) {
+    override suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>) {
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
         val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(contactId)
         if (messageAndAttachment != null) {
@@ -372,6 +334,10 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>> {
         return messageLocalDataSource.getMessagesSelected(contactId)
+    }
+
+    override suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int) {
+        messageLocalDataSource.deleteMessagesByStatusForMe(contactId, status)
     }
 
     override fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {

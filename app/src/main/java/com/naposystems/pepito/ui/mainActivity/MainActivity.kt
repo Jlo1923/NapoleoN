@@ -3,13 +3,15 @@ package com.naposystems.pepito.ui.mainActivity
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Point
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
-import android.text.BoringLayout
 import android.util.TypedValue
+import android.view.Display
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -44,6 +47,7 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import org.json.JSONObject
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -78,13 +82,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        /*window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )*/
-
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
+
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
 
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
@@ -92,7 +96,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-            1 -> setNewTheme(0)
+            1 -> setNewTheme(Constants.ColorScheme.LIGHT_THEME.scheme)
+            2 -> setNewTheme(Constants.ColorScheme.DARK_THEME.scheme)
             3 -> setNewTheme(R.style.AppThemeBlackGoldAlloy)
             4 -> setNewTheme(R.style.AppThemeColdOcean)
             5 -> setNewTheme(R.style.AppThemeCamouflage)
@@ -121,7 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 dialog.show(supportFragmentManager, "AttackDialog")
             }
 
-        disposable.add(disposableNoInternetConnection)
+        disposable.add(disposableAccountAttack)
 
         setSupportActionBar(binding.toolbar)
 
@@ -205,14 +210,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
+        intent.extras?.let { args ->
+            if (args.containsKey(Constants.TYPE_NOTIFICATION)) {
+                val jsonNotification = JSONObject()
+                jsonNotification.put(Constants.TYPE_NOTIFICATION, args.getString(Constants.TYPE_NOTIFICATION)?.toInt()!!)
+                if(args.getString(Constants.TYPE_NOTIFICATION)?.toInt() == Constants.NotificationType.ENCRYPTED_MESSAGE.type){
+                    jsonNotification.put(Constants.TYPE_NOTIFICATION_WITH_CONTACT, args.getString(Constants.TYPE_NOTIFICATION_WITH_CONTACT)?.toInt()!!)
+                }
+                viewModel.setJsonNotification(jsonNotification.toString())
+            }
+        }
+
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
     }
 
     private fun setNewTheme(style: Int) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        if(style != 0) setTheme(style)
+        if (style != Constants.ColorScheme.DARK_THEME.scheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            setTheme(style)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
     }
 
     private fun openMenu() {
@@ -326,6 +346,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun enableDrawer() {
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
+
+    fun getNavController() = this.navController
+
+    fun changeLayoutHeight(height: Int) {
+        val display: Display = windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+
+        val layoutParams = binding.root.layoutParams
+        layoutParams.height = size.y - height
+        binding.root.layoutParams = layoutParams
+    }
+
+    fun resetLayoutHeight() {
+        val layoutParams = binding.root.layoutParams
+        layoutParams.height = MATCH_PARENT
+        binding.root.layoutParams = layoutParams
     }
 
     override fun onSupportNavigateUp() =

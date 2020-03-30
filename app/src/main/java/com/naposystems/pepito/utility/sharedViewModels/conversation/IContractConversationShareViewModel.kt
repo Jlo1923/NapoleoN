@@ -2,7 +2,6 @@ package com.naposystems.pepito.utility.sharedViewModels.conversation
 
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
-import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 
 interface IContractConversationShareViewModel {
 
@@ -11,6 +10,8 @@ interface IContractConversationShareViewModel {
     fun resetMessage()
     fun setAttachmentSelected(attachment: Attachment)
     fun resetAttachmentSelected()
+    fun setGifSelected(attachment: Attachment)
+    fun resetGifSelected()
     fun getQuoteWebId(): String?
     fun setQuoteWebId(webId: String)
     fun resetQuoteWebId()

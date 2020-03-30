@@ -15,11 +15,13 @@ import com.naposystems.pepito.ui.contactUs.ContactUsFragment
 import com.naposystems.pepito.ui.contacts.ContactsFragment
 import com.naposystems.pepito.ui.conversation.ConversationFragment
 import com.naposystems.pepito.ui.conversationCamera.ConversationCameraFragment
-import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
+import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.enterPin.EnterPinFragment
 import com.naposystems.pepito.ui.home.HomeFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
+import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment
@@ -166,5 +168,9 @@ abstract class FragmentBindingModule {
     @ContributesAndroidInjector
     abstract fun bindSubscriptionFragment(): SubscriptionFragment
 
+    @ContributesAndroidInjector
+    abstract fun bindDeletionMessagesDialogFragment(): DeletionMessagesDialogFragment
 
+    @ContributesAndroidInjector
+    abstract fun bindNapoleonKeyboardGifFragment(): NapoleonKeyboardGifFragment
 }

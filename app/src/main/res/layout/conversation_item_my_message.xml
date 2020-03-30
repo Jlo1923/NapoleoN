@@ -96,7 +96,7 @@
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 
-            <TextView
+            <androidx.emoji.widget.EmojiAppCompatTextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"
                 android:layout_width="0dp"

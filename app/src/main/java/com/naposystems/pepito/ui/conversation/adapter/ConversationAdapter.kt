@@ -32,6 +32,10 @@ class ConversationAdapter constructor(
         const val TYPE_INCOMING_MESSAGE_VIDEO = 6
         const val TYPE_MY_MESSAGE_DOCUMENT = 7
         const val TYPE_INCOMING_MESSAGE_DOCUMENT = 8
+        const val TYPE_MY_MESSAGE_GIF = 9
+        const val TYPE_INCOMING_MESSAGE_GIF = 10
+        const val TYPE_MY_MESSAGE_GIF_NN = 11
+        const val TYPE_INCOMING_MESSAGE_GIF_NN = 12
     }
 
     private var isFirst = false
@@ -88,6 +92,20 @@ class ConversationAdapter constructor(
                         else
                             TYPE_INCOMING_MESSAGE_DOCUMENT
                     }
+                    Constants.AttachmentType.GIF.type -> {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                            TYPE_MY_MESSAGE_GIF
+                        } else {
+                            TYPE_INCOMING_MESSAGE_GIF
+                        }
+                    }
+                    Constants.AttachmentType.GIF_NN.type -> {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                            TYPE_MY_MESSAGE_GIF_NN
+                        } else {
+                            TYPE_INCOMING_MESSAGE_GIF_NN
+                        }
+                    }
                     else -> {
                         if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE
@@ -123,6 +141,10 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_VIDEO -> IncomingMessageVideoViewHolder.from(parent)
             TYPE_MY_MESSAGE_DOCUMENT -> MyMessageDocumentViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_DOCUMENT -> IncomingMessageDocumentViewHolder.from(parent)
+            TYPE_MY_MESSAGE_GIF -> MyMessageViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_GIF -> IncomingMessageViewHolder.from(parent)
+            TYPE_MY_MESSAGE_GIF_NN -> MyMessageGifNNViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_GIF_NN -> IncomingMessageGifNNViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
     }
@@ -152,6 +174,14 @@ class ConversationAdapter constructor(
                     .bind(item, clickListener, isFirst)
                 TYPE_INCOMING_MESSAGE_DOCUMENT -> (holder as IncomingMessageDocumentViewHolder)
                     .bind(item, clickListener, isFirst)
+                TYPE_MY_MESSAGE_GIF -> (holder as MyMessageViewHolder)
+                    .bind(item, clickListener, isFirst)
+                TYPE_INCOMING_MESSAGE_GIF -> (holder as IncomingMessageViewHolder)
+                    .bind(item, clickListener, isFirst)
+                TYPE_MY_MESSAGE_GIF_NN -> (holder as MyMessageGifNNViewHolder)
+                    .bind(item, clickListener)
+                TYPE_INCOMING_MESSAGE_GIF_NN -> (holder as IncomingMessageGifNNViewHolder)
+                    .bind(item, clickListener)
             }
         }
     }
@@ -563,6 +593,109 @@ class ConversationAdapter constructor(
                     false
                 )
                 return IncomingMessageDocumentViewHolder(binding)
+            }
+        }
+    }
+
+    class MyMessageGifNNViewHolder constructor(
+        private val binding: ConversationItemMyMessageWithGifNnBinding
+    ) :
+        ConversationViewHolder(binding.root) {
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener
+        ) {
+            binding.conversation = item
+            binding.imageViewAttachment.visibility = View.GONE
+
+            countDown(
+                item,
+                binding.textViewCountDown,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
+
+            if (item.message.isSelected) {
+                binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+
+            binding.containerMyMessage.setOnLongClickListener {
+                clickListener.onLongClick(item.message)
+                true
+            }
+
+            binding.containerMyMessage.setOnClickListener {
+                clickListener.onClick(item)
+            }
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): MyMessageGifNNViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemMyMessageWithGifNnBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return MyMessageGifNNViewHolder(binding)
+            }
+        }
+    }
+
+    class IncomingMessageGifNNViewHolder constructor(
+        private val binding: ConversationItemIncomingMessageWithGifNnBinding
+    ) :
+        ConversationViewHolder(binding.root) {
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            item: MessageAndAttachment,
+            clickListener: ClickListener
+        ) {
+            binding.conversation = item
+            binding.imageViewAttachment.visibility = View.GONE
+
+            countDown(
+                item,
+                binding.textViewCountDown,
+                itemToEliminate = { messageAndAttachment ->
+                    clickListener.messageToEliminate(messageAndAttachment)
+                })
+
+            if (item.message.isSelected) {
+                binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            } else {
+                binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
+            }
+
+            binding.containerIncomingMessage.setOnLongClickListener {
+                clickListener.onLongClick(item.message)
+                true
+            }
+
+            binding.containerIncomingMessage.setOnClickListener {
+                clickListener.onClick(item)
+            }
+
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(
+                parent: ViewGroup
+            ): IncomingMessageGifNNViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ConversationItemIncomingMessageWithGifNnBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
+                return IncomingMessageGifNNViewHolder(binding)
             }
         }
     }

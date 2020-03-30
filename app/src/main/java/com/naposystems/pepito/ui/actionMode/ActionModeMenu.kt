@@ -14,6 +14,7 @@ class ActionModeMenu(private val clickDelete: (Boolean) -> Unit,
     var mode: ActionMode? = null
     var hideCopyButton = false
     var quantityMessageOtherUser = 0
+    var quantityMessagesFailed = 0
 
     @MenuRes
     private var menuResId :  Int  =  0
@@ -21,7 +22,7 @@ class ActionModeMenu(private val clickDelete: (Boolean) -> Unit,
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.delete -> {
-                if(quantityMessageOtherUser > 0){
+                if(quantityMessageOtherUser > 0 || quantityMessagesFailed > 0){
                     clickDelete(true)
                 }
                 else {

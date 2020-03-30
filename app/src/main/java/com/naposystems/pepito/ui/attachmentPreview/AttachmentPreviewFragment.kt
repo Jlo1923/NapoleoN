@@ -12,7 +12,6 @@ import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
@@ -29,7 +28,6 @@ class AttachmentPreviewFragment : Fragment() {
         fun newInstance() = AttachmentPreviewFragment()
     }
 
-    private val viewModel: AttachmentPreviewViewModel by viewModels()
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
 
     private lateinit var binding: AttachmentPreviewFragmentBinding
@@ -74,7 +72,9 @@ class AttachmentPreviewFragment : Fragment() {
         binding.galleryItemId = args.galleryItemId
 
         when (attachment.type) {
-            Constants.AttachmentType.IMAGE.type -> {
+            Constants.AttachmentType.IMAGE.type,
+            Constants.AttachmentType.GIF.type,
+            Constants.AttachmentType.GIF_NN.type -> {
                 if (binding.viewSwitcher.currentView.id == binding.containerVideoView.id) {
                     binding.viewSwitcher.showNext()
                 }
@@ -169,11 +169,11 @@ class AttachmentPreviewFragment : Fragment() {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
+                // Intentionally empty.
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
+                // Intentionally empty.
             }
         })
 

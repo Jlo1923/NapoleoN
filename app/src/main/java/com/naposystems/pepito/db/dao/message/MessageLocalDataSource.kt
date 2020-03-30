@@ -24,6 +24,10 @@ class MessageLocalDataSource @Inject constructor(
         return messageDao.getQuoteId(quoteWebId)
     }
 
+    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {
+        return messageDao.getLocalMessagesByStatus(contactId, status)
+    }
+
     override fun insertMessage(message: Message): Long {
         return messageDao.insertMessage(message)
     }
@@ -48,6 +52,10 @@ class MessageLocalDataSource @Inject constructor(
         listMessages.forEach {messageAndAttachment ->
             messageDao.deleteMessagesSelected(contactId, messageAndAttachment.message.id)
         }
+    }
+
+    override suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int) {
+        messageDao.deleteMessagesByStatusForMe(contactId, status)
     }
 
     override suspend fun getLastMessageByContact(contactId: Int): MessageAndAttachment {

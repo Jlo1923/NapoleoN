@@ -1,10 +1,6 @@
 package com.naposystems.pepito.utility.adapters
 
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,10 +15,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.model.attachment.gallery.GalleryItem
-import com.naposystems.pepito.utility.GlideManager
 import com.naposystems.pepito.utility.Utils
-import java.io.File
 
 fun Fragment.verifyPermission(
     vararg permissions: String,

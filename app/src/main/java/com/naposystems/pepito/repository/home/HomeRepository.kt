@@ -14,6 +14,7 @@ import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.entity.message.Quote
@@ -172,19 +173,19 @@ class HomeRepository @Inject constructor(
         try {
             val response = napoleonApi.getDeletedMessages()
             if (response.isSuccessful && (response.body()!!.count() > 0)) {
-                val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
+                val contactId = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
                 when (val messageAndAttachment =
-                    messageLocalDataSource.getLastMessageByContact(idContact)) {
+                    messageLocalDataSource.getLastMessageByContact(contactId)) {
                     null -> {
-                        conversationLocalDataSource.cleanConversation(idContact)
+                        conversationLocalDataSource.cleanConversation(contactId)
                     }
                     else -> {
-                        conversationLocalDataSource.getQuantityUnreads(idContact)
+                        conversationLocalDataSource.getQuantityUnreads(contactId)
                             .let { quantityUnreads ->
                                 if (quantityUnreads > 0) {
                                     conversationLocalDataSource.updateConversationByContact(
-                                        idContact,
+                                        contactId,
                                         messageAndAttachment.message.body,
                                         messageAndAttachment.message.createdAt,
                                         messageAndAttachment.message.status,
@@ -192,7 +193,7 @@ class HomeRepository @Inject constructor(
                                     )
                                 } else {
                                     conversationLocalDataSource.updateConversationByContact(
-                                        idContact,
+                                        contactId,
                                         messageAndAttachment.message.body,
                                         messageAndAttachment.message.createdAt,
                                         messageAndAttachment.message.status,
@@ -252,6 +253,22 @@ class HomeRepository @Inject constructor(
     override fun getSubscriptionTime(): Long {
         return sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
+        )
+    }
+
+    override fun getJsonNotification(): String {
+        return sharedPreferencesManager.getString(
+            Constants.SharedPreferences.PREF_JSON_NOTIFICATION, ""
+        )
+    }
+
+    override fun getContact(contactId: Int): Contact {
+        return contactLocalDataSource.getContactById(contactId)
+    }
+
+    override fun cleanJsonNotification() {
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_JSON_NOTIFICATION, ""
         )
     }
 }

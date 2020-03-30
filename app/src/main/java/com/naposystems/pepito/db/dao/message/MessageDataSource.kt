@@ -13,6 +13,8 @@ interface MessageDataSource {
 
     fun getQuoteId(quoteWebId: String): Int
 
+    fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
+
     fun insertMessage(message: Message): Long
 
     fun insertListMessage(messageList: List<Message>)
@@ -24,6 +26,8 @@ interface MessageDataSource {
     suspend fun cleanSelectionMessages(contactId: Int)
 
     suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)
+
+    suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
 
     suspend fun copyMessagesSelected(contactId: Int): List<String>
 

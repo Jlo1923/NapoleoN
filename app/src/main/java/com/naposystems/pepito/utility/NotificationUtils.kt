@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
+import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -12,9 +14,21 @@ import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.pepito.R
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
+import timber.log.Timber
 import java.util.*
 
 object NotificationUtils {
+
+    private val mediaPlayer: MediaPlayer by lazy {
+        MediaPlayer().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+        }
+    }
 
     fun createInformativeNotification(
         context: Context,
@@ -30,9 +44,9 @@ object NotificationUtils {
         )
 
         val builder = NotificationCompat.Builder(
-                context,
-                channelId
-            )
+            context,
+            channelId
+        )
             .setLargeIcon(iconBitmap)
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setContentTitle(title)
@@ -42,16 +56,24 @@ object NotificationUtils {
 
         createNotificationChannel(context, channelId)
 
-        if (data.isNotEmpty() && data.containsKey("type_notification")) {
-            when (data.getValue("type_notification").toInt()) {
-                4, 5 -> {
+        if (data.isNotEmpty() && data.containsKey(Constants.TYPE_NOTIFICATION)) {
+            when (data.getValue(Constants.TYPE_NOTIFICATION).toInt()) {
+
+                Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
+                    setupNotificationSound(context, R.raw.sound_encrypted_message)
+                }
+
+                Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
+                    RxBus.publish(RxEvent.NewFriendshipRequest())
+                }
+
+                Constants.NotificationType.VERIFICATION_CODE.type, Constants.NotificationType.SUBSCRIPTION.type -> {
                     with(NotificationManagerCompat.from(context)) {
                         notify(Random().nextInt(), builder.build())
                     }
                 }
 
                 Constants.NotificationType.ACCOUNT_ATTACK.type -> {
-
                     val attackerId = data.getValue("attacker_id").toString()
 
                     sharedPreferencesManager.putInt(
@@ -68,9 +90,28 @@ object NotificationUtils {
 
                     RxBus.publish(RxEvent.AccountAttack())
                 }
-
-                Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> RxBus.publish(RxEvent.NewFriendshipRequest())
             }
+        }
+    }
+
+    private fun setupNotificationSound(context: Context, sound: Int) {
+        try {
+            mediaPlayer.apply {
+                reset()
+                setDataSource(
+                    context,
+                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
+                )
+                if (isPlaying) {
+                    stop()
+                    reset()
+                    release()
+                }
+                prepare()
+                start()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 

@@ -12,7 +12,6 @@ import com.naposystems.pepito.repository.status.StatusRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.Exception
 
 class StatusViewModel @Inject constructor(private val repository: StatusRepository) :
     ViewModel(),
@@ -53,7 +52,6 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     override fun updateStatus(context: Context, textStatus: String) {
         viewModelScope.launch {
             try {
-
                 user.value?.let {user ->
                     val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
                         displayName = user.displayName,
@@ -63,26 +61,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
                     val response = repository.updateRemoteStatus(updateUserInfoReqDTO)
 
                     if (response.isSuccessful) {
-                        status.value?.let { listStatus ->
-                            if(listStatus.count() < 10){
-                                val status = listStatus.find {
-                                    (it.resourceId != 0) && (context.getString(it.resourceId).trim() == updateUserInfoReqDTO.status.trim()) ||
-                                    (it.resourceId == 0) && (it.customStatus.trim() == updateUserInfoReqDTO.status.trim())
-                                }
-
-                                if (status == null) {
-                                    val list = arrayListOf<Status>()
-                                    list.add(Status(0, customStatus = updateUserInfoReqDTO.status))
-                                    repository.insertNewStatus(list)
-                                }
-                            }
-                        }
-
-                        repository.updateLocalStatus(
-                            updateUserInfoReqDTO.status,
-                            user.firebaseId
-                        )
-                        user.status = updateUserInfoReqDTO.status
+                        handleUpdateRemoteStatusSuccessful(context, updateUserInfoReqDTO, user)
                     } else {
                         when (response.code()) {
                             401, 500 -> _errorUpdatingStatus.value =
@@ -97,6 +76,34 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
                 _errorUpdatingStatus.value = emptyList()
             }
         }
+    }
+
+    private suspend fun handleUpdateRemoteStatusSuccessful(
+        context: Context,
+        updateUserInfoReqDTO: UpdateUserInfoReqDTO,
+        user: User
+    ) {
+        status.value?.let { listStatus ->
+            if (listStatus.count() < 10) {
+                val status = listStatus.find {
+                    (it.resourceId != 0) && (context.getString(it.resourceId)
+                        .trim() == updateUserInfoReqDTO.status.trim()) ||
+                            (it.resourceId == 0) && (it.customStatus.trim() == updateUserInfoReqDTO.status.trim())
+                }
+
+                if (status == null) {
+                    val list = arrayListOf<Status>()
+                    list.add(Status(0, customStatus = updateUserInfoReqDTO.status))
+                    repository.insertNewStatus(list)
+                }
+            }
+        }
+
+        repository.updateLocalStatus(
+            updateUserInfoReqDTO.status,
+            user.firebaseId
+        )
+        user.status = updateUserInfoReqDTO.status
     }
 
     override fun deleteStatus(status: Status) {

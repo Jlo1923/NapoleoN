@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="conversation"
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_incoming_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/small_padding"
+        android:paddingEnd="0dp"
+        android:paddingTop="@dimen/x_x_small_padding"
+        android:paddingBottom="@dimen/x_x_small_padding">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingStart="20dp"
+            android:paddingTop="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/small_padding"
+            android:paddingBottom="@dimen/x_small_padding"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="wrap"
+            app:layout_constraintWidth_min="wrap"
+            app:layout_constraintWidth_percent="0.7">
+
+            <TextView
+                android:id="@+id/textView_count_down"
+                style="@style/IncomingMessageTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="10:34" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_attachment"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:imageAttachment="@{conversation}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_count_down"
+                tools:src="@drawable/marilyn"
+                tools:visibility="visible" />
+
+            <TextView
+                style="@style/IncomingMessageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
+                app:messageDate="@{conversation.message.createdAt}"
+                tools:text="10:34"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -24,4 +24,7 @@
     <cache-path
         name="Documentos"
         path="Documentos/" />
+    <cache-path
+        name="Gifs"
+        path="Gifs/" />
 </paths>

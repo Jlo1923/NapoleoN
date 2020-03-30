@@ -13,8 +13,8 @@ interface ContactDao {
     @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
     suspend fun getLocalContacts(): List<Contact>
 
-    @Query("SELECT * FROM contact WHERE id=:id")
-    suspend fun getContactById(id: Int): List<Contact>
+    @Query("SELECT * FROM contact WHERE id=:contactId")
+    fun getContactById(contactId: Int): Contact
 
     @Query("SELECT * FROM contact WHERE id = :contactId")
     fun getContact(contactId: Int): LiveData<Contact>
@@ -22,14 +22,14 @@ interface ContactDao {
     @Query("UPDATE contact SET silenced = :contactSilenced WHERE id = :contactId")
     fun updateContactSilenced(contactId: Int, contactSilenced : Int)
 
-    @Query("UPDATE contact SET display_name_fake = :nameFake WHERE id = :idContact ")
-    suspend fun updateNameFakeContact(idContact: Int, nameFake: String)
+    @Query("UPDATE contact SET display_name_fake = :nameFake WHERE id = :contactId ")
+    suspend fun updateNameFakeContact(contactId: Int, nameFake: String)
 
-    @Query("UPDATE contact SET image_url_fake = :avatarFake WHERE id = :idContact ")
-    suspend fun updateAvatarFakeContact(idContact: Int, avatarFake: String)
+    @Query("UPDATE contact SET image_url_fake = :avatarFake WHERE id = :contactId ")
+    suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String)
 
-    @Query("UPDATE contact SET nickname_fake = :nickNameFake WHERE id = :idContact ")
-    suspend fun updateNickNameFakeContact(idContact: Int, nickNameFake: String)
+    @Query("UPDATE contact SET nickname_fake = :nickNameFake WHERE id = :contactId ")
+    suspend fun updateNickNameFakeContact(contactId: Int, nickNameFake: String)
 
     @Query("UPDATE contact SET display_name_fake = '', nickname_fake = '', image_url_fake = ''  WHERE id = :contactId ")
     suspend fun restoreContact(contactId: Int)

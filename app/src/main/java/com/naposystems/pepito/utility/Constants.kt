@@ -1,11 +1,13 @@
 package com.naposystems.pepito.utility
 
-import java.util.*
-
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
+    const val GIPHY_API_KEY = "3nvsXqW9PgR068WGKRFSRnhV22QnM8iT"
     const val DATA_CRYPT = "datacrypt"
+    const val TYPE_NOTIFICATION = "type_notification"
+    const val TYPE_NOTIFICATION_WITH_CONTACT = "contact"
+    const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 1
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
@@ -46,10 +48,9 @@ object Constants {
         const val DELETE_MESSAGES_FOR_ALL = "destroymessages"
         const val PUT_UNBLOCK_CONTACT = "friendship/unblockuser/{id}"
         const val VALIDATE_PASSWORD_OLD_ACCOUNT = "inforecovery/validateoldpassword"
-        const val GET_QUESTIONS_OLD_USER  = "inforecovery/getanswersinforecoveryolduser/{nick}"
+        const val GET_QUESTIONS_OLD_USER = "inforecovery/getanswersinforecoveryolduser/{nick}"
         const val VALIDATE_ANSWERS_OLD_USER = "inforecovery/validateanswersolduser"
         const val BLOCK_ATTACKER = "inforecovery/blockattacker"
-
         const val GET_SUBSCRIPTION_USER = "payments/ultimatepayment"
         const val TYPE_SUBSCRIPTIONS = "subscriptions"
         const val SEND_SELECTED_SUBSCRIPTION = "paypal/createpayment"
@@ -70,6 +71,13 @@ object Constants {
     enum class OutputControl constructor(val state: Int) {
         TRUE(1),
         FALSE(0)
+    }
+
+    enum class DeleteMessages constructor(val option: Int) {
+        BY_SELECTION(1),
+        BY_UNRECEIVED(2),
+        BY_UNREADS(3),
+        BY_FAILED(5)
     }
 
     enum class Vibrate constructor(val type: Int){
@@ -118,6 +126,11 @@ object Constants {
         EVERY_TWELVE_HOURS(7),
         EVERY_ONE_DAY(8),
         EVERY_SEVEN_DAY(9)
+    }
+
+    enum class SelfDestructTimeByError constructor(val time: Int) {
+        EVERY_TWENTY_FOUR_HOURS(1),
+        EVERY_SEVEN_DAYS(2)
     }
 
     enum class MessageSelfDestructTimeNotSent constructor(val time: Int) {
@@ -199,6 +212,8 @@ object Constants {
         AUDIO("audio"),
         VIDEO("video"),
         DOCUMENT("document"),
+        GIF("gif"),
+        GIF_NN("gifNN")
     }
 
     enum class FriendShipRequestType(val type: Int) {
@@ -214,7 +229,12 @@ object Constants {
     }
 
     enum class NotificationType(val type: Int) {
+        WITHOUT_NOTIFICATION(0),
+        ENCRYPTED_MESSAGE(1),
         NEW_FRIENDSHIP_REQUEST(2),
+        FRIEND_REQUEST_ACCEPTED(3),
+        VERIFICATION_CODE(4),
+        SUBSCRIPTION(5),
         ACCOUNT_ATTACK(6)
     }
 
@@ -239,24 +259,25 @@ object Constants {
         DOWNLOADED(4)
     }
 
-    enum class NapoleonCacheDirectories(val folder: String){
+    enum class NapoleonCacheDirectories(val folder: String) {
         IMAGES("Images"),
         VIDEOS("Videos"),
         AUDIOS("Audios"),
-        DOCUMENTOS("Documentos")
+        DOCUMENTOS("Documentos"),
+        GIFS("Gifs")
     }
 
-    enum class ExistingAttack(val type: Int ) {
+    enum class ExistingAttack(val type: Int) {
         NOT_EXISTING(1),
         EXISTING(2)
     }
 
-    enum class UserType(val type: Int){
+    enum class UserType(val type: Int) {
         NEW_USER(1),
         OLD_USER(2)
     }
 
-    enum class TypeSubscription(val type: Int){
+    enum class TypeSubscription(val type: Int) {
         ONE_MONTH(1),
         ONE_YEAR(2)
     }
@@ -266,6 +287,16 @@ object Constants {
         THREE_MONTHS(3)
     }
 
+    enum class EmojiCategory(val category: Int) {
+        SMILES_AND_PEOPLE(1),
+        ANIMALS_AND_NATURE(2),
+        FOOD_AND_DRINK(3),
+        ACTIVITY(4),
+        TRAVEL_AND_PLACES(5),
+        OBJECTS(6),
+        SYMBOLS(7),
+        FLAGS(8)
+    }
 
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
@@ -288,7 +319,7 @@ object Constants {
         const val PREF_FREE_TRIAL = "free_trial"
         const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
         const val PREF_SUBSCRIPTION_TIME = "subscription_time"
-
+        const val PREF_JSON_NOTIFICATION = "json_notification"
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"

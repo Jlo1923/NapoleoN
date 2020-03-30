@@ -6,8 +6,14 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.LinearLayout.HORIZONTAL
+import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.widget.EmojiAppCompatEditText
+import androidx.emoji.widget.EmojiEditText
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -27,6 +33,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     private var showCameraIcon: Boolean = true
     private var showAttachmentIcon: Boolean = true
     private var showOnlySendIcon: Boolean = false
+    private var fabSend: FabSend
 
     init {
         context.theme.obtainStyledAttributes(
@@ -58,6 +65,9 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
 
                 binding.floatingActionButtonSend.setShowOnlySendIcon(showOnlySendIcon)
 
+                fabSend = binding.floatingActionButtonSend
+
+
             } finally {
                 recycle()
             }
@@ -68,19 +78,13 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.textInputEditTextInput.addTextChangedListener(textWatcher)
     }
 
-    override fun getFloatingActionButton(): FabSend {
-        return binding.floatingActionButtonSend
-    }
+    override fun getFloatingActionButton() = this.fabSend
 
     override fun morphFloatingActionButtonIcon() {
         binding.floatingActionButtonSend.morph()
     }
 
-    override fun getIsShowingMic() {
-        binding.floatingActionButtonSend.isShowingMic()
-    }
-
-    override fun getEditTex(): EditText {
+    override fun getEditTex(): EmojiAppCompatEditText {
         return binding.textInputEditTextInput
     }
 

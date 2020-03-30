@@ -403,6 +403,9 @@
         <action
             android:id="@+id/action_conversationFragment_to_attachmentDocumentFragment"
             app:destination="@id/attachmentDocumentFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentPreviewFragment"
+            app:destination="@id/attachmentPreviewFragment" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"

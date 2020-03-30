@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
-import com.naposystems.pepito.utility.sharedViewModels.conversation.IContractConversationShareViewModel.*
+import com.naposystems.pepito.utility.sharedViewModels.conversation.IContractConversationShareViewModel.AudioAttachment
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +22,10 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
     private val _hasAudioSendClicked = MutableLiveData<Boolean>()
     val hasAudioSendClicked: LiveData<Boolean>
         get() = _hasAudioSendClicked
+
+    private val _gifSelected = MutableLiveData<Attachment>()
+    val gifSelected: LiveData<Attachment>
+        get() = _gifSelected
 
     private val _message = MutableLiveData<String>()
     val message: LiveData<String>
@@ -52,6 +56,14 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     override fun resetAttachmentSelected() {
         _attachmentSelected.value = null
+    }
+
+    override fun setGifSelected(attachment: Attachment) {
+        this._gifSelected.value = attachment
+    }
+
+    override fun resetGifSelected() {
+        this._gifSelected.value = null
     }
 
     override fun getQuoteWebId() = this._quoteWebId.value

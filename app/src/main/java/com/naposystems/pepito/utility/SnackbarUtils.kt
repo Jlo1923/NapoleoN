@@ -24,7 +24,7 @@ class SnackbarUtils(
                         }
                     })
                     .setAction(R.string.okay) {
-                        //snackbarErrorHandler()
+                        // Intentionally empty
                     }
             val snackbarView = snackbar.view
 

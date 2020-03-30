@@ -9,9 +9,6 @@ class SecuritySettingsRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractSecuritySettings.Repository {
 
-    override fun getSelfDestructTime(): Int {
-        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME)
-    }
     override fun getAllowDownload(): Int {
         return sharedPreferencesManager.getInt(
             Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS
@@ -22,12 +19,6 @@ class SecuritySettingsRepository @Inject constructor(
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS,
             state
-        )
-    }
-
-    override fun getMessageSelfDestructTimeNotSent(): Int {
-        return sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
         )
     }
 

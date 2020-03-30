@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <attr name="progressbarColor" format="reference" />
     <attr name="showOnlySendIcon" format="boolean" />
 
     <declare-styleable name="EnterCodeWidget">
@@ -139,4 +140,16 @@
 
     <!-- Seekbar Thumb Tint -->
     <attr name="attrSeekbarThumbTint" format="reference" />
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="min" format="integer" />
+        <attr name="max" format="integer" />
+        <attr name="progress" format="integer" />
+        <attr name="progressbarColor" />
+        <attr name="progressBarThickness" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ImageViewProgress">
+        <attr name="progressbarColor" />
+    </declare-styleable>
 </resources>

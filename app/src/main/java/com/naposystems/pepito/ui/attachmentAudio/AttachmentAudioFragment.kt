@@ -118,7 +118,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         val contact = args.contact
 
         val displayName = if (contact.displayNameFake.isNotEmpty())
-            contact.displayName else contact.displayName
+            contact.displayNameFake else contact.displayName
 
         toolbar?.title = getString(R.string.text_send_to, displayName)
         toolbar?.subtitle = if (countSelected > 0)

@@ -1,7 +1,6 @@
 package com.naposystems.pepito.ui.mainActivity
 
 import com.naposystems.pepito.entity.User
-import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 
 interface IContractMainActivity {
 
@@ -14,6 +13,7 @@ interface IContractMainActivity {
         fun getLockTimeApp(): Long
         fun getTimeRequestAccessPin(): Int
         fun setLockStatus(state: Int)
+        fun setJsonNotification(json : String)
     }
 
     interface Repository {
@@ -25,5 +25,6 @@ interface IContractMainActivity {
         suspend fun getLockTimeApp(): Long
         suspend fun setLockStatus(state: Int)
         fun setLockTimeApp(lockTime: Long)
+        fun setJsonNotification(json : String)
     }
 }
