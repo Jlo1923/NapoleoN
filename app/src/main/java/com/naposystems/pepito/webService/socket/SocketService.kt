@@ -19,17 +19,9 @@ class SocketService @Inject constructor(
 
     init {
         try {
-            socket.connect().on(Socket.EVENT_CONNECT) {
+            connectToSocket()
 
-                sharedPreferencesManager.putString(
-                    Constants.SharedPreferences.PREF_SOCKET_ID,
-                    socket.id()
-                )
-                Timber.e("Conectó al socket ${socket.id()}")
-
-            }.on(Socket.EVENT_CONNECT_ERROR) {
-                Timber.e("No conectó al socket $it")
-            }
+            listenOnDisconnect()
 
             listenNewMessageEvent()
 
@@ -55,26 +47,47 @@ class SocketService @Inject constructor(
         Timber.d("unsubscribe to channel: $channelName")
     }
 
+    private fun listenOnDisconnect() {
+        socket.on("disconnect") { reason ->
+            Timber.d("Socket disconnect $reason")
+            connectToSocket()
+        }
+    }
+
+    private fun connectToSocket() {
+        socket.connect().on(Socket.EVENT_CONNECT) {
+
+            sharedPreferencesManager.putString(
+                Constants.SharedPreferences.PREF_SOCKET_ID,
+                socket.id()
+            )
+            Timber.d("Conectó al socket ${socket.id()}")
+
+        }.on(Socket.EVENT_CONNECT_ERROR) {
+            Timber.e("No conectó al socket $it")
+        }
+    }
+
     private fun listenNewMessageEvent() {
         socket.on("App\\Events\\NewMessageEvent") {
             repository.getMyMessages()
         }
     }
 
-    private fun listenNotifyMessagesReceived(){
+    private fun listenNotifyMessagesReceived() {
         socket.on("App\\Events\\NotifyMessagesReceived") {
             repository.verifyMessagesReceived()
         }
     }
 
-    private fun listenMessagesRead(){
-        socket.on("App\\Events\\NotifyMessageReaded"){
+    private fun listenMessagesRead() {
+        socket.on("App\\Events\\NotifyMessageReaded") {
             repository.verifyMessagesRead()
         }
     }
 
-    private fun listenMessagesDestroy(){
-        socket.on("App\\Events\\SendMessagesDestroyEvent"){
+    private fun listenMessagesDestroy() {
+        socket.on("App\\Events\\SendMessagesDestroyEvent") {
             repository.getDeletedMessages()
         }
     }
