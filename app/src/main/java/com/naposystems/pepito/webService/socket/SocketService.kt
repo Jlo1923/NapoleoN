@@ -56,7 +56,6 @@ class SocketService @Inject constructor(
 
     private fun connectToSocket() {
         socket.connect().on(Socket.EVENT_CONNECT) {
-
             sharedPreferencesManager.putString(
                 Constants.SharedPreferences.PREF_SOCKET_ID,
                 socket.id()
@@ -70,24 +69,28 @@ class SocketService @Inject constructor(
 
     private fun listenNewMessageEvent() {
         socket.on("App\\Events\\NewMessageEvent") {
+            Timber.d("NewMessageEvent")
             repository.getMyMessages()
         }
     }
 
     private fun listenNotifyMessagesReceived() {
         socket.on("App\\Events\\NotifyMessagesReceived") {
+            Timber.d("NotifyMessagesReceived")
             repository.verifyMessagesReceived()
         }
     }
 
     private fun listenMessagesRead() {
         socket.on("App\\Events\\NotifyMessageReaded") {
+            Timber.d("NotifyMessageReaded")
             repository.verifyMessagesRead()
         }
     }
 
     private fun listenMessagesDestroy() {
         socket.on("App\\Events\\SendMessagesDestroyEvent") {
+            Timber.d("SendMessagesDestroyEvent")
             repository.getDeletedMessages()
         }
     }

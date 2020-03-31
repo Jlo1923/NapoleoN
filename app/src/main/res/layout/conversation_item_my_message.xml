@@ -138,7 +138,6 @@
             android:background="@drawable/bg_self_destruct_time_my_message"
             android:elevation="1dp"
             android:gravity="center"
-            android:visibility="gone"
             android:paddingStart="@dimen/small_padding"
             android:paddingEnd="@dimen/small_padding"
             android:textColor="?attr/attrTextColorColorTextIncomingMessage"
