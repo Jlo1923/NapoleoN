@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -56,6 +57,18 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         nickname = args.nickname
 
         viewModel.getOlderQuestions(nickname)
+
+        binding.textInputEditTextAnswerOne.addTextChangedListener {
+            it?.let {
+                binding.buttonRecoveryAccount.isEnabled = it.count() > 0 && binding.textInputEditTextAnswerTwo.text?.count()!! > 0
+            }
+        }
+
+        binding.textInputEditTextAnswerTwo.addTextChangedListener {
+            it?.let {
+                binding.buttonRecoveryAccount.isEnabled = it.count() > 0 && binding.textInputEditTextAnswerOne.text?.count()!! > 0
+            }
+        }
 
         binding.buttonRecoveryAccount.setOnClickListener {
             viewModel.sendAnswers(

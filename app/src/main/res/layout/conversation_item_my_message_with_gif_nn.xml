@@ -14,8 +14,8 @@
         android:id="@+id/container_my_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/x_x_small_padding"
         android:paddingStart="0dp"
+        android:paddingTop="@dimen/x_x_small_padding"
         android:paddingEnd="@dimen/small_padding"
         android:paddingBottom="@dimen/x_x_small_padding">
 
@@ -23,6 +23,7 @@
             android:id="@+id/container_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
             android:background="@android:color/transparent"
             android:paddingStart="@dimen/x_small_padding"
             android:paddingTop="@dimen/x_small_padding"
@@ -34,17 +35,6 @@
             app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.7">
 
-            <TextView
-                android:id="@+id/textView_count_down"
-                style="@style/MyMessageDateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/attrTextColorColorTextIncomingMessage"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="10:34"
-                tools:visibility="visible" />
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_attachment"
                 android:layout_width="0dp"
@@ -54,7 +44,7 @@
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_count_down"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_max="wrap"
                 app:layout_constraintWidth_percent="1"
                 tools:src="@drawable/marilyn"
@@ -84,6 +74,21 @@
                 tools:srcCompat="@drawable/ic_message_sent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textView_count_down"
+            android:layout_width="@dimen/width_self_destruct_time"
+            android:layout_height="@dimen/height_self_destruct_time"
+            android:layout_marginEnd="@dimen/normal_margin"
+            android:background="@drawable/bg_self_destruct_time_my_message"
+            android:elevation="1dp"
+            android:gravity="center"
+            android:textColor="?attr/attrTextColorColorTextIncomingMessage"
+            android:textSize="@dimen/text_size_self_destruct_time"
+            app:layout_constraintBottom_toTopOf="@+id/container_message"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_message"
+            tools:text="10:34:20" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

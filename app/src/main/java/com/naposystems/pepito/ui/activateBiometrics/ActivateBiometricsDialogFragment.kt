@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ActivateBiometricsDialogFragmentBinding
 import com.naposystems.pepito.utility.Constants
@@ -19,7 +20,7 @@ import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import javax.inject.Inject
 
-class ActivateBiometricsDialogFragment : BottomSheetDialogFragment() {
+class ActivateBiometricsDialogFragment: DialogFragment() {
 
     companion object {
         fun newInstance() = ActivateBiometricsDialogFragment()
@@ -68,7 +69,15 @@ class ActivateBiometricsDialogFragment : BottomSheetDialogFragment() {
                         context,"El dispositivo no tiene asignado un desbloqueo biometrico", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+
+        binding.buttonCancel.setOnClickListener {
+            dismiss()
+        }
+
+        binding.buttonAccept.setOnClickListener {
             viewModel.setBiometricsOption(optionBiometrics)
+            dismiss()
         }
 
         return binding.root
@@ -76,10 +85,14 @@ class ActivateBiometricsDialogFragment : BottomSheetDialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog?.window?.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ActivateBiometricsViewModel::class.java)
-
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
 
         viewModel.getBiometricsOption()
         viewModel.biometricsOption.observe(viewLifecycleOwner, Observer {
@@ -93,5 +106,4 @@ class ActivateBiometricsDialogFragment : BottomSheetDialogFragment() {
             }
         })
     }
-
 }

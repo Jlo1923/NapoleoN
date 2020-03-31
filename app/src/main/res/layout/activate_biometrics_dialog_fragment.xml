@@ -13,53 +13,39 @@
         android:background="?attr/attrBackgroundColorBackgroundDialog"
         tools:context=".ui.activateBiometrics.ActivateBiometricsDialogFragment">
 
-        <View
-            android:id="@+id/view_indicator"
-            android:layout_width="0dp"
-            android:layout_height="5dp"
-            android:layout_marginTop="@dimen/small_margin"
-            android:background="@drawable/bg_bottom_sheet_indicator"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.2" />
-
         <TextView
-            android:id="@+id/textView_info"
-            style="@style/SmallBodyTextView"
+            android:id="@+id/textView_title"
+            style="@style/TextViewSecondaryTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
+            android:height="62dp"
+            android:gravity="center_vertical"
             android:paddingStart="@dimen/large_padding"
-            android:paddingEnd="@dimen/large_padding"
-            android:text="@string/text_biometrics_description"
-            android:textAlignment="center"
+            android:paddingEnd="0dp"
+            android:text="@string/text_unlock_options"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_indicator" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/view_radio_group_separator"
+            android:id="@+id/view_title_separator"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="@dimen/normal_margin"
             android:background="@color/separator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_info"
-            app:layout_constraintWidth_percent=".9"/>
+            app:layout_constraintTop_toBottomOf="@id/textView_title" />
 
         <RadioGroup
             android:id="@+id/radioGroup_options"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
             android:paddingStart="@dimen/large_padding"
             android:paddingEnd="0dp"
             android:paddingBottom="@dimen/small_padding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_radio_group_separator">
+            app:layout_constraintTop_toBottomOf="@+id/textView_title">
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/radioButton_without_biometrics"
@@ -91,6 +77,49 @@
                 android:visibility="gone" />
 
         </RadioGroup>
+
+        <View
+            android:id="@+id/view_radio_group_separator"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup_options" />
+
+        <TextView
+            android:id="@+id/textView_info"
+            style="@style/SmallBodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:paddingStart="@dimen/large_padding"
+            android:paddingEnd="@dimen/large_padding"
+            android:text="@string/text_biometrics_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_radio_group_separator" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_accept"
+            style="@style/AppPrimaryButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:text="@string/text_accept"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_info" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_cancel"
+            style="@style/AppPrimaryButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:text="@string/text_cancel"
+            app:layout_constraintEnd_toStartOf="@id/button_accept"
+            app:layout_constraintTop_toTopOf="@id/button_accept" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

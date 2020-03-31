@@ -47,25 +47,25 @@
                 android:id="@+id/container_quote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="100dp"
-                android:visibility="gone"
                 android:layout_marginBottom="4dp"
+                android:maxHeight="100dp"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
-                app:layout_constraintTop_toBottomOf="@id/textView_count_down"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/audio_player"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible">
 
                 <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
                     android:id="@+id/quote"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:isGoTo="true"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:isGoTo="true" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -96,8 +96,8 @@
 
         <TextView
             android:id="@+id/textView_count_down"
-            android:layout_width="55dp"
-            android:layout_height="15dp"
+            android:layout_width="@dimen/width_self_destruct_time"
+            android:layout_height="@dimen/height_self_destruct_time"
             android:layout_marginStart="@dimen/normal_margin"
             android:background="@drawable/bg_self_destruct_time_incoming_message"
             android:elevation="1dp"
