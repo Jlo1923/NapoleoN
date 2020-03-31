@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "e1a89c78e4b0e26aabf03e72ee84565a",
+    "identityHash": "f03334327c9ba668ca14191e6285d62c",
     "entities": [
       {
         "tableName": "user",
@@ -86,7 +86,7 @@
       },
       {
         "tableName": "status",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `resource_id` INTEGER NOT NULL, `custom_status` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `status` TEXT NOT NULL, `custom_status` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -95,9 +95,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "resourceId",
-            "columnName": "resource_id",
-            "affinity": "INTEGER",
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -549,7 +549,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1a89c78e4b0e26aabf03e72ee84565a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f03334327c9ba668ca14191e6285d62c')"
     ]
   }
 }
