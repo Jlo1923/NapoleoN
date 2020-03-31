@@ -33,6 +33,8 @@
     <item name="max_length_nickname" format="integer" type="dimen">20</item>
     <item name="max_length_display_name" format="integer" type="dimen">50</item>
     <item name="max_length_status" format="integer" type="dimen">80</item>
+    <dimen name="width_self_destruct_time">60dp</dimen>
+    <dimen name="height_self_destruct_time">15dp</dimen>
 
     <!-- BEGIN MATERIAL RIPPLE DIMENS -->
     <item name="low_ripple_pressed_alpha" format="float" type="dimen">0.12</item>

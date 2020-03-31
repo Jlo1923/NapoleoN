@@ -15,14 +15,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/small_padding"
-        android:paddingEnd="0dp"
         android:paddingTop="@dimen/x_x_small_padding"
+        android:paddingEnd="0dp"
         android:paddingBottom="@dimen/x_x_small_padding">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
             android:background="@android:color/transparent"
             android:paddingStart="20dp"
             android:paddingTop="@dimen/x_small_padding"
@@ -34,15 +35,6 @@
             app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.7">
 
-            <TextView
-                android:id="@+id/textView_count_down"
-                style="@style/IncomingMessageTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="10:34" />
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_attachment"
                 android:layout_width="match_parent"
@@ -52,7 +44,7 @@
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_count_down"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/marilyn"
                 tools:visibility="visible" />
 
@@ -67,6 +59,21 @@
                 tools:text="10:34"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textView_count_down"
+            android:layout_width="@dimen/width_self_destruct_time"
+            android:layout_height="@dimen/height_self_destruct_time"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:background="@drawable/bg_self_destruct_time_incoming_message"
+            android:elevation="1dp"
+            android:gravity="center"
+            android:textColor="?attr/attrTextColorColorTextMyMessage"
+            android:textSize="@dimen/text_size_self_destruct_time"
+            app:layout_constraintBottom_toTopOf="@+id/container_message"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_message"
+            tools:text="10:34:20" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

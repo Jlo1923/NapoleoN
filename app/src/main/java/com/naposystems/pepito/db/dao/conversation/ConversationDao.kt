@@ -20,11 +20,11 @@ interface ConversationDao {
     @Update
     suspend fun updateConversation(conversation: Conversation)
 
-    @Query("UPDATE conversation SET message = '', created = 0, unreads = 0 WHERE contact_id = :idContact")
-    suspend fun cleanConversation(idContact: Int)
+    @Query("DELETE FROM conversation WHERE contact_id = :contactId")
+    suspend fun cleanConversation(contactId: Int)
 
-    @Query("UPDATE conversation SET message =:message, created =:created, status =:status, unreads =:unreads WHERE contact_id = :idContact")
-    suspend fun updateConversationByContact(idContact: Int, message: String, created: Int, status: Int, unreads: Int)
+    @Query("UPDATE conversation SET message =:message, created =:created, status =:status, unreads =:unreads WHERE contact_id = :contactId")
+    suspend fun updateConversationByContact(contactId: Int, message: String, created: Int, status: Int, unreads: Int)
 
     @Transaction
     @Query("SELECT * FROM contact AS C INNER JOIN conversation AS CO on C.id=CO.contact_id AND C.status_blocked=0 ORDER BY created DESC")

@@ -134,8 +134,8 @@
 
         <TextView
             android:id="@+id/textView_count_down"
-            android:layout_width="55dp"
-            android:layout_height="15dp"
+            android:layout_width="@dimen/width_self_destruct_time"
+            android:layout_height="@dimen/height_self_destruct_time"
             android:layout_marginEnd="@dimen/normal_margin"
             android:background="@drawable/bg_self_destruct_time_my_message"
             android:elevation="1dp"

@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
+import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
@@ -35,6 +36,10 @@ class SecuritySettingsFragment : Fragment() {
     private lateinit var binding: SecuritySettingsFragmentBinding
 
     private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
+        viewModelFactory
+    }
+
+    private val activateBiometricsViewModel: ActivateBiometricsViewModel by viewModels {
         viewModelFactory
     }
 
@@ -78,8 +83,8 @@ class SecuritySettingsFragment : Fragment() {
             optionEditAccessPinClickListener()
         )
 
-        binding.optionBiometrics.setOnClickListener(optionBiometrictsClickListener())
-        binding.imageButtonBiometricsEndIcon.setOnClickListener(optionBiometrictsClickListener())
+        binding.optionBiometrics.setOnClickListener{optionBiometrictsClickListener()}
+        binding.imageButtonBiometricsEndIcon.setOnClickListener{optionBiometrictsClickListener()}
 
         binding.optionTimeRequestAccessPin.setOnClickListener(optionTimeAccessPinClickListener())
         binding.imageButtonTimeOptionEndIcon.setOnClickListener(optionTimeAccessPinClickListener())
@@ -134,9 +139,9 @@ class SecuritySettingsFragment : Fragment() {
         )
     }
 
-    private fun optionBiometrictsClickListener() = View.OnClickListener {
-        val biometricsDialog = ActivateBiometricsDialogFragment()
-        biometricsDialog.show(childFragmentManager, "BiometricsSelection")
+    private fun optionBiometrictsClickListener() {
+        val dialog = ActivateBiometricsDialogFragment()
+        dialog.show(childFragmentManager, "BiometricsSelection")
     }
 
     private fun optionTimeAccessPinClickListener() = View.OnClickListener {
