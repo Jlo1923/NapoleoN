@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.status
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
@@ -11,7 +10,7 @@ interface IContractStatus {
 
     interface ViewModel {
         fun getStatus()
-        fun updateStatus(context : Context, textStatus: String)
+        fun updateStatus(textStatus: String)
         fun deleteStatus(status : Status)
     }
 

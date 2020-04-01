@@ -8,9 +8,8 @@ import com.naposystems.pepito.entity.Status
 
 @BindingAdapter("status")
 fun bindStatus(textView: TextView, status: Status) {
-    val context = textView.context
-    val newStatus = if (status.customStatus.isEmpty() && status.resourceId > 0) {
-        context.getString(status.resourceId)
+    val newStatus = if (status.customStatus.isEmpty() && status.status.isNotEmpty()) {
+        status.status
     } else {
         status.customStatus
     }
@@ -19,7 +18,7 @@ fun bindStatus(textView: TextView, status: Status) {
 
 @BindingAdapter("statusImage")
 fun bindStatusImage(appCompatImageButton: AppCompatImageButton, status: Status) {
-    if (status.customStatus.isEmpty() && status.resourceId > 0) {
+    if (status.customStatus.isEmpty() && status.status.isNotEmpty()) {
         appCompatImageButton.visibility = View.INVISIBLE
     } else {
         appCompatImageButton.visibility = View.VISIBLE

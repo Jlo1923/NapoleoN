@@ -97,14 +97,14 @@ class StatusFragment : Fragment() {
                 adapter = StatusAdapter(
                     statusList,
                     StatusAdapter.StatusSelectionListener(clickListener = { status ->
-                        val textStatus = if (status.resourceId > 0) {
-                            context.getString(status.resourceId)
+                        val textStatus = if (status.status.isNotEmpty()) {
+                            status.status
                         } else {
                             status.customStatus
                         }
 
                         binding.textInputEditTextStatus.setText(textStatus)
-                        viewModel.updateStatus(context, textStatus)
+                        viewModel.updateStatus(textStatus)
                     }, clickDelete = { status, view ->
                         val popup = PopupMenu(context, view)
                         popup.menuInflater.inflate(R.menu.menu_popup_status, popup.menu)
@@ -131,10 +131,7 @@ class StatusFragment : Fragment() {
                 if (view.text.trim().isNotEmpty()) {
                     viewModel.status.value?.let { listStatus ->
                         if (listStatus.count() < 10) {
-                            viewModel.updateStatus(
-                                context,
-                                view.text.toString()
-                            )
+                            viewModel.updateStatus(view.text.toString())
                             view.clearFocus()
                         } else {
                             Utils.alertDialogInformative(
@@ -158,17 +155,15 @@ class StatusFragment : Fragment() {
 
     private fun selectStatus(listStatus : List<Status>) {
         viewModel.user.value?.let { user ->
-            context?.let {context ->
-                val statusOld = listStatus.find {
-                    (it.resourceId != 0) && (context.getString(it.resourceId).trim() == user.status.trim()) ||
-                    (it.resourceId == 0) && (it.customStatus.trim() == user.status.trim())
-                }
+            val statusOld = listStatus.find {
+                (it.status.isNotEmpty()) && (it.status.trim() == user.status.trim()) ||
+                (it.status.isEmpty()) && (it.customStatus.trim() == user.status.trim())
+            }
 
-                if (statusOld == null) {
-                    val statusByDefect = context.getString(listStatus[0].resourceId)
-                    viewModel.updateStatus(context, statusByDefect)
-                    binding.textInputEditTextStatus.setText(statusByDefect)
-                }
+            if (statusOld == null) {
+                val statusByDefect = listStatus[0].status
+                viewModel.updateStatus(statusByDefect)
+                binding.textInputEditTextStatus.setText(statusByDefect)
             }
         }
     }

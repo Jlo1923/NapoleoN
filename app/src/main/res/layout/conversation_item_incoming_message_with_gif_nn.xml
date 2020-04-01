@@ -14,10 +14,7 @@
         android:id="@+id/container_incoming_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/small_padding"
-        android:paddingTop="@dimen/x_x_small_padding"
-        android:paddingEnd="0dp"
-        android:paddingBottom="@dimen/x_x_small_padding">
+        android:paddingStart="@dimen/small_padding">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_message"
