@@ -36,4 +36,10 @@ open class BaseFragment : Fragment() {
             .get(BaseViewModel::class.java)
     }
 
+    open fun validateStateOutputControl() {
+        if (viewModel.outputControl.value != Constants.OutputControl.TRUE.state) {
+            viewModel.outputControl(Constants.OutputControl.TRUE.state)
+        }
+    }
+
 }

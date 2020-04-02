@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -26,6 +27,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactProfileFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
+import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
@@ -56,6 +58,9 @@ class ContactProfileFragment : BaseFragment() {
 
     private lateinit var viewModel: ContactProfileViewModel
     private lateinit var shareContactViewModel: ShareContactViewModel
+    private val baseViewModel: BaseViewModel by viewModels {
+        viewModelFactory
+    }
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
     private lateinit var animatedThreeEditName: AnimatedThreeVectorView
@@ -267,6 +272,8 @@ class ContactProfileFragment : BaseFragment() {
 
         viewModel.getLocalContact(args.contactId)
 
+        baseViewModel.getOutputControl()
+
         viewModel.muteConversationWsError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
@@ -294,6 +301,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
@@ -355,6 +363,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun verifyCameraAndMediaPermission() {
+        validateStateOutputControl()
         Dexter.withActivity(activity)
             .withPermissions(
                 android.Manifest.permission.CAMERA,

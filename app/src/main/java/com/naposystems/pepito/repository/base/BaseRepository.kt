@@ -14,4 +14,10 @@ class BaseRepository @Inject constructor(
             Constants.SharedPreferences.PREF_OUTPUT_CONTROL, state
         )
     }
+
+    override suspend fun getOutputControl(): Int {
+        return sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_OUTPUT_CONTROL
+        )
+    }
 }

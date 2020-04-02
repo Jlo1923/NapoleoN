@@ -30,6 +30,7 @@ import com.naposystems.pepito.databinding.ProfileFragmentBinding
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
+import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -57,6 +58,9 @@ class ProfileFragment : BaseFragment() {
     override lateinit var viewModelFactory: ViewModelFactory
     private lateinit var binding: ProfileFragmentBinding
     private val viewModel: ProfileViewModel by viewModels { viewModelFactory }
+    private val baseViewModel: BaseViewModel by viewModels {
+        viewModelFactory
+    }
     private lateinit var fileName: String
     private lateinit var subFolder: String
     private lateinit var animatedThreeEditName: AnimatedThreeVectorView
@@ -155,6 +159,8 @@ class ProfileFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.viewModel = viewModel
+
+        baseViewModel.getOutputControl()
 
         viewModelObservers()
     }
@@ -308,7 +314,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun verifyCameraAndMediaPermission() {
-
+        validateStateOutputControl()
         Dexter.withActivity(activity!!)
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
             .withListener(object : MultiplePermissionsListener {
