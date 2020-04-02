@@ -8,4 +8,5 @@
     <string name="text_expired_subscription">L\'abonnement a expiré</string>
     <string name="text_free_trial_expired">Le temps de test a expiré</string>
     <string name="text_subscription_expiration">Expiration de l\'abonnement</string>
+    <string name="text_check_conditions">Vous êtes sur le point d\'accéder à une plateforme externe à l\'application. Napoleon Secret Chat ne sauvegarde ni n\'a accès aux données fournies sur cette plateforme. Êtes-vous sûr de vouloir accéder à ce site?</string>
 </resources>

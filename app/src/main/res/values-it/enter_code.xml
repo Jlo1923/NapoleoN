@@ -9,4 +9,8 @@
         <item quantity="one">Nuovo tentativo in: %d secondo</item>
         <item quantity="other">Nuovo tentativo in: %d secondi</item>
     </plurals>
+    <plurals name="text_new_attempt_in_x_minutes">
+        <item quantity="one">Nuovo tentativo in: %d minuto</item>
+        <item quantity="other">Nuovo tentativo in: %d minuti</item>
+    </plurals>
 </resources>

@@ -2,15 +2,42 @@ package com.naposystems.pepito.ui.register.enterCode
 
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
+import com.naposystems.pepito.dto.sendCode.SendCode422DTO
+import com.naposystems.pepito.dto.sendCode.SendCodeErrorDTO
+import com.naposystems.pepito.dto.sendCode.SendCodeResDTO
 import retrofit2.Response
 
 interface IContractEnterCode {
 
     interface ViewModel {
-        fun sendCode(enterCodeReqDTO: EnterCodeReqDTO)
+        fun sendCode(code: String)
+        fun setTimeForRetryCode(timeWait: Int): Long
+        fun getAttemptsForRetryCode()
+        fun getAttemptsForNewCode()
+        fun getTimeForRetryCode(): Long
+        fun getTimeForNewCode(): Long
+        fun setTimeForNewCode(timeWait: Int): Long
+        fun codeForwarding()
+        fun resetAttemptsEnterCode()
+        fun resetAttemptsNewCode()
     }
 
     interface Repository {
-        suspend fun sendCodeToWs(enterCodeReqDTO: EnterCodeReqDTO): Response<EnterCodeResDTO>
+        suspend fun sendCodeToWs(code: String): Response<EnterCodeResDTO>
+        suspend fun codeForwarding(): Response<SendCodeResDTO>
+        fun getAttemptsForNewCode(): Int
+        fun getAttemptsForRetryCode(): Int
+        fun getTimeForRetryCode(): Long
+        fun getTimeForNewCode(): Long
+        fun setAttemptsForNewCode(attempts: Int)
+        fun setTimeForNewCode(time: Long)
+        fun setAttemptsForRetryCode(attempts: Int)
+        fun setTimeForRetryCode(time: Long)
+        fun resetAttemptsEnterCode()
+        fun resetAttemptsNewCode()
+        fun get422Error(response: Response<EnterCodeResDTO>): ArrayList<String>
+        fun getDefaultError(response: Response<EnterCodeResDTO>): ArrayList<String>
+        fun get422ErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>
+        fun getDefaultErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>
     }
 }

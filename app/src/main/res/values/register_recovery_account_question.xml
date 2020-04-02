@@ -9,4 +9,5 @@
     <string name="text_title_cancel">Leave?</string>
     <string name="text_successful_message">Information registered successfully</string>
     <string name="text_error_message">Error registering information</string>
+    <string name="text_final_register">Are you sure you want to go out? The application will save the previous answers in your account recovery settings.</string>
 </resources>

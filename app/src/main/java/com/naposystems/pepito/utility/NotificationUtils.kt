@@ -81,7 +81,7 @@ object NotificationUtils {
                         Constants.ExistingAttack.EXISTING.type
                     )
                     sharedPreferencesManager.putString(
-                        Constants.SharedPreferences.PREF_ATTCKER_ID, attackerId
+                        Constants.SharedPreferences.PREF_ATTACKER_ID, attackerId
                     )
 
                     with(NotificationManagerCompat.from(context)) {

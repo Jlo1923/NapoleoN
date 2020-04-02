@@ -8,10 +8,25 @@ import retrofit2.Response
 interface IContractSendCode {
 
     interface ViewModel {
-        fun requestCode(sendCodeReqDTO: SendCodeReqDTO)
+        fun requestCode()
+        fun getTimeForNewCode()
+        fun getTimeForEnterCode()
+        fun getAttemptsNewCode(): Int
+        fun getAttemptsEnterCode(): Int
+        fun resetAttemptsEnterCode()
+        fun resetAttemptsNewCode()
     }
 
     interface Repository {
-        suspend fun requestCode(sendCodeReqDTO: SendCodeReqDTO) : Response<SendCodeResDTO>
+        suspend fun requestCode(): Response<SendCodeResDTO>
+        fun getTimeForNewCode(): Long
+        fun getTimeForEnterCode(): Long
+        fun setAttemptNewCode()
+        fun getAttemptsNewCode(): Int
+        fun getAttemptsEnterCode(): Int
+        fun resetAttemptsEnterCode()
+        fun resetAttemptsNewCode()
+        fun get422Error(response: Response<SendCodeResDTO>): ArrayList<String>
+        fun getDefaultError(response: Response<SendCodeResDTO>): ArrayList<String>
     }
 }

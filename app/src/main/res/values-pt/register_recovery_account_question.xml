@@ -9,4 +9,5 @@
     <string name="text_title_cancel">Sair?</string>
     <string name="text_successful_message">Informações registradas com sucesso</string>
     <string name="text_error_message">Erro ao registrar informações</string>
+    <string name="text_final_register">Tem certeza de que deseja sair? O aplicativo salvará as respostas anteriores nas configurações de recuperação da sua conta.</string>
 </resources>

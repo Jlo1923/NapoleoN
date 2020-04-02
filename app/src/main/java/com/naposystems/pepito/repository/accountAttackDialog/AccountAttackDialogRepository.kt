@@ -16,7 +16,7 @@ class AccountAttackDialogRepository @Inject constructor(
 
     override suspend fun blockAttack(): Response<AccountAttackDialogResDTO> {
         val attack = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_ATTCKER_ID, ""
+            Constants.SharedPreferences.PREF_ATTACKER_ID, ""
         )
 
         return napoleonApi.blockAttacker(AccountAttackDialogReqDTO(attack))

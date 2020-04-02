@@ -45,14 +45,10 @@ class SubscriptionPaymentFragment : Fragment() {
                     return false
                 }
 
-                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    super.onPageStarted(view, url, favicon)
-                    binding.progressBar.isVisible = true
-                }
-
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
-                    binding.progressBar.isVisible = false
+                    binding.containerProgressPayment.visibility = View.GONE
+                    binding.progressBarPayment.visibility = View.GONE
                 }
             }
         }

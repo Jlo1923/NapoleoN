@@ -629,7 +629,7 @@
     <fragment
         android:id="@+id/subscriptionPaymentFragment"
         android:name="com.naposystems.pepito.ui.subscriptionPayment.SubscriptionPaymentFragment"
-        android:label="Suscripción!!"
+        android:label="@string/text_subscription_title"
         tools:layout="@layout/subscription_payment_fragment" >
         <argument
             android:name="url"

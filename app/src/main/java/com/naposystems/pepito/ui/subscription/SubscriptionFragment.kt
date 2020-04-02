@@ -38,6 +38,7 @@ class SubscriptionFragment : Fragment() {
     private lateinit var binding: SubscriptionFragmentBinding
     private lateinit var snackbarUtils: SnackbarUtils
     private var subscriptionUser: SubscriptionUser? = null
+    private var listTypeSubscription: List<TypeSubscription>? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -55,9 +56,14 @@ class SubscriptionFragment : Fragment() {
             false
         )
 
+        binding.checkBoxPaymentDescription.isChecked = false
+        binding.checkBoxPaymentDescription.setOnCheckedChangeListener { _, isChecked ->
+            binding.imageButtonPaypal.isEnabled = isChecked
+        }
+
         binding.imageButtonPaypal.setOnClickListener {
-            sendPayment()
             binding.viewSwitcher.showNext()
+            sendPayment()
         }
 
         return binding.root
@@ -67,8 +73,30 @@ class SubscriptionFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.getTypeSubscription()
+        viewModel.typeSubscription.observe(viewLifecycleOwner, Observer { listTypeSubscription ->
+            binding.checkBoxPaymentDescription.isChecked = false
+            if (listTypeSubscription.isNotEmpty()) {
+                this.listTypeSubscription = listTypeSubscription
+                val selectSubscription = getString(R.string.text_select_subscription)
+                val newListSubscription = listTypeSubscription.toMutableList()
 
-        observeTypeSubscription()
+                newListSubscription.add(0, TypeSubscription(0, selectSubscription, 0, 0, 0))
+
+                val adapter = ArrayAdapter(
+                    context!!,
+                    R.layout.subscription_item,
+                    R.id.textView_subscription_item,
+                    newListSubscription
+                )
+                binding.spinnerPayment.adapter = adapter
+                viewModel.getRemoteSubscription()
+            }
+        })
+
+        viewModel.subscriptionUser.observe(viewLifecycleOwner, Observer {
+            subscriptionUser = it
+            setSubscriptionUser()
+        })
 
         viewModel.getTypeSubscriptionError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -95,51 +123,34 @@ class SubscriptionFragment : Fragment() {
         })
     }
 
-    private fun observeTypeSubscription() {
-        viewModel.typeSubscription.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-                val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                val netDate: Date
-                subscriptionUser = viewModel.getSubscription()
-
-                if (System.currentTimeMillis() > viewModel.getFreeTrial()) {
-                    if (subscriptionUser?.dateExpires != 0L) {
-                        if (System.currentTimeMillis() > subscriptionUser!!.dateExpires) {
-                            binding.textViewSubscriptionActual.text =
-                                getString(R.string.text_expired_subscription)
-                        } else {
-                            val currentSubscription = it.find { typeSubscription ->
-                                typeSubscription.id == subscriptionUser?.subscriptionId
-                            }?.description
-                            binding.textViewSubscriptionActual.text = currentSubscription
-                        }
-                    } else {
+    private fun setSubscriptionUser() {
+        binding.imageButtonPaypal.isEnabled = false
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val netDate: Date
+        subscriptionUser?.let { subscriptionUser ->
+            if (System.currentTimeMillis() > viewModel.getFreeTrial()) {
+                if (subscriptionUser.dateExpires != 0L) {
+                    if (System.currentTimeMillis() > subscriptionUser.dateExpires) {
                         binding.textViewSubscriptionActual.text =
-                            getString(R.string.text_free_trial_expired)
+                            getString(R.string.text_expired_subscription)
+                    } else {
+                        val currentSubscription =
+                            listTypeSubscription?.find { typeSubscription ->
+                                typeSubscription.id == subscriptionUser.subscriptionId
+                            }?.description
+                        binding.textViewSubscriptionActual.text = currentSubscription
                     }
-                    netDate = Date(subscriptionUser!!.dateExpires)
                 } else {
-                    netDate = Date(viewModel.getFreeTrial())
-                    binding.textViewSubscriptionActual.text = getString(R.string.text_trial_period)
+                    binding.textViewSubscriptionActual.text =
+                        getString(R.string.text_free_trial_expired)
                 }
-
-                binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
-
-                val selectSubscription = getString(R.string.text_select_subscription)
-                val newListSubscription = it.toMutableList()
-
-                newListSubscription.add(0, TypeSubscription(0, selectSubscription, 0, 0, 0))
-
-                val adapter = ArrayAdapter(
-                    context!!,
-                    R.layout.subscription_item,
-                    R.id.textView_subscription_item,
-                    newListSubscription
-                )
-
-                binding.spinnerPayment.adapter = adapter
+                netDate = Date(subscriptionUser.dateExpires)
+            } else {
+                netDate = Date(viewModel.getFreeTrial())
+                binding.textViewSubscriptionActual.text = getString(R.string.text_trial_period)
             }
-        })
+            binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+        }
     }
 
     private fun sendPayment() {
@@ -152,6 +163,7 @@ class SubscriptionFragment : Fragment() {
             Toast.makeText(
                 context!!, "Debe seleccionar un método de pago|!!", Toast.LENGTH_SHORT
             ).show()
+            binding.viewSwitcher.showNext()
         }
     }
 }
