@@ -1,7 +1,9 @@
 package com.naposystems.pepito.dto.enterCode
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-data class EnterCode400DTO(
+@JsonClass(generateAdapter = true)
+data class EnterCodeErrorDTO(
     @Json(name = "error") val error: String
 )

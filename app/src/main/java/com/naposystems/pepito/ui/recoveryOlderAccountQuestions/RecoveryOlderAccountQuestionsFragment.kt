@@ -2,6 +2,8 @@ package com.naposystems.pepito.ui.recoveryOlderAccountQuestions
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +61,10 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         viewModel.getOlderQuestions(nickname)
 
         binding.textInputEditTextAnswerOne.addTextChangedListener {
+
+        }
+
+        binding.textInputEditTextAnswerOne.addTextChangedListener {
             it?.let {
                 binding.buttonRecoveryAccount.isEnabled = it.count() > 0 && binding.textInputEditTextAnswerTwo.text?.count()!! > 0
             }
@@ -71,11 +77,7 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         }
 
         binding.buttonRecoveryAccount.setOnClickListener {
-            viewModel.sendAnswers(
-                nickname,
-                binding.textInputEditTextAnswerOne.text.toString(),
-                binding.textInputEditTextAnswerTwo.text.toString()
-            )
+            sendAnswers()
         }
 
         return binding.root
@@ -91,14 +93,16 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.recoveryOlderAccountQuestions.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                binding.textViewQuestionOne.text = it.firstQuestion
-                binding.textViewQuestionTwo.text = it.secondQuestion
+        viewModel.recoveryOlderAccountQuestions.observe(
+            viewLifecycleOwner,
+            Observer { recoveryOlderQuestions ->
+                if (recoveryOlderQuestions != null) {
+                    binding.textViewQuestionOne.text = recoveryOlderQuestions.firstQuestion
+                    binding.textViewQuestionTwo.text = recoveryOlderQuestions.secondQuestion
 
-                viewModel.resetRecoveryQuestions()
-            }
-        })
+                    viewModel.resetRecoveryQuestions()
+                }
+            })
 
         viewModel.accountCreatedSuccess.observe(viewLifecycleOwner, Observer {
             it.let {
@@ -139,4 +143,11 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         })
     }
 
+    private fun sendAnswers() {
+        viewModel.sendAnswers(
+            nickname,
+            binding.textInputEditTextAnswerOne.text.toString(),
+            binding.textInputEditTextAnswerTwo.text.toString()
+        )
+    }
 }

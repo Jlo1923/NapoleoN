@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RegisterRecoveryAccountBinding
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -28,10 +29,10 @@ class RegisterRecoveryAccountFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
     private lateinit var binding: RegisterRecoveryAccountBinding
-
     private val viewModel: RegisterRecoveryAccountViewModel by viewModels { viewModelFactory }
+
+    private var recoveryQuestionsPref: Int = 0
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -52,11 +53,7 @@ class RegisterRecoveryAccountFragment : Fragment() {
         }
 
         binding.buttonRegister.setOnClickListener {
-
-            findNavController().navigate(
-                RegisterRecoveryAccountFragmentDirections
-                    .actionRegisterRecoveryAccountFragmentToRegisterRecoveryAccountQuestionFragment()
-            )
+            gotoRegisterQuestions()
         }
 
         return binding.root
@@ -66,13 +63,35 @@ class RegisterRecoveryAccountFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel.getRecoveryQuestionsPref()
         viewModel.recoveryQuestionsPref.observe(viewLifecycleOwner, Observer {
-            if (it == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
+            recoveryQuestionsPref = it
+            if (recoveryQuestionsPref == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
                 binding.textViewDescription.setText(R.string.text_recovery_account_ok)
                 binding.buttonRegister.setText(R.string.text_edit)
             }
         })
     }
 
+    private fun gotoRegisterQuestions(){
+        if (recoveryQuestionsPref == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
+            Utils.generalDialog(
+                getString(R.string.text_alert_failure),
+                getString(R.string.text_recovery_account_ok),
+                true,
+                childFragmentManager
+            ) {
+                registerQuestions()
+            }
+        } else {
+            registerQuestions()
+        }
+    }
+
+    private fun registerQuestions(){
+        findNavController().navigate(
+            RegisterRecoveryAccountFragmentDirections
+                .actionRegisterRecoveryAccountFragmentToRegisterRecoveryAccountQuestionFragment()
+        )
+    }
 
     private fun openTermsAndConditions() {
         val termsAndConditionsUri: Uri = Uri.parse(Constants.URL_TERMS_AND_CONDITIONS)

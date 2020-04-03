@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.pepito.dto.sendCode.SendCodeErrorDTO
-import com.naposystems.pepito.dto.sendCode.SendCodeReqDTO
 import com.naposystems.pepito.repository.sendCode.SendCodeRepository
-import com.squareup.moshi.Moshi
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -15,60 +12,78 @@ import javax.inject.Inject
 class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepository) :
     ViewModel(), IContractSendCode.ViewModel {
 
-    private val _openEnterCode = MutableLiveData<Boolean>()
-    val openEnterCode: LiveData<Boolean>
-        get() = _openEnterCode
+    private val _codeSuccess = MutableLiveData<Boolean>()
+    val codeSuccess: LiveData<Boolean>
+        get() = _codeSuccess
 
-    private val _webServiceError = MutableLiveData<String>()
-    val webServiceError: LiveData<String>
+    private val _timeForNewCode = MutableLiveData<Long>()
+    val timeForNewCode: LiveData<Long>
+        get() = _timeForNewCode
+
+    private val _timeForEnterCode = MutableLiveData<Long>()
+    val timeForEnterCode: LiveData<Long>
+        get() = _timeForEnterCode
+
+    private val _webServiceError = MutableLiveData<List<String>>()
+    val webServiceError: LiveData<List<String>>
         get() = _webServiceError
 
-    init {
-        _openEnterCode.value = null
-        _webServiceError.value = ""
-    }
-
-    fun onSendCodePressed(sendCodeReqDTO: SendCodeReqDTO) {
-        viewModelScope.launch {
-            requestCode(sendCodeReqDTO)
-        }
-    }
-
-    fun onEnterCodeOpened() {
-        _openEnterCode.value = null
+    fun resetCode() {
+        _codeSuccess.value = null
+        _webServiceError.value = emptyList()
     }
 
     //region Implementation IContractSendCode.ViewModel
-    override fun requestCode(sendCodeReqDTO: SendCodeReqDTO) {
+    override fun requestCode() {
         viewModelScope.launch {
             try {
-                val response = repository.requestCode(sendCodeReqDTO)
+                val response = repository.requestCode()
 
-                Timber.d(response.toString())
                 if (response.isSuccessful) {
-                    _openEnterCode.value = true
+                    repository.setAttemptNewCode()
+                    _codeSuccess.value = true
                 } else {
                     when (response.code()) {
                         422 -> {
-                            val moshi = Moshi.Builder().build()
-
-                            val adapter = moshi.adapter(SendCodeErrorDTO::class.java)
-
-                            val sendCodeErrorDTO = adapter.fromJson(response.errorBody()!!.string())
-
-                            _webServiceError.value = sendCodeErrorDTO!!.firebaseId[0]
+                            _webServiceError.value = repository.get422Error(response)
+                            _codeSuccess.value = false
                         }
                         else -> {
-                            _webServiceError.value = "Error inesperado"
-                            Timber.e(response.errorBody()!!.string())
+                            _webServiceError.value = repository.getDefaultError(response)
+                            _codeSuccess.value = false
                         }
                     }
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                _webServiceError.value = "Error inesperado jajaja"
+                _webServiceError.value = arrayListOf("Error inesperado|!!")
             }
         }
     }
+
+    override fun getTimeForNewCode() {
+        _timeForNewCode.value = repository.getTimeForNewCode()
+    }
+
+    override fun getTimeForEnterCode() {
+        _timeForEnterCode.value = repository.getTimeForEnterCode()
+    }
+
+    override fun getAttemptsNewCode(): Int {
+        return repository.getAttemptsNewCode()
+    }
+
+    override fun getAttemptsEnterCode(): Int {
+        return repository.getAttemptsEnterCode()
+    }
+
+    override fun resetAttemptsEnterCode() {
+        repository.resetAttemptsEnterCode()
+    }
+
+    override fun resetAttemptsNewCode() {
+        repository.resetAttemptsNewCode()
+    }
+
     //endregion
 }

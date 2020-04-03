@@ -139,15 +139,25 @@
                 app:layout_constraintWidth_percent="0.9"
                 tools:listitem="@layout/subscription_item" />
 
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/checkBox_payment_description"
+                style="@style/BodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:text="@string/text_check_conditions"
+                app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
+                app:layout_constraintStart_toStartOf="@+id/spinner_payment"
+                app:layout_constraintTop_toBottomOf="@id/spinner_payment" />
 
             <ViewSwitcher
                 android:id="@+id/viewSwitcher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/large_margin"
+                android:layout_marginTop="@dimen/normal_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_payment"
+                app:layout_constraintTop_toBottomOf="@+id/checkBox_payment_description"
                 app:layout_constraintWidth_percent="@dimen/width_app_button">
 
                 <ImageButton
@@ -155,7 +165,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/normal_padding"
-                    android:src="@drawable/image_paypal" />
+                    android:src="@drawable/paypal_button" />
 
                 <ProgressBar
                     android:layout_width="match_parent"

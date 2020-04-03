@@ -27,6 +27,11 @@ class SubscriptionViewModel @Inject constructor(
     val subscriptionUrl: LiveData<SubscriptionUrl>
         get() = _subscriptionUrl
 
+
+    private val _subscriptionUser = MutableLiveData<SubscriptionUser>()
+    val subscriptionUser: LiveData<SubscriptionUser>
+        get() = _subscriptionUser
+
     private val _subscriptionUserError = MutableLiveData<List<String>>()
     val subscriptionUserError: LiveData<List<String>>
         get() = _subscriptionUserError
@@ -58,8 +63,15 @@ class SubscriptionViewModel @Inject constructor(
         return repository.getFreeTrial()
     }
 
-    override fun getSubscription(): SubscriptionUser {
-        return repository.getSubscription()
+    override fun getRemoteSubscription() {
+        viewModelScope.launch {
+            repository.getRemoteSubscription()
+            getSubscription()
+        }
+    }
+
+    override fun getSubscription() {
+        _subscriptionUser.value = repository.getSubscription()
     }
 
     override fun sendPayment(typePayment: Int) {
@@ -79,6 +91,6 @@ class SubscriptionViewModel @Inject constructor(
     }
 
     override fun resetViewModel() {
-        _typeSubscription.value = null
+        _subscriptionUrl.value = null
     }
 }

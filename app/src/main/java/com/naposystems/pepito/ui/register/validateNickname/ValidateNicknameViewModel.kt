@@ -63,7 +63,7 @@ class ValidateNicknameViewModel @Inject constructor(private val repository: Vali
 
                             val sendCodeErrorDTO = adapter.fromJson(response.errorBody()!!.string())
 
-                            _webServiceError.value = sendCodeErrorDTO!!.firebaseId[0]
+                            _webServiceError.value = sendCodeErrorDTO!!.error
                         }
                         else -> _webServiceError.value = "Error inesperado"
                     }

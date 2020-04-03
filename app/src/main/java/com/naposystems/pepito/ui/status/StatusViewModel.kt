@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.status
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -49,10 +48,10 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         }
     }
 
-    override fun updateStatus(context: Context, textStatus: String) {
+    override fun updateStatus(textStatus: String) {
         viewModelScope.launch {
             try {
-                user.value?.let {user ->
+                user.value?.let { user ->
                     val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
                         displayName = user.displayName,
                         status = textStatus
@@ -61,11 +60,9 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
                     val response = repository.updateRemoteStatus(updateUserInfoReqDTO)
 
                     if (response.isSuccessful) {
-                        handleUpdateRemoteStatusSuccessful(context, updateUserInfoReqDTO, user)
+                        handleUpdateRemoteStatusSuccessful(updateUserInfoReqDTO, user)
                     } else {
                         when (response.code()) {
-                            401, 500 -> _errorUpdatingStatus.value =
-                                repository.getDefaultError(response)
                             422 -> _errorUpdatingStatus.value = repository.get422Error(response)
                             else -> _errorUpdatingStatus.value = repository.getDefaultError(response)
                         }
@@ -79,16 +76,15 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     }
 
     private suspend fun handleUpdateRemoteStatusSuccessful(
-        context: Context,
         updateUserInfoReqDTO: UpdateUserInfoReqDTO,
         user: User
     ) {
         status.value?.let { listStatus ->
             if (listStatus.count() < 10) {
                 val status = listStatus.find {
-                    (it.resourceId != 0) && (context.getString(it.resourceId)
+                    (it.status.isNotEmpty()) && (it.status
                         .trim() == updateUserInfoReqDTO.status.trim()) ||
-                            (it.resourceId == 0) && (it.customStatus.trim() == updateUserInfoReqDTO.status.trim())
+                            (it.status.isEmpty()) && (it.customStatus.trim() == updateUserInfoReqDTO.status.trim())
                 }
 
                 if (status == null) {

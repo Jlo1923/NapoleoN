@@ -9,4 +9,5 @@
     <string name="text_title_cancel">Abmelden?</string>
     <string name="text_successful_message">Information erfolgreich registriert</string>
     <string name="text_error_message">Fehler beim Registrieren der Informationen</string>
+    <string name="text_final_register">Bist du sicher, dass du ausgehen willst? Die Anwendung speichert die vorherigen Antworten in Ihren Kontowiederherstellungseinstellungen.</string>
 </resources>

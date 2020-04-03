@@ -8,4 +8,5 @@
     <string name="text_expired_subscription">La suscripción está vencida</string>
     <string name="text_free_trial_expired">Tiempo de prueba vencido</string>
     <string name="text_subscription_expiration">Vencimiento de la suscripción</string>
+    <string name="text_check_conditions">Está a punto de ir a una plataforma externa a la aplicación. Napoleon Secret Chat no guarda ni tiene acceso a los datos suministrados en esta plataforma. ¿Seguro que quiere ir a este sitio?</string>
 </resources>

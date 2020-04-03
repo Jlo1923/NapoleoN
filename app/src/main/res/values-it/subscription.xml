@@ -8,4 +8,5 @@
     <string name="text_expired_subscription">Abbonamento scaduto</string>
     <string name="text_free_trial_expired">Il tempo di prova è scaduto</string>
     <string name="text_subscription_expiration">Scadenza dell\'abbonamento</string>
+    <string name="text_check_conditions">Stai per andare su una piattaforma esterna all\'applicazione. Napoleon Secret Chat non salva né ha accesso ai dati forniti su questa piattaforma. Sei sicuro di voler visitare questo sito?</string>
 </resources>

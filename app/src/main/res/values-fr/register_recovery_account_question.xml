@@ -9,4 +9,5 @@
     <string name="text_title_cancel">Se déconnecter?</string>
     <string name="text_successful_message">Informations enregistrées avec succès</string>
     <string name="text_error_message">Erreur lors de l\'enregistrement des informations</string>
+    <string name="text_final_register">Êtes-vous sûr de vouloir sortir? L\'application enregistrera les réponses précédentes dans les paramètres de récupération de votre compte.</string>
 </resources>

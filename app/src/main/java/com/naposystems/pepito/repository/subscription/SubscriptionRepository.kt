@@ -1,6 +1,5 @@
 package com.naposystems.pepito.repository.subscription
 
-import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.subscription.*
 import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 import com.naposystems.pepito.ui.subscription.IContractSubscription
@@ -10,6 +9,7 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SubscriptionRepository @Inject constructor(
@@ -27,13 +27,34 @@ class SubscriptionRepository @Inject constructor(
         )
     }
 
+    override suspend fun getRemoteSubscription() {
+        val response = napoleonApi.getSubscriptionUser()
+        response.body()?.let { responseBody ->
+            val currentTimeSubscriptionLocal = sharedPreferencesManager.getLong(
+                Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
+            )
+            if (System.currentTimeMillis() > currentTimeSubscriptionLocal &&
+                response.isSuccessful && responseBody.subscriptionId != 0
+            ) {
+                sharedPreferencesManager.putInt(
+                    Constants.SharedPreferences.PREF_TYPE_SUBSCRIPTION,
+                    responseBody.subscriptionId
+                )
+                sharedPreferencesManager.putLong(
+                    Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME,
+                    TimeUnit.SECONDS.toMillis(responseBody.dateExpires)
+                )
+            }
+        }
+    }
+
     override fun getSubscription(): SubscriptionUser {
         val subscriptionTime = sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
         )
-        if (subscriptionTime != 0L){
+        if (subscriptionTime != 0L) {
             sharedPreferencesManager.putLong(
-                Constants.SharedPreferences.PREF_FREE_TRIAL, 0
+                Constants.SharedPreferences.PREF_FREE_TRIAL, 0L
             )
         }
 

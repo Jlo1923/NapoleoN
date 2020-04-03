@@ -155,4 +155,40 @@ class SplashRepository @Inject constructor(
             )
         }
     }
+
+    override suspend fun setDefaultAttemptsForRetryCode() {
+        val default = sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_ATTEMPTS_FOR_RETRY_CODE
+        )
+        if (default == 0){
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_ATTEMPTS_FOR_RETRY_CODE,
+                0
+            )
+        }
+    }
+
+    override suspend fun setDefaultTimeForRetryCode() {
+        val default = sharedPreferencesManager.getLong(
+            Constants.SharedPreferences.PREF_TIME_FOR_RETRY_CODE
+        )
+        if (default == 0L){
+            sharedPreferencesManager.putLong(
+                Constants.SharedPreferences.PREF_TIME_FOR_RETRY_CODE,
+                0
+            )
+        }
+    }
+
+    override suspend fun setDefaultAttemptsForNewCode() {
+        val default = sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE
+        )
+        if (default == 0){
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE,
+                0
+            )
+        }
+    }
 }
