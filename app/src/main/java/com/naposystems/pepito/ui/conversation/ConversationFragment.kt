@@ -47,6 +47,8 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
+import com.naposystems.pepito.ui.baseFragment.BaseFragment
+import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
@@ -70,7 +72,7 @@ import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
 import javax.inject.Inject
 
-class ConversationFragment : Fragment(),
+class ConversationFragment : BaseFragment(),
     MediaPlayerManager.Listener {
 
     companion object {
@@ -78,7 +80,7 @@ class ConversationFragment : Fragment(),
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
@@ -92,6 +94,10 @@ class ConversationFragment : Fragment(),
 
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
     private val shareContactViewModel: ShareContactViewModel by viewModels {
+        viewModelFactory
+    }
+
+    private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
 
@@ -189,7 +195,7 @@ class ConversationFragment : Fragment(),
                 c,
                 recyclerView,
                 viewHolder,
-                dX /2,
+                dX / 2,
                 dY,
                 actionState,
                 isCurrentlyActive
@@ -265,6 +271,7 @@ class ConversationFragment : Fragment(),
         })
 
         binding.inputPanel.getImageButtonAttachment().setOnClickListener {
+            validateStateOutputControl()
             val attachmentDialog = AttachmentDialogFragment()
             attachmentDialog.setListener(object :
                 AttachmentDialogFragment.OnAttachmentDialogListener {
@@ -424,6 +431,8 @@ class ConversationFragment : Fragment(),
         selfDestructTimeViewModel.getSelfDestructTimeByContact(args.contact.id)
 
         selfDestructTimeViewModel.getSelfDestructTime()
+
+        baseViewModel.getOutputControl()
 
         setConversationBackground()
 
@@ -992,7 +1001,7 @@ class ConversationFragment : Fragment(),
                     binding.inputPanel.resetImage()
                     conversationAdapter
                         .getMessageAndAttachment(position)?.let { messageAndAttachment ->
-                            if (messageAndAttachment.message.status == Constants.MessageStatus.ERROR.status){
+                            if (messageAndAttachment.message.status == Constants.MessageStatus.ERROR.status) {
                                 this.showToast("No se puede citar de un mensaje fallido|!!")
                             } else {
                                 binding.inputPanel.openQuote(messageAndAttachment)

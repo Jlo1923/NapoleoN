@@ -22,6 +22,7 @@
         android:id="@+id/container_my_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="0dp"
         android:paddingEnd="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

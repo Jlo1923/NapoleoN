@@ -13,7 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -24,6 +24,8 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AppearanceSettingsFragmentBinding
+import com.naposystems.pepito.ui.baseFragment.BaseFragment
+import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
@@ -38,7 +40,7 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-class AppearanceSettingsFragment : Fragment() {
+class AppearanceSettingsFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = AppearanceSettingsFragment()
@@ -48,9 +50,14 @@ class AppearanceSettingsFragment : Fragment() {
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: AppearanceSettingsViewModel
+
+    private val baseViewModel: BaseViewModel by viewModels {
+        viewModelFactory
+    }
+
     private lateinit var binding: AppearanceSettingsFragmentBinding
     private lateinit var fileName: String
     private val compressedFileName by lazy {
@@ -145,7 +152,7 @@ class AppearanceSettingsFragment : Fragment() {
     }
 
     private fun verifyCameraAndMediaPermission() {
-
+        validateStateOutputControl()
         Dexter.withActivity(activity!!)
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
             .withListener(object : MultiplePermissionsListener {
@@ -248,6 +255,7 @@ class AppearanceSettingsFragment : Fragment() {
 
         viewModel.getColorScheme()
         viewModel.getUserDisplayFormat()
+        baseViewModel.getOutputControl()
 
         viewModel.chatBackgroundUpdated.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -269,6 +277,7 @@ class AppearanceSettingsFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
