@@ -8,15 +8,12 @@ import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.repository.profile.ProfileRepository
-import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.SharedPreferencesManager
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
-    private val repository: ProfileRepository,
-    private val sharedPreferencesManager: SharedPreferencesManager
+    private val repository: ProfileRepository
 ) : ViewModel(),
     IContractProfile.ViewModel {
 

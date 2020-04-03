@@ -66,6 +66,7 @@
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="AppThemePinkDream" parent="AppTheme">
@@ -468,7 +469,7 @@
     </style>
 
     <style name="AppPrimaryButtonText.Keyboard" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:textSize">36dp</item>
+        <item name="android:textSize">36sp</item>
         <item name="android:textColor">?attr/attrColorButtonTint</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textStyle">bold</item>
