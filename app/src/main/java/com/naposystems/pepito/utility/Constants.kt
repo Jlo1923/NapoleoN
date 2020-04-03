@@ -279,9 +279,10 @@ object Constants {
         OLD_USER(2)
     }
 
-    enum class TypeSubscription(val type: Int) {
-        ONE_MONTH(1),
-        ONE_YEAR(2)
+    enum class TimeSendCode(val time: Int){
+        TEN_SECONDS(10000),
+        THIRTY_SECONDS(30000),
+        FIVE_MINUTES(300000)
     }
 
     enum class FreeTrialUsers(val time: Int) {
@@ -311,17 +312,29 @@ object Constants {
         const val PREF_TIME_REQUEST_ACCESS_PIN = "time_request_access_pin"
         const val PREF_ALLOW_DOWNLOAD_ATTACHMENTS = "allow_download_attachments"
         const val PREF_SOCKET_ID = "socket_id"
-        const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
         const val PREF_SECRET_KEY = "secret_key"
         const val PREF_OUTPUT_CONTROL = "output_control"
         const val PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT = "message_self_destruct_time_not_sent"
-        const val PREF_EXISTING_ATTACK = "existing_attack"
-        const val PREF_ATTCKER_ID = "attacker_id"
+        const val PREF_JSON_NOTIFICATION = "json_notification"
+
+        const val PREF_ATTEMPTS_FOR_NEW_CODE = "attempts_for_new_code"
+        const val PREF_TIME_FOR_NEW_CODE = "time_for_new_code"
+        const val PREF_ATTEMPTS_FOR_RETRY_CODE = "attempts_for_retry_code"
+        const val PREF_TIME_FOR_RETRY_CODE = "time_for_retry_code"
+
+
+        //region RecoveryAccount
         const val PREF_ACCOUNT_RECOVERY_ATTEMPTS = "account_recovery_attempts"
+        const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"
+        const val PREF_EXISTING_ATTACK = "existing_attack"
+        const val PREF_ATTACKER_ID = "attacker_id"
+        //endregion
+
+        //region Subscription
         const val PREF_FREE_TRIAL = "free_trial"
         const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
         const val PREF_SUBSCRIPTION_TIME = "subscription_time"
-        const val PREF_JSON_NOTIFICATION = "json_notification"
+        //endregion
 
         //region Lock and Unlock App
         const val PREF_LOCK_STATUS = "lock_status"

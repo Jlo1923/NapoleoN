@@ -101,6 +101,9 @@ class SplashViewModel @Inject constructor(
             repository.setDefaultAllowDownloadAttachments()
             repository.setDefaultLockType()
             repository.setDefaultSelfDestructTimeMessageNotSent()
+            repository.setDefaultAttemptsForRetryCode()
+            repository.setDefaultTimeForRetryCode()
+            repository.setDefaultAttemptsForNewCode()
         }
     }
 

@@ -157,8 +157,8 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
 
         if(selectedIdQuestion.toInt() == 0 && textInputAnswer.isEmpty() && countAnswer > 3) {
             generalDialog(
-                "greg",
-                "lhnsdfonsodjisdvionhd",
+                getString(R.string.text_title_info),
+                getString(R.string.text_final_register),
                 true,
                 childFragmentManager
             ) {

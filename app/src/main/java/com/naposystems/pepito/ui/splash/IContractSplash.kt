@@ -33,6 +33,9 @@ interface IContractSplash {
         suspend fun setDefaultBiometricsOption(biometricOption: Int)
         suspend fun setDefaultLockType()
         suspend fun setDefaultSelfDestructTimeMessageNotSent()
+        suspend fun setDefaultAttemptsForRetryCode()
+        suspend fun setDefaultTimeForRetryCode()
+        suspend fun setDefaultAttemptsForNewCode()
     }
 }
 

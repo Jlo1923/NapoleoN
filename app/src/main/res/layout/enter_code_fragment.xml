@@ -10,7 +10,8 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.register.enterCode.EnterCodeFragment">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -20,138 +21,152 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                tools:context=".ui.register.enterCode.EnterCodeFragment">
+                android:animateLayoutChanges="true">
 
-                <TextView
-                    android:id="@+id/textView_attempts"
-                    style="@style/BodyTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/normal_margin"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
-                    app:layout_constraintTop_toTopOf="@id/guideline_top"
-                    tools:text="@string/text_number_attempts" />
-
-                <com.naposystems.pepito.ui.custom.EnterCodeWidget
-                    android:id="@+id/enter_code_widget"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/large_margin"
-                    app:isSecureText="false"
-                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
-                    app:layout_constraintStart_toStartOf="@id/guideline_start"
-                    app:layout_constraintTop_toBottomOf="@id/textView_attempts"
-                    app:layout_constraintTop_toTopOf="@id/guideline_begin_text_inputs"
-                    app:numBoxes="6"
-                    app:errorText="@string/text_message_code_fail"/>
+                    android:paddingStart="@dimen/normal_padding"
+                    android:paddingEnd="@dimen/normal_padding"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/textView_new_attempt_in"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/normal_margin"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
-                    app:layout_constraintStart_toStartOf="@id/guideline_start"
-                    app:layout_constraintTop_toBottomOf="@id/enter_code_widget"
-                    tools:text="Nuevo intento en: 30 segundos" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_didnt_receive_code"
-                    style="@style/AppPrimaryButtonText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/normal_margin"
-                    android:enabled="false"
-                    android:text="@string/text_dont_receive_code"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_start"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_new_attempt_in" />
-
-                <ViewSwitcher
-                    android:id="@+id/viewSwitcher"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/large_margin"
-                    app:layout_constraintBottom_toTopOf="@id/guideline_bottom"
-                    app:layout_constraintEnd_toStartOf="@id/guideline_end"
-                    app:layout_constraintStart_toStartOf="@id/guideline_start"
-                    app:layout_constraintTop_toBottomOf="@+id/button_didnt_receive_code"
-                    app:layout_constraintVertical_bias="0">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/button_continue"
-                            style="@style/AppPrimaryButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:text="@string/text_continue"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_percent="@dimen/width_app_button" />
-
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <ProgressBar
-                        android:id="@+id/progressBar"
+                    <TextView
+                        android:id="@+id/textView_note"
+                        style="@style/BodyTextView.Bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
-                </ViewSwitcher>
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:text="@string/text_check_push"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <com.naposystems.pepito.ui.custom.NumericKeyboardCustomView
-                    android:id="@+id/numeric_keyboard"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/large_margin"
-                    app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
-                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@id/guideline_start"
-                    app:layout_constraintTop_toBottomOf="@+id/viewSwitcher" />
+                    <com.naposystems.pepito.ui.custom.EnterCodeWidget
+                        android:id="@+id/enter_code_widget"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/large_margin"
+                        app:errorText=""
+                        app:isSecureText="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_note"
+                        app:numBoxes="6" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_begin="@dimen/normal_margin" />
+                    <TextView
+                        android:id="@+id/textView_attempts_for_enter_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/small_margin"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/enter_code_widget"
+                        tools:text="@string/text_number_attempts"
+                        tools:visibility="visible" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_end="@dimen/normal_margin" />
+                    <TextView
+                        android:id="@+id/textView_error"
+                        style="@style/SmallBodyTextView.Error"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:text="@string/text_message_code_fail"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_attempts_for_enter_code"
+                        tools:visibility="visible" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_top"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_begin="@dimen/normal_margin" />
+                    <TextView
+                        android:id="@+id/textView_time_for_enter_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_error"
+                        tools:text="Nuevo intento en: 30 segundos"
+                        tools:visibility="visible" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_end="@dimen/normal_margin" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_code_forwarding"
+                        style="@style/AppPrimaryButtonText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_dont_receive_code"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView_time_for_enter_code" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_begin_text_inputs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.07" />
+                    <TextView
+                        android:id="@+id/textView_time_for_new_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/button_code_forwarding"
+                        tools:text="Nuevo intento en: 30 segundos"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/textView_attempt_for_new_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_time_for_new_code"
+                        tools:text="@string/text_number_attempts" />
+
+                    <ViewSwitcher
+                        android:id="@+id/viewSwitcher"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_attempt_for_new_code">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_continue"
+                                style="@style/AppPrimaryButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:enabled="false"
+                                android:text="@string/text_continue"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_percent="@dimen/width_app_button" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <ProgressBar
+                            android:id="@+id/progressBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" />
+                    </ViewSwitcher>
+
+                    <com.naposystems.pepito.ui.custom.NumericKeyboardCustomView
+                        android:id="@+id/numeric_keyboard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_margin"
+                        android:enabled="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/viewSwitcher" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

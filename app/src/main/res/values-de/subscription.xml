@@ -8,4 +8,5 @@
     <string name="text_expired_subscription">Abonnement abgelaufen</string>
     <string name="text_free_trial_expired">Testzeit abgelaufen</string>
     <string name="text_subscription_expiration">Ablauf des Abonnements</string>
+    <string name="text_check_conditions">Sie sind dabei, zu einer Plattform außerhalb der Anwendung zu wechseln. Napoleon Secret Chat speichert oder hat keinen Zugriff auf die auf dieser Plattform bereitgestellten Daten. Sind Sie sicher, dass Sie auf diese Website gehen möchten?</string>
 </resources>

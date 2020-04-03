@@ -168,7 +168,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
      */
     fun getCode(): String {
         var code = ""
-        if (textViews.isNotEmpty()){
+        if (textViews.isNotEmpty()) {
             textViews.forEach { textView ->
                 code += textView.text
             }
@@ -183,7 +183,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
         }
     }
 
-    fun deleteNumber(){
+    fun deleteNumber() {
         mListener.onCodeCompleted(false)
         if (isErrorShowing) {
             changeBackgroundAllTextInputs(R.drawable.bg_enter_code)
@@ -197,7 +197,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
 
     fun showError() {
         isErrorShowing = true
-        textViewError.visibility = View.VISIBLE
+        if (textViewError.text != "") textViewError.visibility = View.VISIBLE
         changeBackgroundAllTextInputs(R.drawable.bg_enter_code_error)
         invalidate()
         requestLayout()

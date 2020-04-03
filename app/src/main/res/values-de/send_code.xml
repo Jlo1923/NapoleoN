@@ -3,4 +3,5 @@
     <string name="text_welcome_napoleon">Willkommen bei Napoleon Secret Chat</string>
     <string name="text_description_welcome_napoleon">Ihre Privatsphäre ist unsere Priorität. Wenn Sie fortfahren möchten, erhalten Sie einen Code zur Aktivierung Ihrer Registrierung.</string>
     <string name="text_send_register_code">Registrierungscode senden</string>
+    <string name="text_check_push">Hinweis: Überprüfen Sie die Push-Benachrichtigungen</string>
 </resources>

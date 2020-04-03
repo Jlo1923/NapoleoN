@@ -547,6 +547,14 @@ class ConversationAdapter constructor(
             } else {
                 binding.containerMyMessage.setBackgroundColor(Color.TRANSPARENT)
             }
+
+            item.quote?.let {
+                binding.quote.setupMessageAndAttachment(item)
+                binding.containerQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 
@@ -581,6 +589,14 @@ class ConversationAdapter constructor(
             } else {
                 binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
             }
+
+            item.quote?.let {
+                binding.quote.setupMessageAndAttachment(item)
+                binding.containerQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.containerQuote.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
         }
 

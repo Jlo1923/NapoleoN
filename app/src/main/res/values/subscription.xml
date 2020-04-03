@@ -8,5 +8,6 @@
     <string name="text_select_subscription">Select a subscription type</string>
     <string name="text_expired_subscription">Subscription expired</string>
     <string name="text_free_trial_expired">Test time expired</string>
-        <string name="text_subscription_expiration">Subscription expiration</string>
+    <string name="text_subscription_expiration">Subscription expiration</string>
+    <string name="text_check_conditions">You are about to go to a platform external to the application. Napoleon Secret Chat does not save or have access to the data provided on this platform. Are you sure you want to go to this site?</string>
 </resources>

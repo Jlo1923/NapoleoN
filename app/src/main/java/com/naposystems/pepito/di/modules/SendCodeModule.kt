@@ -1,6 +1,7 @@
 package com.naposystems.pepito.di.modules
 
 import com.naposystems.pepito.repository.sendCode.SendCodeRepository
+import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
 import dagger.Module
 import dagger.Provides
@@ -10,8 +11,9 @@ class SendCodeModule {
 
     @Provides
     fun provideRepository(
-        napoleonApi: NapoleonApi
+        napoleonApi: NapoleonApi,
+        sharedPreferencesManager: SharedPreferencesManager
     ): SendCodeRepository {
-        return SendCodeRepository(napoleonApi)
+        return SendCodeRepository(napoleonApi, sharedPreferencesManager)
     }
 }

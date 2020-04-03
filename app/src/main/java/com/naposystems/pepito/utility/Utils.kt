@@ -245,7 +245,11 @@ class Utils {
             dialog.show()
 
             val valueColor = TypedValue()
-            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
+            childFragmentManager.theme.resolveAttribute(
+                R.attr.attrTextColorButtonTint,
+                valueColor,
+                true
+            )
 
             val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -285,8 +289,12 @@ class Utils {
 
             dialog.show()
 
-            val valueColor= TypedValue()
-            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
+            val valueColor = TypedValue()
+            childFragmentManager.theme.resolveAttribute(
+                R.attr.attrTextColorButtonTint,
+                valueColor,
+                true
+            )
 
             val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
 
@@ -319,7 +327,11 @@ class Utils {
             dialog.show()
 
             val valueColor = TypedValue()
-            childFragmentManager.theme.resolveAttribute(R.attr.attrTextColorButtonTint, valueColor, true)
+            childFragmentManager.theme.resolveAttribute(
+                R.attr.attrTextColorButtonTint,
+                valueColor,
+                true
+            )
 
             val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
 
@@ -349,8 +361,8 @@ class Utils {
             }
         }
 
-        fun convertItemOfTimeInSeconds(item : Int) : Int{
-            return when(item){
+        fun convertItemOfTimeInSeconds(item: Int): Int {
+            return when (item) {
                 EVERY_FIVE_SECONDS.time -> TimeUnit.SECONDS.toSeconds(5).toInt()
                 EVERY_FIFTEEN_SECONDS.time -> TimeUnit.SECONDS.toSeconds(15).toInt()
                 EVERY_THIRTY_SECONDS.time -> TimeUnit.SECONDS.toSeconds(30).toInt()
@@ -364,9 +376,11 @@ class Utils {
             }
         }
 
-        fun convertItemOfTimeInSecondsByError(item : Int) : Int{
-            return when(item){
-                Constants.SelfDestructTimeByError.EVERY_TWENTY_FOUR_HOURS.time -> TimeUnit.HOURS.toSeconds(24).toInt()
+        fun convertItemOfTimeInSecondsByError(item: Int): Int {
+            return when (item) {
+                Constants.SelfDestructTimeByError.EVERY_TWENTY_FOUR_HOURS.time -> TimeUnit.HOURS.toSeconds(
+                    24
+                ).toInt()
                 else -> TimeUnit.DAYS.toSeconds(7).toInt()
             }
         }

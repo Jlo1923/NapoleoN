@@ -9,4 +9,5 @@
     <string name="text_title_cancel">Disconnettersi?</string>
     <string name="text_successful_message">Informazioni registrate correttamente</string>
     <string name="text_error_message">Errore durante la registrazione delle informazioni</string>
+    <string name="text_final_register">Sei sicuro di voler uscire? L\'applicazione salverà le risposte precedenti nelle impostazioni di recupero dell\'account.</string>
 </resources>
