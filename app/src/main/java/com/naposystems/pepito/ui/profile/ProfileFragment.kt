@@ -102,13 +102,13 @@ class ProfileFragment : BaseFragment() {
             val imageUrl = viewModel.user.value!!.imageUrl
             if (imageUrl.isNotEmpty()){
                 val extra = FragmentNavigatorExtras(
-                    binding.imageViewProfileImage to "transition_profile"
+                    binding.imageViewProfileImage to "transition_image_preview"
                 )
 
                 findNavController().navigate(
                     ProfileFragmentDirections
-                        .actionProfileFragmentToPreviewImageProfileAndContactsFragment(
-                            imageUrl
+                        .actionProfileFragmentToPreviewImageFragment(
+                            imageUrl, null
                         ), extra
                 )
             }

@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.PreviewImageFragmentBinding
+import com.naposystems.pepito.ui.mainActivity.MainActivity
 
 class PreviewImageFragment : Fragment() {
 
@@ -42,6 +43,12 @@ class PreviewImageFragment : Fragment() {
             .load(args.imageUrl)
             .into(binding.imageViewPreview)
 
+        if (!args.titleToolbar.isNullOrEmpty()){
+            (activity as MainActivity).supportActionBar?.title = args.titleToolbar
+        }
+
         return binding.root
     }
+
+
 }
