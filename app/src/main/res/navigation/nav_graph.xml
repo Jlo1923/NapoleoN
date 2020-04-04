@@ -211,8 +211,8 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_profileFragment_to_previewImageProfileAndContactsFragment"
-            app:destination="@id/previewImageProfileAndContactsFragment" />
+            android:id="@+id/action_profileFragment_to_previewImageFragment"
+            app:destination="@id/previewImageFragment" />
     </fragment>
     <fragment
         android:id="@+id/securitySettingsFragment"
@@ -524,6 +524,9 @@
         <argument
             android:name="contactId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_contactProfileFragment_to_previewImageFragment"
+            app:destination="@id/previewImageFragment" />
     </fragment>
     <fragment
         android:id="@+id/attachmentAudioFragment"
@@ -658,12 +661,16 @@
         tools:layout="@layout/attachment_location_fragment"
         android:label="AttachmentLocationFragment" />
     <fragment
-        android:id="@+id/previewImageProfileAndContactsFragment"
+        android:id="@+id/previewImageFragment"
         android:name="com.naposystems.pepito.ui.previewImage.PreviewImageFragment"
         android:label="@string/text_profile_title"
         tools:layout="@layout/preview_image_fragment" >
         <argument
             android:name="imageUrl"
             app:argType="string" />
+        <argument
+            android:name="titleToolbar"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

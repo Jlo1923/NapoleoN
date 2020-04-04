@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.karumi.dexter.Dexter
@@ -101,6 +102,8 @@ class ContactProfileFragment : BaseFragment() {
 
         imageButtonChangeNicknameEndIconClickListener()
 
+        binding.imageViewProfileContact.setOnClickListener(showPreviewImage())
+
         binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
 
         binding.optionRestoreContactChat.setOnClickListener(optionRestoreContactChatClickListener())
@@ -115,6 +118,26 @@ class ContactProfileFragment : BaseFragment() {
         }
 
         return binding.root
+    }
+
+    private fun showPreviewImage() = View.OnClickListener {
+        val contact = viewModel.contact.value!!
+        if (contact.imageUrl.isNotEmpty()){
+            val extra = FragmentNavigatorExtras(
+                binding.imageViewProfileContact to "transition_image_preview"
+            )
+            val titleToolbar = if (contact.displayNameFake.isNotEmpty()) {
+                contact.displayNameFake
+            } else {
+                contact.displayName
+            }
+            findNavController().navigate(
+                ContactProfileFragmentDirections
+                    .actionContactProfileFragmentToPreviewImageFragment(
+                        contact.imageUrl, titleToolbar
+                    ), extra
+            )
+        }
     }
 
     private fun optionBlockContactClickListener() = View.OnClickListener {
