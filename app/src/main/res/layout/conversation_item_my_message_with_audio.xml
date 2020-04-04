@@ -47,25 +47,25 @@
                 android:id="@+id/container_quote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="100dp"
-                android:visibility="gone"
                 android:layout_marginBottom="4dp"
+                android:maxHeight="100dp"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/audio_player"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible">
 
                 <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
                     android:id="@+id/quote"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:isGoTo="true"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:isGoTo="true" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -116,6 +116,8 @@
             android:gravity="center"
             android:textColor="?attr/attrTextColorColorTextIncomingMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
+            android:visibility="gone"
+            app:countDown="@{conversation}"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"

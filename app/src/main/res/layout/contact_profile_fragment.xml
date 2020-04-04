@@ -305,7 +305,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_restore_contact" />
+                        app:srcCompat="@drawable/ic_restore" />
 
                     <TextView
                         android:id="@+id/textView_label_restore_contact_chat"

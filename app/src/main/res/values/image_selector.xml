@@ -4,4 +4,5 @@
     <string name="text_change_cover_photo">Change cover photo</string>
     <string name="text_take_photo">Take photo</string>
     <string name="text_select_photo">Select photo</string>
+    <string name="text_select_default">Default</string>
 </resources>

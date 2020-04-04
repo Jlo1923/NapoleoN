@@ -11,7 +11,7 @@ interface ContactDataSource {
 
     fun getContact(contactId : Int): LiveData<Contact>
 
-    fun getContactById(contactId : Int): Contact
+    fun getContactById(contactId : Int): Contact?
 
     suspend fun restoreContact(contactId: Int)
 
@@ -23,7 +23,7 @@ interface ContactDataSource {
 
     suspend fun insertContact(contact: Contact)
 
-    suspend fun insertContactList(contactList: List<Contact>)
+    suspend fun insertOrUpdateContactList(contactList: List<Contact>)
 
     fun getBlockedContacts() : LiveData<List<Contact>>
 
@@ -41,5 +41,5 @@ interface ContactDataSource {
 
     suspend fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int>
 
-
+    suspend fun restoreImageByContact(contactId: Int)
 }

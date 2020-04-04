@@ -78,4 +78,10 @@ class ContactProfileViewModel @Inject constructor(
             }
         }
     }
+
+    override fun restoreImageByContact(contactId: Int) {
+        viewModelScope.launch {
+            repository.restoreImageByContact(contactId)
+        }
+    }
 }

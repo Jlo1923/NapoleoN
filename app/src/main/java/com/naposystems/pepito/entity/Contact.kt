@@ -11,14 +11,14 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "contact")
 data class Contact(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = "image_url") val imageUrl: String,
+    @ColumnInfo(name = "image_url") var imageUrl: String,
     @ColumnInfo(name = "image_url_fake") val imageUrlFake: String = "",
     @ColumnInfo(name = "nickname") val nickname: String,
     @ColumnInfo(name = "nickname_fake") val nicknameFake: String = "",
-    @ColumnInfo(name = "display_name") val displayName: String,
+    @ColumnInfo(name = "display_name") var displayName: String,
     @ColumnInfo(name = "display_name_fake") val displayNameFake: String = "",
-    @ColumnInfo(name = "status") val status: String,
-    @ColumnInfo(name = "last_seen") val lastSeen: String,
+    @ColumnInfo(name = "status") var status: String,
+    @ColumnInfo(name = "last_seen") var lastSeen: String,
     @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false,
     @ColumnInfo(name = "silenced") val silenced: Boolean = false,
     @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1

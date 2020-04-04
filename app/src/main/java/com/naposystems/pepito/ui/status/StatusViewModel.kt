@@ -54,6 +54,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
                 user.value?.let { user ->
                     val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
                         displayName = user.displayName,
+                        avatar = user.imageUrl,
                         status = textStatus
                     )
 

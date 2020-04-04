@@ -7,6 +7,8 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 
 @BindingAdapter("avatarUser")
 fun bindAvatar(imageView: ImageView, @Nullable user: User?) {
@@ -28,6 +30,34 @@ fun bindAvatar(imageView: ImageView, @Nullable user: User?) {
         Glide.with(context)
             .load(loadImage)
             .circleCrop()
+            .into(imageView)
+    }
+}
+
+@BindingAdapter("bannerUser")
+fun bindBannerUser(imageView: ImageView, @Nullable user: User?) {
+    if (user != null) {
+        val context = imageView.context
+
+        val defaultHeader = context.resources.getDrawable(
+            R.drawable.bg_default_drawer_header,
+            context.theme
+        )
+
+        @Suppress("IMPLICIT_CAST_TO_ANY")
+        val loadImage = if (user.headerUri.isNotEmpty()) {
+             Utils.getFileUri(
+                context = context,
+                fileName = user.headerUri,
+                subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+            )
+        } else {
+            defaultHeader
+        }
+
+        Glide.with(imageView)
+            .load(loadImage)
+            .centerCrop()
             .into(imageView)
     }
 }

@@ -14,7 +14,7 @@ interface ContactDao {
     suspend fun getLocalContacts(): List<Contact>
 
     @Query("SELECT * FROM contact WHERE id=:contactId")
-    fun getContactById(contactId: Int): Contact
+    fun getContactById(contactId: Int): Contact?
 
     @Query("SELECT * FROM contact WHERE id = :contactId")
     fun getContact(contactId: Int): LiveData<Contact>
@@ -33,6 +33,9 @@ interface ContactDao {
 
     @Query("UPDATE contact SET display_name_fake = '', nickname_fake = '', image_url_fake = ''  WHERE id = :contactId ")
     suspend fun restoreContact(contactId: Int)
+
+    @Query("UPDATE contact SET image_url = '', image_url_fake = '' WHERE id = :contactId ")
+    suspend fun restoreImageByContact(contactId: Int)
 
     @Insert
     suspend fun insertContact(contact: Contact)

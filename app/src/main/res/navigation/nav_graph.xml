@@ -252,6 +252,18 @@
         <action
             android:id="@+id/action_appearanceSettingsFragment_to_userDisplayFormatDialogFragment"
             app:destination="@id/userDisplayFormatDialogFragment" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_previewBackgroundChatFragment"
+            app:destination="@id/previewBackgroundChatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewBackgroundChatFragment"
+        android:name="com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatFragment"
+        android:label="@string/text_preview_background_chat_title"
+        tools:layout="@layout/preview_background_chat_fragment">
+        <argument
+            android:name="uri"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/inviteSomeoneFragment"

@@ -82,6 +82,7 @@
     <attr name="attrTextColorNicknameConversation" format="reference" />
     <attr name="attrTextColorHintConversationInputPanel" format="reference" />
     <attr name="attrTextColorConversationInputPanel" format="reference" />
+    <attr name="attrTextColorButtonsPreview" format="reference" />
 
     <!--ActionBarItem-->
     <attr name="attrActionBarItemBackground" format="reference" />

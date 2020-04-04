@@ -15,6 +15,7 @@ interface IContractContactProfile {
         fun updateAvatarFakeContact(contactId: Int, avatarFake: String)
         fun restoreContact(contactId: Int)
         fun updateContactSilenced(contactId : Int, contactSilenced : Boolean)
+        fun restoreImageByContact(contactId : Int)
     }
 
     interface Repository {
@@ -26,6 +27,6 @@ interface IContractContactProfile {
         suspend fun updateContactSilenced(contactId : Int, contactSilenced: Int)
         suspend fun saveTimeMuteConversation(contactId : Int, time: MuteConversationReqDTO) : Response<MuteConversationResDTO>
         fun getError(response: Response<MuteConversationResDTO>) : ArrayList<String>
+        suspend fun restoreImageByContact(contactId : Int)
     }
-
 }
