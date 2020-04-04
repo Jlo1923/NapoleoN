@@ -210,6 +210,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_profileFragment_to_previewImageProfileAndContactsFragment"
+            app:destination="@id/previewImageProfileAndContactsFragment" />
     </fragment>
     <fragment
         android:id="@+id/securitySettingsFragment"
@@ -654,4 +657,13 @@
         android:name="com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationFragment"
         tools:layout="@layout/attachment_location_fragment"
         android:label="AttachmentLocationFragment" />
+    <fragment
+        android:id="@+id/previewImageProfileAndContactsFragment"
+        android:name="com.naposystems.pepito.ui.previewImage.PreviewImageFragment"
+        android:label="@string/text_profile_title"
+        tools:layout="@layout/preview_image_fragment" >
+        <argument
+            android:name="imageUrl"
+            app:argType="string" />
+    </fragment>
 </navigation>

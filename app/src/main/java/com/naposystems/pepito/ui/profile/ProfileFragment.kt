@@ -18,7 +18,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -84,7 +86,6 @@ class ProfileFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(
             inflater, R.layout.profile_fragment, container, false
         )
@@ -98,8 +99,19 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.imageViewProfileImage.setOnClickListener {
-            subFolder = AVATAR_SUBFOLDER
-            verifyCameraAndMediaPermission()
+            val imageUrl = viewModel.user.value!!.imageUrl
+            if (imageUrl.isNotEmpty()){
+                val extra = FragmentNavigatorExtras(
+                    binding.imageViewProfileImage to "transition_profile"
+                )
+
+                findNavController().navigate(
+                    ProfileFragmentDirections
+                        .actionProfileFragmentToPreviewImageProfileAndContactsFragment(
+                            imageUrl
+                        ), extra
+                )
+            }
         }
 
         binding.imageButtonEditHeader.setOnClickListener {
@@ -159,6 +171,10 @@ class ProfileFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.viewModel = viewModel
+
+        if (viewModel.user.value!!.imageUrl.isNotEmpty()){
+            binding.imageViewProfileImage.background = null
+        }
 
         baseViewModel.getOutputControl()
 
