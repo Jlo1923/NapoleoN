@@ -60,4 +60,10 @@
     <string name="text_attachment_document_name">Document.%1$s</string>
     <string name="text_status_limit">4 custom states are allowed, delete a previously saved one to add a new one.</string>
     <string name="text_alert_failure">Advertencia</string>
+    <string name="text_preview_self_destruct_time_my_message" translatable="false">04:52</string>
+    <string name="text_preview_self_destruct_time_incoming_message" translatable="false">00:24</string>
+    <string name="text_preview_date_message" translatable="false">20/04/2020 10:34 p. m.</string>
+    <string name="text_preview_my_message">Hi</string>
+    <string name="text_preview_incoming_message">Hi, how are you?</string>
+    <string name="text_message_restore_image">Are you sure you want to restore the default cover image?</string>
 </resources>

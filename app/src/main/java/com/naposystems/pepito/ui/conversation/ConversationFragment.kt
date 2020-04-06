@@ -26,7 +26,6 @@ import androidx.appcompat.app.ActionBar
 import androidx.core.graphics.toRect
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -714,12 +713,23 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun setConversationBackground() {
-        if (viewModel.getUser().chatBackground.isNotEmpty()) {
-            val uri = Uri.parse(viewModel.getUser().chatBackground)
-            val inputStream: InputStream = context!!.contentResolver.openInputStream(uri)!!
-            val yourDrawable = Drawable.createFromStream(inputStream, uri.toString())
-            yourDrawable.alpha = (255 * 0.3).toInt()
-            activity!!.window.setBackgroundDrawable(yourDrawable)
+        val chatBackgroundFileName = viewModel.getUser().chatBackground
+        activity?.let { activity ->
+            context?.let { context ->
+                if (chatBackgroundFileName.isNotEmpty()) {
+                    val uri = Utils.getFileUri(
+                        context = context,
+                        fileName = chatBackgroundFileName,
+                        subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                    )
+                    val inputStream: InputStream = context.contentResolver.openInputStream(uri)!!
+                    val backgroundDrawable = Drawable.createFromStream(inputStream, uri.toString())
+                    backgroundDrawable.alpha = (255 * 0.3).toInt()
+                    activity.window.setBackgroundDrawable(backgroundDrawable)
+                } else {
+                    activity.window.setBackgroundDrawableResource(R.drawable.vertical_photo)
+                }
+            }
         }
     }
 
@@ -829,7 +839,7 @@ class ConversationFragment : BaseFragment(),
                 false, context!!,
                 R.string.text_accept,
                 R.string.text_cancel,
-                clickTopButton = { _ ->
+                clickPositiveButton = { _ ->
                     when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
                             viewModel.deleteMessagesSelected(

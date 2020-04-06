@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
+import com.naposystems.pepito.utility.Constants
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -35,6 +37,7 @@ import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -51,8 +54,6 @@ class ProfileFragment : BaseFragment() {
         fun newInstance() = ProfileFragment()
         const val REQUEST_IMAGE_CAPTURE = 1
         const val REQUEST_GALLERY_IMAGE = 2
-        const val AVATAR_SUBFOLDER = "avatars"
-        const val HEADER_SUBFOLDER = "headers"
         private const val FILE_EXTENSION = ".jpg"
     }
 
@@ -63,6 +64,7 @@ class ProfileFragment : BaseFragment() {
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
+    private var compressedFile: File? = null
     private lateinit var fileName: String
     private lateinit var subFolder: String
     private lateinit var animatedThreeEditName: AnimatedThreeVectorView
@@ -94,8 +96,13 @@ class ProfileFragment : BaseFragment() {
         animatedThreeEditName = binding.imageButtonNameOptionEndIcon
 
         binding.floatingButtonProfileImage.setOnClickListener {
-            subFolder = AVATAR_SUBFOLDER
-            verifyCameraAndMediaPermission()
+            subFolder = Constants.NapoleonCacheDirectories.AVATAR.folder
+            verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
+        }
+
+        binding.imageViewProfileImage.setOnClickListener {
+            subFolder = Constants.NapoleonCacheDirectories.AVATAR.folder
+            verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
         }
 
         binding.imageViewProfileImage.setOnClickListener {
@@ -115,8 +122,8 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.imageButtonEditHeader.setOnClickListener {
-            subFolder = HEADER_SUBFOLDER
-            verifyCameraAndMediaPermission()
+            subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+            verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location)
         }
 
         binding.imageButtonNameOptionEndIcon.setOnClickListener {
@@ -219,18 +226,10 @@ class ProfileFragment : BaseFragment() {
                 }
 
                 when (subFolder) {
-                    AVATAR_SUBFOLDER -> {
-                        viewModel.user.value?.let {user ->
-                            val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
-                                displayName = user.displayName,
-                                avatar = Utils.convertBitmapToBase64(bitmap!!)
-                            )
-
-                            showAvatarProgress()
-                            viewModel.updateAvatar(updateUserInfoReqDTO)
-                        }
+                    Constants.NapoleonCacheDirectories.AVATAR.folder -> {
+                        updateImageProfile(Utils.convertBitmapToBase64(bitmap!!))
                     }
-                    HEADER_SUBFOLDER -> {
+                    Constants.NapoleonCacheDirectories.HEADER.folder -> {
                         val viewModelUser = viewModel.user.value!!
 
                         val user = User(
@@ -241,7 +240,7 @@ class ProfileFragment : BaseFragment() {
                             accessPin = viewModelUser.accessPin,
                             imageUrl = viewModelUser.imageUrl,
                             status = viewModelUser.status,
-                            headerUri = uri.toString(),
+                            headerUri = compressedFile?.name ?: "",
                             chatBackground = viewModelUser.chatBackground,
                             type = viewModelUser.type,
                             createAt = viewModelUser.createAt
@@ -259,6 +258,17 @@ class ProfileFragment : BaseFragment() {
             } catch (ex: IOException) {
                 Timber.e(ex)
             }
+        }
+    }
+
+    private fun updateImageProfile (avatar : String) {
+        viewModel.user.value?.let {user ->
+            val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
+                displayName = user.displayName,
+                avatar = avatar
+            )
+            showAvatarProgress()
+            viewModel.updateAvatar(updateUserInfoReqDTO)
         }
     }
 
@@ -329,7 +339,7 @@ class ProfileFragment : BaseFragment() {
 
     }
 
-    private fun verifyCameraAndMediaPermission() {
+    private fun verifyCameraAndMediaPermission(location : Int) {
         validateStateOutputControl()
         Dexter.withActivity(activity!!)
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -337,7 +347,7 @@ class ProfileFragment : BaseFragment() {
 
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report!!.areAllPermissionsGranted()) {
-                        openImageSelectorBottomSheet()
+                        openImageSelectorBottomSheet(location)
                     }
 
                     if (report.isAnyPermissionPermanentlyDenied) {
@@ -368,18 +378,21 @@ class ProfileFragment : BaseFragment() {
             }).check()
     }
 
-    private fun openImageSelectorBottomSheet() {
+    private fun openImageSelectorBottomSheet(location : Int) {
 
         var title = ""
 
         when (subFolder) {
-            AVATAR_SUBFOLDER -> title =
+            Constants.NapoleonCacheDirectories.AVATAR.folder -> title =
                 context!!.resources.getString(R.string.text_change_profile_photo)
-            HEADER_SUBFOLDER -> title =
+            Constants.NapoleonCacheDirectories.HEADER.folder -> title =
                 context!!.resources.getString(R.string.text_change_cover_photo)
         }
 
-        val dialog = ImageSelectorBottomSheetFragment.newInstance(title)
+        val dialog = ImageSelectorBottomSheetFragment.newInstance(
+            title, location
+        )
+
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected() {
                 fileName = "${System.currentTimeMillis()}.jpg"
@@ -401,50 +414,89 @@ class ProfileFragment : BaseFragment() {
                 pickPhoto.type = "image/*"
                 startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
             }
+
+            override fun defaultOptionSelected(location: Int) {
+                Utils.generalDialog(
+                    getString(R.string.text_select_default),
+                    getString(R.string.text_message_restore_image),
+                    true,
+                    childFragmentManager) {
+                    when(location) {
+                        Constants.LocationImageSelectorBottomSheet.PROFILE.location -> {
+                            updateImageProfile("")
+                        }
+                        Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
+                            viewModel.user.value?.let {user ->
+                                val userWithoutBanner = User(
+                                    firebaseId = user.firebaseId,
+                                    id= user.id,
+                                    nickname = user.nickname,
+                                    displayName = user.displayName,
+                                    accessPin = user.accessPin,
+                                    imageUrl = user.imageUrl,
+                                    status = user.status,
+                                    headerUri = "",
+                                    chatBackground = user.chatBackground,
+                                    type = user.type,
+                                    createAt = user.createAt
+                                )
+                                viewModel.updateLocalUser(userWithoutBanner)
+                            }
+                        }
+                    }
+                }
+            }
         })
         dialog.show(childFragmentManager, "BottomSheetOptions")
     }
 
     private fun cropImage(sourceUri: Uri) {
+        context?.let { context ->
+            var title = ""
 
-        var title = ""
-
-        when (subFolder) {
-            AVATAR_SUBFOLDER -> {
-                title = context!!.resources.getString(R.string.label_edit_photo)
-                aspectRatioX = 1.0f
-                aspectRatioY = 1.0f
+            when (subFolder) {
+                Constants.NapoleonCacheDirectories.AVATAR.folder -> {
+                    title = context.resources.getString(R.string.label_edit_photo)
+                    aspectRatioX = 1.0f
+                    aspectRatioY = 1.0f
+                }
+                Constants.NapoleonCacheDirectories.HEADER.folder -> {
+                    title = context.resources.getString(R.string.label_edit_cover)
+                    aspectRatioX = 3.0f
+                    aspectRatioY = 2.0f
+                }
             }
-            HEADER_SUBFOLDER -> {
-                title = context!!.resources.getString(R.string.label_edit_cover)
-                aspectRatioX = 3.0f
-                aspectRatioY = 2.0f
-            }
 
-        }
-
-        val path = File(context!!.cacheDir, subFolder)
-
-        val destinationUri =
-            Uri.fromFile(
-                File(
-                    path,
-                    "${System.currentTimeMillis()}_compressed.${FILE_EXTENSION}"
-                )
+            compressedFile = FileManager.createFile(
+                context,
+                "${System.currentTimeMillis()}_compressed${FILE_EXTENSION}",
+                subFolder
             )
-        val options = UCrop.Options()
-        options.setCompressionQuality(imageCompression)
-        options.setToolbarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.setStatusBarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.setActiveWidgetColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.withAspectRatio(aspectRatioX, aspectRatioY)
-        options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
-        options.setToolbarTitle(title)
-        options.setToolbarWidgetColor(ContextCompat.getColor(context!!, R.color.white))
 
-        UCrop.of(sourceUri, destinationUri)
-            .withOptions(options)
-            .start(context!!, this)
+            val destination = Uri.fromFile(compressedFile)
+
+            val valueColorBackground = TypedValue()
+            context.theme.resolveAttribute(
+                R.attr.attrBackgroundColorPrimary,
+                valueColorBackground,
+                true
+            )
+            val colorBackground = context.resources.getColor(valueColorBackground.resourceId)
+
+            val options = UCrop.Options()
+            options.setCompressionQuality(imageCompression)
+            options.setToolbarColor(colorBackground)
+            options.setStatusBarColor(colorBackground)
+            options.setActiveWidgetColor(colorBackground)
+            options.withAspectRatio(aspectRatioX, aspectRatioY)
+            options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
+            options.setToolbarTitle(title)
+            options.setToolbarWidgetColor(ContextCompat.getColor(context, R.color.white))
+
+            UCrop.of(sourceUri, destination)
+                .withOptions(options)
+                .start(context, this)
+        }
     }
 
     private fun showAvatarProgress() {
@@ -460,8 +512,10 @@ class ProfileFragment : BaseFragment() {
     private fun clearCache(context: Context) {
         val path = File(context.cacheDir!!.absolutePath, subFolder)
         if (path.exists() && path.isDirectory) {
-            for (child in path.listFiles()!!) {
-                child.delete()
+            path.listFiles()?.forEach {child ->
+                if (child.name != compressedFile?.name) {
+                    child.delete()
+                }
             }
         }
     }

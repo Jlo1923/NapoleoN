@@ -28,7 +28,7 @@ class ContactsRepository @Inject constructor(
                 val contactResDTO = response.body()!!
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                contactLocalDataSource.insertContactList(contacts)
+                contactLocalDataSource.insertOrUpdateContactList(contacts)
             } else {
                 Timber.e(response.errorBody()!!.string())
             }

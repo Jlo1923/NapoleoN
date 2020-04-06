@@ -1,6 +1,8 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
@@ -73,7 +75,11 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
         val loadImage = when {
             contact.imageUrlFake.isNotEmpty() -> {
-                contact.imageUrlFake
+                Utils.getFileUri(
+                    context = context!!,
+                    fileName = contact.imageUrlFake,
+                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                )
             }
             contact.imageUrl.isNotEmpty() -> {
                 contact.imageUrl
@@ -107,6 +113,25 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
         context.getDrawable(R.drawable.bg_incoming_message)
     } else {
         context.getDrawable(R.drawable.bg_incoming_message_rounded)
+    }
+}
+
+@BindingAdapter("countDown")
+fun bindCountDown(
+    textView: TextView,
+    @Nullable messageAndAttachmentParam: MessageAndAttachment?
+) {
+    val animationScaleUp: Animation by lazy {
+        AnimationUtils.loadAnimation(textView.context, R.anim.scale_up)
+    }
+
+    messageAndAttachmentParam?.let { messageAndAttachment ->
+        if(messageAndAttachment.message.status == Constants.MessageStatus.READED.status) {
+            textView.startAnimation(animationScaleUp)
+            textView.visibility = View.VISIBLE
+        }else {
+            textView.visibility = View.GONE
+        }
     }
 }
 

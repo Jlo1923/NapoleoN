@@ -9,16 +9,19 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ImageSelectorBottomSheetFragmentBinding
+import com.naposystems.pepito.utility.Constants
 
 const val TITLE = "TITLE"
+const val LOCATION = "LOCATION"
 
 class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(title: String) =
+        fun newInstance(title: String, location : Int) =
             ImageSelectorBottomSheetFragment().apply {
                 arguments = Bundle().apply {
                     putString(TITLE, title)
+                    putInt(LOCATION, location)
                 }
             }
     }
@@ -26,17 +29,20 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
     interface OnOptionSelected {
         fun takeImageOptionSelected()
         fun galleryOptionSelected()
+        fun defaultOptionSelected(location: Int)
     }
 
     private var title: String? = null
+    private var location: Int? = null
     private lateinit var binding: ImageSelectorBottomSheetFragmentBinding
     private lateinit var viewModel: ImageSelectorBottomSheetViewModel
     private lateinit var listener: OnOptionSelected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            title = it.getString(TITLE)
+        arguments?.let {bundle ->
+            title = bundle.getString(TITLE)
+            location = bundle.getInt(LOCATION)
         }
     }
 
@@ -63,6 +69,21 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
             dismiss()
         }
 
+        binding.containerDefault.setOnClickListener {
+            when(location) {
+                Constants.LocationImageSelectorBottomSheet.PROFILE.location -> {
+                    listener.defaultOptionSelected(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
+                }
+                Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
+                    listener.defaultOptionSelected(Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location)
+                }
+                else -> {
+                    listener.defaultOptionSelected(Constants.LocationImageSelectorBottomSheet.WITHOUT_LOCATION.location)
+                }
+            }
+            dismiss()
+        }
+
         return binding.root
     }
 
@@ -70,6 +91,15 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
         super.onActivityCreated(savedInstanceState)
         dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
         viewModel = ViewModelProviders.of(this).get(ImageSelectorBottomSheetViewModel::class.java)
+
+        when(location) {
+            Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location -> {
+                binding.containerDefault.visibility = View.GONE
+            }
+            else -> {
+                binding.containerDefault.visibility = View.VISIBLE
+            }
+        }
     }
 
     fun setListener(listener: OnOptionSelected) {

@@ -8,13 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.karumi.dexter.Dexter
@@ -28,7 +28,10 @@ import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
@@ -58,14 +61,20 @@ class AppearanceSettingsFragment : BaseFragment() {
         viewModelFactory
     }
 
+    private val previewBackgroundChatViewModel: PreviewBackgroundChatViewModel by viewModels {
+        viewModelFactory
+    }
+
     private lateinit var binding: AppearanceSettingsFragmentBinding
     private lateinit var fileName: String
-    private val compressedFileName by lazy {
-        "${System.currentTimeMillis()}_compressed.${FILE_EXTENSION}"
+    private var compressedFileName: String = ""
+    private val actualChatBgFileName: String by lazy {
+        "chat_background$FILE_EXTENSION"
     }
     private val subFolder: String by lazy {
         "chatBackground"
     }
+    private var compressedFile: File? = null
     private var aspectRatioX: Float = 9f
     private var aspectRatioY: Float = 16f
     private val bitmapMaxWidth = 720
@@ -221,10 +230,12 @@ class AppearanceSettingsFragment : BaseFragment() {
     private fun openImageSelectorBottomSheet() {
         val title = context!!.resources.getString(R.string.text_conversation_background)
 
-        val dialog = ImageSelectorBottomSheetFragment.newInstance(title)
+        val dialog = ImageSelectorBottomSheetFragment.newInstance(
+            title, Constants.LocationImageSelectorBottomSheet.APPEARANCE_SETTINGS.location
+        )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected() {
-                fileName = "${System.currentTimeMillis()}.${FILE_EXTENSION}"
+                fileName = "${System.currentTimeMillis()}${FILE_EXTENSION}"
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
                     MediaStore.EXTRA_OUTPUT,
@@ -242,6 +253,16 @@ class AppearanceSettingsFragment : BaseFragment() {
                 )
                 startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
             }
+
+            override fun defaultOptionSelected(location: Int) {
+                Utils.generalDialog(
+                    getString(R.string.text_select_default),
+                    getString(R.string.text_message_restore_image),
+                    true,
+                    childFragmentManager) {
+                        previewBackgroundChatViewModel.updateChatBackground("")
+                    }
+            }
         })
         dialog.show(childFragmentManager, "BottomSheetOptions")
     }
@@ -256,24 +277,6 @@ class AppearanceSettingsFragment : BaseFragment() {
         viewModel.getColorScheme()
         viewModel.getUserDisplayFormat()
         baseViewModel.getOutputControl()
-
-        viewModel.chatBackgroundUpdated.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                Utils.showSimpleSnackbar(
-                    binding.coordinator,
-                    getString(R.string.text_updated_successfully),
-                    2
-                )
-                viewModel.resetChatBackgroundUpdated()
-            } else if (it == false) {
-                Utils.showSimpleSnackbar(
-                    binding.coordinator,
-                    getString(R.string.text_error_updating_conversation_background),
-                    3
-                )
-                viewModel.resetChatBackgroundUpdated()
-            }
-        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -291,17 +294,20 @@ class AppearanceSettingsFragment : BaseFragment() {
                 }
             }
             UCrop.REQUEST_CROP -> {
-                requestCrop(resultCode, data)
+                requestCrop(resultCode)
             }
         }
     }
 
-    private fun requestCrop(resultCode: Int, data: Intent?) {
+    private fun requestCrop(resultCode: Int) {
         if (resultCode == Activity.RESULT_OK) {
-            val uri = UCrop.getOutput(data!!)
             try {
-                viewModel.updateChatBackground(uri.toString())
-
+                findNavController().navigate(
+                    AppearanceSettingsFragmentDirections
+                        .actionAppearanceSettingsFragmentToPreviewBackgroundChatFragment(
+                            compressedFile?.name ?: ""
+                        )
+                )
                 clearCache(context!!)
             } catch (ex: IOException) {
                 Timber.e(ex)
@@ -310,39 +316,49 @@ class AppearanceSettingsFragment : BaseFragment() {
     }
 
     private fun cropImage(sourceUri: Uri) {
+        context?.let { context ->
+            val title = context.resources.getString(R.string.text_conversation_background)
 
-        val title = context!!.resources.getString(R.string.text_conversation_background)
+            compressedFileName = "${System.currentTimeMillis()}_compressed${FILE_EXTENSION}"
 
-        val path = File(context!!.cacheDir!!, subFolder)
-
-        val destinationUri =
-            Uri.fromFile(
-                File(
-                    path,
-                    compressedFileName
-                )
+            compressedFile = FileManager.createFile(
+                context,
+                compressedFileName,
+                Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
             )
 
-        val options = UCrop.Options()
-        options.setCompressionQuality(imageCompression)
-        options.setToolbarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.setStatusBarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.setActiveWidgetColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.withAspectRatio(aspectRatioX, aspectRatioY)
-        options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
-        options.setToolbarTitle(title)
-        options.setToolbarWidgetColor(ContextCompat.getColor(context!!, R.color.white))
+            val destinationUri = Uri.fromFile(compressedFile)
 
-        UCrop.of(sourceUri, destinationUri)
-            .withOptions(options)
-            .start(context!!, this)
+            val valueColorBackground = TypedValue()
+            context.theme.resolveAttribute(
+                R.attr.attrBackgroundColorPrimary,
+                valueColorBackground,
+                true
+            )
+
+            val colorBackground = context.resources.getColor(valueColorBackground.resourceId)
+
+            val options = UCrop.Options()
+            options.setCompressionQuality(imageCompression)
+            options.setToolbarColor(colorBackground)
+            options.setStatusBarColor(colorBackground)
+            options.setActiveWidgetColor(colorBackground)
+            options.withAspectRatio(aspectRatioX, aspectRatioY)
+            options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
+            options.setToolbarTitle(title)
+            options.setToolbarWidgetColor(ContextCompat.getColor(context!!, R.color.white))
+
+            UCrop.of(sourceUri, destinationUri)
+                .withOptions(options)
+                .start(context, this)
+        }
     }
 
     private fun clearCache(context: Context) {
         val path = File(context.cacheDir!!.absolutePath, subFolder)
         if (path.exists() && path.isDirectory) {
             for (child in path.listFiles()!!) {
-                if (child.name != compressedFileName) {
+                if (child.name != compressedFileName && child.name != actualChatBgFileName) {
                     child.delete()
                 }
             }

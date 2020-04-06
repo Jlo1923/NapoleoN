@@ -46,4 +46,7 @@
         <item quantity="other">%d selezionato</item>
     </plurals>
     <string name="text_status_limit">Sono ammessi 4 stati personalizzati, eliminane uno precedentemente salvato per aggiungerne uno nuovo.</string>
+    <string name="text_preview_my_message">Ciao</string>
+    <string name="text_preview_incoming_message">Ciao come stai</string>
+    <string name="text_message_restore_image">Sei sicuro di voler ripristinare l\'immagine di copertina predefinita?</string>
 </resources>

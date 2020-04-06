@@ -160,7 +160,7 @@ class HomeRepository @Inject constructor(
 
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                contactLocalDataSource.insertContactList(contacts)
+                contactLocalDataSource.insertOrUpdateContactList(contacts)
             } else {
                 Timber.e(response.errorBody()!!.string())
             }
@@ -262,7 +262,7 @@ class HomeRepository @Inject constructor(
         )
     }
 
-    override fun getContact(contactId: Int): Contact {
+    override fun getContact(contactId: Int): Contact? {
         return contactLocalDataSource.getContactById(contactId)
     }
 

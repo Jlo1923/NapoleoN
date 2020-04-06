@@ -274,19 +274,18 @@ class Utils {
             childFragmentManager: Context,
             titlePositiveButton: Int,
             titleNegativeButton: Int,
-            clickTopButton: (Boolean) -> Unit
+            clickPositiveButton: (Boolean) -> Unit
         ) {
             val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titlePositiveButton) { _, _ ->
-                    clickTopButton(true)
+                    clickPositiveButton(true)
                 }
                 .setNegativeButton(titleNegativeButton) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .create()
-
             dialog.show()
 
             val valueColor = TypedValue()

@@ -3,6 +3,7 @@ package com.naposystems.pepito.ui.conversation.adapter
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.message.MessageAndAttachment
@@ -42,6 +43,9 @@ open class ConversationViewHolder constructor(
                             }
 
                             override fun onTick(millisUntilFinished: Long) {
+                                if (!textView.isVisible) {
+                                    textView.visibility = View.VISIBLE
+                                }
                                 textView.text = Utils.getDuration(
                                     millisUntilFinished,
                                     showHours = false

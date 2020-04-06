@@ -45,7 +45,7 @@ class FileManager {
 
         suspend fun copyFile(
             context: Context,
-            fileInputStream: FileInputStream,
+            fileInputStream: InputStream,
             subFolder: String,
             fileName: String
         ): File {

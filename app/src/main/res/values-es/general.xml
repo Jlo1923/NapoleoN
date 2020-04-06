@@ -45,4 +45,7 @@
     <string name="text_attachment_document_name">Documento.%1$s</string>
     <string name="text_alert_failure">Advertencia</string>
     <string name="text_status_limit">Se permiten 4 estados personalizados, borra uno previamente guardado para agregar uno nuevo.</string>
+    <string name="text_preview_my_message">Hola</string>
+    <string name="text_preview_incoming_message">Hola, ¿Cómo estás?</string>
+    <string name="text_message_restore_image">¿Está seguro que desea restablecer la imagen de portada por defecto?</string>
 </resources>

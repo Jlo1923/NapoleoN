@@ -266,7 +266,11 @@ object Constants {
         VIDEOS("Videos"),
         AUDIOS("Audios"),
         DOCUMENTOS("Documentos"),
-        GIFS("Gifs")
+        GIFS("Gifs"),
+        CHAT_BACKGROUND("chatBackground"),
+        AVATAR("avatars"),
+        HEADER("headers"),
+        IMAGE_FAKE_CONTACT("fakeContact")
     }
 
     enum class ExistingAttack(val type: Int) {
@@ -288,6 +292,14 @@ object Constants {
     enum class FreeTrialUsers(val time: Int) {
         FORTY_FIVE_DAYS(45),
         THREE_MONTHS(3)
+    }
+
+    enum class LocationImageSelectorBottomSheet(val location: Int) {
+        WITHOUT_LOCATION(0),
+        PROFILE(1),
+        BANNER_PROFILE(2),
+        CONTACT_PROFILE(3),
+        APPEARANCE_SETTINGS(4)
     }
 
     enum class EmojiCategory(val category: Int) {

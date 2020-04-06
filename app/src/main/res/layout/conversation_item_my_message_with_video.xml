@@ -49,25 +49,25 @@
                 android:id="@+id/container_quote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="100dp"
-                android:visibility="gone"
                 android:layout_marginBottom="4dp"
+                android:maxHeight="100dp"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible">
 
                 <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
                     android:id="@+id/quote"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:isGoTo="true"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:isGoTo="true" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -77,11 +77,11 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="@dimen/small_margin"
                 android:scaleType="centerCrop"
+                app:imageAttachment="@{conversation}"
+                app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/container_quote"
-                app:layout_constraintBottom_toTopOf="@id/textView_message"
-                app:imageAttachment="@{conversation}"
                 tools:src="@drawable/vertical_photo" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -142,6 +142,8 @@
             android:gravity="center"
             android:textColor="?attr/attrTextColorColorTextIncomingMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
+            android:visibility="gone"
+            app:countDown="@{conversation}"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"

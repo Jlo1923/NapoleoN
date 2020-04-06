@@ -119,6 +119,8 @@
             android:gravity="center"
             android:textColor="?attr/attrTextColorColorTextMyMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
+            android:visibility="gone"
+            app:countDown="@{conversation}"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"

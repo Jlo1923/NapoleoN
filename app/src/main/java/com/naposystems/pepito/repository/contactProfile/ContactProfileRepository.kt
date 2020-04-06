@@ -56,4 +56,8 @@ class ContactProfileRepository@Inject constructor(
         errorList.add(error!!.error)
         return errorList
     }
+
+    override suspend fun restoreImageByContact(contactId: Int) {
+        contactDataSource.restoreImageByContact(contactId)
+    }
 }

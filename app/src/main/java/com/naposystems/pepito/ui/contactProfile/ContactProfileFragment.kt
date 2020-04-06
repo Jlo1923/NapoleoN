@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,8 @@ import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
@@ -51,7 +54,7 @@ class ContactProfileFragment : BaseFragment() {
         fun newInstance() = ContactProfileFragment()
         const val REQUEST_IMAGE_CAPTURE = 1
         const val REQUEST_GALLERY_IMAGE = 2
-        const val HEADER_SUBFOLDER = "headers"
+        private const val FILE_EXTENSION = ".jpg"
     }
 
     @Inject
@@ -67,6 +70,7 @@ class ContactProfileFragment : BaseFragment() {
     private lateinit var animatedThreeEditName: AnimatedThreeVectorView
     private lateinit var animatedThreeEditNickName: AnimatedThreeVectorView
 
+    private var compressedFile : File? = null
     private var contactSilenced: Boolean = false
     private lateinit var subFolder: String
     private lateinit var fileName: String
@@ -113,7 +117,7 @@ class ContactProfileFragment : BaseFragment() {
         binding.optionBlockContact.setOnClickListener(optionBlockContactClickListener())
 
         binding.imageButtonEditHeader.setOnClickListener {
-            subFolder = HEADER_SUBFOLDER
+            subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
             verifyCameraAndMediaPermission()
         }
 
@@ -338,7 +342,7 @@ class ContactProfileFragment : BaseFragment() {
                 }
             }
             UCrop.REQUEST_CROP -> {
-                requestCrop(resultCode, data)
+                requestCrop(resultCode)
             }
         }
     }
@@ -429,11 +433,13 @@ class ContactProfileFragment : BaseFragment() {
         var title = ""
 
         when (subFolder) {
-            HEADER_SUBFOLDER -> title =
+            Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder -> title =
                 context!!.resources.getString(R.string.text_change_cover_photo)
         }
 
-        val dialog = ImageSelectorBottomSheetFragment.newInstance(title)
+        val dialog = ImageSelectorBottomSheetFragment.newInstance(
+            title, Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location
+        )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected() {
                 fileName = "${System.currentTimeMillis()}.jpg"
@@ -454,43 +460,76 @@ class ContactProfileFragment : BaseFragment() {
                 )
                 startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
             }
+
+            override fun defaultOptionSelected(location: Int) {
+                Utils.generalDialog(
+                    getString(R.string.text_select_default),
+                    getString(R.string.text_message_restore_image),
+                    true,
+                    childFragmentManager) {
+                    viewModel.restoreImageByContact(args.contactId)
+                }
+            }
         })
         dialog.show(childFragmentManager, "BottomSheetOptions")
     }
 
     private fun cropImage(sourceUri: Uri) {
+        context?.let { context ->
+            val title = context.resources.getString(R.string.label_edit_cover)
 
-        val title = context!!.resources.getString(R.string.label_edit_cover)
-        val destinationUri =
-            Uri.fromFile(
-                File(
-                    context!!.cacheDir,
-                    Utils.queryName(context!!.contentResolver, sourceUri)
-                )
+            compressedFile = FileManager.createFile(
+                context,
+                "${System.currentTimeMillis()}_compressed${FILE_EXTENSION}",
+                subFolder
             )
 
-        val options = UCrop.Options()
-        options.setCompressionQuality(imageCompression)
-        options.setToolbarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.setStatusBarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.setActiveWidgetColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
-        options.withAspectRatio(aspectRatioX, aspectRatioY)
-        options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
-        options.setToolbarTitle(title)
-        options.setToolbarWidgetColor(ContextCompat.getColor(context!!, R.color.white))
+            val destination = Uri.fromFile(compressedFile)
 
-        UCrop.of(sourceUri, destinationUri)
-            .withOptions(options)
-            .start(context!!, this)
+            val valueColorBackground = TypedValue()
+            context.theme.resolveAttribute(
+                R.attr.attrBackgroundColorPrimary,
+                valueColorBackground,
+                true
+            )
+            val colorBackground = context.resources.getColor(valueColorBackground.resourceId)
+
+            val options = UCrop.Options()
+            options.setCompressionQuality(imageCompression)
+            options.setToolbarColor(colorBackground)
+            options.setStatusBarColor(colorBackground)
+            options.setActiveWidgetColor(colorBackground)
+            options.withAspectRatio(aspectRatioX, aspectRatioY)
+            options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
+            options.setToolbarTitle(title)
+            options.setToolbarWidgetColor(ContextCompat.getColor(context!!, R.color.white))
+
+            UCrop.of(sourceUri, destination)
+                .withOptions(options)
+                .start(context, this)
+        }
     }
 
-    private fun requestCrop(resultCode: Int, data: Intent?) {
+    private fun requestCrop(resultCode: Int) {
         if (resultCode == RESULT_OK) {
-            val uri = UCrop.getOutput(data!!)
             try {
-                viewModel.updateAvatarFakeContact(args.contactId, uri.toString())
+                viewModel.updateAvatarFakeContact(args.contactId, compressedFile?.name ?: "")
+                context?.let { context ->
+                    clearCache(context)
+                }
             } catch (ex: IOException) {
                 Timber.e(ex)
+            }
+        }
+    }
+
+    private fun clearCache(context: Context) {
+        val path = File(context.cacheDir!!.absolutePath, subFolder)
+        if (path.exists() && path.isDirectory) {
+            path.listFiles()?.forEach {child ->
+                if (child.name != compressedFile?.name) {
+                    child.delete()
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 
 fun Fragment.verifyPermission(
@@ -94,7 +95,11 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
         val loadImage = when {
             contact.imageUrlFake.isNotEmpty() -> {
-                contact.imageUrlFake
+                Utils.getFileUri(
+                    context = context,
+                    fileName = contact.imageUrlFake,
+                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                )
             }
             contact.imageUrl.isNotEmpty() -> {
                 contact.imageUrl
@@ -124,7 +129,11 @@ fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: Contact?) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
         val loadImage = when {
             contact.imageUrlFake.isNotEmpty() -> {
-                contact.imageUrlFake
+                Utils.getFileUri(
+                    context = context,
+                    fileName = contact.imageUrlFake,
+                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                )
             }
             contact.imageUrl.isNotEmpty() -> {
                 contact.imageUrl
@@ -134,7 +143,7 @@ fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: Contact?) {
             }
         }
 
-        Glide.with(context)
+        Glide.with(imageView)
             .load(loadImage)
             .into(imageView)
     }

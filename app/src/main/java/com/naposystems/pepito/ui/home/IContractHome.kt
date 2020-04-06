@@ -35,7 +35,7 @@ interface IContractHome {
         fun getFreeTrial(): Long
         fun getSubscriptionTime(): Long
         fun getJsonNotification() : String
-        fun getContact(contactId : Int) : Contact
+        fun getContact(contactId : Int) : Contact?
         fun cleanJsonNotification()
     }
 }

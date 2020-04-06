@@ -24,6 +24,7 @@ import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
 import com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
+import com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -112,6 +113,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AppearanceSettingsViewModel::class)
     internal abstract fun bindAppearanceSettingsViewModel(viewModel: AppearanceSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PreviewBackgroundChatViewModel::class)
+    internal abstract fun bindPreviewBackgroundChatViewModel(viewModel: PreviewBackgroundChatViewModel): ViewModel
 
     @Binds
     @IntoMap

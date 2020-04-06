@@ -46,5 +46,7 @@
         <item quantity="other">%d ausgewählt</item>
     </plurals>
     <string name="text_status_limit">Es sind 4 benutzerdefinierte Status zulässig. Löschen Sie einen zuvor gespeicherten Status, um einen neuen hinzuzufügen.</string>
-
+    <string name="text_preview_my_message">Hallo</string>
+    <string name="text_preview_incoming_message">Hallo, wie geht es dir</string>
+    <string name="text_message_restore_image">Möchten Sie das Standard-Titelbild wirklich wiederherstellen?</string>
 </resources>

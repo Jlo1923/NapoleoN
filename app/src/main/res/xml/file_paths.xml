@@ -27,4 +27,7 @@
     <cache-path
         name="Gifs"
         path="Gifs/" />
+    <cache-path
+        name="fakeContact"
+        path="fakeContact/" />
 </paths>

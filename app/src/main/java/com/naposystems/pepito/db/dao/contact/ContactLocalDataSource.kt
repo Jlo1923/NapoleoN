@@ -27,7 +27,7 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
         return contactDao.getContact(contactId)
     }
 
-    override fun getContactById(contactId: Int): Contact {
+    override fun getContactById(contactId: Int): Contact? {
         return contactDao.getContactById(contactId)
     }
 
@@ -43,13 +43,21 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
         contactDao.insertContact(contact)
     }
 
-    override suspend fun insertContactList(contactList: List<Contact>) {
-        contactDao.insertContacts(contactList)
-
+    override suspend fun insertOrUpdateContactList(contactList: List<Contact>) {
+        contactList.forEach { remoteContact ->
+            val localContact = contactDao.getContactById(remoteContact.id)
+            if (localContact != null) {
+                localContact.imageUrl = remoteContact.imageUrl
+                localContact.displayName = remoteContact.displayName
+                localContact.status = remoteContact.status
+                localContact.lastSeen = remoteContact.lastSeen
+                contactDao.updateContact(localContact)
+            } else {
+                contactDao.insertContact(remoteContact)
+            }
+        }
         val localContacts = getLocaleContacts()
-
         val contactsDeleted = localContacts.subtract(contactList)
-
         if (contactsDeleted.isNotEmpty()) {
             deleteContacts(contactsDeleted.toList())
         }
@@ -85,5 +93,9 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
 
     override suspend fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int> {
         return contactDao.getSelfDestructTimeByContact(contactId)
+    }
+
+    override suspend fun restoreImageByContact(contactId: Int) {
+        contactDao.restoreImageByContact(contactId)
     }
 }

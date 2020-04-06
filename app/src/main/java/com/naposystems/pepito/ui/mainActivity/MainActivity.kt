@@ -293,7 +293,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .into(imageViewAvatar)
 
         Glide.with(this)
-            .load(if (user.headerUri.isEmpty()) defaultHeaderBackground else Uri.parse(user.headerUri))
+            .load(if (user.headerUri.isEmpty()) {
+                defaultHeaderBackground
+            } else {
+                Utils.getFileUri(
+                    context = this,
+                    fileName = user.headerUri,
+                    subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+                )
+            })
             .into(imageViewBackground)
 
         textViewDisplayName.text = user.displayName
