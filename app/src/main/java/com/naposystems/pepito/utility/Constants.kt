@@ -299,7 +299,8 @@ object Constants {
         PROFILE(1),
         BANNER_PROFILE(2),
         CONTACT_PROFILE(3),
-        APPEARANCE_SETTINGS(4)
+        APPEARANCE_SETTINGS(4),
+        CONVERSATION(5)
     }
 
     enum class EmojiCategory(val category: Int) {

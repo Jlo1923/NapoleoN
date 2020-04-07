@@ -24,6 +24,7 @@ import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragme
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatFragment
+import com.naposystems.pepito.ui.previewImage.PreviewImageFragment
 import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment
@@ -82,6 +83,9 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindPreviewBackgroundChatFragment(): PreviewBackgroundChatFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindPreviewImageFragment(): PreviewImageFragment
 
     @ContributesAndroidInjector
     abstract fun bindColorSchemeFragment(): ColorSchemeFragment

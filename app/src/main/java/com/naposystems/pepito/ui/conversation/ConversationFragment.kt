@@ -283,7 +283,8 @@ class ConversationFragment : BaseFragment(),
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
                                 args.contact,
-                                binding.inputPanel.getWebIdQuote()
+                                binding.inputPanel.getWebIdQuote(),
+                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
                             )
                         )
                     }
@@ -1048,6 +1049,7 @@ class ConversationFragment : BaseFragment(),
 
     override fun onPause() {
         super.onPause()
+        resetConversationBackground()
         mediaPlayerManager.pauseAudio()
         mediaPlayerManager.unregisterProximityListener()
         if (actionMode.mode != null) {

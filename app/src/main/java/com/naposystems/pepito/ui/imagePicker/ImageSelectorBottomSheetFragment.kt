@@ -27,8 +27,8 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     interface OnOptionSelected {
-        fun takeImageOptionSelected()
-        fun galleryOptionSelected()
+        fun takeImageOptionSelected(location: Int)
+        fun galleryOptionSelected(location: Int)
         fun defaultOptionSelected(location: Int)
     }
 
@@ -60,28 +60,24 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
         binding.textViewTitle.text = title
 
         binding.containerCameraOption.setOnClickListener {
-            listener.takeImageOptionSelected()
-            dismiss()
+            location?.let { location ->
+                listener.takeImageOptionSelected(location)
+                dismiss()
+            }
         }
 
         binding.containerGalleryOption.setOnClickListener {
-            listener.galleryOptionSelected()
-            dismiss()
+            location?.let { location ->
+                listener.galleryOptionSelected(location)
+                dismiss()
+            }
         }
 
         binding.containerDefault.setOnClickListener {
-            when(location) {
-                Constants.LocationImageSelectorBottomSheet.PROFILE.location -> {
-                    listener.defaultOptionSelected(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
-                }
-                Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
-                    listener.defaultOptionSelected(Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location)
-                }
-                else -> {
-                    listener.defaultOptionSelected(Constants.LocationImageSelectorBottomSheet.WITHOUT_LOCATION.location)
-                }
+            location?.let { location ->
+                listener.defaultOptionSelected(location)
+                dismiss()
             }
-            dismiss()
         }
 
         return binding.root
