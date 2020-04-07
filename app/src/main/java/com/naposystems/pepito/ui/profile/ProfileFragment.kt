@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -32,6 +33,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ProfileFragmentBinding
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
@@ -40,6 +42,7 @@ import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
@@ -53,7 +56,6 @@ class ProfileFragment : BaseFragment() {
     companion object {
         fun newInstance() = ProfileFragment()
         const val REQUEST_IMAGE_CAPTURE = 1
-        const val REQUEST_GALLERY_IMAGE = 2
         private const val FILE_EXTENSION = ".jpg"
     }
 
@@ -64,6 +66,7 @@ class ProfileFragment : BaseFragment() {
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
+    private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
     private var compressedFile: File? = null
     private lateinit var fileName: String
     private lateinit var subFolder: String
@@ -106,8 +109,7 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.imageViewProfileImage.setOnClickListener {
-            val imageUrl = viewModel.user.value!!.imageUrl
-            if (imageUrl.isNotEmpty()){
+            viewModel.user.value?.let { user ->
                 val extra = FragmentNavigatorExtras(
                     binding.imageViewProfileImage to "transition_image_preview"
                 )
@@ -115,10 +117,11 @@ class ProfileFragment : BaseFragment() {
                 findNavController().navigate(
                     ProfileFragmentDirections
                         .actionProfileFragmentToPreviewImageFragment(
-                            imageUrl, null
-                        ), extra
+                            null, null, user
+                            ), extra
                 )
             }
+
         }
 
         binding.imageButtonEditHeader.setOnClickListener {
@@ -175,11 +178,20 @@ class ProfileFragment : BaseFragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        galleryShareViewModel.uriImageSelected.observe(activity!!, Observer { uri ->
+            if(uri != null) {
+                cropImage(uri)
+            }
+        })
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.viewModel = viewModel
 
-        if (viewModel.user.value!!.imageUrl.isNotEmpty()){
+        if (viewModel.user.value!!.imageUrl.isNotEmpty()) {
             binding.imageViewProfileImage.background = null
         }
 
@@ -194,16 +206,6 @@ class ProfileFragment : BaseFragment() {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
                     cropImage(Utils.getFileUri(context!!, fileName, subFolder))
-                }
-            }
-            REQUEST_GALLERY_IMAGE -> {
-                if (resultCode == RESULT_OK) {
-                    try {
-                        val imageUri = data!!.data
-                        cropImage(imageUri!!)
-                    }catch (e: Exception) {
-                        Timber.e(e)
-                    }
                 }
             }
             UCrop.REQUEST_CROP -> {
@@ -261,8 +263,8 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    private fun updateImageProfile (avatar : String) {
-        viewModel.user.value?.let {user ->
+    private fun updateImageProfile(avatar: String) {
+        viewModel.user.value?.let { user ->
             val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
                 displayName = user.displayName,
                 avatar = avatar
@@ -339,7 +341,7 @@ class ProfileFragment : BaseFragment() {
 
     }
 
-    private fun verifyCameraAndMediaPermission(location : Int) {
+    private fun verifyCameraAndMediaPermission(location: Int) {
         validateStateOutputControl()
         Dexter.withActivity(activity!!)
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -378,7 +380,7 @@ class ProfileFragment : BaseFragment() {
             }).check()
     }
 
-    private fun openImageSelectorBottomSheet(location : Int) {
+    private fun openImageSelectorBottomSheet(location: Int) {
 
         var title = ""
 
@@ -394,7 +396,7 @@ class ProfileFragment : BaseFragment() {
         )
 
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
-            override fun takeImageOptionSelected() {
+            override fun takeImageOptionSelected(location: Int) {
                 fileName = "${System.currentTimeMillis()}.jpg"
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
@@ -406,13 +408,14 @@ class ProfileFragment : BaseFragment() {
                 }
             }
 
-            override fun galleryOptionSelected() {
-                val pickPhoto = Intent(
-                    Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            override fun galleryOptionSelected(location: Int) {
+                findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileFragmentToAttachmentGalleryFoldersFragment(
+                        null,
+                        "",
+                        location
+                    )
                 )
-                pickPhoto.type = "image/*"
-                startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
             }
 
             override fun defaultOptionSelected(location: Int) {
@@ -420,16 +423,17 @@ class ProfileFragment : BaseFragment() {
                     getString(R.string.text_select_default),
                     getString(R.string.text_message_restore_image),
                     true,
-                    childFragmentManager) {
-                    when(location) {
+                    childFragmentManager
+                ) {
+                    when (location) {
                         Constants.LocationImageSelectorBottomSheet.PROFILE.location -> {
                             updateImageProfile("")
                         }
                         Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
-                            viewModel.user.value?.let {user ->
+                            viewModel.user.value?.let { user ->
                                 val userWithoutBanner = User(
                                     firebaseId = user.firebaseId,
-                                    id= user.id,
+                                    id = user.id,
                                     nickname = user.nickname,
                                     displayName = user.displayName,
                                     accessPin = user.accessPin,
@@ -512,7 +516,7 @@ class ProfileFragment : BaseFragment() {
     private fun clearCache(context: Context) {
         val path = File(context.cacheDir!!.absolutePath, subFolder)
         if (path.exists() && path.isDirectory) {
-            path.listFiles()?.forEach {child ->
+            path.listFiles()?.forEach { child ->
                 if (child.name != compressedFile?.name) {
                     child.delete()
                 }

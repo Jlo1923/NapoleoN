@@ -72,7 +72,8 @@ class AttachmentGalleryFoldersFragment : Fragment() {
                         AttachmentGalleryFoldersFragmentDirections.actionAttachmentGalleryFragmentToAttachmentGalleryFragment(
                             args.contact,
                             galleryFolder,
-                            args.quoteWebId
+                            args.quoteWebId,
+                            args.location
                         )
                     )
                 }

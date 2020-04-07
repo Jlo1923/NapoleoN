@@ -14,7 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.karumi.dexter.Dexter
@@ -35,6 +37,7 @@ import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
+import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
@@ -48,7 +51,6 @@ class AppearanceSettingsFragment : BaseFragment() {
     companion object {
         fun newInstance() = AppearanceSettingsFragment()
         const val REQUEST_IMAGE_CAPTURE = 1
-        const val REQUEST_GALLERY_IMAGE = 2
         private const val FILE_EXTENSION = ".jpg"
     }
 
@@ -64,7 +66,7 @@ class AppearanceSettingsFragment : BaseFragment() {
     private val previewBackgroundChatViewModel: PreviewBackgroundChatViewModel by viewModels {
         viewModelFactory
     }
-
+    private val galleryShareViewModel : GalleryShareViewModel by activityViewModels()
     private lateinit var binding: AppearanceSettingsFragmentBinding
     private lateinit var fileName: String
     private var compressedFileName: String = ""
@@ -84,6 +86,15 @@ class AppearanceSettingsFragment : BaseFragment() {
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        galleryShareViewModel.uriImageSelected.observe(activity!!, Observer { uri ->
+            if(uri != null) {
+                cropImage(uri)
+            }
+        })
     }
 
     override fun onCreateView(
@@ -234,7 +245,7 @@ class AppearanceSettingsFragment : BaseFragment() {
             title, Constants.LocationImageSelectorBottomSheet.APPEARANCE_SETTINGS.location
         )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
-            override fun takeImageOptionSelected() {
+            override fun takeImageOptionSelected(location: Int) {
                 fileName = "${System.currentTimeMillis()}${FILE_EXTENSION}"
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
@@ -246,12 +257,14 @@ class AppearanceSettingsFragment : BaseFragment() {
                 }
             }
 
-            override fun galleryOptionSelected() {
-                val pickPhoto = Intent(
-                    Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            override fun galleryOptionSelected(location: Int) {
+                findNavController().navigate(
+                    AppearanceSettingsFragmentDirections.actionAppearanceSettingsFragmentToAttachmentGalleryFoldersFragment(
+                        null,
+                        "",
+                        Constants.LocationImageSelectorBottomSheet.APPEARANCE_SETTINGS.location
+                    )
                 )
-                startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
             }
 
             override fun defaultOptionSelected(location: Int) {
@@ -285,12 +298,6 @@ class AppearanceSettingsFragment : BaseFragment() {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     cropImage(Utils.getFileUri(context!!, fileName, subFolder))
-                }
-            }
-            REQUEST_GALLERY_IMAGE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val imageUri = data!!.data
-                    cropImage(imageUri!!)
                 }
             }
             UCrop.REQUEST_CROP -> {

@@ -25,6 +25,7 @@ import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
 import com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
+import com.naposystems.pepito.ui.previewImage.PreviewImageViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -47,6 +48,7 @@ import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewMo
 import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -118,6 +120,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PreviewBackgroundChatViewModel::class)
     internal abstract fun bindPreviewBackgroundChatViewModel(viewModel: PreviewBackgroundChatViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PreviewImageViewModel::class)
+    internal abstract fun bindPreviewImageViewModel(viewModel: PreviewImageViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -243,6 +250,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ConversationShareViewModel::class)
     internal abstract fun bindConversationShareViewModel(viewModel: ConversationShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GalleryShareViewModel::class)
+    internal abstract fun bindGalleryShareViewModel(viewModel: GalleryShareViewModel): ViewModel
 
     @Binds
     @IntoMap

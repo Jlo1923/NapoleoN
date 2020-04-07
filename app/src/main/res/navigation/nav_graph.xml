@@ -213,6 +213,9 @@
         <action
             android:id="@+id/action_profileFragment_to_previewImageFragment"
             app:destination="@id/previewImageFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
     </fragment>
     <fragment
         android:id="@+id/securitySettingsFragment"
@@ -255,6 +258,9 @@
         <action
             android:id="@+id/action_appearanceSettingsFragment_to_previewBackgroundChatFragment"
             app:destination="@id/previewBackgroundChatFragment" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
     </fragment>
     <fragment
         android:id="@+id/previewBackgroundChatFragment"
@@ -539,6 +545,9 @@
         <action
             android:id="@+id/action_contactProfileFragment_to_previewImageFragment"
             app:destination="@id/previewImageFragment" />
+        <action
+            android:id="@+id/action_contactProfileFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
     </fragment>
     <fragment
         android:id="@+id/attachmentAudioFragment"
@@ -555,13 +564,20 @@
         tools:layout="@layout/attachment_gallery_folders_fragment">
         <argument
             android:name="contact"
-            app:argType="com.naposystems.pepito.entity.Contact" />
+            app:argType="com.naposystems.pepito.entity.Contact"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentGalleryFragment"
             app:destination="@id/attachmentGalleryFragment" />
         <argument
             android:name="quoteWebId"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="location"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/attachmentGalleryFragment"
@@ -570,7 +586,9 @@
         tools:layout="@layout/attachment_gallery_fragment">
         <argument
             android:name="contact"
-            app:argType="com.naposystems.pepito.entity.Contact" />
+            app:argType="com.naposystems.pepito.entity.Contact"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <argument
             android:name="galleryFolder"
             app:argType="com.naposystems.pepito.model.attachment.gallery.GalleryFolder" />
@@ -579,7 +597,12 @@
             app:destination="@id/attachmentPreviewFragment" />
         <argument
             android:name="quoteWebId"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="location"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/attachmentPreviewFragment"
@@ -597,7 +620,8 @@
             app:argType="integer" />
         <argument
             android:name="quote"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
     <fragment
         android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"
@@ -678,11 +702,18 @@
         android:label="@string/text_profile_title"
         tools:layout="@layout/preview_image_fragment" >
         <argument
-            android:name="imageUrl"
-            app:argType="string" />
+            android:name="contact"
+            app:argType="com.naposystems.pepito.entity.Contact"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <argument
             android:name="titleToolbar"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="user"
+            app:argType="com.naposystems.pepito.entity.User"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

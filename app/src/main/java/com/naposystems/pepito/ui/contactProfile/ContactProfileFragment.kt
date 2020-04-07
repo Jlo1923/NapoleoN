@@ -14,6 +14,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +41,7 @@ import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
@@ -53,7 +55,6 @@ class ContactProfileFragment : BaseFragment() {
     companion object {
         fun newInstance() = ContactProfileFragment()
         const val REQUEST_IMAGE_CAPTURE = 1
-        const val REQUEST_GALLERY_IMAGE = 2
         private const val FILE_EXTENSION = ".jpg"
     }
 
@@ -65,6 +66,9 @@ class ContactProfileFragment : BaseFragment() {
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
+
+    private val galleryShareViewModel : GalleryShareViewModel by activityViewModels()
+
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
     private lateinit var animatedThreeEditName: AnimatedThreeVectorView
@@ -83,6 +87,15 @@ class ContactProfileFragment : BaseFragment() {
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        galleryShareViewModel.uriImageSelected.observe(activity!!, Observer { uri ->
+            if(uri != null) {
+                cropImage(uri)
+            }
+        })
     }
 
     override fun onCreateView(
@@ -125,8 +138,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun showPreviewImage() = View.OnClickListener {
-        val contact = viewModel.contact.value!!
-        if (contact.imageUrl.isNotEmpty()){
+        viewModel.contact.value?.let { contact ->
             val extra = FragmentNavigatorExtras(
                 binding.imageViewProfileContact to "transition_image_preview"
             )
@@ -138,7 +150,7 @@ class ContactProfileFragment : BaseFragment() {
             findNavController().navigate(
                 ContactProfileFragmentDirections
                     .actionContactProfileFragmentToPreviewImageFragment(
-                        contact.imageUrl, titleToolbar
+                        contact, titleToolbar, null
                     ), extra
             )
         }
@@ -335,12 +347,6 @@ class ContactProfileFragment : BaseFragment() {
                     cropImage(Utils.getFileUri(context!!, fileName, subFolder))
                 }
             }
-            REQUEST_GALLERY_IMAGE -> {
-                if (resultCode == RESULT_OK) {
-                    val imageUri = data!!.data
-                    cropImage(imageUri!!)
-                }
-            }
             UCrop.REQUEST_CROP -> {
                 requestCrop(resultCode)
             }
@@ -441,7 +447,7 @@ class ContactProfileFragment : BaseFragment() {
             title, Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location
         )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
-            override fun takeImageOptionSelected() {
+            override fun takeImageOptionSelected(location: Int) {
                 fileName = "${System.currentTimeMillis()}.jpg"
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 takePictureIntent.putExtra(
@@ -453,12 +459,16 @@ class ContactProfileFragment : BaseFragment() {
                 }
             }
 
-            override fun galleryOptionSelected() {
-                val pickPhoto = Intent(
-                    Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                )
-                startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE)
+            override fun galleryOptionSelected(location: Int) {
+                viewModel.contact.value?.let { contact ->
+                    findNavController().navigate(
+                        ContactProfileFragmentDirections.actionContactProfileFragmentToAttachmentGalleryFoldersFragment(
+                            contact,
+                            "",
+                            Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location
+                        )
+                    )
+                }
             }
 
             override fun defaultOptionSelected(location: Int) {
