@@ -9,4 +9,7 @@
     <string name="text_free_trial_expired">Testzeit abgelaufen</string>
     <string name="text_subscription_expiration">Ablauf des Abonnements</string>
     <string name="text_check_conditions">Sie sind dabei, zu einer Plattform außerhalb der Anwendung zu wechseln. Napoleon Secret Chat speichert oder hat keinen Zugriff auf die auf dieser Plattform bereitgestellten Daten. Sind Sie sicher, dass Sie auf diese Website gehen möchten?</string>
+    <string name="text_payment_method">Zahlungsmethode</string>
+    <string name="text_message_selection_type_subscription">Payment method</string>
+    <string name="text_warning">Als nächstes werden Sie zu einem Zahlungsportal weitergeleitet. Dieses Portal befindet sich außerhalb von Napoleon Secret Chat. Daher weist es nicht die gleichen Eigenschaften wie unsere Anwendung auf und Sie müssen die für seine Verwendung festgelegten Bedingungen akzeptieren. Wir sind nicht verantwortlich für die Behandlung der im Zahlungsmodul angegebenen Daten.</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.subscription
 
-
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -57,6 +56,7 @@ class SubscriptionFragment : Fragment() {
         )
 
         binding.checkBoxPaymentDescription.isChecked = false
+        binding.imageButtonPaypal.isEnabled = false
         binding.checkBoxPaymentDescription.setOnCheckedChangeListener { _, isChecked ->
             binding.imageButtonPaypal.isEnabled = isChecked
         }
@@ -161,7 +161,7 @@ class SubscriptionFragment : Fragment() {
             viewModel.sendPayment(selectedItem.type)
         } else {
             Toast.makeText(
-                context!!, "Debe seleccionar un método de pago|!!", Toast.LENGTH_SHORT
+                context!!, getString(R.string.text_message_selection_type_subscription), Toast.LENGTH_SHORT
             ).show()
             binding.viewSwitcher.showNext()
         }
