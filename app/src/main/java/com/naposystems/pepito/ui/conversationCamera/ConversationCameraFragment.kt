@@ -15,6 +15,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
@@ -22,6 +23,7 @@ import com.naposystems.pepito.databinding.ConversationCameraFragmentBinding
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import timber.log.Timber
 import java.io.File
 import java.nio.ByteBuffer
@@ -54,6 +56,7 @@ class ConversationCameraFragment : Fragment() {
     private var recordingTime: Long = 0
     private var mStartToRecordRunnable: Runnable = Runnable { startRecording() }
     private lateinit var mRecordingTimeRunnable: Runnable
+    private val cameraShareViewModel : CameraShareViewModel by activityViewModels()
 
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
@@ -129,14 +132,19 @@ class ConversationCameraFragment : Fragment() {
         }
 
         binding.imageButtonCamera.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                mHandler.postDelayed(mStartToRecordRunnable, 500)
-            } else if (event.action == MotionEvent.ACTION_UP) {
-                mHandler.removeCallbacks(mStartToRecordRunnable)
-                if (!isRecording) {
-                    takePhoto()
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    if(args.location == Constants.LocationImageSelectorBottomSheet.CONVERSATION.location) {
+                        mHandler.postDelayed(mStartToRecordRunnable, 500)
+                    }
                 }
-                stopRecording()
+                MotionEvent.ACTION_UP -> {
+                    mHandler.removeCallbacks(mStartToRecordRunnable)
+                    if (!isRecording) {
+                        takePhoto()
+                    }
+                    stopRecording()
+                }
             }
             true
         }
@@ -243,29 +251,61 @@ class ConversationCameraFragment : Fragment() {
             mainExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    args.location.let { location ->
+                        when (location) {
+                            Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
+                                val attachment = Attachment(
+                                    id = 0,
+                                    messageId = 0,
+                                    webId = "",
+                                    messageWebId = "",
+                                    type = Constants.AttachmentType.IMAGE.type,
+                                    body = "",
+                                    uri = photoFile.name,
+                                    origin = Constants.AttachmentOrigin.CAMERA.origin,
+                                    thumbnailUri = "",
+                                    status = Constants.AttachmentStatus.SENDING.status
+                                )
 
-                    val attachment = Attachment(
-                        id = 0,
-                        messageId = 0,
-                        webId = "",
-                        messageWebId = "",
-                        type = Constants.AttachmentType.IMAGE.type,
-                        body = "",
-                        uri = photoFile.name,
-                        origin = Constants.AttachmentOrigin.CAMERA.origin,
-                        thumbnailUri = "",
-                        status = Constants.AttachmentStatus.SENDING.status
-                    )
 
-                    findNavController().navigate(
-                        ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
-                            attachment,
-                            0,
-                            args.quote
-                        )
-                    )
+                                findNavController().navigate(
+                                    ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
+                                        attachment,
+                                        0,
+                                        args.quote
+                                    )
+                                )
 
-                    Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
+                                Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
+
+                            } else -> {
+                                context?.let { context ->
+                                    val uri = Utils.getFileUri(
+                                        context = context,
+                                        fileName = photoFile.name,
+                                        subFolder = Constants.NapoleonCacheDirectories.IMAGES.folder
+                                    )
+
+                                    with(cameraShareViewModel){
+                                        setImageUriTaken(uri)
+                                        resetUriImageTaken()
+                                    }
+                                    when(location) {
+                                        Constants.LocationImageSelectorBottomSheet.PROFILE.location,
+                                        Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
+                                            findNavController().popBackStack(R.id.profileFragment, false)
+                                        }
+                                        Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location -> {
+                                            findNavController().popBackStack(R.id.contactProfileFragment, false)
+                                        }
+                                        else -> {
+                                            findNavController().popBackStack(R.id.appearanceSettingsFragment, false)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 override fun onError(exception: ImageCaptureException) {

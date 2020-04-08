@@ -40,6 +40,7 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -68,6 +69,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private val galleryShareViewModel : GalleryShareViewModel by activityViewModels()
+    private val cameraShareViewModel : CameraShareViewModel by activityViewModels()
 
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
@@ -91,11 +93,18 @@ class ContactProfileFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        galleryShareViewModel.uriImageSelected.observe(activity!!, Observer { uri ->
-            if(uri != null) {
-                cropImage(uri)
-            }
-        })
+        activity?.let { activity ->
+            galleryShareViewModel.uriImageSelected.observe(activity, Observer { uri ->
+                if(uri != null) {
+                    cropImage(uri)
+                }
+            })
+            cameraShareViewModel.uriImageTaken.observe(activity, Observer { uri ->
+                if(uri != null) {
+                    cropImage(uri)
+                }
+            })
+        }
     }
 
     override fun onCreateView(
@@ -448,15 +457,11 @@ class ContactProfileFragment : BaseFragment() {
         )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected(location: Int) {
-                fileName = "${System.currentTimeMillis()}.jpg"
-                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                takePictureIntent.putExtra(
-                    MediaStore.EXTRA_OUTPUT,
-                    Utils.getFileUri(context!!, fileName, subFolder)
+                findNavController().navigate(
+                    ContactProfileFragmentDirections.actionContactProfileFragmentToConversationCameraFragment(
+                        location = location
+                    )
                 )
-                if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
-                    startActivityForResult(takePictureIntent, ProfileFragment.REQUEST_IMAGE_CAPTURE)
-                }
             }
 
             override fun galleryOptionSelected(location: Int) {
