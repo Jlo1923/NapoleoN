@@ -46,6 +46,7 @@ import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeViewModel
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountViewModel
+import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
@@ -255,6 +256,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(GalleryShareViewModel::class)
     internal abstract fun bindGalleryShareViewModel(viewModel: GalleryShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CameraShareViewModel::class)
+    internal abstract fun bindCameraShareViewModel(viewModel: CameraShareViewModel): ViewModel
 
     @Binds
     @IntoMap

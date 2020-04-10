@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
+import com.naposystems.pepito.dto.status.UserStatusReqDTO
 import com.naposystems.pepito.entity.Status
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.repository.status.StatusRepository
@@ -52,16 +52,13 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         viewModelScope.launch {
             try {
                 user.value?.let { user ->
-                    val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
-                        displayName = user.displayName,
-                        avatar = user.imageUrl,
+                    val userStatus = UserStatusReqDTO(
                         status = textStatus
                     )
-
-                    val response = repository.updateRemoteStatus(updateUserInfoReqDTO)
+                    val response = repository.updateRemoteStatus(userStatus)
 
                     if (response.isSuccessful) {
-                        handleUpdateRemoteStatusSuccessful(updateUserInfoReqDTO, user)
+                        handleUpdateRemoteStatusSuccessful(textStatus, user)
                     } else {
                         when (response.code()) {
                             422 -> _errorUpdatingStatus.value = repository.get422Error(response)
@@ -77,30 +74,30 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     }
 
     private suspend fun handleUpdateRemoteStatusSuccessful(
-        updateUserInfoReqDTO: UpdateUserInfoReqDTO,
+        textStatus: String,
         user: User
     ) {
         status.value?.let { listStatus ->
             if (listStatus.count() < 10) {
                 val status = listStatus.find {
                     (it.status.isNotEmpty()) && (it.status
-                        .trim() == updateUserInfoReqDTO.status.trim()) ||
-                            (it.status.isEmpty()) && (it.customStatus.trim() == updateUserInfoReqDTO.status.trim())
+                        .trim() == textStatus.trim()) ||
+                            (it.status.isEmpty()) && (it.customStatus.trim() == textStatus.trim())
                 }
 
                 if (status == null) {
                     val list = arrayListOf<Status>()
-                    list.add(Status(0, customStatus = updateUserInfoReqDTO.status))
+                    list.add(Status(0, customStatus = textStatus))
                     repository.insertNewStatus(list)
                 }
             }
         }
 
         repository.updateLocalStatus(
-            updateUserInfoReqDTO.status,
+            textStatus,
             user.firebaseId
         )
-        user.status = updateUserInfoReqDTO.status
+        user.status = textStatus
     }
 
     override fun deleteStatus(status: Status) {

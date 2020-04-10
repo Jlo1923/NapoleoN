@@ -34,6 +34,7 @@ import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.getQuestions.R
 import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeResDTO
+import com.naposystems.pepito.dto.status.UserStatusReqDTO
 import com.naposystems.pepito.dto.subscription.SubscriptionUrlResDTO
 import com.naposystems.pepito.dto.subscription.SubscriptionUserResDTO
 import com.naposystems.pepito.dto.subscription.SubscriptionsResDTO
@@ -103,6 +104,9 @@ interface NapoleonApi {
 
     @PUT(UPDATE_USER_INFO)
     suspend fun updateUserInfo(@Body updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
+
+    @PUT(UPDATE_USER_INFO)
+    suspend fun updateUserStatus(@Body userStatusReqDTO: UserStatusReqDTO): Response<UpdateUserInfoResDTO>
 
     @PUT(UPDATE_MUTE_CONVERSATION)
     suspend fun updateMuteConversation(

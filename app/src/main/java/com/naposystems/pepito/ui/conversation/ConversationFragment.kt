@@ -300,7 +300,8 @@ class ConversationFragment : BaseFragment(),
                             ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
                                 viewModel.getUser().id,
                                 args.contact.id,
-                                binding.inputPanel.getWebIdQuote()
+                                binding.inputPanel.getWebIdQuote(),
+                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
                             )
                         )
                     }

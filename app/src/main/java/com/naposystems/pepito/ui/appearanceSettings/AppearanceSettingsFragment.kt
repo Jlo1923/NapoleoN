@@ -37,6 +37,7 @@ import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
+import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
@@ -66,7 +67,10 @@ class AppearanceSettingsFragment : BaseFragment() {
     private val previewBackgroundChatViewModel: PreviewBackgroundChatViewModel by viewModels {
         viewModelFactory
     }
+
     private val galleryShareViewModel : GalleryShareViewModel by activityViewModels()
+    private val cameraShareViewModel : CameraShareViewModel by activityViewModels()
+
     private lateinit var binding: AppearanceSettingsFragmentBinding
     private lateinit var fileName: String
     private var compressedFileName: String = ""
@@ -90,11 +94,18 @@ class AppearanceSettingsFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        galleryShareViewModel.uriImageSelected.observe(activity!!, Observer { uri ->
-            if(uri != null) {
-                cropImage(uri)
-            }
-        })
+        activity?.let { activity ->
+            galleryShareViewModel.uriImageSelected.observe(activity, Observer { uri ->
+                if(uri != null) {
+                    cropImage(uri)
+                }
+            })
+            cameraShareViewModel.uriImageTaken.observe(activity, Observer { uri ->
+                if(uri != null) {
+                    cropImage(uri)
+                }
+            })
+        }
     }
 
     override fun onCreateView(
@@ -246,15 +257,11 @@ class AppearanceSettingsFragment : BaseFragment() {
         )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected(location: Int) {
-                fileName = "${System.currentTimeMillis()}${FILE_EXTENSION}"
-                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                takePictureIntent.putExtra(
-                    MediaStore.EXTRA_OUTPUT,
-                    Utils.getFileUri(context!!, fileName, subFolder)
+                findNavController().navigate(
+                    AppearanceSettingsFragmentDirections.actionAppearanceSettingsFragmentToConversationCameraFragment(
+                        location = location
+                    )
                 )
-                if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                }
             }
 
             override fun galleryOptionSelected(location: Int) {

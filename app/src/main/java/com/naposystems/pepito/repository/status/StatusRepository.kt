@@ -7,6 +7,7 @@ import com.naposystems.pepito.dto.profile.UpdateUserInfo422DTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoErrorDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
+import com.naposystems.pepito.dto.status.UserStatusReqDTO
 import com.naposystems.pepito.entity.Status
 import com.naposystems.pepito.ui.status.IContractStatus
 import com.naposystems.pepito.utility.WebServiceUtils
@@ -30,8 +31,8 @@ class StatusRepository @Inject constructor(
         return statusLocalDataSource.getStatus()
     }
 
-    override suspend fun updateRemoteStatus(updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO> {
-        return napoleonApi.updateUserInfo(updateUserInfoReqDTO)
+    override suspend fun updateRemoteStatus(userStatus: UserStatusReqDTO): Response<UpdateUserInfoResDTO> {
+        return napoleonApi.updateUserStatus(userStatus)
     }
 
     override suspend fun updateLocalStatus(newStatus: String, firebaseId: String) {
