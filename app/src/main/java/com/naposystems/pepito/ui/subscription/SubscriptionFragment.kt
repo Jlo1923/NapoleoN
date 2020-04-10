@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -58,8 +58,24 @@ class SubscriptionFragment : Fragment() {
         binding.checkBoxPaymentDescription.isChecked = false
         binding.imageButtonPaypal.isEnabled = false
         binding.checkBoxPaymentDescription.setOnCheckedChangeListener { _, isChecked ->
-            binding.imageButtonPaypal.isEnabled = isChecked
+            enableButtonPaypal()
         }
+
+        binding.spinnerPayment.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    enableButtonPaypal()
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    enableButtonPaypal()
+                }
+            }
 
         binding.imageButtonPaypal.setOnClickListener {
             binding.viewSwitcher.showNext()
@@ -123,6 +139,18 @@ class SubscriptionFragment : Fragment() {
         })
     }
 
+    private fun enableButtonPaypal() {
+        when (binding.spinnerPayment.selectedItemId) {
+            null -> {
+                binding.imageButtonPaypal.isEnabled = false
+            }
+            else -> {
+                binding.imageButtonPaypal.isEnabled =
+                    binding.spinnerPayment.selectedItemId.toInt() != 0 && binding.checkBoxPaymentDescription.isChecked
+            }
+        }
+    }
+
     private fun setSubscriptionUser() {
         binding.imageButtonPaypal.isEnabled = false
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -154,16 +182,7 @@ class SubscriptionFragment : Fragment() {
     }
 
     private fun sendPayment() {
-        val selectedPaymentId = binding.spinnerPayment.selectedItemId
         val selectedItem = binding.spinnerPayment.selectedItem as TypeSubscription
-
-        if (selectedPaymentId.toInt() != 0) {
-            viewModel.sendPayment(selectedItem.type)
-        } else {
-            Toast.makeText(
-                context!!, getString(R.string.text_message_selection_type_subscription), Toast.LENGTH_SHORT
-            ).show()
-            binding.viewSwitcher.showNext()
-        }
+        viewModel.sendPayment(selectedItem.type)
     }
 }
