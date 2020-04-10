@@ -9,4 +9,7 @@
     <string name="text_free_trial_expired">Il tempo di prova è scaduto</string>
     <string name="text_subscription_expiration">Scadenza dell\'abbonamento</string>
     <string name="text_check_conditions">Stai per andare su una piattaforma esterna all\'applicazione. Napoleon Secret Chat non salva né ha accesso ai dati forniti su questa piattaforma. Sei sicuro di voler visitare questo sito?</string>
+    <string name="text_payment_method">Metodo di pagamento</string>
+    <string name="text_message_selection_type_subscription">Devi selezionare un tipo di abbonamento</string>
+    <string name="text_warning">Successivamente, verrai reindirizzato a un portale di pagamento, questo portale è esterno alla Chat segreta di Napoleone, pertanto non ha le stesse caratteristiche della nostra applicazione e devi accettare i termini e le condizioni previsti per il suo utilizzo. Non siamo responsabili del trattamento dei dati forniti nel modulo di pagamento.</string>
 </resources>

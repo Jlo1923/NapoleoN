@@ -122,6 +122,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/small_padding"
+                android:textColor="?attr/attrTextColorSecondaryTextColor"
                 android:text="@string/text_subscription_type"
                 app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
                 app:layout_constraintStart_toStartOf="@+id/spinner_payment"
@@ -132,32 +133,65 @@
                 style="@style/BackgroundSpinner"
                 android:layout_width="0dp"
                 android:layout_height="54dp"
-                android:layout_marginTop="@dimen/normal_margin"
+                android:textColor="?attr/attrTextColorHint"
+                android:layout_marginTop="@dimen/small_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_type_subscription"
                 app:layout_constraintWidth_percent="0.9"
                 tools:listitem="@layout/subscription_item" />
 
+            <TextView
+                android:id="@+id/textView_payment_method"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/small_padding"
+                android:textColor="?attr/attrTextColorSecondaryTextColor"
+                android:text="@string/text_payment_method"
+                android:layout_marginTop="@dimen/small_margin"
+                app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
+                app:layout_constraintStart_toStartOf="@+id/spinner_payment"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_payment" />
+
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkBox_payment_description"
                 style="@style/BodyTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/normal_margin"
-                android:text="@string/text_check_conditions"
-                app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView"
                 app:layout_constraintStart_toStartOf="@+id/spinner_payment"
-                app:layout_constraintTop_toBottomOf="@id/spinner_payment" />
+                app:layout_constraintTop_toTopOf="@+id/nestedScrollView"
+                app:layout_constraintVertical_bias="0.50" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/large_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/checkBox_payment_description"
+                app:layout_constraintTop_toBottomOf="@+id/textView_payment_method">
+
+                <TextView
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
+                    android:text="@string/text_warning" />
+
+            </androidx.core.widget.NestedScrollView>
 
             <ViewSwitcher
                 android:id="@+id/viewSwitcher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/normal_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/checkBox_payment_description"
+                app:layout_constraintTop_toBottomOf="@+id/nestedScrollView"
+                app:layout_constraintVertical_bias="0.050000012"
                 app:layout_constraintWidth_percent="@dimen/width_app_button">
 
                 <ImageButton

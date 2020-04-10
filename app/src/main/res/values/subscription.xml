@@ -10,4 +10,7 @@
     <string name="text_free_trial_expired">Test time expired</string>
     <string name="text_subscription_expiration">Subscription expiration</string>
     <string name="text_check_conditions">You are about to go to a platform external to the application. Napoleon Secret Chat does not save or have access to the data provided on this platform. Are you sure you want to go to this site?</string>
+    <string name="text_payment_method">Payment method</string>
+    <string name="text_message_selection_type_subscription">Sie müssen einen Abonnementtyp auswählen</string>
+    <string name="text_warning">Next, you will be redirected to a payment portal, this portal is external to Napoleon Secret Chat, therefore, it does not have the same characteristics as our application and you must accept the terms and conditions stipulated for its use. We are not responsible for the treatment of the data provided in the payment module.</string>
 </resources>
