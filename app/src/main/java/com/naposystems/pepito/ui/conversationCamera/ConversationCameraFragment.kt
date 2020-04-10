@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Size
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.camera.core.*
 import androidx.camera.core.impl.VideoCaptureConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -57,6 +54,8 @@ class ConversationCameraFragment : Fragment() {
     private var mStartToRecordRunnable: Runnable = Runnable { startRecording() }
     private lateinit var mRecordingTimeRunnable: Runnable
     private val cameraShareViewModel : CameraShareViewModel by activityViewModels()
+    private lateinit var listener : ScaleGestureDetector.SimpleOnScaleGestureListener
+    private lateinit var scaleGestureDetector : ScaleGestureDetector
 
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
@@ -64,6 +63,8 @@ class ConversationCameraFragment : Fragment() {
     private var videoCapture: VideoCapture? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
+    private var cameraControl: CameraControl? = null
+    private var cameraInfo : CameraInfo? = null
     private var torchEnable = false
     private var isRecording: Boolean = false
     private val mHandler: Handler by lazy {
@@ -106,6 +107,8 @@ class ConversationCameraFragment : Fragment() {
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+        setupListenerZoom()
+
         binding.viewFinder.post {
             startCamera()
         }
@@ -147,6 +150,29 @@ class ConversationCameraFragment : Fragment() {
                 }
             }
             true
+        }
+
+        binding.viewFinder.setOnTouchListener { _, event ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    val factory = SurfaceOrientedMeteringPointFactory(
+                        binding.viewFinder.width.toFloat(),
+                        binding.viewFinder.height.toFloat()
+                    )
+                    val point = factory.createPoint(event.x, event.y)
+
+                    val action = FocusMeteringAction
+                        .Builder(point)
+                        .build()
+
+                    cameraControl?.startFocusAndMetering(action)
+                    return@setOnTouchListener true
+                }
+                else -> {
+                    scaleGestureDetector.onTouchEvent(event)
+                    return@setOnTouchListener true
+                }
+            }
         }
     }
 
@@ -232,11 +258,28 @@ class ConversationCameraFragment : Fragment() {
                     imageCapture,
                     videoCapture
                 )
+
+                camera?.let { camera ->
+                    cameraControl = camera.cameraControl
+                    cameraInfo = camera.cameraInfo
+                }
             } catch (exc: Exception) {
                 Timber.e("Use case binding failed, exc: $exc")
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun setupListenerZoom() {
+        listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector?): Boolean {
+                val currentZoomRatio: Float = cameraInfo!!.zoomState.value?.zoomRatio ?: 0F
+                val delta = detector?.scaleFactor
+                cameraControl?.setZoomRatio(currentZoomRatio * delta!!)
+                return true
+            }
+        }
+        scaleGestureDetector = ScaleGestureDetector(context, listener)
     }
 
     private fun takePhoto() {
