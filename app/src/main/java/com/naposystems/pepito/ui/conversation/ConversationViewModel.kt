@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
 import com.naposystems.pepito.R
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
@@ -36,6 +35,7 @@ class ConversationViewModel @Inject constructor(
 
     private lateinit var user: User
     private lateinit var contact: Contact
+    private var isVideoCall: Boolean = false
     lateinit var contactProfile: LiveData<Contact>
 
     private val _webServiceError = MutableLiveData<List<String>>()
@@ -61,6 +61,10 @@ class ConversationViewModel @Inject constructor(
     private val _deleteMessagesForAllWsError = MutableLiveData<List<String>>()
     val deleteMessagesForAllWsError: LiveData<List<String>>
         get() = _deleteMessagesForAllWsError
+
+    private val _contactCalledSuccessfully = MutableLiveData<String>()
+    val contactCalledSuccessfully: LiveData<String>
+        get() = _contactCalledSuccessfully
 
     private var countOldMessages: Int = 0
 
@@ -421,6 +425,38 @@ class ConversationViewModel @Inject constructor(
         }
 
         return index
+    }
+
+    override fun callContact() {
+        viewModelScope.launch {
+            try {
+                val response = repository.callContact(contact, isVideoCall)
+
+                if (response.isSuccessful) {
+                    response.body()?.let { responseBody ->
+                        val channel = "private-${responseBody.channel}"
+                        repository.subscribeToCallChannel(channel)
+                        _contactCalledSuccessfully.value = channel
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+    }
+
+    override fun resetContactCalledSuccessfully() {
+        _contactCalledSuccessfully.value = null
+    }
+
+    override fun setIsVideoCall(isVideoCall: Boolean) {
+        this.isVideoCall = isVideoCall
+    }
+
+    override fun isVideoCall() = this.isVideoCall
+
+    override fun resetIsVideoCall() {
+        this.isVideoCall = false
     }
 
     //endregion

@@ -1,5 +1,6 @@
 package com.naposystems.pepito.utility.adapters
 
+import android.Manifest
 import android.net.Uri
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,8 +16,12 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.model.conversationCall.ConversationCall
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
+import org.json.JSONObject
+import org.webrtc.IceCandidate
+import org.webrtc.SessionDescription
 
 fun Fragment.verifyPermission(
     vararg permissions: String,
@@ -62,8 +67,67 @@ fun Fragment.verifyPermission(
         }).check()
 }
 
+fun Fragment.verifyCameraAndMicPermission(successCallback: () -> Unit) {
+    this.verifyPermission(
+        Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+        drawableIconId = R.drawable.ic_camera_primary,
+        message = R.string.text_explanation_camera_to_attachment_picture
+    ) {
+        successCallback()
+    }
+}
+
 fun Fragment.showToast(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+fun JSONObject.toIceCandidate(): IceCandidate {
+    val data = this
+    return IceCandidate(data.getString("id"), data.getInt("label"), data.getString("candidate"))
+}
+
+fun JSONObject.toSessionDescription(type: SessionDescription.Type): SessionDescription {
+    val data = this
+    return SessionDescription(type, data.getString("sdp"))
+}
+
+fun JSONObject.toConversationCallModel(): ConversationCall {
+    var channel = ""
+    var contactId = 0
+    var isVideoCall = false
+
+    if (has(Constants.CallKeys.CHANNEL)) {
+        channel = "private-${getString(Constants.CallKeys.CHANNEL)}"
+    }
+
+    if (has(Constants.CallKeys.CONTACT_ID)) {
+        contactId = getInt(Constants.CallKeys.CONTACT_ID)
+    }
+
+    if (has(Constants.CallKeys.IS_VIDEO_CALL)) {
+        isVideoCall = getBoolean(Constants.CallKeys.IS_VIDEO_CALL)
+    }
+
+    return ConversationCall(channel, contactId, isVideoCall)
+}
+
+fun IceCandidate.toJSONObject(): JSONObject {
+    val jsonObject = JSONObject()
+    jsonObject.put("type", "candidate")
+    jsonObject.put("label", sdpMLineIndex)
+    jsonObject.put("id", sdpMid)
+    jsonObject.put("candidate", sdp)
+
+    return jsonObject
+}
+
+fun SessionDescription.toJSONObject(): JSONObject {
+    val jsonObject = JSONObject()
+
+    jsonObject.put("type", type.canonicalForm())
+    jsonObject.put("sdp", description)
+
+    return jsonObject
 }
 
 @BindingAdapter("background")

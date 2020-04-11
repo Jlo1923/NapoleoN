@@ -17,6 +17,7 @@ import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
 import com.naposystems.pepito.ui.contacts.ContactsViewModel
 import com.naposystems.pepito.ui.conversation.ConversationViewModel
+import com.naposystems.pepito.ui.conversationCall.ConversationCallViewModel
 import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.enterPin.EnterPinViewModel
 import com.naposystems.pepito.ui.home.HomeViewModel
@@ -301,5 +302,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AttachmentLocationViewModel::class)
     internal abstract fun bindAttachmentLocationViewModel(viewModel: AttachmentLocationViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConversationCallViewModel::class)
+    internal abstract fun bindConversationCallViewModel(viewModel: ConversationCallViewModel): ViewModel
 
 }

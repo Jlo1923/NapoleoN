@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.mainActivity
 
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 
 interface IContractMainActivity {
@@ -13,7 +14,15 @@ interface IContractMainActivity {
         fun getLockTimeApp(): Long
         fun getTimeRequestAccessPin(): Int
         fun setLockStatus(state: Int)
-        fun setJsonNotification(json : String)
+        fun setJsonNotification(json: String)
+        fun getContact(contactId: Int)
+        fun resetContact()
+        fun setCallChannel(channel: String)
+        fun getCallChannel(): String
+        fun resetCallChannel()
+        fun setIsVideoCall(isVideoCall: Boolean)
+        fun isVideoCall(): Boolean?
+        fun resetIsVideoCall()
     }
 
     interface Repository {
@@ -25,6 +34,7 @@ interface IContractMainActivity {
         suspend fun getLockTimeApp(): Long
         suspend fun setLockStatus(state: Int)
         fun setLockTimeApp(lockTime: Long)
-        fun setJsonNotification(json : String)
+        fun setJsonNotification(json: String)
+        suspend fun getContactById(contactId: Int): Contact?
     }
 }

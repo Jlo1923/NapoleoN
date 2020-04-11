@@ -8,8 +8,8 @@
     <string name="text_start_chat">Iniciar bate-papo</string>
     <string name="text_view_profile">Ver perfil</string>
     <string name="text_delete_contact">Contacto de exclusão</string>
-    <string name="explanation_camera_to_attachment_picture">Para enviar uma foto, permitir o acesso NAPOLEON sua câmera.</string>
-    <string name="explanation_to_send_audio_attacment">Para enviar um áudio, napoleon permitem acessar conteúdo multimídia.</string>
+    <string name="text_explanation_camera_to_attachment_picture">Para enviar uma foto, permitir o acesso NAPOLEON sua câmera.</string>
+    <string name="text_explanation_to_send_audio_attacment">Para enviar um áudio, napoleon permitem acessar conteúdo multimídia.</string>
     <string name="text_delete_messages">Excluir mensagens?</string>
     <string name="text_delete_message_for_me">Excluir para mim</string>
     <string name="text_delete_message_for_all">Eliminar para todos</string>
@@ -18,7 +18,14 @@
     <string name="text_title_delete_messages_unreceived">Excluir não recebidas</string>
     <string name="text_title_delete_failed_messages">Excluir mensagens com falha</string>
     <string name="text_delete_messages_conversation">Excluir mensagens</string>
-    <string name="explanation_to_send_location_attachment">Para enviar um local, permitir o acesso NAPOLEON sua localização.</string>
+    <string name="text_explanation_to_send_location_attachment">Para enviar um local, permitir o acesso NAPOLEON sua localização.</string>
+    <string name="text_incoming_call_title">Chamada de entrada de %1$s</string>
+    <string name="text_calling_call_title">Chamando %1$s</string>
+    <string name="text_contact_want_change_to_video_call">Contactar quer mudar para chamada de vídeo</string>
+    <string name="text_would_you_like_switch_to_video_call">Você gostaria de mudar para chamada de vídeo?</string>
+    <string name="text_contact_turn_off_camera">%1$s tem desligou a câmera</string>
+    <string name="text_contact_is_busy">%1$s é ocupado</string>
+    <string name="text_finished_call">Chamar concluída</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d dia</item>
         <item quantity="other">%d dias</item>

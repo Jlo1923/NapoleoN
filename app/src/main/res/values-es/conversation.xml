@@ -8,8 +8,8 @@
     <string name="text_start_chat">Iniciar chat</string>
     <string name="text_view_profile">Ver perfil</string>
     <string name="text_delete_contact">Eliminar contacto</string>
-    <string name="explanation_camera_to_attachment_picture">Para enviar una foto, permita que NapoleoN acceda a su cámara.</string>
-    <string name="explanation_to_send_audio_attacment">Para enviar una audio, permita que NapoleoN acceda a su contenido multimedia.</string>
+    <string name="text_explanation_camera_to_attachment_picture">Para enviar una foto, permita que NapoleoN acceda a su cámara.</string>
+    <string name="text_explanation_to_send_audio_attacment">Para enviar una audio, permita que NapoleoN acceda a su contenido multimedia.</string>
     <string name="text_delete_messages">¿Eliminar mensajes?</string>
     <string name="text_delete_message_for_me">Eliminar para mí</string>
     <string name="text_delete_message_for_all">Eliminar para todos</string>
@@ -18,7 +18,14 @@
     <string name="text_title_delete_messages_unreceived">Eliminar no recibidos</string>
     <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
     <string name="text_delete_messages_conversation">Eliminar mensajes</string>
-    <string name="explanation_to_send_location_attachment">Para enviar una ubicación, permita que NapoleoN acceda a su ubicación.</string>
+    <string name="text_explanation_to_send_location_attachment">Para enviar una ubicación, permita que NapoleoN acceda a su ubicación.</string>
+    <string name="text_incoming_call_title">Llamada entrante de %1$s</string>
+    <string name="text_calling_call_title">Llamando a %1$s</string>
+    <string name="text_contact_want_change_to_video_call">El contacto quiere cambiar a videollamada</string>
+    <string name="text_would_you_like_switch_to_video_call">¿Le gustaría cambiar a videollamada?</string>
+    <string name="text_contact_turn_off_camera">%1$s ha apagado la cámara</string>
+    <string name="text_contact_is_busy">%1$s está ocupado</string>
+    <string name="text_finished_call">Llamada terminada</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>

@@ -8,8 +8,8 @@
     <string name="text_start_chat">Chat beginnen</string>
     <string name="text_view_profile">Profil ansehen</string>
     <string name="text_delete_contact">Blockkontakt</string>
-    <string name="explanation_camera_to_attachment_picture">Um ein Foto zu senden, erlauben NAPOLEON Zugriff auf Ihre Kamera.</string>
-    <string name="explanation_to_send_audio_attacment">Um ein Audio zu senden, napoleon erlaubt den Zugriff von Multimedia-Inhalte.</string>
+    <string name="text_explanation_camera_to_attachment_picture">Um ein Foto zu senden, erlauben NAPOLEON Zugriff auf Ihre Kamera.</string>
+    <string name="text_explanation_to_send_audio_attacment">Um ein Audio zu senden, napoleon erlaubt den Zugriff von Multimedia-Inhalte.</string>
     <string name="text_delete_messages">Nachrichten löschen?</string>
     <string name="text_delete_message_for_me">Für mich löschen</string>
     <string name="text_delete_message_for_all">Für alle löschen</string>
@@ -18,7 +18,14 @@
     <string name="text_title_delete_messages_unreceived">Empfangene Nachrichten löschen</string>
     <string name="text_title_delete_failed_messages">Löschen Sie fehlgeschlagene Nachrichten</string>
     <string name="text_delete_messages_conversation">Nachrichten löschen</string>
-    <string name="explanation_to_send_location_attachment">Um einen Standort zu senden, erlauben NAPOLEON Zugriff auf Ihren Standort.</string>
+    <string name="text_explanation_to_send_location_attachment">Um einen Standort zu senden, erlauben NAPOLEON Zugriff auf Ihren Standort.</string>
+    <string name="text_incoming_call_title">Eingehender Anruf von %1$s</string>
+    <string name="text_calling_call_title">Der Aufruf %1$s</string>
+    <string name="text_contact_want_change_to_video_call">Kontakt will Videoanruf wechseln</string>
+    <string name="text_would_you_like_switch_to_video_call">Möchten Sie Videoanruf Wechsel statt?</string>
+    <string name="text_contact_turn_off_camera">%1$s hat die Kamera ausgeschaltet</string>
+    <string name="text_contact_is_busy">%1$s ist besetzt</string>
+    <string name="text_finished_call">Rufen abgeschlossen</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>

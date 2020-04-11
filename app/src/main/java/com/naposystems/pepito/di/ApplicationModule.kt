@@ -2,8 +2,6 @@ package com.naposystems.pepito.di
 
 import android.app.Application
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.utility.Constants
@@ -18,17 +16,15 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.utility.Crypto
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
-import com.naposystems.pepito.utility.emojiManager.EmojiManager
-import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
-import com.naposystems.pepito.webService.GzipRequestInterceptor
 import com.naposystems.pepito.webService.NapoleonApi
-import com.naposystems.pepito.webService.NetworkConnectionInterceptor
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.naposystems.pepito.webService.socket.SocketService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
+import io.socket.client.IO
+import io.socket.client.Socket
 import okhttp3.*
 import okio.Buffer
 import org.json.JSONObject
@@ -222,13 +218,29 @@ class ApplicationModule {
 
     @Provides
     @Singleton
+    fun provideSocket(): Socket = IO.socket(Constants.NapoleonApi.SOCKET_BASE_URL)
+
+    @Provides
+    @Singleton
     fun provideSocketClient(
+        context: Context,
+        socket: Socket,
         sharedPreferencesManager: SharedPreferencesManager,
         socketRepository: IContractSocketService.Repository
     ): IContractSocketService.SocketService {
         return SocketService(
+            context,
+            socket,
             sharedPreferencesManager,
             socketRepository
         )
     }
+
+    /*@Provides
+    @Singleton
+    fun provideWebRTCClient(
+        context: Context,
+        socketService: IContractSocketService.SocketService,
+        sharedPreferencesManager: SharedPreferencesManager
+    ): IContractWebRTCClient = WebRTCClient(context, socketService, sharedPreferencesManager)*/
 }

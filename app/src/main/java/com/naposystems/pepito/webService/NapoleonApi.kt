@@ -12,11 +12,15 @@ import com.naposystems.pepito.dto.contacts.ContactsResDTO
 import com.naposystems.pepito.dto.contacts.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.dto.contacts.deleteContact.DeleteContactResDTO
 import com.naposystems.pepito.dto.contacts.unblockContact.UnblockContactResDTO
-import com.naposystems.pepito.dto.conversation.attachment.AttachmentReqDTO
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.pepito.dto.conversation.call.CallContactReqDTO
+import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
+import com.naposystems.pepito.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.pepito.dto.conversation.message.*
+import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
+import com.naposystems.pepito.dto.conversation.message.MessageResDTO
+import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
@@ -44,6 +48,7 @@ import com.naposystems.pepito.dto.validateNickname.ValidateNicknameResDTO
 import com.naposystems.pepito.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountReqDTO
 import com.naposystems.pepito.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountResDTO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.BLOCK_ATTACKER
+import com.naposystems.pepito.utility.Constants.NapoleonApi.CALL_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_MESSAGES_FOR_ALL
@@ -53,7 +58,6 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUESTS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUEST_QUANTITY
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_MY_MESSAGES
-import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS_OLD_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
@@ -61,9 +65,11 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_SUBSCRIPTION_USE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_BLOCK_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_FRIENDSHIP_REQUEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_UNBLOCK_CONTACT
+import com.naposystems.pepito.utility.Constants.NapoleonApi.REJECT_CALL
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEARCH_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQUEST
+import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_TEST
@@ -225,4 +231,9 @@ interface NapoleonApi {
     @POST(SEND_SELECTED_SUBSCRIPTION)
     suspend fun sendSelectedSubscription(@Body typeSubscriptionReqDTO: TypeSubscriptionReqDTO): Response<SubscriptionUrlResDTO>
 
+    @POST(CALL_CONTACT)
+    suspend fun callContact(@Body callContactReqDTO: CallContactReqDTO): Response<CallContactResDTO>
+
+    @POST(REJECT_CALL)
+    suspend fun rejectCall(@Body rejectCallReqDTO: RejectCallReqDTO): Response<Any>
 }

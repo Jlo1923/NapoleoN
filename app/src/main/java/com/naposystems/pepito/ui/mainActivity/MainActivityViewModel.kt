@@ -4,15 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.repository.mainActivity.MainActivityRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 class MainActivityViewModel @Inject constructor(private val repository: MainActivityRepository) :
     ViewModel(), IContractMainActivity.ViewModel {
+
+    private var callChannel = ""
+    private var isVideoCall: Boolean? = null
 
     private val _user = MutableLiveData<User>()
     val user: LiveData<User>
@@ -25,6 +28,10 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     private val _accountStatus = MutableLiveData<Int>()
     val accountStatus: LiveData<Int>
         get() = _accountStatus
+
+    private val _contact = MutableLiveData<Contact>()
+    val contact: LiveData<Contact>
+        get() = _contact
 
     init {
         _user.value = null
@@ -91,5 +98,35 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
             lockTime = repository.getLockTimeApp()
         }
         return lockTime
+    }
+
+    override fun getContact(contactId: Int) {
+        viewModelScope.launch {
+            _contact.value = repository.getContactById(contactId)
+        }
+    }
+
+    override fun resetContact() {
+        _contact.value = null
+    }
+
+    override fun getCallChannel() = this.callChannel
+
+    override fun setCallChannel(channel: String) {
+        callChannel = channel
+    }
+
+    override fun resetCallChannel() {
+        callChannel = ""
+    }
+
+    override fun setIsVideoCall(isVideoCall: Boolean) {
+        this.isVideoCall = isVideoCall
+    }
+
+    override fun isVideoCall() = isVideoCall
+
+    override fun resetIsVideoCall() {
+        isVideoCall = null
     }
 }

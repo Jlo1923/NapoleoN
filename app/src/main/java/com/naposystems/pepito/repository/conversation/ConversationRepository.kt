@@ -3,7 +3,6 @@ package com.naposystems.pepito.repository.conversation
 import android.content.Context
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
@@ -11,6 +10,8 @@ import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.pepito.dto.conversation.call.CallContactReqDTO
+import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessage422DTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
@@ -41,7 +42,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
 
 class ConversationRepository @Inject constructor(
     private val context: Context,
@@ -212,15 +212,17 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun updateMessage(message: Message) {
-        when(message.status) {
+        when (message.status) {
             Constants.MessageStatus.ERROR.status -> {
                 val selfDestructTime = sharedPreferencesManager.getInt(
                     Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
                 )
-                val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+                val currentTime =
+                    TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
                 message.updatedAt = currentTime
                 message.selfDestructionAt = selfDestructTime
-                message.totalSelfDestructionAt = currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+                message.totalSelfDestructionAt =
+                    currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
                 messageLocalDataSource.updateMessage(message)
             }
             else -> {
@@ -308,7 +310,10 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.cleanSelectionMessages(contactId)
     }
 
-    override suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>) {
+    override suspend fun deleteMessagesSelected(
+        contactId: Int,
+        listMessages: List<MessageAndAttachment>
+    ) {
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
         val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(contactId)
         if (messageAndAttachment != null) {
@@ -379,5 +384,38 @@ class ConversationRepository @Inject constructor(
         errorList.add(conversationError!!.error)
 
         return errorList
+    }
+
+    override suspend fun callContact(
+        contact: Contact,
+        isVideoCall: Boolean
+    ): Response<CallContactResDTO> {
+        val callContactReqDTO = CallContactReqDTO(
+            contactToCall = contact.id,
+            isVideoCall = isVideoCall
+        )
+
+        return napoleonApi.callContact(callContactReqDTO)
+    }
+
+    override fun subscribeToCallChannel(channel: String) {
+
+        val headersReqDTO = HeadersReqDTO(
+            firebaseId
+        )
+
+        val authReqDTO = AuthReqDTO(
+            headersReqDTO
+        )
+
+        val socketReqDTO = SocketReqDTO(
+            channel,
+            authReqDTO
+        )
+
+        socketService.subscribeToCallChannel(
+            channel,
+            SocketReqDTO.toJSONObject(socketReqDTO)
+        )
     }
 }
