@@ -46,6 +46,8 @@ class ColorSchemeFragment : Fragment() {
             inflater, R.layout.color_scheme_fragment, container, false
         )
 
+        binding.lifecycleOwner = this
+
         binding.radioGroupTheme.setOnCheckedChangeListener { _, checkedId ->
             theme = when(checkedId){
                 R.id.radioButton_light_napoleon -> Constants.ThemesApplication.LIGHT_NAPOLEON.theme
@@ -57,10 +59,11 @@ class ColorSchemeFragment : Fragment() {
                 R.id.radioButton_pink_dream -> Constants.ThemesApplication.PINK_DREAM.theme
                 else -> Constants.ThemesApplication.CLEAR_SKY.theme
             }
+            viewModel.setTheme(theme)
         }
 
         binding.imageButtonSaveConfiguration.setOnClickListener {
-            viewModel.setTheme(theme)
+            viewModel.saveTheme(theme)
             if(theme == Constants.ThemesApplication.DARK_NAPOLEON.theme){
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
@@ -75,18 +78,20 @@ class ColorSchemeFragment : Fragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ColorSchemeViewModel::class.java)
 
+        binding.viewModel = viewModel
+
         viewModel.getActualTheme()
 
-        viewModel.theme.observe(viewLifecycleOwner, Observer {
-            when(it) {
-                1 -> binding.radioButtonLightNapoleon.isChecked = true
-                2 -> binding.radioButtonDarkNapoleon.isChecked = true
-                3 -> binding.radioButtonBlackGoldAlloy.isChecked = true
-                4 -> binding.radioButtonColdOcean.isChecked = true
-                5 -> binding.radioButtonCamouflage.isChecked = true
-                6 -> binding.radioButtonPurpleBluebonnets.isChecked = true
-                7 -> binding.radioButtonPinkDream.isChecked = true
-                8 -> binding.radioButtonClearSky.isChecked = true
+        viewModel.theme.observe(viewLifecycleOwner, Observer { theme ->
+            when(theme) {
+                Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> binding.radioButtonLightNapoleon.isChecked = true
+                Constants.ThemesApplication.DARK_NAPOLEON.theme -> binding.radioButtonDarkNapoleon.isChecked = true
+                Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> binding.radioButtonBlackGoldAlloy.isChecked = true
+                Constants.ThemesApplication.COLD_OCEAN.theme -> binding.radioButtonColdOcean.isChecked = true
+                Constants.ThemesApplication.CAMOUFLAGE.theme -> binding.radioButtonCamouflage.isChecked = true
+                Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> binding.radioButtonPurpleBluebonnets.isChecked = true
+                Constants.ThemesApplication.PINK_DREAM.theme -> binding.radioButtonPinkDream.isChecked = true
+                Constants.ThemesApplication.CLEAR_SKY.theme -> binding.radioButtonClearSky.isChecked = true
             }
         })
     }

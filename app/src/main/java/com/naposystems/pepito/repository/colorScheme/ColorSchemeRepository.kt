@@ -13,7 +13,7 @@ class ColorSchemeRepository @Inject constructor(
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)
     }
 
-    override suspend fun setTheme(newTheme: Int) {
+    override suspend fun saveTheme(newTheme: Int) {
         sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_COLOR_SCHEME, newTheme)
     }
 }
