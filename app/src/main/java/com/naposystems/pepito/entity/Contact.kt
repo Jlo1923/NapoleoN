@@ -1,11 +1,14 @@
 package com.naposystems.pepito.entity
 
+import android.content.Context
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.naposystems.pepito.R
 import kotlinx.android.parcel.Parcelize
+import java.io.Serializable
 
 @Parcelize
 @Entity(tableName = "contact")
@@ -22,7 +25,7 @@ data class Contact(
     @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false,
     @ColumnInfo(name = "silenced") val silenced: Boolean = false,
     @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1
-) : Parcelable {
+) : Parcelable, Serializable {
     @Ignore
     var haveFriendshipRequest: Boolean = false
 
@@ -44,5 +47,19 @@ data class Contact(
         return result
     }
 
+    fun getNickname(context: Context): String = when {
+        nicknameFake.isNotEmpty() -> {
+            context.getString(R.string.label_nickname, nicknameFake)
+        }
+        else -> {
+            context.getString(R.string.label_nickname, nickname)
+        }
+    }
+
+    fun getImage(): String = when {
+        imageUrlFake.isNotEmpty() -> imageUrlFake
+        imageUrl.isNotEmpty() -> imageUrl
+        else -> ""
+    }
 
 }

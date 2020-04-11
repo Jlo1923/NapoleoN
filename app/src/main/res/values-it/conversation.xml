@@ -8,8 +8,8 @@
     <string name="text_start_chat">Comincia chat</string>
     <string name="text_view_profile">Vedi profilo</string>
     <string name="text_delete_contact">Elimina contatto</string>
-    <string name="explanation_camera_to_attachment_picture">Per inviare una foto, permettere l\'accesso NAPOLEON la vostra macchina fotografica.</string>
-    <string name="explanation_to_send_audio_attacment">Per inviare un audio, napoleon permettono accedere ai contenuti multimediali.</string>
+    <string name="text_explanation_camera_to_attachment_picture">Per inviare una foto, permettere l\'accesso NAPOLEON la vostra macchina fotografica.</string>
+    <string name="text_explanation_to_send_audio_attacment">Per inviare un audio, napoleon permettono accedere ai contenuti multimediali.</string>
     <string name="text_delete_messages">Elimina i messaggi?</string>
     <string name="text_delete_message_for_me">Elimina questo messaggio?</string>
     <string name="text_delete_message_for_all">Elimina per tutti</string>
@@ -18,7 +18,14 @@
     <string name="text_title_delete_messages_unreceived">Elimina i messaggi non riusciti</string>
     <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
     <string name="text_delete_messages_conversation">Elimina i messaggi</string>
-    <string name="explanation_to_send_location_attachment">Per inviare una posizione, permettere l\'accesso NAPOLEON vostra posizione.</string>
+    <string name="text_explanation_to_send_location_attachment">Per inviare una posizione, permettere l\'accesso NAPOLEON vostra posizione.</string>
+    <string name="text_incoming_call_title">Chiamata in arrivo da %1$s</string>
+    <string name="text_calling_call_title">Chiamata %1$s</string>
+    <string name="text_contact_want_change_to_video_call">Contatto vuole passare alla videochiamata</string>
+    <string name="text_would_you_like_switch_to_video_call">Ti piacerebbe passare alla videochiamata?</string>
+    <string name="text_contact_turn_off_camera">%1$s ha trasformato il fuori campo</string>
+    <string name="text_contact_is_busy">%1$s è occupato</string>
+    <string name="text_finished_call">Chiamata completata</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d giorno</item>
         <item quantity="other">%d giorni</item>

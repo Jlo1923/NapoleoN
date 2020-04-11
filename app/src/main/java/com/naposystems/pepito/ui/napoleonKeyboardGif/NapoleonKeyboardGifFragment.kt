@@ -108,7 +108,6 @@ class NapoleonKeyboardGifFragment : Fragment() {
             )
 
             shareViewModel.setGifSelected(attachment)
-            shareViewModel.resetGifSelected()
             mListener?.onGifSelected()
         })
 

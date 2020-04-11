@@ -49,6 +49,7 @@ import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
 import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
@@ -62,6 +63,7 @@ import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.adapters.showToast
+import com.naposystems.pepito.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
@@ -224,25 +226,129 @@ class ConversationFragment : BaseFragment(),
         setupActionMode()
         setupAdapter()
 
-        binding.inputPanel.getFloatingActionButton().setOnClickListener {
-            if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
+        inputPanelFabClickListener()
 
-                val quote = binding.inputPanel.getQuote()
+        inputPanelEditTextWatcher()
 
-                viewModel.saveMessageLocally(
-                    binding.inputPanel.getEditTex().text.toString(),
-                    obtainTimeSelfDestruct(),
-                    quote?.message?.webId ?: ""
-                )
+        inputPanelAttachMentButtonClickListener()
 
-                with(binding.inputPanel.getEditTex()) {
-                    setText("")
-                }
+        inputPanelCameraButtonClickListener()
+
+        binding.buttonCall.setOnClickListener {
+            this.verifyCameraAndMicPermission {
+                viewModel.setIsVideoCall(false)
+                viewModel.callContact()
             }
-            handlerGoDown()
-            binding.inputPanel.closeQuote()
         }
 
+        binding.buttonVideoCall.setOnClickListener {
+            this.verifyCameraAndMicPermission {
+                viewModel.setIsVideoCall(true)
+                viewModel.callContact()
+            }
+        }
+
+        binding.inputPanel.getImageButtonEmoji().setOnClickListener {
+            emojiKeyboard.toggle()
+        }
+
+        clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+        return binding.root
+    }
+
+    private fun inputPanelCameraButtonClickListener() {
+        binding.inputPanel.getImageButtonCamera().setOnClickListener {
+            verifyCameraAndMicPermission {
+                findNavController().navigate(
+                    ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
+                        viewModel.getUser().id,
+                        args.contact.id,
+                        binding.inputPanel.getWebIdQuote()
+                    )
+                )
+            }
+        }
+    }
+
+    private fun inputPanelAttachMentButtonClickListener() {
+        binding.inputPanel.getImageButtonAttachment().setOnClickListener {
+            validateStateOutputControl()
+            val attachmentDialog = AttachmentDialogFragment()
+            attachmentDialog.setListener(object :
+                AttachmentDialogFragment.OnAttachmentDialogListener {
+                override fun galleryPressed() {
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        drawableIconId = R.drawable.ic_folder_primary,
+                        message = R.string.text_explanation_to_send_audio_attacment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
+                                args.contact,
+                                binding.inputPanel.getWebIdQuote(),
+                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
+                            )
+                        )
+                    }
+                }
+
+                override fun cameraPressed() {
+                    this@ConversationFragment.verifyCameraAndMicPermission {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
+                                viewModel.getUser().id,
+                                args.contact.id,
+                                binding.inputPanel.getWebIdQuote(),
+                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
+                            )
+                        )
+                    }
+                }
+
+                override fun locationPressed() {
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        drawableIconId = R.drawable.ic_location_on_primary,
+                        message = R.string.text_explanation_to_send_location_attachment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment()
+                        )
+                    }
+                }
+
+                override fun audioPressed() {
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        drawableIconId = R.drawable.ic_folder_primary,
+                        message = R.string.text_explanation_to_send_audio_attacment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentAudioFragment(
+                                args.contact
+                            )
+                        )
+                    }
+                }
+
+                override fun documentPressed() {
+                    this@ConversationFragment.verifyPermission(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        drawableIconId = R.drawable.ic_folder_primary,
+                        message = R.string.text_explanation_to_send_audio_attacment
+                    ) {
+                        findNavController().navigate(
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentDocumentFragment()
+                        )
+                    }
+                }
+            })
+            attachmentDialog.show(parentFragmentManager, "attachmentDialog")
+        }
+    }
+
+    private fun inputPanelEditTextWatcher() {
         binding.inputPanel.setEditTextWatcher(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 //Nothing
@@ -268,109 +374,27 @@ class ConversationFragment : BaseFragment(),
                 }
             }
         })
+    }
 
-        binding.inputPanel.getImageButtonAttachment().setOnClickListener {
-            validateStateOutputControl()
-            val attachmentDialog = AttachmentDialogFragment()
-            attachmentDialog.setListener(object :
-                AttachmentDialogFragment.OnAttachmentDialogListener {
-                override fun galleryPressed() {
-                    this@ConversationFragment.verifyPermission(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.explanation_to_send_audio_attacment
-                    ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
-                                args.contact,
-                                binding.inputPanel.getWebIdQuote(),
-                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
-                            )
-                        )
-                    }
-                }
+    private fun inputPanelFabClickListener() {
+        binding.inputPanel.getFloatingActionButton().setOnClickListener {
+            if (!binding.inputPanel.getFloatingActionButton().isShowingMic()) {
 
-                override fun cameraPressed() {
-                    this@ConversationFragment.verifyPermission(
-                        Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-                        drawableIconId = R.drawable.ic_camera_primary,
-                        message = R.string.explanation_camera_to_attachment_picture
-                    ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
-                                viewModel.getUser().id,
-                                args.contact.id,
-                                binding.inputPanel.getWebIdQuote(),
-                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
-                            )
-                        )
-                    }
-                }
+                val quote = binding.inputPanel.getQuote()
 
-                override fun locationPressed() {
-                    this@ConversationFragment.verifyPermission(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        drawableIconId = R.drawable.ic_location_on_primary,
-                        message = R.string.explanation_to_send_location_attachment
-                    ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment()
-                        )
-                    }
-                }
-
-                override fun audioPressed() {
-                    this@ConversationFragment.verifyPermission(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.explanation_to_send_audio_attacment
-                    ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentAudioFragment(
-                                args.contact
-                            )
-                        )
-                    }
-                }
-
-                override fun documentPressed() {
-                    this@ConversationFragment.verifyPermission(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.explanation_to_send_audio_attacment
-                    ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentDocumentFragment()
-                        )
-                    }
-                }
-            })
-            attachmentDialog.show(parentFragmentManager, "attachmentDialog")
-        }
-
-        binding.inputPanel.getImageButtonCamera().setOnClickListener {
-            verifyPermission(
-                Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-                drawableIconId = R.drawable.ic_camera_primary,
-                message = R.string.explanation_camera_to_attachment_picture
-            ) {
-                findNavController().navigate(
-                    ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
-                        viewModel.getUser().id,
-                        args.contact.id,
-                        binding.inputPanel.getWebIdQuote()
-                    )
+                viewModel.saveMessageLocally(
+                    binding.inputPanel.getEditTex().text.toString(),
+                    obtainTimeSelfDestruct(),
+                    quote?.message?.webId ?: ""
                 )
+
+                with(binding.inputPanel.getEditTex()) {
+                    setText("")
+                }
             }
+            handlerGoDown()
+            binding.inputPanel.closeQuote()
         }
-
-        binding.inputPanel.getImageButtonEmoji().setOnClickListener {
-            emojiKeyboard.toggle()
-        }
-
-        clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-
-        return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -412,6 +436,7 @@ class ConversationFragment : BaseFragment(),
                         shareViewModel.getQuoteWebId() ?: ""
                     )
                 )
+                shareViewModel.resetGifSelected()
             }
         })
     }
@@ -454,6 +479,34 @@ class ConversationFragment : BaseFragment(),
         observeStringsCopy()
 
         observeResponseDeleteLocalMessages()
+
+        viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
+            if (!channel.isNullOrEmpty()) {
+                /*findNavController().navigate(
+                    ConversationFragmentDirections.actionConversationFragmentToConversationCallFragment(
+                        contact = args.contact,
+                        channel = channel,
+                        isIncomingCall = false,
+                        isVideoCall = viewModel.isVideoCall()
+                    )
+                )*/
+                val intent = Intent(context, ConversationCallActivity::class.java).apply {
+                    putExtras(Bundle().apply {
+                        putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
+                        putString(ConversationCallActivity.CHANNEL, channel)
+                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, viewModel.isVideoCall())
+                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, false)
+                    })
+                }
+                startActivity(intent)
+                (context as MainActivity).overridePendingTransition(
+                    R.anim.slide_in_up,
+                    R.anim.slide_out_down
+                )
+                viewModel.resetContactCalledSuccessfully()
+                viewModel.resetIsVideoCall()
+            }
+        })
     }
 
     private fun observeResponseDeleteLocalMessages() {

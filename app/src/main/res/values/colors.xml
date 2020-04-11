@@ -95,4 +95,6 @@
     <color name="color_EF5350">#ef5350</color>
     <color name="color_29ABE2">#29abe2</color>
 
+    <color name="black_overlay">#66000000</color>
+
 </resources>

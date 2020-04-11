@@ -4,6 +4,9 @@ import androidx.core.provider.FontRequest
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.giphy.sdk.ui.Giphy
@@ -19,7 +22,7 @@ import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import javax.inject.Inject
 
-class NapoleonApplication : DaggerApplication() {
+class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     companion object {
         private const val USE_BUNDLED_EMOJI = true
@@ -28,12 +31,14 @@ class NapoleonApplication : DaggerApplication() {
     @Inject
     lateinit var socketService: SocketService
 
+    private var isAppVisible: Boolean = false
+
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return DaggerApplicationComponent.builder().create(this).build()
     }
 
     override fun onCreate() {
-        super.onCreate()
+        super<DaggerApplication>.onCreate()
         Stetho.initializeWithDefaults(this)
         Timber.plant(Timber.DebugTree())
         Fabric.with(this, Crashlytics())
@@ -41,7 +46,21 @@ class NapoleonApplication : DaggerApplication() {
         configEmojiCompat()
         Giphy.configure(this, Constants.GIPHY_API_KEY)
         Places.initialize(this, getString(R.string.google_maps_key))
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        socketService.initSocket()
     }
+
+    override fun onStart(owner: LifecycleOwner) {
+        Timber.d("onStart")
+        isAppVisible = true
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        Timber.d("onStop")
+        isAppVisible = false
+    }
+
+    fun isAppVisible() = this.isAppVisible
 
     private fun configEmojiCompat() {
         val config: EmojiCompat.Config

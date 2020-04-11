@@ -675,7 +675,7 @@
         android:id="@+id/subscriptionFragment"
         android:name="com.naposystems.pepito.ui.subscription.SubscriptionFragment"
         android:label="@string/text_subscription_title"
-        tools:layout="@layout/subscription_fragment" >
+        tools:layout="@layout/subscription_fragment">
         <action
             android:id="@+id/action_subscriptionFragment_to_subscriptionPaymentFragment"
             app:destination="@id/subscriptionPaymentFragment"

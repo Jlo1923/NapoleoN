@@ -54,7 +54,14 @@ object Constants {
         const val GET_SUBSCRIPTION_USER = "payments/ultimatepayment"
         const val TYPE_SUBSCRIPTIONS = "subscriptions"
         const val SEND_SELECTED_SUBSCRIPTION = "paypal/createpayment"
+        const val CALL_CONTACT = "call/callfriend"
+        const val REJECT_CALL = "call/rejectedcall"
+    }
 
+    object CallKeys {
+        const val CHANNEL = "channel_private"
+        const val CONTACT_ID = "contact_id"
+        const val IS_VIDEO_CALL = "is_videocall"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
@@ -80,7 +87,7 @@ object Constants {
         BY_FAILED(5)
     }
 
-    enum class Vibrate constructor(val type: Int){
+    enum class Vibrate constructor(val type: Int) {
         DEFAULT(0),
         SOFT(1)
     }
@@ -236,7 +243,8 @@ object Constants {
         FRIEND_REQUEST_ACCEPTED(3),
         VERIFICATION_CODE(4),
         SUBSCRIPTION(5),
-        ACCOUNT_ATTACK(6)
+        ACCOUNT_ATTACK(6),
+        INCOMING_CALL(7)
     }
 
     enum class MessageStatus(val status: Int) {
@@ -358,6 +366,9 @@ object Constants {
         const val PREF_UNLOCK_ATTEMPTS = "unlock_attempts"
         const val PREF_UNLOCK_TOTAL_ATTEMPTS = "unlock_total_attempts"
         //endregion
+
+        const val PREF_IS_ON_CALL = "is_on_call"
+        const val PREF_PENDING_CALL = "pending_call"
     }
 
     object RegularExpressions {

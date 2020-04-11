@@ -6,6 +6,7 @@ import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.pepito.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
@@ -17,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class SocketRepository @Inject constructor(
@@ -178,6 +180,20 @@ class SocketRepository @Inject constructor(
                             }
                     }
                 }
+            }
+        }
+    }
+
+    override fun rejectCall(contactId: Int, channel: String) {
+        GlobalScope.launch {
+            val rejectCallReqDTO = RejectCallReqDTO(
+                contactId = contactId,
+                channel = channel
+            )
+            val response = napoleonApi.rejectCall(rejectCallReqDTO)
+
+            if (response.isSuccessful) {
+                Timber.d("LLamada rechazada bb")
             }
         }
     }

@@ -1,8 +1,8 @@
 package com.naposystems.pepito.ui.conversation
 
 import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
@@ -53,6 +53,11 @@ interface IContractConversation {
         fun setCountOldMessages(count: Int)
         fun getCountOldMessages(): Int
         fun getMessagePosition(messageAndAttachment: MessageAndAttachment): Int
+        fun callContact()
+        fun resetContactCalledSuccessfully()
+        fun setIsVideoCall(isVideoCall: Boolean)
+        fun isVideoCall(): Boolean
+        fun resetIsVideoCall()
     }
 
     interface Repository {
@@ -85,6 +90,7 @@ interface IContractConversation {
         suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
         suspend fun copyMessagesSelected(contactId: Int): List<String>
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
-
+        suspend fun callContact(contact: Contact, isVideoCall: Boolean): Response<CallContactResDTO>
+        fun subscribeToCallChannel(channel: String)
     }
 }
