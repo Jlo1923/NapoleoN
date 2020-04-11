@@ -39,6 +39,8 @@
     <color name="searchViewHintColor">#808080</color>
     <color name="fabNotificationMessage">#AF8B8989</color>
     <color name="colorButtonAlertDialog">#d8a608</color>
+    <color name="color_E8D8AB">#E8D8AB</color>
+    <color name="color_808080">#808080</color>
 
     <!--   Cold Ocean-->
     <color name="color_20202E">#20202e</color>
@@ -47,6 +49,8 @@
     <color name="color_545570">#545570</color>
     <color name="color_81819E">#81819e</color>
     <color name="color_BFBFBF">#bfbfbf</color>
+    <color name="color_2F2D77">#2F2D77</color>
+    <color name="color_A19EA5">#A19EA5</color>
 
     <!--Black Gold Alloy-->
     <color name="color_626262">#626262</color>
@@ -58,6 +62,8 @@
     <color name="color_A27800">#a27800</color>
     <color name="color_000000">#000000</color>
     <color name="color_505050">#505050</color>
+    <color name="color_775B09">#775B09</color>
+    <color name="color_423F3F">#423F3F</color>
 
     <!--Camouflage-->
     <color name="color_001600">#001600</color>
@@ -65,11 +71,14 @@
     <color name="color_002100">#002100</color>
     <color name="color_38732C">#38732c</color>
     <color name="color_3CB043">#3cb043</color>
+    <color name="color_426842">#426842</color>
+    <color name="color_004500">#004500</color>
 
     <!--Purple Bluebonnets-->
     <color name="color_7D366F">#7d366f</color>
     <color name="color_7D5B76">#7d5b76</color>
     <color name="color_E6E6E6">#e6e6e6</color>
+    <color name="color_D8AFCE">#D8AFCE</color>
 
     <!--Clear Sky-->
     <color name="color_4AA3D9">#4aa3d9</color>
@@ -79,7 +88,10 @@
     <color name="color_F2F2F2">#f2f2f2</color>
     <color name="color_82D4FF">#82d4ff</color>
     <color name="color_CCCCCC">#cccccc</color>
+    <color name="color_035B81">#035B81</color>
     <color name="color_4D4D4D">#4d4d4d</color>
+    <color name="color_C4E3F1">#C4E3F1</color>
+    <color name="color_62C3EF">#62C3EF</color>
 
     <!--Pink Dream-->
     <color name="color_FFEFFF">#ffefff</color>
@@ -94,5 +106,6 @@
     <color name="color_DA5E58">#da5e58</color>
     <color name="color_EF5350">#ef5350</color>
     <color name="color_29ABE2">#29abe2</color>
-
+    <color name="color_FBC1E4">#FBC1E4</color>
+    <color name="color_703E5C">#703E5C</color>
 </resources>

@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -343,14 +342,7 @@ class AppearanceSettingsFragment : BaseFragment() {
 
             val destinationUri = Uri.fromFile(compressedFile)
 
-            val valueColorBackground = TypedValue()
-            context.theme.resolveAttribute(
-                R.attr.attrBackgroundColorPrimary,
-                valueColorBackground,
-                true
-            )
-
-            val colorBackground = context.resources.getColor(valueColorBackground.resourceId)
+            val colorBackground = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
 
             val options = UCrop.Options()
             options.setCompressionQuality(imageCompression)

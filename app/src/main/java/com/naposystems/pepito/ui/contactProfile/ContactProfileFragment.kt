@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -500,14 +499,7 @@ class ContactProfileFragment : BaseFragment() {
             )
 
             val destination = Uri.fromFile(compressedFile)
-
-            val valueColorBackground = TypedValue()
-            context.theme.resolveAttribute(
-                R.attr.attrBackgroundColorPrimary,
-                valueColorBackground,
-                true
-            )
-            val colorBackground = context.resources.getColor(valueColorBackground.resourceId)
+            val colorBackground = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
 
             val options = UCrop.Options()
             options.setCompressionQuality(imageCompression)
@@ -517,7 +509,7 @@ class ContactProfileFragment : BaseFragment() {
             options.withAspectRatio(aspectRatioX, aspectRatioY)
             options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
             options.setToolbarTitle(title)
-            options.setToolbarWidgetColor(ContextCompat.getColor(context!!, R.color.white))
+            options.setToolbarWidgetColor(ContextCompat.getColor(context, R.color.white))
 
             UCrop.of(sourceUri, destination)
                 .withOptions(options)

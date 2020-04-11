@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.custom.inputPanel.adapters
 
-import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,24 +24,36 @@ fun bindUserBackground(
     val context = constraintLayout.context
     val quoteNull = messageAndAttachmentNull?.quote
 
-    val test = context.getDrawable(R.drawable.bg_my_quote)
-
-//    test.
-
     if(isFromInputPanel){
         messageAndAttachmentNull?.message?.let {message ->
             constraintLayout.background = if (message.isMine == Constants.IsMine.YES.value) {
-                context.getDrawable(R.drawable.bg_your_quote)
+                context.getDrawable(R.drawable.bg_my_quote_my_message)
             } else {
-                context.getDrawable(R.drawable.bg_my_quote)
+                context.getDrawable(R.drawable.bg_your_quote_my_message)
             }
         }
     } else {
         quoteNull?.let { quote ->
-            constraintLayout.background = if (quote.isMine == Constants.IsMine.YES.value) {
-                context.getDrawable(R.drawable.bg_your_quote)
-            } else {
-                context.getDrawable(R.drawable.bg_my_quote)
+            constraintLayout.background = when {
+                quote.isMine == Constants.IsMine.YES.value
+                        && messageAndAttachmentNull.message.isMine == 1 -> {
+                    context.getDrawable(R.drawable.bg_my_quote_my_message)
+                }
+                quote.isMine == Constants.IsMine.YES.value
+                        && messageAndAttachmentNull.message.isMine == 0 -> {
+                    context.getDrawable(R.drawable.bg_my_quote_incoming_message)
+                }
+                quote.isMine == Constants.IsMine.NO.value
+                        && messageAndAttachmentNull.message.isMine == 1 -> {
+                    context.getDrawable(R.drawable.bg_your_quote_my_message)
+                }
+                quote.isMine == Constants.IsMine.NO.value
+                        && messageAndAttachmentNull.message.isMine == 0 -> {
+                    context.getDrawable(R.drawable.bg_your_quote_incoming_message)
+                }
+                else -> {
+                    context.getDrawable(R.drawable.bg_my_quote_my_message)
+                }
             }
         }
     }
@@ -55,6 +66,7 @@ fun bindUserQuote(
     isFromInputPanel: Boolean
 ) {
     var isMineNull: Int? = null
+    val context = textView.context
 
     messageAndAttachmentNull?.quote?.let { quote ->
         isMineNull = if (isFromInputPanel) {
@@ -68,12 +80,15 @@ fun bindUserQuote(
         }
     }
 
+    val textColorYourName = Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorYourQuote)
+    val textColorMyName = Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorMyQuote)
+
     if (isMineNull == Constants.IsMine.YES.value) {
-        textView.setTextColor(Color.parseColor("#29ABE2"))
-        textView.text = "Tu|!!"
+        textView.setTextColor(textColorMyName)
+        textView.text = context.getString(R.string.text_you_quote)
     } else {
         val contact = messageAndAttachmentNull?.contact
-        textView.setTextColor(Color.parseColor("#DA5E58"))
+        textView.setTextColor(textColorYourName)
         textView.text = contact?.let {
             if (contact.nicknameFake.isNotEmpty()) {
                 contact.nicknameFake
@@ -92,7 +107,7 @@ fun bindBodyQuote(
     @Nullable messageAndAttachment: MessageAndAttachment?,
     isFromInputPanel: Boolean
 ) {
-
+    val context = textView.context
     val body = if (isFromInputPanel) {
         val messageNull = messageAndAttachment?.message
 
@@ -105,10 +120,10 @@ fun bindBodyQuote(
         body
     } else {
         when (getAttachmentType(messageAndAttachment, isFromInputPanel)) {
-            Constants.AttachmentType.IMAGE.type -> "Foto|!!"
-            Constants.AttachmentType.AUDIO.type -> "Audio|!!"
-            Constants.AttachmentType.VIDEO.type -> "Video|!!"
-            Constants.AttachmentType.DOCUMENT.type -> "Documento|!!"
+            Constants.AttachmentType.IMAGE.type -> context.getString(R.string.text_you_quote)
+            Constants.AttachmentType.AUDIO.type -> context.getString(R.string.text_you_quote)
+            Constants.AttachmentType.VIDEO.type -> context.getString(R.string.text_you_quote)
+            Constants.AttachmentType.DOCUMENT.type -> context.getString(R.string.text_you_quote)
             else -> ""
         }
     }

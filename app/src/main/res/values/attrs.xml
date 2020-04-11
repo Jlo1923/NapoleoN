@@ -153,4 +153,11 @@
     <declare-styleable name="ImageViewProgress">
         <attr name="progressbarColor" />
     </declare-styleable>
+
+    <!-- Quote -->
+    <attr name="attrBackgroundColorQuoteMyMessage" format="reference" />
+    <attr name="attrBackgroundColorQuoteIncomingMessage" format="reference" />
+    <attr name="attrIdentifierColorMyQuote" format="reference" />
+    <attr name="attrIdentifierColorYourQuote" format="reference" />
+
 </resources>

@@ -244,14 +244,8 @@ class Utils {
 
             dialog.show()
 
-            val valueColor = TypedValue()
-            childFragmentManager.theme.resolveAttribute(
-                R.attr.attrTextColorButtonTint,
-                valueColor,
-                true
-            )
+            val textColorButton = convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
-            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
             positiveButton.setBackgroundColor(Color.TRANSPARENT)
@@ -288,14 +282,7 @@ class Utils {
                 .create()
             dialog.show()
 
-            val valueColor = TypedValue()
-            childFragmentManager.theme.resolveAttribute(
-                R.attr.attrTextColorButtonTint,
-                valueColor,
-                true
-            )
-
-            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
+            val textColorButton = convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
@@ -325,14 +312,7 @@ class Utils {
 
             dialog.show()
 
-            val valueColor = TypedValue()
-            childFragmentManager.theme.resolveAttribute(
-                R.attr.attrTextColorButtonTint,
-                valueColor,
-                true
-            )
-
-            val textColorButton = childFragmentManager.resources.getColor(valueColor.resourceId)
+            val textColorButton = convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
@@ -358,6 +338,16 @@ class Utils {
             } else {
                 1
             }
+        }
+
+        fun convertAttrToColorResource(context: Context, attr: Int): Int {
+            val valueColor = TypedValue()
+            context.theme.resolveAttribute(
+                attr,
+                valueColor,
+                true
+            )
+            return context.resources.getColor(valueColor.resourceId)
         }
 
         fun convertItemOfTimeInSeconds(item: Int): Int {

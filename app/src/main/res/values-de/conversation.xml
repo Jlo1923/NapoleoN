@@ -19,6 +19,11 @@
     <string name="text_title_delete_failed_messages">Löschen Sie fehlgeschlagene Nachrichten</string>
     <string name="text_delete_messages_conversation">Nachrichten löschen</string>
     <string name="explanation_to_send_location_attachment">Um einen Standort zu senden, erlauben NAPOLEON Zugriff auf Ihren Standort.</string>
+    <string name="text_you_quote">Sie</string>
+    <string name="text_photo_quote">Foto</string>
+    <string name="text_audio_quote">Audio</string>
+    <string name="text_video_quote">Video</string>
+    <string name="text_document_quote">Dokument</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>

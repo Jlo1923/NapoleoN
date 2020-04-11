@@ -19,6 +19,11 @@
     <string name="text_title_delete_failed_messages">Delete failed</string>
     <string name="text_delete_messages_conversation">Delete messages</string>
     <string name="explanation_to_send_location_attachment">To send a location, allow NAPOLEON access your location.</string>
+    <string name="text_you_quote">You</string>
+    <string name="text_photo_quote">Photo</string>
+    <string name="text_audio_quote">Audio</string>
+    <string name="text_video_quote">Video</string>
+    <string name="text_document_quote">Document</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>

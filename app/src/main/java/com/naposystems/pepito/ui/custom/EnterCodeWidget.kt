@@ -6,7 +6,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.InputType
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.KeyCharacterMap
 import android.view.View
@@ -72,10 +71,8 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
      * Creamos el LinearLayout horizontal que contendrá los TextViews
      */
     private fun createLinearLayout(context: Context): LinearLayout {
-
-        val value = TypedValue()
-        context.theme.resolveAttribute(R.attr.attrBackgroundColorBackground, value, true)
-        val colorBackground = ContextCompat.getColor(context, value.resourceId)
+        val imageColor = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorBackground)
+        val colorBackground = ContextCompat.getColor(context, imageColor)
 
         linearTextInputs.apply {
             id = View.generateViewId()

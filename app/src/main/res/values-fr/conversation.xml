@@ -19,6 +19,11 @@
     <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
     <string name="text_delete_messages_conversation">Supprimer des messages</string>
     <string name="explanation_to_send_location_attachment">Pour envoyer un emplacement, autoriser l\'accès NAPOLEON votre emplacement.</string>
+    <string name="text_you_quote">Vous</string>
+    <string name="text_photo_quote">La photo</string>
+    <string name="text_audio_quote">Audio</string>
+    <string name="text_video_quote">Vidéo</string>
+    <string name="text_document_quote">Document</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d jour</item>
         <item quantity="other">%d jours</item>
