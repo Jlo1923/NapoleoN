@@ -550,6 +550,10 @@
         <item name="android:textColor">?attr/attrTextColorWhite</item>
     </style>
 
+    <style name="CallTitle" parent="BodyTextView">
+        <item name="android:textSize">@dimen/text_size_call_title</item>
+    </style>
+
     <style name="TextViewListTitle" parent="BodyTextView.Bold">
         <item name="android:background">?attr/attrBackgroundSectionOtherColor</item>
         <item name="android:padding">@dimen/small_padding</item>
@@ -814,6 +818,25 @@
         <item name="android:progressBackgroundTint">@color/black</item>
         <item name="android:progressTint">@color/white</item>
         <item name="android:thumbTint">@color/colorSecondary</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="ConversationCallButton">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:textOn">@null</item>
+        <item name="android:textOff">@null</item>
+        <item name="android:layout_height">36dp</item>
     </style>
 
 </resources>

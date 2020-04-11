@@ -1,5 +1,6 @@
 package com.naposystems.pepito.repository.mainActivity
 
+import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.mainActivity.IContractMainActivity
@@ -8,6 +9,7 @@ import com.naposystems.pepito.utility.SharedPreferencesManager
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
+    private val contactLocalDataSource: ContactDataSource,
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :
@@ -62,4 +64,7 @@ class MainActivityRepository @Inject constructor(
             Constants.SharedPreferences.PREF_LOCK_TIME_APP
         )
     }
+
+    override suspend fun getContactById(contactId: Int) =
+        contactLocalDataSource.getContactById(contactId)
 }

@@ -16,8 +16,9 @@ class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        Timber.d("onMessageReceived")
         NotificationUtils.createInformativeNotification(
-            this,
+            applicationContext,
             remoteMessage.data,
             remoteMessage.notification
         )

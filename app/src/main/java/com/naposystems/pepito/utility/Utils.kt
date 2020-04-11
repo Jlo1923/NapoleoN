@@ -8,9 +8,9 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.effect.Effect
 import android.graphics.Color
 import android.graphics.Rect
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
@@ -534,5 +534,8 @@ class Utils {
             visibleHeightMethod.isAccessible = true
             return visibleHeightMethod.invoke(imm) as Int
         }
+
+        fun getAudioManager(context: Context) =
+            context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 }

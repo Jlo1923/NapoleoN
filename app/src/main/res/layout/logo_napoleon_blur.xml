@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="com.naposystems.pepito.entity.Contact" />
+    </data>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageView_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        custom:callBackground="@{contact}"
+        tools:showIn="@layout/activity_conversation_call"
+        tools:src="@drawable/logo_napoleon_app_blur" />
+</layout>

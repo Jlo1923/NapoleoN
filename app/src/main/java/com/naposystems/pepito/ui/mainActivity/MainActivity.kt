@@ -1,11 +1,11 @@
 package com.naposystems.pepito.ui.mainActivity
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
-import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Display
@@ -19,7 +19,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -39,6 +38,7 @@ import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.accountAttack.AccountAttackDialogFragment
+import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -48,6 +48,7 @@ import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
+import timber.log.Timber
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -84,6 +85,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
+
+        intent.extras?.let { bundle ->
+            var channel = ""
+            var contactId = 0
+            var isVideoCall = false
+
+            if (bundle.containsKey(Constants.CallKeys.CHANNEL)) {
+                channel = bundle.getString(Constants.CallKeys.CHANNEL) ?: ""
+            }
+
+            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {
+                contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
+            }
+
+            if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
+                isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
+            }
+
+            Timber.d("Channel: $channel, ContactId: $contactId, IsVideoCall: $isVideoCall")
+
+            if (channel.isNotEmpty() || contactId > 0) {
+                viewModel.setCallChannel(channel)
+                viewModel.setIsVideoCall(isVideoCall)
+                viewModel.getContact(contactId)
+            }
+        }
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
@@ -127,6 +154,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
         disposable.add(disposableAccountAttack)
+
+        val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+
+                val intent = Intent(this, ConversationCallActivity::class.java).apply {
+                    putExtras(Bundle().apply {
+                        putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
+                        putString(ConversationCallActivity.CHANNEL, it.channel)
+                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
+                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                    })
+                }
+                startActivity(intent)
+
+            }
+
+        disposable.add(disposableIncomingCall)
 
         setSupportActionBar(binding.toolbar)
 
@@ -210,12 +255,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
+        viewModel.contact.observe(this, Observer { contact ->
+            if (contact != null) {
+                val intent = Intent(this, ConversationCallActivity::class.java).apply {
+                    putExtras(Bundle().apply {
+                        putSerializable(ConversationCallActivity.CONTACT_ID, contact)
+                        putString(ConversationCallActivity.CHANNEL, viewModel.getCallChannel())
+                        putBoolean(
+                            ConversationCallActivity.IS_VIDEO_CALL,
+                            viewModel.isVideoCall() ?: false
+                        )
+                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                    })
+                }
+                startActivity(intent)
+
+                viewModel.resetContact()
+                viewModel.resetCallChannel()
+            }
+        })
+
         intent.extras?.let { args ->
             if (args.containsKey(Constants.TYPE_NOTIFICATION)) {
                 val jsonNotification = JSONObject()
-                jsonNotification.put(Constants.TYPE_NOTIFICATION, args.getString(Constants.TYPE_NOTIFICATION)?.toInt()!!)
-                if(args.getString(Constants.TYPE_NOTIFICATION)?.toInt() == Constants.NotificationType.ENCRYPTED_MESSAGE.type){
-                    jsonNotification.put(Constants.TYPE_NOTIFICATION_WITH_CONTACT, args.getString(Constants.TYPE_NOTIFICATION_WITH_CONTACT)?.toInt()!!)
+                jsonNotification.put(
+                    Constants.TYPE_NOTIFICATION,
+                    args.getString(Constants.TYPE_NOTIFICATION)?.toInt()!!
+                )
+                if (args.getString(Constants.TYPE_NOTIFICATION)
+                        ?.toInt() == Constants.NotificationType.ENCRYPTED_MESSAGE.type
+                ) {
+                    jsonNotification.put(
+                        Constants.TYPE_NOTIFICATION_WITH_CONTACT,
+                        args.getString(Constants.TYPE_NOTIFICATION_WITH_CONTACT)?.toInt()!!
+                    )
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }

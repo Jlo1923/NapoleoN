@@ -108,4 +108,7 @@
     <color name="color_29ABE2">#29abe2</color>
     <color name="color_FBC1E4">#FBC1E4</color>
     <color name="color_703E5C">#703E5C</color>
+
+    <color name="black_overlay">#66000000</color>
+
 </resources>

@@ -4,16 +4,19 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.media.MediaPlayer
 import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.pepito.R
+import com.naposystems.pepito.app.NapoleonApplication
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
+import com.naposystems.pepito.utility.Constants.SharedPreferences.PREF_PENDING_CALL
+import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
 
@@ -89,6 +92,34 @@ object NotificationUtils {
                     }
 
                     RxBus.publish(RxEvent.AccountAttack())
+                }
+
+                Constants.NotificationType.INCOMING_CALL.type -> {
+                    if (context is NapoleonApplication) {
+                        val app: NapoleonApplication = context
+                        Timber.d("IsAppVisible: ${app.isAppVisible()}")
+                        if (!app.isAppVisible()) {
+
+                            val jsonObject = JSONObject()
+                            jsonObject.put(
+                                Constants.CallKeys.CHANNEL,
+                                data[Constants.CallKeys.CHANNEL]
+                            )
+                            jsonObject.put(
+                                Constants.CallKeys.IS_VIDEO_CALL,
+                                data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
+                            )
+                            jsonObject.put(
+                                Constants.CallKeys.CONTACT_ID,
+                                data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
+                            )
+
+                            sharedPreferencesManager.putString(
+                                PREF_PENDING_CALL,
+                                jsonObject.toString()
+                            )
+                        }
+                    }
                 }
             }
         }
