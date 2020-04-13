@@ -35,4 +35,8 @@
     <color name="searchViewTextColor">#4d4d4d</color>
     <color name="searchViewHintColor">#808080</color>
     <color name="colorButtonAlertDialog">#f2f2f2</color>
+    <color name="color_E8D8AB">#4D4D4D</color>
+    <color name="color_A27800">#101010</color>
+    <color name="color_8F8F8F">#8F8F8F</color>
+    <color name="color_F2F2F2">#CCCACA</color>
 </resources>

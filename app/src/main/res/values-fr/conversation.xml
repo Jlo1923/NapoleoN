@@ -26,6 +26,12 @@
     <string name="text_contact_turn_off_camera">%1$s a tourné hors de la caméra</string>
     <string name="text_contact_is_busy">%1$s est occupé</string>
     <string name="text_finished_call">Appel terminé</string>
+    <string name="explanation_to_send_location_attachment">Pour envoyer un emplacement, autoriser l\'accès NAPOLEON votre emplacement.</string>
+    <string name="text_you_quote">Vous</string>
+    <string name="text_photo_quote">La photo</string>
+    <string name="text_audio_quote">Audio</string>
+    <string name="text_video_quote">Vidéo</string>
+    <string name="text_document_quote">Document</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d jour</item>
         <item quantity="other">%d jours</item>

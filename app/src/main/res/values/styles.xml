@@ -41,8 +41,7 @@
         <item name="attrBackgroundColorBackground">@color/colorBackground</item>
         <item name="attrTintColorSecondaryDark">@color/colorSecondaryDark</item>
         <item name="attrTextColorColorPrimary">@color/colorPrimary</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
-        </item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
         <item name="attrBoxStrokeErrorColorColorError">@color/colorError</item>
         <item name="attrErrorTextColorColorError">@color/colorError</item>
         <item name="attrErrorIconTintColorError">@color/colorError</item>
@@ -67,6 +66,10 @@
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
         <item name="android:windowContentTransitions">true</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_E8D8AB</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_A27800</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_8F8F8F</item>
     </style>
 
     <style name="AppThemePinkDream" parent="AppTheme">
@@ -102,8 +105,7 @@
         <item name="attrBackgroundColorBackground">@color/color_FFEFFF</item>
         <item name="attrTintColorSecondaryDark">@color/color_9F6E8B</item>
         <item name="attrTextColorColorPrimary">@color/color_F38DC7</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
-        </item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -127,6 +129,10 @@
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_D19DBB</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_FBC1E4</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_BF5D96</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_703E5C</item>
     </style>
 
     <style name="AppThemeClearSky" parent="AppTheme">
@@ -161,8 +167,7 @@
         <item name="attrBackgroundColorBackground">@color/color_E6F2FF</item>
         <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
         <item name="attrTextColorColorPrimary">@color/color_4AA3D9</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
-        </item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -186,6 +191,10 @@
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_62C3EF</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_C4E3F1</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_035B81</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_9B9B9B</item>
     </style>
 
     <style name="AppThemePurpleBluebonnets" parent="AppTheme">
@@ -219,8 +228,7 @@
         <item name="attrBackgroundColorBackground">@color/color_F2F2F2</item>
         <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
         <item name="attrTextColorColorPrimary">@color/color_7D366F</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
-        </item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -243,6 +251,10 @@
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_D8AFCE</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_703E5C</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_9B9B9B</item>
     </style>
 
     <style name="AppThemeCamouflage" parent="AppTheme">
@@ -278,8 +290,7 @@
         <item name="attrBackgroundColorBackground">@color/color_001600</item>
         <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
         <item name="attrTextColorColorPrimary">@color/color_031E03</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
-        </item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -299,6 +310,10 @@
         <item name="attrTextColorConversationInputPanel">@color/white</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_426842</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_9B9B9B</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_004500</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_F2F2F2</item>
     </style>
 
     <style name="AppThemeBlackGoldAlloy" parent="AppTheme">
@@ -333,8 +348,7 @@
         <item name="attrBackgroundColorBackground">@color/color_121212</item>
         <item name="attrTintColorSecondaryDark">@color/color_D8A605</item>
         <item name="attrTextColorColorPrimary">@color/color_282828</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
-        </item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -354,6 +368,10 @@
         <item name="attrTextColorConversationInputPanel">@color/white</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_775B09</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_9B9B9B</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_423F3F</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_F2F2F2</item>
     </style>
 
     <style name="AppThemeColdOcean" parent="AppTheme">
@@ -389,8 +407,7 @@
         <item name="attrBackgroundColorBackground">@color/color_20202E</item>
         <item name="attrTintColorSecondaryDark">@color/color_59BC88</item>
         <item name="attrTextColorColorPrimary">@color/color_2A2C45</item>
-        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
-        </item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color</item>
         <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
@@ -410,6 +427,10 @@
         <item name="attrTextColorConversationInputPanel">@color/white</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_81819E</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_A19EA5</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_2F2D77</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_59BC88</item>
     </style>
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">

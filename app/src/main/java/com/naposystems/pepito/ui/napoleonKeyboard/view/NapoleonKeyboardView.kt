@@ -2,7 +2,6 @@ package com.naposystems.pepito.ui.napoleonKeyboard.view
 
 import android.content.Context
 import android.graphics.PorterDuff
-import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -19,6 +18,7 @@ import com.naposystems.pepito.ui.napoleonKeyboardEmoji.NapoleonKeyboardEmojiFrag
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.napoleonKeyboardSticker.NapoleonKeyboardStickerFragment
+import com.naposystems.pepito.utility.Utils
 
 class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(context),
     IContractNapoleonKeyboardView {
@@ -140,35 +140,24 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
     }
 
     private fun changeTintToColorPrimary(imageView: ImageView) {
-
-        val outValueColorPrimary = TypedValue()
-        context.theme.resolveAttribute(
-            R.attr.colorPrimary,
-            outValueColorPrimary,
-            true
-        )
+        val imageColor = Utils.convertAttrToColorResource(context, R.attr.colorPrimary)
 
         imageView.setColorFilter(
             ContextCompat.getColor(
                 context,
-                outValueColorPrimary.resourceId
+                imageColor
             ),
             PorterDuff.Mode.SRC_IN
         )
     }
 
     private fun changeTintToActionBarItemBackground(imageView: ImageView) {
-        val outValueActionBarItemBackgroundTint = TypedValue()
-        context.theme.resolveAttribute(
-            R.attr.attrActionBarItemBackground,
-            outValueActionBarItemBackgroundTint,
-            true
-        )
+        val imageColor = Utils.convertAttrToColorResource(context, R.attr.attrActionBarItemBackground)
 
         imageView.setColorFilter(
             ContextCompat.getColor(
                 context,
-                outValueActionBarItemBackgroundTint.resourceId
+                imageColor
             ),
             PorterDuff.Mode.SRC_IN
         )

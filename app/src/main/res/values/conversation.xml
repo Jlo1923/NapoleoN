@@ -26,6 +26,12 @@
     <string name="text_contact_turn_off_camera">%1$s has turned the camera off</string>
     <string name="text_contact_is_busy">%1$s is busy</string>
     <string name="text_finished_call">Finished call</string>
+    <string name="explanation_to_send_location_attachment">To send a location, allow NAPOLEON access your location.</string>
+    <string name="text_you_quote">You</string>
+    <string name="text_photo_quote">Photo</string>
+    <string name="text_audio_quote">Audio</string>
+    <string name="text_video_quote">Video</string>
+    <string name="text_document_quote">Document</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
@@ -34,4 +40,5 @@
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
     </plurals>
+
 </resources>

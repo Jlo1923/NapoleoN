@@ -26,6 +26,12 @@
     <string name="text_contact_turn_off_camera">%1$s tem desligou a câmera</string>
     <string name="text_contact_is_busy">%1$s é ocupado</string>
     <string name="text_finished_call">Chamar concluída</string>
+    <string name="explanation_to_send_location_attachment">Para enviar um local, permitir o acesso NAPOLEON sua localização.</string>
+    <string name="text_you_quote">Você</string>
+    <string name="text_photo_quote">Foto</string>
+    <string name="text_audio_quote">Audio</string>
+    <string name="text_video_quote">Video</string>
+    <string name="text_document_quote">Documento</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d dia</item>
         <item quantity="other">%d dias</item>
