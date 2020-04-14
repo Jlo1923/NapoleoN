@@ -59,7 +59,7 @@ fun bindAlbumArt(imageView: AppCompatImageView, @Nullable albumArt: String?) {
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    imageView.setImageResource(R.drawable.ic_attachment_audio)
+                    imageView.setImageResource(R.drawable.ic_audio)
                     return true
                 }
 
@@ -76,6 +76,6 @@ fun bindAlbumArt(imageView: AppCompatImageView, @Nullable albumArt: String?) {
             })
             .into(imageView)
     } else {
-        imageView.setImageResource(R.drawable.ic_attachment_audio)
+        imageView.setImageResource(R.drawable.ic_audio)
     }
 }

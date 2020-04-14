@@ -1,8 +1,7 @@
 package com.naposystems.pepito.ui.addContact.adapter
 
-import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Animatable
 import androidx.databinding.BindingAdapter
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.material.button.MaterialButton
 import com.naposystems.pepito.R
 
@@ -12,7 +11,7 @@ fun haveFriendShipRequest(button: MaterialButton, haveFriendShipRequest: Boolean
     val context = button.context
 
     val animatedVectorDrawableCompat =
-        button.icon as AnimatedVectorDrawable
+        button.icon as Animatable
 
     if (haveFriendShipRequest) {
         animatedVectorDrawableCompat.start()
