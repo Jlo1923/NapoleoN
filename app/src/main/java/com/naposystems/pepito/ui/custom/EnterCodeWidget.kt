@@ -72,11 +72,10 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
      */
     private fun createLinearLayout(context: Context): LinearLayout {
         val imageColor = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorBackground)
-        val colorBackground = ContextCompat.getColor(context, imageColor)
 
         linearTextInputs.apply {
             id = View.generateViewId()
-            setBackgroundColor(colorBackground)
+            setBackgroundColor(imageColor)
             orientation = HORIZONTAL
         }
 

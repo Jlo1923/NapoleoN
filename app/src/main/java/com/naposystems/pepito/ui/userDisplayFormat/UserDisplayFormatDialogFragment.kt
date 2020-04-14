@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.UserDisplayFormatDialogFragmentBinding
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -30,7 +31,7 @@ class UserDisplayFormatDialogFragment : DialogFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private val viewModel: UserDisplayFormatDialogViewModel by viewModels { viewModelFactory }
+    private val viewModel: UserDisplayFormatShareViewModel by activityViewModels { viewModelFactory }
     private lateinit var binding: UserDisplayFormatDialogFragmentBinding
     private lateinit var listener: UserDisplayFormatListener
     private var format: Int = 0
@@ -82,17 +83,21 @@ class UserDisplayFormatDialogFragment : DialogFragment() {
 
         viewModel.getUserDisplayFormat()
 
-        viewModel.userDisplayFormat.observe(viewLifecycleOwner, Observer {
-            this.format = it
-            when (it) {
-                Constants.UserDisplayFormat.NAME_AND_NICKNAME.format ->
-                    binding.radioButtonNameAndNickname.isChecked = true
-                Constants.UserDisplayFormat.ONLY_NAME.format ->
-                    binding.radioButtonOnlyName.isChecked = true
-                Constants.UserDisplayFormat.ONLY_NICKNAME.format ->
-                    binding.radioButtonOnlyNickname.isChecked = true
-            }
-        })
+        activity?.let { activity ->
+            viewModel.userDisplayFormat.observe(activity, Observer {
+                if(it != null) {
+                    this.format = it
+                    when (it) {
+                        Constants.UserDisplayFormat.NAME_AND_NICKNAME.format ->
+                            binding.radioButtonNameAndNickname.isChecked = true
+                        Constants.UserDisplayFormat.ONLY_NAME.format ->
+                            binding.radioButtonOnlyName.isChecked = true
+                        Constants.UserDisplayFormat.ONLY_NICKNAME.format ->
+                            binding.radioButtonOnlyNickname.isChecked = true
+                    }
+                }
+            })
+        }
     }
 
     fun setListener(listener: UserDisplayFormatListener) {

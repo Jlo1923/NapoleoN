@@ -45,12 +45,12 @@ import com.naposystems.pepito.ui.status.StatusViewModel
 import com.naposystems.pepito.ui.subscription.SubscriptionViewModel
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeViewModel
-import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountViewModel
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -135,8 +135,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(UserDisplayFormatDialogViewModel::class)
-    internal abstract fun bindUserDisplayFormatDialogViewModel(viewModel: UserDisplayFormatDialogViewModel): ViewModel
+    @ViewModelKey(UserDisplayFormatShareViewModel::class)
+    internal abstract fun bindUserDisplayFormatShareViewModel(viewModel: UserDisplayFormatShareViewModel): ViewModel
 
     @Binds
     @IntoMap

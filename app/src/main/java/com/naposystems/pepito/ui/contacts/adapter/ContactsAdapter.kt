@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.ContactsItemBinding
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 
-class ContactsAdapter constructor(private val clickListener: ContactClickListener) :
+class ContactsAdapter constructor(
+        private val clickListener: ContactClickListener,
+        private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+    ) :
     ListAdapter<Contact, ContactsAdapter.ContactsViewHolder>(DiffCallback) {
 
     object DiffCallback : DiffUtil.ItemCallback<Contact>() {
@@ -31,14 +35,18 @@ class ContactsAdapter constructor(private val clickListener: ContactClickListene
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, clickListener)
+        holder.bind(item, clickListener, userDisplayFormatShareViewModel)
     }
 
     class ContactsViewHolder constructor(private val binding: ContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Contact, clickListener: ContactClickListener) {
+        fun bind(item: Contact,
+                 clickListener: ContactClickListener,
+                 userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+        ) {
             binding.contact = item
             binding.clickListener = clickListener
+            binding.viewModel = userDisplayFormatShareViewModel
 
             binding.buttonMore.setOnClickListener {
                 clickListener.onMoreClick(item, it)

@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.HomeFragmentItemBinding
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 
-class ConversationAdapter(private val clickListener: ClickListener) :
+class ConversationAdapter(
+    private val clickListener: ClickListener,
+    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+) :
     ListAdapter<ConversationAndContact,
             ConversationAdapter.ConversationAndContactViewHolder>(DiffCallback) {
 
@@ -38,16 +42,19 @@ class ConversationAdapter(private val clickListener: ClickListener) :
 
     override fun onBindViewHolder(holder: ConversationAndContactViewHolder, position: Int) {
         val chat = getItem(position)
-        holder.bind(chat, clickListener)
+        holder.bind(chat, clickListener, userDisplayFormatShareViewModel)
     }
 
     class ConversationAndContactViewHolder private constructor(
         private val binding: HomeFragmentItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(conversation: ConversationAndContact, clickListener: ClickListener) {
+        fun bind(conversation: ConversationAndContact, clickListener: ClickListener,
+                 userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+        ) {
             binding.conversation = conversation
             binding.clickListener = clickListener
+            binding.viewModel = userDisplayFormatShareViewModel
 
             binding.constrainsLayoutConversation.setOnLongClickListener {
                 clickListener.onLongClick(conversation, binding.textViewHora)
