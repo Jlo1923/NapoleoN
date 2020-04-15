@@ -735,7 +735,7 @@
     </style>
 
     <style name="ImageViewAttachment">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">40dp</item>
     </style>
 
@@ -746,7 +746,7 @@
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textSize">@dimen/minor_text_size</item>
     </style>
 
     <style name="TextViewCountTime">

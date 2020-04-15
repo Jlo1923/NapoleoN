@@ -31,7 +31,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_attachment_audio" />
+            app:srcCompat="@drawable/ic_audio" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView_is_selected"
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="@dimen/x_small_padding"
-            android:tint="@color/buttonTint"
+            android:tint="?attr/attrColorButtonTint"
             app:firstAnimation="@drawable/anim_play_to_pause"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

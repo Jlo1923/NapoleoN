@@ -206,7 +206,7 @@ fun bindAttachmentDocumentIcon(imageView: ImageView, messageAndAttachment: Messa
             "ppt" -> R.drawable.ic_attachment_ppt
             "pptx" -> R.drawable.ic_attachment_pptx
             "pdf" -> R.drawable.ic_attachment_pdf
-            else -> R.drawable.ic_attachment_document
+            else -> R.drawable.ic_document
         }
 
         Glide.with(imageView)

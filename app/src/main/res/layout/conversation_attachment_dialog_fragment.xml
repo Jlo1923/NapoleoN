@@ -54,7 +54,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_attachment_gallery" />
+                        app:srcCompat="@drawable/ic_gallery" />
 
                     <TextView
                         style="@style/TextViewAttachment"
@@ -85,7 +85,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_attachment_camera" />
+                        app:srcCompat="@drawable/ic_camera" />
 
                     <TextView
                         style="@style/TextViewAttachment"
@@ -116,7 +116,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_attachment_location" />
+                        app:srcCompat="@drawable/ic_location" />
 
                     <TextView
                         style="@style/TextViewAttachment"
@@ -147,7 +147,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_attachment_audio" />
+                        app:srcCompat="@drawable/ic_audio" />
 
                     <TextView
                         style="@style/TextViewAttachment"
@@ -178,7 +178,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_attachment_document" />
+                        app:srcCompat="@drawable/ic_document" />
 
                     <TextView
                         style="@style/TextViewAttachment"
