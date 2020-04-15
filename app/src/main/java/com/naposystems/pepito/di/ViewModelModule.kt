@@ -12,6 +12,7 @@ import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFolder
 import com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationViewModel
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
+import com.naposystems.pepito.ui.changeFakes.ChangeFakesDialogViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
 import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
@@ -47,6 +48,7 @@ import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeViewModel
 import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountViewModel
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
@@ -235,6 +237,11 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(ChangeFakesDialogViewModel::class)
+    internal abstract fun bindChangeFakesDialogViewModel(viewModel: ChangeFakesDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(ShareContactViewModel::class)
     internal abstract fun bindShareContactViewModel(viewModel: ShareContactViewModel): ViewModel
 
@@ -252,6 +259,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ConversationShareViewModel::class)
     internal abstract fun bindConversationShareViewModel(viewModel: ConversationShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactProfileShareViewModel::class)
+    internal abstract fun bindContactProfileShareViewModel(viewModel: ContactProfileShareViewModel): ViewModel
 
     @Binds
     @IntoMap

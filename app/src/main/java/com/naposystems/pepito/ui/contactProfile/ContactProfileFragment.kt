@@ -5,11 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -30,16 +28,16 @@ import com.naposystems.pepito.databinding.ContactProfileFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
-import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
+import com.naposystems.pepito.ui.changeFakes.ChangeFakesDialogFragment
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
-import com.naposystems.pepito.ui.profile.ProfileFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -69,11 +67,12 @@ class ContactProfileFragment : BaseFragment() {
 
     private val galleryShareViewModel : GalleryShareViewModel by activityViewModels()
     private val cameraShareViewModel : CameraShareViewModel by activityViewModels()
+    private val contactProfileShareViewModel : ContactProfileShareViewModel by activityViewModels{
+        viewModelFactory
+    }
 
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
-    private lateinit var animatedThreeEditName: AnimatedThreeVectorView
-    private lateinit var animatedThreeEditNickName: AnimatedThreeVectorView
 
     private var compressedFile : File? = null
     private var contactSilenced: Boolean = false
@@ -116,17 +115,6 @@ class ContactProfileFragment : BaseFragment() {
 
         binding.lifecycleOwner = this
 
-        animatedThreeEditName = binding.imageButtonChangeNameEndIcon
-        animatedThreeEditNickName = binding.imageButtonChangeNicknameEndIcon
-
-        imageButtonChangeNameEndIconClickListener()
-
-        setEditTextNameSetOnEditorActionListener()
-
-        setEditTextNicknameSetOnEditorActionListener()
-
-        imageButtonChangeNicknameEndIconClickListener()
-
         binding.imageViewProfileContact.setOnClickListener(showPreviewImage())
 
         binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
@@ -142,11 +130,26 @@ class ContactProfileFragment : BaseFragment() {
             verifyCameraAndMediaPermission()
         }
 
+        binding.imageButtonChangeNameEndIcon.setOnClickListener {
+            setupChangeFakeDialog(Constants.ChangeFake.NAME.option)
+        }
+
+        binding.imageButtonChangeNicknameEndIcon.setOnClickListener {
+            setupChangeFakeDialog(Constants.ChangeFake.NICKNAME.option)
+        }
+
         return binding.root
     }
 
+    private fun setupChangeFakeDialog(option : Int) {
+        val dialog = ChangeFakesDialogFragment.newInstance(
+            args.contactId, option
+        )
+        dialog.show(childFragmentManager, "ChangeFakesDialog")
+    }
+
     private fun showPreviewImage() = View.OnClickListener {
-        viewModel.contact.value?.let { contact ->
+        contactProfileShareViewModel.contact.value?.let { contact ->
             val extra = FragmentNavigatorExtras(
                 binding.imageViewProfileContact to "transition_image_preview"
             )
@@ -169,16 +172,14 @@ class ContactProfileFragment : BaseFragment() {
             getString(R.string.text_block_contact),
             getString(
                 R.string.text_wish_block_contact,
-                if (viewModel.contact.value!!.displayNameFake.isEmpty()) {
-                    viewModel.contact.value!!.displayName
-                } else {
-                    viewModel.contact.value!!.displayNameFake
+                contactProfileShareViewModel.contact.value?.let { contact ->
+                    contact.getName()
                 }
             ),
             true,
             childFragmentManager
         ) {
-            viewModel.contact.value?.let { contact ->
+            contactProfileShareViewModel.contact.value?.let { contact ->
                 if (contact.statusBlocked) {
                     shareContactViewModel.unblockContact(contact.id)
                 } else {
@@ -212,96 +213,6 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun imageButtonChangeNicknameEndIconClickListener() {
-        binding.imageButtonChangeNicknameEndIcon.setOnClickListener {
-            animatedThreeEditNickName.apply {
-                if (hasBeenInitialized) {
-                    binding.imageButtonChangeNameEndIcon.isEnabled = true
-                    cancelToEdit(binding.editTextNickname)
-                } else {
-                    binding.imageButtonChangeNameEndIcon.isEnabled = false
-                    editToCancel(binding.editTextNickname)
-                }
-            }
-        }
-    }
-
-    private fun setEditTextNicknameSetOnEditorActionListener() {
-        binding.editTextNickname.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (binding.editTextName.text?.count()!! < 3) {
-                    Utils.generalDialog(
-                        getString(R.string.text_nickname_invalid),
-                        getString(R.string.text_alert_nickname),
-                        true,
-                        childFragmentManager
-                    ) { }
-                } else {
-                    binding.editTextNickname.apply {
-                        isEnabled = false
-                    }
-
-                    animatedThreeEditNickName.cancelToHourglass()
-                    viewModel.updateNicknameFakeContact(args.contactId, view.text.toString())
-                    binding.editTextName.apply {
-                        isEnabled = true
-                    }
-
-                    binding.editTextName.isFocusable = true
-                    binding.imageButtonChangeNameEndIcon.isEnabled = true
-                }
-                false
-            } else
-                true
-        }
-    }
-
-    private fun setEditTextNameSetOnEditorActionListener() {
-        binding.editTextName.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                if (binding.editTextName.text?.count()!! < 3) {
-                    Utils.generalDialog(
-                        getString(R.string.text_name_invalid),
-                        getString(R.string.text_alert_name),
-                        true,
-                        childFragmentManager
-                    ) { }
-                } else {
-                    binding.editTextName.apply {
-                        isEnabled = false
-                    }
-
-                    animatedThreeEditName.cancelToHourglass()
-                    viewModel.updateNameFakeContact(args.contactId, view.text.toString())
-
-                    binding.editTextName.apply {
-                        isEnabled = true
-                    }
-
-                    binding.editTextNickname.isFocusable = true
-                    binding.imageButtonChangeNicknameEndIcon.isEnabled = true
-                }
-                false
-            } else
-                true
-        }
-    }
-
-    private fun imageButtonChangeNameEndIconClickListener() {
-        binding.imageButtonChangeNameEndIcon.setOnClickListener {
-            animatedThreeEditName.apply {
-                if (hasBeenInitialized) {
-                    binding.imageButtonChangeNicknameEndIcon.isEnabled = true
-                    cancelToEdit(binding.editTextName)
-                } else {
-                    binding.imageButtonChangeNicknameEndIcon.isEnabled = false
-                    editToCancel(binding.editTextName)
-                }
-            }
-        }
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -315,9 +226,7 @@ class ContactProfileFragment : BaseFragment() {
             Timber.e(e)
         }
 
-        binding.viewmodel = viewModel
-
-        viewModel.getLocalContact(args.contactId)
+        binding.viewmodel = contactProfileShareViewModel
 
         baseViewModel.getOutputControl()
 
@@ -328,19 +237,7 @@ class ContactProfileFragment : BaseFragment() {
             }
         })
 
-        viewModel.responseEditNameFake.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                animatedThreeEditName.hourglassToEdit()
-            }
-        })
-
-        viewModel.responseEditNicknameFake.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                animatedThreeEditNickName.hourglassToEdit()
-            }
-        })
-
-        viewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
+        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
             checkSilenceConversation(contact.silenced)
             setTextToolbar(contact)
             setTextBlockedContact(contact.statusBlocked)
@@ -464,7 +361,7 @@ class ContactProfileFragment : BaseFragment() {
             }
 
             override fun galleryOptionSelected(location: Int) {
-                viewModel.contact.value?.let { contact ->
+                contactProfileShareViewModel.contact.value?.let { contact ->
                     findNavController().navigate(
                         ContactProfileFragmentDirections.actionContactProfileFragmentToAttachmentGalleryFoldersFragment(
                             contact,

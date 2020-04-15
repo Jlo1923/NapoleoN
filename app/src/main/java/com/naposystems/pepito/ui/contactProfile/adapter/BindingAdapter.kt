@@ -1,21 +1,31 @@
 package com.naposystems.pepito.ui.contactProfile.adapter
 
-import android.annotation.SuppressLint
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.databinding.BindingAdapter
+import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 
-@SuppressLint("SetTextI18n")
 @BindingAdapter("nicknameContact")
 fun bindNickNameContact(textView: TextView, @Nullable contact: Contact?) {
+    textView.text = contact?.getNickName()
+}
+
+@BindingAdapter("nameContact")
+fun bindNameContact(textView: TextView, @Nullable contact: Contact?) {
+    val context = textView.context
     if (contact != null) {
         when {
-            contact.nicknameFake.isNotEmpty() -> {
-                textView.text = contact.nicknameFake
+            contact.displayNameFake.isNotEmpty() -> {
+                if (contact.displayNameFake.count() < 4) {
+                    textView.text = ""
+                    textView.hint = context.getString(R.string.text_display_name)
+                } else {
+                    textView.text = contact.displayNameFake
+                }
             }
-            contact.nickname.isNotEmpty() -> {
-                textView.text = contact.nickname
+            contact.displayName.isNotEmpty() -> {
+                textView.text = contact.displayName
             }
         }
     }

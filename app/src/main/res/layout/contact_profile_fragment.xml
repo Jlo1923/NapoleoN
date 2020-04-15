@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel" />
+            type="com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel" />
 
     </data>
 
@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.contactProfile.ContactProfileFragment">
-
 
         <ScrollView
             android:layout_width="match_parent"
@@ -101,7 +100,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_person_black" />
 
-                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
+                    <ImageButton
                         android:id="@+id/imageButton_change_name_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -112,7 +111,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_edit_secondary_black" />
+                        app:srcCompat="@drawable/ic_edit_black" />
 
                     <TextView
                         android:id="@+id/textView_name"
@@ -123,21 +122,19 @@
                         app:layout_constraintStart_toEndOf="@id/imageView_change_name_start_icon"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <TextView
                         android:id="@+id/editText_name"
                         style="@style/SmallBodyTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:imeOptions="actionDone"
-                        android:inputType="textCapWords|textNoSuggestions"
                         android:maxLength="@dimen/max_length_display_name"
                         android:padding="0dp"
                         android:singleLine="true"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/textView_name"
                         app:layout_constraintStart_toStartOf="@+id/textView_name"
-                        app:name="@{viewmodel.contact}"
+                        app:nameContact="@{viewmodel.contact}"
                         tools:text="Cecilia Maidana" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -158,7 +155,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_at_black" />
 
-                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
+                    <ImageButton
                         android:id="@+id/imageButton_change_nickname_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -169,7 +166,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_edit_secondary_black" />
+                        app:srcCompat="@drawable/ic_edit_black" />
 
                     <TextView
                         android:id="@+id/textView_nickname"
@@ -180,13 +177,12 @@
                         app:layout_constraintStart_toEndOf="@id/imageView_change_nickname_start_icon"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <TextView
                         android:id="@+id/editText_nickname"
                         style="@style/SmallBodyTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:inputType="textCapWords|textNoSuggestions"
                         android:maxLength="@dimen/max_length_nickname"
                         android:padding="0dp"
                         android:singleLine="true"

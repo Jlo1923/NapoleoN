@@ -288,7 +288,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
     override fun changeTextViewTitle(stringResourceId: Int) {
         binding.textViewTitle.text =
-            getString(stringResourceId, contact?.getNickname(this))
+            getString(stringResourceId, this.getString(R.string.label_nickname, contact?.getNickName()))
     }
 
     override fun changeBluetoothButtonVisibility(visibility: Int) {

@@ -52,7 +52,6 @@ class ConversationRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
     private val conversationLocalDataSource: ConversationDataSource,
-    private val contactDataSource: ContactDataSource,
     private val quoteDataSource: QuoteDataSource
 ) :
     IContractConversation.Repository {
@@ -189,10 +188,6 @@ class ConversationRepository @Inject constructor(
             "${System.currentTimeMillis()}.$extension",
             requestFile
         )
-    }
-
-    override fun getLocalContact(contactId: Int): LiveData<Contact> {
-        return contactDataSource.getContact(contactId)
     }
 
     override suspend fun getLocalUser(): User {

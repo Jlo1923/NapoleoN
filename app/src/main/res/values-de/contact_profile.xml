@@ -6,6 +6,7 @@
     <string name="text_want_mute_conversation">Tem certeza de que quer contato restabelecer?</string>
     <string name="text_alert_nickname">Der Spitzname muss mindestens 5 und bis zu 20 Zeichen</string>
     <string name="text_alert_name">Der Name muß mindestens 3 und maximal 50 Zeichen enthalten</string>
+    <string name="text_name_not_contain_enough_char">Der Name muss mindestens 5 Zeichen enthalten.</string>
     <string name="text_name_invalid">Ungültiger Name</string>
     <string name="text_nickname_invalid">Ungültiger Spitzname</string>
 </resources>

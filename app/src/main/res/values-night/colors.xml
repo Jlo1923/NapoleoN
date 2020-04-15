@@ -17,7 +17,7 @@
     <color name="separator">#8F8F8F</color>
     <color name="green">#59BC88</color>
     <color name="colorBackground">#121212</color>
-    <color name="colorBackgroundDialog">#383838</color>
+    <color name="colorBackgroundDialog">#121212</color>
     <color name="colorSecondaryBackground">#282828</color>
     <color name="buttonTint">#f2f2f2</color>
     <color name="buttonTintCamera">#121212</color>

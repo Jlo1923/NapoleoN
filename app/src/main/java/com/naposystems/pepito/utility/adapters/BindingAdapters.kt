@@ -216,34 +216,15 @@ fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: Contact?) {
 
 @BindingAdapter("nickname")
 fun bindNickname(textView: TextView, @Nullable contact: Contact?) {
-    if (contact != null) {
-        val context = textView.context
-        val formattedNickname = when {
-            contact.nicknameFake.isNotEmpty() -> {
-                context.getString(R.string.label_nickname, contact.nicknameFake)
-            }
-            else -> {
-                context.getString(R.string.label_nickname, contact.nickname)
-            }
-        }
-        textView.text = formattedNickname
+    textView.context.let { context ->
+        textView.text = context.getString(R.string.label_nickname, contact?.getNickName())
     }
 }
 
 @BindingAdapter("name")
 fun bindName(textView: TextView, @Nullable contact: Contact?) {
-    if (contact != null) {
-        when {
-            contact.displayNameFake.isNotEmpty() -> {
-                textView.text = contact.displayNameFake
-            }
-            contact.displayName.isNotEmpty() -> {
-                textView.text = contact.displayName
-            }
-        }
-    }
+    textView.text = contact?.getName()
 }
-
 
 @BindingAdapter("nameFormat")
 fun bindNameFormat(textView: TextView, format: Int) {

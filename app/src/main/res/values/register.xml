@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_nickname">Nickname*</string>
-    <string name="text_display_name">Display name</string>
     <string name="text_terms_and_conditions_line_one">By clicking on Register, you accept the</string>
     <string name="text_terms_and_conditions_line_two">terms, conditions and privacy policies.</string>
     <string name="text_nickname_required">Nickname is required</string>
-    <string name="text_nickname_not_contain_enough_char">The nickname must contain a minimum of 5 characters</string>
     <string name="text_nickname_must_not_contain_space">Cannot contain blank spaces</string>
     <string name="text_cant_contain_special_characters">Cannot contain special characters</string>
     <string name="text_nickname_contain_at_least_one_number">It must contain at least one number</string>

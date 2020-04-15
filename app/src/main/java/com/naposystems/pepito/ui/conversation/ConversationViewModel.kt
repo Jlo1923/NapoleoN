@@ -103,10 +103,6 @@ class ConversationViewModel @Inject constructor(
         this.contact = contact
     }
 
-    override fun getLocalContact(contactId: Int) {
-        contactProfile = repository.getLocalContact(contactId)
-    }
-
     override fun getLocalMessages() {
         viewModelScope.launch {
             user = repository.getLocalUser()
