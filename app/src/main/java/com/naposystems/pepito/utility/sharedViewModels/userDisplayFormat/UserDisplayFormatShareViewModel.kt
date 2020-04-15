@@ -1,12 +1,13 @@
-package com.naposystems.pepito.ui.userDisplayFormat
+package com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.naposystems.pepito.repository.userDisplayFormat.UserDisplayFormatRepository
+import com.naposystems.pepito.ui.userDisplayFormat.IContractUserDisplayFormat
 import javax.inject.Inject
 
-class UserDisplayFormatDialogViewModel @Inject constructor(
+class UserDisplayFormatShareViewModel @Inject constructor(
     private val repository: UserDisplayFormatRepository
 ) : ViewModel(), IContractUserDisplayFormat.ViewModel {
 

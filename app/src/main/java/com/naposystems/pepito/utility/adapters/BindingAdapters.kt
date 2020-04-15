@@ -2,6 +2,7 @@ package com.naposystems.pepito.utility.adapters
 
 import android.Manifest
 import android.net.Uri
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -239,6 +240,31 @@ fun bindName(textView: TextView, @Nullable contact: Contact?) {
             contact.displayName.isNotEmpty() -> {
                 textView.text = contact.displayName
             }
+        }
+    }
+}
+
+
+@BindingAdapter("nameFormat")
+fun bindNameFormat(textView: TextView, format: Int) {
+    when(format) {
+        Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
+            textView.visibility = View.GONE
+        }
+        else -> {
+            textView.visibility = View.VISIBLE
+        }
+    }
+}
+
+@BindingAdapter("nickNameFormat")
+fun bindNickNameFormat(textView: TextView, format: Int) {
+    when(format) {
+        Constants.UserDisplayFormat.ONLY_NAME.format -> {
+            textView.visibility = View.GONE
+        }
+        else -> {
+            textView.visibility = View.VISIBLE
         }
     }
 }

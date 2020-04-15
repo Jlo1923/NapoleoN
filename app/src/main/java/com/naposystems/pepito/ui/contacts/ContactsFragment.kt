@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +18,7 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.pepito.ui.custom.SearchView
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
@@ -35,6 +37,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: ContactsViewModel by viewModels { viewModelFactory }
+    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels { viewModelFactory }
     private lateinit var shareContactViewModel: ShareContactViewModel
     private lateinit var binding: ContactsFragmentBinding
     private lateinit var adapter: ContactsAdapter
@@ -165,7 +168,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
                 }
                 popup.show()
             }
-        })
+        }, userDisplayFormatShareViewModel)
         binding.recyclerViewContacts.adapter = adapter
     }
 

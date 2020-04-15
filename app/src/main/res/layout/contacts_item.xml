@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="viewModel"
+            type="com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel" />
+
+        <variable
             name="clickListener"
             type="com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter.ContactClickListener" />
 
@@ -44,6 +48,7 @@
             android:ellipsize="end"
             android:lines="1"
             app:name="@{contact}"
+            app:nameFormat="@{viewModel.userDisplayFormat}"
             app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
             app:layout_constraintEnd_toStartOf="@id/button_more"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
@@ -57,13 +62,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x_small_margin"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"
             android:textColor="?attr/attrColorButtonTint"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/textView_user_name"
-            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintEnd_toStartOf="@+id/button_more"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            app:nickNameFormat="@{viewModel.userDisplayFormat}"
             app:nickname="@{contact}"
             tools:text="@tools:sample/first_names" />
 

@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,7 @@ import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.home.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
@@ -41,6 +43,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var shareContactViewModel: ShareContactViewModel
+    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels { viewModelFactory }
     private lateinit var binding: HomeFragmentBinding
     lateinit var adapter: ConversationAdapter
     private val disposable: CompositeDisposable by lazy {
@@ -113,6 +116,8 @@ class HomeFragment : Fragment() {
         viewModel.getFriendshipQuantity()
 
         viewModel.subscribeToGeneralSocketChannel()
+
+        userDisplayFormatShareViewModel.getUserDisplayFormat()
 
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
@@ -265,7 +270,7 @@ class HomeFragment : Fragment() {
                 }
                 popup.show()
             }
-        })
+        }, userDisplayFormatShareViewModel)
         binding.recyclerViewChats.adapter = adapter
     }
 

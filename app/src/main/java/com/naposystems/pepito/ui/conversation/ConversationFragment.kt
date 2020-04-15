@@ -57,6 +57,7 @@ import com.naposystems.pepito.ui.napoleonKeyboard.NapoleonKeyboard
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -94,6 +95,9 @@ class ConversationFragment : BaseFragment(),
     }
 
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
+    private val userDisplayFormatShareViewModel : UserDisplayFormatShareViewModel by activityViewModels {
+        viewModelFactory
+    }
     private val shareContactViewModel: ShareContactViewModel by viewModels {
         viewModelFactory
     }
@@ -820,6 +824,8 @@ class ConversationFragment : BaseFragment(),
         }
 
         actionBarCustomView.contact = args.contact
+
+        actionBarCustomView.viewModel = userDisplayFormatShareViewModel
 
         actionBarCustomView.buttonBack.setOnClickListener {
             findNavController().popBackStack()
