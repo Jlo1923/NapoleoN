@@ -127,9 +127,9 @@ class ConversationCameraFragment : Fragment() {
             imageCapture!!.flashMode =
                 if (torchEnable) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF
             binding.imageButtonFlash.setImageDrawable(
-                context!!.resources.getDrawable(
+                requireContext().resources.getDrawable(
                     if (torchEnable) R.drawable.ic_flash_on_black else R.drawable.ic_flash_off_black,
-                    context!!.theme
+                    requireContext().theme
                 )
             )
         }
@@ -214,7 +214,7 @@ class ConversationCameraFragment : Fragment() {
                 .build()
 
             // Default PreviewSurfaceProvider
-            preview!!.setSurfaceProvider(binding.viewFinder.previewSurfaceProvider)
+            preview!!.setSurfaceProvider(binding.viewFinder.createSurfaceProvider(cameraInfo))
 
             // ImageCapture
             imageCapture = ImageCapture.Builder()
@@ -429,7 +429,7 @@ class ConversationCameraFragment : Fragment() {
         binding.imageButtonCamera.setBackgroundColor(
             resources.getColor(
                 android.R.color.transparent,
-                context!!.theme
+                requireContext().theme
             )
         )
         videoCapture?.stopRecording()
@@ -455,7 +455,7 @@ class ConversationCameraFragment : Fragment() {
         }
 
         fileName = "${timeStamp}$extension"
-        path = File(context!!.cacheDir!!, subFolder)
+        path = File(requireContext().cacheDir!!, subFolder)
         if (!path.exists())
             path.mkdirs()
 
