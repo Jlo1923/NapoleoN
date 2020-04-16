@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_display_name">Nome visualizzato</string>
     <string name="text_terms_and_conditions_line_one">Facendo clic su Registrazione, si accetta il</string>
     <string name="text_terms_and_conditions_line_two">termini, condizioni e politiche sulla privacy.</string>
     <string name="text_nickname_required">Il soprannome è obbligatorio.</string>
-    <string name="text_nickname_not_contain_enough_char">Il nickname deve contenere almeno 5 caratteri</string>
     <string name="text_nickname_must_not_contain_space">Non può contenere spazi vuoti</string>
     <string name="text_cant_contain_special_characters">Non può contenere caratteri speciali</string>
     <string name="text_nickname_contain_at_least_one_number">Deve contenere almeno un numero</string>

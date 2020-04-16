@@ -67,6 +67,7 @@ import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -99,6 +100,9 @@ class ConversationFragment : BaseFragment(),
         viewModelFactory
     }
     private val shareContactViewModel: ShareContactViewModel by viewModels {
+        viewModelFactory
+    }
+    private val contactProfileShareViewModel : ContactProfileShareViewModel by activityViewModels{
         viewModelFactory
     }
 
@@ -268,7 +272,8 @@ class ConversationFragment : BaseFragment(),
                     ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
                         viewModel.getUser().id,
                         args.contact.id,
-                        binding.inputPanel.getWebIdQuote()
+                        binding.inputPanel.getWebIdQuote(),
+                        Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
                     )
                 )
             }
@@ -450,7 +455,7 @@ class ConversationFragment : BaseFragment(),
 
         binding.viewModel = viewModel
 
-        viewModel.getLocalContact(args.contact.id)
+        contactProfileShareViewModel.getLocalContact(args.contact.id)
 
         viewModel.setContact(args.contact)
 
@@ -533,7 +538,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun observeContactProfile() {
-        viewModel.contactProfile.observe(viewLifecycleOwner, Observer { contact ->
+        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
             if (contact != null) {
                 actionBarCustomView.contact = contact
                 setTextSilenceOfMenu(contact)
@@ -646,7 +651,7 @@ class ConversationFragment : BaseFragment(),
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menuOptionsContact = menu
         inflater.inflate(R.menu.menu_conversation, menu)
-        viewModel.contactProfile.value?.let { contact ->
+        contactProfileShareViewModel.contact.value?.let { contact ->
             setTextSilenceOfMenu(contact)
         }
     }
@@ -700,7 +705,7 @@ class ConversationFragment : BaseFragment(),
                 blockContact(args.contact)
             }
             R.id.menu_item_mute_conversation -> {
-                viewModel.contactProfile.value?.let { contact ->
+                contactProfileShareViewModel.contact.value?.let { contact ->
                     if (contact.silenced)
                         desactiveSilence()
                     else
@@ -735,7 +740,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun silenceConversation() {
-        viewModel.contactProfile.value?.let { contact ->
+        contactProfileShareViewModel.contact.value?.let { contact ->
             val dialog = MuteConversationDialogFragment.newInstance(
                 args.contact.id, contact.silenced
             )
@@ -749,7 +754,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun desactiveSilence() {
-        viewModel.contactProfile.value?.let { contact ->
+        contactProfileShareViewModel.contact.value?.let { contact ->
             shareContactViewModel.muteConversation(args.contact.id, contact.silenced)
         }
     }

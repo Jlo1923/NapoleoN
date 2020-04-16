@@ -6,6 +6,7 @@
     <string name="text_want_mute_conversation">Tem certeza de que quer contato restabelecer?</string>
     <string name="text_alert_nickname">O apelido deve conter, pelo menos, cinco e até 20 caracteres</string>
     <string name="text_alert_name">O nome deve conter pelo menos 3 e no máximo 50 caracteres</string>
+    <string name="text_name_not_contain_enough_char">O nome deve conter pelo menos 5 caracteres.</string>
     <string name="text_name_invalid">Nome inválido</string>
     <string name="text_nickname_invalid">Apelido inválido</string>
 </resources>

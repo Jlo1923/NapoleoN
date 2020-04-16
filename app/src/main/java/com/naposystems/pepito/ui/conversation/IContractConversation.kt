@@ -39,7 +39,6 @@ interface IContractConversation {
         )
 
         fun sendMessagesRead()
-        fun getLocalContact(contactId: Int)
         fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Boolean)
         fun cleanSelectionMessages(contactId: Int)
         fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)
@@ -83,7 +82,6 @@ interface IContractConversation {
         fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>
         fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>
         suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
-        fun getLocalContact(contactId: Int): LiveData<Contact>
         suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
         suspend fun cleanSelectionMessages(contactId: Int)
         suspend fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)

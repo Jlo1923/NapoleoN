@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_display_name">Nome de exibição</string>
     <string name="text_terms_and_conditions_line_one">Ao clicar em Registro, você aceita o</string>
     <string name="text_terms_and_conditions_line_two">termos, condições e políticas de privacidade.</string>
     <string name="text_nickname_required">O apelido é obrigatório.</string>
-    <string name="text_nickname_not_contain_enough_char">O apelido deve conter no mínimo 5 caracteres</string>
     <string name="text_nickname_must_not_contain_space">Não pode conter espaços em branco</string>
     <string name="text_cant_contain_special_characters">Não pode conter caracteres especiais</string>
     <string name="text_nickname_contain_at_least_one_number">Ele deve conter pelo menos um número</string>

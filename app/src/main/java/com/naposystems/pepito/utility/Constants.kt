@@ -80,6 +80,11 @@ object Constants {
         FALSE(0)
     }
 
+    enum class ChangeFake constructor(val option: Int) {
+        NAME(1),
+        NICKNAME(2)
+    }
+
     enum class DeleteMessages constructor(val option: Int) {
         BY_SELECTION(1),
         BY_UNRECEIVED(2),

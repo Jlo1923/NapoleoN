@@ -47,12 +47,21 @@ data class Contact(
         return result
     }
 
-    fun getNickname(context: Context): String = when {
+    fun getNickName(): String = when {
         nicknameFake.isNotEmpty() -> {
-            context.getString(R.string.label_nickname, nicknameFake)
+            nicknameFake
         }
         else -> {
-            context.getString(R.string.label_nickname, nickname)
+            nickname
+        }
+    }
+
+    fun getName(): String = when {
+        displayNameFake.isNotEmpty() -> {
+            displayNameFake
+        }
+        else -> {
+            displayName
         }
     }
 

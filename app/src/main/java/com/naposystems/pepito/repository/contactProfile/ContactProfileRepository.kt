@@ -1,11 +1,9 @@
 package com.naposystems.pepito.repository.contactProfile
 
-import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.dto.muteConversation.MuteConversationErrorDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
-import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contactProfile.IContractContactProfile
 import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
@@ -19,18 +17,6 @@ class ContactProfileRepository@Inject constructor(
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
-    }
-
-    override fun getLocalContact(contactId: Int): LiveData<Contact> {
-        return contactDataSource.getContact(contactId)
-    }
-
-    override suspend fun updateNameFakeContact(contactId: Int, nameFake: String) {
-        contactDataSource.updateNameFakeContact(contactId, nameFake)
-    }
-
-    override suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String) {
-        contactDataSource.updateNicknameFakeContact(contactId, nicknameFake)
     }
 
     override suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
