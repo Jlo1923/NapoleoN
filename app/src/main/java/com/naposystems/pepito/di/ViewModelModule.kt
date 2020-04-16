@@ -50,6 +50,7 @@ import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.Validat
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
@@ -264,6 +265,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ContactProfileShareViewModel::class)
     internal abstract fun bindContactProfileShareViewModel(viewModel: ContactProfileShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactRepositoryShareViewModel::class)
+    internal abstract fun bindContactRepositoryShareViewModel(viewModel: ContactRepositoryShareViewModel): ViewModel
 
     @Binds
     @IntoMap

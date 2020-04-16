@@ -73,10 +73,9 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
         }
     }
 
-    override fun getContactsAndMessages() {
+    override fun getMessages() {
         viewModelScope.launch {
             try {
-                repository.getContacts()
                 repository.getRemoteMessages()
             } catch (ex: Exception) {
                 Timber.e(ex)

@@ -24,11 +24,14 @@ import javax.inject.Singleton
         RecoveryAccountQuestionsModule::class, RegisterRecoveryAccountQuestionModule::class,
         AddContactModule::class, HomeModule::class, SocketModule::class,
         ActivateBiometricsModule::class, EnterPinModule::class, UnlockAppTimeModule::class,
-        ContactProfileModule::class, MuteConversationModule::class, ChangeFakesModule::class, ShareContactModule::class,
-        ContactProfileShareModule::class, BaseModule::class, SelfDestructTimeMessageNotSentModule::class, AttachmentGalleryFolderModule::class,
+        ContactProfileModule::class, MuteConversationModule::class, ChangeFakesModule::class,
+        ShareContactModule::class, ContactProfileShareModule::class,
+        ContactRepositoryShareModule::class, BaseModule::class,
+        SelfDestructTimeMessageNotSentModule::class, AttachmentGalleryFolderModule::class,
         AttachmentGalleryModule::class, ValidatePasswordPreviousRecoveryAccountModule::class,
-        RecoveryOlderAccountQuestionsModule::class, AccountAttackDialogModule::class, SubscriptionModule::class,
-        NapoleonKeyboardGifModule::class, AttachmentLocationModule::class, ConversationCallModule::class,
+        RecoveryOlderAccountQuestionsModule::class, AccountAttackDialogModule::class,
+        SubscriptionModule::class, NapoleonKeyboardGifModule::class,
+        AttachmentLocationModule::class, ConversationCallModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {

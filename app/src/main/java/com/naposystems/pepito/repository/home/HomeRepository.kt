@@ -7,7 +7,6 @@ import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
-import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
@@ -147,26 +146,6 @@ class HomeRepository @Inject constructor(
         )
 
         quoteDataSource.insertQuote(quote)
-    }
-
-    override suspend fun getContacts() {
-        try {
-
-            val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
-
-            if (response.isSuccessful) {
-
-                val contactResDTO = response.body()!!
-
-                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
-
-                contactLocalDataSource.insertOrUpdateContactList(contacts)
-            } else {
-                Timber.e(response.errorBody()!!.string())
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
     }
 
     override suspend fun getDeletedMessages() {

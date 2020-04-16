@@ -13,7 +13,7 @@ interface IContractHome {
         fun getUserLiveData()
         fun getFriendshipQuantity()
         fun subscribeToGeneralSocketChannel()
-        fun getContactsAndMessages()
+        fun getMessages()
         fun getDeletedMessages()
         fun insertSubscription()
         fun getFreeTrial(): Long
@@ -29,7 +29,6 @@ interface IContractHome {
         suspend fun subscribeToGeneralSocketChannel()
         fun getConversations(): LiveData<List<ConversationAndContact>>
         suspend fun getRemoteMessages()
-        suspend fun getContacts()
         suspend fun getDeletedMessages()
         suspend fun insertSubscription()
         fun getFreeTrial(): Long

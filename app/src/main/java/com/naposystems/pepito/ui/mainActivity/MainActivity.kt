@@ -16,6 +16,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -43,6 +44,7 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -63,6 +65,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
+    private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
+        viewModelFactory
+    }
     private var accountStatus: Int = 0
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
@@ -172,6 +177,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
         disposable.add(disposableIncomingCall)
+
+        val disposableFriendRequestAccepted = RxBus.listen(RxEvent.FriendshipRequestAccepted::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                contactRepositoryShareViewModel.getContacts()
+            }
+        disposable.add(disposableFriendRequestAccepted)
 
         setSupportActionBar(binding.toolbar)
 
