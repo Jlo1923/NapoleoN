@@ -80,9 +80,10 @@ object Constants {
         FALSE(0)
     }
 
-    enum class ChangeFake constructor(val option: Int) {
-        NAME(1),
-        NICKNAME(2)
+    enum class ChangeParams constructor(val option: Int) {
+        NAME_FAKE(1),
+        NICKNAME_FAKE(2),
+        NAME_USER(3)
     }
 
     enum class DeleteMessages constructor(val option: Int) {

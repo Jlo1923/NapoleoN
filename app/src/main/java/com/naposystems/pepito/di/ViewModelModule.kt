@@ -12,7 +12,7 @@ import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFolder
 import com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationViewModel
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
-import com.naposystems.pepito.ui.changeFakes.ChangeFakesDialogViewModel
+import com.naposystems.pepito.ui.changeParams.ChangeParamsDialogViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
 import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.pepito.ui.contactUs.ContactUsViewModel
@@ -54,6 +54,7 @@ import com.naposystems.pepito.utility.sharedViewModels.contactRepository.Contact
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -140,6 +141,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UserDisplayFormatShareViewModel::class)
     internal abstract fun bindUserDisplayFormatShareViewModel(viewModel: UserDisplayFormatShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UserProfileShareViewModel::class)
+    internal abstract fun bindUserProfileShareViewModel(viewModel: UserProfileShareViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -238,8 +244,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ChangeFakesDialogViewModel::class)
-    internal abstract fun bindChangeFakesDialogViewModel(viewModel: ChangeFakesDialogViewModel): ViewModel
+    @ViewModelKey(ChangeParamsDialogViewModel::class)
+    internal abstract fun bindChangeFakesDialogViewModel(viewModel: ChangeParamsDialogViewModel): ViewModel
 
     @Binds
     @IntoMap

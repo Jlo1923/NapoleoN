@@ -28,7 +28,7 @@ import com.naposystems.pepito.databinding.ContactProfileFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
-import com.naposystems.pepito.ui.changeFakes.ChangeFakesDialogFragment
+import com.naposystems.pepito.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
@@ -131,18 +131,18 @@ class ContactProfileFragment : BaseFragment() {
         }
 
         binding.imageButtonChangeNameEndIcon.setOnClickListener {
-            setupChangeFakeDialog(Constants.ChangeFake.NAME.option)
+            setupChangeFakeDialog(Constants.ChangeParams.NAME_FAKE.option)
         }
 
         binding.imageButtonChangeNicknameEndIcon.setOnClickListener {
-            setupChangeFakeDialog(Constants.ChangeFake.NICKNAME.option)
+            setupChangeFakeDialog(Constants.ChangeParams.NICKNAME_FAKE.option)
         }
 
         return binding.root
     }
 
     private fun setupChangeFakeDialog(option : Int) {
-        val dialog = ChangeFakesDialogFragment.newInstance(
+        val dialog = ChangeParamsDialogFragment.newInstance(
             args.contactId, option
         )
         dialog.show(childFragmentManager, "ChangeFakesDialog")

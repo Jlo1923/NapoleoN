@@ -10,7 +10,7 @@ import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFolder
 import com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationFragment
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment
-import com.naposystems.pepito.ui.changeFakes.ChangeFakesDialogFragment
+import com.naposystems.pepito.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment
 import com.naposystems.pepito.ui.contactProfile.ContactProfileFragment
 import com.naposystems.pepito.ui.contactUs.ContactUsFragment
@@ -155,7 +155,7 @@ abstract class FragmentBindingModule {
     abstract fun bindConversationMuteDialogFragment(): MuteConversationDialogFragment
 
     @ContributesAndroidInjector
-    abstract fun bindChangeFakesDialogFragment(): ChangeFakesDialogFragment
+    abstract fun bindChangeFakesDialogFragment(): ChangeParamsDialogFragment
 
     @ContributesAndroidInjector
     abstract fun bindSelfDestructTimeMessageNotSentDialogFragment(): SelfDestructTimeMessageNotSentDialogFragment

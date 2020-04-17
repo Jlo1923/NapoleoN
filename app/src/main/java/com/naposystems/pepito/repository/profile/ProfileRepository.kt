@@ -1,5 +1,6 @@
 package com.naposystems.pepito.repository.profile
 
+import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.profile.UpdateUserInfo422DTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoErrorDTO
@@ -22,7 +23,6 @@ import kotlin.reflect.full.memberProperties
 
 class ProfileRepository @Inject constructor(
     private val localDataSource: UserLocalDataSource,
-    private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractProfile.Repository {
@@ -31,8 +31,8 @@ class ProfileRepository @Inject constructor(
         Moshi.Builder().build()
     }
 
-    override suspend fun getUser(): User {
-        return localDataSource.getUser(
+    override suspend fun getUser(): LiveData<User> {
+        return localDataSource.getUserLiveData(
             sharedPreferencesManager.getString(
                 Constants.SharedPreferences.PREF_FIREBASE_ID,
                 ""
@@ -40,29 +40,8 @@ class ProfileRepository @Inject constructor(
         )
     }
 
-    override suspend fun updateUserInfo(updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO> {
-        return napoleonApi.updateUserInfo(updateUserInfoReqDTO)
-    }
-
     override suspend fun updateLocalUser(user: User) {
         localDataSource.updateUser(user)
     }
 
-    fun get422Error(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
-
-        val adapter = moshi.adapter(UpdateUserInfo422DTO::class.java)
-
-        val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
-
-        return WebServiceUtils.get422Errors(enterCodeError!!)
-    }
-
-    fun getDefaultError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
-
-        val adapter = moshi.adapter(UpdateUserInfoErrorDTO::class.java)
-
-        val updateUserInfoError = adapter.fromJson(response.errorBody()!!.string())
-
-        return arrayListOf(updateUserInfoError!!.error)
-    }
 }
