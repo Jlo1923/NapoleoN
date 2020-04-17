@@ -31,11 +31,10 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
 
     //region Implementation IContractContacts.ViewModel
 
-    override fun getContacts() {
+    override fun getLocalContacts() {
         viewModelScope.launch {
             try {
                 _contacts = repository.getLocalContacts()
-                repository.getRemoteContacts()
                 _contactsLoaded.value = true
             } catch (ex: Exception) {
                 Timber.e(ex)

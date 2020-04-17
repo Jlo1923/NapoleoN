@@ -22,6 +22,7 @@ import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDis
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
@@ -37,7 +38,12 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: ContactsViewModel by viewModels { viewModelFactory }
-    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels { viewModelFactory }
+    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
+        viewModelFactory
+    }
+    private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
+        viewModelFactory
+    }
     private lateinit var shareContactViewModel: ShareContactViewModel
     private lateinit var binding: ContactsFragmentBinding
     private lateinit var adapter: ContactsAdapter
@@ -67,7 +73,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
             if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
                 binding.viewSwitcher.showNext()
             }
-            viewModel.getContacts()
+            getContacts()
             binding.swipeRefresh.isRefreshing = false
         }
 
@@ -85,7 +91,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
         binding.viewModel = viewModel
 
-        viewModel.getContacts()
+        getContacts()
 
         observeContacts()
 
@@ -100,6 +106,11 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         })
 
         observeContactsForSearch()
+    }
+
+    private fun getContacts() {
+        contactRepositoryShareViewModel.getContacts()
+        viewModel.getLocalContacts()
     }
 
     private fun observeContactsForSearch() {
@@ -119,14 +130,16 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
     private fun observeContacts() {
         viewModel.contacts.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-            if (it.isNotEmpty()) {
-                if (binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
-                    binding.viewSwitcher.showNext()
-                }
-            } else {
-                if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
-                    binding.viewSwitcher.showNext()
+            if (it != null) {
+                adapter.submitList(it)
+                if (it.isNotEmpty()) {
+                    if (binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
+                        binding.viewSwitcher.showNext()
+                    }
+                } else {
+                    if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
+                        binding.viewSwitcher.showNext()
+                    }
                 }
             }
         })

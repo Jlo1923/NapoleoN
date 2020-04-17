@@ -70,6 +70,10 @@ object NotificationUtils {
                     RxBus.publish(RxEvent.NewFriendshipRequest())
                 }
 
+                Constants.NotificationType.FRIEND_REQUEST_ACCEPTED.type -> {
+                    RxBus.publish(RxEvent.FriendshipRequestAccepted())
+                }
+
                 Constants.NotificationType.VERIFICATION_CODE.type, Constants.NotificationType.SUBSCRIPTION.type -> {
                     with(NotificationManagerCompat.from(context)) {
                         notify(Random().nextInt(), builder.build())

@@ -9,6 +9,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -24,6 +25,7 @@ import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDis
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -43,7 +45,12 @@ class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var shareContactViewModel: ShareContactViewModel
-    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels { viewModelFactory }
+    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
+        viewModelFactory
+    }
+    private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
+        viewModelFactory
+    }
     private lateinit var binding: HomeFragmentBinding
     lateinit var adapter: ConversationAdapter
     private val disposable: CompositeDisposable by lazy {
@@ -109,7 +116,9 @@ class HomeFragment : Fragment() {
 
         viewModel.getUserLiveData()
 
-        viewModel.getContactsAndMessages()
+        viewModel.getMessages()
+
+        contactRepositoryShareViewModel.getContacts()
 
         viewModel.getDeletedMessages()
 
