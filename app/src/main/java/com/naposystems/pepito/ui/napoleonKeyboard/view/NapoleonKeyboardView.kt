@@ -143,10 +143,7 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
         val imageColor = Utils.convertAttrToColorResource(context, R.attr.colorPrimary)
 
         imageView.setColorFilter(
-            ContextCompat.getColor(
-                context,
-                imageColor
-            ),
+            imageColor,
             PorterDuff.Mode.SRC_IN
         )
     }
@@ -155,10 +152,7 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
         val imageColor = Utils.convertAttrToColorResource(context, R.attr.attrActionBarItemBackground)
 
         imageView.setColorFilter(
-            ContextCompat.getColor(
-                context,
-                imageColor
-            ),
+            imageColor,
             PorterDuff.Mode.SRC_IN
         )
     }

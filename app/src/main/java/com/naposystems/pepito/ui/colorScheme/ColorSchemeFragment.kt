@@ -12,20 +12,21 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ColorSchemeFragmentBinding
+import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.colorScheme.adapter.ColorSchemeAdapter
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class ColorSchemeFragment : Fragment() {
+class ColorSchemeFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = ColorSchemeFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: ColorSchemeViewModel
     private lateinit var binding: ColorSchemeFragmentBinding
@@ -67,6 +68,7 @@ class ColorSchemeFragment : Fragment() {
             if(theme == Constants.ThemesApplication.DARK_NAPOLEON.theme){
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
+            validateStateOutputControl()
             activity?.recreate()
         }
 
