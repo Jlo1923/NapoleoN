@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Task
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
@@ -38,6 +39,10 @@ class NapoleonKeyboardStickerFragment : Fragment() {
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var mFirebaseStorage: FirebaseStorage
     private var mListener: NapoleonKeyboardStickerListener? = null
+
+    private val listNapoleonEmoji by lazy {
+        mutableListOf<StorageReference>()
+    }
 
     interface NapoleonKeyboardStickerListener {
         fun onStickerSelected()
@@ -94,9 +99,7 @@ class NapoleonKeyboardStickerFragment : Fragment() {
         napoleonEmojiRemoteConfigList?.let { emojiList ->
             val storageRef = mFirebaseStorage.reference
 
-            inflateHeader(storageRef)
-
-            val listNapoleonEmoji = mutableListOf<StorageReference>()
+            inflateHeader(storageRef, napoleonEmojiRemoteConfigList)
 
             emojiList.forEach { napoleonEmoji ->
                 listNapoleonEmoji.add(storageRef.child(napoleonEmoji.type))
@@ -114,50 +117,54 @@ class NapoleonKeyboardStickerFragment : Fragment() {
         }
     }
 
-    private fun inflateHeader(storageRef: StorageReference): Task<ListResult> {
-        val emojisRef = storageRef.child("emojis")
+    private fun inflateHeader(
+        storageRef: StorageReference,
+        napoleonEmojiRemoteConfigList: List<NapoleonEmojiRemoteConfig>
+    ){
+        try {
+            val emojisRef = storageRef.child("emojis")
 
-        return emojisRef.listAll()
-            .addOnSuccessListener { listResult ->
-                listResult.items.forEachIndexed { index, itemStorageRef ->
-                    context?.let {
-                        val layoutInflater = LayoutInflater.from(context!!)
-                        val bindingHeaderItem =
-                            NapoleonKeyboardStickerHeaderItemBinding.inflate(layoutInflater)
+            napoleonEmojiRemoteConfigList.forEachIndexed { index, napoleonEmoji ->
+                context?.let {
+                    val itemStorageRef = emojisRef.child("${napoleonEmoji.type}.png")
 
-                        val file = FileManager.createFile(
-                            it,
-                            itemStorageRef.name,
-                            Constants.NapoleonCacheDirectories.IMAGES.folder
-                        )
+                    val layoutInflater = LayoutInflater.from(context!!)
+                    val bindingHeaderItem =
+                        NapoleonKeyboardStickerHeaderItemBinding.inflate(layoutInflater)
 
-                        if (!file.exists()) {
-                            itemStorageRef.getFile(file)
-                                .addOnSuccessListener {
-                                    bindingHeaderItem.imageViewProgress.loadImageFile(file)
-                                }
-                        } else {
-                            bindingHeaderItem.imageViewProgress.loadImageFile(file)
-                        }
+                    val file = FileManager.createFile(
+                        it,
+                        itemStorageRef.name,
+                        Constants.NapoleonCacheDirectories.IMAGES.folder
+                    )
 
-                        binding.listViewHeader.addView(bindingHeaderItem.root)
-
-                        val layoutParams = bindingHeaderItem.imageViewProgress.layoutParams
-                        layoutParams.apply {
-                            val dp80 = Utils.dpToPx(context!!, 60f)
-                            width = dp80
-                            height = dp80
-                        }
-
-                        bindingHeaderItem.root.setOnClickListener(headerItemClickListener(index))
-
-                        bindingHeaderItem.imageViewProgress.layoutParams = layoutParams
+                    if (!file.exists()) {
+                        itemStorageRef.getFile(file)
+                            .addOnSuccessListener {
+                                bindingHeaderItem.imageViewProgress.loadImageFile(file)
+                            }
+                    } else {
+                        bindingHeaderItem.imageViewProgress.loadImageFile(file)
                     }
+
+                    binding.listViewHeader.addView(bindingHeaderItem.root)
+
+                    val layoutParams = bindingHeaderItem.imageViewProgress.layoutParams
+                    layoutParams.apply {
+                        val dp80 = Utils.dpToPx(context!!, 60f)
+                        width = dp80
+                        height = dp80
+                    }
+
+                    bindingHeaderItem.root.setOnClickListener(headerItemClickListener(index))
+
+                    bindingHeaderItem.imageViewProgress.layoutParams = layoutParams
                 }
             }
-            .addOnFailureListener { error ->
-                Timber.e(error)
-            }
+        } catch (e: Exception) {
+            Crashlytics.log(e.localizedMessage)
+            Timber.e(e)
+        }
     }
 
 
