@@ -1,4 +1,4 @@
-package com.naposystems.pepito.ui.changeFakes
+package com.naposystems.pepito.ui.changeParams
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ChangeFakesDialogViewModel @Inject constructor(
-    private val repository: IContractChangeFakes.Repository
-) : ViewModel(), IContractChangeFakes.ViewModel {
+class ChangeParamsDialogViewModel @Inject constructor(
+    private val repository: IContractChangeParams.Repository
+) : ViewModel(), IContractChangeParams.ViewModel {
 
     private val _responseEditFake = MutableLiveData<Boolean>()
     val responseEditFake: LiveData<Boolean>

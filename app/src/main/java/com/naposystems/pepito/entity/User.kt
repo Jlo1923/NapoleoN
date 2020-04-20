@@ -16,7 +16,7 @@ data class User(
     @ColumnInfo(name = "access_pin") val accessPin: String,
     @ColumnInfo(name = "image_url") val imageUrl: String,
     @ColumnInfo(name = "status") var status: String,
-    @ColumnInfo(name = "header_uri") val headerUri: String,
+    @ColumnInfo(name = "header_uri") var headerUri: String,
     @ColumnInfo(name = "chat_background") val chatBackground: String,
     @ColumnInfo(name = "type") val type: Int,
     @ColumnInfo(name = "create_at")val createAt:Long

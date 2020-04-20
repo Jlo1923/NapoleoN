@@ -13,7 +13,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -21,7 +20,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.transition.TransitionInflater
 import com.naposystems.pepito.utility.Constants
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
@@ -31,18 +29,17 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ProfileFragmentBinding
-import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
-import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.User
+import com.naposystems.pepito.dto.user.UserAvatarReqDTO
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
-import com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
+import com.naposystems.pepito.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
@@ -66,12 +63,14 @@ class ProfileFragment : BaseFragment() {
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
+    private val userProfileShareViewModel: UserProfileShareViewModel by viewModels {
+        viewModelFactory
+    }
     private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
     private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
     private var compressedFile: File? = null
     private lateinit var fileName: String
     private lateinit var subFolder: String
-    private lateinit var animatedThreeEditName: AnimatedThreeVectorView
     private var aspectRatioX: Float = 1f
     private var aspectRatioY: Float = 1f
     private val bitmapMaxWidth = 1000
@@ -83,11 +82,6 @@ class ProfileFragment : BaseFragment() {
         super.onAttach(context)
     }
 
-    override fun onResume() {
-        animatedThreeEditName.clearAnimation()
-        super.onResume()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -96,8 +90,6 @@ class ProfileFragment : BaseFragment() {
             inflater, R.layout.profile_fragment, container, false
         )
         binding.lifecycleOwner = this
-
-        animatedThreeEditName = binding.imageButtonNameOptionEndIcon
 
         binding.floatingButtonProfileImage.setOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.AVATAR.folder
@@ -131,41 +123,10 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.imageButtonNameOptionEndIcon.setOnClickListener {
-            animatedThreeEditName.apply {
-                if (!hasBeenInitialized) {
-                    editToCancel(binding.editTextDisplayName)
-                } else {
-                    cancelToEdit(binding.editTextDisplayName)
-                }
-            }
-        }
-
-        binding.editTextDisplayName.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                val newDisplayName = view.text.toString()
-
-                animatedThreeEditName.cancelToHourglass()
-
-                binding.editTextDisplayName.apply {
-                    isEnabled = false
-                }
-
-                val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
-                    displayName = newDisplayName
-                )
-
-                viewModel.updateDisplayName(updateUserInfoReqDTO, {
-                    animatedThreeEditName.hourglassToEdit()
-                }, {
-                    animatedThreeEditName.hourglassToCancel()
-                    binding.editTextDisplayName.apply {
-                        isEnabled = true
-                    }
-                })
-                false
-            } else
-                true
+            val dialog = ChangeParamsDialogFragment.newInstance(
+                0, Constants.ChangeParams.NAME_USER.option
+            )
+            dialog.show(childFragmentManager, "ChangeFakesDialog")
         }
 
         binding.optionStatus.setOnClickListener(statusClickListener())
@@ -197,8 +158,10 @@ class ProfileFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.viewModel = viewModel
 
-        if (viewModel.user.value!!.imageUrl.isNotEmpty()) {
-            binding.imageViewProfileImage.background = null
+        viewModel.user.value?.let { user->
+            if (user.imageUrl.isNotEmpty()) {
+                binding.imageViewProfileImage.background = null
+            }
         }
 
         baseViewModel.getOutputControl()
@@ -238,27 +201,15 @@ class ProfileFragment : BaseFragment() {
                         updateImageProfile(Utils.convertBitmapToBase64(bitmap!!))
                     }
                     Constants.NapoleonCacheDirectories.HEADER.folder -> {
-                        val viewModelUser = viewModel.user.value!!
+                        viewModel.user.value?.let { user ->
+                            user.headerUri =  compressedFile?.name ?: ""
 
-                        val user = User(
-                            firebaseId = viewModelUser.firebaseId,
-                            id = viewModelUser.id,
-                            nickname = viewModelUser.nickname,
-                            displayName = viewModelUser.displayName,
-                            accessPin = viewModelUser.accessPin,
-                            imageUrl = viewModelUser.imageUrl,
-                            status = viewModelUser.status,
-                            headerUri = compressedFile?.name ?: "",
-                            chatBackground = viewModelUser.chatBackground,
-                            type = viewModelUser.type,
-                            createAt = viewModelUser.createAt
-                        )
+                            Glide.with(this)
+                                .load(uri)
+                                .into(binding.imageViewBackground)
 
-                        Glide.with(this)
-                            .load(uri)
-                            .into(binding.imageViewBackground)
-
-                        viewModel.updateLocalUser(user)
+                            userProfileShareViewModel.updateUserLocal(user)
+                        }
                     }
                 }
 
@@ -271,18 +222,12 @@ class ProfileFragment : BaseFragment() {
 
     private fun updateImageProfile(avatar: String) {
         viewModel.user.value?.let { user ->
-            val updateUserInfoReqDTO = UpdateUserInfoReqDTO(
-                displayName = user.displayName,
+            val updateUserInfoReqDTO = UserAvatarReqDTO(
                 avatar = avatar
             )
             showAvatarProgress()
-            viewModel.updateAvatar(updateUserInfoReqDTO)
+            userProfileShareViewModel.updateUserInfo(user, updateUserInfoReqDTO)
         }
-    }
-
-    override fun onDetach() {
-        animatedThreeEditName.clearAnimation()
-        super.onDetach()
     }
 
     private fun statusClickListener() = View.OnClickListener {
@@ -312,32 +257,13 @@ class ProfileFragment : BaseFragment() {
             }
         })
 
-        viewModel.userUpdated.observe(viewLifecycleOwner, Observer {
+        userProfileShareViewModel.userUpdated.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-
                 hideAvatarProgressBar()
-
-                val viewModelUser = viewModel.user.value!!
-
-                val user = User(
-                    firebaseId = viewModelUser.firebaseId,
-                    id = viewModelUser.id,
-                    nickname = it.nickname,
-                    displayName = it.displayName,
-                    accessPin = viewModelUser.accessPin,
-                    imageUrl = it.avatarUrl,
-                    status = it.status,
-                    headerUri = viewModelUser.headerUri,
-                    chatBackground = viewModelUser.chatBackground,
-                    type = viewModelUser.type,
-                    createAt = viewModelUser.createAt
-                )
-
-                viewModel.updateLocalUser(user)
             }
         })
 
-        viewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
+        userProfileShareViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
                 snackbarUtils.showSnackbar()
@@ -433,20 +359,8 @@ class ProfileFragment : BaseFragment() {
                         }
                         Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
                             viewModel.user.value?.let { user ->
-                                val userWithoutBanner = User(
-                                    firebaseId = user.firebaseId,
-                                    id = user.id,
-                                    nickname = user.nickname,
-                                    displayName = user.displayName,
-                                    accessPin = user.accessPin,
-                                    imageUrl = user.imageUrl,
-                                    status = user.status,
-                                    headerUri = "",
-                                    chatBackground = user.chatBackground,
-                                    type = user.type,
-                                    createAt = user.createAt
-                                )
-                                viewModel.updateLocalUser(userWithoutBanner)
+                                user.headerUri = ""
+                                userProfileShareViewModel.updateUserLocal(user)
                             }
                         }
                     }

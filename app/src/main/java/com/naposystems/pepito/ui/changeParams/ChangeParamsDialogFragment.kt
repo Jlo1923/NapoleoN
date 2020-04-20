@@ -1,4 +1,4 @@
-package com.naposystems.pepito.ui.changeFakes
+package com.naposystems.pepito.ui.changeParams
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProviders
@@ -9,14 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ChangeFakesDialogFragmentBinding
+import com.naposystems.pepito.dto.user.DisplayNameReqDTO
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -24,10 +28,10 @@ import javax.inject.Inject
 private const val CONTACT_ID = "contactId"
 private const val OPTION = "option"
 
-class ChangeFakesDialogFragment : DialogFragment() {
+class ChangeParamsDialogFragment : DialogFragment() {
 
     companion object {
-        fun newInstance(contactId : Int , option : Int) = ChangeFakesDialogFragment().apply {
+        fun newInstance(contactId : Int , option : Int) = ChangeParamsDialogFragment().apply {
             arguments = Bundle().apply {
                 putInt(CONTACT_ID, contactId)
                 putInt(OPTION, option)
@@ -37,8 +41,11 @@ class ChangeFakesDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ChangeFakesDialogViewModel
+    private lateinit var viewModel: ChangeParamsDialogViewModel
     private val contactProfileShareViewModel : ContactProfileShareViewModel by activityViewModels {
+        viewModelFactory
+    }
+    private val userProfileShareViewModel: UserProfileShareViewModel by viewModels {
         viewModelFactory
     }
     private lateinit var binding: ChangeFakesDialogFragmentBinding
@@ -58,15 +65,26 @@ class ChangeFakesDialogFragment : DialogFragment() {
 
         binding.buttonAccept.setOnClickListener {
             arguments?.let { args ->
-                if(args.getInt(OPTION) == Constants.ChangeFake.NAME.option) {
-                    viewModel.updateNameFakeContact(
-                        args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
-                    )
-                }
-                else {
-                    viewModel.updateNicknameFakeContact(
-                        args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
-                    )
+                when(args.getInt(OPTION)) {
+                    Constants.ChangeParams.NAME_FAKE.option -> {
+                        viewModel.updateNameFakeContact(
+                            args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
+                        )
+                    }
+                    Constants.ChangeParams.NICKNAME_FAKE.option -> {
+                        viewModel.updateNicknameFakeContact(
+                            args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
+                        )
+                    } else -> {
+                        userProfileShareViewModel.user.value?.let { user ->
+                            userProfileShareViewModel.updateUserInfo(
+                                user,
+                                DisplayNameReqDTO (
+                                    displayName = binding.editTextDisplay.text.toString()
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -92,7 +110,9 @@ class ChangeFakesDialogFragment : DialogFragment() {
         }
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(ChangeFakesDialogViewModel::class.java)
+            .get(ChangeParamsDialogViewModel::class.java)
+
+        userProfileShareViewModel.getUser()
 
         viewModel.responseEditFake.observe(viewLifecycleOwner, Observer {
             if (it) {
@@ -100,30 +120,56 @@ class ChangeFakesDialogFragment : DialogFragment() {
             }
         })
 
-        activity?.let {activity ->
-            contactProfileShareViewModel.contact.observe(activity, Observer { contact ->
-                if (contact != null) {
-                    when(arguments?.getInt(OPTION)) {
-                        Constants.ChangeFake.NAME.option -> {
-                            binding.editTextDisplay.setText(contact.getName())
-                        }else -> {
-                        binding.editTextDisplay.setText(contact.getNickName())
-                    }
-                    }
-                }
-            })
-        }
+        observers()
 
         setupTitle()
+    }
+
+    private fun observers() {
+        when(arguments?.getInt(OPTION)) {
+            Constants.ChangeParams.NAME_USER.option -> {
+                userProfileShareViewModel.userUpdated.observe(viewLifecycleOwner, Observer {
+                    if(it != null) {
+                        dismiss()
+                    }
+                })
+                userProfileShareViewModel.user.observe(viewLifecycleOwner, Observer { user ->
+                    if(user != null) {
+                        binding.editTextDisplay.setText(user.displayName)
+                    }
+                })
+                userProfileShareViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
+                    if (it.isNotEmpty()) {
+                        Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+            else -> {
+                activity?.let {activity ->
+                    contactProfileShareViewModel.contact.observe(activity, Observer { contact ->
+                        if (contact != null) {
+                            when(arguments?.getInt(OPTION)) {
+                                Constants.ChangeParams.NAME_FAKE.option -> {
+                                    binding.editTextDisplay.setText(contact.getName())
+                                }
+                                Constants.ChangeParams.NICKNAME_FAKE.option-> {
+                                    binding.editTextDisplay.setText(contact.getNickName())
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        }
     }
 
     private fun listenerEditText(): TextWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {}
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            if(count == 0) {
+            if(binding.editTextDisplay.text?.count() == 0) {
                 when(arguments?.getInt(OPTION)) {
-                    Constants.ChangeFake.NAME.option -> {
+                    Constants.ChangeParams.NAME_FAKE.option -> {
                         enabledButtonAccept(true)
                     }
                     else -> {
@@ -134,12 +180,12 @@ class ChangeFakesDialogFragment : DialogFragment() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            when (count) {
+            when (binding.editTextDisplay.text?.count()) {
                 in 1..4 -> {
                     enabledButtonAccept(false)
                 }
                 0 -> {
-                    if(arguments?.getInt(OPTION) == Constants.ChangeFake.NAME.option) {
+                    if(arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_FAKE.option) {
                         enabledButtonAccept(true)
                     } else {
                         enabledButtonAccept(false)
@@ -159,7 +205,8 @@ class ChangeFakesDialogFragment : DialogFragment() {
                 binding.textInputLayoutDisplay.error = null
             } else {
                 when(arguments?.getInt(OPTION)) {
-                    Constants.ChangeFake.NAME.option -> {
+                    Constants.ChangeParams.NAME_FAKE.option,
+                    Constants.ChangeParams.NAME_USER.option -> {
                         binding.textInputLayoutDisplay.error = getString(R.string.text_name_not_contain_enough_char)
                     }
                     else -> {
@@ -172,11 +219,11 @@ class ChangeFakesDialogFragment : DialogFragment() {
 
     private fun setupTitle() {
         val string =when(arguments?.get(OPTION)) {
-            Constants.ChangeFake.NAME.option -> {
-                R.string.text_name
+            Constants.ChangeParams.NICKNAME_FAKE.option -> {
+                R.string.text_nickname
             }
             else -> {
-                R.string.text_nickname
+                R.string.text_name
             }
         }
         binding.textViewTitle.text = context?.getString(string)

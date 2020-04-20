@@ -183,8 +183,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_person_black" />
 
-                    <!-- EDIT ICON -->
-                    <com.naposystems.pepito.ui.custom.AnimatedThreeVectorView
+                    <ImageButton
                         android:id="@+id/imageButton_name_option_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -214,8 +213,7 @@
                         app:layout_constraintStart_toEndOf="@id/imageView_name_option_start_icon"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <!-- USER NAME -->
-                    <com.google.android.material.textfield.TextInputEditText
+                    <TextView
                         android:id="@+id/editText_display_name"
                         style="@style/SmallBodyTextView"
                         android:layout_width="0dp"

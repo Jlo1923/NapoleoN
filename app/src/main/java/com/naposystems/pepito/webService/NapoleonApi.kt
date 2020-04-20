@@ -109,7 +109,7 @@ interface NapoleonApi {
     suspend fun createAccount(@Body createAccountReqDTO: CreateAccountReqDTO): Response<CreateAccountResDTO>
 
     @PUT(UPDATE_USER_INFO)
-    suspend fun updateUserInfo(@Body updateUserInfoReqDTO: UpdateUserInfoReqDTO): Response<UpdateUserInfoResDTO>
+    suspend fun updateUserInfo(@Body updateUserInfoReqDTO: Any): Response<UpdateUserInfoResDTO>
 
     @PUT(UPDATE_USER_INFO)
     suspend fun updateUserStatus(@Body userStatusReqDTO: UserStatusReqDTO): Response<UpdateUserInfoResDTO>
