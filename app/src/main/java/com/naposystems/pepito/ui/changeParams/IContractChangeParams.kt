@@ -1,9 +1,7 @@
-package com.naposystems.pepito.ui.changeFakes
+package com.naposystems.pepito.ui.changeParams
 
-import androidx.lifecycle.LiveData
-import com.naposystems.pepito.entity.Contact
 
-interface IContractChangeFakes {
+interface IContractChangeParams {
 
     interface ViewModel {
         fun updateNameFakeContact(contactId: Int, nameFake: String)
