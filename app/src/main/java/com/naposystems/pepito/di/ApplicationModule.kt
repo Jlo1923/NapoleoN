@@ -235,12 +235,4 @@ class ApplicationModule {
             socketRepository
         )
     }
-
-    /*@Provides
-    @Singleton
-    fun provideWebRTCClient(
-        context: Context,
-        socketService: IContractSocketService.SocketService,
-        sharedPreferencesManager: SharedPreferencesManager
-    ): IContractWebRTCClient = WebRTCClient(context, socketService, sharedPreferencesManager)*/
 }

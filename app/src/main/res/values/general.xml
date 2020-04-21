@@ -5,7 +5,7 @@
     <string name="text_power_by" translatable="false">Powered by</string>
     <string name="middle_dash" translatable="false">-</string>
     <string name="channel_description" translatable="false">Default channel</string>
-    <string name="default_notification_channel_id" translatable="false">123456789</string>
+    <string name="default_notification_channel_id" translatable="false">Default channel</string>
     <string name="okay" translatable="false">OK</string>
     <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="only_numbers" translatable="false">0123456789</string>

@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
-    private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
+    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
         viewModelFactory
     }
     private var accountStatus: Int = 0
@@ -182,11 +182,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         disposable.add(disposableIncomingCall)
 
-        val disposableFriendRequestAccepted = RxBus.listen(RxEvent.FriendshipRequestAccepted::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                contactRepositoryShareViewModel.getContacts()
-            }
+        val disposableFriendRequestAccepted =
+            RxBus.listen(RxEvent.FriendshipRequestAccepted::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    contactRepositoryShareViewModel.getContacts()
+                }
         disposable.add(disposableFriendRequestAccepted)
 
         setSupportActionBar(binding.toolbar)
@@ -292,18 +293,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         intent.extras?.let { args ->
-            if (args.containsKey(Constants.TYPE_NOTIFICATION)) {
+            if (args.containsKey(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                 val jsonNotification = JSONObject()
                 jsonNotification.put(
-                    Constants.TYPE_NOTIFICATION,
-                    args.getString(Constants.TYPE_NOTIFICATION)?.toInt()!!
+                    Constants.NotificationKeys.TYPE_NOTIFICATION,
+                    args.getString(Constants.NotificationKeys.TYPE_NOTIFICATION)?.toInt()!!
                 )
-                if (args.getString(Constants.TYPE_NOTIFICATION)
+                if (args.getString(Constants.NotificationKeys.TYPE_NOTIFICATION)
                         ?.toInt() == Constants.NotificationType.ENCRYPTED_MESSAGE.type
                 ) {
                     jsonNotification.put(
-                        Constants.TYPE_NOTIFICATION_WITH_CONTACT,
-                        args.getString(Constants.TYPE_NOTIFICATION_WITH_CONTACT)?.toInt()!!
+                        Constants.NotificationKeys.CONTACT,
+                        args.getString(Constants.NotificationKeys.CONTACT)?.toInt()!!
                     )
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
@@ -382,15 +383,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .into(imageViewAvatar)
 
         Glide.with(this)
-            .load(if (user.headerUri.isEmpty()) {
-                defaultHeaderBackground
-            } else {
-                Utils.getFileUri(
-                    context = this,
-                    fileName = user.headerUri,
-                    subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
-                )
-            })
+            .load(
+                if (user.headerUri.isEmpty()) {
+                    defaultHeaderBackground
+                } else {
+                    Utils.getFileUri(
+                        context = this,
+                        fileName = user.headerUri,
+                        subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+                    )
+                }
+            )
             .into(imageViewBackground)
 
         textViewDisplayName.text = user.displayName
