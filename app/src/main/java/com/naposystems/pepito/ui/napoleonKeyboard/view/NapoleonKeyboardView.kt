@@ -6,7 +6,6 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.widget.EmojiAppCompatEditText
 import androidx.fragment.app.Fragment
@@ -77,7 +76,11 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
         napoleonKeyboardGifListener: NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener,
         napoleonKeyboardStickerListener: NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener
     ) {
-        setupAdapter(emojiPageAdapterListener, napoleonKeyboardGifListener, napoleonKeyboardStickerListener)
+        setupAdapter(
+            emojiPageAdapterListener,
+            napoleonKeyboardGifListener,
+            napoleonKeyboardStickerListener
+        )
     }
 
     private fun setupAdapter(
@@ -142,19 +145,14 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
     private fun changeTintToColorPrimary(imageView: ImageView) {
         val imageColor = Utils.convertAttrToColorResource(context, R.attr.colorPrimary)
 
-        imageView.setColorFilter(
-            imageColor,
-            PorterDuff.Mode.SRC_IN
-        )
+        imageView.setColorFilter(imageColor, PorterDuff.Mode.SRC_IN)
     }
 
     private fun changeTintToActionBarItemBackground(imageView: ImageView) {
-        val imageColor = Utils.convertAttrToColorResource(context, R.attr.attrActionBarItemBackground)
+        val imageColor =
+            Utils.convertAttrToColorResource(context, R.attr.attrActionBarItemBackground)
 
-        imageView.setColorFilter(
-            imageColor,
-            PorterDuff.Mode.SRC_IN
-        )
+        imageView.setColorFilter(imageColor, PorterDuff.Mode.SRC_IN)
     }
 
     //region Implementation IContractEmojiView

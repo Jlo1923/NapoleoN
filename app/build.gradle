@@ -17,7 +17,7 @@ android {
         applicationId "com.naposystems.pepito"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 82
+        versionCode 83
 
         versionName "2.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -136,7 +136,7 @@ dependencies {
     implementation 'com.github.yalantis:ucrop:2.2.4'
 
     //Permissions
-    implementation 'com.karumi:dexter:6.0.0'
+    implementation 'com.karumi:dexter:6.1.0'
 
     //Socket-io
     implementation('io.socket:socket.io-client:0.8.3') {

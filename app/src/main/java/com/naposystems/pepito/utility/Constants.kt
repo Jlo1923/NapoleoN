@@ -3,7 +3,7 @@ package com.naposystems.pepito.utility
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
-    const val GIPHY_API_KEY = "3nvsXqW9PgR068WGKRFSRnhV22QnM8iT"
+    const val GIPHY_API_KEY = "R6CTqCVGyxWIAEad1tbbRFouJ6C6hFQX"
     const val DATA_CRYPT = "datacrypt"
     const val TYPE_NOTIFICATION = "type_notification"
     const val TYPE_NOTIFICATION_WITH_CONTACT = "contact"
@@ -272,7 +272,8 @@ object Constants {
         GALLERY(2),
         AUDIO_SELECTION(3),
         DOWNLOADED(4),
-        LOCATION(5)
+        LOCATION(5),
+        RECORD_AUDIO(6)
     }
 
     enum class NapoleonCacheDirectories(val folder: String) {

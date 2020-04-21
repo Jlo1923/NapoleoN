@@ -6,18 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
-import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
-import com.naposystems.pepito.databinding.InputPanelQuoteBinding
+import com.naposystems.pepito.databinding.CustomInputPanelQuoteBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.utility.Constants
-import kotlinx.android.synthetic.main.language_selection_dialog_fragment_item.view.*
 
 class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
     IContractInputPanelQuote {
 
-    private var binding: InputPanelQuoteBinding
+    private var binding: CustomInputPanelQuoteBinding
     private var isCancelable: Boolean = false
     private var isFromInputPanel: Boolean = false
     private var messageAndAttachment: MessageAndAttachment? = null
@@ -34,7 +30,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                 val layoutInflater = getContext().getSystemService(infService) as LayoutInflater
                 binding = DataBindingUtil.inflate(
                     layoutInflater,
-                    R.layout.input_panel_quote,
+                    R.layout.custom_input_panel_quote,
                     this@InputPanelQuote,
                     true
                 )

@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
 import androidx.security.crypto.EncryptedFile
@@ -347,7 +348,7 @@ class Utils {
                 valueColor,
                 true
             )
-            return context.resources.getColor(valueColor.resourceId)
+            return ContextCompat.getColor(context, valueColor.resourceId)
         }
 
         fun convertItemOfTimeInSeconds(item: Int): Int {
