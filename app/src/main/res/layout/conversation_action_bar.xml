@@ -72,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:lines="1"
-                        app:nameFormat="@{viewModel.userDisplayFormat}"
+                        app:nameFormatContact="@{viewModel.userDisplayFormat}"
                         app:nameActionBar="@{contact}"
                         tools:text="Giussep Ricardo Cachaya" />
 

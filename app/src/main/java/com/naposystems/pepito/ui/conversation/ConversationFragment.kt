@@ -33,11 +33,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
@@ -1040,6 +1037,7 @@ class ConversationFragment : BaseFragment(),
 
         binding.recyclerViewConversation.adapter = conversationAdapter
         binding.recyclerViewConversation.layoutManager = linearLayoutManager
+        binding.recyclerViewConversation.itemAnimator = ItemAnimator()
 
         binding.recyclerViewConversation.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {

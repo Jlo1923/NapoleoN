@@ -18,6 +18,7 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.pepito.ui.custom.SearchView
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
@@ -183,6 +184,8 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
             }
         }, userDisplayFormatShareViewModel)
         binding.recyclerViewContacts.adapter = adapter
+        binding.recyclerViewContacts.itemAnimator = ItemAnimator()
+
     }
 
     private fun goToConversation(item: Contact) {

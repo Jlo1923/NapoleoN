@@ -17,6 +17,7 @@ import com.naposystems.pepito.ui.addContact.adapter.AddContactAdapter
 import com.naposystems.pepito.ui.addContact.adapter.FriendshipRequestAdapter
 import com.naposystems.pepito.ui.custom.SearchView
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -194,6 +195,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             })
 
         binding.recyclerViewFriendshipRequest.adapter = friendshipRequestsAdapter
+        binding.recyclerViewFriendshipRequest.itemAnimator = ItemAnimator()
+
     }
 
     private fun setupSearchContactAdapter() {
@@ -203,6 +206,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             }
         })
         binding.recyclerViewContacts.adapter = adapter
+        binding.recyclerViewContacts.itemAnimator = ItemAnimator()
     }
 
     //region Implementation SearchView.OnSearchView

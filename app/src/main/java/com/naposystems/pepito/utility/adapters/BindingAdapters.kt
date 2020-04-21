@@ -265,3 +265,19 @@ fun bindNickNameFormat(textView: TextView, format: Int) {
     }
 }
 
+@BindingAdapter("nameFormatContact")
+fun bindNameFormatContact(textView: TextView, format: Int) {
+    when(format) {
+        Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
+            textView.visibility = View.GONE
+        }
+        else -> {
+            if(textView.text == " ") {
+                textView.visibility = View.GONE
+            } else {
+                textView.visibility = View.VISIBLE
+            }
+        }
+    }
+}
+

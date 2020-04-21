@@ -19,6 +19,7 @@ import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import com.naposystems.pepito.ui.attachmentAudio.adapter.AttachmentAudioAdapter
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
@@ -159,6 +160,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         })
 
         binding.recyclerViewAudios.adapter = adapter
+        binding.recyclerViewAudios.itemAnimator = ItemAnimator()
     }
 
     override fun onDestroy() {

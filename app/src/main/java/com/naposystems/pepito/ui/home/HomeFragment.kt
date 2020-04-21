@@ -23,6 +23,7 @@ import com.naposystems.pepito.ui.home.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
@@ -281,6 +282,8 @@ class HomeFragment : Fragment() {
             }
         }, userDisplayFormatShareViewModel)
         binding.recyclerViewChats.adapter = adapter
+        binding.recyclerViewChats.itemAnimator = ItemAnimator()
+
     }
 
     private fun startConversation(contact: Contact) {
