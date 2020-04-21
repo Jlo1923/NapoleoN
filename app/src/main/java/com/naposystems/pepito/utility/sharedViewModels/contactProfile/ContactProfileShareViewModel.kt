@@ -9,9 +9,11 @@ class ContactProfileShareViewModel @Inject constructor(
     private val repository: IContractContactProfileShare.Repository
 ) : ViewModel(), IContractContactProfileShare.ViewModel {
 
-    lateinit var contact: LiveData<Contact>
+    private lateinit var _contact : LiveData<Contact>
+    val contact : LiveData<Contact>
+    get() = _contact
 
     override fun getLocalContact(contactId: Int) {
-        contact = repository.getLocalContact(contactId)
+        _contact = repository.getLocalContact(contactId)
     }
 }

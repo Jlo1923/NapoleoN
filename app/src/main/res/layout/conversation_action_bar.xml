@@ -47,12 +47,12 @@
                 android:layout_height="?android:attr/actionBarSize"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/imageView_avatar"
-                    android:layout_width="50dp"
-                    android:layout_height="?android:attr/actionBarSize"
-                    android:paddingTop="@dimen/small_padding"
-                    android:paddingBottom="@dimen/small_padding"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/border_avatar_contact"
                     app:avatarActionBar="@{contact}"
                     tools:src="@drawable/ic_spanish_flag" />
 
