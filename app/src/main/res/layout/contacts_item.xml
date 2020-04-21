@@ -48,7 +48,7 @@
             android:ellipsize="end"
             android:lines="1"
             app:name="@{contact}"
-            app:nameFormat="@{viewModel.userDisplayFormat}"
+            app:nameFormatContact="@{viewModel.userDisplayFormat}"
             app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
             app:layout_constraintEnd_toStartOf="@id/button_more"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
