@@ -26,6 +26,7 @@
             android:layout_marginStart="@dimen/normal_margin"
             android:layout_marginTop="@dimen/normal_margin"
             android:layout_marginBottom="@dimen/normal_margin"
+            android:background="@drawable/border_avatar_contact"
             app:avatar="@{contact}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

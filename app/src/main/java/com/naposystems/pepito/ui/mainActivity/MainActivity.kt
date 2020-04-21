@@ -1,7 +1,9 @@
 package com.naposystems.pepito.ui.mainActivity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Point
@@ -84,6 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -139,6 +142,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         val disposableNoInternetConnection = RxBus.listen(RxEvent.NoInternetConnection::class.java)
             .observeOn(AndroidSchedulers.mainThread())

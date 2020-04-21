@@ -230,6 +230,8 @@ class ContactProfileFragment : BaseFragment() {
 
         baseViewModel.getOutputControl()
 
+        contactProfileShareViewModel.getLocalContact(args.contactId)
+
         viewModel.muteConversationWsError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
