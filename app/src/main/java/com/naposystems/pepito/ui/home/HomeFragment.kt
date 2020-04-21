@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,12 +21,12 @@ import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.home.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
-import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -152,9 +152,9 @@ class HomeFragment : Fragment() {
         viewModel.jsonNotification.observe(viewLifecycleOwner, Observer {json ->
             if (!json.isNullOrEmpty()) {
                 val jsonNotification = JSONObject(json)
-                when(jsonNotification.get(Constants.TYPE_NOTIFICATION)) {
+                when(jsonNotification.getInt(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                     Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                        viewModel.getContact(jsonNotification.get(Constants.TYPE_NOTIFICATION_WITH_CONTACT).toString().toInt())
+                        viewModel.getContact(jsonNotification.getInt(Constants.NotificationKeys.CONTACT))
                     }
                     Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
                         viewModel.cleanJsonNotification()

@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AndroidSupportInjectionModule::class, ApplicationModule::class, ViewModelModule::class,
-        FragmentBindingModule::class, ActivityBindingModule::class, SplashModule::class,
+        FragmentBindingModule::class, ActivityBindingModule::class, ServiceBindingModule::class, SplashModule::class,
         SendCodeModule::class, EnterCodeModule::class, LanguageSelectionModule::class,
         ValidateNicknameModule::class, CreateAccountModule::class, ProfileModule::class,
         StatusModule::class, BlockedContactsModule::class, AppearanceSettingsModule::class,
@@ -31,7 +31,7 @@ import javax.inject.Singleton
         AttachmentGalleryModule::class, ValidatePasswordPreviousRecoveryAccountModule::class,
         RecoveryOlderAccountQuestionsModule::class, AccountAttackDialogModule::class,
         SubscriptionModule::class, NapoleonKeyboardGifModule::class,
-        AttachmentLocationModule::class, ConversationCallModule::class,
+        AttachmentLocationModule::class, ConversationCallModule::class, NotificationUtilsModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {

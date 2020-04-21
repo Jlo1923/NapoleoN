@@ -3,8 +3,8 @@ package com.naposystems.pepito.firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.pepito.utility.Constants.SharedPreferences.PREF_FIREBASE_ID
-import com.naposystems.pepito.utility.NotificationUtils
 import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.utility.notificationUtils.NotificationUtils
 import timber.log.Timber
 
 class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
@@ -16,8 +16,11 @@ class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Timber.d("onMessageReceived")
-        NotificationUtils.createInformativeNotification(
+        val notificationUtils =
+            NotificationUtils(
+                applicationContext
+            )
+        notificationUtils.createInformativeNotification(
             applicationContext,
             remoteMessage.data,
             remoteMessage.notification

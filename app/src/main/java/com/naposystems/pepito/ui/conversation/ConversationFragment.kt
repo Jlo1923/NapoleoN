@@ -33,8 +33,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
@@ -72,6 +75,7 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
@@ -1217,39 +1221,44 @@ class ConversationFragment : BaseFragment(),
 
     private fun startRecording() {
 
-        recordFile = FileManager.createFile(
-            requireContext(),
-            "${System.currentTimeMillis()}.aac",
-            Constants.NapoleonCacheDirectories.AUDIOS.folder
-        )
+        try {
+            recordFile = FileManager.createFile(
+                requireContext(),
+                "${System.currentTimeMillis()}.aac",
+                Constants.NapoleonCacheDirectories.AUDIOS.folder
+            )
 
-        recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
-            setOutputFile(recordFile!!)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            try {
-                prepare()
+            recorder = MediaRecorder().apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+                val fileOutputStream = FileOutputStream(recordFile!!)
+                setOutputFile(fileOutputStream.fd)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                try {
+                    prepare()
 
-                isRecordingAudio = true
+                    isRecordingAudio = true
 
-                mRecordingAudioRunnable = Runnable {
-                    if (mRecordingAudioRunnable != null) {
-                        val oneSecond = TimeUnit.SECONDS.toMillis(1)
-                        recordingTime += oneSecond
-                        binding.inputPanel.setRecordingTime(recordingTime)
+                    mRecordingAudioRunnable = Runnable {
+                        if (mRecordingAudioRunnable != null) {
+                            val oneSecond = TimeUnit.SECONDS.toMillis(1)
+                            recordingTime += oneSecond
+                            binding.inputPanel.setRecordingTime(recordingTime)
 
-                        mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
+                            mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
+                        }
                     }
+
+                    mHandler.postDelayed(mRecordingAudioRunnable!!, 1000)
+
+                } catch (e: IOException) {
+                    Timber.e("prepare() failed")
                 }
 
-                mHandler.postDelayed(mRecordingAudioRunnable!!, 1000)
-
-            } catch (e: IOException) {
-                Timber.e("prepare() failed")
+                start()
             }
-
-            start()
+        } catch (e: Exception) {
+            resetAudioRecording()
         }
     }
 

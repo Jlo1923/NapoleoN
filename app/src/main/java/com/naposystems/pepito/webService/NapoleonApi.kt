@@ -18,15 +18,12 @@ import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
 import com.naposystems.pepito.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
-import com.naposystems.pepito.dto.conversation.message.MessageResDTO
-import com.naposystems.pepito.dto.conversation.message.MessagesReadReqDTO
+import com.naposystems.pepito.dto.conversation.message.*
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
-import com.naposystems.pepito.dto.profile.UpdateUserInfoReqDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.pepito.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountQuestionsReqDTO
@@ -62,6 +59,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS_OLD_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_SUBSCRIPTION_USER
+import com.naposystems.pepito.utility.Constants.NapoleonApi.NOTIFY_MESSAGE_RECEIVED
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_BLOCK_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_FRIENDSHIP_REQUEST
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_UNBLOCK_CONTACT
@@ -170,6 +168,9 @@ interface NapoleonApi {
 
     @PUT(SEND_MESSAGES_READ)
     suspend fun sendMessagesRead(@Body messagesReadReqDTO: MessagesReadReqDTO): Response<List<String>>
+
+    @POST(NOTIFY_MESSAGE_RECEIVED)
+    suspend fun notifyMessageReceived(@Body messageReceivedReqDTO: MessageReceivedReqDTO): Response<MessageReceivedResDTO>
 
     @GET(GET_RECOVERY_QUESTIONS)
     suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<RecoveryAccountUserTypeResDTO>

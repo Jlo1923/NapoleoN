@@ -5,8 +5,6 @@ object Constants {
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
     const val GIPHY_API_KEY = "R6CTqCVGyxWIAEad1tbbRFouJ6C6hFQX"
     const val DATA_CRYPT = "datacrypt"
-    const val TYPE_NOTIFICATION = "type_notification"
-    const val TYPE_NOTIFICATION_WITH_CONTACT = "contact"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 1
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
@@ -34,6 +32,7 @@ object Constants {
         const val VERIFY_MESSAGES_RECEIVED = "messages/verifymessagesreceived"
         const val VERIFY_MESSAGES_READ = "messages/verifymessagesreaded"
         const val SEND_MESSAGES_READ = "messages/sendmessagesreaded"
+        const val NOTIFY_MESSAGE_RECEIVED = "messages/notifymessagereceivedunread"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
         const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
@@ -62,6 +61,14 @@ object Constants {
         const val CHANNEL = "channel_private"
         const val CONTACT_ID = "contact_id"
         const val IS_VIDEO_CALL = "is_videocall"
+    }
+
+    object NotificationKeys {
+        const val TYPE_NOTIFICATION = "type_notification"
+        const val MESSAGE_ID = "message_id"
+        const val BODY = "body"
+        const val TITLE = "title"
+        const val CONTACT = "contact"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
