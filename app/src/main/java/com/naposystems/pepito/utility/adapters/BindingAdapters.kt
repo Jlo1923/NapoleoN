@@ -3,6 +3,8 @@ package com.naposystems.pepito.utility.adapters
 import android.Manifest
 import android.net.Uri
 import android.view.View
+import android.view.animation.LinearInterpolator
+import android.view.animation.TranslateAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -31,7 +33,7 @@ fun Fragment.verifyPermission(
     successCallback: () -> Unit
 ) {
 
-    Dexter.withActivity(activity!!)
+    Dexter.withContext(requireContext())
         .withPermissions(*permissions)
         .withListener(object : MultiplePermissionsListener {
 
@@ -42,11 +44,11 @@ fun Fragment.verifyPermission(
 
                 if (report.isAnyPermissionPermanentlyDenied) {
                     Utils.showDialogToInformPermission(
-                        context!!,
+                        requireContext(),
                         childFragmentManager,
                         drawableIconId,
                         message,
-                        { Utils.openSetting(context!!) },
+                        { Utils.openSetting(requireContext()) },
                         {}
                     )
                 }
@@ -57,7 +59,7 @@ fun Fragment.verifyPermission(
                 token: PermissionToken?
             ) {
                 Utils.showDialogToInformPermission(
-                    context!!,
+                    requireContext(),
                     childFragmentManager,
                     drawableIconId,
                     message,
@@ -129,6 +131,19 @@ fun SessionDescription.toJSONObject(): JSONObject {
     jsonObject.put("sdp", description)
 
     return jsonObject
+}
+
+fun View.slideUp(animDuration: Long) {
+    visibility = View.VISIBLE
+    val animate = TranslateAnimation(
+        0f,  // fromXDelta
+        0f,  // toXDelta
+        height.toFloat(),  // fromYDelta
+        0f
+    ) // toYDelta
+    animate.interpolator = LinearInterpolator()
+    animate.duration = animDuration
+    startAnimation(animate)
 }
 
 @BindingAdapter("background")

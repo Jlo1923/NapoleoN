@@ -1,9 +1,6 @@
 package com.naposystems.pepito.ui.custom
 
 import android.content.Context
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.text.InputType
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
@@ -14,10 +11,10 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
+import timber.log.Timber
 
 
 class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(context, attrs) {
@@ -61,6 +58,8 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
                 createTextViews(context)
 
                 createTextViewError(context)
+            } catch (e: Exception) {
+                Timber.e(e)
             } finally {
                 recycle()
             }
@@ -71,11 +70,12 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
      * Creamos el LinearLayout horizontal que contendrá los TextViews
      */
     private fun createLinearLayout(context: Context): LinearLayout {
-        val imageColor = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorBackground)
+        val colorBackground =
+            Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorBackground)
 
         linearTextInputs.apply {
             id = View.generateViewId()
-            setBackgroundColor(imageColor)
+            setBackgroundColor(colorBackground)
             orientation = HORIZONTAL
         }
 

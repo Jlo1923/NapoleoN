@@ -127,7 +127,7 @@ class AttachmentPreviewFragment : Fragment() {
             }
         }
 
-        binding.inputPanel.getFloatingActionButton().setOnClickListener {
+        binding.floatingActionButtonSend.setOnClickListener {
             with(conversationShareViewModel) {
                 setQuoteWebId(args.quote)
                 setMessage(binding.inputPanel.getEditTex().text.toString())

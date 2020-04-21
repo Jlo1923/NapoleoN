@@ -2,7 +2,6 @@
 <resources>
 
     <attr name="progressbarColor" format="reference" />
-    <attr name="showOnlySendIcon" format="boolean" />
 
     <declare-styleable name="EnterCodeWidget">
         <attr name="numBoxes" format="integer" />
@@ -10,8 +9,8 @@
         <attr name="errorText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="FabIconSend">
-        <attr name="showOnlySendIcon" />
+    <declare-styleable name="FabSend">
+        <attr name="showOnlySendIcon" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="SearchView">
@@ -27,7 +26,6 @@
         <attr name="showEmojiIcon" format="boolean" />
         <attr name="showCameraIcon" format="boolean" />
         <attr name="showAttachmentIcon" format="boolean" />
-        <attr name="showOnlySendIcon" />
         <attr name="showQuote" format="boolean" />
     </declare-styleable>
 

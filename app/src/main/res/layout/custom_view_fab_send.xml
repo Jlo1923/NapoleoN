@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="@dimen/conversation_fab_size"
+        android:layout_height="200dp"
+        android:background="@drawable/bg_lock_audio_record">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView_lock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:tint="?attr/attrTintColorSecondaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_lock_outline_black" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/imageView_up_arrow"
+            android:layout_width="@dimen/conversation_fab_size"
+            android:layout_height="@dimen/conversation_fab_size"
+            android:layout_marginTop="@dimen/small_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageView_lock"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/swipe_up_anim" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

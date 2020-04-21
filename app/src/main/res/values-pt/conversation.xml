@@ -32,6 +32,8 @@
     <string name="text_audio_quote">Audio</string>
     <string name="text_video_quote">Video</string>
     <string name="text_document_quote">Documento</string>
+    <string name="text_slide_to_cancel">Deslize para cancelar</string>
+    <string name="text_explanation_to_record_audio_attacment">Para enviar uma nota de voz, deixe NAPOLEON pode gravar áudio.</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d dia</item>
         <item quantity="other">%d dias</item>

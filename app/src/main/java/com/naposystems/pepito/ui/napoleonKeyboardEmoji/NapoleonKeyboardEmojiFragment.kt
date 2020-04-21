@@ -15,8 +15,6 @@ import com.naposystems.pepito.ui.napoleonKeyboardEmoji.adapter.NapoleonKeyboardE
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.emojiManager.EmojiManager
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class NapoleonKeyboardEmojiFragment : Fragment() {
 
@@ -41,11 +39,7 @@ class NapoleonKeyboardEmojiFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        GlobalScope.launch {
-            if (::mContext.isInitialized){
-                setupAdapter(mContext, mListener)
-            }
-        }
+        setupAdapter(mContext, mListener)
     }
 
     fun setListener(context: Context, listener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener) {
