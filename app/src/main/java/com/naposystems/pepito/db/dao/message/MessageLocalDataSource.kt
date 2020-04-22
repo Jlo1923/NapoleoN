@@ -87,6 +87,10 @@ class MessageLocalDataSource @Inject constructor(
         }
     }
 
+    override fun getMessagesByHome(): LiveData<List<MessageAndAttachment>> {
+        return messageDao.getMessagesByHome()
+    }
+
     override suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String> {
         return messageDao.getMessagesByStatus(contactId, status)
     }

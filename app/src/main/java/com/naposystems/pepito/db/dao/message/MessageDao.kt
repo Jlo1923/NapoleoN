@@ -15,6 +15,9 @@ interface MessageDao {
     @Query("SELECT * FROM message WHERE contact_id=:contact ORDER BY id DESC")
     fun getMessagesAndAttachments(contact: Int): LiveData<List<MessageAndAttachment>>
 
+    @Query("SELECT * FROM message GROUP BY contact_id HAVING id = MAX(id) ORDER BY id DESC")
+    fun getMessagesByHome(): LiveData<List<MessageAndAttachment>>
+
     @Query("SELECT id FROM message WHERE web_id=:quoteWebId")
     fun getQuoteId(quoteWebId: String): Int
 

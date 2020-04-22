@@ -16,6 +16,7 @@ import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.home.IContractHome
@@ -249,5 +250,9 @@ class HomeRepository @Inject constructor(
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_JSON_NOTIFICATION, ""
         )
+    }
+
+    override fun getMessagesByHome(): LiveData<List<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessagesByHome()
     }
 }

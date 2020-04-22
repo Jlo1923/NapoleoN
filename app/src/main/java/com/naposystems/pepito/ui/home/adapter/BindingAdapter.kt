@@ -23,6 +23,48 @@ fun bindMessageDate(textView: TextView, timestamp: Int) {
     }
 }
 
+@BindingAdapter("iconByConversation")
+fun bindIconByConversation(imageView: ImageView, messageAndAttachment: MessageAndAttachment?) {
+    if(messageAndAttachment?.attachmentList?.count()!! > 0){
+        imageView.visibility = View.VISIBLE
+        val resourceId: Int? = when (messageAndAttachment.attachmentList.last().type) {
+            Constants.AttachmentType.IMAGE.type -> R.drawable.ic_image
+            Constants.AttachmentType.AUDIO.type -> R.drawable.ic_headset
+            Constants.AttachmentType.VIDEO.type -> R.drawable.ic_video
+            Constants.AttachmentType.DOCUMENT.type -> R.drawable.ic_docs
+            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.drawable.ic_gif
+            Constants.AttachmentType.LOCATION.type -> R.drawable.ic_location
+            else -> null
+        }
+        resourceId?.let { resource ->
+            imageView.setImageResource(resource)
+        }
+    } else {
+        imageView.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("bodyConversation")
+fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAttachment?) {
+    val context = textView.context
+    if(messageAndAttachment?.attachmentList?.count()!! > 0){
+        val stringId: Int? = when (messageAndAttachment.attachmentList.last().type) {
+            Constants.AttachmentType.IMAGE.type -> R.string.text_photo
+            Constants.AttachmentType.AUDIO.type -> R.string.text_audio
+            Constants.AttachmentType.VIDEO.type -> R.string.text_video
+            Constants.AttachmentType.DOCUMENT.type -> R.string.text_document
+            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.string.text_gif
+            Constants.AttachmentType.LOCATION.type -> R.string.text_location
+            else -> null
+        }
+        stringId?.let { string ->
+            textView.text = context.getString(string)
+        }
+    } else {
+        textView.text = messageAndAttachment.message.body
+    }
+}
+
 @BindingAdapter("unreadMessages")
 fun bindUnreadMessages(textView: TextView, unreadMessages: Int) {
 

@@ -15,7 +15,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.conversation.ConversationAndContact" />
+            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
 
     </data>
 
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:messageHour="@{conversation.conversation.createdAt}"
+            app:messageHour="@{conversation.message.createdAt}"
             tools:text="8:15 a.m" />
 
         <TextView
@@ -58,11 +58,12 @@
             android:layout_height="20dp"
             android:background="@drawable/bg_unread_messages"
             android:gravity="center"
+            android:visibility="invisible"
             android:textColor="@color/colorTextMyMessage"
-            app:layout_constraintBottom_toBottomOf="@id/textView_message"
+            app:layout_constraintBottom_toBottomOf="@id/linear_container"
             app:layout_constraintEnd_toEndOf="@id/textView_hora"
-            app:layout_constraintTop_toTopOf="@+id/textView_message"
-            app:unreadMessages="@{conversation.conversation.unReads}"
+            app:layout_constraintTop_toTopOf="@+id/linear_container"
+            app:unreadMessages="@{conversation.message.id}"
             tools:text="99" />
 
         <TextView
@@ -98,20 +99,37 @@
             app:nickname="@{conversation.contact}"
             tools:text="@tools:sample/first_names" />
 
-        <TextView
-            android:id="@+id/textView_message"
-            style="@style/BodyTextView.message"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linear_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/normal_margin"
-            android:ellipsize="end"
             android:layout_marginStart="@dimen/normal_margin"
-            android:lines="1"
-            android:text="@{conversation.conversation.message}"
-            app:layout_constraintEnd_toStartOf="@id/textView_unread_messages"
+            android:layout_marginEnd="@dimen/normal_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView_unread_messages"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
-            app:layout_constraintTop_toBottomOf="@id/textView_user_nickname"
-            tools:text="@tools:sample/lorem/random" />
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname">
+
+            <ImageView
+                android:id="@+id/imageView_message_option_start_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:iconByConversation="@{conversation}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+                app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname"
+                tools:srcCompat="@drawable/ic_location" />
+
+            <TextView
+                android:id="@+id/textView_message"
+                style="@style/BodyTextView.message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                app:bodyConversation="@{conversation}" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

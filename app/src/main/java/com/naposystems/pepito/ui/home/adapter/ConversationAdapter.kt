@@ -8,26 +8,27 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.HomeFragmentItemBinding
 import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 
 class ConversationAdapter(
     private val clickListener: ClickListener,
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
 ) :
-    ListAdapter<ConversationAndContact,
+    ListAdapter<MessageAndAttachment,
             ConversationAdapter.ConversationAndContactViewHolder>(DiffCallback) {
 
-    object DiffCallback : DiffUtil.ItemCallback<ConversationAndContact>() {
+    object DiffCallback : DiffUtil.ItemCallback<MessageAndAttachment>() {
         override fun areItemsTheSame(
-            oldItem: ConversationAndContact,
-            newItem: ConversationAndContact
+            oldItem: MessageAndAttachment,
+            newItem: MessageAndAttachment
         ): Boolean {
             return oldItem === newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: ConversationAndContact,
-            newItem: ConversationAndContact
+            oldItem: MessageAndAttachment,
+            newItem: MessageAndAttachment
         ): Boolean {
             return oldItem == newItem
         }
@@ -49,7 +50,7 @@ class ConversationAdapter(
         private val binding: HomeFragmentItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(conversation: ConversationAndContact, clickListener: ClickListener,
+        fun bind(conversation: MessageAndAttachment, clickListener: ClickListener,
                  userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
         ) {
             binding.conversation = conversation
@@ -83,8 +84,8 @@ class ConversationAdapter(
     }
 
     interface ClickListener {
-        fun onClick(item: ConversationAndContact)
-        fun onClickAvatar(item: ConversationAndContact)
-        fun onLongClick(item: ConversationAndContact, view: View)
+        fun onClick(item: MessageAndAttachment)
+        fun onClickAvatar(item: MessageAndAttachment)
+        fun onLongClick(item: MessageAndAttachment, view: View)
     }
 }
