@@ -36,6 +36,9 @@
     <string name="text_camera">Camera</string>
     <string name="text_location">Location</string>
     <string name="text_audio">Audio</string>
+    <string name="text_video">Video</string>
+    <string name="text_photo">Photo</string>
+    <string name="text_gif">Gif</string>
     <string name="text_document">Document</string>
     <string name="text_error_connection">There is no Internet connection. Try again later</string>
     <string name="text_register">Register</string>

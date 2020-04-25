@@ -25,6 +25,9 @@
     <string name="text_camera">Kamera</string>
     <string name="text_location">Standort</string>
     <string name="text_audio">Audio</string>
+    <string name="text_video">Video</string>
+    <string name="text_photo">Foto</string>
+    <string name="text_gif">Gif</string>
     <string name="text_document">Dokument</string>
     <string name="text_add">Hinzufügen</string>
     <string name="text_sent">Gesendet</string>

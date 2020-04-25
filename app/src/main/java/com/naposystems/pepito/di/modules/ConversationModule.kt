@@ -3,7 +3,6 @@ package com.naposystems.pepito.di.modules
 import android.content.Context
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.conversation.ConversationRepository
@@ -28,7 +27,6 @@ class ConversationModule {
         attachmentDataSource: AttachmentDataSource,
         sharedPreferencesManager: SharedPreferencesManager,
         napoleonApi: NapoleonApi,
-        conversationLocalDataSource: ConversationDataSource,
         quoteDataSource: QuoteDataSource
     ): IContractConversation.Repository {
         return ConversationRepository(
@@ -39,7 +37,6 @@ class ConversationModule {
             attachmentDataSource,
             sharedPreferencesManager,
             napoleonApi,
-            conversationLocalDataSource,
             quoteDataSource
         )
     }

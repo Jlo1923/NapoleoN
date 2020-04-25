@@ -1,7 +1,6 @@
 package com.naposystems.pepito.repository.sharedRepository
 
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationLocalDataSource
 import com.naposystems.pepito.db.dao.message.MessageLocalDataSource
 import com.naposystems.pepito.dto.contacts.blockedContact.BlockedContactResDTO
 import com.naposystems.pepito.dto.contacts.deleteContact.DeleteContactErrorDTO
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class ShareContactRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val contactLocalDataSource: ContactDataSource,
-    private val conversationLocalDataSource: ConversationLocalDataSource,
     private val messageLocalDataSource: MessageLocalDataSource
 ) : IContractShareContact.Repository {
 
@@ -55,7 +53,6 @@ class ShareContactRepository @Inject constructor(
     }
 
     override suspend fun deleteConversation(contactId: Int) {
-        conversationLocalDataSource.deleteConversationAndMessages(contactId)
         messageLocalDataSource.deleteMessages(contactId)
     }
 

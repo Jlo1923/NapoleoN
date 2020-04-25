@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
-import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import retrofit2.Response
 
 interface IContractHome {
@@ -27,7 +27,6 @@ interface IContractHome {
         suspend fun getUserLiveData(): LiveData<User>
         suspend fun getFriendshipQuantity(): Response<FriendshipRequestQuantityResDTO>
         suspend fun subscribeToGeneralSocketChannel()
-        fun getConversations(): LiveData<List<ConversationAndContact>>
         suspend fun getRemoteMessages()
         suspend fun getDeletedMessages()
         suspend fun insertSubscription()
@@ -36,5 +35,6 @@ interface IContractHome {
         fun getJsonNotification() : String
         fun getContact(contactId : Int) : Contact?
         fun cleanJsonNotification()
+        fun getMessagesForHome(): LiveData<List<MessageAndAttachment>>
     }
 }

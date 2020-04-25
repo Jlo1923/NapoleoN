@@ -219,8 +219,6 @@ class ConversationViewModel @Inject constructor(
 
             if (messageResponse.isSuccessful) {
 
-                repository.insertConversation(messageResponse.body()!!)
-
                 if (attachment != null) {
 
                     withContext(Dispatchers.IO) {

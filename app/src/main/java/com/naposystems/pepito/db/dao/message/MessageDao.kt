@@ -1,7 +1,6 @@
 package com.naposystems.pepito.db.dao.message
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.*
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
@@ -14,6 +13,9 @@ interface MessageDao {
 
     @Query("SELECT * FROM message WHERE contact_id=:contact ORDER BY id DESC")
     fun getMessagesAndAttachments(contact: Int): LiveData<List<MessageAndAttachment>>
+
+    @Query("SELECT *, COUNT(CASE WHEN status=3 AND is_mine=0 THEN 1 END) AS messagesUnReads FROM message GROUP BY contact_id ORDER BY id DESC")
+    fun getMessagesForHome(): LiveData<List<MessageAndAttachment>>
 
     @Query("SELECT id FROM message WHERE web_id=:quoteWebId")
     fun getQuoteId(quoteWebId: String): Int

@@ -219,10 +219,12 @@ fun bindAttachmentTypeQuote(
 
     attachmentType?.let {
         val resourceId: Int? = when (attachmentType) {
-            Constants.AttachmentType.IMAGE.type -> R.drawable.ic_image_quote_black
-            Constants.AttachmentType.AUDIO.type -> R.drawable.ic_headset_quote_black
-            Constants.AttachmentType.VIDEO.type -> R.drawable.ic_video_quote_black
-            Constants.AttachmentType.DOCUMENT.type -> R.drawable.ic_document_quote_black
+            Constants.AttachmentType.IMAGE.type -> R.drawable.ic_image
+            Constants.AttachmentType.AUDIO.type -> R.drawable.ic_headset
+            Constants.AttachmentType.VIDEO.type -> R.drawable.ic_video
+            Constants.AttachmentType.DOCUMENT.type -> R.drawable.ic_docs
+            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.drawable.ic_gif
+            Constants.AttachmentType.LOCATION.type -> R.drawable.ic_location
             else -> null
         }
 

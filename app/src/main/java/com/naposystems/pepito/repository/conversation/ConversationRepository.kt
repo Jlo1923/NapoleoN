@@ -4,8 +4,6 @@ import android.content.Context
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
-import com.naposystems.pepito.db.dao.contact.ContactDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
@@ -51,7 +49,6 @@ class ConversationRepository @Inject constructor(
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
-    private val conversationLocalDataSource: ConversationDataSource,
     private val quoteDataSource: QuoteDataSource
 ) :
     IContractConversation.Repository {
@@ -202,10 +199,6 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.insertListMessage(messageList)
     }
 
-    override suspend fun insertConversation(messageResDTO: MessageResDTO) {
-        conversationLocalDataSource.insertConversation(messageResDTO, true, 0)
-    }
-
     override fun updateMessage(message: Message) {
         when (message.status) {
             Constants.MessageStatus.ERROR.status -> {
@@ -235,20 +228,17 @@ class ConversationRepository @Inject constructor(
 
         if (messagesUnread.isNotEmpty()) {
             try {
-
-                val messagesReadReqDTO = MessagesReadReqDTO(
-                    messagesUnread
+                val response = napoleonApi.sendMessagesRead(
+                    MessagesReadReqDTO (
+                        messagesUnread
+                    )
                 )
-
-                val response = napoleonApi.sendMessagesRead(messagesReadReqDTO)
 
                 if (response.isSuccessful) {
                     messageLocalDataSource.updateMessageStatus(
                         response.body()!!,
                         Constants.MessageStatus.READED.status
                     )
-
-                    conversationLocalDataSource.updateConversation(contactId)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
@@ -310,18 +300,6 @@ class ConversationRepository @Inject constructor(
         listMessages: List<MessageAndAttachment>
     ) {
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
-        val messageAndAttachment = messageLocalDataSource.getLastMessageByContact(contactId)
-        if (messageAndAttachment != null) {
-            conversationLocalDataSource.updateConversationByContact(
-                contactId,
-                messageAndAttachment.message.body,
-                messageAndAttachment.message.createdAt,
-                messageAndAttachment.message.status,
-                0
-            )
-        } else {
-            conversationLocalDataSource.cleanConversation(contactId)
-        }
     }
 
     override suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO> {

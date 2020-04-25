@@ -500,8 +500,6 @@ class ConversationFragment : BaseFragment(),
 
         baseViewModel.getOutputControl()
 
-        setConversationBackground()
-
         selfDestructTimeViewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {
             selfDestructTimeViewModel.selfDestructTimeByContact = it
         })
@@ -734,6 +732,7 @@ class ConversationFragment : BaseFragment(),
     override fun onResume() {
         super.onResume()
         mediaPlayerManager.registerProximityListener()
+        setConversationBackground()
     }
 
     override fun onDestroy() {

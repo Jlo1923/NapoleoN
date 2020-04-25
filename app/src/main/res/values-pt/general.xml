@@ -21,6 +21,9 @@
     <string name="text_camera">Câmera</string>
     <string name="text_location">Localização</string>
     <string name="text_audio">Áudio</string>
+    <string name="text_video">Video</string>
+    <string name="text_photo">Foto</string>
+    <string name="text_gif">Gif</string>
     <string name="text_document">Documento</string>
     <string name="text_error_connection">Não há conexão com a internet. Tente novamente mais tarde</string>
     <string name="text_register">Registre-se</string>

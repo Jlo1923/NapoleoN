@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentBinding
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.conversation.ConversationAndContact
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.home.adapter.ConversationAdapter
@@ -251,17 +251,17 @@ class HomeFragment : Fragment() {
 
     private fun setAdapter() {
         adapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
-            override fun onClick(item: ConversationAndContact) {
+            override fun onClick(item: MessageAndAttachment) {
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)
                 )
             }
 
-            override fun onClickAvatar(item: ConversationAndContact) {
+            override fun onClickAvatar(item: MessageAndAttachment) {
                 seeProfile(item.contact)
             }
 
-            override fun onLongClick(item: ConversationAndContact, view: View) {
+            override fun onLongClick(item: MessageAndAttachment, view: View) {
                 val popup = PopupMenu(context!!, view)
                 popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
 
