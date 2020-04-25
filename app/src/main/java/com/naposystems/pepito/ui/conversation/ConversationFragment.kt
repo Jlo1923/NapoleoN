@@ -70,6 +70,7 @@ import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -98,6 +99,9 @@ class ConversationFragment : BaseFragment(),
         viewModelFactory
     }
     private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
+        viewModelFactory
+    }
+    private val timeFormatShareViewModel: TimeFormatShareViewModel by viewModels {
         viewModelFactory
     }
 
@@ -499,6 +503,8 @@ class ConversationFragment : BaseFragment(),
         selfDestructTimeViewModel.getSelfDestructTime()
 
         baseViewModel.getOutputControl()
+
+        timeFormatShareViewModel.getTimeFormat()
 
         selfDestructTimeViewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {
             selfDestructTimeViewModel.selfDestructTimeByContact = it
@@ -1033,7 +1039,7 @@ class ConversationFragment : BaseFragment(),
                     ).show()
                 }
             }
-        }, mediaPlayerManager)
+        }, mediaPlayerManager, timeFormatShareViewModel)
 
         linearLayoutManager = LinearLayoutManager(requireContext())
         linearLayoutManager.reverseLayout = true

@@ -8,6 +8,7 @@
         <variable
             name="viewModel"
             type="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel" />
+
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -236,6 +237,77 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_time_format"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_with_separator"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="@dimen/normal_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/option_language">
+
+                <ImageView
+                    android:id="@+id/imageView_option_time_format_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_format_time" />
+
+                <!-- GO ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_time_format_option_end_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    android:tint="?attr/attrTintColorSecondaryDark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_right_black" />
+
+                <!-- LABEL COLOR COMBINATION -->
+                <TextView
+                    android:id="@+id/textView_time_format_color"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/small_padding"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="@string/text_time_format"
+                    app:layout_constraintBottom_toTopOf="@id/textView_format_hour"
+                    app:layout_constraintEnd_toStartOf="@id/imageButton_time_format_option_end_icon"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_option_time_format_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- COLOR SCHEME SELECTED -->
+                <TextView
+                    android:id="@+id/textView_format_hour"
+                    style="@style/OptionValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:enabled="true"
+                    android:maxLength="@dimen/max_length_status"
+                    android:padding="0dp"
+                    android:singleLine="true"
+                    app:timeFormat="@{viewModel.timeFormat}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/textView_time_format_color"
+                    app:layout_constraintStart_toStartOf="@id/textView_time_format_color"
+                    app:layout_constraintTop_toBottomOf="@id/textView_time_format_color"
+                    tools:text="24 Hours" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <!-- OPTION CHAT BACKGROUND -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/option_chat_background"
@@ -248,7 +320,7 @@
                 android:padding="@dimen/normal_padding"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_language">
+                app:layout_constraintTop_toBottomOf="@+id/option_time_format">
 
                 <ImageView
                     android:id="@+id/imageView_option_chat_background_start_icon"
@@ -264,8 +336,8 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:tint="?attr/attrTintColorSecondaryDark"
                     android:scaleType="fitCenter"
+                    android:tint="?attr/attrTintColorSecondaryDark"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -275,9 +347,9 @@
                 <TextView
                     android:id="@+id/textView_chat_background"
                     style="@style/BodyTextView.Bold"
-                    android:layout_marginStart="@dimen/small_padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/small_padding"
                     android:layout_marginEnd="@dimen/normal_margin"
                     android:ellipsize="end"
                     android:lines="1"

@@ -18,9 +18,14 @@ class AppearanceSettingsViewModel @Inject constructor(
     val userDisplayFormat: LiveData<Int>
         get() = _userDisplayFormat
 
+    private val _timeFormat = MutableLiveData<Int>()
+    val timeFormat: LiveData<Int>
+        get() = _timeFormat
+
     init {
         _colorScheme.value = null
         _userDisplayFormat.value = null
+        _timeFormat.value = null
     }
 
     //region Implementation IContractAppearanceSettings.ViewModel
@@ -30,6 +35,10 @@ class AppearanceSettingsViewModel @Inject constructor(
 
     override fun getUserDisplayFormat() {
         _userDisplayFormat.value = repository.getUserDisplayFormat()
+    }
+
+    override fun getTimeFormat() {
+        _timeFormat.value = repository.getTimeFormat()
     }
 
     //endregion

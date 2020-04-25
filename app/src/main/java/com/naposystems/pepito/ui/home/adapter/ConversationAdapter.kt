@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.HomeFragmentItemBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 
 class ConversationAdapter(
     private val clickListener: ClickListener,
-    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel,
+    private val timeFormatShareViewModel: TimeFormatShareViewModel
 ) :
     ListAdapter<MessageAndAttachment,
             ConversationAdapter.ConversationAndContactViewHolder>(DiffCallback) {
@@ -42,7 +44,7 @@ class ConversationAdapter(
 
     override fun onBindViewHolder(holder: ConversationAndContactViewHolder, position: Int) {
         val chat = getItem(position)
-        holder.bind(chat, clickListener, userDisplayFormatShareViewModel)
+        holder.bind(chat, clickListener, userDisplayFormatShareViewModel,timeFormatShareViewModel)
     }
 
     class ConversationAndContactViewHolder private constructor(
@@ -50,11 +52,13 @@ class ConversationAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(conversation: MessageAndAttachment, clickListener: ClickListener,
-                 userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+                 userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel,
+                 timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = conversation
             binding.clickListener = clickListener
             binding.viewModel = userDisplayFormatShareViewModel
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             binding.constrainsLayoutConversation.setOnLongClickListener {
                 clickListener.onLongClick(conversation, binding.textViewHora)

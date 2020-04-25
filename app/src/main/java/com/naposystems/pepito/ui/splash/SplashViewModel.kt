@@ -96,6 +96,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             repository.setDefaultTheme()
             repository.setDefaultUserDisplayFormat()
+            repository.setDefaultTimeFormat()
             repository.setDefaultSelfDestructTime()
             repository.setDefaultTimeRequestAccessPin()
             repository.setDefaultAllowDownloadAttachments()

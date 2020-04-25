@@ -16,10 +16,12 @@ import com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 
 class ConversationAdapter constructor(
     private val clickListener: ClickListener,
-    private val mediaPlayerManager: MediaPlayerManager
+    private val mediaPlayerManager: MediaPlayerManager,
+    private val timeFormatShareViewModel: TimeFormatShareViewModel
 ) :
     ListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
@@ -159,29 +161,29 @@ class ConversationAdapter constructor(
         item?.let {
             when (getItemViewType(position)) {
                 TYPE_MY_MESSAGE -> (holder as MyMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_INCOMING_MESSAGE -> (holder as IncomingMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager, timeFormatShareViewModel)
                 TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager, timeFormatShareViewModel)
                 TYPE_MY_MESSAGE_VIDEO -> (holder as MyMessageVideoViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_INCOMING_MESSAGE_VIDEO -> (holder as IncomingMessageVideoViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_MY_MESSAGE_DOCUMENT -> (holder as MyMessageDocumentViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_INCOMING_MESSAGE_DOCUMENT -> (holder as IncomingMessageDocumentViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_MY_MESSAGE_GIF -> (holder as MyMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_INCOMING_MESSAGE_GIF -> (holder as IncomingMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormatShareViewModel)
                 TYPE_MY_MESSAGE_GIF_NN -> (holder as MyMessageGifNNViewHolder)
-                    .bind(item, clickListener)
+                    .bind(item, clickListener, timeFormatShareViewModel)
                 TYPE_INCOMING_MESSAGE_GIF_NN -> (holder as IncomingMessageGifNNViewHolder)
-                    .bind(item, clickListener)
+                    .bind(item, clickListener, timeFormatShareViewModel)
             }
         }
     }
@@ -195,12 +197,14 @@ class ConversationAdapter constructor(
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean
+            isFirst: Boolean,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             countDown(
                 item,
@@ -256,12 +260,14 @@ class ConversationAdapter constructor(
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean
+            isFirst: Boolean,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.imageViewAttachment.visibility = View.GONE
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             countDown(
                 item,
@@ -321,11 +327,13 @@ class ConversationAdapter constructor(
             item: MessageAndAttachment,
             clickListener: ClickListener,
             isFirst: Boolean,
-            mediaPlayerManager: MediaPlayerManager
+            mediaPlayerManager: MediaPlayerManager,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             countDown(
                 item,
@@ -387,11 +395,13 @@ class ConversationAdapter constructor(
             item: MessageAndAttachment,
             clickListener: ClickListener,
             isFirst: Boolean,
-            mediaPlayerManager: MediaPlayerManager
+            mediaPlayerManager: MediaPlayerManager,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             countDown(
                 item,
@@ -452,11 +462,13 @@ class ConversationAdapter constructor(
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean
+            isFirst: Boolean,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             if (item.message.isSelected) {
                 binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -494,11 +506,13 @@ class ConversationAdapter constructor(
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean
+            isFirst: Boolean,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             if (item.message.isSelected) {
                 binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -536,11 +550,13 @@ class ConversationAdapter constructor(
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean
+            isFirst: Boolean,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             if (item.message.isSelected) {
                 binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -578,11 +594,13 @@ class ConversationAdapter constructor(
         fun bind(
             item: MessageAndAttachment,
             clickListener: ClickListener,
-            isFirst: Boolean
+            isFirst: Boolean,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.clickListener = clickListener
             binding.isFirst = isFirst
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             if (item.message.isSelected) {
                 binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -621,10 +639,12 @@ class ConversationAdapter constructor(
         @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
-            clickListener: ClickListener
+            clickListener: ClickListener,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.imageViewAttachment.visibility = View.GONE
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             countDown(
                 item,
@@ -671,10 +691,12 @@ class ConversationAdapter constructor(
         @SuppressLint("ResourceAsColor")
         fun bind(
             item: MessageAndAttachment,
-            clickListener: ClickListener
+            clickListener: ClickListener,
+            timeFormatShareViewModel: TimeFormatShareViewModel
         ) {
             binding.conversation = item
             binding.imageViewAttachment.visibility = View.GONE
+            binding.timeFormatViewModel = timeFormatShareViewModel
 
             countDown(
                 item,

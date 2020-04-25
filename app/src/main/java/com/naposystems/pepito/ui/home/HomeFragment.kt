@@ -26,6 +26,7 @@ import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -47,6 +48,9 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var shareContactViewModel: ShareContactViewModel
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
+        viewModelFactory
+    }
+    private val timeFormatShareViewModel : TimeFormatShareViewModel by activityViewModels{
         viewModelFactory
     }
     private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
@@ -128,6 +132,8 @@ class HomeFragment : Fragment() {
         viewModel.subscribeToGeneralSocketChannel()
 
         userDisplayFormatShareViewModel.getUserDisplayFormat()
+
+        timeFormatShareViewModel.getTimeFormat()
 
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
@@ -280,7 +286,7 @@ class HomeFragment : Fragment() {
                 }
                 popup.show()
             }
-        }, userDisplayFormatShareViewModel)
+        }, userDisplayFormatShareViewModel, timeFormatShareViewModel)
         binding.recyclerViewChats.adapter = adapter
         binding.recyclerViewChats.itemAnimator = ItemAnimator()
 

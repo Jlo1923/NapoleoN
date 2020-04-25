@@ -10,6 +10,10 @@
             type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
 
         <variable
+            name="timeFormatViewModel"
+            type="com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel" />
+
+        <variable
             name="clickListener"
             type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
@@ -115,6 +119,7 @@
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
                 app:messageDate="@{conversation.message.createdAt}"
+                app:formatTime="@{timeFormatViewModel.timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

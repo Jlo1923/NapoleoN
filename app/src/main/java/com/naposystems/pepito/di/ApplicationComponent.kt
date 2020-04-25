@@ -17,7 +17,7 @@ import javax.inject.Singleton
         SendCodeModule::class, EnterCodeModule::class, LanguageSelectionModule::class,
         ValidateNicknameModule::class, CreateAccountModule::class, ProfileModule::class,
         StatusModule::class, BlockedContactsModule::class, AppearanceSettingsModule::class,
-        ColorSchemeModule::class, UserDisplayFormatModule::class, SelfDestructTime::class,
+        ColorSchemeModule::class, UserDisplayFormatModule::class, TimeFormatModule::class, SelfDestructTime::class,
         SecuritySettingsModule::class, EditAccessPinModule::class, TimeAccessPinModule::class,
         ContactsModule::class, ContactUsModule::class, ConversationModule::class,
         RegisterRecoveryAccountModule::class, RecoveryAccountModule::class,

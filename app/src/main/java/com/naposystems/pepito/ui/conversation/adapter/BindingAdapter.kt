@@ -20,10 +20,14 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-@BindingAdapter("messageDate")
-fun bindMessageDate(textView: TextView, timestamp: Int) {
+@BindingAdapter("messageDate", "formatTime")
+fun bindMessageDate(textView: TextView, timestamp: Int, format : Int) {
     try {
-        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
+        val sdf = if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        } else {
+            SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
+        }
         val netDate = Date(timestamp.toLong() * 1000)
         textView.text = sdf.format(netDate)
         textView.visibility = View.VISIBLE

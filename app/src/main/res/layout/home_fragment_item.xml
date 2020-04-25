@@ -10,6 +10,10 @@
             type="com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel" />
 
         <variable
+            name="timeFormatViewModel"
+            type="com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel" />
+
+        <variable
             name="clickListener"
             type="com.naposystems.pepito.ui.home.adapter.ConversationAdapter.ClickListener" />
 
@@ -49,6 +53,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:messageHour="@{conversation.message.createdAt}"
+            app:format="@{timeFormatViewModel.timeFormat}"
             tools:text="8:15 a.m" />
 
         <TextView
