@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentBinding
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent

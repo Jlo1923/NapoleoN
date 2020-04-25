@@ -3,7 +3,6 @@ package com.naposystems.pepito.repository.home
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
@@ -15,7 +14,6 @@ import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
-import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
@@ -35,7 +33,6 @@ class HomeRepository @Inject constructor(
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val socketService: IContractSocketService.SocketService,
-    private val conversationLocalDataSource: ConversationDataSource,
     private val messageLocalDataSource: MessageDataSource,
     private val contactLocalDataSource: ContactDataSource,
     private val attachmentLocalDataSource: AttachmentDataSource,
@@ -84,10 +81,6 @@ class HomeRepository @Inject constructor(
         return userLocalDataSource.getUserLiveData(firebaseId)
     }
 
-    override fun getConversations(): LiveData<List<ConversationAndContact>> {
-        return conversationLocalDataSource.getConversations()
-    }
-
     override suspend fun getRemoteMessages() {
         val response = napoleonApi.getMyMessages()
 
@@ -113,12 +106,6 @@ class HomeRepository @Inject constructor(
                             messageId.toInt(),
                             messageRes.attachments
                         )
-                    )
-
-                    conversationLocalDataSource.insertConversation(
-                        messageRes,
-                        false,
-                        1
                     )
                 }
             }
@@ -153,36 +140,7 @@ class HomeRepository @Inject constructor(
         try {
             val response = napoleonApi.getDeletedMessages()
             if (response.isSuccessful && (response.body()!!.count() > 0)) {
-                val contactId = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
-                when (val messageAndAttachment =
-                    messageLocalDataSource.getLastMessageByContact(contactId)) {
-                    null -> {
-                        conversationLocalDataSource.cleanConversation(contactId)
-                    }
-                    else -> {
-                        conversationLocalDataSource.getQuantityUnreads(contactId)
-                            .let { quantityUnreads ->
-                                if (quantityUnreads > 0) {
-                                    conversationLocalDataSource.updateConversationByContact(
-                                        contactId,
-                                        messageAndAttachment.message.body,
-                                        messageAndAttachment.message.createdAt,
-                                        messageAndAttachment.message.status,
-                                        quantityUnreads - response.body()!!.count()
-                                    )
-                                } else {
-                                    conversationLocalDataSource.updateConversationByContact(
-                                        contactId,
-                                        messageAndAttachment.message.body,
-                                        messageAndAttachment.message.createdAt,
-                                        messageAndAttachment.message.status,
-                                        0
-                                    )
-                                }
-                            }
-                    }
-                }
             }
         } catch (ex: Exception) {
             Timber.e(ex)
@@ -252,7 +210,7 @@ class HomeRepository @Inject constructor(
         )
     }
 
-    override fun getMessagesByHome(): LiveData<List<MessageAndAttachment>> {
-        return messageLocalDataSource.getMessagesByHome()
+    override fun getMessagesForHome(): LiveData<List<MessageAndAttachment>> {
+        return messageLocalDataSource.getMessagesForHome()
     }
 }

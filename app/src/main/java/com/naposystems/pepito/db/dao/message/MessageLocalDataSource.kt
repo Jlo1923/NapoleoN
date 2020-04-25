@@ -1,8 +1,6 @@
 package com.naposystems.pepito.db.dao.message
 
 import androidx.lifecycle.LiveData
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
@@ -87,8 +85,8 @@ class MessageLocalDataSource @Inject constructor(
         }
     }
 
-    override fun getMessagesByHome(): LiveData<List<MessageAndAttachment>> {
-        return messageDao.getMessagesByHome()
+    override fun getMessagesForHome(): LiveData<List<MessageAndAttachment>> {
+        return messageDao.getMessagesForHome()
     }
 
     override suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String> {

@@ -70,7 +70,6 @@ interface IContractConversation {
         suspend fun getLocalUser(): User
         fun insertMessage(message: Message): Long
         fun insertListMessage(messageList: List<Message>)
-        suspend fun insertConversation(messageResDTO: MessageResDTO)
         fun updateMessage(message: Message)
         suspend fun sendMessagesRead(contactId: Int)
         fun insertAttachment(attachment: Attachment): Long

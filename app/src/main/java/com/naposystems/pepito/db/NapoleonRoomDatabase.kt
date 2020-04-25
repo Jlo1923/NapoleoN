@@ -7,12 +7,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.pepito.db.dao.contact.ContactDao
 import com.naposystems.pepito.db.dao.message.MessageDao
 import com.naposystems.pepito.db.dao.attachment.AttachmentDao
-import com.naposystems.pepito.db.dao.conversation.ConversationDao
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDao
 import com.naposystems.pepito.db.dao.status.StatusDao
 import com.naposystems.pepito.db.dao.user.UserDao
 import com.naposystems.pepito.entity.*
-import com.naposystems.pepito.entity.conversation.Conversation
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
@@ -20,7 +18,7 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 @Database(
     entities = [
         User::class, Status::class, Message::class,
-        Attachment::class, Contact::class, Conversation::class,
+        Attachment::class, Contact::class,
         Quote::class
     ],
     version = 11
@@ -38,8 +36,6 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
     abstract fun attachmentDao(): AttachmentDao
 
     abstract fun contactDao(): ContactDao
-
-    abstract fun conversationDao(): ConversationDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {

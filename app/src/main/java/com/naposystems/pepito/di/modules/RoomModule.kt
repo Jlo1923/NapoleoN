@@ -15,9 +15,6 @@ import com.naposystems.pepito.db.dao.message.MessageLocalDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentDao
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.attachment.AttachmentLocalDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationDao
-import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationLocalDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDao
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteLocalDataSource
@@ -140,15 +137,4 @@ class RoomModule {
         return ContactLocalDataSource(contactDao)
     }
 
-    @Provides
-    @Singleton
-    fun provideConversationDao(napoleonRoomDatabase: NapoleonRoomDatabase): ConversationDao {
-        return napoleonRoomDatabase.conversationDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideConversationLocalDataSource(contactDao: ConversationDao): ConversationDataSource {
-        return ConversationLocalDataSource(contactDao)
-    }
 }

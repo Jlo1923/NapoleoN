@@ -141,6 +141,11 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ) {
+        var app: NapoleonApplication? = null
+        if (context is NapoleonApplication) {
+            app = context
+            Timber.d("IsAppVisible:${app.isAppVisible()}")
+        }
         when (notificationType) {
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
@@ -166,7 +171,7 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                     builder.setContentText(data.getValue(bodyKey))
                 }
 
-                if (data.containsKey(messageId)) {
+                if (data.containsKey(messageId) && app != null && !app.isAppVisible()) {
                     repository.notifyMessageReceived(data.getValue(messageId))
                 }
 
@@ -209,30 +214,25 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             }
 
             Constants.NotificationType.INCOMING_CALL.type -> {
-                if (context is NapoleonApplication) {
-                    val app: NapoleonApplication = context
-                    Timber.d("IsAppVisible: ${app.isAppVisible()}")
-                    if (!app.isAppVisible()) {
+                if (app != null && !app.isAppVisible()) {
+                    val jsonObject = JSONObject()
+                    jsonObject.put(
+                        Constants.CallKeys.CHANNEL,
+                        data[Constants.CallKeys.CHANNEL]
+                    )
+                    jsonObject.put(
+                        Constants.CallKeys.IS_VIDEO_CALL,
+                        data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
+                    )
+                    jsonObject.put(
+                        Constants.CallKeys.CONTACT_ID,
+                        data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
+                    )
 
-                        val jsonObject = JSONObject()
-                        jsonObject.put(
-                            Constants.CallKeys.CHANNEL,
-                            data[Constants.CallKeys.CHANNEL]
-                        )
-                        jsonObject.put(
-                            Constants.CallKeys.IS_VIDEO_CALL,
-                            data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
-                        )
-                        jsonObject.put(
-                            Constants.CallKeys.CONTACT_ID,
-                            data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
-                        )
-
-                        sharedPreferencesManager.putString(
-                            PREF_PENDING_CALL,
-                            jsonObject.toString()
-                        )
-                    }
+                    sharedPreferencesManager.putString(
+                        PREF_PENDING_CALL,
+                        jsonObject.toString()
+                    )
                 }
             }
         }

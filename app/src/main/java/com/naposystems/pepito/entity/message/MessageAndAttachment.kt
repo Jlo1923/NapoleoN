@@ -30,7 +30,9 @@ data class MessageAndAttachment(
         entityColumn = "id",
         entity = Contact::class
     )
-    var contact: Contact
+    var contact: Contact,
+    @Nullable
+    val messagesUnReads: Int? = 0
 ) : Parcelable {
     companion object {
 

@@ -2,7 +2,6 @@ package com.naposystems.pepito.di.modules
 
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
@@ -25,7 +24,6 @@ class HomeModule {
         userLocalDataSource: UserLocalDataSource,
         sharedPreferencesManager: SharedPreferencesManager,
         socketService: SocketService,
-        conversationLocalDataSource: ConversationDataSource,
         messageLocalDataSource: MessageDataSource,
         contactLocalDataSource: ContactDataSource,
         attachmentLocalDataSource: AttachmentDataSource,
@@ -36,7 +34,6 @@ class HomeModule {
             userLocalDataSource,
             sharedPreferencesManager,
             socketService,
-            conversationLocalDataSource,
             messageLocalDataSource,
             contactLocalDataSource,
             attachmentLocalDataSource,

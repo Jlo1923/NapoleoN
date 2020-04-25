@@ -54,17 +54,26 @@
         <TextView
             android:id="@+id/textView_unread_messages"
             style="@style/MinorBodyTextView.White"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
             android:background="@drawable/bg_unread_messages"
             android:gravity="center"
-            android:visibility="invisible"
             android:textColor="@color/colorTextMyMessage"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/linear_container"
             app:layout_constraintEnd_toEndOf="@id/textView_hora"
             app:layout_constraintTop_toTopOf="@+id/linear_container"
-            app:unreadMessages="@{conversation.message.id}"
+            app:unreadMessages="@{conversation.messagesUnReads}"
             tools:text="99" />
+
+        <ImageView
+            android:id="@+id/imageView_status_message"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            app:statusMessage="@{conversation.message}"
+            app:layout_constraintBottom_toBottomOf="@+id/linear_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linear_container" />
 
         <TextView
             android:id="@+id/textView_user_name"

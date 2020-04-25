@@ -2,7 +2,6 @@ package com.naposystems.pepito.repository.socket
 
 import android.content.Context
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
-import com.naposystems.pepito.db.dao.conversation.ConversationDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
@@ -24,7 +23,6 @@ import javax.inject.Inject
 class SocketRepository @Inject constructor(
     private val context: Context,
     private val napoleonApi: NapoleonApi,
-    private val conversationLocalDataSource: ConversationDataSource,
     private val messageLocalDataSource: MessageDataSource,
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val quoteDataSource: QuoteDataSource
@@ -59,18 +57,7 @@ class SocketRepository @Inject constructor(
                         downloadFile(listAttachments)
 
                         attachmentLocalDataSource.insertAttachments(listAttachments)
-
-                        val unreadMessages =
-                            messageResList.filter { it.userDestination == messageRes.userDestination }
-                                .size
-
-                        conversationLocalDataSource.insertConversation(
-                            messageRes,
-                            false,
-                            unreadMessages
-                        )
                     }
-
                 }
             }
         }
@@ -150,36 +137,7 @@ class SocketRepository @Inject constructor(
         GlobalScope.launch {
             val response = napoleonApi.getDeletedMessages()
             if (response.isSuccessful && (response.body()!!.count() > 0)) {
-                val idContact = messageLocalDataSource.getIdContactWithWebId(response.body()!!)
                 messageLocalDataSource.deletedMessages(response.body()!!)
-                when (val messageAndAttachment =
-                    messageLocalDataSource.getLastMessageByContact(idContact)) {
-                    null -> {
-                        conversationLocalDataSource.cleanConversation(idContact)
-                    }
-                    else -> {
-                        conversationLocalDataSource.getQuantityUnreads(idContact)
-                            .let { quantityUnreads ->
-                                if (quantityUnreads > 0) {
-                                    conversationLocalDataSource.updateConversationByContact(
-                                        idContact,
-                                        messageAndAttachment.message.body,
-                                        messageAndAttachment.message.createdAt,
-                                        messageAndAttachment.message.status,
-                                        quantityUnreads - response.body()!!.count()
-                                    )
-                                } else {
-                                    conversationLocalDataSource.updateConversationByContact(
-                                        idContact,
-                                        messageAndAttachment.message.body,
-                                        messageAndAttachment.message.createdAt,
-                                        messageAndAttachment.message.status,
-                                        0
-                                    )
-                                }
-                            }
-                    }
-                }
             }
         }
     }

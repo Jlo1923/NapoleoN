@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
-import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 import kotlinx.coroutines.launch
@@ -36,7 +35,7 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val contact: LiveData<Contact>
         get() = _contact
 
-    val conversations: LiveData<List<MessageAndAttachment>> = repository.getMessagesByHome()
+    val conversations: LiveData<List<MessageAndAttachment>> = repository.getMessagesForHome()
 
     init {
         _contact.value = null

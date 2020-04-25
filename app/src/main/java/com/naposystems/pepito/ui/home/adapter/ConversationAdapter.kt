@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.HomeFragmentItemBinding
-import com.naposystems.pepito.entity.conversation.ConversationAndContact
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 
