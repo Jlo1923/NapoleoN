@@ -7,7 +7,6 @@ import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
-import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.call.CallContactReqDTO
 import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessage422DTO
@@ -27,17 +26,22 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.IContractConversation
 import com.naposystems.pepito.utility.*
 import com.naposystems.pepito.webService.NapoleonApi
+import com.naposystems.pepito.webService.ProgressRequestBody
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import java.io.File
+import java.io.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -132,26 +136,79 @@ class ConversationRepository @Inject constructor(
         return napoleonApi.sendMessage(messageReqDTO)
     }
 
-    override suspend fun sendMessageAttachment(attachment: Attachment): Response<AttachmentResDTO> {
+    @InternalCoroutinesApi
+    override suspend fun sendMessageAttachment(
+        attachment: Attachment,
+        message: Message,
+        messageResponse: Response<MessageResDTO>
+    ) = channelFlow<UploadResult> {
+        withContext(Dispatchers.IO) {
+            val requestBodyMessageId = createPartFromString(attachment.messageWebId)
+            val requestBodyType = createPartFromString(attachment.type)
 
-        val requestBodyMessageId = createPartFromString(attachment.messageWebId)
-        val requestBodyType = createPartFromString(attachment.type)
-        val requestBodyFilePart = createPartFromFile(attachment)
+            val requestBodyFilePart =
+                createPartFromFile(attachment, object : ProgressRequestBody.Listener {
+                    override fun onRequestProgress(
+                        bytesWritten: Int,
+                        contentLength: Long,
+                        progress: Int
+                    ) {
+                        channel.offer(UploadResult.Progress(attachment, progress.toLong()))
+                    }
+                })
 
-        return napoleonApi.sendMessageAttachment(
-            messageId = requestBodyMessageId,
-            attachmentType = requestBodyType,
-            file = requestBodyFilePart
-        )
+            val response = napoleonApi.sendMessageAttachment(
+                messageId = requestBodyMessageId,
+                attachmentType = requestBodyType,
+                file = requestBodyFilePart
+            )
+
+            if (response.isSuccessful) {
+                Timber.d("Envió el puto archivo")
+                response.body()?.let { attachmentResDTO ->
+                    attachment.apply {
+                        webId = attachmentResDTO.id
+                        messageWebId = attachmentResDTO.messageId
+                        body = attachmentResDTO.body
+                        status = Constants.AttachmentStatus.SENT.status
+                    }
+                }
+                val messageEntity = MessageResDTO.toMessageEntity(
+                    message,
+                    messageResponse.body()!!,
+                    Constants.IsMine.YES.value
+                )
+                updateMessage(messageEntity)
+
+                updateAttachment(attachment)
+                channel.offer(UploadResult.Success(attachment))
+            } else {
+                setStatusErrorMessageAndAttachment(message, attachment)
+                channel.offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
+            }
+        }
+    }
+
+    private fun setStatusErrorMessageAndAttachment(message: Message, attachment: Attachment?) {
+        message.status = Constants.MessageStatus.ERROR.status
+        updateMessage(message)
+        attachment?.let {
+            attachment.status = Constants.AttachmentStatus.ERROR.status
+            updateAttachment(attachment)
+        }
     }
 
     private fun createPartFromString(string: String): RequestBody {
         return RequestBody.create(MultipartBody.FORM, string)
     }
 
-    private fun createPartFromFile(attachment: Attachment): MultipartBody.Part {
+    private fun createPartFromFile(
+        attachment: Attachment,
+        listener: ProgressRequestBody.Listener
+    ): MultipartBody.Part {
 
-        val subfolder = FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
+        val subfolder =
+            FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
 
         val fileUri = Utils.getFileUri(
             context = context, fileName = attachment.uri, subFolder = subfolder
@@ -161,7 +218,7 @@ class ConversationRepository @Inject constructor(
 
         val stream = context.contentResolver.openInputStream(fileUri)
         val byteArrayStream = ByteArrayOutputStream()
-        val buffer = ByteArray(1024)
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
 
         var i: Int
 
@@ -175,15 +232,21 @@ class ConversationRepository @Inject constructor(
 
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
 
-        val requestFile: RequestBody = RequestBody.create(
-            MediaType.parse(mimeType!!),
-            byteArray
-        )
+        val mediaType = MediaType.parse(mimeType!!)
 
+        val progressRequestBody =
+            ProgressRequestBody(
+                attachment,
+                byteArray,
+                mediaType!!,
+                listener
+            )
+
+        Timber.d("before return MultiparBody")
         return MultipartBody.Part.createFormData(
             "body",
             "${System.currentTimeMillis()}.$extension",
-            requestFile
+            progressRequestBody
         )
     }
 
@@ -263,24 +326,26 @@ class ConversationRepository @Inject constructor(
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(quoteWebId)
 
-        var firstAttachment: Attachment? = null
+        if (originalMessage != null) {
+            var firstAttachment: Attachment? = null
 
-        if (originalMessage.attachmentList.isNotEmpty()) {
-            firstAttachment = originalMessage.attachmentList.first()
+            if (originalMessage.attachmentList.isNotEmpty()) {
+                firstAttachment = originalMessage.attachmentList.first()
+            }
+
+            val quote = Quote(
+                id = 0,
+                messageId = message.id,
+                contactId = originalMessage.message.contactId,
+                body = originalMessage.message.body,
+                attachmentType = firstAttachment?.type ?: "",
+                thumbnailUri = firstAttachment?.uri ?: "",
+                messageParentId = originalMessage.message.id,
+                isMine = originalMessage.message.isMine
+            )
+
+            quoteDataSource.insertQuote(quote)
         }
-
-        val quote = Quote(
-            id = 0,
-            messageId = message.id,
-            contactId = originalMessage.message.contactId,
-            body = originalMessage.message.body,
-            attachmentType = firstAttachment?.type ?: "",
-            thumbnailUri = firstAttachment?.uri ?: "",
-            messageParentId = originalMessage.message.id,
-            isMine = originalMessage.message.isMine
-        )
-
-        quoteDataSource.insertQuote(quote)
     }
 
     override suspend fun updateStateSelectionMessage(
@@ -390,5 +455,109 @@ class ConversationRepository @Inject constructor(
             channel,
             SocketReqDTO.toJSONObject(socketReqDTO)
         )
+    }
+
+    override fun downloadAttachment(
+        attachment: Attachment,
+        itemPosition: Int
+    ) = flow {
+        withContext(Dispatchers.IO) {
+            val response = napoleonApi.downloadFileByUrl(attachment.body)
+
+            if (response.isSuccessful) {
+                response.body()?.let { body ->
+                    try {
+                        var folder = ""
+
+                        when (attachment.type) {
+                            Constants.AttachmentType.IMAGE.type -> {
+                                folder = Constants.NapoleonCacheDirectories.IMAGES.folder
+                            }
+                            Constants.AttachmentType.AUDIO.type -> {
+                                folder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            }
+                            Constants.AttachmentType.VIDEO.type -> {
+                                folder = Constants.NapoleonCacheDirectories.VIDEOS.folder
+                            }
+                            Constants.AttachmentType.DOCUMENT.type -> {
+                                folder =
+                                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                            }
+                            Constants.AttachmentType.GIF.type -> {
+                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                            }
+                            Constants.AttachmentType.GIF_NN.type -> {
+                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                            }
+                            Constants.AttachmentType.LOCATION.type -> {
+                                folder = Constants.NapoleonCacheDirectories.IMAGES.folder
+                            }
+                        }
+
+                        val path = File(context.cacheDir!!, folder)
+                        if (!path.exists())
+                            path.mkdirs()
+
+                        val fileName = "${attachment.webId}.${attachment.extension}"
+
+                        val file = File(
+                            path,
+                            fileName
+                        )
+
+                        attachment.uri = fileName
+                        updateAttachment(attachment)
+
+                        var inputStream: InputStream? = null
+                        var outputStream: OutputStream? = null
+
+                        try {
+
+                            Timber.d("File Size=${body.contentLength()}")
+                            val contentLength = body.contentLength()
+                            inputStream = body.byteStream()
+                            outputStream = file.outputStream() /*encryptedFile.openFileOutput()*/
+                            val data = ByteArray(contentLength.toInt())
+                            var count: Int
+                            var progress = 0
+                            while (inputStream.read(data).also { count = it } != -1) {
+                                outputStream.write(data, 0, count)
+                                progress += count
+                                val finalPercentage = (progress * 100 / contentLength)
+                                emit(
+                                    DownloadAttachmentResult.Progress(
+                                        itemPosition,
+                                        finalPercentage
+                                    )
+                                )
+                                Timber.d(
+                                    "Progress: $progress/${contentLength} >>>> $finalPercentage"
+                                )
+                            }
+                            outputStream.flush()
+                            Timber.d("File saved successfully!")
+                            emit(DownloadAttachmentResult.Success(attachment, itemPosition))
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                            emit(DownloadAttachmentResult.Error(attachment, "File not downloaded"))
+                            Timber.d("Failed to save the file!")
+                        } finally {
+                            inputStream?.close()
+                            outputStream?.close()
+                        }
+                    } catch (e: IOException) {
+                        emit(DownloadAttachmentResult.Error(attachment, "File not downloaded"))
+                        Timber.e(e)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int) {
+        if (messageAndAttachment.attachmentList.isNotEmpty()) {
+            val firstAttachment = messageAndAttachment.attachmentList.first()
+            attachmentLocalDataSource.updateAttachmentState(firstAttachment.webId, state)
+        }
     }
 }

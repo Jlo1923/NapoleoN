@@ -34,18 +34,15 @@ data class MessageAndAttachment(
     @Nullable
     val messagesUnReads: Int? = 0
 ) : Parcelable {
-    companion object {
 
-        fun getFirstAttachment(messageAndAttachment: MessageAndAttachment): Attachment? {
-            var firstAttachment: Attachment? = null
+    fun getFirstAttachment(): Attachment? {
+        var firstAttachment: Attachment? = null
 
-            if (messageAndAttachment.attachmentList.isNotEmpty()) {
-                firstAttachment = messageAndAttachment.attachmentList.first()
-            }
-
-            return firstAttachment
+        if (attachmentList.isNotEmpty()) {
+            firstAttachment = attachmentList.first()
         }
 
+        return firstAttachment
     }
 
     override fun equals(other: Any?): Boolean {

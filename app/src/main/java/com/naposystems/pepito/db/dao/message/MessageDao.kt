@@ -9,7 +9,7 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 interface MessageDao {
 
     @Query("SELECT * FROM message WHERE web_id=:webId")
-    fun getMessageByWebId(webId: String): MessageAndAttachment
+    fun getMessageByWebId(webId: String): MessageAndAttachment?
 
     @Query("SELECT * FROM message WHERE contact_id=:contact ORDER BY id DESC")
     fun getMessagesAndAttachments(contact: Int): LiveData<List<MessageAndAttachment>>

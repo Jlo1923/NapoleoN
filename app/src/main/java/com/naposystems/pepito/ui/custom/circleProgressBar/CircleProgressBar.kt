@@ -60,7 +60,7 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet) : Vie
                 }
 
                 mForegroundPaint.apply {
-                    color = resources.getColor(R.color.colorPrimary, context.theme)
+                    color = resources.getColor(mColor, context.theme)
                     style = Paint.Style.STROKE
                     strokeWidth = mStrokeWidth.toFloat()
                 }
@@ -101,6 +101,17 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet) : Vie
     }
 
     //region Implementation IContractCircleProgressBar
+
+    override fun setProgressColor(colorId: Int) {
+        this.mColor = colorId
+        mForegroundPaint.apply {
+            color = resources.getColor(mColor, context.theme)
+            style = Paint.Style.STROKE
+            strokeWidth = mStrokeWidth.toFloat()
+        }
+        invalidate()
+    }
+
     override fun setProgress(progress: Float) {
         this.mProgress = progress
         invalidate()

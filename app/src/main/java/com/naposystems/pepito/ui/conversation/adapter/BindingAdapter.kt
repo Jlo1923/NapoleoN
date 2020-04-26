@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
+import android.content.Context
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -13,7 +14,10 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.utility.BlurTransformation
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
@@ -126,57 +130,127 @@ fun bindCountDown(
     }
 
     messageAndAttachmentParam?.let { messageAndAttachment ->
-        if(messageAndAttachment.message.status == Constants.MessageStatus.READED.status) {
+        if (messageAndAttachment.message.status == Constants.MessageStatus.READED.status) {
             textView.startAnimation(animationScaleUp)
             textView.visibility = View.VISIBLE
-        }else {
+        } else {
             textView.visibility = View.GONE
         }
     }
 }
 
-@BindingAdapter("imageAttachment")
+@BindingAdapter("imageAttachment", "clickListener", "itemPosition")
 fun bindImageAttachment(
     imageView: ImageView,
-    @Nullable messageAndAttachmentParam: MessageAndAttachment?
+    @Nullable messageAndAttachmentParam: MessageAndAttachment?,
+    @Nullable clickListener: ConversationAdapter.ClickListener?,
+    @Nullable itemPosition: Int?
 ) {
-
     try {
         messageAndAttachmentParam?.let { messageAndAttachment ->
+            val context = imageView.context
+            val message = messageAndAttachment.message
+
             if (messageAndAttachment.attachmentList.isNotEmpty()) {
                 imageView.visibility = View.VISIBLE
                 val firstAttachment = messageAndAttachment.attachmentList[0]
 
-                when (firstAttachment.type) {
-                    Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
-                        Glide.with(imageView)
-                            .load(firstAttachment)
-                            .transform(CenterCrop(), RoundedCorners(8))
-                            .into(imageView)
-                    }
-                    Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
-                        Glide.with(imageView)
-                            .asGif()
-                            .load(firstAttachment)
-                            .into(imageView)
-                    }
-                    Constants.AttachmentType.VIDEO.type -> {
-                        val uri = Utils.getFileUri(
-                            imageView.context,
-                            firstAttachment.uri,
-                            Constants.NapoleonCacheDirectories.VIDEOS.folder
-                        )
-                        Glide.with(imageView)
-                            .load(uri)
-                            .thumbnail(0.1f)
-                            .transform(CenterCrop(), RoundedCorners(8))
-                            .into(imageView)
+                if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
+                    loadAttachment(firstAttachment, imageView)
+                } else {
+                    when (firstAttachment.status) {
+                        Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
+                            loadBlurAttachment(
+                                message,
+                                firstAttachment,
+                                imageView,
+                                context,
+                                clickListener,
+                                itemPosition
+                            )
+                        }
+                        Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
+                            loadAttachment(firstAttachment, imageView)
+                        }
                     }
                 }
             }
         }
     } catch (e: Exception) {
         Timber.e(e)
+    }
+}
+
+private fun loadBlurAttachment(
+    message: Message,
+    firstAttachment: Attachment,
+    imageView: ImageView,
+    context: Context?,
+    clickListener: ConversationAdapter.ClickListener?,
+    itemPosition: Int?
+) {
+    if (message.status == Constants.MessageStatus.READED.status) {
+        val fileName = "${firstAttachment.webId}.${firstAttachment.extension}"
+        firstAttachment.status = Constants.AttachmentStatus.DOWNLOADING.status
+        firstAttachment.uri = fileName
+        when (firstAttachment.type) {
+            Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
+                Glide.with(imageView)
+                    .load(firstAttachment.body)
+                    .transform(
+                        CenterCrop(),
+                        RoundedCorners(8),
+                        BlurTransformation(context)
+                    )
+                    .into(imageView)
+            }
+            Constants.AttachmentType.VIDEO.type,
+            Constants.AttachmentType.GIF.type,
+            Constants.AttachmentType.GIF_NN.type -> {
+                Glide.with(imageView)
+                    .load(firstAttachment.body)
+                    .thumbnail(0.1f)
+                    .transform(
+                        CenterCrop(),
+                        RoundedCorners(8),
+                        BlurTransformation(context)
+                    )
+                    .into(imageView)
+            }
+        }
+        clickListener?.downloadAttachment(firstAttachment, itemPosition)
+    }
+}
+
+private fun loadAttachment(
+    firstAttachment: Attachment,
+    imageView: ImageView
+) {
+    when (firstAttachment.type) {
+        Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment)
+                .transform(CenterCrop(), RoundedCorners(8))
+                .into(imageView)
+        }
+        Constants.AttachmentType.VIDEO.type -> {
+            val uri = Utils.getFileUri(
+                imageView.context,
+                firstAttachment.uri,
+                Constants.NapoleonCacheDirectories.VIDEOS.folder
+            )
+            Glide.with(imageView)
+                .load(uri)
+                .thumbnail(0.1f)
+                .transform(CenterCrop(), RoundedCorners(8))
+                .into(imageView)
+        }
+        Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
+            Glide.with(imageView)
+                .asGif()
+                .load(firstAttachment)
+                .into(imageView)
+        }
     }
 }
 

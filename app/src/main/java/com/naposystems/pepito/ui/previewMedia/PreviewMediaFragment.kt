@@ -51,13 +51,13 @@ class PreviewMediaFragment : Fragment() {
     }
     private val animationFadeIn: Animation by lazy {
         AnimationUtils.loadAnimation(
-            context!!,
+            requireContext(),
             R.anim.fade_in_fast
         )
     }
     private val animationFadeOut: Animation by lazy {
         AnimationUtils.loadAnimation(
-            context!!,
+            requireContext(),
             R.anim.fade_out_fast
         )
     }
@@ -89,16 +89,15 @@ class PreviewMediaFragment : Fragment() {
             Constants.AttachmentType.IMAGE.type,
             Constants.AttachmentType.GIF.type,
             Constants.AttachmentType.LOCATION.type -> {
-                if (binding.viewSwitcher.currentView.id == binding.containerVideoView.id) {
-                    binding.viewSwitcher.showNext()
-                }
+                binding.imageViewPreview.visibility = View.VISIBLE
             }
             Constants.AttachmentType.VIDEO.type -> {
                 try {
                     binding.containerSeekbar.visibility = View.VISIBLE
+                    binding.containerVideoView.visibility = View.VISIBLE
 
                     contentUri = Utils.getFileUri(
-                        context = context!!,
+                        context = requireContext(),
                         subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
                         fileName = firstAttachment.uri
                     )
@@ -271,16 +270,16 @@ class PreviewMediaFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (Util.SDK_INT >= 24) {
+        /*if (Util.SDK_INT >= 24) {
             initializePlayer()
-        }
+        }*/
     }
 
     override fun onResume() {
         super.onResume()
-        if ((Util.SDK_INT < 24)) {
+        /*if ((Util.SDK_INT < 24)) {
             initializePlayer()
-        }
+        }*/
     }
 
     override fun onPause() {
