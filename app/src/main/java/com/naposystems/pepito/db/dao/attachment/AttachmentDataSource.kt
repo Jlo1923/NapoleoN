@@ -9,4 +9,6 @@ interface AttachmentDataSource {
     fun insertAttachments(listAttachment: List<Attachment>): List<Long>
 
     fun updateAttachment(attachment: Attachment)
+
+    fun updateAttachmentState(webId: String, state: Int)
 }

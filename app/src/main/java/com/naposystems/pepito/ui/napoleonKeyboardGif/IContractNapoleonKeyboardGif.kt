@@ -1,7 +1,8 @@
 package com.naposystems.pepito.ui.napoleonKeyboardGif
 
-import androidx.lifecycle.MutableLiveData
 import com.giphy.sdk.core.models.Media
+import com.naposystems.pepito.utility.DownloadFileResult
+import kotlinx.coroutines.flow.Flow
 
 interface IContractNapoleonKeyboardGif {
 
@@ -10,6 +11,6 @@ interface IContractNapoleonKeyboardGif {
     }
 
     interface Repository {
-        suspend fun downloadGif(url: String, progressLiveData: MutableLiveData<Float>): String
+        suspend fun downloadGif(url: String): Flow<DownloadFileResult>
     }
 }

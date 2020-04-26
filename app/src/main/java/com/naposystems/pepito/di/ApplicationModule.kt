@@ -67,8 +67,8 @@ class ApplicationModule {
         sharedPreferencesManager: SharedPreferencesManager
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
-            .readTimeout(60, TimeUnit.SECONDS)
-            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.MINUTES)
+            .connectTimeout(15, TimeUnit.MINUTES)
 
         httpClient.addNetworkInterceptor(StethoInterceptor())
 

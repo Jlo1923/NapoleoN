@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -60,7 +61,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     false
                 )
 
-//                mAudioFileUri = getString(R.styleable.AudioPlayerCustomView_absolutePath)
                 mAudioId = getInt(R.styleable.AudioPlayerCustomView_audioId, 0)
                 mSeekbarProgressBackgroundTint = getResourceId(
                     R.styleable.AudioPlayerCustomView_seekbarProgressBackgroundTint,
@@ -89,6 +89,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             binding.imageButtonRewind.imageTintList = this
             binding.imageButtonSpeed.imageTintList = this
             binding.imageButtonForward.imageTintList = this
+            binding.progressBar.setProgressColor(mTintColor)
             binding.textViewDuration.setTextColor(this)
         }
 
@@ -136,6 +137,15 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     //region Implementation IContractAudioPlayer
+
+    override fun enablePlayButton(isEnable: Boolean) {
+        binding.imageButtonPlay.isEnabled = isEnable
+    }
+
+    override fun setProgress(progress: Long) {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.setProgress(progress.toFloat())
+    }
 
     override fun playAudio() {
         binding.imageButtonPlay.performClick()

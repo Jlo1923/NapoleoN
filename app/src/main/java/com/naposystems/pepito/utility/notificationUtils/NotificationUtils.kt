@@ -6,9 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -32,17 +29,6 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
 
     @Inject
     lateinit var repository: NotificationUtilsRepository
-
-    private val mediaPlayer: MediaPlayer by lazy {
-        MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build()
-            )
-        }
-    }
 
     init {
         (applicationContext as DaggerApplication).androidInjector().inject(this)
@@ -141,10 +127,10 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ) {
-        var app: NapoleonApplication? = null
+        var app: NapoleonApplication?  = null
         if (context is NapoleonApplication) {
             app = context
-            Timber.d("IsAppVisible:${app.isAppVisible()}")
+            Timber.d("IsAppVisible: ${app.isAppVisible()}")
         }
         when (notificationType) {
 
@@ -235,27 +221,6 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                     )
                 }
             }
-        }
-    }
-
-    private fun setupNotificationSound(context: Context, sound: Int) {
-        try {
-            mediaPlayer.apply {
-                reset()
-                setDataSource(
-                    context,
-                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
-                )
-                if (isPlaying) {
-                    stop()
-                    reset()
-                    release()
-                }
-                prepare()
-                start()
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
         }
     }
 

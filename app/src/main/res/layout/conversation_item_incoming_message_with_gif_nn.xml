@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="itemPosition"
+            type="Integer" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
         <variable
             name="conversation"
@@ -38,11 +47,28 @@
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
+                app:clickListener="@{clickListener}"
                 app:imageAttachment="@{conversation}"
+                app:itemPosition="@{itemPosition}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/marilyn"
+                tools:visibility="visible" />
+
+            <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="@dimen/width_attachment_circle_progress"
+                android:layout_height="@dimen/height_attachment_circle_progress"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
+                app:layout_constraintStart_toStartOf="@id/imageView_attachment"
+                app:layout_constraintTop_toTopOf="@id/imageView_attachment"
+                custom:progress="0"
+                custom:progressBarThickness="@dimen/circle_progress_bar"
+                custom:progressbarColor="@color/colorPrimary"
+                tools:progress="70"
                 tools:visibility="visible" />
 
             <TextView

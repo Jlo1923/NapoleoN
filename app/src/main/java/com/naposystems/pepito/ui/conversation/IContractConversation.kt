@@ -1,7 +1,6 @@
 package com.naposystems.pepito.ui.conversation
 
 import androidx.lifecycle.LiveData
-import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO
@@ -13,6 +12,10 @@ import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
+import com.naposystems.pepito.utility.DownloadAttachmentResult
+import com.naposystems.pepito.utility.UploadResult
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -57,6 +60,8 @@ interface IContractConversation {
         fun setIsVideoCall(isVideoCall: Boolean)
         fun isVideoCall(): Boolean
         fun resetIsVideoCall()
+        fun downloadAttachment(attachment: Attachment, itemPosition: Int)
+        fun updateAttachment(attachment: Attachment)
     }
 
     interface Repository {
@@ -66,7 +71,12 @@ interface IContractConversation {
         suspend fun getQuoteId(quoteWebId: String): Int
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
-        suspend fun sendMessageAttachment(attachment: Attachment): Response<AttachmentResDTO>
+        @InternalCoroutinesApi
+        suspend fun sendMessageAttachment(
+            attachment: Attachment,
+            message: Message,
+            messageResponse: Response<MessageResDTO>
+        ): Flow<UploadResult>
         suspend fun getLocalUser(): User
         fun insertMessage(message: Message): Long
         fun insertListMessage(messageList: List<Message>)
@@ -89,5 +99,7 @@ interface IContractConversation {
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
         suspend fun callContact(contact: Contact, isVideoCall: Boolean): Response<CallContactResDTO>
         fun subscribeToCallChannel(channel: String)
+        fun downloadAttachment(attachment: Attachment, itemPosition: Int): Flow<DownloadAttachmentResult>
+        fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int)
     }
 }

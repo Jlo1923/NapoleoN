@@ -34,7 +34,7 @@ data class AttachmentResDTO(
                     "",
                     Constants.AttachmentOrigin.DOWNLOADED.origin,
                     "",
-                    Constants.AttachmentStatus.SENT.status
+                    Constants.AttachmentStatus.NOT_DOWNLOADED.status
                 )
 
                 attachment.extension = attachmentDTO.extension

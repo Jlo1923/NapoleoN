@@ -18,4 +18,8 @@ class AttachmentLocalDataSource @Inject constructor(
     override fun updateAttachment(attachment: Attachment) {
         attachmentDao.updateAttachment(attachment)
     }
+
+    override fun updateAttachmentState(webId: String, state: Int) {
+        attachmentDao.updateAttachmentState(webId, state)
+    }
 }

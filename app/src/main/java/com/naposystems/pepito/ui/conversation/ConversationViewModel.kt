@@ -16,12 +16,11 @@ import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
-import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.FileManager
-import com.naposystems.pepito.utility.Utils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.naposystems.pepito.utility.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import retrofit2.Response
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -65,6 +64,14 @@ class ConversationViewModel @Inject constructor(
     private val _contactCalledSuccessfully = MutableLiveData<String>()
     val contactCalledSuccessfully: LiveData<String>
         get() = _contactCalledSuccessfully
+
+    private val _downloadProgress = MutableLiveData<DownloadAttachmentResult>()
+    val downloadAttachmentProgress: LiveData<DownloadAttachmentResult>
+        get() = _downloadProgress
+
+    private val _uploadProgress = MutableLiveData<UploadResult>()
+    val uploadProgress: LiveData<UploadResult>
+        get() = _uploadProgress
 
     private var countOldMessages: Int = 0
 
@@ -110,10 +117,14 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     override fun saveMessageLocally(body: String, selfDestructTime: Int, quote: String) {
         saveMessageAndAttachment(body, null, 0, selfDestructTime, quote)
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     override fun saveMessageAndAttachment(
         messageString: String,
         attachment: Attachment?,
@@ -160,6 +171,8 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     override fun saveMessageWithAudioAttachment(
         mediaStoreAudio: MediaStoreAudio,
         selfDestructTime: Int,
@@ -198,6 +211,8 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     private suspend fun sendMessageAndAttachment(
         attachment: Attachment?,
         message: Message,
@@ -221,42 +236,7 @@ class ConversationViewModel @Inject constructor(
 
                 if (attachment != null) {
 
-                    withContext(Dispatchers.IO) {
-
-                        attachment.messageWebId = messageResponse.body()!!.id
-
-                        try {
-                            val responseAttachment =
-                                repository.sendMessageAttachment(attachment)
-
-                            if (responseAttachment.isSuccessful) {
-
-                                responseAttachment.body()?.let { attachmentResDTO ->
-                                    attachment.apply {
-                                        webId = attachmentResDTO.id
-                                        messageWebId = attachmentResDTO.messageId
-                                        body = attachmentResDTO.body
-                                        status = Constants.AttachmentStatus.SENT.status
-                                    }
-                                }
-
-                                val messageEntity = MessageResDTO.toMessageEntity(
-                                    message,
-                                    messageResponse.body()!!,
-                                    Constants.IsMine.YES.value
-                                )
-                                repository.updateMessage(messageEntity)
-
-                                repository.updateAttachment(attachment)
-
-                            } else {
-                                setStatusErrorMessageAndAttachment(message, attachment)
-                            }
-                        } catch (e: Exception) {
-                            setStatusErrorMessageAndAttachment(message, attachment)
-                            Timber.e(e)
-                        }
-                    }
+                    uploadAttachment(attachment, messageResponse, message)
                 } else {
                     val messageEntity = MessageResDTO.toMessageEntity(
                         message,
@@ -277,6 +257,32 @@ class ConversationViewModel @Inject constructor(
         } catch (e: Exception) {
             setStatusErrorMessageAndAttachment(message, attachment)
             Timber.e(e)
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
+    private suspend fun uploadAttachment(
+        attachment: Attachment,
+        messageResponse: Response<MessageResDTO>,
+        message: Message
+    ) {
+        withContext(Dispatchers.IO) {
+
+            attachment.messageWebId = messageResponse.body()!!.id
+
+            try {
+                viewModelScope.launch {
+                    repository.sendMessageAttachment(attachment, message, messageResponse)
+                        .flowOn(Dispatchers.IO)
+                        .collect {
+                            _uploadProgress.value = it
+                        }
+                }
+            } catch (e: Exception) {
+                setStatusErrorMessageAndAttachment(message, attachment)
+                Timber.e(e)
+            }
         }
     }
 
@@ -423,17 +429,21 @@ class ConversationViewModel @Inject constructor(
 
     override fun callContact() {
         viewModelScope.launch {
+            val channel = "private-private.${contact.id}.${user.id}"
             try {
+                repository.subscribeToCallChannel(channel)
+                _contactCalledSuccessfully.value = channel
                 val response = repository.callContact(contact, isVideoCall)
 
                 if (response.isSuccessful) {
-                    response.body()?.let { responseBody ->
-                        val channel = "private-${responseBody.channel}"
-                        repository.subscribeToCallChannel(channel)
-                        _contactCalledSuccessfully.value = channel
+                    response.body()?.let { _ ->
+                        // Intentionally empty
                     }
+                } else {
+                    repository.unSubscribeToChannel(contact, channel)
                 }
             } catch (e: Exception) {
+                repository.unSubscribeToChannel(contact, channel)
                 Timber.e(e)
             }
         }
@@ -453,5 +463,20 @@ class ConversationViewModel @Inject constructor(
         this.isVideoCall = false
     }
 
-    //endregion
+    override fun downloadAttachment(attachment: Attachment, itemPosition: Int) {
+        viewModelScope.launch {
+            repository.downloadAttachment(attachment, itemPosition)
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    _downloadProgress.value = it
+                }
+        }
+    }
+
+    override fun updateAttachment(attachment: Attachment) {
+        repository.updateAttachment(attachment)
+    }
+
+
+//endregion
 }

@@ -116,24 +116,26 @@ class HomeRepository @Inject constructor(
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(messageRes.quoted)
 
-        var firstAttachment: Attachment? = null
+        if (originalMessage != null) {
+            var firstAttachment: Attachment? = null
 
-        if (originalMessage.attachmentList.isNotEmpty()) {
-            firstAttachment = originalMessage.attachmentList.first()
+            if (originalMessage.attachmentList.isNotEmpty()) {
+                firstAttachment = originalMessage.attachmentList.first()
+            }
+
+            val quote = Quote(
+                id = 0,
+                messageId = messageId,
+                contactId = originalMessage.message.contactId,
+                body = originalMessage.message.body,
+                attachmentType = firstAttachment?.type ?: "",
+                thumbnailUri = firstAttachment?.uri ?: "",
+                messageParentId = originalMessage.message.id,
+                isMine = originalMessage.message.isMine
+            )
+
+            quoteDataSource.insertQuote(quote)
         }
-
-        val quote = Quote(
-            id = 0,
-            messageId = messageId,
-            contactId = originalMessage.message.contactId,
-            body = originalMessage.message.body,
-            attachmentType = firstAttachment?.type ?: "",
-            thumbnailUri = firstAttachment?.uri ?: "",
-            messageParentId = originalMessage.message.id,
-            isMine = originalMessage.message.isMine
-        )
-
-        quoteDataSource.insertQuote(quote)
     }
 
     override suspend fun getDeletedMessages() {

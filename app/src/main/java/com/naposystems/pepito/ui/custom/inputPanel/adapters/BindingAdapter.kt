@@ -139,7 +139,7 @@ fun bindImageQuote(
 
     messageAndAttachmentNull?.let { messageAndAttachment ->
         if (isFromInputPanel) {
-            firstAttachmentNull = MessageAndAttachment.getFirstAttachment(messageAndAttachment)
+            firstAttachmentNull = messageAndAttachment.getFirstAttachment()
 
             firstAttachmentNull?.let { attachment ->
                 if (attachment.type == Constants.AttachmentType.IMAGE.type) {
@@ -256,7 +256,7 @@ private fun getAttachmentType(
                     quote.attachmentType
 
         } ?: run {
-            val firstAttachment = MessageAndAttachment.getFirstAttachment(messageAndAttachment)
+            val firstAttachment = messageAndAttachment.getFirstAttachment()
             firstAttachment?.let { attachment ->
                 attachmentType = attachment.type
             }

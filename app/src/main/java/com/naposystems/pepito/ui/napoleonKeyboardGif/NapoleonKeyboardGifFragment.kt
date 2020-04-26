@@ -20,6 +20,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.NapoleonKeyboardGifFragmentBinding
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.DownloadFileResult
 import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -83,39 +84,40 @@ class NapoleonKeyboardGifFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.downloadProgress.observe(viewLifecycleOwner, Observer { progress ->
-            val newProgress = progress * 100
-            binding.textViewProgress.text = "${newProgress.toInt()}%"
-            binding.progressBar.setProgress(newProgress)
+        viewModel.downloadAttachmentProgress.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is DownloadFileResult.Success -> {
+                    if (binding.viewSwitcher.nextView.id == binding.containerGiphy.id) {
+                        binding.viewSwitcher.showNext()
+                    }
+                    val attachment = Attachment(
+                        id = 0,
+                        messageId = 0,
+                        webId = "",
+                        messageWebId = "",
+                        type = Constants.AttachmentType.GIF.type,
+                        body = "",
+                        uri = it.fileName,
+                        origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
+                        thumbnailUri = "",
+                        status = Constants.AttachmentStatus.SENDING.status
+                    )
 
-            if (progress >= 1.0f && binding.viewSwitcher.nextView.id == binding.containerGiphy.id) {
-                binding.viewSwitcher.showNext()
+                    shareViewModel.setGifSelected(attachment)
+                    mListener?.onGifSelected()
+                }
+                is DownloadFileResult.Progress -> {
+                    binding.textViewProgress.text = "${it.progress}%"
+                    binding.progressBar.setProgress(it.progress.toFloat())
+                }
+                is DownloadFileResult.Error -> {
+                    this.showToast(getString(R.string.text_error_sending_gif))
+                    if (binding.viewSwitcher.nextView.id == binding.containerGiphy.id) {
+                        binding.viewSwitcher.showNext()
+                    }
+                }
             }
-        })
 
-        viewModel.gifFileName.observe(viewLifecycleOwner, Observer { gifFileName ->
-            val attachment = Attachment(
-                id = 0,
-                messageId = 0,
-                webId = "",
-                messageWebId = "",
-                type = Constants.AttachmentType.GIF.type,
-                body = "",
-                uri = gifFileName,
-                origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
-                thumbnailUri = "",
-                status = Constants.AttachmentStatus.SENDING.status
-            )
-
-            shareViewModel.setGifSelected(attachment)
-            mListener?.onGifSelected()
-        })
-
-        viewModel.errorDownloading.observe(viewLifecycleOwner, Observer { error ->
-            this.showToast(error)
-            if (binding.viewSwitcher.nextView.id == binding.containerGiphy.id) {
-                binding.viewSwitcher.showNext()
-            }
         })
     }
 

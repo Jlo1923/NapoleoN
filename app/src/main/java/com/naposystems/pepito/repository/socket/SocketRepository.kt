@@ -10,13 +10,10 @@ import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.message.Quote
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -54,30 +51,8 @@ class SocketRepository @Inject constructor(
                             messageRes.attachments
                         )
 
-                        downloadFile(listAttachments)
-
                         attachmentLocalDataSource.insertAttachments(listAttachments)
                     }
-                }
-            }
-        }
-    }
-
-    private suspend fun downloadFile(listAttachments: List<Attachment>) {
-        withContext(Dispatchers.IO) {
-            listAttachments.forEach { attachment ->
-
-                val responseDownloadFile =
-                    napoleonApi.downloadFileByUrl(attachment.body)
-
-                if (responseDownloadFile.isSuccessful) {
-                    attachment.uri =
-                        FileManager.saveToDisk(
-                            context = context,
-                            body = responseDownloadFile.body()!!,
-                            type = attachment.type,
-                            extension = attachment.extension
-                        )
                 }
             }
         }
@@ -87,24 +62,26 @@ class SocketRepository @Inject constructor(
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(messageRes.quoted)
 
-        var firstAttachment: Attachment? = null
+        if (originalMessage != null) {
+            var firstAttachment: Attachment? = null
 
-        if (originalMessage.attachmentList.isNotEmpty()) {
-            firstAttachment = originalMessage.attachmentList.first()
+            if (originalMessage.attachmentList.isNotEmpty()) {
+                firstAttachment = originalMessage.attachmentList.first()
+            }
+
+            val quote = Quote(
+                id = 0,
+                messageId = messageId,
+                contactId = originalMessage.message.contactId,
+                body = originalMessage.message.body,
+                attachmentType = firstAttachment?.type ?: "",
+                thumbnailUri = firstAttachment?.uri ?: "",
+                messageParentId = originalMessage.message.id,
+                isMine = originalMessage.message.isMine
+            )
+
+            quoteDataSource.insertQuote(quote)
         }
-
-        val quote = Quote(
-            id = 0,
-            messageId = messageId,
-            contactId = originalMessage.message.contactId,
-            body = originalMessage.message.body,
-            attachmentType = firstAttachment?.type ?: "",
-            thumbnailUri = firstAttachment?.uri ?: "",
-            messageParentId = originalMessage.message.id,
-            isMine = originalMessage.message.isMine
-        )
-
-        quoteDataSource.insertQuote(quote)
     }
 
     override fun verifyMessagesReceived() {

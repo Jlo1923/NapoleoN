@@ -220,5 +220,13 @@ class FileManager {
                 null
             }
         }
+
+        fun checkIfFileExist(context: Context, fileName: String, folder: String): Boolean {
+            val path = File(context.cacheDir!!, folder)
+            if (!path.exists())
+                path.mkdirs()
+
+            return File(path, fileName).exists()
+        }
     }
 }
