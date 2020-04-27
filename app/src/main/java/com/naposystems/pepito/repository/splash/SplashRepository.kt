@@ -56,15 +56,10 @@ class SplashRepository @Inject constructor(
     }
 
     override suspend fun setDefaultTheme() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_COLOR_SCHEME
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_COLOR_SCHEME,
+            Constants.ColorScheme.LIGHT_THEME.scheme
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_COLOR_SCHEME,
-                Constants.ColorScheme.LIGHT_THEME.scheme
-            )
-        }
     }
 
     override suspend fun setDefaultLanguage(language: String) {
@@ -74,120 +69,93 @@ class SplashRepository @Inject constructor(
     }
 
     override suspend fun setDefaultUserDisplayFormat() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT,
+            Constants.UserDisplayFormat.NAME_AND_NICKNAME.format
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT,
-                Constants.UserDisplayFormat.NAME_AND_NICKNAME.format
-            )
-        }
+    }
+
+    override suspend fun setDefaultTimeFormat() {
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_TIME_FORMAT,
+            Constants.TimeFormat.EVERY_TWELVE_HOURS.time
+        )
     }
 
     override suspend fun setDefaultSelfDestructTime() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME,
+            Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME,
-                Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time
-            )
-        }
     }
 
     override suspend fun setDefaultTimeRequestAccessPin() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN,
+            Constants.TimeRequestAccessPin.THIRTY_SECONDS.time
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_TIME_REQUEST_ACCESS_PIN,
-                Constants.TimeRequestAccessPin.THIRTY_SECONDS.time
-            )
-        }
     }
 
     override suspend fun setDefaultAllowDownloadAttachments() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS,
+            Constants.AllowDownloadAttachments.YES.option
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_ALLOW_DOWNLOAD_ATTACHMENTS,
-                Constants.AllowDownloadAttachments.YES.option
-            )
-        }
     }
 
     override suspend fun setDefaultBiometricsOption(biometricOption: Int) {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION,
+            biometricOption
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_BIOMETRICS_OPTION, biometricOption
-            )
-        }
     }
 
     override suspend fun setDefaultLockType() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_TYPE_LOCK_APP
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_TYPE_LOCK_APP,
+            Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_TYPE_LOCK_APP,
-                Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type
-            )
-        }
     }
 
     override suspend fun setDefaultSelfDestructTimeMessageNotSent() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT,
+            Constants.MessageSelfDestructTimeNotSent.SEVEN_DAYS.time
         )
-        if (default == 0) {
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT,
-                Constants.MessageSelfDestructTimeNotSent.SEVEN_DAYS.time
-            )
-        }
     }
 
     override suspend fun setDefaultAttemptsForRetryCode() {
-        val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_ATTEMPTS_FOR_RETRY_CODE
-        )
-        if (default == 0){
-            sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_ATTEMPTS_FOR_RETRY_CODE,
-                0
-            )
-        }
+        defaultPreferencesPutInt(Constants.SharedPreferences.PREF_ATTEMPTS_FOR_RETRY_CODE, 0)
     }
 
     override suspend fun setDefaultTimeForRetryCode() {
+        defaultPreferencesPutLong(Constants.SharedPreferences.PREF_TIME_FOR_RETRY_CODE, 0)
+    }
+
+    override suspend fun setDefaultAttemptsForNewCode() {
+        defaultPreferencesPutInt(Constants.SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE, 0)
+    }
+
+    private fun defaultPreferencesPutLong(preference : String, data : Long) {
         val default = sharedPreferencesManager.getLong(
-            Constants.SharedPreferences.PREF_TIME_FOR_RETRY_CODE
+            preference
         )
-        if (default == 0L){
+        if (default == 0L) {
             sharedPreferencesManager.putLong(
-                Constants.SharedPreferences.PREF_TIME_FOR_RETRY_CODE,
-                0
+                preference,
+                data
             )
         }
     }
 
-    override suspend fun setDefaultAttemptsForNewCode() {
+    private fun defaultPreferencesPutInt(preference : String, data : Int) {
         val default = sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE
+            preference
         )
-        if (default == 0){
+        if (default == 0) {
             sharedPreferencesManager.putInt(
-                Constants.SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE,
-                0
+                preference,
+                data
             )
         }
     }

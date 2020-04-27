@@ -25,11 +25,13 @@ class IncomingMessageDocumentViewHolder constructor(private val binding: Convers
     fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
-        isFirst: Boolean
+        isFirst: Boolean,
+        timeFormat : Int?
     ) {
         binding.conversation = item
         binding.clickListener = clickListener
         binding.isFirst = isFirst
+        binding.timeFormat = timeFormat
 
         if (item.message.isSelected) {
             binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))

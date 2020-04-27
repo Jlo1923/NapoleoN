@@ -15,6 +15,10 @@
             type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
 
         <variable
+            name="timeFormat"
+            type="Integer" />
+
+        <variable
             name="clickListener"
             type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
@@ -129,6 +133,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
                 app:messageDate="@{conversation.message.createdAt}"
+                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

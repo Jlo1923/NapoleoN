@@ -17,4 +17,8 @@ class AppearanceSettingsRepository @Inject constructor(
     override fun getUserDisplayFormat(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT)
     }
+
+    override fun getTimeFormat(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_TIME_FORMAT)
+    }
 }

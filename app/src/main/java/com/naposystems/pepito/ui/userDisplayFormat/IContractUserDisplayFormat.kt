@@ -5,6 +5,7 @@ interface IContractUserDisplayFormat {
     interface ViewModel {
         fun setUserDisplayFormat(format: Int)
         fun getUserDisplayFormat()
+        fun getValUserDisplayFormat() : Int?
     }
 
     interface Repository {

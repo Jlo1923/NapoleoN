@@ -17,6 +17,11 @@
         <variable
             name="conversation"
             type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="timeFormat"
+            type="Integer" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -79,6 +84,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
                 app:messageDate="@{conversation.message.createdAt}"
+                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>

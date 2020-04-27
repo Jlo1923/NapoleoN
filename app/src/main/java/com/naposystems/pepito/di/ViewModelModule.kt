@@ -53,6 +53,7 @@ import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewM
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -141,6 +142,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UserDisplayFormatShareViewModel::class)
     internal abstract fun bindUserDisplayFormatShareViewModel(viewModel: UserDisplayFormatShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TimeFormatShareViewModel::class)
+    internal abstract fun bindTimeFormatShareViewModel(viewModel: TimeFormatShareViewModel): ViewModel
 
     @Binds
     @IntoMap

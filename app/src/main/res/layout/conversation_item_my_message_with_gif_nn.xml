@@ -17,6 +17,11 @@
         <variable
             name="clickListener"
             type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+
+        <variable
+            name="timeFormat"
+            type="Integer" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -84,6 +89,7 @@
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
                 app:messageDate="@{conversation.message.createdAt}"
+                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

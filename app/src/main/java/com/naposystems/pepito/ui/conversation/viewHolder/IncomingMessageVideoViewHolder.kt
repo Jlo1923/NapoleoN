@@ -27,13 +27,15 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
     fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
-        isFirst: Boolean
+        isFirst: Boolean,
+        timeFormat : Int?
     ) {
         Timber.d("Bind")
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
         binding.isFirst = isFirst
+        binding.timeFormat = timeFormat
 
         val firstAttachment: Attachment? = item.getFirstAttachment()
 

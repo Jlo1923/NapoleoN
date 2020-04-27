@@ -5,6 +5,7 @@ import androidx.annotation.Nullable
 import androidx.databinding.BindingAdapter
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.utility.Utils
 
 @BindingAdapter("nicknameContact")
 fun bindNickNameContact(textView: TextView, @Nullable contact: Contact?) {

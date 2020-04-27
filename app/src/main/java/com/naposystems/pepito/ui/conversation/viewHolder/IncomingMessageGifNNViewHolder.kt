@@ -25,12 +25,14 @@ class IncomingMessageGifNNViewHolder constructor(
     @SuppressLint("ResourceAsColor")
     fun bind(
         item: MessageAndAttachment,
-        clickListener: ConversationAdapter.ClickListener
+        clickListener: ConversationAdapter.ClickListener,
+        timeFormat : Int?
     ) {
         binding.itemPosition = adapterPosition
         binding.clickListener = clickListener
         binding.conversation = item
         binding.imageViewAttachment.visibility = View.GONE
+        binding.timeFormat = timeFormat
 
         countDown(
             item,

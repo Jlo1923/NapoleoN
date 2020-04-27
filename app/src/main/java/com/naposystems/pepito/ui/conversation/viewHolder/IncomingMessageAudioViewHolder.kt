@@ -28,11 +28,13 @@ class IncomingMessageAudioViewHolder constructor(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean,
-        mediaPlayerManager: MediaPlayerManager
+        mediaPlayerManager: MediaPlayerManager,
+        timeFormat : Int?
     ) {
         binding.conversation = item
         binding.clickListener = clickListener
         binding.isFirst = isFirst
+        binding.timeFormat = timeFormat
 
         countDown(
             item,

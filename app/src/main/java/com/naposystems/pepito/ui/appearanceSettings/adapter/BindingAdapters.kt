@@ -39,3 +39,15 @@ fun bindUserDisplayFormat(textView: TextView, userDisplayFormat: Int) {
 
     textView.text = stringUserDisplayFormat
 }
+
+@BindingAdapter("timeFormat")
+fun bindTimeFormat(textView: TextView, timeFormat: Int) {
+    val context = textView.context
+    val stringTimeFormat = when (timeFormat) {
+        Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time ->
+            R.string.text_every_twenty_four_hours
+        else -> R.string.text_every_twelve_hours
+    }
+
+    textView.text = context.getString(stringTimeFormat)
+}

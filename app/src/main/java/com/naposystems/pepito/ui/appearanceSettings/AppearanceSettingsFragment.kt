@@ -30,6 +30,7 @@ import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
+import com.naposystems.pepito.ui.timeFormat.TimeFormatDialogFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
@@ -38,6 +39,7 @@ import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
@@ -130,6 +132,7 @@ class AppearanceSettingsFragment : BaseFragment() {
         binding.imageButtonUserDisplayOptionEndIcon.setOnClickListener(
             userDisplayFormatClickListener()
         )
+        binding.optionTimeFormat.setOnClickListener(timeFormatClickListener())
 
         binding.optionLanguage.setOnClickListener(languageClickListener())
         binding.imageButtonLanguageOptionEndIcon.setOnClickListener(languageClickListener())
@@ -175,6 +178,16 @@ class AppearanceSettingsFragment : BaseFragment() {
             }
         })
         userDisplayFormatDialog.show(childFragmentManager, "UserDisplayFormat")
+    }
+
+    private fun timeFormatClickListener() = View.OnClickListener {
+        val dialog = TimeFormatDialogFragment.newInstance()
+        dialog.setListener(object : TimeFormatDialogFragment.TimeFormatListener {
+            override fun onTimeFormatChange() {
+                viewModel.getTimeFormat()
+            }
+        })
+        dialog.show(childFragmentManager, "TimeFormat")
     }
 
     private fun chatBackgroundClickListener() = View.OnClickListener {
@@ -295,6 +308,7 @@ class AppearanceSettingsFragment : BaseFragment() {
 
         viewModel.getColorScheme()
         viewModel.getUserDisplayFormat()
+        viewModel.getTimeFormat()
         baseViewModel.getOutputControl()
     }
 
