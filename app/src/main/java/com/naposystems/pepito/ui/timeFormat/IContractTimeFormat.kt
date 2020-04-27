@@ -5,6 +5,7 @@ interface IContractTimeFormat {
     interface ViewModel {
         fun setTimeFormat(format: Int)
         fun getTimeFormat()
+        fun getValTimeFormat() : Int?
     }
 
     interface Repository {

@@ -257,36 +257,39 @@ class HomeFragment : Fragment() {
 
     private fun setAdapter() {
         adapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
-            override fun onClick(item: MessageAndAttachment) {
-                findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)
-                )
-            }
-
-            override fun onClickAvatar(item: MessageAndAttachment) {
-                seeProfile(item.contact)
-            }
-
-            override fun onLongClick(item: MessageAndAttachment, view: View) {
-                val popup = PopupMenu(context!!, view)
-                popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
-
-                popup.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.start_chat_from_inbox ->
-                            startConversation(item.contact)
-                        R.id.see_profile_from_inbox ->
-                            seeProfile(item.contact)
-                        R.id.delete_chat_from_inbox ->
-                            deleteChat(item.contact)
-                        R.id.block_contact_from_inbox ->
-                            blockContact(item.contact)
-                    }
-                    true
+                override fun onClick(item: MessageAndAttachment) {
+                    findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)
+                    )
                 }
-                popup.show()
-            }
-        }, userDisplayFormatShareViewModel, timeFormatShareViewModel)
+
+                override fun onClickAvatar(item: MessageAndAttachment) {
+                    seeProfile(item.contact)
+                }
+
+                override fun onLongClick(item: MessageAndAttachment, view: View) {
+                    val popup = PopupMenu(context!!, view)
+                    popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
+
+                    popup.setOnMenuItemClickListener {
+                        when (it.itemId) {
+                            R.id.start_chat_from_inbox ->
+                                startConversation(item.contact)
+                            R.id.see_profile_from_inbox ->
+                                seeProfile(item.contact)
+                            R.id.delete_chat_from_inbox ->
+                                deleteChat(item.contact)
+                            R.id.block_contact_from_inbox ->
+                                blockContact(item.contact)
+                        }
+                        true
+                    }
+                    popup.show()
+                }
+            },
+            userDisplayFormatShareViewModel.getValUserDisplayFormat(),
+            timeFormatShareViewModel.getValTimeFormat()
+        )
         binding.recyclerViewChats.adapter = adapter
         binding.recyclerViewChats.itemAnimator = ItemAnimator()
 

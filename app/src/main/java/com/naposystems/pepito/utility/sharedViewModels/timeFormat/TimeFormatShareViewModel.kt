@@ -24,4 +24,8 @@ class TimeFormatShareViewModel @Inject constructor(
         _timeFormat.value = repository.getTimeFormat()
     }
 
+    override fun getValTimeFormat(): Int? {
+        return timeFormat.value
+    }
+
 }

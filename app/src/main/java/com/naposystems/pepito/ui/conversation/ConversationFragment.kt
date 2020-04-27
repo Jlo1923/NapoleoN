@@ -1087,7 +1087,7 @@ class ConversationFragment : BaseFragment(),
                     viewModel.downloadAttachment(attachment, itemPosition)
                 }
             }
-        }, mediaPlayerManager, timeFormatShareViewModel.timeFormat.value)
+        }, mediaPlayerManager, timeFormatShareViewModel.getValTimeFormat())
 
         linearLayoutManager = LinearLayoutManager(requireContext())
         linearLayoutManager.reverseLayout = true
