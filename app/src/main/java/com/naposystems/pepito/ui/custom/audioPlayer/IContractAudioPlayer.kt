@@ -4,6 +4,8 @@ import android.net.Uri
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 
 interface IContractAudioPlayer {
+    fun enablePlayButton(isEnable: Boolean)
+    fun setProgress(progress: Long)
     fun playAudio()
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setMediaPlayerManager(mediaPlayerManager: MediaPlayerManager)

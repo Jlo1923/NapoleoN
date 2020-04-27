@@ -74,6 +74,8 @@ import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShar
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -101,18 +103,18 @@ class ConversationFragment : BaseFragment(),
     private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
         viewModelFactory
     }
-    private val timeFormatShareViewModel: TimeFormatShareViewModel by viewModels {
-        viewModelFactory
-    }
 
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
-    private val userDisplayFormatShareViewModel : UserDisplayFormatShareViewModel by activityViewModels {
+    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
     private val shareContactViewModel: ShareContactViewModel by viewModels {
         viewModelFactory
     }
-    private val contactProfileShareViewModel : ContactProfileShareViewModel by activityViewModels{
+    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+        viewModelFactory
+    }
+    private val timeFormatShareViewModel : TimeFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
 
@@ -234,6 +236,8 @@ class ConversationFragment : BaseFragment(),
         super.onAttach(context)
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -410,6 +414,8 @@ class ConversationFragment : BaseFragment(),
         })
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     private fun inputPanelFabClickListener() {
         with(binding.floatingActionButtonSend) {
             this.setOnClickListener {
@@ -441,6 +447,8 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(this) {
@@ -526,14 +534,6 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
-                /*findNavController().navigate(
-                    ConversationFragmentDirections.actionConversationFragmentToConversationCallFragment(
-                        contact = args.contact,
-                        channel = channel,
-                        isIncomingCall = false,
-                        isVideoCall = viewModel.isVideoCall()
-                    )
-                )*/
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
@@ -551,8 +551,45 @@ class ConversationFragment : BaseFragment(),
                 viewModel.resetIsVideoCall()
             }
         })
+
+        viewModel.downloadAttachmentProgress.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is DownloadAttachmentResult.Success -> {
+                    it.attachment.status =
+                        Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
+                    viewModel.updateAttachment(
+                        it.attachment
+                    )
+                }
+                is DownloadAttachmentResult.Progress -> {
+                    conversationAdapter.setProgress(
+                        it.itemPosition,
+                        it.progress
+                    )
+                }
+                is DownloadAttachmentResult.Error -> {
+                    it.attachment.status =
+                        Constants.AttachmentStatus.DOWNLOAD_ERROR.status
+                    viewModel.updateAttachment(
+                        it.attachment
+                    )
+                    Timber.d("Error")
+                }
+            }
+        })
+
+        viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is UploadResult.Progress -> {
+                    Timber.d("Progreso subida: ${it.progress}")
+                    conversationAdapter.setUploadProgress(it.attachment, it.progress)
+                }
+            }
+        })
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     private fun saveAndSendRecordAudio() {
         recordFile?.let { file ->
 
@@ -1039,7 +1076,18 @@ class ConversationFragment : BaseFragment(),
                     ).show()
                 }
             }
-        }, mediaPlayerManager, timeFormatShareViewModel)
+
+            override fun downloadAttachment(
+                attachment: Attachment,
+                itemPosition: Int?
+            ) {
+                Timber.d("downloadAttachment")
+                if (itemPosition != null) {
+                    viewModel.updateAttachment(attachment)
+                    viewModel.downloadAttachment(attachment, itemPosition)
+                }
+            }
+        }, mediaPlayerManager, timeFormatShareViewModel.timeFormat.value)
 
         linearLayoutManager = LinearLayoutManager(requireContext())
         linearLayoutManager.reverseLayout = true
@@ -1081,7 +1129,9 @@ class ConversationFragment : BaseFragment(),
         if (item.attachmentList.isNotEmpty()) {
             val firstAttachment = item.attachmentList.first()
 
-            if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
+            if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type &&
+                firstAttachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
+            ) {
                 openAttachmentDocument(firstAttachment)
             }
         }

@@ -278,7 +278,11 @@ object Constants {
     enum class AttachmentStatus(val status: Int) {
         SENDING(1),
         SENT(2),
-        ERROR(3)
+        ERROR(3),
+        NOT_DOWNLOADED(4),
+        DOWNLOADING(5),
+        DOWNLOAD_COMPLETE(6),
+        DOWNLOAD_ERROR(7)
     }
 
     enum class AttachmentOrigin(val origin: Int) {
@@ -312,7 +316,7 @@ object Constants {
         OLD_USER(2)
     }
 
-    enum class TimeSendCode(val time: Int){
+    enum class TimeSendCode(val time: Int) {
         TEN_SECONDS(10000),
         THIRTY_SECONDS(30000),
         FIVE_MINUTES(300000)

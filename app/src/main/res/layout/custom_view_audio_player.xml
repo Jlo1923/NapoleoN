@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -26,6 +27,21 @@
             app:layout_constraintTop_toTopOf="@id/container_controls"
             app:secondAnimation="@drawable/anim_pause_to_play"
             app:srcCompat="@drawable/ic_play_arrow_black" />
+
+        <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_play"
+            app:layout_constraintEnd_toEndOf="@id/imageButton_play"
+            app:layout_constraintStart_toStartOf="@id/imageButton_play"
+            app:layout_constraintTop_toTopOf="@id/imageButton_play"
+            custom:progress="0"
+            custom:progressBarThickness="@dimen/circle_progress_bar"
+            custom:progressbarColor="@color/colorTextMyMessage"
+            tools:progress="70"
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"

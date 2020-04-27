@@ -34,6 +34,7 @@
     <string name="text_document_quote">Documento</string>
     <string name="text_slide_to_cancel">Swipe per annullare</string>
     <string name="text_explanation_to_record_audio_attacment">Per inviare una nota vocale, lasciate NAPOLEON può registrare l\'audio.</string>
+    <string name="text_error_sending_gif">Si è verificato un errore durante l\'invio del Gif, riprova</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d giorno</item>
         <item quantity="other">%d giorni</item>

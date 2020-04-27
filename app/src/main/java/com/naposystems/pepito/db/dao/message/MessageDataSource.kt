@@ -1,13 +1,12 @@
 package com.naposystems.pepito.db.dao.message
 
 import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 
 interface MessageDataSource {
 
-    fun getMessageByWebId(webId: String): MessageAndAttachment
+    fun getMessageByWebId(webId: String): MessageAndAttachment?
 
     fun getMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
 

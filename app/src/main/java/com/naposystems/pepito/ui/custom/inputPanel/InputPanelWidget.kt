@@ -64,7 +64,13 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun setEditTextWatcher(textWatcher: TextWatcher) {
-        binding.textInputEditTextInput.addTextChangedListener(textWatcher)
+        val colorHint = Utils.convertAttrToColorResource(context, R.attr.attrTextColorHintConversationInputPanel)
+        val textColor = Utils.convertAttrToColorResource(context, R.attr.attrTextColorConversationInputPanel)
+        binding.textInputEditTextInput.apply {
+            addTextChangedListener(textWatcher)
+            setHintTextColor(colorHint)
+            setTextColor(textColor)
+        }
     }
 
     override fun getEditTex() = binding.textInputEditTextInput

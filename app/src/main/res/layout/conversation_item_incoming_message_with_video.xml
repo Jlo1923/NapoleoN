@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="itemPosition"
+            type="Integer" />
 
         <variable
             name="conversation"
             type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
 
         <variable
-            name="timeFormatViewModel"
-            type="com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel" />
+            name="timeFormat"
+            type="Integer" />
 
         <variable
             name="clickListener"
@@ -80,15 +85,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="@dimen/small_margin"
-                android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
+                app:clickListener="@{clickListener}"
                 app:imageAttachment="@{conversation}"
+                app:itemPosition="@{itemPosition}"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/container_quote"
                 tools:src="@drawable/vertical_photo"
+                tools:visibility="visible" />
+
+            <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
+                app:layout_constraintStart_toStartOf="@id/imageView_attachment"
+                app:layout_constraintTop_toTopOf="@id/imageView_attachment"
+                custom:progress="0"
+                custom:progressBarThickness="@dimen/circle_progress_bar"
+                custom:progressbarColor="@color/colorPrimary"
+                tools:progress="70"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -97,12 +118,14 @@
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:background="@drawable/bg_play_attachment_preview"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView_attachment"
                 app:layout_constraintEnd_toEndOf="@+id/imageView_attachment"
                 app:layout_constraintStart_toStartOf="@+id/imageView_attachment"
                 app:layout_constraintTop_toTopOf="@+id/imageView_attachment"
                 app:srcCompat="@drawable/ic_play_arrow_black"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/textView_message"
@@ -125,7 +148,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
                 app:messageDate="@{conversation.message.createdAt}"
-                app:formatTime="@{timeFormatViewModel.timeFormat}"
+                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>

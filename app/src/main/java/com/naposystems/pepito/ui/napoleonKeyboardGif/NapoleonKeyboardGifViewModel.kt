@@ -5,37 +5,31 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.giphy.sdk.core.models.Media
+import com.naposystems.pepito.utility.DownloadFileResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 class NapoleonKeyboardGifViewModel @Inject constructor(
     private val repository: IContractNapoleonKeyboardGif.Repository
 ) : ViewModel(), IContractNapoleonKeyboardGif.ViewModel {
 
-    private val _downloadProgress = MutableLiveData<Float>()
-    val downloadProgress: LiveData<Float>
+    private val _downloadProgress = MutableLiveData<DownloadFileResult>()
+    val downloadAttachmentProgress: LiveData<DownloadFileResult>
         get() = _downloadProgress
-
-    private val _gifFileName = MutableLiveData<String>()
-    val gifFileName: LiveData<String>
-        get() = _gifFileName
-
-    private val _errorDownloading = MutableLiveData<String>()
-    val errorDownloading: LiveData<String>
-        get() = _errorDownloading
 
     /** [IContractNapoleonKeyboardGif.ViewModel] */
     //region Implementation IContractNapoleonKeyboardGif.ViewModel
     override fun downloadGif(mediaGif: Media) {
         viewModelScope.launch {
-            try {
-                mediaGif.images.original?.gifUrl?.let { gifUrl ->
-                    _gifFileName.value = repository.downloadGif(gifUrl, _downloadProgress)
-                }
-            } catch (e: Exception) {
-                Timber.e(e)
-                _errorDownloading.value = "Falló la descarga|!!"
+            mediaGif.images.original?.gifUrl?.let { gifUrl ->
+                repository.downloadGif(gifUrl)
+                    .flowOn(Dispatchers.IO)
+                    .collect {
+                        _downloadProgress.value = it
+                    }
             }
         }
     }
