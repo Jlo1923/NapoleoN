@@ -14,7 +14,6 @@
     <string name="text_duration_and_size" translatable="false">%1$s - %2$s</string>
     <string name="transition_name_gallery_thumbnail" translatable="false">gallery_item_thumbnail_%1$d</string>
     <string name="com.crashlytics.useFirebaseAppId" tools:ignore="ExtraTranslation">true</string>
-
     <string name="text_accept">Accept</string>
     <string name="text_cancel">Cancel</string>
     <string name="text_continue">Continue</string>
@@ -71,4 +70,10 @@
     <string name="text_message_restore_image">Are you sure you want to restore the default cover image?</string>
     <string name="text_display_name">Display name</string>
     <string name="text_nickname_not_contain_enough_char">The nickname must contain at least 5 characters.</string>
+    <string name="text_empty_state_conversation_title">Start a conversation</string>
+    <string name="text_empty_state_conversation_description">Chat with your friends and share with them in a safe and private way</string>
+    <string name="text_empty_state_friendship_title">Friend requests</string>
+    <string name="text_empty_state_friendship_description">You have no friend requests</string>
+    <string name="text_empty_state_search_title">Find your friends</string>
+    <string name="text_empty_state_search_description">Find a nickname, add it and share with that person privately and securely</string>
 </resources>

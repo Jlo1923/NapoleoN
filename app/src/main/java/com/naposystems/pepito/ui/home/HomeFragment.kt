@@ -119,6 +119,8 @@ class HomeFragment : Fragment() {
             Timber.e(e)
         }
 
+        setupEmptyState()
+
         viewModel.getUserLiveData()
 
         viewModel.getMessages()
@@ -137,6 +139,11 @@ class HomeFragment : Fragment() {
 
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
+            if(it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
+                binding.viewSwitcherChats.showNext()
+            } else if(it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id){
+                binding.viewSwitcherChats.showNext()
+            }
         })
 
         viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
@@ -188,6 +195,12 @@ class HomeFragment : Fragment() {
         })
 
         (activity as MainActivity).getUser()
+    }
+
+    private fun setupEmptyState() {
+        binding.emptyState.setImageEmptyState(R.drawable.image_empty_state_conversation)
+        binding.emptyState.setTitleEmptyState(R.string.text_empty_state_conversation_title)
+        binding.emptyState.setDescriptionEmptyState(R.string.text_empty_state_conversation_description)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

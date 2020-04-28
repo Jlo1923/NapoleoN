@@ -54,4 +54,10 @@
     <string name="text_message_restore_image">Voulez-vous vraiment restaurer l\'image de couverture par défaut?</string>
     <string name="text_display_name">Nom d\'affichage</string>
     <string name="text_nickname_not_contain_enough_char">Le surnom doit contenir au moins 5 caractères.</string>
+    <string name="text_empty_state_conversation_title">Démarrer une conversation</string>
+    <string name="text_empty_state_conversation_description">Discuter avec vos amis et partager avec eux de manière sûre et privée</string>
+    <string name="text_empty_state_friendship_title">Demandes d\'amis</string>
+    <string name="text_empty_state_friendship_description">Vous n\'avez aucune demande d\'ami</string>
+    <string name="text_empty_state_search_title">Trouvez vos amis</string>
+    <string name="text_empty_state_search_description">Trouvez un surnom, ajoutez-le et partagez-le avec cette personne en privé et en toute sécurité</string>
 </resources>

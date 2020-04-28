@@ -86,6 +86,8 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
             Timber.e(e)
         }
 
+        setupEmptyState()
+
         viewModel.getBlockedContacts()
 
         observeBlockedContacts()
@@ -100,7 +102,6 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     private fun observeListBlockedContacts() {
         viewModel.listBlockedContacts.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
-
             if (it.isNotEmpty()) {
                 if (binding.viewSwitcherRecycler.currentView.id == binding.containerSearchNotFound.id) {
                     binding.viewSwitcherRecycler.showNext()
@@ -117,7 +118,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         viewModel.blockedContacts.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
             if (it.isNotEmpty()) {
-                if (binding.viewSwitcher.currentView.id == binding.containerEmptyStateBlockedContacts.id) {
+                if (binding.viewSwitcher.currentView.id == binding.emptyState.id) {
                     binding.viewSwitcher.showNext()
                 }
             } else {
@@ -192,6 +193,12 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
             BlockedContactsFragmentDirections
                 .actionBlockedContactsFragmentToContactProfileFragment(contact.id)
         )
+    }
+
+    private fun setupEmptyState() {
+        binding.emptyState.setImageEmptyState(R.drawable.image_empty_state_blocked_contacts)
+        binding.emptyState.setTitleEmptyState(R.string.text_empty_state_blocked_contacts_title)
+        binding.emptyState.setDescriptionEmptyState(R.string.text_empty_state_blocked_contacts_description)
     }
 
     private fun unblockContact(contact: Contact) {

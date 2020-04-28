@@ -54,4 +54,10 @@
     <string name="text_message_restore_image">Möchten Sie das Standard-Titelbild wirklich wiederherstellen?</string>
     <string name="text_display_name">Anzeigename</string>
     <string name="text_nickname_not_contain_enough_char">Der Spitzname muss mindestens 5 Zeichen enthalten.</string>
+    <string name="text_empty_state_conversation_title">Starten Sie ein Gespräch</string>
+    <string name="text_empty_state_conversation_description">Chatten Sie mit Ihren Freunden und teilen Sie sie auf sichere und private Weise</string>
+    <string name="text_empty_state_friendship_title">Freundschaftsanfragen</string>
+    <string name="text_empty_state_friendship_description">Sie haben keine Freundschaftsanfragen</string>
+    <string name="text_empty_state_search_title">Finde deine Freunde</string>
+    <string name="text_empty_state_search_description">Suchen Sie einen Spitznamen, fügen Sie ihn hinzu und teilen Sie ihn privat und sicher mit dieser Person</string>
 </resources>
