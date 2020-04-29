@@ -12,8 +12,7 @@ import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 
 class MyMessageViewHolder constructor(
     private val binding: ConversationItemMyMessageBinding
-) :
-    ConversationViewHolder(binding.root) {
+) : ConversationViewHolder(binding.root) {
 
     fun setProgress(
         progress: Long
@@ -26,13 +25,15 @@ class MyMessageViewHolder constructor(
     fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
-        isFirst: Boolean
+        isFirst: Boolean,
+        timeFormat : Int?
     ) {
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
         binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
+        binding.timeFormat = timeFormat
 
         countDown(
             item,

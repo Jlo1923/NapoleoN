@@ -53,4 +53,12 @@
     <string name="text_message_restore_image">¿Está seguro que desea restablecer la imagen de portada por defecto?</string>
     <string name="text_display_name">Nombre a mostrar</string>
     <string name="text_nickname_not_contain_enough_char">El apodo debe contener mínimo 5 caracteres.</string>
+    <string name="text_empty_state_conversation_title">Inicia una conversación</string>
+    <string name="text_empty_state_conversation_description">Conversa con tus amigos y comparte con ellos de una manera segura y privada</string>
+    <string name="text_empty_state_friendship_title">Solicitudes de amistad</string>
+    <string name="text_empty_state_friendship_description">No tienes solicitudes de amistad</string>
+    <string name="text_empty_state_search_title">Busca a tus amigos</string>
+    <string name="text_empty_state_search_description">Busca un apodo, agrégalo y comparte con esa persona de una forma privada y segura</string>
+    <string name="text_now">Ahora</string>
+    <string name="text_yesterday">Ayer</string>
 </resources>

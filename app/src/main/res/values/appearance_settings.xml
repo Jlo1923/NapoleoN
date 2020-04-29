@@ -11,4 +11,5 @@
     <string name="text_conversation_background">Conversation background</string>
     <string name="text_updated_successfully">The conversation background has been changed successfully</string>
     <string name="text_error_updating_conversation_background">An error occurred while changing the conversation background, please try again</string>
+    <string name="text_time_format">Time format</string>
 </resources>

@@ -27,6 +27,7 @@ interface IContractSplash {
         suspend fun setDefaultTheme()
         suspend fun setDefaultLanguage(language: String)
         suspend fun setDefaultUserDisplayFormat()
+        suspend fun setDefaultTimeFormat()
         suspend fun setDefaultSelfDestructTime()
         suspend fun setDefaultTimeRequestAccessPin()
         suspend fun setDefaultAllowDownloadAttachments()

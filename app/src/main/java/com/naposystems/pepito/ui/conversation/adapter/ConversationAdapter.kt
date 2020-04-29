@@ -11,10 +11,12 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.viewHolder.*
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 
 class ConversationAdapter constructor(
     private val clickListener: ClickListener,
-    private val mediaPlayerManager: MediaPlayerManager
+    private val mediaPlayerManager: MediaPlayerManager,
+    private var timeFormat: Int?
 ) :
     ListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
@@ -188,29 +190,29 @@ class ConversationAdapter constructor(
         item?.let {
             when (getItemViewType(position)) {
                 TYPE_MY_MESSAGE -> (holder as MyMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_INCOMING_MESSAGE -> (holder as IncomingMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager, timeFormat)
                 TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager)
+                    .bind(item, clickListener, isFirst, mediaPlayerManager, timeFormat)
                 TYPE_MY_MESSAGE_VIDEO -> (holder as MyMessageVideoViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_INCOMING_MESSAGE_VIDEO -> (holder as IncomingMessageVideoViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_DOCUMENT -> (holder as MyMessageDocumentViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_INCOMING_MESSAGE_DOCUMENT -> (holder as IncomingMessageDocumentViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_GIF -> (holder as MyMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_INCOMING_MESSAGE_GIF -> (holder as IncomingMessageViewHolder)
-                    .bind(item, clickListener, isFirst)
+                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_GIF_NN -> (holder as MyMessageGifNNViewHolder)
-                    .bind(item, clickListener)
+                    .bind(item, clickListener, timeFormat)
                 TYPE_INCOMING_MESSAGE_GIF_NN -> (holder as IncomingMessageGifNNViewHolder)
-                    .bind(item, clickListener)
+                    .bind(item, clickListener, timeFormat)
             }
         }
     }

@@ -71,7 +71,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         setAdapter()
 
         binding.swipeRefresh.setOnRefreshListener {
-            if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
+            if (binding.viewSwitcher.nextView.id == binding.emptyState.id) {
                 binding.viewSwitcher.showNext()
             }
             getContacts()
@@ -134,11 +134,11 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
             if (it != null) {
                 adapter.submitList(it)
                 if (it.isNotEmpty()) {
-                    if (binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
+                    if (binding.viewSwitcher.nextView.id == binding.viewSwitcherSearchContact.id) {
                         binding.viewSwitcher.showNext()
                     }
                 } else {
-                    if (binding.viewSwitcher.nextView.id == binding.lottieEmptyState.id) {
+                    if (binding.viewSwitcher.nextView.id == binding.emptyState.id) {
                         binding.viewSwitcher.showNext()
                     }
                 }

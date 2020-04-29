@@ -14,6 +14,8 @@ object Constants {
     object NapoleonApi {
         /*const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
         const val SOCKET_BASE_URL = "http://192.168.1.222:6001"*/
+        /*const val BASE_URL = "http://pruebita.napoleon-chat.com/api/"
+        const val SOCKET_BASE_URL = "http://pruebita.napoleon-chat.com:6001"*/
         const val BASE_URL = "http://dev.napoleon-chat.com/api/"
         const val SOCKET_BASE_URL = "http://dev.napoleon-chat.com:6001"
         const val GENERATE_CODE = "auth/sendverificationcode"
@@ -146,6 +148,11 @@ object Constants {
         EVERY_TWELVE_HOURS(7),
         EVERY_ONE_DAY(8),
         EVERY_SEVEN_DAY(9)
+    }
+
+    enum class TimeFormat constructor(val time: Int) {
+        EVERY_TWENTY_FOUR_HOURS(1),
+        EVERY_TWELVE_HOURS(2)
     }
 
     enum class SelfDestructTimeByError constructor(val time: Int) {
@@ -348,6 +355,7 @@ object Constants {
         const val PREF_USER_ID = "user_id"
         const val PREF_COLOR_SCHEME = "color_scheme"
         const val PREF_USER_DISPLAY_FORMAT = "user_display_format"
+        const val PREF_TIME_FORMAT = "time_format"
         const val PREF_SELF_DESTRUCT_TIME = "self_destruct_time"
         const val PREF_TIME_REQUEST_ACCESS_PIN = "time_request_access_pin"
         const val PREF_ALLOW_DOWNLOAD_ATTACHMENTS = "allow_download_attachments"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -20,37 +21,6 @@
             android:id="@+id/viewSwitcher"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_empty_state_blocked_contacts"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imageView_empty_state_blocked_contacts"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toTopOf="@id/textView_description_blocked_contacts"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHeight_percent="0.3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    app:srcCompat="@drawable/image_empty_state_blocked_contacts" />
-
-                <TextView
-                    android:id="@+id/textView_description_blocked_contacts"
-                    style="@style/TextViewSecondaryTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/normal_margin"
-                    android:text="@string/text_description_empty_state_blocked_contacts"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/imageView_empty_state_blocked_contacts" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ViewSwitcher
                 android:id="@+id/viewSwitcher_recycler"
@@ -130,6 +100,15 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </ViewSwitcher>
+
+            <com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
+                android:id="@+id/empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                custom:description="@string/text_empty_state_blocked_contacts_description"
+                custom:image="@drawable/image_empty_state_blocked_contacts"
+                custom:title="@string/text_empty_state_blocked_contacts_title" />
+
         </ViewSwitcher>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

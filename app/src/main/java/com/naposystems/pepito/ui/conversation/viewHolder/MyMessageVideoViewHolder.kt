@@ -5,13 +5,13 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.ConversationItemMyMessageWithVideoBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 
 class MyMessageVideoViewHolder constructor(private val binding: ConversationItemMyMessageWithVideoBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+    ConversationViewHolder(binding.root) {
 
     fun setProgress(
         progress: Long
@@ -24,12 +24,21 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
     fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
-        isFirst: Boolean
+        isFirst: Boolean,
+        timeFormat : Int?
     ) {
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
         binding.isFirst = isFirst
+        binding.timeFormat = timeFormat
+
+        countDown(
+            item,
+            binding.textViewCountDown,
+            itemToEliminate = { messageAndAttachment ->
+                clickListener.messageToEliminate(messageAndAttachment)
+            })
 
         if (item.message.isSelected) {
             binding.containerMyMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))

@@ -143,7 +143,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             friendshipRequestsAdapter.submitList(it)
             binding.swipeRefresh.isRefreshing = false
             if (it.isNotEmpty()) {
-                if (binding.viewSwitcherFriendshipRequest.currentView.id == binding.containerEmptyStateFriendship.id) {
+                if (binding.viewSwitcherFriendshipRequest.currentView.id == binding.emptyStateFriendshipRequest.id) {
                     binding.viewSwitcherFriendshipRequest.showNext()
                 }
             } else {
@@ -167,7 +167,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         viewModel.users.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
             if (it.isNotEmpty()) {
-                if (binding.viewSwitcherSearch.currentView.id == binding.containerEmptyStateSearch.id) {
+                if (binding.viewSwitcherSearch.currentView.id == binding.emptyStateSearch.id) {
                     binding.viewSwitcherSearch.showNext()
                 }
             } else {

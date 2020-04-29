@@ -26,6 +26,7 @@ import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -47,6 +48,9 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var shareContactViewModel: ShareContactViewModel
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
+        viewModelFactory
+    }
+    private val timeFormatShareViewModel : TimeFormatShareViewModel by activityViewModels{
         viewModelFactory
     }
     private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
@@ -129,8 +133,15 @@ class HomeFragment : Fragment() {
 
         userDisplayFormatShareViewModel.getUserDisplayFormat()
 
+        timeFormatShareViewModel.getTimeFormat()
+
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
+            if(it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
+                binding.viewSwitcherChats.showNext()
+            } else if(it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id){
+                binding.viewSwitcherChats.showNext()
+            }
         })
 
         viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
@@ -251,36 +262,39 @@ class HomeFragment : Fragment() {
 
     private fun setAdapter() {
         adapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
-            override fun onClick(item: MessageAndAttachment) {
-                findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)
-                )
-            }
-
-            override fun onClickAvatar(item: MessageAndAttachment) {
-                seeProfile(item.contact)
-            }
-
-            override fun onLongClick(item: MessageAndAttachment, view: View) {
-                val popup = PopupMenu(context!!, view)
-                popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
-
-                popup.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.start_chat_from_inbox ->
-                            startConversation(item.contact)
-                        R.id.see_profile_from_inbox ->
-                            seeProfile(item.contact)
-                        R.id.delete_chat_from_inbox ->
-                            deleteChat(item.contact)
-                        R.id.block_contact_from_inbox ->
-                            blockContact(item.contact)
-                    }
-                    true
+                override fun onClick(item: MessageAndAttachment) {
+                    findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)
+                    )
                 }
-                popup.show()
-            }
-        }, userDisplayFormatShareViewModel)
+
+                override fun onClickAvatar(item: MessageAndAttachment) {
+                    seeProfile(item.contact)
+                }
+
+                override fun onLongClick(item: MessageAndAttachment, view: View) {
+                    val popup = PopupMenu(context!!, view)
+                    popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
+
+                    popup.setOnMenuItemClickListener {
+                        when (it.itemId) {
+                            R.id.start_chat_from_inbox ->
+                                startConversation(item.contact)
+                            R.id.see_profile_from_inbox ->
+                                seeProfile(item.contact)
+                            R.id.delete_chat_from_inbox ->
+                                deleteChat(item.contact)
+                            R.id.block_contact_from_inbox ->
+                                blockContact(item.contact)
+                        }
+                        true
+                    }
+                    popup.show()
+                }
+            },
+            userDisplayFormatShareViewModel.getValUserDisplayFormat(),
+            timeFormatShareViewModel.getValTimeFormat()
+        )
         binding.recyclerViewChats.adapter = adapter
         binding.recyclerViewChats.itemAnimator = ItemAnimator()
 

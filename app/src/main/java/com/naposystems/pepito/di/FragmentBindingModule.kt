@@ -43,6 +43,7 @@ import com.naposystems.pepito.ui.splash.SplashFragment
 import com.naposystems.pepito.ui.status.StatusFragment
 import com.naposystems.pepito.ui.subscription.SubscriptionFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
+import com.naposystems.pepito.ui.timeFormat.TimeFormatDialogFragment
 import com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeFragment
 import com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment
@@ -93,6 +94,9 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindUserDisplayFormatDialogFragment(): UserDisplayFormatDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindTimeFormatDialogFragment(): TimeFormatDialogFragment
 
     @ContributesAndroidInjector
     abstract fun bindSecuritySettingsFragment(): SecuritySettingsFragment

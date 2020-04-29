@@ -7,4 +7,6 @@
     <string name="text_blocked_contact">Contatto bloccato</string>
     <string name="text_deleted_contact">Contatto eliminato</string>
     <string name="search_by_nickname">Cerca per nickname</string>
+    <string name="text_empty_state_contacts_title">Contatti</string>
+    <string name="text_empty_state_contacts_description">Non hai contatti aggiunti</string>
 </resources>
