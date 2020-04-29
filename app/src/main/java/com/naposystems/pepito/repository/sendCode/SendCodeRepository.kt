@@ -30,6 +30,10 @@ class SendCodeRepository @Inject constructor(
         return napoleonApi.generateCode(SendCodeReqDTO(firebase))
     }
 
+    override suspend fun setFirebaseId(newToken: String) {
+        sharedPreferencesManager.putString(Constants.SharedPreferences.PREF_FIREBASE_ID, newToken)
+    }
+
     override fun getTimeForNewCode(): Long {
         return sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_TIME_FOR_NEW_CODE

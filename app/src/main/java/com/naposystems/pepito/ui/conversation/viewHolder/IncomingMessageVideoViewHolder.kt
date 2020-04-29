@@ -5,16 +5,16 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithVideoBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.pepito.utility.Constants
 import timber.log.Timber
 
 class IncomingMessageVideoViewHolder constructor(private val binding: ConversationItemIncomingMessageWithVideoBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+    ConversationViewHolder(binding.root) {
 
     fun setProgress(
         progress: Long
@@ -36,6 +36,13 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
         binding.clickListener = clickListener
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
+
+        countDown(
+            item,
+            binding.textViewCountDown,
+            itemToEliminate = { messageAndAttachment ->
+                clickListener.messageToEliminate(messageAndAttachment)
+            })
 
         val firstAttachment: Attachment? = item.getFirstAttachment()
 
