@@ -28,7 +28,12 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
     val webServiceError: LiveData<List<String>>
         get() = _webServiceError
 
-    fun resetCode() {
+    private val _successToken = MutableLiveData<Boolean>()
+    val successToken: LiveData<Boolean>
+        get() = _successToken
+
+    override fun resetCode() {
+        _successToken.value = null
         _codeSuccess.value = null
         _webServiceError.value = emptyList()
     }
@@ -83,6 +88,13 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
 
     override fun resetAttemptsNewCode() {
         repository.resetAttemptsNewCode()
+    }
+
+    override fun setFirebaseId(newToken: String) {
+        viewModelScope.launch {
+            repository.setFirebaseId(newToken)
+            _successToken.value = true
+        }
     }
 
     //endregion

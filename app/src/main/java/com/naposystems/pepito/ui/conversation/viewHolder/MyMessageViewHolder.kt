@@ -12,8 +12,7 @@ import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 
 class MyMessageViewHolder constructor(
     private val binding: ConversationItemMyMessageBinding
-) :
-    ConversationViewHolder(binding.root) {
+) : ConversationViewHolder(binding.root) {
 
     fun setProgress(
         progress: Long

@@ -14,8 +14,7 @@ import com.naposystems.pepito.utility.Constants
 
 class IncomingMessageViewHolder constructor(
     private val binding: ConversationItemIncomingMessageBinding
-) :
-    ConversationViewHolder(binding.root) {
+) : ConversationViewHolder(binding.root) {
 
     fun setProgress(
         progress: Long

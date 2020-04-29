@@ -5,14 +5,14 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithDocumentBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.pepito.utility.Constants
 
 class IncomingMessageDocumentViewHolder constructor(private val binding: ConversationItemIncomingMessageWithDocumentBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+    ConversationViewHolder(binding.root) {
 
     fun setProgress(
         progress: Long
@@ -32,6 +32,13 @@ class IncomingMessageDocumentViewHolder constructor(private val binding: Convers
         binding.clickListener = clickListener
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
+
+        countDown(
+            item,
+            binding.textViewCountDown,
+            itemToEliminate = { messageAndAttachment ->
+                clickListener.messageToEliminate(messageAndAttachment)
+            })
 
         if (item.message.isSelected) {
             binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))

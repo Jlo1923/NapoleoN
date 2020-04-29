@@ -74,7 +74,14 @@
                     app:layout_constraintStart_toStartOf="@+id/guideline1"
                     app:layout_constraintTop_toBottomOf="@+id/textView_information">
 
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_button_send_code"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -90,11 +97,6 @@
                             app:layout_constraintWidth_percent="@dimen/width_app_button" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
                 </ViewSwitcher>
 
                 <androidx.constraintlayout.widget.Guideline
