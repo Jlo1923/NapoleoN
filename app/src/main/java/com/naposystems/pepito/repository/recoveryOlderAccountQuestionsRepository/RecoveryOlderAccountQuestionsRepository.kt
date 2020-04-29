@@ -1,10 +1,8 @@
 package com.naposystems.pepito.repository.recoveryOlderAccountQuestionsRepository
 
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
-import com.naposystems.pepito.dto.recoveryAccountQuestions.RecoveryAccountUserDTO
 import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.RecoveryOlderAccountDTO
 import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.getQuestions.RecoveryOlderAccountQuestionsErrorDTO
-import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.getQuestions.RecoveryOlderAccountQuestionsReqDTO
 import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.getQuestions.RecoveryOlderAccountQuestionsResDTO
 import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.sendAnswers.RecoveryOlderAccountQuestionsAnswers422DTO
 import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.sendAnswers.RecoveryOlderAccountQuestionsAnswersReqDTO
@@ -17,10 +15,7 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
-import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 class RecoveryOlderAccountQuestionsRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
@@ -61,6 +56,7 @@ class RecoveryOlderAccountQuestionsRepository @Inject constructor(
     override suspend fun insertUser(recoveryOlderAccountDTO: RecoveryOlderAccountDTO) {
         val user = RecoveryOlderAccountDTO.toUserModel(recoveryOlderAccountDTO, firebaseId)
         userLocalDataSource.insertUser(user)
+        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 
     override fun setRecoveredAccountPref() {

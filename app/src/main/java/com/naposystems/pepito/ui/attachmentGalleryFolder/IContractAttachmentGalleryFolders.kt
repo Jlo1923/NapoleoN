@@ -1,14 +1,13 @@
 package com.naposystems.pepito.ui.attachmentGalleryFolder
 
-import com.naposystems.pepito.model.attachment.gallery.GalleryFolder
+import com.naposystems.pepito.model.attachment.gallery.GalleryResult
+import kotlinx.coroutines.flow.Flow
 
 interface IContractAttachmentGalleryFolders {
 
-    interface ViewModel {
-        fun loadFolders()
-    }
+    interface ViewModel
 
     interface Repository {
-        suspend fun getFolders(): List<GalleryFolder>
+        fun getFolders(): Flow<GalleryResult>
     }
 }

@@ -15,7 +15,6 @@ import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -48,6 +47,7 @@ class CreateAccountRepository @Inject constructor(
 
     override suspend fun createUser(user: User) {
         userLocalDataSource.insertUser(user)
+        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 
     override suspend fun updateAccessPin(newAccessPin: String, firebaseId: String) {

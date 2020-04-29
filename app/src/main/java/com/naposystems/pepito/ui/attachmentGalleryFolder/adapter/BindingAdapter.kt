@@ -17,27 +17,39 @@ fun binFolderThumbnail(imageView: ImageView, galleryFolder: GalleryFolder) {
     try {
         val context = imageView.context
 
-        if (galleryFolder.thumbnailUri != null) {
-            GlideManager.loadFile(imageView, File(galleryFolder.thumbnailUri!!.path!!))
-        } else if (galleryFolder.contentUri != null) {
-
-            var bitmap: Bitmap
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ImageDecoder.createSource(context.contentResolver, galleryFolder.contentUri!!)
-                    .also { source ->
-                        ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
-                            bitmap = bitmapDecoded
-                        }
-                    }
-            } else {
-                bitmap =
-                    MediaStore.Images.Media.getBitmap(context.contentResolver, galleryFolder.contentUri)
+        when {
+            galleryFolder.bitmapThumbnail != null -> {
+                GlideManager.loadBitmap(
+                    imageView,
+                    galleryFolder.bitmapThumbnail
+                )
             }
+            galleryFolder.thumbnailUri != null -> {
+                GlideManager.loadFile(imageView, File(galleryFolder.thumbnailUri!!.path!!))
+            }
+            galleryFolder.contentUri != null -> {
 
-            GlideManager.loadBitmap(
-                imageView,
-                bitmap
-            )
+                var bitmap: Bitmap
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    ImageDecoder.createSource(context.contentResolver, galleryFolder.contentUri!!)
+                        .also { source ->
+                            ImageDecoder.decodeBitmap(source).also { bitmapDecoded ->
+                                bitmap = bitmapDecoded
+                            }
+                        }
+                } else {
+                    bitmap =
+                        MediaStore.Images.Media.getBitmap(
+                            context.contentResolver,
+                            galleryFolder.contentUri
+                        )
+                }
+
+                GlideManager.loadBitmap(
+                    imageView,
+                    bitmap
+                )
+            }
         }
     } catch (e: Exception) {
         Timber.e(e)

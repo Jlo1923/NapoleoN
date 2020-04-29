@@ -17,7 +17,7 @@ interface UserDao {
     fun getUserLiveData(firebaseId: String): LiveData<User>
 
     @Insert
-    suspend fun insertUser(user: User)
+    suspend fun insertUser(user: User): Long
 
     @Update
     suspend fun updateUser(user: User)

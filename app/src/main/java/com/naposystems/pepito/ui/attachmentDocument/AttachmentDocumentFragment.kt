@@ -67,7 +67,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                 )
 
                 val parcelFileDescriptor =
-                    context!!.contentResolver.openFileDescriptor(contentUri, "r")
+                    requireContext().contentResolver.openFileDescriptor(contentUri, "r")
 
                 parcelFileDescriptor?.let {
 
@@ -75,7 +75,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                     val fileInputStream = FileInputStream(fileDescriptor)
 
                     val fileSelected = FileManager.copyFile(
-                        context!!,
+                        requireContext(),
                         fileInputStream,
                         Constants.NapoleonCacheDirectories.DOCUMENTOS.folder,
                         "${System.currentTimeMillis()}.$extension"
@@ -120,7 +120,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
 
         )
 
-        val selectionDocuments = "${MediaStore.Files.FileColumns.SIZE}>0 AND " +
+        val selectionDocuments =
                 "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
                 "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
                 "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
@@ -143,9 +143,9 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
             CursorLoader(
                 context,
                 MediaStore.Files.getContentUri("external"),
-                projectionDocuments,
-                selectionDocuments,
-                selectionArgsDocuments,
+                null,
+                null,
+                null,
                 "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC"
             )
         } ?: throw Exception("Activity cannot be null")

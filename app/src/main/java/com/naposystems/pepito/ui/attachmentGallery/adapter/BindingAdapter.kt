@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 import com.naposystems.pepito.utility.Constants
 
@@ -12,6 +13,7 @@ fun binGalleryItemThumbnail(imageView: ImageView, galleryItem: GalleryItem) {
 
     Glide.with(imageView)
         .load(galleryItem)
+        .transition(DrawableTransitionOptions.withCrossFade())
         .into(imageView)
 }
 
