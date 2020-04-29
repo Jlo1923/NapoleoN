@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -110,7 +111,10 @@
                 <com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
                     android:id="@+id/empty_state"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    custom:description="@string/text_empty_state_conversation_description"
+                    custom:image="@drawable/image_empty_state_conversation"
+                    custom:title="@string/text_empty_state_conversation_title" />
 
             </ViewSwitcher>
 

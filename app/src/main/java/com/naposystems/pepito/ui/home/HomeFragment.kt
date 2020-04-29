@@ -119,8 +119,6 @@ class HomeFragment : Fragment() {
             Timber.e(e)
         }
 
-        setupEmptyState()
-
         viewModel.getUserLiveData()
 
         viewModel.getMessages()
@@ -195,12 +193,6 @@ class HomeFragment : Fragment() {
         })
 
         (activity as MainActivity).getUser()
-    }
-
-    private fun setupEmptyState() {
-        binding.emptyState.setImageEmptyState(R.drawable.image_empty_state_conversation)
-        binding.emptyState.setTitleEmptyState(R.string.text_empty_state_conversation_title)
-        binding.emptyState.setDescriptionEmptyState(R.string.text_empty_state_conversation_description)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

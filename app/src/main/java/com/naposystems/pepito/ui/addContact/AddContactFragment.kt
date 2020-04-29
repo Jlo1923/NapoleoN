@@ -95,8 +95,6 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
         viewModel.getFriendshipRequests()
 
-        setupEmptyState()
-
         observeUsers()
 
         observeFriendShipRequestSend()
@@ -178,16 +176,6 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 }
             }
         })
-    }
-
-    private fun setupEmptyState() {
-        binding.emptyStateFriendshipRequest.setImageEmptyState(R.drawable.image_empty_state_friendship)
-        binding.emptyStateFriendshipRequest.setTitleEmptyState(R.string.text_empty_state_friendship_title)
-        binding.emptyStateFriendshipRequest.setDescriptionEmptyState(R.string.text_empty_state_friendship_description)
-
-        binding.emptyStateSearch.setImageEmptyState(R.drawable.image_empty_state_search)
-        binding.emptyStateSearch.setTitleEmptyState(R.string.text_empty_state_search_title)
-        binding.emptyStateSearch.setDescriptionEmptyState(R.string.text_empty_state_search_description)
     }
 
     private fun setupFriendshipRequestsAdapter() {

@@ -92,8 +92,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
         binding.viewModel = viewModel
 
-        setupEmptyState()
-
         getContacts()
 
         observeContacts()
@@ -237,12 +235,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         ) {
             shareContactViewModel.sendDeleteContact(contact)
         }
-    }
-
-    private fun setupEmptyState() {
-        binding.emptyState.setImageEmptyState(R.drawable.image_empty_state_friendship)
-        binding.emptyState.setTitleEmptyState(R.string.text_empty_state_contacts_title)
-        binding.emptyState.setDescriptionEmptyState(R.string.text_empty_state_contacts_description)
     }
 
     //region Implementation SearchView.OnSearchView

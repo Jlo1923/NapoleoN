@@ -86,8 +86,6 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
             Timber.e(e)
         }
 
-        setupEmptyState()
-
         viewModel.getBlockedContacts()
 
         observeBlockedContacts()
@@ -193,12 +191,6 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
             BlockedContactsFragmentDirections
                 .actionBlockedContactsFragmentToContactProfileFragment(contact.id)
         )
-    }
-
-    private fun setupEmptyState() {
-        binding.emptyState.setImageEmptyState(R.drawable.image_empty_state_blocked_contacts)
-        binding.emptyState.setTitleEmptyState(R.string.text_empty_state_blocked_contacts_title)
-        binding.emptyState.setDescriptionEmptyState(R.string.text_empty_state_blocked_contacts_description)
     }
 
     private fun unblockContact(contact: Contact) {
