@@ -83,21 +83,25 @@ fun bindIconByConversation(imageView: ImageView, messageAndAttachment: MessageAn
 @BindingAdapter("bodyConversation")
 fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAttachment?) {
     val context = textView.context
-    if(messageAndAttachment?.attachmentList?.count()!! > 0){
-        val stringId: Int? = when (messageAndAttachment.attachmentList.last().type) {
-            Constants.AttachmentType.IMAGE.type -> R.string.text_photo
-            Constants.AttachmentType.AUDIO.type -> R.string.text_audio
-            Constants.AttachmentType.VIDEO.type -> R.string.text_video
-            Constants.AttachmentType.DOCUMENT.type -> R.string.text_document
-            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.string.text_gif
-            Constants.AttachmentType.LOCATION.type -> R.string.text_location
-            else -> null
-        }
-        stringId?.let { string ->
-            textView.text = context.getString(string)
-        }
-    } else {
+    if(messageAndAttachment?.message?.body?.count()!! > 0){
         textView.text = messageAndAttachment.message.body
+    } else {
+        if(messageAndAttachment.attachmentList.count() > 0){
+            val stringId: Int? = when (messageAndAttachment.attachmentList.last().type) {
+                Constants.AttachmentType.IMAGE.type -> R.string.text_photo
+                Constants.AttachmentType.AUDIO.type -> R.string.text_audio
+                Constants.AttachmentType.VIDEO.type -> R.string.text_video
+                Constants.AttachmentType.DOCUMENT.type -> R.string.text_document
+                Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.string.text_gif
+                Constants.AttachmentType.LOCATION.type -> R.string.text_location
+                else -> null
+            }
+            stringId?.let { string ->
+                textView.text = context.getString(string)
+            }
+        } else {
+            textView.text = ""
+        }
     }
 }
 
