@@ -59,4 +59,6 @@
     <string name="text_empty_state_friendship_description">No tienes solicitudes de amistad</string>
     <string name="text_empty_state_search_title">Busca a tus amigos</string>
     <string name="text_empty_state_search_description">Busca un apodo, agrégalo y comparte con esa persona de una forma privada y segura</string>
+    <string name="text_now">Ahora</string>
+    <string name="text_yesterday">Ayer</string>
 </resources>

@@ -60,4 +60,6 @@
     <string name="text_empty_state_friendship_description">Sie haben keine Freundschaftsanfragen</string>
     <string name="text_empty_state_search_title">Finde deine Freunde</string>
     <string name="text_empty_state_search_description">Suchen Sie einen Spitznamen, fügen Sie ihn hinzu und teilen Sie ihn privat und sicher mit dieser Person</string>
+    <string name="text_now">Jetzt</string>
+    <string name="text_yesterday">Gestern</string>
 </resources>

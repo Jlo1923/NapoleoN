@@ -60,4 +60,6 @@
     <string name="text_empty_state_friendship_description">Você não tem pedidos de amizade</string>
     <string name="text_empty_state_search_title">Encontre seus amigos</string>
     <string name="text_empty_state_search_description">Encontre um apelido, adicione-o e compartilhe com essa pessoa de forma privada e segura</string>
+    <string name="text_now">Agora</string>
+    <string name="text_yesterday">Ontem</string>
 </resources>

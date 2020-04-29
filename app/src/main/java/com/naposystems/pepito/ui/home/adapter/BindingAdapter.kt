@@ -8,23 +8,66 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
-@BindingAdapter("messageHour", "format")
-fun bindMessageDate(textView: TextView, timestamp: Int, format : Int) {
-    try {
-        val sdf = if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-            SimpleDateFormat("HH:mm", Locale.getDefault())
+@BindingAdapter("messageHour", "format", "colorText")
+fun bindMessageDate(textView: TextView, timestamp: Int, format : Int, unreadMessages: Int) {
+    textView.context?.let { context ->
+        if(unreadMessages > 0) {
+            textView.setTextColor(
+                Utils.convertAttrToColorResource(context, R.attr.attrColorButtonTint)
+            )
         } else {
-            SimpleDateFormat("hh:mm aa", Locale.getDefault())
+            textView.setTextColor(
+                Utils.convertAttrToColorResource(context, R.attr.attrTextColorMessageAndTimeHome)
+            )
         }
-        val netDate = Date(timestamp.toLong() * 1000)
-        textView.text = sdf.format(netDate)
-        textView.visibility = View.VISIBLE
-    } catch (e: Exception) {
-        Timber.e("Error parsing date")
+
+        try {
+            val timeInit = TimeUnit.MINUTES.toSeconds(2) + timestamp
+            val timeSevenMoreDays = TimeUnit.DAYS.toSeconds(7) + timestamp
+            val timeActual = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val dayNext = sdf.format(Date((timestamp.toLong() + TimeUnit.DAYS.toSeconds(1)) * 1000))
+            val dayMessage = sdf.format(Date(timestamp.toLong() * 1000))
+            val dayActual = sdf.format(Date(timeActual * 1000))
+            when{
+                timeInit > timeActual -> {
+                    textView.text = context.getString(R.string.text_now)
+                }
+                timeInit < timeActual && dayMessage == dayActual -> {
+                    val sdf =  if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+                            SimpleDateFormat("HH:mm", Locale.getDefault())
+                        } else {
+                            SimpleDateFormat("hh:mm aa", Locale.getDefault())
+                    }
+                    textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+                }
+                timeInit < timeActual && dayNext == dayActual -> {
+                    textView.text = context.getString(R.string.text_yesterday)
+                }
+                else -> {
+                    val sdf = if(timeSevenMoreDays > timeActual) {
+                        SimpleDateFormat("EEEE", Locale.getDefault())
+                    } else {
+                        if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+                            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                        } else {
+                            SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
+                        }
+                    }
+                    textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+                }
+            }
+
+            textView.visibility = View.VISIBLE
+        } catch (e: Exception) {
+            Timber.e("Error parsing date")
+        }
     }
 }
 
@@ -52,21 +95,25 @@ fun bindIconByConversation(imageView: ImageView, messageAndAttachment: MessageAn
 @BindingAdapter("bodyConversation")
 fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAttachment?) {
     val context = textView.context
-    if(messageAndAttachment?.attachmentList?.count()!! > 0){
-        val stringId: Int? = when (messageAndAttachment.attachmentList.last().type) {
-            Constants.AttachmentType.IMAGE.type -> R.string.text_photo
-            Constants.AttachmentType.AUDIO.type -> R.string.text_audio
-            Constants.AttachmentType.VIDEO.type -> R.string.text_video
-            Constants.AttachmentType.DOCUMENT.type -> R.string.text_document
-            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.string.text_gif
-            Constants.AttachmentType.LOCATION.type -> R.string.text_location
-            else -> null
-        }
-        stringId?.let { string ->
-            textView.text = context.getString(string)
-        }
-    } else {
+    if(messageAndAttachment?.message?.body?.count()!! > 0){
         textView.text = messageAndAttachment.message.body
+    } else {
+        if(messageAndAttachment.attachmentList.count() > 0){
+            val stringId: Int? = when (messageAndAttachment.attachmentList.last().type) {
+                Constants.AttachmentType.IMAGE.type -> R.string.text_photo
+                Constants.AttachmentType.AUDIO.type -> R.string.text_audio
+                Constants.AttachmentType.VIDEO.type -> R.string.text_video
+                Constants.AttachmentType.DOCUMENT.type -> R.string.text_document
+                Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.string.text_gif
+                Constants.AttachmentType.LOCATION.type -> R.string.text_location
+                else -> null
+            }
+            stringId?.let { string ->
+                textView.text = context.getString(string)
+            }
+        } else {
+            textView.text = ""
+        }
     }
 }
 

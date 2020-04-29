@@ -54,6 +54,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:messageHour="@{conversation.message.createdAt}"
             app:format="@{timeFormat}"
+            app:colorText="@{conversation.messagesUnReads}"
             tools:text="8:15 a.m" />
 
         <TextView
@@ -63,7 +64,6 @@
             android:layout_height="17dp"
             android:background="@drawable/bg_unread_messages"
             android:gravity="center"
-            android:textColor="@color/colorTextMyMessage"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/linear_container"
             app:layout_constraintEnd_toEndOf="@id/textView_hora"

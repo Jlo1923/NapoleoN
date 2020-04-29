@@ -76,4 +76,6 @@
     <string name="text_empty_state_friendship_description">You have no friend requests</string>
     <string name="text_empty_state_search_title">Find your friends</string>
     <string name="text_empty_state_search_description">Find a nickname, add it and share with that person privately and securely</string>
+    <string name="text_now">Now</string>
+    <string name="text_yesterday">Yesterday</string>
 </resources>

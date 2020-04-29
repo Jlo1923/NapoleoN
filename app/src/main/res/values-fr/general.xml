@@ -60,4 +60,6 @@
     <string name="text_empty_state_friendship_description">Vous n\'avez aucune demande d\'ami</string>
     <string name="text_empty_state_search_title">Trouvez vos amis</string>
     <string name="text_empty_state_search_description">Trouvez un surnom, ajoutez-le et partagez-le avec cette personne en privé et en toute sécurité</string>
+    <string name="text_now">Maintenant</string>
+    <string name="text_yesterday">Hier</string>
 </resources>
