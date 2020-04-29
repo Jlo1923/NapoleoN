@@ -54,4 +54,5 @@
     <string name="text_message_restore_image">Sei sicuro di voler ripristinare l\'immagine di copertina predefinita?</string>
     <string name="text_display_name">Nome visualizzato</string>
     <string name="text_nickname_not_contain_enough_char">Il nickname deve contenere almeno 5 caratteri.</string>
+    <string name="text_now">Ora</string>
 </resources>

@@ -54,4 +54,5 @@
     <string name="text_message_restore_image">Tem certeza de que deseja restaurar a imagem da capa padrão?</string>
     <string name="text_display_name">Nome de exibição</string>
     <string name="text_nickname_not_contain_enough_char">O apelido deve conter pelo menos 5 caracteres.</string>
+    <string name="text_now">Agora</string>
 </resources>

@@ -54,4 +54,5 @@
     <string name="text_message_restore_image">Möchten Sie das Standard-Titelbild wirklich wiederherstellen?</string>
     <string name="text_display_name">Anzeigename</string>
     <string name="text_nickname_not_contain_enough_char">Der Spitzname muss mindestens 5 Zeichen enthalten.</string>
+    <string name="text_now">Jetzt</string>
 </resources>

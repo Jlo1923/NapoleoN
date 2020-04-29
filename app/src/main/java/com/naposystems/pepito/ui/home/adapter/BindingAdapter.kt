@@ -8,23 +8,54 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
-@BindingAdapter("messageHour", "format")
-fun bindMessageDate(textView: TextView, timestamp: Int, format : Int) {
-    try {
-        val sdf = if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-            SimpleDateFormat("HH:mm", Locale.getDefault())
+@BindingAdapter("messageHour", "format", "colorText")
+fun bindMessageDate(textView: TextView, timestamp: Int, format : Int, unreadMessages: Int) {
+    textView.context?.let { context ->
+        if(unreadMessages > 0) {
+            textView.setTextColor(
+                Utils.convertAttrToColorResource(context, R.attr.attrColorButtonTint)
+            )
         } else {
-            SimpleDateFormat("hh:mm aa", Locale.getDefault())
+            textView.setTextColor(
+                Utils.convertAttrToColorResource(context, R.attr.attrTextColorMessageAndTimeHome)
+            )
         }
-        val netDate = Date(timestamp.toLong() * 1000)
-        textView.text = sdf.format(netDate)
-        textView.visibility = View.VISIBLE
-    } catch (e: Exception) {
-        Timber.e("Error parsing date")
+
+        try {
+            val timeInit = TimeUnit.MINUTES.toSeconds(3) + timestamp
+            val timeSevenMoreDays = TimeUnit.DAYS.toSeconds(7) + timestamp
+            val timeActual = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+            when{
+                timeInit > timeActual -> {
+                    textView.text = context.getString(R.string.text_now)
+                }
+                else -> {
+                    val sdf = if(timeSevenMoreDays > timeActual) {
+                        SimpleDateFormat("EEEE", Locale.getDefault())
+                    } else {
+                        if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+                            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                        } else {
+                            SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
+                        }
+                    }
+
+                    val netDate = Date(timestamp.toLong() * 1000)
+
+                    textView.text = sdf.format(netDate)
+                }
+            }
+
+            textView.visibility = View.VISIBLE
+        } catch (e: Exception) {
+            Timber.e("Error parsing date")
+        }
     }
 }
 

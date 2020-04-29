@@ -71,4 +71,5 @@
     <string name="text_message_restore_image">Are you sure you want to restore the default cover image?</string>
     <string name="text_display_name">Display name</string>
     <string name="text_nickname_not_contain_enough_char">The nickname must contain at least 5 characters.</string>
+    <string name="text_now">Now</string>
 </resources>
