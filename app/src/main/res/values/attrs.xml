@@ -167,4 +167,10 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="EmptyStateCustomView">
+        <attr name="image" format="reference" />
+        <attr name="title" format="string" />
+        <attr name="description" format="string" />
+    </declare-styleable>
 </resources>

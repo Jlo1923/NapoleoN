@@ -137,6 +137,11 @@ class HomeFragment : Fragment() {
 
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
+            if(it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
+                binding.viewSwitcherChats.showNext()
+            } else if(it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id){
+                binding.viewSwitcherChats.showNext()
+            }
         })
 
         viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {

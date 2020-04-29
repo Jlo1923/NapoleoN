@@ -54,5 +54,12 @@
     <string name="text_message_restore_image">Tem certeza de que deseja restaurar a imagem da capa padrão?</string>
     <string name="text_display_name">Nome de exibição</string>
     <string name="text_nickname_not_contain_enough_char">O apelido deve conter pelo menos 5 caracteres.</string>
+    <string name="text_empty_state_conversation_title">Iniciar uma conversa</string>
+    <string name="text_empty_state_conversation_description">Converse com seus amigos e compartilhe com eles de forma segura e privada</string>
+    <string name="text_empty_state_friendship_title">Pedidos de amizade</string>
+    <string name="text_empty_state_friendship_description">Você não tem pedidos de amizade</string>
+    <string name="text_empty_state_search_title">Encontre seus amigos</string>
+    <string name="text_empty_state_search_description">Encontre um apelido, adicione-o e compartilhe com essa pessoa de forma privada e segura</string>
     <string name="text_now">Agora</string>
+    <string name="text_yesterday">Ontem</string>
 </resources>

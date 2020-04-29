@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -21,27 +22,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ViewSwitcher
-                android:id="@+id/viewSwitcher"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottie_empty_state"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/loading_animation" />
-
-                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                    android:id="@+id/swipe_refresh"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <ViewSwitcher
+                    android:id="@+id/viewSwitcher"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <ViewSwitcher
                         android:id="@+id/viewSwitcher_search_contact"
@@ -78,11 +71,18 @@
 
                     </ViewSwitcher>
 
-                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
+                        android:id="@+id/empty_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        custom:description="@string/text_empty_state_contacts_description"
+                        custom:image="@drawable/image_empty_state_friendship"
+                        custom:title="@string/text_empty_state_contacts_title"/>
 
-            </ViewSwitcher>
+                </ViewSwitcher>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout
->
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

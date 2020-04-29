@@ -54,5 +54,12 @@
     <string name="text_message_restore_image">Sei sicuro di voler ripristinare l\'immagine di copertina predefinita?</string>
     <string name="text_display_name">Nome visualizzato</string>
     <string name="text_nickname_not_contain_enough_char">Il nickname deve contenere almeno 5 caratteri.</string>
+    <string name="text_empty_state_conversation_title">Inizia una conversazione</string>
+    <string name="text_empty_state_conversation_description">Chattare con i tuoi amici e condividere con loro in modo sicuro e privato</string>
+    <string name="text_empty_state_friendship_title">Richieste di amicizia</string>
+    <string name="text_empty_state_friendship_description">Non hai richieste di amicizia</string>
+    <string name="text_empty_state_search_title">Trova i tuoi amici</string>
+    <string name="text_empty_state_search_description">Trova un soprannome, aggiungilo e condividi con quella persona in modo privato e sicuro</string>
     <string name="text_now">Ora</string>
+    <string name="text_yesterday">Ieri</string>
 </resources>

@@ -28,12 +28,27 @@ fun bindMessageDate(textView: TextView, timestamp: Int, format : Int, unreadMess
         }
 
         try {
-            val timeInit = TimeUnit.MINUTES.toSeconds(3) + timestamp
+            val timeInit = TimeUnit.MINUTES.toSeconds(2) + timestamp
             val timeSevenMoreDays = TimeUnit.DAYS.toSeconds(7) + timestamp
             val timeActual = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val dayNext = sdf.format(Date((timestamp.toLong() + TimeUnit.DAYS.toSeconds(1)) * 1000))
+            val dayMessage = sdf.format(Date(timestamp.toLong() * 1000))
+            val dayActual = sdf.format(Date(timeActual * 1000))
             when{
                 timeInit > timeActual -> {
                     textView.text = context.getString(R.string.text_now)
+                }
+                timeInit < timeActual && dayMessage == dayActual -> {
+                    val sdf =  if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+                            SimpleDateFormat("HH:mm", Locale.getDefault())
+                        } else {
+                            SimpleDateFormat("hh:mm aa", Locale.getDefault())
+                    }
+                    textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+                }
+                timeInit < timeActual && dayNext == dayActual -> {
+                    textView.text = context.getString(R.string.text_yesterday)
                 }
                 else -> {
                     val sdf = if(timeSevenMoreDays > timeActual) {
@@ -45,10 +60,7 @@ fun bindMessageDate(textView: TextView, timestamp: Int, format : Int, unreadMess
                             SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
                         }
                     }
-
-                    val netDate = Date(timestamp.toLong() * 1000)
-
-                    textView.text = sdf.format(netDate)
+                    textView.text = sdf.format(Date(timestamp.toLong() * 1000))
                 }
             }
 
