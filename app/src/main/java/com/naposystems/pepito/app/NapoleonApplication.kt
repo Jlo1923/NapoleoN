@@ -45,7 +45,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         EmojiManager.instance.install()
         configEmojiCompat()
         Giphy.configure(this, Constants.GIPHY_API_KEY)
-        Places.initialize(this, getString(R.string.google_maps_key))
+        Places.initialize(this, "AIzaSyDcAkhqRS4BO-BoKM89HiXuR4ruLr8fj1w")
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         socketService.initSocket()
     }
