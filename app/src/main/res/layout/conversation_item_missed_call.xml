@@ -42,11 +42,10 @@
                 android:id="@+id/imageView_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:tint="@color/redIntense"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@drawable/ic_call_missed_black" />
+                tools:srcCompat="@drawable/ic_call_missed_red" />
 
             <TextView
                 android:id="@+id/textView_body"

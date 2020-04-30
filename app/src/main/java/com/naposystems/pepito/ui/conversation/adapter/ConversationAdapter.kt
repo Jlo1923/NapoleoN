@@ -107,9 +107,9 @@ class ConversationAdapter constructor(
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
         conversation?.let {
-            return if (conversation.attachmentList.isNotEmpty()) {
-                when (conversation.message.messageType) {
-                    Constants.MessageType.MESSAGE.type -> {
+            return when (conversation.message.messageType) {
+                Constants.MessageType.MESSAGE.type -> {
+                    if (conversation.attachmentList.isNotEmpty()) {
                         when (conversation.attachmentList[0].type) {
                             Constants.AttachmentType.AUDIO.type -> {
                                 if (conversation.message.isMine == Constants.IsMine.YES.value)
@@ -150,22 +150,21 @@ class ConversationAdapter constructor(
                                     TYPE_INCOMING_MESSAGE
                             }
                         }
-                    }
-                    Constants.MessageType.MISSED_CALL.type,
-                    Constants.MessageType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
-                    else -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                    } else {
+                        if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE
-                        } else {
+                        else
                             TYPE_INCOMING_MESSAGE
-                        }
                     }
                 }
-            } else {
-                if (conversation.message.isMine == Constants.IsMine.YES.value) {
-                    TYPE_MY_MESSAGE
-                } else {
-                    TYPE_INCOMING_MESSAGE
+                Constants.MessageType.MISSED_CALL.type,
+                Constants.MessageType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
+                else -> {
+                    if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        TYPE_MY_MESSAGE
+                    } else {
+                        TYPE_INCOMING_MESSAGE
+                    }
                 }
             }
         }

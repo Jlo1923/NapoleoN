@@ -37,6 +37,8 @@
     <string name="text_error_sending_gif">Ocorreu um erro de enviar o GIF, por favor tente novamente</string>
     <string name="text_missed_voice_call_at">Chamada perdida hoje em %1$s</string>
     <string name="text_missed_video_call_at">Chamada de vídeo em %1$s hoje perdida</string>
+    <string name="text_missed_voice_call">Chamada Perdida</string>
+    <string name="text_missed_video_call">Vídeo chamada não atendida</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d dia</item>
         <item quantity="other">%d dias</item>

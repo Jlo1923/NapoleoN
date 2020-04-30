@@ -116,7 +116,7 @@ class ConversationFragment : BaseFragment(),
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
     }
-    private val timeFormatShareViewModel : TimeFormatShareViewModel by activityViewModels {
+    private val timeFormatShareViewModel: TimeFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
 
@@ -627,6 +627,7 @@ class ConversationFragment : BaseFragment(),
                     selfDestructTime = obtainTimeSelfDestruct(),
                     quote = ""
                 )
+                viewModel.resetDocumentCopied()
             }
         })
     }

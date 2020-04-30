@@ -37,6 +37,8 @@
     <string name="text_error_sending_gif">Ein Fehler ist aufgetreten der Gif senden, bitte versuchen Sie es erneut</string>
     <string name="text_missed_voice_call_at">Verpasster Anruf heute um %1$s Uhr</string>
     <string name="text_missed_video_call_at">Heute Videoanruf bei %1$s verloren</string>
+    <string name="text_missed_voice_call">Anruf in Abwesenheit</string>
+    <string name="text_missed_video_call">Verpasster Videoanruf</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>

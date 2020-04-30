@@ -493,5 +493,9 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    override fun resetDocumentCopied() {
+        _documentCopied.value = null
+    }
+
     //endregion
 }

@@ -42,11 +42,11 @@ class MessageMissedCallViewHolder constructor(
 
             when (item.message.messageType) {
                 Constants.MessageType.MISSED_CALL.type -> {
-                    iconId = R.drawable.ic_call_missed_black
+                    iconId = R.drawable.ic_call_missed_red
                     stringId = R.string.text_missed_voice_call_at
                 }
                 else -> {
-                    iconId = R.drawable.ic_videocall_missed_black
+                    iconId = R.drawable.ic_videocall_missed_red
                     stringId = R.string.text_missed_video_call_at
                 }
             }
