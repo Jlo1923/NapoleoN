@@ -10,6 +10,7 @@ import retrofit2.Response
 interface IContractHome {
 
     interface ViewModel {
+        fun getConversation()
         fun getUserLiveData()
         fun getFriendshipQuantity()
         fun subscribeToGeneralSocketChannel()

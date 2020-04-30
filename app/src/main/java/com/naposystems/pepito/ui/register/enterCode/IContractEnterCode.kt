@@ -14,7 +14,7 @@ interface IContractEnterCode {
         fun setTimeForRetryCode(timeWait: Int): Long
         fun getAttemptsForRetryCode()
         fun getAttemptsForNewCode()
-        fun getTimeForRetryCode(): Long
+        fun getNumAttemptsForNewCode() : Int
         fun getTimeForNewCode(): Long
         fun setTimeForNewCode(timeWait: Int): Long
         fun codeForwarding()
@@ -27,7 +27,6 @@ interface IContractEnterCode {
         suspend fun codeForwarding(): Response<SendCodeResDTO>
         fun getAttemptsForNewCode(): Int
         fun getAttemptsForRetryCode(): Int
-        fun getTimeForRetryCode(): Long
         fun getTimeForNewCode(): Long
         fun setAttemptsForNewCode(attempts: Int)
         fun setTimeForNewCode(time: Long)

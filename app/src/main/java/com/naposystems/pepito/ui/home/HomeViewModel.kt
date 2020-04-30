@@ -19,9 +19,9 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val user: LiveData<User>
         get() = _user
 
-    private val _subscriptionUser = MutableLiveData<SubscriptionUser>()
-    val subscriptionUser: LiveData<SubscriptionUser>
-        get() = _subscriptionUser
+    private lateinit var _conversations: LiveData<List<MessageAndAttachment>>
+    val conversations: LiveData<List<MessageAndAttachment>>
+        get() = _conversations
 
     private val _quantityFriendshipRequest = MutableLiveData<Int>()
     val quantityFriendshipRequest: LiveData<Int>
@@ -35,7 +35,6 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val contact: LiveData<Contact>
         get() = _contact
 
-    val conversations: LiveData<List<MessageAndAttachment>> = repository.getMessagesForHome()
 
     init {
         _contact.value = null
@@ -58,6 +57,12 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
+        }
+    }
+
+    override fun getConversation() {
+        viewModelScope.launch {
+            _conversations = repository.getMessagesForHome()
         }
     }
 

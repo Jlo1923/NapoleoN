@@ -418,8 +418,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun showToolbar() {
-        resetToolbar()
-
         val value = TypedValue()
         this.theme.resolveAttribute(R.attr.attrBackgroundTintIconToolbar, value, true)
 
@@ -432,16 +430,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             elevation = fourDp
         }
         binding.frameLayout.elevation = fourDp
-    }
-
-    private fun resetToolbar() {
-        with(supportActionBar!!) {
-            subtitle = ""
-            setDisplayShowCustomEnabled(false)
-            setDisplayShowTitleEnabled(true)
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
-        }
     }
 
     private fun enableDrawer() {

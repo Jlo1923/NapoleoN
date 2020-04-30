@@ -65,12 +65,6 @@ class EnterCodeRepository @Inject constructor(
         )
     }
 
-    override fun getTimeForRetryCode(): Long {
-        return sharedPreferencesManager.getLong(
-            Constants.SharedPreferences.PREF_TIME_FOR_RETRY_CODE
-        )
-    }
-
     override fun getTimeForNewCode(): Long {
         return sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_TIME_FOR_NEW_CODE

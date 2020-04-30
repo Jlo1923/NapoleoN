@@ -200,7 +200,6 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
             context.theme
         )
 
-        @Suppress("IMPLICIT_CAST_TO_ANY")
         val loadImage = when {
             contact.imageUrlFake.isNotEmpty() -> {
                 Utils.getFileUri(
@@ -213,12 +212,13 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
                 contact.imageUrl
             }
             else -> {
-                defaultAvatar
+                ""
             }
         }
 
         Glide.with(context)
             .load(loadImage)
+            .error(defaultAvatar)
             .circleCrop()
             .into(imageView)
     }
