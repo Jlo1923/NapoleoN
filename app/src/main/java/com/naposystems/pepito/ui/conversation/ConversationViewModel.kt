@@ -1,6 +1,7 @@
 package com.naposystems.pepito.ui.conversation
 
 import android.content.Context
+import android.net.Uri
 import android.os.ParcelFileDescriptor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -73,6 +74,10 @@ class ConversationViewModel @Inject constructor(
     val uploadProgress: LiveData<UploadResult>
         get() = _uploadProgress
 
+    private val _documentCopied = MutableLiveData<File>()
+    val documentCopied: LiveData<File>
+        get() = _documentCopied
+
     private var countOldMessages: Int = 0
 
     init {
@@ -143,7 +148,8 @@ class ConversationViewModel @Inject constructor(
                 createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
                 isMine = Constants.IsMine.YES.value,
                 status = Constants.MessageStatus.SENDING.status,
-                numberAttachments = numberAttachments
+                numberAttachments = numberAttachments,
+                messageType = Constants.MessageType.MESSAGE.type
             )
 
             val messageId = repository.insertMessage(message).toInt()
@@ -227,7 +233,8 @@ class ConversationViewModel @Inject constructor(
                 quoted = quote,
                 body = message.body,
                 numberAttachments = numberAttachments,
-                destroy = selfDestructTime
+                destroy = selfDestructTime,
+                messageType = Constants.MessageType.MESSAGE.type
             )
 
             val messageResponse = repository.sendMessage(messageReqDTO)
@@ -432,12 +439,11 @@ class ConversationViewModel @Inject constructor(
             val channel = "private-private.${contact.id}.${user.id}"
             try {
                 repository.subscribeToCallChannel(channel)
-                _contactCalledSuccessfully.value = channel
                 val response = repository.callContact(contact, isVideoCall)
 
                 if (response.isSuccessful) {
                     response.body()?.let { _ ->
-                        // Intentionally empty
+                        _contactCalledSuccessfully.value = channel
                     }
                 } else {
                     repository.unSubscribeToChannel(contact, channel)
@@ -477,6 +483,19 @@ class ConversationViewModel @Inject constructor(
         repository.updateAttachment(attachment)
     }
 
+    override fun sendDocumentAttachment(fileUri: Uri) {
+        viewModelScope.launch {
+            val file = repository.copyFile(fileUri)
 
-//endregion
+            if (file != null) {
+                _documentCopied.value = file
+            }
+        }
+    }
+
+    override fun resetDocumentCopied() {
+        _documentCopied.value = null
+    }
+
+    //endregion
 }

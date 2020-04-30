@@ -20,6 +20,12 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
         binding.progressBar.setProgress(progress.toFloat())
     }
 
+    fun setUploadComplete(boolean: Boolean) {
+        if (boolean) {
+            binding.progressBar.visibility = View.GONE
+        }
+    }
+
     @SuppressLint("ResourceAsColor")
     fun bind(
         item: MessageAndAttachment,

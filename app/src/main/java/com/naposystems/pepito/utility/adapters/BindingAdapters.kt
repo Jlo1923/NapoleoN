@@ -1,7 +1,10 @@
 package com.naposystems.pepito.utility.adapters
 
 import android.Manifest
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
@@ -21,6 +24,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.model.conversationCall.ConversationCall
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.GlideManager
 import com.naposystems.pepito.utility.Utils
 import org.json.JSONObject
 import org.webrtc.IceCandidate
@@ -146,6 +150,30 @@ fun View.slideUp(animDuration: Long) {
     startAnimation(animate)
 }
 
+fun ImageView.loadContentUri(contentUri: Uri) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        ImageDecoder.createSource(context.contentResolver, contentUri)
+            .also { source ->
+                ImageDecoder.decodeBitmap(source).also { bitmap ->
+                    GlideManager.loadBitmap(
+                        this,
+                        bitmap
+                    )
+                }
+            }
+    } else {
+        val bitmap =
+            MediaStore.Images.Media.getBitmap(
+                context.contentResolver,
+                contentUri
+            )
+        GlideManager.loadBitmap(
+            this,
+            bitmap
+        )
+    }
+}
+
 @BindingAdapter("background")
 fun bindBackground(imageView: ImageView, imageUrl: String) {
     val context = imageView.context
@@ -243,7 +271,7 @@ fun bindName(textView: TextView, @Nullable contact: Contact?) {
 
 @BindingAdapter("nameFormat")
 fun bindNameFormat(textView: TextView, format: Int) {
-    when(format) {
+    when (format) {
         Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
             textView.visibility = View.GONE
         }
@@ -255,7 +283,7 @@ fun bindNameFormat(textView: TextView, format: Int) {
 
 @BindingAdapter("nickNameFormat")
 fun bindNickNameFormat(textView: TextView, format: Int) {
-    when(format) {
+    when (format) {
         Constants.UserDisplayFormat.ONLY_NAME.format -> {
             textView.visibility = View.GONE
         }
@@ -267,12 +295,12 @@ fun bindNickNameFormat(textView: TextView, format: Int) {
 
 @BindingAdapter("nameFormatContact")
 fun bindNameFormatContact(textView: TextView, format: Int) {
-    when(format) {
+    when (format) {
         Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
             textView.visibility = View.GONE
         }
         else -> {
-            if(textView.text == " ") {
+            if (textView.text == " ") {
                 textView.visibility = View.GONE
             } else {
                 textView.visibility = View.VISIBLE

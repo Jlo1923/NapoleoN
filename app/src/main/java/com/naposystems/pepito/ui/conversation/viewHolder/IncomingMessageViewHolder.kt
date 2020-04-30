@@ -21,6 +21,10 @@ class IncomingMessageViewHolder constructor(
     ) {
         binding.progressBar.visibility = View.VISIBLE
         binding.progressBar.setProgress(progress.toFloat())
+
+        if (progress == 100L){
+            binding.progressBar.visibility = View.GONE
+        }
     }
 
     @SuppressLint("ResourceAsColor")

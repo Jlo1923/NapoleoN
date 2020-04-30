@@ -50,11 +50,11 @@
             style="@style/SmallBodyTextView.Time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:colorText="@{conversation.messagesUnReads}"
+            app:format="@{timeFormat}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:messageHour="@{conversation.message.createdAt}"
-            app:format="@{timeFormat}"
-            app:colorText="@{conversation.messagesUnReads}"
             tools:text="8:15 a.m" />
 
         <TextView
@@ -75,10 +75,10 @@
             android:id="@+id/imageView_status_message"
             android:layout_width="17dp"
             android:layout_height="17dp"
-            app:statusMessage="@{conversation.message}"
             app:layout_constraintBottom_toBottomOf="@+id/linear_container"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/linear_container" />
+            app:layout_constraintTop_toTopOf="@+id/linear_container"
+            app:statusMessage="@{conversation.message}" />
 
         <TextView
             android:id="@+id/textView_user_name"
@@ -92,8 +92,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/imageView_user_image"
             app:layout_constraintTop_toTopOf="parent"
-            app:nameFormat="@{displayFormat}"
             app:name="@{conversation.contact}"
+            app:nameFormat="@{displayFormat}"
             tools:text="@tools:sample/full_names" />
 
         <TextView
@@ -101,9 +101,9 @@
             style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"
-            android:layout_marginStart="@dimen/normal_margin"
             android:textColor="?attr/attrColorButtonTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -119,6 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_margin"
             android:layout_marginEnd="@dimen/normal_margin"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView_unread_messages"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
@@ -126,22 +127,28 @@
 
             <ImageView
                 android:id="@+id/imageView_message_option_start_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="@dimen/x_small_margin"
+                android:visibility="gone"
                 app:iconByConversation="@{conversation}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
                 app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname"
-                tools:srcCompat="@drawable/ic_location" />
+                tools:srcCompat="@drawable/ic_call_missed_red"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/textView_message"
                 style="@style/BodyTextView.message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:lines="1"
-                app:bodyConversation="@{conversation}" />
+                app:bodyConversation="@{conversation}"
+                tools:text="LLamada perdida" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

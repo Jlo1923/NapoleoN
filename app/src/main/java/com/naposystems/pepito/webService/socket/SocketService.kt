@@ -3,6 +3,9 @@ package com.naposystems.pepito.webService.socket
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
+import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
+import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.firebase.TestService
 import com.naposystems.pepito.model.conversationCall.ConversationCall
 import com.naposystems.pepito.reactive.RxBus
@@ -26,6 +29,10 @@ class SocketService @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val repository: IContractSocketService.Repository
 ) : IContractSocketService.SocketService {
+
+    private val firebaseId by lazy {
+        sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
+    }
 
     companion object {
         const val CALL_NN = "client-callNN"
@@ -122,7 +129,7 @@ class SocketService @Inject constructor(
     private fun listenOnDisconnect() {
         socket.on("disconnect") { reason ->
             Timber.d("Socket disconnect $reason")
-            connectToSocket()
+            socket.connect()
         }
     }
 
@@ -143,10 +150,37 @@ class SocketService @Inject constructor(
                 validateCallData(jsonObject.toConversationCallModel(), true)
             }
 
+            subscribeToGeneralChannel()
         }.on(Socket.EVENT_CONNECT_ERROR) {
             Timber.e("No conectó al socket $it")
+            socket.connect()
         }.on(Socket.EVENT_ERROR) {
             Timber.e("Error de mierda al conectar al puto socket ${it[0]}")
+        }
+    }
+
+    private fun subscribeToGeneralChannel() {
+        val userId = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+        if (userId != 0) {
+            val headersReqDTO = HeadersReqDTO(
+                firebaseId
+            )
+
+            val authReqDTO = AuthReqDTO(
+                headersReqDTO
+            )
+
+            val channelName =
+                "private-general.${userId}"
+
+            val socketReqDTO = SocketReqDTO(
+                channelName,
+                authReqDTO
+            )
+
+            subscribe(SocketReqDTO.toJSONObject(socketReqDTO))
+            repository.getMyMessages()
         }
     }
 

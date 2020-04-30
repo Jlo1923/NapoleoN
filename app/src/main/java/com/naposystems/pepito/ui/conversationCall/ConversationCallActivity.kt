@@ -106,6 +106,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.fabHangup.setOnClickListener {
+            if (!webRTCClient.isActiveCall()) {
+                viewModel.sendMissedCall(contactId, isVideoCall)
+            }
             webRTCClient.emitHangUp()
             webRTCClient.dispose()
         }
@@ -288,7 +291,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
     override fun changeTextViewTitle(stringResourceId: Int) {
         binding.textViewTitle.text =
-            getString(stringResourceId, this.getString(R.string.label_nickname, contact?.getNickName()))
+            getString(
+                stringResourceId,
+                this.getString(R.string.label_nickname, contact?.getNickName())
+            )
     }
 
     override fun changeBluetoothButtonVisibility(visibility: Int) {
@@ -326,6 +332,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
     override fun resetIsOnCallPref() {
         viewModel.resetIsOnCallPref()
+    }
+
+    override fun contactNotAnswer() {
+        viewModel.sendMissedCall(contactId, isVideoCall)
     }
 
     //endregion

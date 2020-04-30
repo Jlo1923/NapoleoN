@@ -35,6 +35,10 @@
     <string name="text_slide_to_cancel">Swipe per annullare</string>
     <string name="text_explanation_to_record_audio_attacment">Per inviare una nota vocale, lasciate NAPOLEON può registrare l\'audio.</string>
     <string name="text_error_sending_gif">Si è verificato un errore durante l\'invio del Gif, riprova</string>
+    <string name="text_missed_voice_call_at">Chiamata persa oggi alle %1$s</string>
+    <string name="text_missed_video_call_at">Videochiamata a %1$s di oggi ha perso</string>
+    <string name="text_missed_voice_call">Chiamata persa</string>
+    <string name="text_missed_video_call">Videochiamata persa</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d giorno</item>
         <item quantity="other">%d giorni</item>

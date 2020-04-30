@@ -3,7 +3,6 @@ package com.naposystems.pepito.repository.recoveryAccountQuestions
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.recoveryAccountQuestions.*
-import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Crypto
@@ -114,5 +113,6 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
     override suspend fun insertUser(recoveryAccountUserDTO: RecoveryAccountUserDTO) {
         val user = RecoveryAccountUserDTO.toUserModel(recoveryAccountUserDTO, firebaseId)
         userLocalDataSource.insertUser(user)
+        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 }

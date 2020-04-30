@@ -28,5 +28,6 @@ interface IContractWebRTCClient {
     fun startProximitySensor()
     fun stopProximitySensor()
     fun handleKeyDown(keyCode: Int): Boolean
+    fun isActiveCall(): Boolean
     fun dispose()
 }

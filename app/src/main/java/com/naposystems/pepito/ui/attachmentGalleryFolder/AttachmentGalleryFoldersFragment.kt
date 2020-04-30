@@ -14,7 +14,9 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AttachmentGalleryFoldersFragmentBinding
 import com.naposystems.pepito.model.attachment.gallery.GalleryFolder
+import com.naposystems.pepito.model.attachment.gallery.GalleryResult
 import com.naposystems.pepito.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
+import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -48,7 +50,6 @@ class AttachmentGalleryFoldersFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.attachment_gallery_folders_fragment, container, false
         )
-
         setupAdapter()
 
         return binding.root
@@ -56,18 +57,36 @@ class AttachmentGalleryFoldersFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.loadFolders()
-
+        setToolbarTitle()
         viewModel.folders.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+            when (it) {
+                is GalleryResult.Loading -> {
+                    // Intentionally empty
+                }
+                is GalleryResult.Success -> adapter.submitList(it.listGalleryFolder)
+                is GalleryResult.Error -> {
+                    this.showToast(requireContext().getString(R.string.text_fail))
+                }
+            }
         })
+    }
+
+    private fun setToolbarTitle() {
+        val toolbar = (activity as MainActivity).supportActionBar
+        var displayName = ""
+
+        args.contact?.let { contact ->
+            displayName = if (contact.nicknameFake.isNotEmpty())
+                contact.nicknameFake else contact.nickname
+        }
+
+        toolbar?.title = getString(R.string.text_send_to, displayName)
     }
 
     private fun setupAdapter() {
         adapter =
             AttachmentGalleryFolderAdapter(object : AttachmentGalleryFolderAdapter.ClickListener {
                 override fun onClick(galleryFolder: GalleryFolder) {
-                    this@AttachmentGalleryFoldersFragment.showToast(galleryFolder.folderName)
                     findNavController().navigate(
                         AttachmentGalleryFoldersFragmentDirections.actionAttachmentGalleryFragmentToAttachmentGalleryFragment(
                             args.contact,
@@ -81,5 +100,4 @@ class AttachmentGalleryFoldersFragment : Fragment() {
 
         binding.recyclerViewFolders.adapter = adapter
     }
-
 }

@@ -2,9 +2,11 @@ package com.naposystems.pepito.app
 
 import android.content.Context
 import com.bumptech.glide.Glide
+import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
+import com.bumptech.glide.request.RequestOptions
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 import com.naposystems.pepito.utility.glideModelLoaders.attachment.AttachmentLoaderFactory
@@ -29,6 +31,13 @@ class NapoleonAppGlideModule : AppGlideModule() {
             GalleryItemLoaderFactory(
                 context
             )
+        )
+    }
+
+    override fun applyOptions(context: Context, builder: GlideBuilder) {
+        builder.setDefaultRequestOptions(
+            RequestOptions()
+                .disallowHardwareConfig()
         )
     }
 }

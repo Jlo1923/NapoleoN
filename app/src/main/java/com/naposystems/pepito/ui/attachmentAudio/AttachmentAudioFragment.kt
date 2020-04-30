@@ -130,12 +130,12 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
             ) else getString(R.string.text_tap_to_select)
 
         if (countSelected == 1 && binding.fabSend.visibility == View.INVISIBLE) {
-            binding.fabSend!!.startAnimation(animationScaleUp)
+            binding.fabSend.startAnimation(animationScaleUp)
             binding.fabSend.visibility = View.VISIBLE
         }
 
         if (binding.fabSend.visibility == View.VISIBLE && countSelected == 0) {
-            binding.fabSend!!.startAnimation(animationScaleDown)
+            binding.fabSend.startAnimation(animationScaleDown)
             binding.fabSend.visibility = View.INVISIBLE
         }
     }

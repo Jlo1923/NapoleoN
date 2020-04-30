@@ -11,7 +11,6 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.viewHolder.*
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
-import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 
 class ConversationAdapter constructor(
     private val clickListener: ClickListener,
@@ -22,6 +21,7 @@ class ConversationAdapter constructor(
 
     companion object {
         const val PROGRESS = "progress"
+        const val UPLOAD_COMPLETE = "upload_complete"
         const val TYPE_MY_MESSAGE = 1
         const val TYPE_INCOMING_MESSAGE = 2
         const val TYPE_MY_MESSAGE_AUDIO = 3
@@ -34,6 +34,7 @@ class ConversationAdapter constructor(
         const val TYPE_INCOMING_MESSAGE_GIF = 10
         const val TYPE_MY_MESSAGE_GIF_NN = 11
         const val TYPE_INCOMING_MESSAGE_GIF_NN = 12
+        const val TYPE_MISSED_CALL = 13
     }
 
     private var isFirst = false
@@ -83,6 +84,13 @@ class ConversationAdapter constructor(
             Bundle().apply { putLong(PROGRESS, progress) })
     }
 
+    fun setUploadComplete(attachment: Attachment) {
+        notifyItemChanged(
+            getPositionByItem(attachment),
+            Bundle().apply { putBoolean(UPLOAD_COMPLETE, true) }
+        )
+    }
+
     private fun getPositionByItem(attachment: Attachment) =
         currentList.indexOfFirst { messageAndAttachment ->
             if (messageAndAttachment.attachmentList.isNotEmpty()) {
@@ -98,60 +106,65 @@ class ConversationAdapter constructor(
 
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
-
         conversation?.let {
-            return if (conversation.attachmentList.isNotEmpty()) {
-                when (conversation.attachmentList[0].type) {
-                    Constants.AttachmentType.IMAGE.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value)
-                            TYPE_MY_MESSAGE
-                        else
-                            TYPE_INCOMING_MESSAGE
-                    }
-                    Constants.AttachmentType.AUDIO.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value)
-                            TYPE_MY_MESSAGE_AUDIO
-                        else
-                            TYPE_INCOMING_MESSAGE_AUDIO
-                    }
-                    Constants.AttachmentType.VIDEO.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value)
-                            TYPE_MY_MESSAGE_VIDEO
-                        else
-                            TYPE_INCOMING_MESSAGE_VIDEO
-                    }
-                    Constants.AttachmentType.DOCUMENT.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value)
-                            TYPE_MY_MESSAGE_DOCUMENT
-                        else
-                            TYPE_INCOMING_MESSAGE_DOCUMENT
-                    }
-                    Constants.AttachmentType.GIF.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
-                            TYPE_MY_MESSAGE_GIF
-                        } else {
-                            TYPE_INCOMING_MESSAGE_GIF
+            return when (conversation.message.messageType) {
+                Constants.MessageType.MESSAGE.type -> {
+                    if (conversation.attachmentList.isNotEmpty()) {
+                        when (conversation.attachmentList[0].type) {
+                            Constants.AttachmentType.AUDIO.type -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                    TYPE_MY_MESSAGE_AUDIO
+                                else
+                                    TYPE_INCOMING_MESSAGE_AUDIO
+                            }
+                            Constants.AttachmentType.VIDEO.type -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                    TYPE_MY_MESSAGE_VIDEO
+                                else
+                                    TYPE_INCOMING_MESSAGE_VIDEO
+                            }
+                            Constants.AttachmentType.DOCUMENT.type -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                    TYPE_MY_MESSAGE_DOCUMENT
+                                else
+                                    TYPE_INCOMING_MESSAGE_DOCUMENT
+                            }
+                            Constants.AttachmentType.GIF.type -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                                    TYPE_MY_MESSAGE_GIF
+                                } else {
+                                    TYPE_INCOMING_MESSAGE_GIF
+                                }
+                            }
+                            Constants.AttachmentType.GIF_NN.type -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                                    TYPE_MY_MESSAGE_GIF_NN
+                                } else {
+                                    TYPE_INCOMING_MESSAGE_GIF_NN
+                                }
+                            }
+                            else -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                    TYPE_MY_MESSAGE
+                                else
+                                    TYPE_INCOMING_MESSAGE
+                            }
                         }
-                    }
-                    Constants.AttachmentType.GIF_NN.type -> {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value) {
-                            TYPE_MY_MESSAGE_GIF_NN
-                        } else {
-                            TYPE_INCOMING_MESSAGE_GIF_NN
-                        }
-                    }
-                    else -> {
+                    } else {
                         if (conversation.message.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE
                         else
                             TYPE_INCOMING_MESSAGE
                     }
                 }
-            } else {
-                if (conversation.message.isMine == Constants.IsMine.YES.value) {
-                    TYPE_MY_MESSAGE
-                } else {
-                    TYPE_INCOMING_MESSAGE
+                Constants.MessageType.MISSED_CALL.type,
+                Constants.MessageType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
+                else -> {
+                    if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                        TYPE_MY_MESSAGE
+                    } else {
+                        TYPE_INCOMING_MESSAGE
+                    }
                 }
             }
         }
@@ -176,6 +189,7 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_GIF -> IncomingMessageViewHolder.from(parent)
             TYPE_MY_MESSAGE_GIF_NN -> MyMessageGifNNViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_GIF_NN -> IncomingMessageGifNNViewHolder.from(parent)
+            TYPE_MISSED_CALL -> MessageMissedCallViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
     }
@@ -189,9 +203,9 @@ class ConversationAdapter constructor(
 
         item?.let {
             when (getItemViewType(position)) {
-                TYPE_MY_MESSAGE -> (holder as MyMessageViewHolder)
+                TYPE_MY_MESSAGE, TYPE_MY_MESSAGE_GIF -> (holder as MyMessageViewHolder)
                     .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_INCOMING_MESSAGE -> (holder as IncomingMessageViewHolder)
+                TYPE_INCOMING_MESSAGE, TYPE_INCOMING_MESSAGE_GIF -> (holder as IncomingMessageViewHolder)
                     .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
                     .bind(item, clickListener, isFirst, mediaPlayerManager, timeFormat)
@@ -205,13 +219,11 @@ class ConversationAdapter constructor(
                     .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_INCOMING_MESSAGE_DOCUMENT -> (holder as IncomingMessageDocumentViewHolder)
                     .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_MY_MESSAGE_GIF -> (holder as MyMessageViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_INCOMING_MESSAGE_GIF -> (holder as IncomingMessageViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_GIF_NN -> (holder as MyMessageGifNNViewHolder)
                     .bind(item, clickListener, timeFormat)
                 TYPE_INCOMING_MESSAGE_GIF_NN -> (holder as IncomingMessageGifNNViewHolder)
+                    .bind(item, clickListener, timeFormat)
+                TYPE_MISSED_CALL -> (holder as MessageMissedCallViewHolder)
                     .bind(item, clickListener, timeFormat)
             }
         }
@@ -229,24 +241,37 @@ class ConversationAdapter constructor(
             item?.let {
                 val bundle = payloads.first() as Bundle
                 val progress = bundle.getLong(PROGRESS)
+                val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
                 when (getItemViewType(position)) {
-                    TYPE_MY_MESSAGE -> {
-                        (holder as MyMessageViewHolder).setProgress(progress)
+                    TYPE_MY_MESSAGE, TYPE_MY_MESSAGE_GIF -> {
+                        (holder as MyMessageViewHolder).apply {
+                            setProgress(progress)
+                            setUploadComplete(uploadComplete)
+                        }
                     }
                     TYPE_MY_MESSAGE_VIDEO -> {
-                        (holder as MyMessageVideoViewHolder).setProgress(progress)
-                    }
-                    TYPE_MY_MESSAGE_GIF -> {
-                        (holder as MyMessageViewHolder).setProgress(progress)
+                        (holder as MyMessageVideoViewHolder).apply {
+                            setProgress(progress)
+                            setUploadComplete(uploadComplete)
+                        }
                     }
                     TYPE_MY_MESSAGE_GIF_NN -> {
-                        (holder as MyMessageGifNNViewHolder).setProgress(progress)
+                        (holder as MyMessageGifNNViewHolder).apply {
+                            setProgress(progress)
+                            setUploadComplete(uploadComplete)
+                        }
                     }
                     TYPE_MY_MESSAGE_AUDIO -> {
-                        (holder as MyMessageAudioViewHolder).setProgress(progress)
+                        (holder as MyMessageAudioViewHolder).apply {
+                            setProgress(progress)
+                            setUploadComplete(uploadComplete)
+                        }
                     }
                     TYPE_MY_MESSAGE_DOCUMENT -> {
-                        (holder as MyMessageDocumentViewHolder).setProgress(progress)
+                        (holder as MyMessageDocumentViewHolder).apply {
+                            setProgress(progress)
+                            setUploadComplete(uploadComplete)
+                        }
                     }
                     TYPE_INCOMING_MESSAGE -> {
                         (holder as IncomingMessageViewHolder).setProgress(progress)

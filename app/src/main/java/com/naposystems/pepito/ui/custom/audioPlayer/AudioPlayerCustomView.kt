@@ -147,6 +147,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         binding.progressBar.setProgress(progress.toFloat())
     }
 
+    override fun hideProgressBar() {
+        binding.progressBar.visibility = View.GONE
+    }
+
     override fun playAudio() {
         binding.imageButtonPlay.performClick()
     }

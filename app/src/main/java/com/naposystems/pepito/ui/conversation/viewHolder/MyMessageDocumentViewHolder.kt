@@ -20,6 +20,12 @@ class MyMessageDocumentViewHolder constructor(private val binding: ConversationI
         binding.progressBar.setProgress(progress.toFloat())
     }
 
+    fun setUploadComplete(boolean: Boolean) {
+        if (boolean) {
+            binding.progressBar.visibility = View.GONE
+        }
+    }
+
     @SuppressLint("ResourceAsColor")
     fun bind(
         item: MessageAndAttachment,
