@@ -55,6 +55,7 @@ class WebRTCClient constructor(
             override fun onFinish() {
                 Timber.d("CountDown finish")
                 if (!isActiveCall) {
+                    mListener?.contactNotAnswer()
                     emitHangUp()
                     dispose()
                 }
@@ -172,6 +173,7 @@ class WebRTCClient constructor(
         fun changeBluetoothButtonVisibility(visibility: Int)
         fun enableControls()
         fun resetIsOnCallPref()
+        fun contactNotAnswer()
     }
 
     init {
@@ -742,6 +744,8 @@ class WebRTCClient constructor(
             else -> false
         }
     }
+
+    override fun isActiveCall() = isActiveCall
 
     override fun dispose() {
         Timber.d("Dispose")

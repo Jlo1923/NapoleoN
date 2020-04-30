@@ -347,6 +347,12 @@ object Constants {
         FLAGS(8)
     }
 
+    enum class MessageType(val type: Int) {
+        MESSAGE(1),
+        MISSED_CALL(2),
+        MISSED_VIDEO_CALL(3)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"

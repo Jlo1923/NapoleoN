@@ -35,6 +35,8 @@
     <string name="text_slide_to_cancel">Deslizar para cancelar</string>
     <string name="text_explanation_to_record_audio_attacment">Para enviar una nota de voz, permita que NapoleoN pueda grabar audio.</string>
     <string name="text_error_sending_gif">Could not download the gif, please try again</string>
+    <string name="text_missed_voice_call_at">Llamada perdida hoy a %1$s</string>
+    <string name="text_missed_video_call_at">Videollamada perdida hoy a %1$s</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>

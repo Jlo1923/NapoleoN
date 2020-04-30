@@ -4,6 +4,7 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
+import timber.log.Timber
 import java.io.ByteArrayInputStream
 
 class ProgressRequestBody(
@@ -24,20 +25,24 @@ class ProgressRequestBody(
     override fun contentLength(): Long = mLength
 
     override fun writeTo(sink: BufferedSink) {
-        ByteArrayInputStream(bytes).use { inputStream ->
-            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-            var uploaded = 0
-            var read: Int
+        try {
+            ByteArrayInputStream(bytes).use { inputStream ->
+                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                var uploaded = 0
+                var read: Int
 
-            while (inputStream.read(buffer).also { read = it } != -1) {
-                sink.write(buffer, 0, read)
-                uploaded += read
-                listener.onRequestProgress(
-                    uploaded,
-                    mLength,
-                    (100f * uploaded / mLength).toInt()
-                )
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    sink.write(buffer, 0, read)
+                    uploaded += read
+                    listener.onRequestProgress(
+                        uploaded,
+                        mLength,
+                        (100f * uploaded / mLength).toInt()
+                    )
+                }
             }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 }

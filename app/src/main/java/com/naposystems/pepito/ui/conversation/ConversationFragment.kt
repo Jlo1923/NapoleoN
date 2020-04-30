@@ -2,6 +2,7 @@ package com.naposystems.pepito.ui.conversation
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -88,6 +89,7 @@ class ConversationFragment : BaseFragment(),
     MediaPlayerManager.Listener, FabSend.FabSendListener {
 
     companion object {
+        const val RC_DOCUMENT = 2511
         fun newInstance() = ConversationFragment()
     }
 
@@ -376,9 +378,20 @@ class ConversationFragment : BaseFragment(),
                         drawableIconId = R.drawable.ic_folder_primary,
                         message = R.string.text_explanation_to_send_audio_attacment
                     ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentDocumentFragment()
+                        val intent = Intent(Intent.ACTION_GET_CONTENT)
+                        intent.type = "*/*"
+                        intent.putExtra(
+                            Intent.EXTRA_MIME_TYPES, arrayOf(
+                                "application/pdf",
+                                "application/msword",
+                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                "application/vnd.ms-excel",
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                "application/vnd.ms-powerpoint",
+                                "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                            )
                         )
+                        startActivityForResult(intent, RC_DOCUMENT)
                     }
                 }
             })
@@ -493,6 +506,7 @@ class ConversationFragment : BaseFragment(),
         })
     }
 
+    @InternalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -580,10 +594,39 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
             when (it) {
+                is UploadResult.Success -> {
+                    conversationAdapter.setUploadComplete(it.attachment)
+                }
                 is UploadResult.Progress -> {
                     Timber.d("Progreso subida: ${it.progress}")
                     conversationAdapter.setUploadProgress(it.attachment, it.progress)
                 }
+            }
+        })
+
+        viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                val attachment = Attachment(
+                    id = 0,
+                    messageId = 0,
+                    webId = "",
+                    messageWebId = "",
+                    type = Constants.AttachmentType.DOCUMENT.type,
+                    body = "",
+                    uri = it.name,
+                    origin = Constants.AttachmentOrigin.GALLERY.origin,
+                    thumbnailUri = "",
+                    status = Constants.AttachmentStatus.SENDING.status,
+                    extension = it.extension
+                )
+
+                viewModel.saveMessageAndAttachment(
+                    messageString = "",
+                    attachment = attachment,
+                    numberAttachments = 1,
+                    selfDestructTime = obtainTimeSelfDestruct(),
+                    quote = ""
+                )
             }
         })
     }
@@ -827,6 +870,16 @@ class ConversationFragment : BaseFragment(),
         }
 
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode != RC_DOCUMENT || resultCode != RESULT_OK)
+            return
+
+        Timber.d("URI FILE: ${data?.data.toString()}")
+        data?.data?.let { uri ->
+            viewModel.sendDocumentAttachment(uri)
+        }
     }
 
     private fun blockContact(contact: Contact) {

@@ -143,9 +143,9 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
             CursorLoader(
                 context,
                 MediaStore.Files.getContentUri("external"),
-                null,
-                null,
-                null,
+                projectionDocuments,
+                selectionDocuments,
+                selectionArgsDocuments,
                 "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC"
             )
         } ?: throw Exception("Activity cannot be null")

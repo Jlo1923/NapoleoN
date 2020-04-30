@@ -1,7 +1,10 @@
 package com.naposystems.pepito.repository.conversation
 
 import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import androidx.core.database.getStringOrNull
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -292,7 +295,7 @@ class ConversationRepository @Inject constructor(
         if (messagesUnread.isNotEmpty()) {
             try {
                 val response = napoleonApi.sendMessagesRead(
-                    MessagesReadReqDTO (
+                    MessagesReadReqDTO(
                         messagesUnread
                     )
                 )
@@ -558,6 +561,50 @@ class ConversationRepository @Inject constructor(
         if (messageAndAttachment.attachmentList.isNotEmpty()) {
             val firstAttachment = messageAndAttachment.attachmentList.first()
             attachmentLocalDataSource.updateAttachmentState(firstAttachment.webId, state)
+        }
+    }
+
+    override suspend fun copyFile(fileUri: Uri): File? {
+        return try {
+            val contentResolver = context.contentResolver
+
+            val cursor = contentResolver.query(
+                fileUri,
+                arrayOf(MediaStore.Files.FileColumns.MIME_TYPE),
+                null,
+                null,
+                null
+            )
+
+            if (cursor != null && cursor.moveToFirst()) {
+                cursor.use {
+                    val mimeTypeIndex =
+                        cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+                    val mimeType = cursor.getStringOrNull(mimeTypeIndex)
+                    val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+
+                    if (extension != null) {
+                        val inputStream = context.contentResolver.openInputStream(fileUri)
+                        if (inputStream != null) {
+                            FileManager.copyFile(
+                                context,
+                                inputStream,
+                                Constants.NapoleonCacheDirectories.DOCUMENTOS.folder,
+                                "${System.currentTimeMillis()}.$extension"
+                            )
+                        } else {
+                            null
+                        }
+                    } else {
+                        null
+                    }
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
         }
     }
 }

@@ -24,6 +24,12 @@ class MyMessageAudioViewHolder constructor(
         binding.audioPlayer.setProgress(progress)
     }
 
+    fun setUploadComplete(boolean: Boolean) {
+        if (boolean) {
+            binding.audioPlayer.hideProgressBar()
+        }
+    }
+
     fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,

@@ -60,9 +60,13 @@ class AttachmentGalleryFoldersFragment : Fragment() {
         setToolbarTitle()
         viewModel.folders.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is GalleryResult.Loading -> this.showToast("Cargando madafaka")
+                is GalleryResult.Loading -> {
+                    // Intentionally empty
+                }
                 is GalleryResult.Success -> adapter.submitList(it.listGalleryFolder)
-                is GalleryResult.Error -> this.showToast("Error madafaka")
+                is GalleryResult.Error -> {
+                    this.showToast(requireContext().getString(R.string.text_fail))
+                }
             }
         })
     }
@@ -83,7 +87,6 @@ class AttachmentGalleryFoldersFragment : Fragment() {
         adapter =
             AttachmentGalleryFolderAdapter(object : AttachmentGalleryFolderAdapter.ClickListener {
                 override fun onClick(galleryFolder: GalleryFolder) {
-                    this@AttachmentGalleryFoldersFragment.showToast(galleryFolder.folderName)
                     findNavController().navigate(
                         AttachmentGalleryFoldersFragmentDirections.actionAttachmentGalleryFragmentToAttachmentGalleryFragment(
                             args.contact,

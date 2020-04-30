@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.conversation
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
@@ -18,6 +19,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 import retrofit2.Response
+import java.io.File
 
 interface IContractConversation {
 
@@ -62,6 +64,7 @@ interface IContractConversation {
         fun resetIsVideoCall()
         fun downloadAttachment(attachment: Attachment, itemPosition: Int)
         fun updateAttachment(attachment: Attachment)
+        fun sendDocumentAttachment(fileUri: Uri)
     }
 
     interface Repository {
@@ -71,12 +74,14 @@ interface IContractConversation {
         suspend fun getQuoteId(quoteWebId: String): Int
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
+
         @InternalCoroutinesApi
         suspend fun sendMessageAttachment(
             attachment: Attachment,
             message: Message,
             messageResponse: Response<MessageResDTO>
         ): Flow<UploadResult>
+
         suspend fun getLocalUser(): User
         fun insertMessage(message: Message): Long
         fun insertListMessage(messageList: List<Message>)
@@ -99,7 +104,12 @@ interface IContractConversation {
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
         suspend fun callContact(contact: Contact, isVideoCall: Boolean): Response<CallContactResDTO>
         fun subscribeToCallChannel(channel: String)
-        fun downloadAttachment(attachment: Attachment, itemPosition: Int): Flow<DownloadAttachmentResult>
+        fun downloadAttachment(
+            attachment: Attachment,
+            itemPosition: Int
+        ): Flow<DownloadAttachmentResult>
+
         fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int)
+        suspend fun copyFile(fileUri: Uri): File?
     }
 }
