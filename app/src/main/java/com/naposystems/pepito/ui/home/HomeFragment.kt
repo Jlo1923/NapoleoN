@@ -119,6 +119,8 @@ class HomeFragment : Fragment() {
             Timber.e(e)
         }
 
+        viewModel.getConversation()
+
         viewModel.getUserLiveData()
 
         viewModel.getMessages()

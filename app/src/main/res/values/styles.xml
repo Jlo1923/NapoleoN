@@ -15,7 +15,8 @@
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:actionBarStyle">@color/green</item>
-        <item name="attrTextColorMessageAndTimeHome">@color/textColorTimeAndMessage</item>
+        <item name="attrTextColorDrawerAndStatus">@color/textColorDrawerAndStatus</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/secondaryTextColor</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="attrBackgroundColorPrimary">@color/colorPrimary</item>
@@ -30,7 +31,8 @@
         <item name="attrTextColorRed">@color/red</item>
         <item name="attrStrokeColorRed">@color/red</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
-        <item name="attrTextColorWhite">@color/textColorBadge</item>
+        <item name="attrTextColorWhite">@color/white</item>
+        <item name="attrTextBadge">@color/textColorBadge</item>
         <item name="attrBackgroundSectionColor">@color/sectionColor</item>
         <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessage</item>
         <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessage</item>
@@ -82,6 +84,7 @@
         <item name="colorAccent">@color/color_F38DC7</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_F38DC7</item>
+        <item name="attrTextColorDrawerAndStatus">@color/color_9F6E8B</item>
         <item name="attrTextColorMessageAndTimeHome">@color/color_9F6E8B</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_FFEFFF</item>
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
@@ -95,6 +98,7 @@
         <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
         <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
         <item name="attrBackgroundSectionColor">@color/color_F38DC7</item>
         <item name="attrBackgroundSectionOtherColor">@color/color_E6E6E6</item>
         <item name="attrTextColorColorTextMyMessage">@color/color_FFCEED</item>
@@ -158,6 +162,7 @@
         <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
         <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
         <item name="attrBackgroundSectionColor">@color/color_82D4FF</item>
         <item name="attrBackgroundSectionOtherColor">@color/color_E6E6E6</item>
         <item name="attrTextColorColorTextMyMessage">@color/color_F2F2F2</item>
@@ -221,6 +226,7 @@
         <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
         <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
         <item name="attrBackgroundSectionColor">@color/color_E6E6E6</item>
         <item name="attrTextColorColorTextMyMessage">@color/color_F2F2F2</item>
         <item name="attrTextColorColorTextIncomingMessage">@color/color_4D4D4D</item>
@@ -272,6 +278,7 @@
         <item name="attrBackgroundColorPrimary">@color/color_031E03</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_38732C</item>
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrTextColorDrawerAndStatus">@color/white</item>
         <item name="attrTextColorMessageAndTimeHome">@color/white</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_38732C</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
@@ -283,6 +290,7 @@
         <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
         <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
         <item name="attrBackgroundSectionColor">@color/color_031E03</item>
         <item name="attrBackgroundSectionOtherColor">@color/color_002100</item>
         <item name="attrTextColorColorTextMyMessage">@color/white</item>
@@ -342,6 +350,7 @@
         <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
         <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
         <item name="attrBackgroundSectionColor">@color/color_282828</item>
         <item name="attrBackgroundSectionOtherColor">@color/color_121212</item>
         <item name="attrTextColorColorTextMyMessage">@color/color_4D4D4D</item>
@@ -402,7 +411,9 @@
         <item name="attrStrokeColorRed">@color/color_DA5E58</item>
         <item name="attrRippleColorRed">@color/ripple_red</item>
         <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
         <item name="attrBackgroundSectionColor">@color/color_2A2C45</item>
+        <item name="attrTextColorDrawerAndStatus">@color/color_F2F2F2</item>
         <item name="attrTextColorMessageAndTimeHome">@color/color_F2F2F2</item>
         <item name="attrTextColorColorTextMyMessage">@color/color_4D4D4D</item>
         <item name="attrTextColorColorTextIncomingMessage">@color/color_59BC88</item>
@@ -629,6 +640,10 @@
 
     <style name="MinorBodyTextView.White" parent="MinorBodyTextView">
         <item name="android:textColor">?attr/attrTextColorWhite</item>
+    </style>
+
+    <style name="MinorBodyTextViewBadge" parent="MinorBodyTextView">
+        <item name="android:textColor">?attr/attrTextBadge</item>
     </style>
 
     <style name="DialogAnimation">

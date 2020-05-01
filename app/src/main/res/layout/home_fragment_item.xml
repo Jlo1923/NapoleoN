@@ -43,7 +43,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            tools:src="@drawable/ic_default_avatar" />
 
         <TextView
             android:id="@+id/textView_hora"
@@ -59,7 +59,7 @@
 
         <TextView
             android:id="@+id/textView_unread_messages"
-            style="@style/MinorBodyTextView.White"
+            style="@style/MinorBodyTextViewBadge"
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:background="@drawable/bg_unread_messages"

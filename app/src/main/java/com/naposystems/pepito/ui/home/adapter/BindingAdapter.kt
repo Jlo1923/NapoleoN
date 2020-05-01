@@ -35,6 +35,7 @@ fun bindMessageDate(textView: TextView, timestamp: Int, format: Int, unreadMessa
             val dayNext = sdf.format(Date((timestamp.toLong() + TimeUnit.DAYS.toSeconds(1)) * 1000))
             val dayMessage = sdf.format(Date(timestamp.toLong() * 1000))
             val dayActual = sdf.format(Date(timeActual * 1000))
+
             when {
                 timeInit > timeActual -> {
                     textView.text = context.getString(R.string.text_now)

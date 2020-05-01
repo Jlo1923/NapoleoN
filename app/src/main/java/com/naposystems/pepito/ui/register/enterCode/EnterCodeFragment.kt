@@ -88,7 +88,6 @@ class EnterCodeFragment :
                 binding.textViewAttemptForNewCode.text =
                     getString(R.string.text_number_attempts, attemptsForNewCode, MAX_ATTEMPTS)
                 binding.textViewAttemptForNewCode.visibility = View.VISIBLE
-                timeForNewCode()
             } else {
                 binding.textViewAttemptForNewCode.visibility = View.GONE
             }
@@ -124,6 +123,8 @@ class EnterCodeFragment :
                 snackbarUtils.showSnackbar()
             }
         })
+
+        timeForNewCode()
     }
 
     private fun timeForRetryCode() {
@@ -168,7 +169,7 @@ class EnterCodeFragment :
     }
 
     private fun timeForNewCode() {
-        val time = if (attemptsForNewCode == MAX_ATTEMPTS)
+        val time = if (viewModel.getNumAttemptsForNewCode() == MAX_ATTEMPTS)
             viewModel.setTimeForNewCode(Constants.TimeSendCode.FIVE_MINUTES.time)
         else
             viewModel.setTimeForNewCode(Constants.TimeSendCode.THIRTY_SECONDS.time)

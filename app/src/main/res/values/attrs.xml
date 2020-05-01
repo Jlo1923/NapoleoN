@@ -69,6 +69,8 @@
     <attr name="attrTextColorButtonTint" format="reference" />
     <attr name="attrTextColorRed" format="reference" />
     <attr name="attrTextColorWhite" format="reference" />
+    <attr name="attrTextBadge" format="reference" />
+    <attr name="attrTextColorDrawerAndStatus" format="reference" />
     <attr name="attrTextColorMessageAndTimeHome" format="reference" />
     <attr name="attrTextColorColorTextMyMessage" format="reference" />
     <attr name="attrTextColorColorTextIncomingMessage" format="reference" />

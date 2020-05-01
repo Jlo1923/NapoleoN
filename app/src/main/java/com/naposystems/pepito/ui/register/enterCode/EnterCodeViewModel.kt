@@ -106,8 +106,8 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
         _attemptsForNewCode.value = repository.getAttemptsForNewCode()
     }
 
-    override fun getTimeForRetryCode(): Long {
-        return repository.getTimeForRetryCode()
+    override fun getNumAttemptsForNewCode(): Int {
+        return repository.getAttemptsForNewCode()
     }
 
     override fun getTimeForNewCode(): Long {
