@@ -40,7 +40,7 @@ class EmptyStateCustomView(context: Context, attrs: AttributeSet) :
                     R.styleable.EmptyStateCustomView_image,
                     R.drawable.logo_napoleon_app
                 )
-                title = getString(R.styleable.EmptyStateCustomView_title) ?: ""
+                title = getString(R.styleable.EmptyStateCustomView_titleEmptyState) ?: ""
                 description = getString(R.styleable.EmptyStateCustomView_description) ?: ""
 
                 setImageEmptyState(imageId)
