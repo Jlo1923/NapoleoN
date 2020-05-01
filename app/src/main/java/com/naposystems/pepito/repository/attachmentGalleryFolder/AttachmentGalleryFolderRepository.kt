@@ -142,7 +142,7 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                 emit(GalleryResult.Success(galleryFolders))
             } catch (e: Exception) {
                 Timber.e(e)
-                emit(GalleryResult.Error("Ha ocurrido un error al cargar la galería"))
+                emit(GalleryResult.Error("Ha ocurrido un error al cargar la galería", e))
             }
         }
     }

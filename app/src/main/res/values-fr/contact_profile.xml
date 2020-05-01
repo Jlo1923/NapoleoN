@@ -9,4 +9,5 @@
     <string name="text_name_not_contain_enough_char">Le nom doit contenir au moins 5 caractères.</string>
     <string name="text_name_invalid">Pseudo invalide</string>
     <string name="text_nickname_invalid">Apodo no válido</string>
+    <string name="text_change_contact_photo">Contact photo de changement</string>
 </resources>

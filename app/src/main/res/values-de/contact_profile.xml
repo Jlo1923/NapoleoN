@@ -9,4 +9,5 @@
     <string name="text_name_not_contain_enough_char">Der Name muss mindestens 5 Zeichen enthalten.</string>
     <string name="text_name_invalid">Ungültiger Name</string>
     <string name="text_nickname_invalid">Ungültiger Spitzname</string>
+    <string name="text_change_contact_photo">Kontaktwechsel Foto</string>
 </resources>
