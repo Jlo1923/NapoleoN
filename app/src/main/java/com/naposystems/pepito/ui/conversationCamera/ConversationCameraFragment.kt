@@ -164,7 +164,6 @@ class ConversationCameraFragment : Fragment() {
                     val action = FocusMeteringAction
                         .Builder(point)
                         .build()
-
                     cameraControl?.startFocusAndMetering(action)
                     return@setOnTouchListener true
                 }
@@ -174,6 +173,7 @@ class ConversationCameraFragment : Fragment() {
                 }
             }
         }
+
     }
 
     override fun onDestroyView() {

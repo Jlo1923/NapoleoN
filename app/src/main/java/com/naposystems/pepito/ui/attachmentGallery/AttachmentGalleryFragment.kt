@@ -197,25 +197,41 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
             MediaStore.Files.FileColumns.DATE_MODIFIED
         )
 
-        val selectionFilesFolder =
-            "${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=? " +
-                    "AND (${MediaStore.Files.FileColumns.MEDIA_TYPE}=? " +
-                    "OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=?) " +
-                    "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+        val isConversation =
+            this.args.location == Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
 
-        val selectionArgsFilesFolder = arrayOf(
-            this.args.galleryFolder.folderName,
-            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
-            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
-            MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString()
-        )
+        //WHERE
+        var selection = if (isConversation) {
+            "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
+                    "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+        } else {
+            "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+        }
+
+        selection = "$selection AND ${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=?"
+
+        //WHERE ARGS
+        val selectionArgs: Array<String> = if (isConversation) {
+            arrayOf(
+                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
+                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+                MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString(),
+                this.args.galleryFolder.folderName
+            )
+        } else {
+            arrayOf(
+                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
+                MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString(),
+                this.args.galleryFolder.folderName
+            )
+        }
 
         return CursorLoader(
             requireContext(),
             MediaStore.Files.getContentUri("external"),
             projectionFilesFolder,
-            selectionFilesFolder,
-            selectionArgsFilesFolder,
+            selection,
+            selectionArgs,
             "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC, ${MediaStore.Files.FileColumns._ID} DESC"
         )
     }

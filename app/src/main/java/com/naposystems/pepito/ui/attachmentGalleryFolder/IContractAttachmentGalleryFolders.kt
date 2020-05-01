@@ -5,9 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface IContractAttachmentGalleryFolders {
 
-    interface ViewModel
+    interface ViewModel {
+        fun getFolders(isConversation: Boolean)
+    }
 
     interface Repository {
-        fun getFolders(): Flow<GalleryResult>
+        fun getFolders(isConversation: Boolean): Flow<GalleryResult>
     }
 }

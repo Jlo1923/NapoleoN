@@ -45,6 +45,11 @@ class AttachmentGalleryFoldersFragment : Fragment() {
         AndroidSupportInjection.inject(this)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.getFolders(args.location == Constants.LocationImageSelectorBottomSheet.CONVERSATION.location)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -60,7 +65,8 @@ class AttachmentGalleryFoldersFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setToolbarTitle()
-        viewModel.folders.observe(viewLifecycleOwner, Observer {
+
+        viewModel.galleryFolders.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is GalleryResult.Loading -> {
                     // Intentionally empty

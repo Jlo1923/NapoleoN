@@ -209,6 +209,9 @@ dependencies {
 
     // WebRTC
     implementation 'org.webrtc:google-webrtc:1.0.30039'
+
+    // Vertical seekbar
+    implementation 'com.lukelorusso:verticalseekbar:1.2.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

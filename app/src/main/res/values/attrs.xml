@@ -52,6 +52,7 @@
 
     <!--//Background-->
     <attr name="attrBackgroundColorPrimary" format="reference" />
+    <attr name="attrBackgroundColorPrimary50" format="reference" />
     <attr name="attrBackgroundSectionColor" format="reference" />
     <attr name="attrBackgroundSectionOtherColor" format="reference" />
     <attr name="attrBackgroundColorBackground" format="reference" />
