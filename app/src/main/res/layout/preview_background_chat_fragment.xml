@@ -150,7 +150,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_cancel"
-                android:layout_width="130dp"
+                android:layout_width="150dp"
                 android:layout_margin="@dimen/normal_margin"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -163,7 +163,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_accept"
-                android:layout_width="130dp"
+                android:layout_width="150dp"
                 android:layout_margin="@dimen/normal_margin"
                 android:layout_height="wrap_content"
                 android:text="@string/text_accept"

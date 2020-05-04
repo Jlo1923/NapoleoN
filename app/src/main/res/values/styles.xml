@@ -468,7 +468,7 @@
     </style>
 
     <style name="AppPrimaryButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:background">?attr/attrBackgroundColorPrimary</item>
+        <item name="background">?attr/attrBackgroundColorPrimary</item>
         <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
@@ -720,7 +720,7 @@
         <item name="android:layout_marginEnd">@dimen/normal_margin</item>
         <item name="android:layout_marginBottom">@dimen/small_margin</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">2</item>
+        <item name="android:maxLines">3</item>
     </style>
 
     <style name="OptionValue" parent="SmallBodyTextView">

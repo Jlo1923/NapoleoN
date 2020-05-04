@@ -114,7 +114,7 @@
                     android:layout_height="match_parent"
                     custom:description="@string/text_empty_state_conversation_description"
                     custom:image="@drawable/image_empty_state_conversation"
-                    custom:title="@string/text_empty_state_conversation_title" />
+                    custom:titleEmptyState="@string/text_empty_state_conversation_title" />
 
             </ViewSwitcher>
 

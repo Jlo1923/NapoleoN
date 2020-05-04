@@ -173,7 +173,7 @@
 
     <declare-styleable name="EmptyStateCustomView">
         <attr name="image" format="reference" />
-        <attr name="title" format="string" />
+        <attr name="titleEmptyState" format="string" />
         <attr name="description" format="string" />
     </declare-styleable>
 </resources>

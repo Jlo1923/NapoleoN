@@ -86,10 +86,10 @@
                     app:layout_constraintTop_toTopOf="@id/textView_control_question"
                     app:srcCompat="@drawable/ic_help_black" />
 
-
-                <Spinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/spinner_questions"
                     style="@style/BackgroundSpinner"
+                    android:textColor="?attr/attrTextColorHint"
                     android:layout_width="0dp"
                     android:layout_height="54dp"
                     android:layout_marginTop="@dimen/normal_margin"
@@ -99,7 +99,7 @@
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toBottomOf="@+id/textView_control_question"
                     android:spinnerMode="dropdown"
-                    tools:listitem="@layout/contact_us_item" />
+                    tools:listitem="@layout/register_recovery_account_question_item" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayout_answers"
@@ -107,6 +107,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/text_answer"
+                    android:textColorHint="?attr/attrTextColorHint"
                     app:errorEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/button_add_question"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
@@ -115,6 +116,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/textInputEditText_answers"
+                        android:textColor="?attr/attrTextColorHint"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:imeOptions="actionDone"
