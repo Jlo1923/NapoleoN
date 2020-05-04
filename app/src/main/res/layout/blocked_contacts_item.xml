@@ -26,6 +26,7 @@
             android:id="@+id/imageView_user_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:background="@drawable/border_avatar_contact"
             app:avatar="@{contact}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
