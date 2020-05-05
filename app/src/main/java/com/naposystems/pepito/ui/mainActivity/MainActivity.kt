@@ -432,6 +432,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.frameLayout.elevation = fourDp
     }
 
+    private fun resetToolbar() {
+        with(supportActionBar!!) {
+            subtitle = ""
+            setDisplayShowCustomEnabled(false)
+            setDisplayShowTitleEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
+    }
+
     private fun enableDrawer() {
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }

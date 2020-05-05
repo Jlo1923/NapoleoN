@@ -102,7 +102,7 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.imageViewProfileImage.setOnClickListener {
-            viewModel.user.value?.let { user ->
+            viewModel.getUser()?.let { user ->
                 val extra = FragmentNavigatorExtras(
                     binding.imageViewProfileImage to "transition_image_preview"
                 )
@@ -111,7 +111,7 @@ class ProfileFragment : BaseFragment() {
                     ProfileFragmentDirections
                         .actionProfileFragmentToPreviewImageFragment(
                             null, null, user
-                            ), extra
+                        ), extra
                 )
             }
 
@@ -142,13 +142,13 @@ class ProfileFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        galleryShareViewModel.uriImageSelected.observe(activity!!, Observer { uri ->
-            if(uri != null) {
+        galleryShareViewModel.uriImageSelected.observe(requireActivity(), Observer { uri ->
+            if (uri != null) {
                 cropImage(uri)
             }
         })
-        cameraShareViewModel.uriImageTaken.observe(activity!!, Observer { uri ->
-            if(uri != null) {
+        cameraShareViewModel.uriImageTaken.observe(requireActivity(), Observer { uri ->
+            if (uri != null) {
                 cropImage(uri)
             }
         })
@@ -174,7 +174,7 @@ class ProfileFragment : BaseFragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
-                    cropImage(Utils.getFileUri(context!!, fileName, subFolder))
+                    cropImage(Utils.getFileUri(requireContext(), fileName, subFolder))
                 }
             }
             UCrop.REQUEST_CROP -> {
@@ -190,10 +190,10 @@ class ProfileFragment : BaseFragment() {
                 val bitmap: Bitmap?
 
                 bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    val source = ImageDecoder.createSource(context!!.contentResolver, uri!!)
+                    val source = ImageDecoder.createSource(requireContext().contentResolver, uri!!)
                     ImageDecoder.decodeBitmap(source)
                 } else {
-                    MediaStore.Images.Media.getBitmap(context!!.contentResolver, uri)
+                    MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
                 }
 
                 when (subFolder) {
@@ -201,8 +201,8 @@ class ProfileFragment : BaseFragment() {
                         updateImageProfile(Utils.convertBitmapToBase64(bitmap!!))
                     }
                     Constants.NapoleonCacheDirectories.HEADER.folder -> {
-                        viewModel.user.value?.let { user ->
-                            user.headerUri =  compressedFile?.name ?: ""
+                        viewModel.getUser()?.let { user ->
+                            user.headerUri = compressedFile?.name ?: ""
 
                             Glide.with(this)
                                 .load(uri)
@@ -213,7 +213,7 @@ class ProfileFragment : BaseFragment() {
                     }
                 }
 
-                clearCache(context!!)
+                clearCache(requireContext())
             } catch (ex: IOException) {
                 Timber.e(ex)
             }
@@ -221,7 +221,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun updateImageProfile(avatar: String) {
-        viewModel.user.value?.let { user ->
+        viewModel.getUser()?.let { user ->
             val updateUserInfoReqDTO = UserAvatarReqDTO(
                 avatar = avatar
             )
@@ -231,11 +231,13 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun statusClickListener() = View.OnClickListener {
-        findNavController()
-            .navigate(
-                ProfileFragmentDirections
-                    .actionProfileFragmentToStatusFragment(viewModel.user.value!!)
-            )
+        if (viewModel.getUser() != null) {
+            findNavController()
+                .navigate(
+                    ProfileFragmentDirections
+                        .actionProfileFragmentToStatusFragment(viewModel.getUser()!!)
+                )
+        }
     }
 
     private fun blockedContactClickListener() = View.OnClickListener {
@@ -275,7 +277,7 @@ class ProfileFragment : BaseFragment() {
 
     private fun verifyCameraAndMediaPermission(location: Int) {
         validateStateOutputControl()
-        Dexter.withActivity(activity!!)
+        Dexter.withContext(requireContext())
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
             .withListener(object : MultiplePermissionsListener {
 
@@ -286,11 +288,11 @@ class ProfileFragment : BaseFragment() {
 
                     if (report.isAnyPermissionPermanentlyDenied) {
                         Utils.showDialogToInformPermission(
-                            context!!,
+                            requireContext(),
                             childFragmentManager,
                             R.drawable.ic_camera_primary,
                             R.string.explanation_camera_and_storage_permission,
-                            { Utils.openSetting(context!!) },
+                            { Utils.openSetting(requireContext()) },
                             {}
                         )
                     }
@@ -301,7 +303,7 @@ class ProfileFragment : BaseFragment() {
                     token: PermissionToken?
                 ) {
                     Utils.showDialogToInformPermission(
-                        context!!,
+                        requireContext(),
                         childFragmentManager,
                         R.drawable.ic_camera_primary,
                         R.string.explanation_camera_and_storage_permission,
@@ -314,17 +316,16 @@ class ProfileFragment : BaseFragment() {
 
     private fun openImageSelectorBottomSheet(location: Int) {
 
-        var title = ""
-
-        when (subFolder) {
-            Constants.NapoleonCacheDirectories.AVATAR.folder -> title =
-                context!!.resources.getString(R.string.text_change_profile_photo)
-            Constants.NapoleonCacheDirectories.HEADER.folder -> title =
-                context!!.resources.getString(R.string.text_change_cover_photo)
+        val (title: String, showDefault: Boolean) = when (subFolder) {
+            Constants.NapoleonCacheDirectories.AVATAR.folder ->
+                getString(R.string.text_change_profile_photo) to
+                        (viewModel.getUser()?.imageUrl?.isNotEmpty() ?: false)
+            else -> getString(R.string.text_change_cover_photo) to
+                    (viewModel.getUser()?.headerUri?.isNotEmpty() ?: false)
         }
 
         val dialog = ImageSelectorBottomSheetFragment.newInstance(
-            title, location
+            title, location, showDefault
         )
 
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
@@ -347,9 +348,14 @@ class ProfileFragment : BaseFragment() {
             }
 
             override fun defaultOptionSelected(location: Int) {
+                val (dialogTitle: String, dialogMessage: String) = when (location) {
+                    Constants.LocationImageSelectorBottomSheet.PROFILE.location ->
+                        getString(R.string.text_profile_photo) to getString(R.string.text_message_restore_profile_photo)
+                    else -> getString(R.string.text_cover_photo) to getString(R.string.text_message_restore_cover_photo)
+                }
                 Utils.generalDialog(
-                    getString(R.string.text_select_default),
-                    getString(R.string.text_message_restore_image),
+                    dialogTitle,
+                    dialogMessage,
                     true,
                     childFragmentManager
                 ) {
@@ -358,7 +364,7 @@ class ProfileFragment : BaseFragment() {
                             updateImageProfile("")
                         }
                         Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
-                            viewModel.user.value?.let { user ->
+                            viewModel.getUser()?.let { user ->
                                 user.headerUri = ""
                                 userProfileShareViewModel.updateUserLocal(user)
                             }
@@ -395,7 +401,8 @@ class ProfileFragment : BaseFragment() {
 
             val destination = Uri.fromFile(compressedFile)
 
-            val colorBackground = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
+            val colorBackground =
+                Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
 
             val options = UCrop.Options()
             options.setCompressionQuality(imageCompression)

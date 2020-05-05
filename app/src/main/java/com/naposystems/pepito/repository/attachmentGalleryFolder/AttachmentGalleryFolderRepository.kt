@@ -18,7 +18,7 @@ import javax.inject.Inject
 class AttachmentGalleryFolderRepository @Inject constructor(private val context: Context) :
     IContractAttachmentGalleryFolders.Repository {
 
-    override fun getFolders() = flow {
+    override fun getFolders(isConversation: Boolean) = flow {
         withContext(Dispatchers.IO) {
             try {
                 emit(GalleryResult.Loading)
@@ -36,20 +36,26 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                 )
 
                 //WHERE
-                val selection =
+                val selection = if (isConversation) {
                     "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
                             "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+                } else {
+                    "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+                }
 
                 //WHERE ARGS
-                val selectionArgs = arrayOf(
-                    MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
-                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
-                    MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString()
-                )
-
-                /*//GROUP
-                    val bucketGroupBy =
-                        "$selection) GROUP BY (${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}"*/
+                val selectionArgs: Array<String> = if (isConversation) {
+                    arrayOf(
+                        MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
+                        MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+                        MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString()
+                    )
+                } else {
+                    arrayOf(
+                        MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
+                        MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString()
+                    )
+                }
 
                 //SORT
                 val bucketSort =
@@ -70,27 +76,19 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                             cursorFolders.getColumnIndexOrThrow(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME)
                         val idColumnIndex =
                             cursorFolders.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
-                        /*val fileQuantityColumnIndex =
-                                cursorFolders.getColumnIndexOrThrow(MediaStore.Files.FileColumns._COUNT)*/
                         val mediaTypeColumnIndex =
                             cursorFolders.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
-                        val heightColumnIndex =
-                            cursorFolders.getColumnIndexOrThrow(MediaStore.Files.FileColumns.HEIGHT)
-                        val widthColumnIndex =
-                            cursorFolders.getColumnIndexOrThrow(MediaStore.Files.FileColumns.WIDTH)
 
                         do {
                             val folderId = cursorFolders.getString(folderIdColumnIndex)
                             val folderName = cursorFolders.getString(folderNameColumnIndex)
                             val fileId = cursorFolders.getInt(idColumnIndex)
                             val mediaType = cursorFolders.getInt(mediaTypeColumnIndex)
-                            val height = cursorFolders.getInt(heightColumnIndex)
-                            val width = cursorFolders.getInt(widthColumnIndex)
 
                             val exist = galleryFolders.any { it.folderName == folderName }
 
                             if (!exist) {
-                                val quantity = getCount(folderId)
+                                val quantity = getCount(folderId, selection, selectionArgs)
                                 val galleryFolder = GalleryFolder(
                                     id = fileId,
                                     folderName = folderName,
@@ -109,7 +107,7 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                                     )
                                     val bitmapThumbnail = context.contentResolver.loadThumbnail(
                                         contentUri,
-                                        Size((width), (height)),
+                                        Size(640, 480),
                                         null
                                     )
                                     galleryFolder.bitmapThumbnail = bitmapThumbnail
@@ -142,34 +140,25 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                 emit(GalleryResult.Success(galleryFolders))
             } catch (e: Exception) {
                 Timber.e(e)
-                emit(GalleryResult.Error("Ha ocurrido un error al cargar la galería"))
+                emit(GalleryResult.Error("Ha ocurrido un error al cargar la galería", e))
             }
         }
     }
 
-    private fun getCount(bucketId: String): Int {
+    private fun getCount(bucketId: String, selection: String, selectionArgs: Array<String>): Int {
         val projection = arrayOf(
             MediaStore.Files.FileColumns.BUCKET_ID,
             MediaStore.Files.FileColumns.MEDIA_TYPE
         )
 
-        val selection =
-            "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
-                    "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? " +
-                    "AND ${MediaStore.Files.FileColumns.BUCKET_ID} = ?"
-
-        val selectionArgs = arrayOf(
-            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
-            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
-            MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString(),
-            bucketId
-        )
+        val newSelection = "$selection AND ${MediaStore.Files.FileColumns.BUCKET_ID} = ?"
+        val newSelectionArgs = selectionArgs.plus(bucketId)
 
         context.contentResolver.query(
             MediaStore.Files.getContentUri("external"),
             projection,
-            selection,
-            selectionArgs,
+            newSelection,
+            newSelectionArgs,
             null
         ).use { cursor ->
             return if (cursor == null || !cursor.moveToFirst()) 0

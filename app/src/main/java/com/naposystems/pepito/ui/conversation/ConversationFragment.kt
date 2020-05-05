@@ -954,7 +954,7 @@ class ConversationFragment : BaseFragment(),
                     backgroundDrawable.alpha = (255 * 0.3).toInt()
                     activity.window.setBackgroundDrawable(backgroundDrawable)
                 } else {
-                    activity.window.setBackgroundDrawableResource(R.drawable.vertical_photo)
+                    activity.window.setBackgroundDrawableResource(R.drawable.doodle_bg)
                 }
             }
         }
@@ -1286,7 +1286,6 @@ class ConversationFragment : BaseFragment(),
 
     override fun onPause() {
         super.onPause()
-        resetConversationBackground()
         resetAudioRecording()
         mediaPlayerManager.pauseAudio()
         mediaPlayerManager.unregisterProximityListener()

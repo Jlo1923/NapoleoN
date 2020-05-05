@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#d8a608</color>
+    <color name="colorPrimary_50">#80d8a608</color>
     <color name="colorPrimaryLight">#ffd74b</color>
     <color name="colorPrimaryDark">#a27800</color>
     <color name="colorSecondary">#cccccc</color>
@@ -47,6 +48,7 @@
     <!--   Cold Ocean-->
     <color name="color_20202E">#20202e</color>
     <color name="color_2A2C45">#2a2c45</color>
+    <color name="color_802A2C45">#802a2c45</color>
     <color name="color_01001E">#01001e</color>
     <color name="color_545570">#545570</color>
     <color name="color_81819E">#81819e</color>
@@ -59,6 +61,7 @@
     <color name="color_8F8F8F">#8f8f8f</color>
     <color name="color_121212">#121212</color>
     <color name="color_282828">#282828</color>
+    <color name="color_80282828">#80282828</color>
     <color name="color_FFFFFF">#ffffff</color>
     <color name="color_D8A605">#d8a605</color>
     <color name="color_A27800">#a27800</color>
@@ -70,6 +73,7 @@
     <!--Camouflage-->
     <color name="color_001600">#001600</color>
     <color name="color_031E03">#031e03</color>
+    <color name="color_80031E03">#80031e03</color>
     <color name="color_002100">#002100</color>
     <color name="color_38732C">#38732c</color>
     <color name="color_3CB043">#3cb043</color>
@@ -78,12 +82,14 @@
 
     <!--Purple Bluebonnets-->
     <color name="color_7D366F">#7d366f</color>
+    <color name="color_807D366F">#807d366f</color>
     <color name="color_7D5B76">#7d5b76</color>
     <color name="color_E6E6E6">#e6e6e6</color>
     <color name="color_D8AFCE">#D8AFCE</color>
 
     <!--Clear Sky-->
     <color name="color_4AA3D9">#4aa3d9</color>
+    <color name="color_804AA3D9">#804aa3d9</color>
     <color name="color_E6F2FF">#e6f2ff</color>
     <color name="color_0074A7">#0074a7</color>
     <color name="color_9B9B9B">#9b9b9b</color>
@@ -100,6 +106,7 @@
     <color name="color_903B6E">#903b6e</color>
     <color name="color_59BC88">#59bc88</color>
     <color name="color_F38DC7">#f38dc7</color>
+    <color name="color_80F38DC7">#80f38dc7</color>
     <color name="color_BF5D96">#bf5d96</color>
     <color name="color_FFDCFF">#ffdcff</color>
     <color name="color_D19DBB">#d19dbb</color>

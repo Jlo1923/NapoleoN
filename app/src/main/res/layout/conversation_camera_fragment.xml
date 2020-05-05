@@ -12,17 +12,26 @@
         android:layout_height="match_parent"
         android:background="@color/black">
 
-        <androidx.camera.view.PreviewView
+        <androidx.camera.view.CameraView
             android:id="@+id/view_finder"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:clickable="true"
+            android:focusable="true"
+            app:captureMode="mixed"
+            app:flash="off"
+            app:lensFacing="back"
+            app:pinchToZoomEnabled="false" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_focus"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:focusable="true">
-        </androidx.camera.view.PreviewView>
+            app:lottie_rawRes="@raw/focus_animation" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_recording"
@@ -59,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_margin"
             android:background="@android:color/transparent"
-            android:foreground="?attr/selectableItemBackground"
+            android:foreground="?attr/actionBarItemBackground"
             android:padding="@dimen/small_padding"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/imageButton_camera"
@@ -85,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/normal_margin"
             android:background="@android:color/transparent"
-            android:foreground="?attr/selectableItemBackground"
+            android:foreground="?attr/actionBarItemBackground"
             android:padding="@dimen/small_padding"
             android:scaleType="center"
             android:tint="@color/white"
@@ -93,6 +102,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/imageButton_camera"
             app:srcCompat="@drawable/ic_switch_camera_black" />
+
+        <com.naposystems.pepito.ui.custom.verticalSlider.VerticalSlider
+            android:id="@+id/verticalSlider"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

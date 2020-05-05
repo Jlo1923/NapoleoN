@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="explanation_camera_and_storage_permission">To be able to change the profile and cover photo, allow NapoleoN to access your camera, photos and multimedia content of your device.</string>
+    <string name="text_profile_photo">Profile picture</string>
+    <string name="text_cover_photo">Cover photo</string>
+    <string name="text_message_restore_cover_photo">Are you sure you want to restore the default cover image?</string>
+    <string name="text_message_restore_profile_photo">Are you sure you want to reset the default profile picture?</string>
 </resources>

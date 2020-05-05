@@ -10,11 +10,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/normal_padding"
-        android:paddingEnd="@dimen/small_padding"
-        android:paddingTop="@dimen/normal_padding"
-        android:paddingBottom="0dp"
         android:background="?attr/attrBackgroundColorBackgroundDialog"
+        android:paddingStart="@dimen/normal_padding"
+        android:paddingTop="@dimen/normal_padding"
+        android:paddingEnd="@dimen/small_padding"
+        android:paddingBottom="0dp"
         tools:context=".ui.generalDialog.GeneralDialogFragment">
 
         <TextView
@@ -22,6 +22,8 @@
             style="@style/TextViewSecondaryTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
             android:gravity="center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +35,9 @@
             style="@style/SmallBodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
             android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_title"

@@ -20,6 +20,7 @@
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="attrBackgroundColorPrimary">@color/colorPrimary</item>
+        <item name="attrBackgroundColorPrimary50">@color/colorPrimary_50</item>
         <item name="attrTextColorPrimaryTextColor">@color/primaryTextColor</item>
         <item name="attrIconTintWhite">@color/textColorBadge</item>
         <item name="attrBackgroundTintColorSecondary">@color/colorSecondary</item>
@@ -84,6 +85,7 @@
         <item name="colorAccent">@color/color_F38DC7</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_F38DC7</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_80F38DC7</item>
         <item name="attrTextColorDrawerAndStatus">@color/color_9F6E8B</item>
         <item name="attrTextColorMessageAndTimeHome">@color/color_9F6E8B</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_FFEFFF</item>
@@ -150,6 +152,7 @@
         <item name="colorAccent">@color/color_4AA3D9</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_4AA3D9</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_804AA3D9</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
@@ -214,6 +217,7 @@
         <item name="colorAccent">@color/color_7D366F</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_7D366F</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_807D366F</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
@@ -276,6 +280,7 @@
         <item name="colorAccent">@color/color_031E03</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_031E03</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_80031E03</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_38732C</item>
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrTextColorDrawerAndStatus">@color/white</item>
@@ -338,6 +343,7 @@
         <item name="colorAccent">@color/color_282828</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_282828</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_80282828</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
@@ -398,6 +404,7 @@
         <item name="colorAccent">@color/color_2A2C45</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_2A2C45</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_802A2C45</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundSectionOtherColor">@color/color_2A2C45</item>

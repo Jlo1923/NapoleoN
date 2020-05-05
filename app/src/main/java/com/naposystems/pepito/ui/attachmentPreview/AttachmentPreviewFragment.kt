@@ -39,13 +39,13 @@ class AttachmentPreviewFragment : Fragment() {
     }
     private val animationFadeIn: Animation by lazy {
         AnimationUtils.loadAnimation(
-            context!!,
+            requireContext(),
             R.anim.fade_in_fast
         )
     }
     private val animationFadeOut: Animation by lazy {
         AnimationUtils.loadAnimation(
-            context!!,
+            requireContext(),
             R.anim.fade_out_fast
         )
     }
@@ -89,7 +89,7 @@ class AttachmentPreviewFragment : Fragment() {
                 binding.videoView.apply {
 
                     val fileUri = Utils.getFileUri(
-                        context = context!!,
+                        context = requireContext(),
                         subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
                         fileName = attachment.uri
                     )

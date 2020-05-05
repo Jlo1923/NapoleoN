@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="explanation_camera_and_storage_permission">Para poder cambiar la foto de perfil y portada, permite que NapoleoN pueda acceder a tu cámara, fotos y contenido multimedia de tu dispositivo.</string>
+    <string name="text_profile_photo">Foto de perfil</string>
+    <string name="text_cover_photo">Foto de portada</string>
+    <string name="text_message_restore_cover_photo">¿Está seguro que desea restablecer la imagen de portada por defecto?</string>
+    <string name="text_message_restore_profile_photo">¿Está seguro que desea restablecer la foto de perfil por defecto?</string>
 </resources>

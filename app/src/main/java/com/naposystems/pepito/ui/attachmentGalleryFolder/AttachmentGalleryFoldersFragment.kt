@@ -17,9 +17,11 @@ import com.naposystems.pepito.model.attachment.gallery.GalleryFolder
 import com.naposystems.pepito.model.attachment.gallery.GalleryResult
 import com.naposystems.pepito.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
 import javax.inject.Inject
 
 class AttachmentGalleryFoldersFragment : Fragment() {
@@ -43,6 +45,11 @@ class AttachmentGalleryFoldersFragment : Fragment() {
         AndroidSupportInjection.inject(this)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.getFolders(args.location == Constants.LocationImageSelectorBottomSheet.CONVERSATION.location)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,7 +65,8 @@ class AttachmentGalleryFoldersFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setToolbarTitle()
-        viewModel.folders.observe(viewLifecycleOwner, Observer {
+
+        viewModel.galleryFolders.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is GalleryResult.Loading -> {
                     // Intentionally empty
@@ -66,21 +74,32 @@ class AttachmentGalleryFoldersFragment : Fragment() {
                 is GalleryResult.Success -> adapter.submitList(it.listGalleryFolder)
                 is GalleryResult.Error -> {
                     this.showToast(requireContext().getString(R.string.text_fail))
+                    Timber.e(it.exception)
                 }
             }
         })
     }
 
     private fun setToolbarTitle() {
-        val toolbar = (activity as MainActivity).supportActionBar
-        var displayName = ""
+        val title = when (args.location) {
+            Constants.LocationImageSelectorBottomSheet.PROFILE.location -> getString(R.string.text_change_profile_photo)
+            Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> getString(R.string.text_change_cover_photo)
+            Constants.LocationImageSelectorBottomSheet.APPEARANCE_SETTINGS.location -> getString(R.string.text_conversation_background)
+            Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location -> getString(R.string.text_change_contact_photo)
+            Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
+                var displayName = ""
 
-        args.contact?.let { contact ->
-            displayName = if (contact.nicknameFake.isNotEmpty())
-                contact.nicknameFake else contact.nickname
+                args.contact?.let { contact ->
+                    displayName = if (contact.nicknameFake.isNotEmpty())
+                        contact.nicknameFake else contact.nickname
+                }
+                getString(R.string.text_send_to, displayName)
+            }
+            else -> ""
         }
 
-        toolbar?.title = getString(R.string.text_send_to, displayName)
+        val toolbar = (activity as MainActivity).supportActionBar
+        toolbar?.title = title
     }
 
     private fun setupAdapter() {

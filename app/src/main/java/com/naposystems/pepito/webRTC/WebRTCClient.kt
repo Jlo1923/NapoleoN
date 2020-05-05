@@ -119,10 +119,10 @@ class WebRTCClient constructor(
     private var mediaPlayerHasStopped: Boolean = false
 
     private var peerIceServer: MutableList<PeerConnection.IceServer> = arrayListOf(
-        PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
-        PeerConnection.IceServer.builder("turn:numb.viagenie.ca")
-            .setUsername("webrtc@live.com")
-            .setPassword("muazkh")
+        PeerConnection.IceServer.builder("stun:stun.networkin.chat:5349").createIceServer(),
+        PeerConnection.IceServer.builder("turn:turn.networkin.chat:5349")
+            .setUsername("networkin")
+            .setPassword("qazplm123")
             .createIceServer()
     )
 

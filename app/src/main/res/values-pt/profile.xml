@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="explanation_camera_and_storage_permission">Para poder alterar o perfil e a foto da capa, permita que o NapoleoN acesse sua câmera, fotos e conteúdo multimídia do seu dispositivo.</string>
+    <string name="text_profile_photo">Imagem de perfil</string>
+    <string name="text_cover_photo">Foto de capa</string>
+    <string name="text_message_restore_cover_photo">Tem certeza de que deseja restaurar a imagem da capa padrão?</string>
+    <string name="text_message_restore_profile_photo">Tem certeza de que deseja redefinir a imagem do perfil padrão?</string>
 </resources>

@@ -6,8 +6,9 @@ import com.naposystems.pepito.entity.User
 interface IContractProfile {
 
     interface ViewModel {
-        fun getUser()
+        fun getLocalUser()
         fun updateLocalUser(newUser: User)
+        fun getUser(): User?
     }
 
     interface Repository {
