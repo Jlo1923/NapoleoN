@@ -32,6 +32,7 @@ class StatusFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
@@ -153,11 +154,11 @@ class StatusFragment : Fragment() {
         }
     }
 
-    private fun selectStatus(listStatus : List<Status>) {
+    private fun selectStatus(listStatus: List<Status>) {
         viewModel.user.value?.let { user ->
             val statusOld = listStatus.find {
                 (it.status.isNotEmpty()) && (it.status.trim() == user.status.trim()) ||
-                (it.status.isEmpty()) && (it.customStatus.trim() == user.status.trim())
+                        (it.status.isEmpty()) && (it.customStatus.trim() == user.status.trim())
             }
 
             if (statusOld == null) {

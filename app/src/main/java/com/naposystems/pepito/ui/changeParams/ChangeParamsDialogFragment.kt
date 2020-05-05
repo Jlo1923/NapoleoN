@@ -1,7 +1,6 @@
 package com.naposystems.pepito.ui.changeParams
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -31,7 +30,7 @@ private const val OPTION = "option"
 class ChangeParamsDialogFragment : DialogFragment() {
 
     companion object {
-        fun newInstance(contactId : Int , option : Int) = ChangeParamsDialogFragment().apply {
+        fun newInstance(contactId: Int, option: Int) = ChangeParamsDialogFragment().apply {
             arguments = Bundle().apply {
                 putInt(CONTACT_ID, contactId)
                 putInt(OPTION, option)
@@ -41,8 +40,8 @@ class ChangeParamsDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ChangeParamsDialogViewModel
-    private val contactProfileShareViewModel : ContactProfileShareViewModel by activityViewModels {
+    private val viewModel: ChangeParamsDialogViewModel by viewModels { viewModelFactory }
+    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
     }
     private val userProfileShareViewModel: UserProfileShareViewModel by viewModels {
@@ -59,13 +58,18 @@ class ChangeParamsDialogFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.change_fakes_dialog_fragment, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.change_fakes_dialog_fragment,
+            container,
+            false
+        )
 
         binding.lifecycleOwner = this
 
         binding.buttonAccept.setOnClickListener {
             arguments?.let { args ->
-                when(args.getInt(OPTION)) {
+                when (args.getInt(OPTION)) {
                     Constants.ChangeParams.NAME_FAKE.option -> {
                         viewModel.updateNameFakeContact(
                             args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
@@ -75,11 +79,12 @@ class ChangeParamsDialogFragment : DialogFragment() {
                         viewModel.updateNicknameFakeContact(
                             args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
                         )
-                    } else -> {
+                    }
+                    else -> {
                         userProfileShareViewModel.user.value?.let { user ->
                             userProfileShareViewModel.updateUserInfo(
                                 user,
-                                DisplayNameReqDTO (
+                                DisplayNameReqDTO(
                                     displayName = binding.editTextDisplay.text.toString()
                                 )
                             )
@@ -109,9 +114,6 @@ class ChangeParamsDialogFragment : DialogFragment() {
             )
         }
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(ChangeParamsDialogViewModel::class.java)
-
         userProfileShareViewModel.getUser()
 
         viewModel.responseEditFake.observe(viewLifecycleOwner, Observer {
@@ -126,15 +128,15 @@ class ChangeParamsDialogFragment : DialogFragment() {
     }
 
     private fun observers() {
-        when(arguments?.getInt(OPTION)) {
+        when (arguments?.getInt(OPTION)) {
             Constants.ChangeParams.NAME_USER.option -> {
                 userProfileShareViewModel.userUpdated.observe(viewLifecycleOwner, Observer {
-                    if(it != null) {
+                    if (it != null) {
                         dismiss()
                     }
                 })
                 userProfileShareViewModel.user.observe(viewLifecycleOwner, Observer { user ->
-                    if(user != null) {
+                    if (user != null) {
                         binding.editTextDisplay.setText(user.displayName)
                     }
                 })
@@ -145,14 +147,14 @@ class ChangeParamsDialogFragment : DialogFragment() {
                 })
             }
             else -> {
-                activity?.let {activity ->
+                activity?.let { activity ->
                     contactProfileShareViewModel.contact.observe(activity, Observer { contact ->
                         if (contact != null) {
-                            when(arguments?.getInt(OPTION)) {
+                            when (arguments?.getInt(OPTION)) {
                                 Constants.ChangeParams.NAME_FAKE.option -> {
                                     binding.editTextDisplay.setText(contact.getName())
                                 }
-                                Constants.ChangeParams.NICKNAME_FAKE.option-> {
+                                Constants.ChangeParams.NICKNAME_FAKE.option -> {
                                     binding.editTextDisplay.setText(contact.getNickName())
                                 }
                             }
@@ -165,58 +167,37 @@ class ChangeParamsDialogFragment : DialogFragment() {
 
     private fun listenerEditText(): TextWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
-            validateCount()
+            // Intentionally empty
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            validateCount()
+            // Intentionally empty
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             when (binding.editTextDisplay.text?.count()) {
-                in 1..4 -> {
-                    enabledButtonAccept(false)
-                }
-                0 -> {
-                    if(arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_FAKE.option) {
-                        enabledButtonAccept(true)
-                    } else {
-                        enabledButtonAccept(false)
-                    }
-                }
-                else -> {
-                    enabledButtonAccept(true)
-                }
+                in 1..4 -> enabledButtonAccept(false)
+                0 -> enabledButtonAccept(true)
+                else -> enabledButtonAccept(true)
             }
         }
     }
 
-    private fun validateCount() {
-        if(binding.editTextDisplay.text?.count() == 0) {
-            when(arguments?.getInt(OPTION)) {
-                Constants.ChangeParams.NAME_FAKE.option -> {
-                    enabledButtonAccept(true)
-                }
-                else -> {
-                    enabledButtonAccept(false)
-                }
-            }
-        }
-    }
-
-    private fun enabledButtonAccept(boolean : Boolean) {
-        if(isResumed) {
+    private fun enabledButtonAccept(boolean: Boolean) {
+        if (isResumed) {
             binding.buttonAccept.isEnabled = boolean
-            if(boolean){
+            if (boolean) {
                 binding.textInputLayoutDisplay.error = null
             } else {
-                when(arguments?.getInt(OPTION)) {
+                when (arguments?.getInt(OPTION)) {
                     Constants.ChangeParams.NAME_FAKE.option,
                     Constants.ChangeParams.NAME_USER.option -> {
-                        binding.textInputLayoutDisplay.error = getString(R.string.text_name_not_contain_enough_char)
+                        binding.textInputLayoutDisplay.error =
+                            getString(R.string.text_name_not_contain_enough_char)
                     }
                     else -> {
-                        binding.textInputLayoutDisplay.error = getString(R.string.text_nickname_not_contain_enough_char)
+                        binding.textInputLayoutDisplay.error =
+                            getString(R.string.text_nickname_not_contain_enough_char)
                     }
                 }
             }
@@ -224,7 +205,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
     }
 
     private fun setupTitle() {
-        val string =when(arguments?.get(OPTION)) {
+        val string = when (arguments?.get(OPTION)) {
             Constants.ChangeParams.NICKNAME_FAKE.option -> {
                 R.string.text_nickname
             }

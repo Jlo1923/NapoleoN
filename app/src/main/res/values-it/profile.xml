@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="explanation_camera_and_storage_permission">Per modificare il profilo e la foto di copertina, consenti a NapoleoN di accedere alla fotocamera, alle foto e ai contenuti multimediali sul tuo dispositivo.</string>
+    <string name="text_profile_photo">Immagine del profilo</string>
+    <string name="text_cover_photo">Foto di copertina</string>
+    <string name="text_message_restore_cover_photo">Sei sicuro di voler ripristinare l\'immagine di copertina predefinita?</string>
+    <string name="text_message_restore_profile_photo">Sei sicuro di voler ripristinare l\'immagine del profilo di default?</string>
 </resources>

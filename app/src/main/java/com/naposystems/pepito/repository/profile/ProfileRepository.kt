@@ -27,10 +27,6 @@ class ProfileRepository @Inject constructor(
 ) :
     IContractProfile.Repository {
 
-    private val moshi by lazy {
-        Moshi.Builder().build()
-    }
-
     override suspend fun getUser(): LiveData<User> {
         return localDataSource.getUserLiveData(
             sharedPreferencesManager.getString(

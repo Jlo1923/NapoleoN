@@ -12,12 +12,16 @@
         android:layout_height="match_parent"
         android:background="@color/black">
 
-        <androidx.camera.view.PreviewView
+        <androidx.camera.view.CameraView
             android:id="@+id/view_finder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            app:captureMode="mixed"
+            app:flash="off"
+            app:lensFacing="back"
+            app:pinchToZoomEnabled="false" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_focus"
@@ -27,7 +31,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:lottie_rawRes="@raw/focus_animation"/>
+            app:lottie_rawRes="@raw/focus_animation" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_recording"

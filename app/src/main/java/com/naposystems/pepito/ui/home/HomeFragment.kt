@@ -50,10 +50,10 @@ class HomeFragment : Fragment() {
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
-    private val timeFormatShareViewModel : TimeFormatShareViewModel by activityViewModels{
+    private val timeFormatShareViewModel: TimeFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
-    private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
+    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
         viewModelFactory
     }
     private lateinit var binding: HomeFragmentBinding
@@ -104,6 +104,8 @@ class HomeFragment : Fragment() {
 
         disposable.add(disposableNewMessageReceived)
 
+        binding.textViewStatus.isSelected = true
+
         return binding.root
     }
 
@@ -139,9 +141,9 @@ class HomeFragment : Fragment() {
 
         viewModel.conversations.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
-            if(it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
+            if (it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
                 binding.viewSwitcherChats.showNext()
-            } else if(it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id){
+            } else if (it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id) {
                 binding.viewSwitcherChats.showNext()
             }
         })
@@ -162,10 +164,10 @@ class HomeFragment : Fragment() {
 
         viewModel.getJsonNotification()
 
-        viewModel.jsonNotification.observe(viewLifecycleOwner, Observer {json ->
+        viewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
             if (!json.isNullOrEmpty()) {
                 val jsonNotification = JSONObject(json)
-                when(jsonNotification.getInt(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
+                when (jsonNotification.getInt(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                     Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
                         viewModel.getContact(jsonNotification.getInt(Constants.NotificationKeys.CONTACT))
                     }
@@ -214,15 +216,17 @@ class HomeFragment : Fragment() {
         val freeTrial = viewModel.getFreeTrial()
         val subscriptionTime = viewModel.getSubscriptionTime()
 
-        if (System.currentTimeMillis() > freeTrial){
-            if (System.currentTimeMillis() > subscriptionTime && subscriptionTime == 0L){
-                binding.textViewMessageSubscription.text = getString(R.string.text_free_trial_expired)
+        if (System.currentTimeMillis() > freeTrial) {
+            if (System.currentTimeMillis() > subscriptionTime && subscriptionTime == 0L) {
+                binding.textViewMessageSubscription.text =
+                    getString(R.string.text_free_trial_expired)
                 binding.containerSubscription.isVisible = true
             } else {
-                if (subscriptionTime > System.currentTimeMillis()){
+                if (subscriptionTime > System.currentTimeMillis()) {
                     binding.containerSubscription.isVisible = false
                 } else {
-                    binding.textViewMessageSubscription.text = getString(R.string.text_expired_subscription)
+                    binding.textViewMessageSubscription.text =
+                        getString(R.string.text_expired_subscription)
                     binding.containerSubscription.isVisible = true
                 }
             }
@@ -255,7 +259,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun goToStatus() {
-        viewModel.user.value?.let {user ->
+        viewModel.user.value?.let { user ->
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToStatusFragment(user)
             )
@@ -263,7 +267,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        adapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
+        adapter = ConversationAdapter(
+            object : ConversationAdapter.ClickListener {
                 override fun onClick(item: MessageAndAttachment) {
                     findNavController().navigate(
                         HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)

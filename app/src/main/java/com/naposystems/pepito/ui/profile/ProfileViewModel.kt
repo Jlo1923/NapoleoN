@@ -22,12 +22,12 @@ class ProfileViewModel @Inject constructor(
         get() = _errorGettingLocalUser
 
     init {
-        getUser()
+        getLocalUser()
         _errorGettingLocalUser.value = false
     }
 
     //region Implementation IContractProfile.ViewModel
-    override fun getUser() {
+    override fun getLocalUser() {
         viewModelScope.launch {
             try {
                 user = repository.getUser()
@@ -47,6 +47,8 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    override fun getUser() = this.user.value
 
     //endregion
 }

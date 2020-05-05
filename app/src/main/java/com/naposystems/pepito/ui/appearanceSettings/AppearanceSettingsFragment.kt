@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +38,6 @@ import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
-import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
@@ -146,7 +144,7 @@ class AppearanceSettingsFragment : BaseFragment() {
     }
 
     private fun getLanguageSelected(): String {
-        return when (LocaleHelper.getLanguagePreference(context!!)) {
+        return when (LocaleHelper.getLanguagePreference(requireContext())) {
             "de" -> "Deutsch"
             "en" -> "English"
             "es" -> "Español"
@@ -196,7 +194,7 @@ class AppearanceSettingsFragment : BaseFragment() {
 
     private fun verifyCameraAndMediaPermission() {
         validateStateOutputControl()
-        Dexter.withActivity(activity!!)
+        Dexter.withContext(requireContext())
             .withPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
             .withListener(object : MultiplePermissionsListener {
 
@@ -238,7 +236,7 @@ class AppearanceSettingsFragment : BaseFragment() {
 
         val dialog = PermissionDialogFragment.newInstance(
             icon,
-            context!!.resources.getString(message)
+            requireContext().resources.getString(message)
         )
         dialog.setListener(object : PermissionDialogFragment.OnDialogListener {
             override fun onAcceptPressed() {
@@ -255,17 +253,19 @@ class AppearanceSettingsFragment : BaseFragment() {
     private fun openSetting() {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", context!!.packageName, null)
+            Uri.fromParts("package", requireContext().packageName, null)
         )
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 
     private fun openImageSelectorBottomSheet() {
-        val title = context!!.resources.getString(R.string.text_conversation_background)
+        val title = requireContext().resources.getString(R.string.text_conversation_background)
 
         val dialog = ImageSelectorBottomSheetFragment.newInstance(
-            title, Constants.LocationImageSelectorBottomSheet.APPEARANCE_SETTINGS.location
+            title,
+            Constants.LocationImageSelectorBottomSheet.APPEARANCE_SETTINGS.location,
+            true
         )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected(location: Int) {
@@ -289,7 +289,7 @@ class AppearanceSettingsFragment : BaseFragment() {
             override fun defaultOptionSelected(location: Int) {
                 Utils.generalDialog(
                     getString(R.string.text_select_default),
-                    getString(R.string.text_message_restore_image),
+                    getString(R.string.text_message_restore_cover_photo),
                     true,
                     childFragmentManager) {
                         previewBackgroundChatViewModel.updateChatBackground("")
@@ -317,7 +317,7 @@ class AppearanceSettingsFragment : BaseFragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    cropImage(Utils.getFileUri(context!!, fileName, subFolder))
+                    cropImage(Utils.getFileUri(requireContext(), fileName, subFolder))
                 }
             }
             UCrop.REQUEST_CROP -> {
@@ -335,7 +335,7 @@ class AppearanceSettingsFragment : BaseFragment() {
                             compressedFile?.name ?: ""
                         )
                 )
-                clearCache(context!!)
+                clearCache(requireContext())
             } catch (ex: IOException) {
                 Timber.e(ex)
             }
@@ -366,7 +366,7 @@ class AppearanceSettingsFragment : BaseFragment() {
             options.withAspectRatio(aspectRatioX, aspectRatioY)
             options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight)
             options.setToolbarTitle(title)
-            options.setToolbarWidgetColor(ContextCompat.getColor(context!!, R.color.white))
+            options.setToolbarWidgetColor(ContextCompat.getColor(requireContext(), R.color.white))
 
             UCrop.of(sourceUri, destinationUri)
                 .withOptions(options)

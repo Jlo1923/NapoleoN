@@ -65,16 +65,16 @@ class ContactProfileFragment : BaseFragment() {
         viewModelFactory
     }
 
-    private val galleryShareViewModel : GalleryShareViewModel by activityViewModels()
-    private val cameraShareViewModel : CameraShareViewModel by activityViewModels()
-    private val contactProfileShareViewModel : ContactProfileShareViewModel by activityViewModels{
+    private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
+    private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
+    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
     }
 
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
 
-    private var compressedFile : File? = null
+    private var compressedFile: File? = null
     private var contactSilenced: Boolean = false
     private lateinit var subFolder: String
     private lateinit var fileName: String
@@ -93,12 +93,12 @@ class ContactProfileFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
             galleryShareViewModel.uriImageSelected.observe(activity, Observer { uri ->
-                if(uri != null) {
+                if (uri != null) {
                     cropImage(uri)
                 }
             })
             cameraShareViewModel.uriImageTaken.observe(activity, Observer { uri ->
-                if(uri != null) {
+                if (uri != null) {
                     cropImage(uri)
                 }
             })
@@ -141,7 +141,7 @@ class ContactProfileFragment : BaseFragment() {
         return binding.root
     }
 
-    private fun setupChangeFakeDialog(option : Int) {
+    private fun setupChangeFakeDialog(option: Int) {
         val dialog = ChangeParamsDialogFragment.newInstance(
             args.contactId, option
         )
@@ -251,7 +251,7 @@ class ContactProfileFragment : BaseFragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == RESULT_OK) {
-                    cropImage(Utils.getFileUri(context!!, fileName, subFolder))
+                    cropImage(Utils.getFileUri(requireContext(), fileName, subFolder))
                 }
             }
             UCrop.REQUEST_CROP -> {
@@ -304,7 +304,7 @@ class ContactProfileFragment : BaseFragment() {
 
     private fun verifyCameraAndMediaPermission() {
         validateStateOutputControl()
-        Dexter.withActivity(activity)
+        Dexter.withContext(requireContext())
             .withPermissions(
                 android.Manifest.permission.CAMERA,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -315,11 +315,11 @@ class ContactProfileFragment : BaseFragment() {
                         openImageSelectorBottomSheet()
                     } else if (report.isAnyPermissionPermanentlyDenied) {
                         Utils.showDialogToInformPermission(
-                            context!!,
+                            requireContext(),
                             childFragmentManager,
                             R.drawable.ic_camera_primary,
                             R.string.explanation_camera_and_storage_permission,
-                            { Utils.openSetting(context!!) },
+                            { Utils.openSetting(requireContext()) },
                             {}
                         )
                     }
@@ -330,7 +330,7 @@ class ContactProfileFragment : BaseFragment() {
                     token: PermissionToken?
                 ) {
                     Utils.showDialogToInformPermission(
-                        context!!,
+                        requireContext(),
                         childFragmentManager,
                         R.drawable.ic_camera_primary,
                         R.string.explanation_camera_and_storage_permission,
@@ -347,11 +347,11 @@ class ContactProfileFragment : BaseFragment() {
 
         when (subFolder) {
             Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder -> title =
-                context!!.resources.getString(R.string.text_change_cover_photo)
+                requireContext().resources.getString(R.string.text_change_cover_photo)
         }
 
         val dialog = ImageSelectorBottomSheetFragment.newInstance(
-            title, Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location
+            title, Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location, false
         )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected(location: Int) {
@@ -377,9 +377,10 @@ class ContactProfileFragment : BaseFragment() {
             override fun defaultOptionSelected(location: Int) {
                 Utils.generalDialog(
                     getString(R.string.text_select_default),
-                    getString(R.string.text_message_restore_image),
+                    getString(R.string.text_message_restore_cover_photo),
                     true,
-                    childFragmentManager) {
+                    childFragmentManager
+                ) {
                     viewModel.restoreImageByContact(args.contactId)
                 }
             }
@@ -398,7 +399,8 @@ class ContactProfileFragment : BaseFragment() {
             )
 
             val destination = Uri.fromFile(compressedFile)
-            val colorBackground = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
+            val colorBackground =
+                Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
 
             val options = UCrop.Options()
             options.setCompressionQuality(imageCompression)
@@ -432,7 +434,7 @@ class ContactProfileFragment : BaseFragment() {
     private fun clearCache(context: Context) {
         val path = File(context.cacheDir!!.absolutePath, subFolder)
         if (path.exists() && path.isDirectory) {
-            path.listFiles()?.forEach {child ->
+            path.listFiles()?.forEach { child ->
                 if (child.name != compressedFile?.name) {
                     child.delete()
                 }

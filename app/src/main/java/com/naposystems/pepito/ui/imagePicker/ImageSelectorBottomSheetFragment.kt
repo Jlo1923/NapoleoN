@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
@@ -13,15 +14,17 @@ import com.naposystems.pepito.utility.Constants
 
 const val TITLE = "TITLE"
 const val LOCATION = "LOCATION"
+const val SHOW_DEFAULT = "SHOW_DEFAULT"
 
 class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(title: String, location : Int) =
+        fun newInstance(title: String, location: Int, showDefault: Boolean) =
             ImageSelectorBottomSheetFragment().apply {
                 arguments = Bundle().apply {
                     putString(TITLE, title)
                     putInt(LOCATION, location)
+                    putBoolean(SHOW_DEFAULT, showDefault)
                 }
             }
     }
@@ -34,15 +37,17 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var title: String? = null
     private var location: Int? = null
+    private var showDefault: Boolean = false
     private lateinit var binding: ImageSelectorBottomSheetFragmentBinding
-    private lateinit var viewModel: ImageSelectorBottomSheetViewModel
+    private val viewModel: ImageSelectorBottomSheetViewModel by viewModels()
     private lateinit var listener: OnOptionSelected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {bundle ->
+        arguments?.let { bundle ->
             title = bundle.getString(TITLE)
             location = bundle.getInt(LOCATION)
+            showDefault = bundle.getBoolean(SHOW_DEFAULT)
         }
     }
 
@@ -58,6 +63,8 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
         )
 
         binding.textViewTitle.text = title
+
+        binding.containerDefault.visibility = if (showDefault) View.VISIBLE else View.GONE
 
         binding.containerCameraOption.setOnClickListener {
             location?.let { location ->
@@ -86,16 +93,6 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        viewModel = ViewModelProviders.of(this).get(ImageSelectorBottomSheetViewModel::class.java)
-
-        when(location) {
-            Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location -> {
-                binding.containerDefault.visibility = View.GONE
-            }
-            else -> {
-                binding.containerDefault.visibility = View.VISIBLE
-            }
-        }
     }
 
     fun setListener(listener: OnOptionSelected) {
