@@ -14,14 +14,20 @@
 
         <androidx.camera.view.PreviewView
             android:id="@+id/view_finder"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:clickable="true"
-            android:focusable="true"
+            android:focusable="true" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_focus"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_rawRes="@raw/focus_animation"/>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_recording"
@@ -58,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_margin"
             android:background="@android:color/transparent"
-            android:foreground="?attr/selectableItemBackground"
+            android:foreground="?attr/actionBarItemBackground"
             android:padding="@dimen/small_padding"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/imageButton_camera"
@@ -84,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/normal_margin"
             android:background="@android:color/transparent"
-            android:foreground="?attr/selectableItemBackground"
+            android:foreground="?attr/actionBarItemBackground"
             android:padding="@dimen/small_padding"
             android:scaleType="center"
             android:tint="@color/white"
@@ -93,27 +99,14 @@
             app:layout_constraintTop_toTopOf="@id/imageButton_camera"
             app:srcCompat="@drawable/ic_switch_camera_black" />
 
-        <com.lukelorusso.verticalseekbar.VerticalSeekBar
-            android:layout_width="32dp"
-            android:layout_height="200dp"
+        <com.naposystems.pepito.ui.custom.verticalSlider.VerticalSlider
+            android:id="@+id/verticalSlider"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_goneMarginEnd="@dimen/normal_margin"
-            app:vsb_bar_background="?attr/attrBackgroundColorPrimary50"
-            app:vsb_bar_corner_radius="8dp"
-            app:vsb_bar_progress_gradient_end="?attr/attrBackgroundColorPrimary"
-            app:vsb_bar_progress_gradient_start="?attr/attrBackgroundColorPrimary"
-            app:vsb_bar_width="4dp"
-            app:vsb_click_to_set_progress="false"
-            app:vsb_max_placeholder_position="inside"
-            app:vsb_max_value="100"
-            app:vsb_min_placeholder_position="inside"
-            app:vsb_progress="0"
-            app:vsb_show_thumb="true"
-            app:vsb_thumb_container_tint="@android:color/transparent"
-            app:vsb_thumb_placeholder_src="@drawable/thumb_camera_zoom"
-            app:vsb_use_thumb_to_set_progress="true" />
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

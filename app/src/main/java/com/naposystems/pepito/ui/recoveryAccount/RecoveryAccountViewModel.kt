@@ -37,11 +37,11 @@ class RecoveryAccountViewModel @Inject constructor(
                 } else {
                     when (response.code()) {
                         403 -> {
-                            _recoveryErrorForAttempts.value = repository.getError(response.errorBody()!!)
+                            _recoveryErrorForAttempts.value =
+                                repository.getError(response.errorBody()!!)
                         }
                         else -> {
-                            _recoveryQuestionsCreatingError.value =
-                                repository.getError(response.errorBody()!!)
+                            _recoveryQuestionsCreatingError.value = listOf("Error interno")
                         }
                     }
                 }
