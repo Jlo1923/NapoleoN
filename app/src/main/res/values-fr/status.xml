@@ -11,5 +11,6 @@
     <string name="text_status_only_emergency">Seulement d\'urgence</string>
     <string name="text_error_getting_local_status">Une erreur s\'est produite lors de l\'obtention des états, essayez à nouveau</string>
     <string name="text_delete_status">Supprimer l\'état</string>
+    <string name="text_status_updated_successfully">Statut mis à jour avec succès</string>
 
 </resources>

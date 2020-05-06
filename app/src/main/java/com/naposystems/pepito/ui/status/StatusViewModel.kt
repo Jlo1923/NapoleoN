@@ -22,6 +22,10 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     val status: LiveData<List<Status>>
         get() = _status
 
+    private val _statusUpdatedSuccessfully = MutableLiveData<Boolean>()
+    val statusUpdatedSuccessfully: LiveData<Boolean>
+        get() = _statusUpdatedSuccessfully
+
     private val _errorGettingStatus = MutableLiveData<Boolean>()
     val errorGettingStatus: LiveData<Boolean>
         get() = _errorGettingStatus
@@ -59,10 +63,12 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
 
                     if (response.isSuccessful) {
                         handleUpdateRemoteStatusSuccessful(textStatus, user)
+                        _statusUpdatedSuccessfully.value = true
                     } else {
                         when (response.code()) {
                             422 -> _errorUpdatingStatus.value = repository.get422Error(response)
-                            else -> _errorUpdatingStatus.value = repository.getDefaultError(response)
+                            else -> _errorUpdatingStatus.value =
+                                repository.getDefaultError(response)
                         }
                     }
                 }

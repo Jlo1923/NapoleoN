@@ -12,7 +12,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="?attr/attrBackgroundColorBackgroundDialog"
         tools:context=".ui.selfDestructTime.SelfDestructTimeDialogFragment">
 
@@ -20,7 +20,7 @@
             android:id="@+id/textView_title"
             style="@style/TextViewSecondaryTitle"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:height="62dp"
             android:gravity="center_vertical"
             android:paddingStart="@dimen/large_padding"
@@ -42,7 +42,10 @@
         <ScrollView
             android:id="@+id/scrollView2"
             android:layout_width="match_parent"
-            android:layout_height="340dp"
+            android:layout_height="0dp"
+            android:scrollbarThumbVertical="@color/colorSecondaryDark"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toTopOf="@id/container_bottom_options"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_title">
@@ -151,48 +154,61 @@
 
         </ScrollView>
 
-        <View
-            android:id="@+id/view_radio_group_separator"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/separator"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
-
-        <TextView
-            android:id="@+id/textView_info"
-            style="@style/SmallBodyTextView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_bottom_options"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_margin"
-            android:paddingStart="@dimen/large_padding"
-            android:paddingEnd="@dimen/large_padding"
-            android:text="@string/text_info_message_self_destruction"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_radio_group_separator" />
+            app:layout_constraintTop_toBottomOf="@id/scrollView2">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_accept"
-            style="@style/AppPrimaryButtonText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:text="@string/text_accept"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_info" />
+            <View
+                android:id="@+id/view_radio_group_separator"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/separator"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_cancel"
-            style="@style/AppPrimaryButtonText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:text="@string/text_cancel"
-            app:layout_constraintEnd_toStartOf="@id/button_accept"
-            app:layout_constraintTop_toTopOf="@id/button_accept" />
+            <TextView
+                android:id="@+id/textView_info"
+                style="@style/SmallBodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:paddingStart="@dimen/large_padding"
+                android:paddingEnd="@dimen/large_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_radio_group_separator"
+                tools:text="@string/text_info_message_self_destruction" />
+
+            <Button
+                android:id="@+id/button_accept"
+                style="@style/AppPrimaryButtonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginBottom="@dimen/small_margin"
+                android:text="@string/text_accept"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_info" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_cancel"
+                style="@style/AppPrimaryButtonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:text="@string/text_cancel"
+                app:layout_constraintBottom_toBottomOf="@id/button_accept"
+                app:layout_constraintEnd_toStartOf="@id/button_accept"
+                app:layout_constraintTop_toTopOf="@id/button_accept" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

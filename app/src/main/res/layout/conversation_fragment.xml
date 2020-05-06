@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:windowSoftInputMode="adjustPan">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -86,11 +85,9 @@
                 android:clipToPadding="true"
                 app:layout_constraintBottom_toTopOf="@id/inputPanel"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/container_status"
-                app:layout_constraintVertical_bias="0.0"
-                tools:itemCount="30"
+                tools:itemCount="2"
                 tools:listitem="@layout/conversation_item_my_message" />
 
             <!-- INPUT PANEL -->
@@ -171,7 +168,7 @@
                 style="@style/FabGoDown"
                 android:outlineProvider="none"
                 android:src="@drawable/ic_keyboard_arrow_down_black"
-                android:visibility="invisible"
+                android:visibility="gone"
                 app:backgroundTint="@color/fabNotificationMessage"
                 app:borderWidth="0dp"
                 app:elevation="16dp"

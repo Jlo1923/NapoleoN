@@ -59,6 +59,7 @@ import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.napoleonKeyboard.NapoleonKeyboard
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
+import com.naposystems.pepito.ui.selfDestructTime.Location
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.utility.*
@@ -150,6 +151,7 @@ class ConversationFragment : BaseFragment(),
     private var verticalCenter = 0
     private var isRecordingAudio: Boolean = false
     private var minTimeRecording = TimeUnit.SECONDS.toMillis(1)
+    private var messagedLoadedFirstTime: Boolean = false
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -290,6 +292,29 @@ class ConversationFragment : BaseFragment(),
         binding.inputPanel.getImageButtonEmoji().setOnClickListener {
             emojiKeyboard.toggle()
         }
+
+        binding.fabGoDown.setOnClickListener {
+            handlerGoDown()
+        }
+
+        binding.recyclerViewConversation.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val friendlyMessageCount: Int = conversationAdapter.itemCount - 1
+                val lastVisiblePosition: Int =
+                    linearLayoutManager.findLastVisibleItemPosition()
+
+                val invisibleItems = friendlyMessageCount - lastVisiblePosition
+                Timber.d("invisibleItems: $invisibleItems")
+
+                if (invisibleItems >= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION) {
+                    showFabScroll(View.VISIBLE, animationScaleUp)
+                } else {
+                    showFabScroll(View.GONE, animationScaleDown)
+                }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })
 
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
@@ -454,7 +479,6 @@ class ConversationFragment : BaseFragment(),
                 if (this.isShowingMic() && isRecordingAudio && recordingTime >= minTimeRecording) {
                     saveAndSendRecordAudio()
                 }
-                handlerGoDown()
                 binding.inputPanel.closeQuote()
             }
         }
@@ -698,6 +722,12 @@ class ConversationFragment : BaseFragment(),
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
             conversationAdapter.submitList(conversationList)
 
+            if (!messagedLoadedFirstTime) {
+                val friendlyMessageCount: Int = conversationAdapter.itemCount
+                binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                messagedLoadedFirstTime = true
+            }
+
             if (conversationList.isNotEmpty()) {
                 viewModel.sendMessagesRead()
             }
@@ -776,18 +806,8 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun handlerGoDown() {
-        Handler().postDelayed({
-            if (conversationAdapter.itemCount > 0) {
-                val smoothScroller: RecyclerView.SmoothScroller =
-                    object : LinearSmoothScroller(context) {
-                        override fun getVerticalSnapPreference(): Int {
-                            return SNAP_TO_START
-                        }
-                    }
-                smoothScroller.targetPosition = 0
-                linearLayoutManager.startSmoothScroll(smoothScroller)
-            }
-        }, 300)
+        val friendlyMessageCount: Int = conversationAdapter.itemCount
+        binding.recyclerViewConversation.smoothScrollToPosition(friendlyMessageCount - 1)
     }
 
     override fun onDetach() {
@@ -842,7 +862,10 @@ class ConversationFragment : BaseFragment(),
                 )
             }
             R.id.menu_item_schedule -> {
-                val dialog = SelfDestructTimeDialogFragment.newInstance(args.contact.id)
+                val dialog = SelfDestructTimeDialogFragment.newInstance(
+                    args.contact.id,
+                    Location.CONVERSATION
+                )
                 dialog.setListener(object :
                     SelfDestructTimeDialogFragment.SelfDestructTimeListener {
                     override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
@@ -1144,31 +1167,28 @@ class ConversationFragment : BaseFragment(),
         }, mediaPlayerManager, timeFormatShareViewModel.getValTimeFormat())
 
         linearLayoutManager = LinearLayoutManager(requireContext())
-        linearLayoutManager.reverseLayout = true
 
+        binding.recyclerViewConversation.setHasFixedSize(false)
         binding.recyclerViewConversation.adapter = conversationAdapter
         binding.recyclerViewConversation.layoutManager = linearLayoutManager
         binding.recyclerViewConversation.itemAnimator = ItemAnimator()
 
-        binding.recyclerViewConversation.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                when {
-                    linearLayoutManager.findFirstVisibleItemPosition() <= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION -> {
-                        if (binding.textViewNotificationMessage.visibility == View.VISIBLE) {
-                            showFabScroll(View.INVISIBLE, animationScaleDown)
-                        }
-                    }
-                    else -> {
-                        if (binding.textViewNotificationMessage.visibility != View.VISIBLE) {
-                            showFabScroll(View.VISIBLE, animationScaleUp)
-                        }
-                        binding.fabGoDown.setOnClickListener {
-                            handlerGoDown()
-                        }
+        conversationAdapter.registerAdapterDataObserver(object :
+            RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (messagedLoadedFirstTime) {
+                    val friendlyMessageCount: Int = conversationAdapter.itemCount
+                    val lastVisiblePosition: Int =
+                        linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                    Timber.d("friendlyMessageCount: $friendlyMessageCount, lastVisiblePosition: $lastVisiblePosition, positionStart: $positionStart, itemCount: $itemCount")
+                    if (lastVisiblePosition == -1 ||
+                        positionStart >= friendlyMessageCount - 1 &&
+                        lastVisiblePosition == positionStart - 1
+                    ) {
+                        binding.recyclerViewConversation.scrollToPosition(positionStart)
                     }
                 }
-                super.onScrolled(recyclerView, dx, dy)
             }
         })
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
@@ -1192,10 +1212,12 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun showFabScroll(visible: Int, animation: Animation) {
-        binding.fabGoDown.startAnimation(animation)
-        binding.textViewNotificationMessage.startAnimation(animation)
-        binding.fabGoDown.visibility = visible
-        binding.textViewNotificationMessage.visibility = visible
+        if (visible != binding.fabGoDown.visibility) {
+            binding.fabGoDown.visibility = visible
+            binding.fabGoDown.startAnimation(animation)
+//        binding.textViewNotificationMessage.startAnimation(animation)
+//        binding.textViewNotificationMessage.visibility = visible
+        }
     }
 
     private fun updateStateSelectionMessage(item: Message) {

@@ -11,5 +11,6 @@
     <string name="text_status_only_emergency">Only emergency</string>
     <string name="text_error_getting_local_status">An error occurred while getting the states, try again</string>
     <string name="text_delete_status">Delete state</string>
+    <string name="text_status_updated_successfully">Status updated successfully</string>
 
 </resources>

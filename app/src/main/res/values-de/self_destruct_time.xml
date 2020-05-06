@@ -7,7 +7,7 @@
     <string name="text_every_one_hour">1 Stunde</string>
     <string name="text_every_six_hours">6 Stunden</string>
     <string name="text_every_twenty_four_hours">24 Stunden</string>
-    <string name="text_info_message_self_destruction">In dieser Konversation gesendete und empfangene Nachrichten werden nach der ausgewählten Zeit gelöscht.</string>
+    <string name="text_info_message_self_destruction">Nachrichten gesendet werden nach der gewählten Zeit gelöscht.</string>
     <string name="text_every_seven_days">7 días</string>
     <string name="text_every_five_seconds">5 sekunden</string>
     <string name="text_every_fifteen_seconds">15 sekunden</string>
@@ -16,4 +16,5 @@
     <string name="text_every_ten_minutes">10 minuten</string>
     <string name="text_every_twelve_hours">12 stunden</string>
     <string name="text_every_one_day">1 tag</string>
+    <string name="text_info_conversation_message_self_destruction">Nachrichten in dieser Konversation gesendet werden nach der gewählten Zeit gelöscht werden.</string>
 </resources>

@@ -17,6 +17,11 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
+enum class Location {
+    CONVERSATION,
+    SECURITY_SETTINGS
+}
+
 class SelfDestructTimeDialogFragment : DialogFragment() {
 
     private var contactId: Int = 0
@@ -24,16 +29,19 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
     companion object {
 
         private const val CONTACT_ID: String = "CONTACT_ID"
+        private const val LOCATION: String = "LOCATION"
 
-        fun newInstance(contactId : Int) = SelfDestructTimeDialogFragment().apply {
-            arguments = Bundle().apply {
-                putInt(CONTACT_ID, contactId)
+        fun newInstance(contactId: Int, location: Location) =
+            SelfDestructTimeDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(CONTACT_ID, contactId)
+                    putSerializable(LOCATION, location)
+                }
             }
-        }
     }
 
     interface SelfDestructTimeListener {
-        fun onSelfDestructTimeChange(selfDestructTimeSelected : Int)
+        fun onSelfDestructTimeChange(selfDestructTimeSelected: Int)
     }
 
     @Inject
@@ -57,8 +65,15 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
             inflater, R.layout.self_destruct_time_dialog_fragment, container, false
         )
 
-        arguments.let {
-            contactId = it!!.getInt(CONTACT_ID)
+        arguments?.let {
+            contactId = it.getInt(CONTACT_ID)
+            val location = it.getSerializable(LOCATION) as Location
+
+            binding.textViewInfo.text =
+                if (location == Location.SECURITY_SETTINGS)
+                    getString(R.string.text_info_message_self_destruction)
+                else
+                    getString(R.string.text_info_conversation_message_self_destruction)
         }
 
         binding.radioGroupOptions.setOnCheckedChangeListener { _, checkedId ->
@@ -81,7 +96,7 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
         }
 
         binding.buttonAccept.setOnClickListener {
-            if(contactId == 0) {
+            if (contactId == 0) {
                 viewModel.setSelfDestructTime(this.selfDestructTime)
             }
             listener.onSelfDestructTimeChange(this.selfDestructTime)
@@ -96,20 +111,20 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
         dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog?.window?.setLayout(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT
         )
 
         viewModel.getSelfDestructTimeByContact(contactId)
 
         viewModel.getSelfDestructTime()
 
-        viewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {timeByContact ->
+        viewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer { timeByContact ->
 
             viewModel.selfDestructTimeGlobal.value?.let { selfDestructTimeGlobal ->
-                this.selfDestructTime = if(contactId == 0)
+                this.selfDestructTime = if (contactId == 0)
                     selfDestructTimeGlobal
                 else {
-                    if(timeByContact < 0)
+                    if (timeByContact < 0)
                         selfDestructTimeGlobal
                     else
                         timeByContact
