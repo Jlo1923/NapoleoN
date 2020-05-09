@@ -72,26 +72,23 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
     }
 
     fun setListeners(
-        emojiPageAdapterListener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener,
         napoleonKeyboardGifListener: NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener,
         napoleonKeyboardStickerListener: NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener
     ) {
         setupAdapter(
-            emojiPageAdapterListener,
             napoleonKeyboardGifListener,
             napoleonKeyboardStickerListener
         )
     }
 
     private fun setupAdapter(
-        emojiPageAdapterListener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener,
         napoleonKeyboardGifListener: NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener,
         napoleonKeyboardStickerListener: NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener
     ) {
         val fragments = mutableListOf<Fragment>()
 
         val napoleonKeyboardEmojiFragment = NapoleonKeyboardEmojiFragment.newInstance()
-        napoleonKeyboardEmojiFragment.setListener(context, emojiPageAdapterListener)
+        napoleonKeyboardEmojiFragment.setListener(context)
 
         val napoleonKeyboardGifFragment = NapoleonKeyboardGifFragment.newInstance()
         napoleonKeyboardGifFragment.setListener(napoleonKeyboardGifListener)

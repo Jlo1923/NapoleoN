@@ -46,6 +46,8 @@ import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.model.emojiKeyboard.Emoji
+import com.naposystems.pepito.reactive.RxBus
+import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
@@ -75,6 +77,8 @@ import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShar
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import timber.log.Timber
@@ -140,6 +144,7 @@ class ConversationFragment : BaseFragment(),
     private var clipData: ClipData? = null
     private var mRecordingAudioRunnable: Runnable? = null
 
+    private var keyboardHeight: Int = 0
     private var recordingTime: Long = 0
     private var swipeBack = false
     private val maxPositionSwipe = 3
@@ -168,7 +173,6 @@ class ConversationFragment : BaseFragment(),
     }
 
     private var emojiKeyboard: NapoleonKeyboard? = null
-
 
     private val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, RIGHT) {
         override fun getMovementFlags(
@@ -222,6 +226,10 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -233,6 +241,8 @@ class ConversationFragment : BaseFragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        subscribeRxEvents()
+
         inflateCustomActionBar(inflater)
 
         binding = DataBindingUtil.inflate(
@@ -241,14 +251,7 @@ class ConversationFragment : BaseFragment(),
 
         emojiKeyboard = NapoleonKeyboard(
             binding.coordinator,
-            binding.inputPanel.getEditTex(),
-            object : NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener {
-                override fun onEmojiClick(emoji: Emoji) {
-                    binding.inputPanel.getEditTex().text?.append(
-                        EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
-                    )
-                }
-            }
+            binding.inputPanel.getEditTex()
         )
 
         binding.lifecycleOwner = this
@@ -289,7 +292,7 @@ class ConversationFragment : BaseFragment(),
         }
 
         binding.inputPanel.getImageButtonEmoji().setOnClickListener {
-            emojiKeyboard?.toggle()
+            emojiKeyboard?.toggle(keyboardHeight)
         }
 
         binding.fabGoDown.setOnClickListener {
@@ -326,12 +329,19 @@ class ConversationFragment : BaseFragment(),
 
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
-            val heightDiff: Int = binding.root.rootView.height - binding.root.height
-            Timber.d("KeyboardHeight: ${binding.root.rootView.height}")
-        }
-
         return binding.root
+    }
+
+    private fun subscribeRxEvents() {
+        val disposableEmojiSelected = RxBus.listen(RxEvent.EmojiSelected::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                binding.inputPanel.getEditTex().text?.append(
+                    EmojiCompat.get().process(String(it.emoji.code, 0, it.emoji.code.size))
+                )
+            }
+
+        disposable.add(disposableEmojiSelected)
     }
 
     private fun inputPanelCameraButtonClickListener() {
@@ -502,7 +512,11 @@ class ConversationFragment : BaseFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            findNavController().popBackStack(R.id.homeFragment, false)
+            if (emojiKeyboard?.isShowing() == true) {
+                emojiKeyboard?.handleBackButton()
+            } else {
+                findNavController().popBackStack(R.id.homeFragment, false)
+            }
         }
 
         shareViewModel.hasAudioSendClicked.observe(requireActivity(), Observer {
@@ -860,9 +874,12 @@ class ConversationFragment : BaseFragment(),
 
     override fun onDestroy() {
         super.onDestroy()
+        Timber.d("onDestroy")
         resetConversationBackground()
         mediaPlayerManager.unregisterProximityListener()
         mediaPlayerManager.resetMediaPlayer()
+        emojiKeyboard?.dispose()
+        disposable.dispose()
         if (mRecordingAudioRunnable != null) {
             mHandler.removeCallbacks(mRecordingAudioRunnable!!)
             mRecordingAudioRunnable = null

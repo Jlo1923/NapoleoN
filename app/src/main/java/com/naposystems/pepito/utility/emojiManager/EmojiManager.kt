@@ -2,8 +2,9 @@ package com.naposystems.pepito.utility.emojiManager
 
 import com.naposystems.pepito.model.emojiKeyboard.EmojiCategory
 import com.naposystems.pepito.utility.emojiManager.categories.*
+import java.io.Serializable
 
-class EmojiManager private constructor() {
+class EmojiManager private constructor(): Serializable {
 
     private object HOLDER {
         val INSTANCE = EmojiManager()

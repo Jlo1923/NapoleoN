@@ -1,5 +1,6 @@
 package com.naposystems.pepito.reactive
 
+import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import org.json.JSONObject
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
@@ -22,4 +23,5 @@ class RxEvent {
     data class ContactTurnOffCamera(val channel: String)
     data class ContactTurnOnCamera(val channel: String)
     data class ContactRejectCall(val channel: String)
+    data class EmojiSelected(val emoji: Emoji)
 }
