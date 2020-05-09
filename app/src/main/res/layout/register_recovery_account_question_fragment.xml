@@ -136,6 +136,7 @@
                     android:layoutDirection="rtl"
                     android:text="@string/text_add_question"
                     android:visibility="gone"
+                    tools:visibility="visible"
                     app:icon="@drawable/ic_arrow_right_primary"
                     app:iconTint="@color/buttonTint"
                     app:layout_constraintBottom_toTopOf="@id/button_cancel"

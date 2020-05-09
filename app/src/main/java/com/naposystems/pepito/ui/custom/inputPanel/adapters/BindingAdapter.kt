@@ -24,8 +24,8 @@ fun bindUserBackground(
     val context = constraintLayout.context
     val quoteNull = messageAndAttachmentNull?.quote
 
-    if(isFromInputPanel){
-        messageAndAttachmentNull?.message?.let {message ->
+    if (isFromInputPanel) {
+        messageAndAttachmentNull?.message?.let { message ->
             constraintLayout.background = if (message.isMine == Constants.IsMine.YES.value) {
                 context.getDrawable(R.drawable.bg_my_quote_my_message)
             } else {
@@ -80,8 +80,10 @@ fun bindUserQuote(
         }
     }
 
-    val textColorYourName = Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorYourQuote)
-    val textColorMyName = Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorMyQuote)
+    val textColorYourName =
+        Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorYourQuote)
+    val textColorMyName =
+        Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorMyQuote)
 
     if (isMineNull == Constants.IsMine.YES.value) {
         textView.setTextColor(textColorMyName)
@@ -108,6 +110,7 @@ fun bindBodyQuote(
     isFromInputPanel: Boolean
 ) {
     val context = textView.context
+    val isMine = messageAndAttachment?.message?.isMine == Constants.IsMine.YES.value
     val body = if (isFromInputPanel) {
         val messageNull = messageAndAttachment?.message
 
@@ -119,13 +122,7 @@ fun bindBodyQuote(
     textView.text = if (body.isNotEmpty()) {
         body
     } else {
-        when (getAttachmentType(messageAndAttachment, isFromInputPanel)) {
-            Constants.AttachmentType.IMAGE.type -> context.getString(R.string.text_you_quote)
-            Constants.AttachmentType.AUDIO.type -> context.getString(R.string.text_you_quote)
-            Constants.AttachmentType.VIDEO.type -> context.getString(R.string.text_you_quote)
-            Constants.AttachmentType.DOCUMENT.type -> context.getString(R.string.text_you_quote)
-            else -> ""
-        }
+        if (isMine) context.getString(R.string.text_you_quote) else messageAndAttachment?.contact?.getNickName()
     }
 }
 

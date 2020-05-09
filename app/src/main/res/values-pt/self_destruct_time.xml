@@ -17,4 +17,5 @@
     <string name="text_every_twelve_hours">12 hours</string>
     <string name="text_every_one_day">1 dia</string>
     <string name="text_info_conversation_message_self_destruction">Mensagens enviadas nesta conversa serão apagados após o tempo selecionado.</string>
+    <string name="text_info_message_autodestruction_time_failed_messages">As mensagens enviadas a partir de nossas conversas que não atingem o seu destino serão apagados após o tempo selecionado</string>
 </resources>

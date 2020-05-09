@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.naposystems.pepito.R
@@ -20,7 +21,7 @@ import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import javax.inject.Inject
 
-class ActivateBiometricsDialogFragment: DialogFragment() {
+class ActivateBiometricsDialogFragment : DialogFragment() {
 
     companion object {
         fun newInstance() = ActivateBiometricsDialogFragment()
@@ -28,7 +29,7 @@ class ActivateBiometricsDialogFragment: DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ActivateBiometricsViewModel
+    private val viewModel: ActivateBiometricsViewModel by viewModels { viewModelFactory }
     private lateinit var binding: ActivateBiometricsDialogFragmentBinding
 
     private var optionBiometrics: Int = 0
@@ -47,8 +48,10 @@ class ActivateBiometricsDialogFragment: DialogFragment() {
             inflater, R.layout.activate_biometrics_dialog_fragment, container, false
         )
 
+        viewModel.getBiometricsOption()
+
         binding.radioGroupOptions.setOnCheckedChangeListener { _, checkedId ->
-            val biometricManager = BiometricManager.from(context!!)
+            val biometricManager = BiometricManager.from(requireContext())
 
             when (biometricManager.canAuthenticate()) {
                 BiometricManager.BIOMETRIC_SUCCESS -> {
@@ -66,7 +69,10 @@ class ActivateBiometricsDialogFragment: DialogFragment() {
                     Timber.e("Biometric features are currently unavailable.")
                 BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                     Toast.makeText(
-                        context,"El dispositivo no tiene asignado un desbloqueo biometrico", Toast.LENGTH_LONG).show()
+                        context,
+                        "El dispositivo no tiene asignado un desbloqueo biometrico",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -91,10 +97,6 @@ class ActivateBiometricsDialogFragment: DialogFragment() {
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(ActivateBiometricsViewModel::class.java)
-
-        viewModel.getBiometricsOption()
         viewModel.biometricsOption.observe(viewLifecycleOwner, Observer {
             optionBiometrics = it
             when (it) {

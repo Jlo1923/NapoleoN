@@ -93,9 +93,9 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
 
     override fun openQuote(messageAndAttachment: MessageAndAttachment) {
         binding.textInputEditTextInput.requestFocus()
-        binding.layoutQuote.visibility = View.VISIBLE
         binding.layoutQuote.setupMessageAndAttachment(messageAndAttachment)
-        Utils.openKeyboard(binding.textInputEditTextInput)
+        binding.layoutQuote.visibility = View.VISIBLE
+        //Utils.openKeyboard(binding.textInputEditTextInput)
     }
 
     override fun getWebIdQuote() =

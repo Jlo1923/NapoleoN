@@ -607,4 +607,8 @@ class ConversationRepository @Inject constructor(
             null
         }
     }
+
+    override fun verifyMessagesToDelete() {
+        messageLocalDataSource.verifyMessagesToDelete()
+    }
 }

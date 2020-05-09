@@ -47,7 +47,7 @@
     <string name="text_unblock_contact">Desbloquear Contacto</string>
     <string name="text_attachment_document_name">Documento.%1$s</string>
     <string name="text_alert_failure">Advertencia</string>
-    <string name="text_status_limit">Se permiten 4 estados personalizados, borra uno previamente guardado para agregar uno nuevo.</string>
+    <string name="text_status_limit">Se permiten 4 estados personalizados; Elimina uno previamente almacenado para agregar uno nuevo</string>
     <string name="text_preview_my_message">Hola</string>
     <string name="text_preview_incoming_message">Hola, ¿Cómo estás?</string>
     <string name="text_display_name">Nombre a mostrar</string>
@@ -60,4 +60,6 @@
     <string name="text_empty_state_search_description">Busca un apodo, agrégalo y comparte con esa persona de una forma privada y segura</string>
     <string name="text_now">Ahora</string>
     <string name="text_yesterday">Ayer</string>
+    <string name="text_close">Cerrar</string>
+    <string name="text_confirm">Confirmar</string>
 </resources>

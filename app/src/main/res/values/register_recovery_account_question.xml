@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_count_questions">Security Question %1$d/%2$d</string>
-    <string name="text_add_question">Add Another Question</string>
+    <string name="text_add_question">Add another question</string>
     <string name="text_security_questions">Choose a question</string>
     <string name="text_select_question">You must select a question</string>
     <string name="text_title_register_questions">The Recover Account option will help you recover your Nickname, contacts and preferences. Remember that a difficult answer is the key to your privacy and security</string>

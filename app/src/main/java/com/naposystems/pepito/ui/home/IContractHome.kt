@@ -22,6 +22,7 @@ interface IContractHome {
         fun getJsonNotification()
         fun getContact(contactId : Int)
         fun cleanJsonNotification()
+        fun verifyMessagesToDelete()
     }
 
     interface Repository {
@@ -37,5 +38,6 @@ interface IContractHome {
         fun getContact(contactId : Int) : Contact?
         fun cleanJsonNotification()
         fun getMessagesForHome(): LiveData<List<MessageAndAttachment>>
+        fun verifyMessagesToDelete()
     }
 }

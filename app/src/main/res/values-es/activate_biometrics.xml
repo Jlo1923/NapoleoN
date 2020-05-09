@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_biometrics_description">Puedes elegir los métodos de desbloqueo para la aplicación. El Pin siempre será indispensable y no lo podrás quitar de las opciones solicitadas.</string>
+    <string name="text_biometrics_description">Puedes elegir el metodo de desbloqueo; Siempre podras acceder mediante el Pin de Acceso</string>
     <string name="text_only_pin">Pin</string>
     <string name="text_pin_and_fingerprint">Pin + Huella dactilar</string>
     <string name="text_pin_and_unlock_facial">Pin + Desbloqueo facial</string>

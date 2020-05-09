@@ -40,31 +40,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/container_quote"
+                    <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+                        android:id="@+id/layout_quote"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:maxHeight="150dp"
-                        app:layout_constraintBottom_toTopOf="@id/container_input_options"
+                        android:visibility="gone"
+                        app:isCancelable="true"
+                        app:isFromInputPanel="true"
+                        app:layout_constraintBottom_toTopOf="@+id/container_input_options"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:visibility="gone">
-
-                        <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
-                            android:id="@+id/layout_quote"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            app:isCancelable="true"
-                            app:isFromInputPanel="true"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                        tools:layout_height="0dp" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/container_input_options"
@@ -72,8 +59,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/container_quote">
+                        app:layout_constraintStart_toStartOf="parent">
 
                         <ImageButton
                             android:id="@+id/imageButton_emoji"

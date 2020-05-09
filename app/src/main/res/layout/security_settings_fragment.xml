@@ -6,8 +6,8 @@
     <data>
 
         <variable
-        name="viewModel"
-        type="com.naposystems.pepito.ui.securitySettings.SecuritySettingsViewModel" />
+            name="viewModel"
+            type="com.naposystems.pepito.ui.securitySettings.SecuritySettingsViewModel" />
 
         <variable
             name="selfDestructViewModel"
@@ -252,7 +252,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_arrow_right_primary" />
+                    app:srcCompat="@drawable/ic_edit_black" />
 
                 <!-- OPTION TITLE -->
                 <TextView

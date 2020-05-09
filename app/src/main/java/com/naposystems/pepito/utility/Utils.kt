@@ -208,9 +208,17 @@ class Utils {
             message: String,
             isCancelable: Boolean,
             childFragmentManager: FragmentManager,
+            textButtonAccept: String = "",
+            textButtonCancel: String = "",
             actionAccept: () -> Unit
         ) {
-            val dialog = GeneralDialogFragment.newInstance(title, message, isCancelable)
+            val dialog = GeneralDialogFragment.newInstance(
+                title,
+                message,
+                isCancelable,
+                textButtonAccept,
+                textButtonCancel
+            )
             dialog.setListener(object : GeneralDialogFragment.OnGeneralDialog {
                 override fun onAccept() {
                     actionAccept()
@@ -245,7 +253,8 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
+            val textColorButton =
+                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
@@ -283,7 +292,8 @@ class Utils {
                 .create()
             dialog.show()
 
-            val textColorButton = convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
+            val textColorButton =
+                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)
@@ -313,7 +323,8 @@ class Utils {
 
             dialog.show()
 
-            val textColorButton = convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
+            val textColorButton =
+                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton.setTextColor(textColorButton)

@@ -21,6 +21,7 @@ import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.napoleonKeyboardSticker.NapoleonKeyboardStickerFragment
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.emojiManager.EmojiResultReceiver
+import java.io.Serializable
 
 
 class NapoleonKeyboard constructor(
@@ -30,7 +31,7 @@ class NapoleonKeyboard constructor(
 ) : IContractNapoleonKeyboard, EmojiResultReceiver.Listener,
     NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener,
     NapoleonKeyboardView.NapoleonKeyboardViewListener,
-    NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener {
+    NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener, Serializable {
 
     companion object {
         const val MIN_KEYBOARD_HEIGHT: Int = 50

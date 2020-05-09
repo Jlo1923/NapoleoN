@@ -8,5 +8,5 @@
     <string name="text_one_hour">1 hora</string>
     <string name="text_one_day">1 día</string>
     <string name="text_never">Nunca</string>
-    <string name="text_desc_pin_locked_time">Se solicita el pin de acceso despues de transcurrido el tiempo seleccionado, despues de bloquear la app.</string>
+    <string name="text_desc_pin_locked_time">El Pin de Acceso es solicitado despues de transcurrido el tiempo seleccionado y la App se encuentre en segundo plano</string>
 </resources>

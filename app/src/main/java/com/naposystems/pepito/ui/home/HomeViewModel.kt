@@ -129,5 +129,10 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
             repository.cleanJsonNotification()
         }
     }
+
+    override fun verifyMessagesToDelete() {
+        repository.verifyMessagesToDelete()
+    }
+
     //endregion
 }

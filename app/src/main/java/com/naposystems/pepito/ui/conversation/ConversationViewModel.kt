@@ -118,6 +118,7 @@ class ConversationViewModel @Inject constructor(
     override fun getLocalMessages() {
         viewModelScope.launch {
             user = repository.getLocalUser()
+            repository.verifyMessagesToDelete()
             _messageMessages = repository.getLocalMessages(contact.id)
         }
     }

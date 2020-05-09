@@ -9,7 +9,7 @@
     <string name="text_only_name">Nur Name</string>
     <string name="text_only_nickname">Nur Spitzname</string>
     <string name="text_conversation_background">Gesprächshintergrund</string>
-    <string name="text_updated_successfully">Der Konversationshintergrund wurde erfolgreich geändert</string>
+    <string name="text_updated_successfully">Der Hintergrund wurde korrekt angewendet</string>
     <string name="text_error_updating_conversation_background">Beim Ändern des Gesprächshintergrunds ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut</string>
     <string name="text_time_format">Zeitformat</string>
 </resources>

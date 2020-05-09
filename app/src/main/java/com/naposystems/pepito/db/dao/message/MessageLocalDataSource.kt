@@ -110,4 +110,8 @@ class MessageLocalDataSource @Inject constructor(
     override suspend fun getIdContactWithWebId(listWebId: List<String>): Int {
         return messageDao.getIdContactWithWebId(listWebId[0])
     }
+
+    override fun verifyMessagesToDelete() {
+        messageDao.verifyMessagesToDelete()
+    }
 }

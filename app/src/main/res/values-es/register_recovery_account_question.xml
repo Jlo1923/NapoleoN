@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_count_questions">Pregunta de Seguridad %1$d / %2$d</string>
-    <string name="text_add_question">Agregar Otra Pregunta</string>
+    <string name="text_add_question">Agregar otra pregunta</string>
     <string name="text_security_questions">Elige una pregunta</string>
     <string name="text_select_question">Debe seleccionar una pregunta</string>
     <string name="text_title_register_questions">La opción de Recuperar Cuenta, te ayudara a recuperar tu Apodo, contactos y preferencias. Recuerda que una respuesta difícil es la clave para tu privacidad y seguridad</string>

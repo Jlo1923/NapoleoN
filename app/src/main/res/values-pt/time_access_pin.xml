@@ -8,5 +8,5 @@
     <string name="text_one_hour">1 hora</string>
     <string name="text_one_day">1 dia</string>
     <string name="text_never">Nunca</string>
-    <string name="text_desc_pin_locked_time">O pino de acesso é solicitado após o tempo selecionado, após o bloqueio do aplicativo.</string>
+    <string name="text_desc_pin_locked_time">O PIN de acesso é solicitado após decorrer o tempo seleccionado e o aplicativo está em segundo plano</string>
 </resources>

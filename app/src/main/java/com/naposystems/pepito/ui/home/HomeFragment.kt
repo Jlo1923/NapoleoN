@@ -45,8 +45,8 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: HomeViewModel
-    private lateinit var shareContactViewModel: ShareContactViewModel
+    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
+    private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -74,6 +74,8 @@ class HomeFragment : Fragment() {
     ): View? {
 
         setHasOptionsMenu(true)
+
+        viewModel.verifyMessagesToDelete()
 
         binding = DataBindingUtil.inflate(
             layoutInflater,
@@ -111,15 +113,6 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(HomeViewModel::class.java)
-
-        try {
-            shareContactViewModel = ViewModelProvider(this, viewModelFactory)
-                .get(ShareContactViewModel::class.java)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
 
         viewModel.getConversation()
 

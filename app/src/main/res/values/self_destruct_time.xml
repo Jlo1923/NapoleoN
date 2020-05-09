@@ -17,4 +17,5 @@
     <string name="text_every_twelve_hours">12 hours</string>
     <string name="text_every_one_day">1 day</string>
     <string name="text_info_conversation_message_self_destruction">Messages sent in this conversation will be deleted after the selected time.</string>
+    <string name="text_info_message_autodestruction_time_failed_messages">Messages sent from our conversations that do not reach their destination will be deleted after the selected time</string>
 </resources>

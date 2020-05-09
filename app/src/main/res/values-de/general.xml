@@ -48,7 +48,7 @@
         <item quantity="one">%d ausgewählt</item>
         <item quantity="other">%d ausgewählt</item>
     </plurals>
-    <string name="text_status_limit">Es sind 4 benutzerdefinierte Status zulässig. Löschen Sie einen zuvor gespeicherten Status, um einen neuen hinzuzufügen.</string>
+    <string name="text_status_limit">4 benutzerdefinierte Zustände sind erlaubt; Entfernt eine vorher gespeicherte neue hinzuzufügen</string>
     <string name="text_preview_my_message">Hallo</string>
     <string name="text_preview_incoming_message">Hallo, wie geht es dir</string>
     <string name="text_display_name">Anzeigename</string>
@@ -61,4 +61,6 @@
     <string name="text_empty_state_search_description">Suchen Sie einen Spitznamen, fügen Sie ihn hinzu und teilen Sie ihn privat und sicher mit dieser Person</string>
     <string name="text_now">Jetzt</string>
     <string name="text_yesterday">Gestern</string>
+    <string name="text_close">Schließen</string>
+    <string name="text_confirm">Confirm</string>
 </resources>

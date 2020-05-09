@@ -37,7 +37,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
@@ -168,19 +167,7 @@ class ConversationFragment : BaseFragment(),
         MediaPlayerManager(requireContext())
     }
 
-    private val emojiKeyboard by lazy {
-        NapoleonKeyboard(
-            binding.coordinator,
-            binding.inputPanel.getEditTex(),
-            object : NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener {
-                override fun onEmojiClick(emoji: Emoji) {
-                    binding.inputPanel.getEditTex().text?.append(
-                        EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
-                    )
-                }
-            }
-        )
-    }
+    private var emojiKeyboard: NapoleonKeyboard? = null
 
 
     private val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, RIGHT) {
@@ -252,6 +239,18 @@ class ConversationFragment : BaseFragment(),
             inflater, R.layout.conversation_fragment, container, false
         )
 
+        emojiKeyboard = NapoleonKeyboard(
+            binding.coordinator,
+            binding.inputPanel.getEditTex(),
+            object : NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener {
+                override fun onEmojiClick(emoji: Emoji) {
+                    binding.inputPanel.getEditTex().text?.append(
+                        EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
+                    )
+                }
+            }
+        )
+
         binding.lifecycleOwner = this
 
         binding.contact = args.contact
@@ -290,7 +289,7 @@ class ConversationFragment : BaseFragment(),
         }
 
         binding.inputPanel.getImageButtonEmoji().setOnClickListener {
-            emojiKeyboard.toggle()
+            emojiKeyboard?.toggle()
         }
 
         binding.fabGoDown.setOnClickListener {
@@ -316,7 +315,21 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
+        binding.recyclerViewConversation.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+            if (bottom < oldBottom) {
+                binding.recyclerViewConversation.post {
+                    val friendlyMessageCount: Int = conversationAdapter.itemCount
+                    binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                }
+            }
+        }
+
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val heightDiff: Int = binding.root.rootView.height - binding.root.height
+            Timber.d("KeyboardHeight: ${binding.root.rootView.height}")
+        }
 
         return binding.root
     }
@@ -811,8 +824,11 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun onDetach() {
-        (activity as MainActivity).supportActionBar?.displayOptions = ActionBar.DISPLAY_HOME_AS_UP
-        (activity as MainActivity).supportActionBar?.setDisplayShowCustomEnabled(false)
+        with(activity as MainActivity) {
+            supportActionBar?.displayOptions = ActionBar.DISPLAY_HOME_AS_UP
+            supportActionBar?.setDisplayShowCustomEnabled(false)
+
+        }
         super.onDetach()
     }
 
@@ -977,7 +993,10 @@ class ConversationFragment : BaseFragment(),
                     backgroundDrawable.alpha = (255 * 0.3).toInt()
                     activity.window.setBackgroundDrawable(backgroundDrawable)
                 } else {
-                    activity.window.setBackgroundDrawableResource(R.drawable.doodle_bg)
+                    activity.window.decorView.background = resources.getDrawable(
+                        R.drawable.bg_default_conversation,
+                        requireContext().theme
+                    )
                 }
             }
         }

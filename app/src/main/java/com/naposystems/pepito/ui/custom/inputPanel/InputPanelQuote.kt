@@ -35,6 +35,8 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                     true
                 )
 
+                binding.messageAndAttachment = messageAndAttachment
+
                 isCancelable = getBoolean(R.styleable.Quote_isCancelable, false)
                 isFromInputPanel = getBoolean(R.styleable.Quote_isFromInputPanel, false)
 
@@ -57,12 +59,12 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     override fun setupMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
         this.messageAndAttachment = messageAndAttachment
         binding.messageAndAttachment = messageAndAttachment
-        binding.containerQuote.visibility = View.VISIBLE
+//        binding.containerQuote.visibility = View.VISIBLE
         binding.executePendingBindings()
     }
 
     override fun closeQuote() {
-        binding.containerQuote.visibility = View.GONE
+        visibility = View.GONE
         binding.imageViewQuote.apply {
             this.setImageBitmap(null)
             this.visibility = View.GONE

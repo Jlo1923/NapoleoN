@@ -112,5 +112,6 @@ interface IContractConversation {
 
         fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int)
         suspend fun copyFile(fileUri: Uri): File?
+        fun verifyMessagesToDelete()
     }
 }

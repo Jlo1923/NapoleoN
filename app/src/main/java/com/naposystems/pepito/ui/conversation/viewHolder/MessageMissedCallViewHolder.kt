@@ -26,6 +26,7 @@ class MessageMissedCallViewHolder constructor(
     ) {
         val context = binding.containerMissedCall.context
         binding.clickListener = clickListener
+        binding.conversation = item
 
         try {
             val sdf = if (timeFormat == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {

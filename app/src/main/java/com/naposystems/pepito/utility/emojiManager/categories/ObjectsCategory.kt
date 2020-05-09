@@ -3,8 +3,9 @@ package com.naposystems.pepito.utility.emojiManager.categories
 import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.model.emojiKeyboard.EmojiCategory
 import com.naposystems.pepito.utility.Constants
+import java.io.Serializable
 
-class ObjectsCategory : EmojiCategory() {
+class ObjectsCategory : EmojiCategory(), Serializable {
 
     init {
         this.id = Constants.EmojiCategory.OBJECTS.category

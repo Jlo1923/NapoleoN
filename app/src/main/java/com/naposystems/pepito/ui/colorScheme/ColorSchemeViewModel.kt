@@ -31,6 +31,7 @@ class ColorSchemeViewModel @Inject constructor(private val repository: ColorSche
     override fun saveTheme(newTheme: Int) {
         viewModelScope.launch {
             repository.saveTheme(newTheme)
+            _theme.value = newTheme
         }
     }
     //endregion

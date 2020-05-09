@@ -106,7 +106,19 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
 
         imageButtonFlashClickListener()
 
-        imageButtonCameraTouchListener()
+        args.location.let { location ->
+            when (location) {
+                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
+                    imageButtonCameraTouchListener()
+                }
+                else -> {
+                    binding.imageButtonCamera.setOnClickListener {
+                        takePhoto()
+                    }
+                }
+            }
+        }
+
 
         viewFinderTouchListener()
 
@@ -327,6 +339,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
         try {
             binding.imageButtonCamera.background =
                 resources.getDrawable(R.drawable.bg_button_take_picture, requireContext().theme)
+            binding.viewFinder.stopRecording()
             Timber.i("Video File stopped")
             recordingTime = 0L
         } catch (e: Exception) {

@@ -1,13 +1,13 @@
 package com.naposystems.pepito.ui.previewBackgroundChat
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -35,7 +35,7 @@ class PreviewBackgroundChatFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: PreviewBackgroundChatViewModel
+    private val viewModel: PreviewBackgroundChatViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewBackgroundChatFragmentBinding
     private val fileName: String = "chat_background.jpg"
 
@@ -99,8 +99,6 @@ class PreviewBackgroundChatFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(PreviewBackgroundChatViewModel::class.java)
 
         viewModel.setChatBackground(args.uri)
 
