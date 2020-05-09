@@ -56,14 +56,15 @@
                 <ImageView
                     android:id="@+id/imageView_contact_image"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginBottom="@dimen/small_margin"
                     android:background="@drawable/border_avatar_contact"
                     app:avatar="@{contact}"
                     app:layout_constraintBottom_toTopOf="@+id/textView_contact_name"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_percent="0.3"
+                    app:layout_constraintWidth_percent="0.4"
                     tools:src="@tools:sample/avatars" />
 
                 <!-- CONTACT NAME -->
@@ -217,8 +218,8 @@
                 style="@style/ConversationCallButton"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:checked="false"
                 android:background="@drawable/conversation_call_button_mute_video"
+                android:checked="false"
                 android:visibility="@{isVideoCall ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_mic_off"

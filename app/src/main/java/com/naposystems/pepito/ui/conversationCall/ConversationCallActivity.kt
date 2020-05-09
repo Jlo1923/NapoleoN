@@ -106,6 +106,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.fabHangup.setOnClickListener {
+            if (!isIncomingCall && !webRTCClient.isActiveCall()) {
+                viewModel.sendMissedCall(contactId, isVideoCall)
+            }
             webRTCClient.emitHangUp()
             webRTCClient.dispose()
         }

@@ -235,9 +235,6 @@ class WebRTCClient constructor(
                 if (it.channel == this.channel) {
                     stopMediaPlayer()
                     localPeer?.dispose()
-                    if (!isActiveCall) {
-                        mListener?.contactNotAnswer()
-                    }
                 }
             }
 
@@ -458,7 +455,8 @@ class WebRTCClient constructor(
                 videoSource?.capturerObserver
             )
 
-            localVideoTrack = peerConnectionFactory.createVideoTrack("localVideoTrack1", videoSource)
+            localVideoTrack =
+                peerConnectionFactory.createVideoTrack("localVideoTrack1", videoSource)
             localVideoView?.setMirror(true)
             remoteVideoView?.setMirror(false)
         }
