@@ -88,7 +88,7 @@
                 android:layout_marginTop="@dimen/small_margin"
                 android:paddingStart="@dimen/large_padding"
                 android:paddingEnd="@dimen/large_padding"
-                android:text="Los mensajes enviados en las conversaciones que nunca lleguen a sus destinatarios, serán eliminados después del tiempo seleccionado.!!"
+                android:text="@string/text_info_message_autodestruction_time_failed_messages"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_radio_group_separator" />

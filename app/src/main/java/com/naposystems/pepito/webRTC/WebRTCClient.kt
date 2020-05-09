@@ -96,8 +96,6 @@ class WebRTCClient constructor(
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
-    private lateinit var remoteMediaStream: MediaStream
-
     private var videoCapturerAndroid: VideoCapturer? = null
     private var videoSource: VideoSource? = null
     private var sdpConstraints: MediaConstraints? = null
@@ -117,12 +115,15 @@ class WebRTCClient constructor(
     private var isSpeakerOn: Boolean = false
     private var isMicOn: Boolean = true
     private var mediaPlayerHasStopped: Boolean = false
+    private var renegotiateCall: Boolean = false
+
 
     private var peerIceServer: MutableList<PeerConnection.IceServer> = arrayListOf(
-        PeerConnection.IceServer.builder("stun:stun.networkin.chat:5349").createIceServer(),
-        PeerConnection.IceServer.builder("turn:turn.networkin.chat:5349")
-            .setUsername("networkin")
-            .setPassword("qazplm123")
+        PeerConnection.IceServer.builder("stun:sturnturn-prueba.napoleon-chat.com")
+            .createIceServer(),
+        PeerConnection.IceServer.builder("turn:sturnturn-prueba.napoleon-chat.com")
+            .setUsername("wPJlHAYY")
+            .setPassword("GrI09zxkwFuOihIf")
             .createIceServer()
     )
 
@@ -254,8 +255,8 @@ class WebRTCClient constructor(
                     if (it.channel == this.channel) {
                         Timber.d("ContactAcceptChangeToVideoCall")
                         isVideoCall = true
+                        renegotiateCall = true
                         startCaptureVideo()
-                        renderRemoteVideo()
                     }
                 }
 
@@ -355,19 +356,33 @@ class WebRTCClient constructor(
         localPeer = peerConnectionFactory.createPeerConnection(
             rtcConfig,
             object : CustomPeerConnectionObserver() {
+                override fun onRenegotiationNeeded() {
+                    super.onRenegotiationNeeded()
+                    Timber.d("onRenegotiationNeeded")
+                    if (renegotiateCall) {
+                        createOffer()
+                    }
+                }
+
                 override fun onIceCandidate(iceCandidate: IceCandidate) {
                     super.onIceCandidate(iceCandidate)
+                    Timber.d("onIceCandidate")
                     onIceCandidateReceived(iceCandidate)
                 }
 
-                override fun onAddStream(mediaStream: MediaStream) {
-                    super.onAddStream(mediaStream)
-                    remoteMediaStream = mediaStream
-                    if (isVideoCall) {
-                        renderRemoteVideo()
-                    } else {
-                        audioManager.isSpeakerphoneOn = false
-                        isSpeakerOn = false
+                override fun onAddTrack(
+                    rtpReceiver: RtpReceiver,
+                    mediaStreams: Array<MediaStream>
+                ) {
+                    super.onAddTrack(rtpReceiver, mediaStreams)
+                    Timber.d("onAddTrack")
+                    if (mediaStreams.isNotEmpty()) {
+                        if (isVideoCall) {
+                            renderRemoteVideo(mediaStreams.first())
+                        } else {
+                            audioManager.isSpeakerphoneOn = false
+                            isSpeakerOn = false
+                        }
                     }
                 }
 
@@ -399,13 +414,27 @@ class WebRTCClient constructor(
                             TimeUnit.SECONDS.toMillis(1)
                         )
                     }
+
+                    if (iceConnectionState == PeerConnection.IceConnectionState.FAILED) {
+                        mListener?.resetIsOnCallPref()
+                        playSound(
+                            Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone),
+                            false
+                        ) {
+                            dispose()
+                        }
+                    }
                 }
             })
 
-        createLocalVideoTrack()
-        addLocalVideoTrackToLocalMediaStream()
         createLocalAudioTrack()
         addLocalAudioTrackToLocalMediaStream()
+
+        if (isVideoCall) {
+            createLocalVideoTrack()
+            addLocalVideoTrackToLocalMediaStream()
+        }
+
         localPeer?.addStream(localMediaStream)
     }
 
@@ -426,16 +455,17 @@ class WebRTCClient constructor(
                 videoSource?.capturerObserver
             )
 
-            localVideoTrack = peerConnectionFactory.createVideoTrack("localVideoTrack", videoSource)
+            localVideoTrack =
+                peerConnectionFactory.createVideoTrack("localVideoTrack1", videoSource)
             localVideoView?.setMirror(true)
-            remoteVideoView?.setMirror(true)
+            remoteVideoView?.setMirror(false)
         }
     }
 
     private fun createLocalAudioTrack() {
         val audioConstraints = MediaConstraints()
         val audioSource: AudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
-        localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack", audioSource)
+        localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
     }
 
     private fun createVideoCapturer(): VideoCapturer? {
@@ -512,7 +542,7 @@ class WebRTCClient constructor(
                     (CustomSdpObserver("Local offer")),
                     sessionDescription
                 )
-                Timber.d("onCreateSuccess")
+                Timber.d("createOffer onCreateSuccess")
                 socketService.emitToCall(
                     channel = channel,
                     jsonObject = sessionDescription.toJSONObject()
@@ -532,20 +562,19 @@ class WebRTCClient constructor(
                     CustomSdpObserver("Local Answer"),
                     sessionDescription
                 )
-                Timber.d("onCreateSuccess")
+                Timber.d("createAnswer onCreateSuccess")
                 socketService.emitToCall(
                     channel = channel,
                     jsonObject = sessionDescription.toJSONObject()
                 )
             }
         }, MediaConstraints())
-
     }
 
-    private fun renderRemoteVideo() {
-        if (::remoteMediaStream.isInitialized) {
+    private fun renderRemoteVideo(firstMediaStream: MediaStream) {
+        if (firstMediaStream.videoTracks.isNotEmpty()) {
 
-            val videoTrack = remoteMediaStream.videoTracks[0]
+            val videoTrack = firstMediaStream.videoTracks[0]
             try {
                 stopProximitySensor()
                 audioManager.isSpeakerphoneOn = true
@@ -632,6 +661,8 @@ class WebRTCClient constructor(
     }
 
     override fun startCaptureVideo() {
+        createLocalVideoTrack()
+        addLocalVideoTrackToLocalMediaStream()
         videoCapturerAndroid?.startCapture(1280, 720, 30)
         localVideoTrack?.addSink(localVideoView)
     }
@@ -720,7 +751,7 @@ class WebRTCClient constructor(
         isVideoCall = true
         startCaptureVideo()
         socketService.emitToCall(channel, SocketService.CONTACT_ACCEPT_CHANGE_TO_VIDEO)
-        renderRemoteVideo()
+        //renderRemoteVideo()
     }
 
     override fun startProximitySensor() {

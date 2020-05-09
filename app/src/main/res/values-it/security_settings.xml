@@ -4,9 +4,9 @@
     <string name="text_default_message_self_destruct_time">Tempo di autodistruzione del messaggio predefinito</string>
     <string name="text_security">SICUREZZA</string>
     <string name="text_edit_access_pin">Modifica pin di accesso</string>
-    <string name="text_time_to_request_access_pin">Tempo di blocco</string>
+    <string name="text_time_to_request_access_pin">Tempo di PIN di accesso richiesta</string>
     <string name="text_account_recovery_information">Informazioni sul recupero dell\'account</string>
     <string name="text_allow_download_attachments">Consenti download allegati inviati</string>
     <string name="text_unlock_options">Opzioni di sblocco</string>
-    <string name="text_message_self_destruct_time_not_send">Tempo di autodistruzione per i messaggi non inviati</string>
+    <string name="text_message_self_destruct_time_not_send">Tempo i messaggi di autodistruzione non è riuscita</string>
 </resources>

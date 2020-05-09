@@ -3,7 +3,9 @@ package com.naposystems.pepito.ui.appearanceSettings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.repository.appearanceSettings.AppearanceSettingsRepository
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AppearanceSettingsViewModel @Inject constructor(
@@ -22,10 +24,15 @@ class AppearanceSettingsViewModel @Inject constructor(
     val timeFormat: LiveData<Int>
         get() = _timeFormat
 
+    private val _conversationBackground = MutableLiveData<String>()
+    val conversationBackground: LiveData<String>
+        get() = _conversationBackground
+
     init {
         _colorScheme.value = null
         _userDisplayFormat.value = null
         _timeFormat.value = null
+        _conversationBackground.value = null
     }
 
     //region Implementation IContractAppearanceSettings.ViewModel
@@ -39,6 +46,16 @@ class AppearanceSettingsViewModel @Inject constructor(
 
     override fun getTimeFormat() {
         _timeFormat.value = repository.getTimeFormat()
+    }
+
+    override fun getConversationBackground() {
+        viewModelScope.launch {
+            _conversationBackground.value = repository.getConversationBackground()
+        }
+    }
+
+    override fun resetConversationBackgroundLiveData() {
+        _conversationBackground.value = null
     }
 
     //endregion

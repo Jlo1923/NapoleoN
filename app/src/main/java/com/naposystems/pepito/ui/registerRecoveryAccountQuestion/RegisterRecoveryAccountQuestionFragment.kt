@@ -155,7 +155,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         val selectedQuestion = binding.spinnerQuestions.selectedItem
         val textInputAnswer = binding.textInputEditTextAnswers.text.toString()
 
-        if(selectedIdQuestion.toInt() == 0 && textInputAnswer.isEmpty() && countAnswer > 3) {
+        if (selectedIdQuestion.toInt() == 0 && textInputAnswer.isEmpty() && countAnswer > 3) {
             generalDialog(
                 getString(R.string.text_title_info),
                 getString(R.string.text_final_register),
@@ -225,7 +225,9 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
             getString(R.string.text_title_cancel),
             getString(R.string.text_description_cancel),
             true,
-            childFragmentManager
+            childFragmentManager,
+            getString(R.string.text_confirm),
+            getString(R.string.text_close)
         ) {
             findNavController().popBackStack()
         }

@@ -7,9 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -67,8 +65,8 @@ class AppearanceSettingsFragment : BaseFragment() {
         viewModelFactory
     }
 
-    private val galleryShareViewModel : GalleryShareViewModel by activityViewModels()
-    private val cameraShareViewModel : CameraShareViewModel by activityViewModels()
+    private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
+    private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
 
     private lateinit var binding: AppearanceSettingsFragmentBinding
     private lateinit var fileName: String
@@ -95,12 +93,12 @@ class AppearanceSettingsFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
             galleryShareViewModel.uriImageSelected.observe(activity, Observer { uri ->
-                if(uri != null) {
+                if (uri != null) {
                     cropImage(uri)
                 }
             })
             cameraShareViewModel.uriImageTaken.observe(activity, Observer { uri ->
-                if(uri != null) {
+                if (uri != null) {
                     cropImage(uri)
                 }
             })
@@ -200,7 +198,7 @@ class AppearanceSettingsFragment : BaseFragment() {
 
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report!!.areAllPermissionsGranted()) {
-                        openImageSelectorBottomSheet()
+                        viewModel.getConversationBackground()
                     }
 
                     if (report.isAnyPermissionPermanentlyDenied) {
@@ -259,13 +257,13 @@ class AppearanceSettingsFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    private fun openImageSelectorBottomSheet() {
+    private fun openImageSelectorBottomSheet(showRestoreDefault: Boolean) {
         val title = requireContext().resources.getString(R.string.text_conversation_background)
 
         val dialog = ImageSelectorBottomSheetFragment.newInstance(
             title,
             Constants.LocationImageSelectorBottomSheet.APPEARANCE_SETTINGS.location,
-            true
+            showRestoreDefault
         )
         dialog.setListener(object : ImageSelectorBottomSheetFragment.OnOptionSelected {
             override fun takeImageOptionSelected(location: Int) {
@@ -291,9 +289,10 @@ class AppearanceSettingsFragment : BaseFragment() {
                     getString(R.string.text_select_default),
                     getString(R.string.text_message_restore_cover_photo),
                     true,
-                    childFragmentManager) {
-                        previewBackgroundChatViewModel.updateChatBackground("")
-                    }
+                    childFragmentManager
+                ) {
+                    previewBackgroundChatViewModel.updateChatBackground("")
+                }
             }
         })
         dialog.show(childFragmentManager, "BottomSheetOptions")
@@ -310,6 +309,14 @@ class AppearanceSettingsFragment : BaseFragment() {
         viewModel.getUserDisplayFormat()
         viewModel.getTimeFormat()
         baseViewModel.getOutputControl()
+
+        viewModel.conversationBackground.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                val showRestoreDefault = it.isNotEmpty()
+                openImageSelectorBottomSheet(showRestoreDefault)
+                viewModel.resetConversationBackgroundLiveData()
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -356,7 +363,8 @@ class AppearanceSettingsFragment : BaseFragment() {
 
             val destinationUri = Uri.fromFile(compressedFile)
 
-            val colorBackground = Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
+            val colorBackground =
+                Utils.convertAttrToColorResource(context, R.attr.attrBackgroundColorPrimary)
 
             val options = UCrop.Options()
             options.setCompressionQuality(imageCompression)

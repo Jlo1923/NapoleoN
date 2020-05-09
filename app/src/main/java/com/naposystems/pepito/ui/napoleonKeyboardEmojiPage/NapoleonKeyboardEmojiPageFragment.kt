@@ -5,11 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.Fragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.NapoleonKeyboardEmojiPageFragmentBinding
+import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.model.emojiKeyboard.EmojiCategory
+import com.naposystems.pepito.reactive.RxBus
+import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
+import com.naposystems.pepito.utility.adapters.showToast
 
 class NapoleonKeyboardEmojiPageFragment : Fragment() {
 
@@ -19,12 +24,10 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
         const val LISTENER_KEY: String = "listener"
 
         fun newInstance(
-            category: EmojiCategory,
-            listener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener
+            category: EmojiCategory
         ) = NapoleonKeyboardEmojiPageFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(CATEGORY_KEY, category)
-                putSerializable(LISTENER_KEY, listener)
             }
         }
     }
@@ -45,12 +48,13 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
                 val categoryValue = bundle.getSerializable(CATEGORY_KEY)
                 categoryValue?.let { category ->
                     emojiCategory = category as EmojiCategory
-                    if (bundle.containsKey(LISTENER_KEY)) {
+                    setupAdapter()
+                    /*if (bundle.containsKey(LISTENER_KEY)) {
                         val listenerValue = bundle.getSerializable(LISTENER_KEY)
                         listenerValue?.let { listener ->
                             setupAdapter(listener as NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener)
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -58,9 +62,14 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupAdapter(listener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener) {
+    private fun setupAdapter() {
         emojiCategory?.let {
-            val adapter = NapoleonKeyboardEmojiPageAdapter(listener)
+            val adapter = NapoleonKeyboardEmojiPageAdapter(object :
+                NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener {
+                override fun onEmojiClick(emoji: Emoji) {
+                    RxBus.publish(RxEvent.EmojiSelected(emoji))
+                }
+            })
             adapter.submitList(it.emojiList)
 
             binding.recyclerViewEmojis.adapter = adapter

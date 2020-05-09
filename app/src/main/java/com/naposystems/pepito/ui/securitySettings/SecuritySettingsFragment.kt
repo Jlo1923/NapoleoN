@@ -15,6 +15,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsViewModel
+import com.naposystems.pepito.ui.selfDestructTime.Location
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
@@ -123,7 +124,7 @@ class SecuritySettingsFragment : Fragment() {
     }
 
     private fun optionMessageClickListener() = View.OnClickListener {
-        val dialog = SelfDestructTimeDialogFragment.newInstance(0)
+        val dialog = SelfDestructTimeDialogFragment.newInstance(0, Location.SECURITY_SETTINGS)
         dialog.setListener(object : SelfDestructTimeDialogFragment.SelfDestructTimeListener {
             override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
                 selfDestructTimeViewModel.getSelfDestructTime()

@@ -7,9 +7,9 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.BlockedContactsFragmentBinding
@@ -23,13 +23,15 @@ import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     companion object {
+        private const val EMPTY_STATE = 0
+        private const val RECYCLER_VIEW = 1
+        private const val SEARCH_NO_RESULT = 2
         fun newInstance() = BlockedContactsFragment()
     }
 
@@ -37,7 +39,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel: BlockedContactsViewModel by viewModels { viewModelFactory }
-    private lateinit var shareContactViewModel: ShareContactViewModel
+    private val shareContactViewModel: ShareContactViewModel by activityViewModels { viewModelFactory }
     private lateinit var binding: BlockedContactsFragmentBinding
     private lateinit var adapter: BlockedContactsAdapter
     private lateinit var mainActivity: MainActivity
@@ -79,12 +81,6 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        try {
-            shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
-                .get(ShareContactViewModel::class.java)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
 
         viewModel.getBlockedContacts()
 
@@ -100,30 +96,15 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     private fun observeListBlockedContacts() {
         viewModel.listBlockedContacts.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
-            if (it.isNotEmpty()) {
-                if (binding.viewSwitcherRecycler.currentView.id == binding.containerSearchNotFound.id) {
-                    binding.viewSwitcherRecycler.showNext()
-                }
-            } else {
-                if (binding.viewSwitcherRecycler.currentView.id == binding.containerRecyclerViewBlockedContacts.id) {
-                    binding.viewSwitcherRecycler.showNext()
-                }
-            }
+            binding.viewFlipper.displayedChild =
+                if (it.isNotEmpty()) RECYCLER_VIEW else SEARCH_NO_RESULT
         })
     }
 
     private fun observeBlockedContacts() {
         viewModel.blockedContacts.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
-            if (it.isNotEmpty()) {
-                if (binding.viewSwitcher.currentView.id == binding.emptyState.id) {
-                    binding.viewSwitcher.showNext()
-                }
-            } else {
-                if (binding.viewSwitcher.currentView.id == binding.viewSwitcherRecycler.id) {
-                    binding.viewSwitcher.showNext()
-                }
-            }
+            binding.viewFlipper.displayedChild = if (it.isNotEmpty()) RECYCLER_VIEW else EMPTY_STATE
         })
     }
 
@@ -133,23 +114,27 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     }
 
     override fun onQuery(text: String) {
-        if (text.length >= 4) {
-            viewModel.searchLocalBlockedContact(text.toLowerCase(Locale.getDefault()))
-        } else {
-            refreshView()
+        when (text.length) {
+            in 1..3 -> showNoResults()
+            0 -> showRecycler()
+            else -> viewModel.searchLocalBlockedContact(text.toLowerCase(Locale.getDefault()))
         }
     }
 
     override fun onClosed() {
-        refreshView()
+        showRecycler()
     }
     //endregion
 
-    private fun refreshView() {
+    private fun showNoResults() {
         adapter.submitList(viewModel.blockedContacts.value)
-        if (binding.viewSwitcherRecycler.currentView.id == binding.containerSearchNotFound.id) {
-            binding.viewSwitcherRecycler.showNext()
-        }
+        binding.viewFlipper.displayedChild = SEARCH_NO_RESULT
+    }
+
+    private fun showRecycler() {
+        val blockedContacts = viewModel.blockedContacts.value?.size ?: 0
+        binding.viewFlipper.displayedChild =
+            if (blockedContacts > 0) RECYCLER_VIEW else EMPTY_STATE
     }
 
     private fun setAdapter() {
@@ -169,7 +154,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun showPopupMenu(view: View, item: Contact) {
-        val popup = PopupMenu(context!!, view)
+        val popup = PopupMenu(requireContext(), view)
         popup.menuInflater.inflate(R.menu.menu_block_contact, popup.menu)
 
         popup.setOnMenuItemClickListener {
@@ -208,7 +193,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
             childFragmentManager
         ) {
             shareContactViewModel.unblockContact(contact.id)
-            showToast(context!!, getString(R.string.text_unblocked_contact))
+            showToast(requireContext(), getString(R.string.text_unblocked_contact))
         }
     }
 }

@@ -215,4 +215,8 @@ class HomeRepository @Inject constructor(
     override fun getMessagesForHome(): LiveData<List<MessageAndAttachment>> {
         return messageLocalDataSource.getMessagesForHome()
     }
+
+    override fun verifyMessagesToDelete() {
+        messageLocalDataSource.verifyMessagesToDelete()
+    }
 }

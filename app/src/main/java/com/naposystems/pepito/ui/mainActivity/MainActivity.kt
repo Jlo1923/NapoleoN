@@ -251,6 +251,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     disableDrawer()
                 }
                 else -> {
+                    showToolbar()
                     resetToolbar()
                     dontOpenMenu()
                     disableDrawer()

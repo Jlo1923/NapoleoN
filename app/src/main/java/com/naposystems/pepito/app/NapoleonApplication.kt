@@ -1,5 +1,7 @@
 package com.naposystems.pepito.app
 
+import android.app.NotificationManager
+import android.content.Context
 import androidx.core.provider.FontRequest
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
@@ -21,6 +23,7 @@ import dagger.android.support.DaggerApplication
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
@@ -48,6 +51,9 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         Places.initialize(this, "AIzaSyDcAkhqRS4BO-BoKM89HiXuR4ruLr8fj1w")
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         socketService.initSocket()
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
     }
 
     override fun onStart(owner: LifecycleOwner) {

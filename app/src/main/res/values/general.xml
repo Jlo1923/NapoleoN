@@ -60,7 +60,7 @@
     <string name="text_block_contact">Block contact</string>
     <string name="text_unblock_contact">Unblock Contact</string>
     <string name="text_attachment_document_name">Document.%1$s</string>
-    <string name="text_status_limit">4 custom states are allowed, delete a previously saved one to add a new one.</string>
+    <string name="text_status_limit">4 custom states are allowed; Removes one previously stored to add new one</string>
     <string name="text_alert_failure">Advertencia</string>
     <string name="text_preview_self_destruct_time_my_message" translatable="false">04:52</string>
     <string name="text_preview_self_destruct_time_incoming_message" translatable="false">00:24</string>
@@ -77,4 +77,6 @@
     <string name="text_empty_state_search_description">Find a nickname, add it and share with that person privately and securely</string>
     <string name="text_now">Now</string>
     <string name="text_yesterday">Yesterday</string>
+    <string name="text_close">Close</string>
+    <string name="text_confirm">Confirm</string>
 </resources>

@@ -48,7 +48,7 @@
         <item quantity="one">%d selezionato</item>
         <item quantity="other">%d selezionato</item>
     </plurals>
-    <string name="text_status_limit">Sono ammessi 4 stati personalizzati, eliminane uno precedentemente salvato per aggiungerne uno nuovo.</string>
+    <string name="text_status_limit">4 stati personalizzati sono consentiti; Rimuove un precedentemente memorizzati per aggiungere uno nuovo</string>
     <string name="text_preview_my_message">Ciao</string>
     <string name="text_preview_incoming_message">Ciao come stai</string>
     <string name="text_display_name">Nome visualizzato</string>
@@ -61,4 +61,6 @@
     <string name="text_empty_state_search_description">Trova un soprannome, aggiungilo e condividi con quella persona in modo privato e sicuro</string>
     <string name="text_now">Ora</string>
     <string name="text_yesterday">Ieri</string>
+    <string name="text_close">Vicino</string>
+    <string name="text_confirm">Conferma</string>
 </resources>

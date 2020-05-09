@@ -81,7 +81,7 @@ class SplashFragment : Fragment() {
                         SplashFragmentDirections.actionSplashFragmentToRegisterFragment()
                     )
                     Constants.AccountStatus.ACCOUNT_CREATED.id -> {
-                        when(lockTypeApp) {
+                        when (lockTypeApp) {
                             Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type -> {
                                 validateTimeLock()
                             }
@@ -123,7 +123,7 @@ class SplashFragment : Fragment() {
 
         //region Set DefaultPreferences
         viewModel.setDefaultPreferences()
-        viewModel.setDefaultLanguage(LocaleHelper.getLanguagePreference(context!!))
+        viewModel.setDefaultLanguage(LocaleHelper.getLanguagePreference(requireContext()))
         setDefaultBiometricsOption()
         //endregion
 
@@ -159,16 +159,18 @@ class SplashFragment : Fragment() {
 
 
     private fun setDefaultBiometricsOption() {
-        val biometricManager = BiometricManager.from(context!!)
+        val biometricManager = BiometricManager.from(requireContext())
 
-        when(biometricManager.canAuthenticate()){
+        when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
                 viewModel.setDefaultBiometricsOption(Constants.Biometrics.BIOMETRICS_NOT_FOUND.option)
             }
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE,
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED,
-            BiometricManager.BIOMETRIC_SUCCESS -> {
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 viewModel.setDefaultBiometricsOption(Constants.Biometrics.WITHOUT_BIOMETRICS.option)
+            }
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                viewModel.setDefaultBiometricsOption(Constants.Biometrics.UNLOCK_WITH_FINGERPRINT.option)
             }
 
         }

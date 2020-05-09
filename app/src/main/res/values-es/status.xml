@@ -11,5 +11,6 @@
     <string name="text_status_only_emergency">Solo emergencias</string>
     <string name="text_error_getting_local_status">Ha ocurrido un error al obtener los estados, inténtalo nuevamente</string>
     <string name="text_delete_status">Eliminar estado</string>
+    <string name="text_status_updated_successfully">Estado actualizado satisfactoriamente</string>
 
 </resources>

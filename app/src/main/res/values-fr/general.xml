@@ -48,7 +48,7 @@
         <item quantity="one">%d sélectionné</item>
         <item quantity="other">%d sélectionné</item>
     </plurals>
-    <string name="text_status_limit">4 états personnalisés sont autorisés, supprimez un précédemment enregistré pour en ajouter un nouveau.</string>
+    <string name="text_status_limit">4 états personnalisés sont autorisés; Supprime une précédemment stockée pour ajouter un nouveau</string>
     <string name="text_preview_my_message">Salut</string>
     <string name="text_preview_incoming_message">Bonjour, comment allez-vous?</string>
     <string name="text_display_name">Nom d\'affichage</string>
@@ -61,4 +61,6 @@
     <string name="text_empty_state_search_description">Trouvez un surnom, ajoutez-le et partagez-le avec cette personne en privé et en toute sécurité</string>
     <string name="text_now">Maintenant</string>
     <string name="text_yesterday">Hier</string>
+    <string name="text_close">Fermer</string>
+    <string name="text_confirm">Confirmer</string>
 </resources>

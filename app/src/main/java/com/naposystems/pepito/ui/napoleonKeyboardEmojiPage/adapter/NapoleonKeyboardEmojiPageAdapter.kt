@@ -47,7 +47,7 @@ class NapoleonKeyboardEmojiPageAdapter constructor(private val listener: OnNapol
         }
     }
 
-    interface OnNapoleonKeyboardEmojiPageAdapterListener : Serializable {
+    interface OnNapoleonKeyboardEmojiPageAdapterListener {
         fun onEmojiClick(emoji: Emoji)
     }
 }

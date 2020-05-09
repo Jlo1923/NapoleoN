@@ -6,7 +6,7 @@ object Constants {
     const val GIPHY_API_KEY = "R6CTqCVGyxWIAEad1tbbRFouJ6C6hFQX"
     const val DATA_CRYPT = "datacrypt"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
-    const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 1
+    const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 3
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
     const val QUANTITY_ATTACHMENTS = 0

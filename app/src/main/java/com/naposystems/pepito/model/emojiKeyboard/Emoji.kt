@@ -1,8 +1,9 @@
 package com.naposystems.pepito.model.emojiKeyboard
 
 import androidx.recyclerview.widget.DiffUtil
+import java.io.Serializable
 
-class Emoji(val id: Int, val name: String, vararg val code: Int) {
+class Emoji(val id: Int, val name: String, vararg val code: Int): Serializable {
 
     companion object {
         val DiffCallback = object : DiffUtil.ItemCallback<Emoji>() {

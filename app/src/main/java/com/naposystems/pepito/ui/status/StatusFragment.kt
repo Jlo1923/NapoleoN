@@ -2,9 +2,7 @@ package com.naposystems.pepito.ui.status
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
@@ -51,6 +49,8 @@ class StatusFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
+
         binding = DataBindingUtil.inflate(
             inflater, R.layout.status_fragment, container, false
         )
@@ -67,31 +67,51 @@ class StatusFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        context?.let { context ->
-            textInputEditTextStatusSetOnEditorActionListener(context)
+        textInputEditTextStatusSetOnEditorActionListener()
 
-            viewModel.user.value = args.user
+        viewModel.user.value = args.user
 
-            observeStatus(context)
+        observeStatus()
 
-            viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
-                if (it == true) {
-                    val message = getString(R.string.text_error_getting_local_status)
+        viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                val message = getString(R.string.text_error_getting_local_status)
 
-                    Utils.showSimpleSnackbar(binding.coordinator, message, 3)
-                }
-            })
+                Utils.showSimpleSnackbar(binding.coordinator, message, 3)
+            }
+        })
 
-            viewModel.errorUpdatingStatus.observe(viewLifecycleOwner, Observer {
-                if (it.isNotEmpty()) {
-                    val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                    snackbarUtils.showSnackbar()
-                }
-            })
-        }
+        viewModel.errorUpdatingStatus.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+                val snackbarUtils = SnackbarUtils(binding.coordinator, it)
+                snackbarUtils.showSnackbar()
+            }
+        })
+
+        viewModel.statusUpdatedSuccessfully.observe(viewLifecycleOwner, Observer { isUpdated ->
+            if (isUpdated == true) {
+                Utils.hideKeyboard(binding.coordinator)
+                Utils.showSimpleSnackbar(
+                    binding.coordinator,
+                    getString(R.string.text_status_updated_successfully),
+                    3
+                )
+            }
+        })
     }
 
-    private fun observeStatus(context: Context) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_status, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.done -> createStatus()
+        }
+        return true
+    }
+
+    private fun observeStatus() {
         viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
             if (statusList != null) {
                 selectStatus(statusList)
@@ -107,7 +127,7 @@ class StatusFragment : Fragment() {
                         binding.textInputEditTextStatus.setText(textStatus)
                         viewModel.updateStatus(textStatus)
                     }, clickDelete = { status, view ->
-                        val popup = PopupMenu(context, view)
+                        val popup = PopupMenu(requireContext(), view)
                         popup.menuInflater.inflate(R.menu.menu_popup_status, popup.menu)
 
                         popup.setOnMenuItemClickListener {
@@ -126,30 +146,36 @@ class StatusFragment : Fragment() {
         })
     }
 
-    private fun textInputEditTextStatusSetOnEditorActionListener(context: Context) {
-        binding.textInputEditTextStatus.setOnEditorActionListener { view, actionId, _ ->
+    private fun textInputEditTextStatusSetOnEditorActionListener() {
+        binding.textInputEditTextStatus.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (view.text.trim().isNotEmpty()) {
-                    viewModel.status.value?.let { listStatus ->
-                        if (listStatus.count() < 10) {
-                            viewModel.updateStatus(view.text.toString())
-                            view.clearFocus()
-                        } else {
-                            Utils.alertDialogInformative(
-                                R.string.text_status_limit,
-                                true,
-                                context,
-                                R.string.text_accept,
-                                clickTopButton = {
-
-                                }
-                            )
-                        }
-                    }
-                }
+                createStatus()
                 false
             } else {
                 true
+            }
+        }
+    }
+
+    private fun createStatus() {
+        binding.textInputEditTextStatus.text?.toString()?.let { textStatus ->
+            if (textStatus.trim().isNotEmpty()) {
+                viewModel.status.value?.let { listStatus ->
+                    if (listStatus.count() < 10) {
+                        viewModel.updateStatus(textStatus)
+                        binding.textInputEditTextStatus.clearFocus()
+                    } else {
+                        Utils.alertDialogInformative(
+                            R.string.text_status_limit,
+                            true,
+                            requireContext(),
+                            R.string.text_accept,
+                            clickTopButton = {
+
+                            }
+                        )
+                    }
+                }
             }
         }
     }

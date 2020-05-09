@@ -61,6 +61,7 @@
             android:layout_marginEnd="@dimen/small_margin"
             android:text="@string/text_cancel"
             android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintEnd_toStartOf="@id/button_accept"
             app:layout_constraintTop_toTopOf="@id/button_accept" />
 

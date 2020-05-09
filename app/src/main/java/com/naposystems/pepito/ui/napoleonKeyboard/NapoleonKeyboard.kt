@@ -21,19 +21,19 @@ import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.napoleonKeyboardSticker.NapoleonKeyboardStickerFragment
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.emojiManager.EmojiResultReceiver
-
+import timber.log.Timber
+import java.io.Serializable
 
 class NapoleonKeyboard constructor(
     private val rootView: View,
-    private val editText: EmojiAppCompatEditText,
-    private val listener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener
+    private val editText: EmojiAppCompatEditText
 ) : IContractNapoleonKeyboard, EmojiResultReceiver.Listener,
     NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener,
     NapoleonKeyboardView.NapoleonKeyboardViewListener,
-    NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener {
+    NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener, Serializable {
 
     companion object {
-        const val MIN_KEYBOARD_HEIGHT: Int = 50
+        const val MIN_KEYBOARD_HEIGHT: Int = 0
     }
 
     private val mainActivity: MainActivity by lazy {
@@ -54,32 +54,23 @@ class NapoleonKeyboard constructor(
     private val emojiResultReceiver = EmojiResultReceiver(Handler(Looper.getMainLooper()))
 
     init {
-        popupWindowEmoji.apply {
-            isFocusable = true
-            contentView = NapoleonKeyboardView(mainActivity)
-            (contentView as NapoleonKeyboardView).apply {
-                setListeners(listener, this@NapoleonKeyboard, this@NapoleonKeyboard)
-                setEditText(editText)
-                setListener(this@NapoleonKeyboard)
+        try {
+            popupWindowEmoji.apply {
+                isFocusable = true
+                contentView = NapoleonKeyboardView(mainActivity)
+                (contentView as NapoleonKeyboardView).apply {
+                    setListeners(this@NapoleonKeyboard, this@NapoleonKeyboard)
+                    setEditText(editText)
+                    setListener(this@NapoleonKeyboard)
+                }
+
+                inputMethodMode = PopupWindow.INPUT_METHOD_NOT_NEEDED
+                setBackgroundDrawable(null)
             }
 
-            inputMethodMode = PopupWindow.INPUT_METHOD_NOT_NEEDED
-            setBackgroundDrawable(null)
-        }
-
-        mainActivity.onBackPressedDispatcher.addCallback() {
-            when {
-                isShowing() && !isShowingGifPageBigger -> {
-                    dismiss()
-                }
-                isShowingGifPageBigger -> {
-                    normalizePopupHeight()
-                }
-                else -> {
-                    mainActivity.getNavController().navigateUp()
-                }
-            }
-
+            start()
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
@@ -99,9 +90,7 @@ class NapoleonKeyboard constructor(
             popupWindowEmoji.width = properWidth
         }
 
-        if (!isKeyboardOpen) {
-            isKeyboardOpen = true
-        }
+        isKeyboardOpen = true
 
         if (isPendingOpen) {
             showAtBottom()
@@ -109,8 +98,6 @@ class NapoleonKeyboard constructor(
     }
 
     private fun updateKeyboardStateClosed() {
-        isKeyboardOpen = false
-
         if (isShowing()) {
             dismiss()
         }
@@ -125,7 +112,6 @@ class NapoleonKeyboard constructor(
         popupWindowEmoji.dismiss()
         emojiResultReceiver.setListener(null)
         mainActivity.resetLayoutHeight()
-        mainActivity.window.decorView.setOnApplyWindowInsetsListener(null)
     }
 
     private fun start() {
@@ -154,6 +140,7 @@ class NapoleonKeyboard constructor(
                                 offset
                             )
                         } else {
+                            isKeyboardOpen = false
                             if (isShowingKeyboard) {
                                 windowInsets?.let {
                                     popupWindowEmoji.isFocusable = false
@@ -195,22 +182,49 @@ class NapoleonKeyboard constructor(
     }
 
     //region Implementation IContractEmojiKeyboard
-    override fun toggle() {
+    override fun toggle(keyboardHeight: Int) {
         if (!popupWindowEmoji.isShowing) {
-            start()
             editText.requestFocus()
-            val inputMethodManager = mainActivity
-                .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-            isPendingOpen = true
+            if (isKeyboardOpen) {
+                showAtBottom()
+            } else {
+                isPendingOpen = true
+                val inputMethodManager = mainActivity
+                    .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+            }
+
+
         } else {
             dismiss()
         }
     }
 
     override fun isShowing() = popupWindowEmoji.isShowing
+
+    override fun handleBackButton() {
+        when {
+            isShowing() && !isShowingGifPageBigger -> {
+                normalizePopupHeight()
+                dismiss()
+            }
+            isShowingGifPageBigger -> {
+                normalizePopupHeight()
+            }
+            else -> {
+                mainActivity.getNavController().navigateUp()
+            }
+        }
+    }
+
+    override fun dispose() {
+        popupWindowEmoji.dismiss()
+        emojiResultReceiver.setListener(null)
+        mainActivity.resetLayoutHeight()
+        mainActivity.window.decorView.setOnApplyWindowInsetsListener(null)
+    }
 
     //endregion
 

@@ -8,8 +8,7 @@ import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.NapoleonKeyboardEmoji
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 
 class NapoleonKeyboardEmojiViewPagerAdapter constructor(
-    fragmentActivity: FragmentActivity,
-    private val listener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener
+    fragmentActivity: FragmentActivity
 ) :
     FragmentStateAdapter(fragmentActivity) {
 
@@ -20,7 +19,7 @@ class NapoleonKeyboardEmojiViewPagerAdapter constructor(
     override fun createFragment(position: Int): Fragment {
         val emojiCategory = mListCategories[position]
 
-        return NapoleonKeyboardEmojiPageFragment.newInstance(emojiCategory, listener)
+        return NapoleonKeyboardEmojiPageFragment.newInstance(emojiCategory)
     }
 
     fun addCategories(listEmojiCategory: List<EmojiCategory>) {

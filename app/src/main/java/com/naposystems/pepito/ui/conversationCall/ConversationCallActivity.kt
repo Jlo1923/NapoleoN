@@ -106,7 +106,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.fabHangup.setOnClickListener {
-            if (!webRTCClient.isActiveCall()) {
+            if (!isIncomingCall && !webRTCClient.isActiveCall()) {
                 viewModel.sendMissedCall(contactId, isVideoCall)
             }
             webRTCClient.emitHangUp()
@@ -335,7 +335,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     }
 
     override fun contactNotAnswer() {
-        viewModel.sendMissedCall(contactId, isVideoCall)
+        if (!isIncomingCall)
+            viewModel.sendMissedCall(contactId, isVideoCall)
     }
 
     //endregion

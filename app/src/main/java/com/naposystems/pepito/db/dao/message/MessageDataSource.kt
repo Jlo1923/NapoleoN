@@ -47,4 +47,6 @@ interface MessageDataSource {
     suspend fun deleteMessages(contactId: Int)
 
     suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
+
+    fun verifyMessagesToDelete()
 }

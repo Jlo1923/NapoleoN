@@ -25,24 +25,25 @@
                 android:id="@+id/imageView_background"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/vertical_photo" />
+                tools:src="@drawable/bg_default_conversation" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_message"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="116dp"
+                android:layout_marginTop="@dimen/normal_margin"
                 android:background="@drawable/bg_incoming_message"
                 android:paddingStart="20dp"
                 android:paddingTop="@dimen/x_small_padding"
                 android:paddingEnd="@dimen/small_padding"
                 android:paddingBottom="@dimen/x_small_padding"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_max="wrap"
                 app:layout_constraintWidth_min="wrap"
                 app:layout_constraintWidth_percent="0.7">
@@ -151,28 +152,26 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_cancel"
                 android:layout_width="150dp"
-                android:layout_margin="@dimen/normal_margin"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="@color/white"
+                android:layout_margin="@dimen/normal_margin"
                 android:text="@string/text_cancel"
+                android:textColor="@color/white"
                 android:textSize="@dimen/small_text_size"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_message_my_message" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_accept"
                 android:layout_width="150dp"
-                android:layout_margin="@dimen/normal_margin"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/normal_margin"
                 android:text="@string/text_accept"
-                android:textStyle="bold"
                 android:textColor="@color/white"
                 android:textSize="@dimen/small_text_size"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_message_my_message" />
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

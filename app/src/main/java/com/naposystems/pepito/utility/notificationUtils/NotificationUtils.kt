@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
-import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.*
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.pepito.R
@@ -58,7 +58,7 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
         val pendingIntent = pair.first
         notificationType = pair.second
 
-        val builder = NotificationCompat.Builder(
+        val builder = Builder(
             context,
             channelId
         )
@@ -67,7 +67,9 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             .setContentTitle(title)
             .setContentIntent(pendingIntent)
             .setContentText(body)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(DEFAULT_ALL)
+            .setPriority(PRIORITY_MAX)
+            .setVisibility(VISIBILITY_PUBLIC)
             .setAutoCancel(true)
 
         createNotificationChannel(
@@ -123,11 +125,11 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
     private fun handleNotificationType(
         notificationType: Int,
         data: Map<String, String>,
-        builder: NotificationCompat.Builder,
+        builder: Builder,
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ) {
-        var app: NapoleonApplication?  = null
+        var app: NapoleonApplication? = null
         if (context is NapoleonApplication) {
             app = context
             Timber.d("IsAppVisible: ${app.isAppVisible()}")
@@ -161,8 +163,10 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                     repository.notifyMessageReceived(data.getValue(messageId))
                 }
 
-                with(NotificationManagerCompat.from(context)) {
-                    notify(Random().nextInt(), builder.build())
+                if (!app!!.isAppVisible()) {
+                    with(NotificationManagerCompat.from(context)) {
+                        notify(Random().nextInt(), builder.build())
+                    }
                 }
                 Timber.d("Mensaje perro")
             }
@@ -230,10 +234,12 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.default_notification_channel_id)
             val descriptionText = context.getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText
             }
+            channel.setShowBadge(true)
+            channel.lockscreenVisibility = PRIORITY_MAX
             // Register the channel with the system
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
