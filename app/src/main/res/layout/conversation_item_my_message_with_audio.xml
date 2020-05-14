@@ -23,6 +23,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_my_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(conversation)}"
@@ -92,11 +93,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/small_margin"
                 android:visibility="gone"
+                app:formatTime="@{timeFormat}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
                 app:messageDate="@{conversation.message.createdAt}"
-                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

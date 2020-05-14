@@ -1,7 +1,5 @@
 package com.naposystems.pepito.ui.conversation.viewHolder
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,52 +7,36 @@ import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithGif
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
+import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 
 class IncomingMessageGifNNViewHolder constructor(
     private val binding: ConversationItemIncomingMessageWithGifNnBinding
 ) :
     ConversationViewHolder(binding.root) {
 
-    fun setProgress(
-        progress: Long
-    ) {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.progressBar.setProgress(progress.toFloat())
+    init {
+        super.containerMessage = binding.containerIncomingMessage
+        super.progressBar = binding.progressBar
+        super.progressBarIndeterminate = binding.progressBarIndeterminate
+        super.imageButtonState = binding.imageButtonState
+//        super.containerQuote = binding.containerQuote
+        super.textViewCountDown = binding.textViewCountDown
+//        super.quote = binding.quote
     }
 
-    @SuppressLint("ResourceAsColor")
-    fun bind(
+    override fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
-        timeFormat : Int?
+        isFirst: Boolean,
+        timeFormat: Int?,
+        mediaPlayerManager: MediaPlayerManager?
     ) {
+        super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
         binding.itemPosition = adapterPosition
         binding.clickListener = clickListener
         binding.conversation = item
         binding.imageViewAttachment.visibility = View.GONE
         binding.timeFormat = timeFormat
-
-        countDown(
-            item,
-            binding.textViewCountDown,
-            itemToEliminate = { messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
-
-        if (item.message.isSelected) {
-            binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
-        } else {
-            binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
-        }
-
-        binding.containerIncomingMessage.setOnLongClickListener {
-            clickListener.onLongClick(item.message)
-            true
-        }
-
-        binding.containerIncomingMessage.setOnClickListener {
-            clickListener.onClick(item)
-        }
 
         binding.executePendingBindings()
     }

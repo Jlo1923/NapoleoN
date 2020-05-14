@@ -90,7 +90,7 @@
                 android:id="@+id/progressBar"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:visibility="gone"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@id/textView_document_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/textView_document_name"
@@ -100,18 +100,49 @@
                 tools:progress="50"
                 tools:visibility="visible" />
 
+            <ProgressBar
+                android:id="@+id/progressBar_indeterminate"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar" />
+
+            <!-- BUTTON ATTACHMENT STATE -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_state"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:background="@drawable/bg_black_40"
+                android:foreground="?attr/actionBarItemBackground"
+                android:padding="@dimen/x_small_padding"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar"
+                app:srcCompat="@drawable/ic_close_black_24"
+                custom:iconForState="@{conversation}"
+                tools:visibility="visible" />
+
             <TextView
                 android:id="@+id/textView_document_name"
                 style="@style/MyMessageTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textAlignment="textStart"
                 app:attachmentDocumentName="@{conversation}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_document_type"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/progressBar"
                 app:layout_constraintStart_toEndOf="@id/imageView_document_type"
                 app:layout_constraintTop_toTopOf="@id/imageView_document_type"
                 tools:text="El mero packistan.pdf" />
@@ -122,11 +153,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/small_margin"
                 android:visibility="gone"
+                app:formatTime="@{timeFormat}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
                 app:messageDate="@{conversation.message.createdAt}"
-                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

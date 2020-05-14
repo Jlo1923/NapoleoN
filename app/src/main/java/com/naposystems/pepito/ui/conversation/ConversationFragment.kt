@@ -45,7 +45,6 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
-import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
@@ -59,7 +58,6 @@ import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.napoleonKeyboard.NapoleonKeyboard
-import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.ui.selfDestructTime.Location
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -544,15 +542,19 @@ class ConversationFragment : BaseFragment(),
         })
 
         shareViewModel.gifSelected.observe(requireActivity(), Observer { gifAttachment ->
-            if (gifAttachment != null) {
-                findNavController().navigate(
-                    ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
-                        gifAttachment,
-                        0,
-                        shareViewModel.getQuoteWebId() ?: ""
+            try {
+                if (gifAttachment != null) {
+                    findNavController().navigate(
+                        ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
+                            gifAttachment,
+                            0,
+                            shareViewModel.getQuoteWebId() ?: ""
+                        )
                     )
-                )
-                shareViewModel.resetGifSelected()
+                    shareViewModel.resetGifSelected()
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         })
     }
@@ -619,6 +621,9 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.downloadAttachmentProgress.observe(viewLifecycleOwner, Observer {
             when (it) {
+                is DownloadAttachmentResult.Start -> {
+                    conversationAdapter.setStartDownload(it.itemPosition, it.job)
+                }
                 is DownloadAttachmentResult.Success -> {
                     it.attachment.status =
                         Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
@@ -645,12 +650,19 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is UploadResult.Success -> {
-                    conversationAdapter.setUploadComplete(it.attachment)
-                }
+                is UploadResult.Start -> conversationAdapter.setUploadStart(it.attachment, it.job)
+                is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
                 is UploadResult.Progress -> {
                     Timber.d("Progreso subida: ${it.progress}")
                     conversationAdapter.setUploadProgress(it.attachment, it.progress)
+                }
+                is UploadResult.Cancel -> {
+                    val attachment: Attachment = it.attachment
+                    val message: Message = it.message
+                    message.status = Constants.MessageStatus.SENDING.status
+                    viewModel.updateMessage(message)
+                    attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
+                    viewModel.updateAttachment(attachment)
                 }
             }
         })
@@ -869,7 +881,7 @@ class ConversationFragment : BaseFragment(),
     override fun onResume() {
         super.onResume()
         mediaPlayerManager.registerProximityListener()
-        setConversationBackground()
+//        setConversationBackground()
     }
 
     override fun onDestroy() {
@@ -1144,6 +1156,7 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
+    @InternalCoroutinesApi
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
             override fun onClick(item: MessageAndAttachment) {
@@ -1199,6 +1212,14 @@ class ConversationFragment : BaseFragment(),
                     viewModel.updateAttachment(attachment)
                     viewModel.downloadAttachment(attachment, itemPosition)
                 }
+            }
+
+            override fun uploadAttachment(attachment: Attachment, message: Message) {
+                viewModel.uploadAttachment(attachment, message)
+            }
+
+            override fun updateAttachmentState(attachment: Attachment) {
+                viewModel.updateAttachment(attachment)
             }
         }, mediaPlayerManager, timeFormatShareViewModel.getValTimeFormat())
 

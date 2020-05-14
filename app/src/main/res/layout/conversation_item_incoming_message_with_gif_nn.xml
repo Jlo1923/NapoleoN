@@ -52,9 +52,7 @@
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
-                app:clickListener="@{clickListener}"
                 app:imageAttachment="@{conversation}"
-                app:itemPosition="@{itemPosition}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -74,6 +72,36 @@
                 custom:progressBarThickness="@dimen/circle_progress_bar"
                 custom:progressbarColor="@color/colorPrimary"
                 tools:progress="70"
+                tools:visibility="visible" />
+
+            <ProgressBar
+                android:id="@+id/progressBar_indeterminate"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar" />
+
+            <!-- BUTTON ATTACHMENT STATE -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_state"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_black_40"
+                android:foreground="?attr/actionBarItemBackground"
+                android:padding="@dimen/x_small_padding"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar"
+                app:srcCompat="@drawable/ic_close_black_24"
+                custom:iconForState="@{conversation}"
                 tools:visibility="visible" />
 
             <TextView

@@ -21,7 +21,6 @@ import com.naposystems.pepito.utility.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
-import retrofit2.Response
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -241,16 +240,19 @@ class ConversationViewModel @Inject constructor(
             val messageResponse = repository.sendMessage(messageReqDTO)
 
             if (messageResponse.isSuccessful) {
+                val messageEntity = MessageResDTO.toMessageEntity(
+                    message,
+                    messageResponse.body()!!,
+                    Constants.IsMine.YES.value
+                )
 
                 if (attachment != null) {
-
-                    uploadAttachment(attachment, messageResponse, message)
+                    attachment.messageWebId = messageResponse.body()!!.id
+                    uploadAttachment(attachment, messageEntity)
                 } else {
-                    val messageEntity = MessageResDTO.toMessageEntity(
-                        message,
-                        messageResponse.body()!!,
-                        Constants.IsMine.YES.value
-                    )
+                    messageEntity.status =
+                        if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
+                        else Constants.MessageStatus.SENT.status
                     repository.updateMessage(messageEntity)
                 }
             } else {
@@ -265,32 +267,6 @@ class ConversationViewModel @Inject constructor(
         } catch (e: Exception) {
             setStatusErrorMessageAndAttachment(message, attachment)
             Timber.e(e)
-        }
-    }
-
-    @ExperimentalCoroutinesApi
-    @InternalCoroutinesApi
-    private suspend fun uploadAttachment(
-        attachment: Attachment,
-        messageResponse: Response<MessageResDTO>,
-        message: Message
-    ) {
-        withContext(Dispatchers.IO) {
-
-            attachment.messageWebId = messageResponse.body()!!.id
-
-            try {
-                viewModelScope.launch {
-                    repository.sendMessageAttachment(attachment, message, messageResponse)
-                        .flowOn(Dispatchers.IO)
-                        .collect {
-                            _uploadProgress.value = it
-                        }
-                }
-            } catch (e: Exception) {
-                setStatusErrorMessageAndAttachment(message, attachment)
-                Timber.e(e)
-            }
         }
     }
 
@@ -470,6 +446,25 @@ class ConversationViewModel @Inject constructor(
         this.isVideoCall = false
     }
 
+    override fun uploadAttachment(
+        attachment: Attachment,
+        message: Message
+    ) {
+        try {
+            viewModelScope.launch {
+                repository.suspendUpdateAttachment(attachment)
+                repository.uploadAttachment(attachment, message)
+                    .flowOn(Dispatchers.IO)
+                    .collect {
+                        _uploadProgress.value = it
+                    }
+            }
+        } catch (e: Exception) {
+            setStatusErrorMessageAndAttachment(message, attachment)
+            Timber.e(e)
+        }
+    }
+
     override fun downloadAttachment(attachment: Attachment, itemPosition: Int) {
         viewModelScope.launch {
             repository.downloadAttachment(attachment, itemPosition)
@@ -478,6 +473,10 @@ class ConversationViewModel @Inject constructor(
                     _downloadProgress.value = it
                 }
         }
+    }
+
+    override fun updateMessage(message: Message) {
+        repository.updateMessage(message)
     }
 
     override fun updateAttachment(attachment: Attachment) {

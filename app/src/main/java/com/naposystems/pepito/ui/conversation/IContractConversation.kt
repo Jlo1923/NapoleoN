@@ -62,7 +62,9 @@ interface IContractConversation {
         fun setIsVideoCall(isVideoCall: Boolean)
         fun isVideoCall(): Boolean
         fun resetIsVideoCall()
+        fun uploadAttachment(attachment: Attachment, message: Message)
         fun downloadAttachment(attachment: Attachment, itemPosition: Int)
+        fun updateMessage(message: Message)
         fun updateAttachment(attachment: Attachment)
         fun sendDocumentAttachment(fileUri: Uri)
         fun resetDocumentCopied()
@@ -75,14 +77,7 @@ interface IContractConversation {
         suspend fun getQuoteId(quoteWebId: String): Int
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
-
-        @InternalCoroutinesApi
-        suspend fun sendMessageAttachment(
-            attachment: Attachment,
-            message: Message,
-            messageResponse: Response<MessageResDTO>
-        ): Flow<UploadResult>
-
+        suspend fun uploadAttachment(attachment: Attachment, message: Message): Flow<UploadResult>
         suspend fun getLocalUser(): User
         fun insertMessage(message: Message): Long
         fun insertListMessage(messageList: List<Message>)
@@ -91,6 +86,7 @@ interface IContractConversation {
         fun insertAttachment(attachment: Attachment): Long
         fun insertAttachments(listAttachment: List<Attachment>): List<Long>
         fun updateAttachment(attachment: Attachment)
+        suspend fun suspendUpdateAttachment(attachment: Attachment)
         fun insertQuote(quoteWebId: String, message: Message)
         fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
@@ -105,7 +101,7 @@ interface IContractConversation {
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
         suspend fun callContact(contact: Contact, isVideoCall: Boolean): Response<CallContactResDTO>
         fun subscribeToCallChannel(channel: String)
-        fun downloadAttachment(
+        suspend fun downloadAttachment(
             attachment: Attachment,
             itemPosition: Int
         ): Flow<DownloadAttachmentResult>

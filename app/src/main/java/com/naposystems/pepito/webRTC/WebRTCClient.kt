@@ -119,9 +119,9 @@ class WebRTCClient constructor(
 
 
     private var peerIceServer: MutableList<PeerConnection.IceServer> = arrayListOf(
-        PeerConnection.IceServer.builder("stun:sturnturn-prueba.napoleon-chat.com")
+        PeerConnection.IceServer.builder("stun:stun-dev.napoleon-chat.com:3478")
             .createIceServer(),
-        PeerConnection.IceServer.builder("turn:sturnturn-prueba.napoleon-chat.com")
+        PeerConnection.IceServer.builder("turn:turn-dev.napoleon-chat.com:3478")
             .setUsername("wPJlHAYY")
             .setPassword("GrI09zxkwFuOihIf")
             .createIceServer()

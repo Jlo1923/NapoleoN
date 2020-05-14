@@ -21,6 +21,7 @@
             android:clickable="true"
             android:focusable="true"
             android:scaleType="fitCenter"
+            android:visibility="invisible"
             app:firstAnimation="@drawable/anim_play_to_pause"
             app:layout_constraintBottom_toBottomOf="@id/seekbar"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,6 +42,36 @@
             custom:progressBarThickness="@dimen/circle_progress_bar"
             custom:progressbarColor="@color/colorTextMyMessage"
             tools:progress="70"
+            tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/progressBar_indeterminate"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/colorTextMyMessage"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/progressBar"
+            app:layout_constraintEnd_toEndOf="@id/progressBar"
+            app:layout_constraintStart_toStartOf="@id/progressBar"
+            app:layout_constraintTop_toTopOf="@id/progressBar" />
+
+        <!-- BUTTON ATTACHMENT STATE -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/imageButton_state"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/x_x_small_margin"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/actionBarItemBackground"
+            android:padding="@dimen/x_small_padding"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/progressBar"
+            app:layout_constraintEnd_toEndOf="@id/progressBar"
+            app:layout_constraintStart_toStartOf="@id/progressBar"
+            app:layout_constraintTop_toTopOf="@id/progressBar"
+            app:srcCompat="@drawable/ic_close_black_24"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

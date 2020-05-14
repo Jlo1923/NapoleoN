@@ -24,6 +24,7 @@ class NapoleonKeyboardGifRepository @Inject constructor(
     override suspend fun downloadGif(
         url: String
     ) = flow {
+        emit(DownloadFileResult.Progress(1L))
         withContext(Dispatchers.IO) {
             val responseDownloadFile =
                 napoleonApi.downloadFileByUrl(url)
