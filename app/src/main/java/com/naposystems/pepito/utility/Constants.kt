@@ -282,7 +282,9 @@ object Constants {
         NOT_DOWNLOADED(4),
         DOWNLOADING(5),
         DOWNLOAD_COMPLETE(6),
-        DOWNLOAD_ERROR(7)
+        DOWNLOAD_ERROR(7),
+        DOWNLOAD_CANCEL(8),
+        UPLOAD_CANCEL(9)
     }
 
     enum class AttachmentOrigin(val origin: Int) {

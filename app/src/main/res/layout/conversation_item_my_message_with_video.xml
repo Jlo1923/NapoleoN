@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:custom="http://schemas.android.com/apk/res-auto">
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -31,7 +31,7 @@
         android:id="@+id/container_my_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
         android:paddingEnd="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,28 +85,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
                 android:layout_marginTop="@dimen/small_margin"
+                android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:scaleType="centerCrop"
                 app:imageAttachment="@{conversation}"
-                app:clickListener="@{clickListener}"
-                app:itemPosition="@{itemPosition}"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/container_quote"
                 tools:src="@drawable/vertical_photo" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imageView_play"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_play_attachment_preview"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView_attachment"
-                app:layout_constraintEnd_toEndOf="@+id/imageView_attachment"
-                app:layout_constraintStart_toStartOf="@+id/imageView_attachment"
-                app:layout_constraintTop_toTopOf="@+id/imageView_attachment"
-                app:srcCompat="@drawable/ic_play_arrow_black"
-                app:tint="@color/white" />
+            <!-- BUTTON ATTACHMENT STATE -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_state"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_black_40"
+                android:foreground="?attr/actionBarItemBackground"
+                android:padding="@dimen/x_small_padding"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar"
+                app:srcCompat="@drawable/ic_close_black_24"
+                custom:iconForState="@{conversation}"
+                tools:visibility="visible" />
 
             <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
                 android:id="@+id/progressBar"
@@ -122,6 +127,17 @@
                 custom:progressbarColor="@color/colorPrimary"
                 tools:progress="70"
                 tools:visibility="visible" />
+
+            <ProgressBar
+                android:id="@+id/progressBar_indeterminate"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar" />
 
             <TextView
                 android:id="@+id/textView_message"
@@ -140,11 +156,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/small_margin"
                 android:visibility="gone"
+                app:formatTime="@{timeFormat}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
                 app:messageDate="@{conversation.message.createdAt}"
-                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

@@ -1,20 +1,34 @@
 package com.naposystems.pepito.ui.conversation.viewHolder
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
-import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 
 class IncomingMessageViewHolder constructor(
     private val binding: ConversationItemIncomingMessageBinding
 ) : ConversationViewHolder(binding.root) {
+
+    init {
+        super.containerMessage = binding.containerIncomingMessage
+        super.progressBar = binding.progressBar
+        super.progressBarIndeterminate = binding.progressBarIndeterminate
+        super.imageButtonState = binding.imageButtonCancel
+        super.containerQuote = binding.containerQuote
+        super.textViewCountDown = binding.textViewCountDown
+        super.quote = binding.quote
+    }
+
+    /*private var job: Job? = null
+
+    fun setStart(job: Job) {
+        this.job = job
+        binding.imageButtonCancel.visibility = View.VISIBLE
+    }
 
     fun setProgress(
         progress: Long
@@ -25,70 +39,22 @@ class IncomingMessageViewHolder constructor(
         if (progress == 100L){
             binding.progressBar.visibility = View.GONE
         }
-    }
+    }*/
 
-    @SuppressLint("ResourceAsColor")
-    fun bind(
+    override fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean,
-        timeFormat : Int?
+        timeFormat: Int?,
+        mediaPlayerManager: MediaPlayerManager?
     ) {
+        super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
         binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
-
-        val firstAttachment: Attachment? = item.getFirstAttachment()
-
-        countDown(
-            item,
-            binding.textViewCountDown,
-            itemToEliminate = { messageAndAttachment ->
-                clickListener.messageToEliminate(messageAndAttachment)
-            })
-
-        if (item.message.isSelected) {
-            binding.containerIncomingMessage.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
-        } else {
-            binding.containerIncomingMessage.setBackgroundColor(Color.TRANSPARENT)
-        }
-
-        binding.containerIncomingMessage.setOnLongClickListener {
-            clickListener.onLongClick(item.message)
-            true
-        }
-
-        binding.containerIncomingMessage.setOnClickListener {
-            clickListener.onClick(item)
-        }
-
-        when(firstAttachment?.status){
-            Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
-                binding.progressBar.visibility = View.GONE
-                binding.progressBar.setProgress(0f)
-                binding.imageViewAttachment.setImageDrawable(null)
-            }
-            Constants.AttachmentStatus.DOWNLOADING.status -> {
-                binding.progressBar.visibility = View.VISIBLE
-            }
-            else -> binding.progressBar.visibility = View.GONE
-        }
-
-        binding.imageViewAttachment.setOnClickListener {
-            if (firstAttachment?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status) {
-                clickListener.onPreviewClick(item)
-            }
-        }
-
-        item.quote?.let {
-            binding.containerQuote.visibility = View.VISIBLE
-            binding.quote.setupMessageAndAttachment(item)
-        } ?: run {
-            binding.containerQuote.visibility = View.GONE
-        }
 
         binding.executePendingBindings()
     }

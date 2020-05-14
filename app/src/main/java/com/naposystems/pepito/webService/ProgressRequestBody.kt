@@ -1,14 +1,16 @@
 package com.naposystems.pepito.webService
 
-import com.naposystems.pepito.entity.message.attachments.Attachment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
 import timber.log.Timber
 import java.io.ByteArrayInputStream
+import java.net.SocketException
 
 class ProgressRequestBody(
-    private val attachment: Attachment,
+    private val job: CoroutineScope,
     private val bytes: ByteArray,
     private val mediaType: MediaType,
     private val listener: Listener
@@ -18,6 +20,7 @@ class ProgressRequestBody(
 
     interface Listener {
         fun onRequestProgress(bytesWritten: Int, contentLength: Long, progress: Int)
+        fun onRequestCancel()
     }
 
     override fun contentType(): MediaType = mediaType
@@ -32,15 +35,24 @@ class ProgressRequestBody(
                 var read: Int
 
                 while (inputStream.read(buffer).also { read = it } != -1) {
-                    sink.write(buffer, 0, read)
-                    uploaded += read
-                    listener.onRequestProgress(
-                        uploaded,
-                        mLength,
-                        (100f * uploaded / mLength).toInt()
-                    )
+                    if (job.isActive) {
+                        sink.write(buffer, 0, read)
+                        uploaded += read
+                        listener.onRequestProgress(
+                            uploaded,
+                            mLength,
+                            (100f * uploaded / mLength).toInt()
+                        )
+                    } else {
+                        Timber.d("Job no active")
+                        listener.onRequestCancel()
+                        break
+                    }
                 }
             }
+        } catch (e: SocketException) {
+            Timber.d("Job cancel")
+            listener.onRequestCancel()
         } catch (e: Exception) {
             Timber.e(e)
         }

@@ -31,6 +31,7 @@
         android:id="@+id/container_incoming_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
         android:paddingStart="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,9 +88,7 @@
                 android:layout_marginTop="@dimen/small_margin"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
-                app:clickListener="@{clickListener}"
                 app:imageAttachment="@{conversation}"
-                app:itemPosition="@{itemPosition}"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -112,6 +111,35 @@
                 tools:progress="70"
                 tools:visibility="visible" />
 
+            <ProgressBar
+                android:id="@+id/progressBar_indeterminate"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_cancel"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_black_40"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/x_small_padding"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar"
+                app:srcCompat="@drawable/ic_close_black_24"
+                custom:iconForState="@{conversation}"
+                tools:visibility="visible" />
+
             <TextView
                 android:id="@+id/textView_message"
                 style="@style/IncomingMessageTextView"
@@ -130,10 +158,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                app:formatTime="@{timeFormat}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
                 app:messageDate="@{conversation.message.createdAt}"
-                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

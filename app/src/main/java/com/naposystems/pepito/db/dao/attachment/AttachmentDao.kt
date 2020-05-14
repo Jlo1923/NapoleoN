@@ -18,6 +18,9 @@ interface AttachmentDao {
     @Update
     fun updateAttachment(attachment: Attachment)
 
+    @Update
+    suspend fun suspendUpdateAttachment(attachment: Attachment)
+
     @Query("UPDATE attachment SET status=:state WHERE web_id=:webId")
     fun updateAttachmentState(webId: String, state: Int)
 }

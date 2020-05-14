@@ -5,12 +5,16 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ProgressBar
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.CustomViewAudioPlayerBinding
+import com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class AudioPlayerCustomView constructor(context: Context, attributeSet: AttributeSet) :
@@ -90,6 +94,8 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             binding.imageButtonSpeed.imageTintList = this
             binding.imageButtonForward.imageTintList = this
             binding.progressBar.setProgressColor(mTintColor)
+            binding.progressBarIndeterminate.indeterminateTintList = this
+            binding.imageButtonState.imageTintList = this
             binding.textViewDuration.setTextColor(this)
         }
 
@@ -139,16 +145,45 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     //region Implementation IContractAudioPlayer
 
     override fun enablePlayButton(isEnable: Boolean) {
+        binding.imageButtonPlay.visibility = if (isEnable) View.VISIBLE else View.INVISIBLE
         binding.imageButtonPlay.isEnabled = isEnable
     }
+
+    override fun getProgressBar() = binding.progressBar
 
     override fun setProgress(progress: Long) {
         binding.progressBar.visibility = View.VISIBLE
         binding.progressBar.setProgress(progress.toFloat())
+        hideIndeterminateProgress()
     }
 
     override fun hideProgressBar() {
         binding.progressBar.visibility = View.GONE
+    }
+
+    override fun getIndeterminateProgress() = binding.progressBarIndeterminate
+
+    override fun showIndeterminateProgress() {
+        binding.progressBarIndeterminate.visibility = View.VISIBLE
+    }
+
+    override fun hideIndeterminateProgress() {
+        binding.progressBarIndeterminate.visibility = View.INVISIBLE
+    }
+
+    override fun changeImageButtonStateIcon(icon: Int) {
+        binding.imageButtonState.setImageResource(icon)
+    }
+
+    override fun getImageButtonState() = binding.imageButtonState
+
+    override fun showImageButtonState() {
+        binding.imageButtonState.visibility = View.VISIBLE
+        Timber.d("entró")
+    }
+
+    override fun hideImageButtonState() {
+        binding.imageButtonState.visibility = View.GONE
     }
 
     override fun playAudio() {

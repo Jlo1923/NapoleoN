@@ -53,14 +53,31 @@
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 app:imageAttachment="@{conversation}"
-                app:clickListener="@{clickListener}"
-                app:itemPosition="@{itemPosition}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_max="wrap"
                 app:layout_constraintWidth_percent="1"
                 tools:src="@drawable/marilyn"
+                tools:visibility="visible" />
+
+            <!-- BUTTON ATTACHMENT STATE -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_state"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_black_40"
+                android:foreground="?attr/actionBarItemBackground"
+                android:padding="@dimen/x_small_padding"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar"
+                app:srcCompat="@drawable/ic_close_black_24"
+                custom:iconForState="@{conversation}"
                 tools:visibility="visible" />
 
             <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
@@ -78,6 +95,17 @@
                 tools:progress="70"
                 tools:visibility="visible" />
 
+            <ProgressBar
+                android:id="@+id/progressBar_indeterminate"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar" />
+
             <TextView
                 style="@style/MyMessageDateTextView"
                 android:layout_width="wrap_content"
@@ -85,11 +113,11 @@
                 android:layout_marginEnd="@dimen/small_margin"
                 android:textColor="?attr/attrTextColorColorTextIncomingMessage"
                 android:visibility="gone"
+                app:formatTime="@{timeFormat}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
                 app:messageDate="@{conversation.message.createdAt}"
-                app:formatTime="@{timeFormat}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

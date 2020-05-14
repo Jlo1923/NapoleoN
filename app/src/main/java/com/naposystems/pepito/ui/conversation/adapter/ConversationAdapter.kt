@@ -11,6 +11,8 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.viewHolder.*
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import kotlinx.coroutines.Job
+import timber.log.Timber
 
 class ConversationAdapter constructor(
     private val clickListener: ClickListener,
@@ -54,12 +56,13 @@ class ConversationAdapter constructor(
             } else {
                 hasAttachments = false
             }
+
             return if (!hasAttachments) {
                 oldItem.message.id == newItem.message.id &&
                         oldItem.message.status == newItem.message.status &&
                         oldItem.message.isSelected == newItem.message.isSelected
             } else {
-                return oldItem.message.id == newItem.message.id &&
+                oldItem.message.id == newItem.message.id &&
                         oldItem.message.status == newItem.message.status &&
                         oldItem.message.isSelected == newItem.message.isSelected &&
                         oldFirstAttachment?.status == newFirstAttachment?.status
@@ -74,11 +77,22 @@ class ConversationAdapter constructor(
         }
     }
 
+    fun setStartDownload(itemPosition: Int, job: Job) {
+        notifyItemChanged(itemPosition, job)
+    }
+
     fun setProgress(position: Int, progress: Long) {
         notifyItemChanged(position, Bundle().apply { putLong(PROGRESS, progress) })
     }
 
-    fun setUploadProgress(attachment: Attachment, progress: Long) {
+    fun setUploadStart(attachment: Attachment, job: Job) {
+        notifyItemChanged(getPositionByItem(attachment), job)
+    }
+
+    fun setUploadProgress(
+        attachment: Attachment,
+        progress: Long
+    ) {
         notifyItemChanged(
             getPositionByItem(attachment),
             Bundle().apply { putLong(PROGRESS, progress) })
@@ -91,7 +105,7 @@ class ConversationAdapter constructor(
         )
     }
 
-    private fun getPositionByItem(attachment: Attachment) =
+    fun getPositionByItem(attachment: Attachment) =
         currentList.indexOfFirst { messageAndAttachment ->
             if (messageAndAttachment.attachmentList.isNotEmpty()) {
                 messageAndAttachment.attachmentList.first().id == attachment.id
@@ -195,7 +209,6 @@ class ConversationAdapter constructor(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         val item = getItem(position)
 
         isFirst = (position + 1 == itemCount ||
@@ -203,26 +216,23 @@ class ConversationAdapter constructor(
 
         item?.let {
             when (getItemViewType(position)) {
-                TYPE_MY_MESSAGE, TYPE_MY_MESSAGE_GIF -> (holder as MyMessageViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_INCOMING_MESSAGE, TYPE_INCOMING_MESSAGE_GIF -> (holder as IncomingMessageViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_MY_MESSAGE_AUDIO -> (holder as MyMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager, timeFormat)
-                TYPE_INCOMING_MESSAGE_AUDIO -> (holder as IncomingMessageAudioViewHolder)
-                    .bind(item, clickListener, isFirst, mediaPlayerManager, timeFormat)
-                TYPE_MY_MESSAGE_VIDEO -> (holder as MyMessageVideoViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_INCOMING_MESSAGE_VIDEO -> (holder as IncomingMessageVideoViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_MY_MESSAGE_DOCUMENT -> (holder as MyMessageDocumentViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_INCOMING_MESSAGE_DOCUMENT -> (holder as IncomingMessageDocumentViewHolder)
-                    .bind(item, clickListener, isFirst, timeFormat)
-                TYPE_MY_MESSAGE_GIF_NN -> (holder as MyMessageGifNNViewHolder)
-                    .bind(item, clickListener, timeFormat)
-                TYPE_INCOMING_MESSAGE_GIF_NN -> (holder as IncomingMessageGifNNViewHolder)
-                    .bind(item, clickListener, timeFormat)
+                TYPE_MY_MESSAGE,
+                TYPE_MY_MESSAGE_GIF,
+                TYPE_MY_MESSAGE_VIDEO,
+                TYPE_MY_MESSAGE_DOCUMENT,
+                TYPE_MY_MESSAGE_GIF_NN,
+                TYPE_INCOMING_MESSAGE,
+                TYPE_INCOMING_MESSAGE_GIF,
+                TYPE_INCOMING_MESSAGE_VIDEO,
+                TYPE_INCOMING_MESSAGE_GIF_NN,
+                TYPE_INCOMING_MESSAGE_DOCUMENT ->
+                    (holder as ConversationViewHolder)
+                        .bind(item, clickListener, isFirst, timeFormat)
+                TYPE_MY_MESSAGE_AUDIO,
+                TYPE_INCOMING_MESSAGE_AUDIO -> {
+                    (holder as ConversationViewHolder)
+                        .bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
+                }
                 TYPE_MISSED_CALL -> (holder as MessageMissedCallViewHolder)
                     .bind(item, clickListener, timeFormat)
             }
@@ -238,63 +248,73 @@ class ConversationAdapter constructor(
         if (payloads.firstOrNull() != null) {
             val item = getItem(position)
 
+            Timber.d("onBindViewHolder with payload: ${payloads.first()}")
+
             item?.let {
-                val bundle = payloads.first() as Bundle
-                val progress = bundle.getLong(PROGRESS)
-                val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
-                when (getItemViewType(position)) {
-                    TYPE_MY_MESSAGE, TYPE_MY_MESSAGE_GIF -> {
-                        (holder as MyMessageViewHolder).apply {
-                            setProgress(progress)
-                            setUploadComplete(uploadComplete)
-                        }
+                try {
+                    when (val any = payloads.first()) {
+                        is Bundle -> handleBundlePayload(any, position, holder)
+                        is Job -> handleJobPayload(any, position, holder)
                     }
-                    TYPE_MY_MESSAGE_VIDEO -> {
-                        (holder as MyMessageVideoViewHolder).apply {
-                            setProgress(progress)
-                            setUploadComplete(uploadComplete)
-                        }
-                    }
-                    TYPE_MY_MESSAGE_GIF_NN -> {
-                        (holder as MyMessageGifNNViewHolder).apply {
-                            setProgress(progress)
-                            setUploadComplete(uploadComplete)
-                        }
-                    }
-                    TYPE_MY_MESSAGE_AUDIO -> {
-                        (holder as MyMessageAudioViewHolder).apply {
-                            setProgress(progress)
-                            setUploadComplete(uploadComplete)
-                        }
-                    }
-                    TYPE_MY_MESSAGE_DOCUMENT -> {
-                        (holder as MyMessageDocumentViewHolder).apply {
-                            setProgress(progress)
-                            setUploadComplete(uploadComplete)
-                        }
-                    }
-                    TYPE_INCOMING_MESSAGE -> {
-                        (holder as IncomingMessageViewHolder).setProgress(progress)
-                    }
-                    TYPE_INCOMING_MESSAGE_VIDEO -> {
-                        (holder as IncomingMessageVideoViewHolder).setProgress(progress)
-                    }
-                    TYPE_INCOMING_MESSAGE_GIF -> {
-                        (holder as IncomingMessageViewHolder).setProgress(progress)
-                    }
-                    TYPE_INCOMING_MESSAGE_GIF_NN -> {
-                        (holder as IncomingMessageGifNNViewHolder).setProgress(progress)
-                    }
-                    TYPE_INCOMING_MESSAGE_AUDIO -> {
-                        (holder as IncomingMessageAudioViewHolder).setProgress(progress)
-                    }
-                    TYPE_INCOMING_MESSAGE_DOCUMENT -> {
-                        (holder as IncomingMessageDocumentViewHolder).setProgress(progress)
-                    }
-                    else -> {
-                        // Intentionally empty
-                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Que mierda pasa")
                 }
+            }
+        }
+    }
+
+    private fun handleJobPayload(job: Job, position: Int, holder: RecyclerView.ViewHolder) {
+        Timber.d("handleJobPayload: ${getItemViewType(position)}")
+        when (getItemViewType(position)) {
+            TYPE_INCOMING_MESSAGE,
+            TYPE_INCOMING_MESSAGE_VIDEO,
+            TYPE_INCOMING_MESSAGE_GIF,
+            TYPE_INCOMING_MESSAGE_GIF_NN,
+            TYPE_INCOMING_MESSAGE_AUDIO,
+            TYPE_INCOMING_MESSAGE_DOCUMENT -> {
+                (holder as ConversationViewHolder).apply {
+                    setDownloadStart(job)
+                }
+            }
+            TYPE_MY_MESSAGE,
+            TYPE_MY_MESSAGE_VIDEO,
+            TYPE_MY_MESSAGE_GIF,
+            TYPE_MY_MESSAGE_GIF_NN,
+            TYPE_MY_MESSAGE_AUDIO,
+            TYPE_MY_MESSAGE_DOCUMENT -> {
+                (holder as ConversationViewHolder).apply {
+                    setUploadStart(job)
+                }
+            }
+        }
+    }
+
+    private fun handleBundlePayload(
+        bundle: Bundle,
+        position: Int,
+        holder: RecyclerView.ViewHolder
+    ) {
+        val progress = bundle.getLong(PROGRESS)
+        val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
+        when (getItemViewType(position)) {
+            TYPE_MY_MESSAGE,
+            TYPE_MY_MESSAGE_GIF,
+            TYPE_MY_MESSAGE_VIDEO,
+            TYPE_MY_MESSAGE_GIF_NN,
+            TYPE_MY_MESSAGE_AUDIO,
+            TYPE_MY_MESSAGE_DOCUMENT -> {
+                (holder as ConversationViewHolder).apply {
+                    setProgress(progress)
+                    setUploadComplete(uploadComplete)
+                }
+            }
+            TYPE_INCOMING_MESSAGE,
+            TYPE_INCOMING_MESSAGE_GIF,
+            TYPE_INCOMING_MESSAGE_VIDEO,
+            TYPE_INCOMING_MESSAGE_GIF_NN,
+            TYPE_INCOMING_MESSAGE_DOCUMENT,
+            TYPE_INCOMING_MESSAGE_AUDIO -> {
+                (holder as ConversationViewHolder).setProgress(progress)
             }
         }
     }
@@ -307,5 +327,7 @@ class ConversationAdapter constructor(
         fun onPreviewClick(item: MessageAndAttachment)
         fun goToQuote(messageAndAttachment: MessageAndAttachment)
         fun downloadAttachment(attachment: Attachment, itemPosition: Int?)
+        fun uploadAttachment(attachment: Attachment, message: Message)
+        fun updateAttachmentState(messageAndAttachment: Attachment)
     }
 }

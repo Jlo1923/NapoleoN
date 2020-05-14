@@ -7,6 +7,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -14,7 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.BlurTransformation
@@ -25,9 +25,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @BindingAdapter("messageDate", "formatTime")
-fun bindMessageDate(textView: TextView, timestamp: Int, format : Int) {
+fun bindMessageDate(textView: TextView, timestamp: Int, format: Int) {
     try {
-        val sdf = if(format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+        val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
             SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         } else {
             SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
@@ -143,38 +143,34 @@ fun bindCountDown(
     }
 }
 
-@BindingAdapter("imageAttachment", "clickListener", "itemPosition")
+@BindingAdapter("imageAttachment")
 fun bindImageAttachment(
     imageView: ImageView,
-    @Nullable messageAndAttachmentParam: MessageAndAttachment?,
-    @Nullable clickListener: ConversationAdapter.ClickListener?,
-    @Nullable itemPosition: Int?
+    @Nullable messageAndAttachmentParam: MessageAndAttachment?
 ) {
     try {
         messageAndAttachmentParam?.let { messageAndAttachment ->
-            val context = imageView.context
-            val message = messageAndAttachment.message
+            Timber.d("bindImageAttachment")
 
-            if (messageAndAttachment.attachmentList.isNotEmpty()) {
+            val context = imageView.context
+            messageAndAttachment.getFirstAttachment()?.let { attachment ->
                 imageView.visibility = View.VISIBLE
-                val firstAttachment = messageAndAttachment.attachmentList[0]
 
                 if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
-                    loadAttachment(firstAttachment, imageView)
+                    loadAttachment(attachment, imageView)
                 } else {
-                    when (firstAttachment.status) {
-                        Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
-                            loadBlurAttachment(
-                                message,
-                                firstAttachment,
-                                imageView,
-                                context,
-                                clickListener,
-                                itemPosition
-                            )
-                        }
+                    when (attachment.status) {
                         Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
-                            loadAttachment(firstAttachment, imageView)
+                            loadAttachment(attachment, imageView)
+                        }
+                        Constants.AttachmentStatus.NOT_DOWNLOADED.status,
+                        Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
+                        Constants.AttachmentStatus.DOWNLOAD_ERROR.status -> {
+                            loadBlurAttachment(
+                                attachment,
+                                imageView,
+                                context
+                            )
                         }
                     }
                 }
@@ -186,43 +182,34 @@ fun bindImageAttachment(
 }
 
 private fun loadBlurAttachment(
-    message: Message,
     firstAttachment: Attachment,
     imageView: ImageView,
-    context: Context?,
-    clickListener: ConversationAdapter.ClickListener?,
-    itemPosition: Int?
+    context: Context?
 ) {
-    if (message.status == Constants.MessageStatus.READED.status) {
-        val fileName = "${firstAttachment.webId}.${firstAttachment.extension}"
-        firstAttachment.status = Constants.AttachmentStatus.DOWNLOADING.status
-        firstAttachment.uri = fileName
-        when (firstAttachment.type) {
-            Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
-                Glide.with(imageView)
-                    .load(firstAttachment.body)
-                    .transform(
-                        CenterCrop(),
-                        RoundedCorners(8),
-                        BlurTransformation(context)
-                    )
-                    .into(imageView)
-            }
-            Constants.AttachmentType.VIDEO.type,
-            Constants.AttachmentType.GIF.type,
-            Constants.AttachmentType.GIF_NN.type -> {
-                Glide.with(imageView)
-                    .load(firstAttachment.body)
-                    .thumbnail(0.1f)
-                    .transform(
-                        CenterCrop(),
-                        RoundedCorners(8),
-                        BlurTransformation(context)
-                    )
-                    .into(imageView)
-            }
+    when (firstAttachment.type) {
+        Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment.body)
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(8),
+                    BlurTransformation(context)
+                )
+                .into(imageView)
         }
-        clickListener?.downloadAttachment(firstAttachment, itemPosition)
+        Constants.AttachmentType.VIDEO.type,
+        Constants.AttachmentType.GIF.type,
+        Constants.AttachmentType.GIF_NN.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment.body)
+                .thumbnail(0.1f)
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(8),
+                    BlurTransformation(context)
+                )
+                .into(imageView)
+        }
     }
 }
 
@@ -290,5 +277,49 @@ fun bindAttachmentDocumentIcon(imageView: ImageView, messageAndAttachment: Messa
         Glide.with(imageView)
             .load(drawableId)
             .into(imageView)
+    }
+}
+
+@BindingAdapter("iconForState")
+fun bindIconForState(
+    imageButton: AppCompatImageButton,
+    messageAndAttachment: MessageAndAttachment
+) {
+    val firstAttachment = messageAndAttachment.getFirstAttachment()
+
+    firstAttachment?.let { attachment ->
+
+        val drawableId = when (attachment.status) {
+            Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
+                imageButton.visibility = View.VISIBLE
+                R.drawable.ic_file_upload_black
+            }
+            Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
+            Constants.AttachmentStatus.DOWNLOAD_ERROR.status -> {
+                imageButton.visibility = View.VISIBLE
+                R.drawable.ic_file_download_black
+            }
+            Constants.AttachmentStatus.DOWNLOADING.status,
+            Constants.AttachmentStatus.SENDING.status -> {
+                imageButton.visibility = View.VISIBLE
+                R.drawable.ic_close_black_24
+            }
+            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,
+            Constants.AttachmentStatus.SENT.status -> {
+                if (attachment.type == Constants.AttachmentType.VIDEO.type) {
+                    imageButton.visibility = View.VISIBLE
+                    R.drawable.ic_play_arrow_black
+                } else {
+                    imageButton.visibility = View.GONE
+                    R.drawable.ic_file_download_black
+                }
+            }
+            else -> {
+                imageButton.visibility = View.GONE
+                R.drawable.ic_file_download_black
+            }
+        }
+
+        imageButton.setImageResource(drawableId)
     }
 }

@@ -10,5 +10,7 @@ interface AttachmentDataSource {
 
     fun updateAttachment(attachment: Attachment)
 
+    suspend fun suspendUpdateAttachment(attachment: Attachment)
+
     fun updateAttachmentState(webId: String, state: Int)
 }
