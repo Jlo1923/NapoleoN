@@ -69,7 +69,7 @@
                             android:id="@+id/textInputEditText_nickname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:digits="@string/only_letters_and_numbers"
+                            android:digits="@string/only_letters_upper_case_and_numbers"
                             android:inputType="text"
                             android:lines="1"
                             android:maxLength="@dimen/max_length_nickname"

@@ -24,6 +24,8 @@ import com.naposystems.pepito.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FieldsValidator
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
+import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -81,7 +83,7 @@ class ValidateNicknameFragment : Fragment() {
                     .navigate(
                         ValidateNicknameFragmentDirections
                             .actionRegisterFragmentToAccessPinFragment(
-                                viewModel.nickName.value!!,
+                                viewModel.nickName.value!!.toLowerCase(Locale.getDefault()),
                                 viewModel.displayName.value!!,
                                 false
                             )
@@ -114,7 +116,8 @@ class ValidateNicknameFragment : Fragment() {
                     itsNicknameAvailable = false
                     binding.buttonNext.isEnabled = false
                     resetDrawableTextInput(binding.textInputEditTextNickname)
-                    binding.textInputLayoutNickname.error = getString(R.string.text_nickname_unavailable)
+                    binding.textInputLayoutNickname.error =
+                        getString(R.string.text_nickname_unavailable)
                 }
             }
         })
@@ -127,15 +130,15 @@ class ValidateNicknameFragment : Fragment() {
     private fun openTermsAndConditions() {
         val termsAndConditionsUri: Uri = Uri.parse(Constants.URL_TERMS_AND_CONDITIONS)
         val intent = Intent(Intent.ACTION_VIEW, termsAndConditionsUri)
-        if (intent.resolveActivity(context!!.packageManager) != null) {
+        if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
         }
     }
 
     private fun setDrawableTextInput(textInputEditText: TextInputEditText) {
-        val drawable = context!!.resources.getDrawable(
+        val drawable = requireContext().resources.getDrawable(
             R.drawable.ic_language_selected,
-            context!!.theme
+            requireContext().theme
         )
 
         textInputEditText.apply {
@@ -168,12 +171,27 @@ class ValidateNicknameFragment : Fragment() {
                 Pattern.compile(Constants.RegularExpressions.NICKNAME)
 
             if (nicknameRegex.matcher(s!!).find()) {
-                val validateNicknameReqDTO = ValidateNicknameReqDTO(s.toString())
-                viewModel.validateNickname(validateNicknameReqDTO)
+                val string = s.toString().toLowerCase(Locale.getDefault())
+                val lastChar = string.last()
+                val lastCharIsDigit = lastChar.isDigit()
+                val lastCharIsNumberOne = if (lastCharIsDigit) {
+                    Character.getNumericValue(lastChar) == 1
+                } else {
+                    false
+                }
+                val restOfString = string.substring(IntRange(0, string.length - 2))
+
+                val restContainsNumber = restOfString.contains(Regex("\\d"))
+
+                if (lastCharIsNumberOne && !restContainsNumber) {
+                    viewModel.setNoValidNickname()
+                } else {
+                    val validateNicknameReqDTO = ValidateNicknameReqDTO(string)
+                    viewModel.validateNickname(validateNicknameReqDTO)
+                }
             } else {
                 resetDrawableTextInput(binding.textInputEditTextNickname)
             }
         }
     }
-
 }

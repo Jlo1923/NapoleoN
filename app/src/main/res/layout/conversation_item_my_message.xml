@@ -196,11 +196,12 @@
             android:textColor="?attr/attrTextColorColorTextIncomingMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
             android:visibility="gone"
-            app:countDown="@{conversation}"
+            android:maxLines="1"
+            android:ellipsize="end"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"
-            tools:text="10:34:20"
+            tools:text="30 segundos"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
+import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer
 import android.view.View
@@ -24,7 +25,8 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 open class ConversationViewHolder constructor(
-    view: View
+    view: View,
+    private val context: Context
 ) : RecyclerView.ViewHolder(view) {
 
     private var uploadJob: Job? = null
@@ -85,9 +87,8 @@ open class ConversationViewHolder constructor(
                 }
             }
         } else {
-            textView?.text = ""
+            showDestructionTime(item)
         }
-
     }
 
     fun setProgress(
@@ -239,6 +240,29 @@ open class ConversationViewHolder constructor(
 
             if (item.message.isMine == Constants.IsMine.YES.value && audioPlayer != null && mediaPlayerManager != null) {
                 loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
+            }
+        }
+    }
+
+    private fun showDestructionTime(messageAndAttachment: MessageAndAttachment) {
+        val message = messageAndAttachment.message
+        if (message.isMine == Constants.IsMine.YES.value && message.status != Constants.MessageStatus.READED.status) {
+            val stringId = when (messageAndAttachment.message.selfDestructionAt) {
+                Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time -> R.string.text_every_five_seconds
+                Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time -> R.string.text_every_fifteen_seconds
+                Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time -> R.string.text_every_thirty_seconds
+                Constants.SelfDestructTime.EVERY_ONE_MINUTE.time -> R.string.text_every_one_minute
+                Constants.SelfDestructTime.EVERY_TEN_MINUTES.time -> R.string.text_every_ten_minutes
+                Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time -> R.string.text_every_thirty_minutes
+                Constants.SelfDestructTime.EVERY_ONE_HOUR.time -> R.string.text_every_one_hour
+                Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time -> R.string.text_every_twelve_hours
+                Constants.SelfDestructTime.EVERY_ONE_DAY.time -> R.string.text_every_one_day
+                Constants.SelfDestructTime.EVERY_SEVEN_DAY.time -> R.string.text_every_seven_days
+                else -> -1
+            }
+            if (stringId != -1) {
+                textViewCountDown?.visibility = View.VISIBLE
+                textViewCountDown?.text = context.resources.getString(stringId)
             }
         }
     }

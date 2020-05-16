@@ -109,17 +109,24 @@ class EnterCodeRepository @Inject constructor(
         return arrayListOf(updateInfoError!!.error)
     }
 
-    override fun get422ErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>  {
+    override fun get422ErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String> {
         val adapter = moshi.adapter(SendCode422DTO::class.java)
         val error = adapter.fromJson(response.errorBody()!!.string())
 
         return WebServiceUtils.get422Errors(error!!)
     }
 
-    override fun getDefaultErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>  {
+    override fun getDefaultErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String> {
         val adapter = moshi.adapter(SendCodeErrorDTO::class.java)
         val updateInfoError = adapter.fromJson(response.errorBody()!!.string())
 
         return arrayListOf(updateInfoError!!.error)
+    }
+
+    override fun saveAccountStatus(id: Int) {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
+            id
+        )
     }
 }

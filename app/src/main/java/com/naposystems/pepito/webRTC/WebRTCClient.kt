@@ -378,6 +378,7 @@ class WebRTCClient constructor(
                     Timber.d("onAddTrack")
                     if (mediaStreams.isNotEmpty()) {
                         if (isVideoCall) {
+                            Timber.d("onAddTrack isVideoCall")
                             renderRemoteVideo(mediaStreams.first())
                         } else {
                             audioManager.isSpeakerphoneOn = false
@@ -455,6 +456,7 @@ class WebRTCClient constructor(
                 videoSource?.capturerObserver
             )
 
+            Timber.d("createLocalVideoTrack")
             localVideoTrack =
                 peerConnectionFactory.createVideoTrack("localVideoTrack1", videoSource)
             localVideoView?.setMirror(true)
@@ -466,6 +468,7 @@ class WebRTCClient constructor(
         val audioConstraints = MediaConstraints()
         val audioSource: AudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
         localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
+        localAudioTrack?.setEnabled(true)
     }
 
     private fun createVideoCapturer(): VideoCapturer? {
@@ -580,6 +583,7 @@ class WebRTCClient constructor(
                 audioManager.isSpeakerphoneOn = true
                 isSpeakerOn = true
                 mListener?.showRemoteVideo()
+
                 videoTrack.addSink(remoteVideoView)
             } catch (e: Exception) {
                 Timber.d("NO Got Remote Stream")

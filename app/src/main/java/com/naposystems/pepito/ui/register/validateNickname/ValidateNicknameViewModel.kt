@@ -74,5 +74,10 @@ class ValidateNicknameViewModel @Inject constructor(private val repository: Vali
             }
         }
     }
+
+    override fun setNoValidNickname() {
+        _itsNicknameValid.value = true
+    }
+
     //endregion
 }

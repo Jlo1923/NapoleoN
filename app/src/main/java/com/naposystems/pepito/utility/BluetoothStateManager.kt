@@ -107,40 +107,44 @@ class BluetoothStateManager(
         get() = AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED
 
     private fun requestHeadsetProxyProfile() {
-        bluetoothAdapter!!.getProfileProxy(context, object : ServiceListener {
-            @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
-            override fun onServiceConnected(
-                profile: Int,
-                proxy: BluetoothProfile
-            ) {
-                if (destroyed.get()) {
-                    Timber.w("Got bluetooth profile event after the service was destroyed. Ignoring.")
-                    return
-                }
-                if (profile == BluetoothProfile.HEADSET) {
-                    synchronized(LOCK) { bluetoothHeadset = proxy as BluetoothHeadset }
-                    val sticky =
-                        context.registerReceiver(null, IntentFilter(scoChangeIntent))
-                    bluetoothScoReceiver!!.onReceive(context, sticky!!)
-                    synchronized(LOCK) {
-                        if (wantsConnection && isBluetoothAvailable && scoConnection == ScoConnection.DISCONNECTED) {
-                            val audioManager: AudioManager = Utils.getAudioManager(context)
-                            audioManager.startBluetoothSco()
-                            scoConnection = ScoConnection.IN_PROGRESS
-                        }
+        try {
+            bluetoothAdapter!!.getProfileProxy(context, object : ServiceListener {
+                @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+                override fun onServiceConnected(
+                    profile: Int,
+                    proxy: BluetoothProfile
+                ) {
+                    if (destroyed.get()) {
+                        Timber.w("Got bluetooth profile event after the service was destroyed. Ignoring.")
+                        return
                     }
-                    handleBluetoothStateChange()
+                    if (profile == BluetoothProfile.HEADSET) {
+                        synchronized(LOCK) { bluetoothHeadset = proxy as BluetoothHeadset }
+                        val sticky =
+                            context.registerReceiver(null, IntentFilter(scoChangeIntent))
+                        bluetoothScoReceiver!!.onReceive(context, sticky!!)
+                        synchronized(LOCK) {
+                            if (wantsConnection && isBluetoothAvailable && scoConnection == ScoConnection.DISCONNECTED) {
+                                val audioManager: AudioManager = Utils.getAudioManager(context)
+                                audioManager.startBluetoothSco()
+                                scoConnection = ScoConnection.IN_PROGRESS
+                            }
+                        }
+                        handleBluetoothStateChange()
+                    }
                 }
-            }
 
-            override fun onServiceDisconnected(profile: Int) {
-                Timber.i("onServiceDisconnected")
-                if (profile == BluetoothProfile.HEADSET) {
-                    bluetoothHeadset = null
-                    handleBluetoothStateChange()
+                override fun onServiceDisconnected(profile: Int) {
+                    Timber.i("onServiceDisconnected")
+                    if (profile == BluetoothProfile.HEADSET) {
+                        bluetoothHeadset = null
+                        handleBluetoothStateChange()
+                    }
                 }
-            }
-        }, BluetoothProfile.HEADSET)
+            }, BluetoothProfile.HEADSET)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     private inner class BluetoothScoReceiver : BroadcastReceiver() {

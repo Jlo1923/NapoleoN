@@ -221,8 +221,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
     }
 
     private fun focusAfter(keyCode: Int) {
-        val km = KeyCharacterMap.load(KeyCharacterMap.NUMERIC)
-        textViews[position].text = km.getNumber(keyCode).toString()
+        textViews[position].text = keyCode.toString()
         textViews[position].background =
             resources.getDrawable(
                 R.drawable.bg_enter_code_filled,

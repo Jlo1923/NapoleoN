@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di.modules
 
+import android.content.Context
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.splash.SplashRepository
 import com.naposystems.pepito.ui.splash.IContractSplash
@@ -12,9 +13,10 @@ class SplashModule {
 
     @Provides
     fun provideRepository(
+        context: Context,
         sharedPreferencesManager: SharedPreferencesManager,
         userDataSource: UserLocalDataSource
     ): IContractSplash.Repository {
-        return SplashRepository(sharedPreferencesManager, userDataSource)
+        return SplashRepository(context, sharedPreferencesManager, userDataSource)
     }
 }
