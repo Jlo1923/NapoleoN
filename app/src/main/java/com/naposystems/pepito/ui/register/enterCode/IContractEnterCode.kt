@@ -38,5 +38,6 @@ interface IContractEnterCode {
         fun getDefaultError(response: Response<EnterCodeResDTO>): ArrayList<String>
         fun get422ErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>
         fun getDefaultErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>
+        fun saveAccountStatus(id: Int)
     }
 }

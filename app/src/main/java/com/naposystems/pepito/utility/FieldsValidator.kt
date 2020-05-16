@@ -57,7 +57,7 @@ class FieldsValidator {
             textInputLayout.error = null
 
             if (displayName.isNotEmpty()) {
-                if (displayName.length < 5) {
+                if (displayName.length < 2) {
                     textInputLayout.error = context.getString(R.string.text_nickname_not_contain_enough_char)
                     return false
                 }

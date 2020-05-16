@@ -11,7 +11,7 @@ import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 
 class IncomingMessageViewHolder constructor(
     private val binding: ConversationItemIncomingMessageBinding
-) : ConversationViewHolder(binding.root) {
+) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
         super.containerMessage = binding.containerIncomingMessage

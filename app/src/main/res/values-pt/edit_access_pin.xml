@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_info_edit_access_pin">O pino de acesso deve conter 4 números e tem a funcionalidade para permitir que o aplicativo seja desbloqueado sempre que você o inserir. Esse pino de acesso é diferente da senha.</string>
+    <string name="text_info_edit_access_pin">O acesso pin é solicitada após decorrer o tempo seleccionado, e o aplicativo está em segundo plano.</string>
     <string name="text_old_access_pin">Pino de acesso antigo</string>
     <string name="text_new_access_pin">Novo pino de acesso</string>
     <string name="text_access_pin_not_correspond">Acesso pin não correspondem</string>

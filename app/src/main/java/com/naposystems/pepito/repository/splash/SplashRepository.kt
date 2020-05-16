@@ -1,5 +1,8 @@
 package com.naposystems.pepito.repository.splash
 
+import android.content.Context
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.splash.IContractSplash
@@ -8,6 +11,7 @@ import com.naposystems.pepito.utility.SharedPreferencesManager
 import javax.inject.Inject
 
 class SplashRepository @Inject constructor(
+    private val context: Context,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val userDatasource: UserLocalDataSource
 ) : IContractSplash.Repository {
@@ -56,9 +60,15 @@ class SplashRepository @Inject constructor(
     }
 
     override suspend fun setDefaultTheme() {
+        val nightModeFlags: Int = context.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK
+        val defaultTheme = when (nightModeFlags) {
+            Configuration.UI_MODE_NIGHT_YES -> Constants.ColorScheme.DARK_THEME.scheme
+            else -> Constants.ColorScheme.LIGHT_THEME.scheme
+        }
         defaultPreferencesPutInt(
             Constants.SharedPreferences.PREF_COLOR_SCHEME,
-            Constants.ColorScheme.LIGHT_THEME.scheme
+            defaultTheme
         )
     }
 
@@ -136,7 +146,7 @@ class SplashRepository @Inject constructor(
         defaultPreferencesPutInt(Constants.SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE, 0)
     }
 
-    private fun defaultPreferencesPutLong(preference : String, data : Long) {
+    private fun defaultPreferencesPutLong(preference: String, data: Long) {
         val default = sharedPreferencesManager.getLong(
             preference
         )
@@ -148,7 +158,7 @@ class SplashRepository @Inject constructor(
         }
     }
 
-    private fun defaultPreferencesPutInt(preference : String, data : Int) {
+    private fun defaultPreferencesPutInt(preference: String, data: Int) {
         val default = sharedPreferencesManager.getInt(
             preference
         )

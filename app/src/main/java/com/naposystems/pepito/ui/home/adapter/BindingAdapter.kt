@@ -184,7 +184,7 @@ private fun drawableId(status: Int): Int {
         Constants.MessageStatus.SENT.status -> R.drawable.ic_message_sent
         Constants.MessageStatus.UNREAD.status -> R.drawable.ic_message_unread
         Constants.MessageStatus.READED.status -> R.drawable.ic_message_readed
-        Constants.MessageStatus.ERROR.status -> R.drawable.ic_error_outline_black
+        Constants.MessageStatus.ERROR.status -> R.drawable.ic_message_error
         else -> R.drawable.ic_access_time_black
     }
 }

@@ -87,43 +87,43 @@ class NumericKeyboardCustomView(context: Context, attrs: AttributeSet) :
 
     private fun setKeyListener() {
         binding.button0.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_0)
+            mListener.onKeyPressed(0)
         }
 
         binding.button1.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_1)
+            mListener.onKeyPressed(1)
         }
 
         binding.button2.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_2)
+            mListener.onKeyPressed(2)
         }
 
         binding.button3.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_3)
+            mListener.onKeyPressed(3)
         }
 
         binding.button4.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_4)
+            mListener.onKeyPressed(4)
         }
 
         binding.button5.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_5)
+            mListener.onKeyPressed(5)
         }
 
         binding.button6.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_6)
+            mListener.onKeyPressed(6)
         }
 
         binding.button7.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_7)
+            mListener.onKeyPressed(7)
         }
 
         binding.button8.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_8)
+            mListener.onKeyPressed(8)
         }
 
         binding.button9.setOnClickListener {
-            mListener.onKeyPressed(KEYCODE_9)
+            mListener.onKeyPressed(9)
         }
 
         binding.buttonDelete.setOnClickListener {

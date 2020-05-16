@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.repository.enterCode.EnterCodeRepository
+import com.naposystems.pepito.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -44,6 +45,7 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
 
                 if (response.isSuccessful) {
                     _isValidCode.value = true
+                    repository.saveAccountStatus(Constants.AccountStatus.CODE_VALIDATED.id)
                 } else {
                     when (response.code()) {
                         400 -> {

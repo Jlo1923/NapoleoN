@@ -8,6 +8,7 @@ interface IContractValidateNickname {
 
     interface ViewModel {
         fun validateNickname(validateNicknameReqDTO: ValidateNicknameReqDTO)
+        fun setNoValidNickname()
     }
 
     interface Repository {

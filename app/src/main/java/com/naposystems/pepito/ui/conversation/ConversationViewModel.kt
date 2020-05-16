@@ -149,7 +149,8 @@ class ConversationViewModel @Inject constructor(
                 isMine = Constants.IsMine.YES.value,
                 status = Constants.MessageStatus.SENDING.status,
                 numberAttachments = numberAttachments,
-                messageType = Constants.MessageType.MESSAGE.type
+                messageType = Constants.MessageType.MESSAGE.type,
+                selfDestructionAt = selfDestructTime
             )
 
             val messageId = repository.insertMessage(message).toInt()

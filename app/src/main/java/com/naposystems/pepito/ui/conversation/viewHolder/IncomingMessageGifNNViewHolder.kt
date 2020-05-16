@@ -12,7 +12,7 @@ import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 class IncomingMessageGifNNViewHolder constructor(
     private val binding: ConversationItemIncomingMessageWithGifNnBinding
 ) :
-    ConversationViewHolder(binding.root) {
+    ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
         super.containerMessage = binding.containerIncomingMessage

@@ -9,7 +9,7 @@ import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 
 class MyMessageDocumentViewHolder constructor(private val binding: ConversationItemMyMessageWithDocumentBinding) :
-    ConversationViewHolder(binding.root) {
+    ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
         super.containerMessage = binding.containerMyMessage
