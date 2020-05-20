@@ -63,4 +63,6 @@
     <string name="text_yesterday">Gestern</string>
     <string name="text_close">Schließen</string>
     <string name="text_confirm">Confirm</string>
+    <string name="text_hang_up_call">Auflegen</string>
+    <string name="text_answer_call">Antworten</string>
 </resources>

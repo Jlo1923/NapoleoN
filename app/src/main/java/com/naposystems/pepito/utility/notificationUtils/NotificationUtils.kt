@@ -1,12 +1,17 @@
 package com.naposystems.pepito.utility.notificationUtils
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import androidx.core.app.NotificationCompat.*
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
@@ -15,23 +20,36 @@ import com.naposystems.pepito.app.NapoleonApplication
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.repository.notificationUtils.NotificationUtilsRepository
+import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.Constants.SharedPreferences.PREF_PENDING_CALL
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import dagger.android.support.DaggerApplication
-import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
+
 class NotificationUtils @Inject constructor(applicationContext: Context) {
+
+    companion object {
+        const val NOTIFICATION_RINGING = 950707
+        const val NOTIFICATION = 162511
+
+        fun cancelWebRTCCallNotification(context: Context) {
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(NOTIFICATION_RINGING)
+        }
+    }
 
     @Inject
     lateinit var repository: NotificationUtilsRepository
 
     init {
         (applicationContext as DaggerApplication).androidInjector().inject(this)
+        createNotificationChannel(applicationContext)
+        createCallNotificationChannel(applicationContext)
     }
 
     fun createInformativeNotification(
@@ -71,11 +89,6 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             .setPriority(PRIORITY_MAX)
             .setVisibility(VISIBILITY_PUBLIC)
             .setAutoCancel(true)
-
-        createNotificationChannel(
-            context,
-            channelId
-        )
 
         handleNotificationType(
             notificationType,
@@ -204,7 +217,47 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             }
 
             Constants.NotificationType.INCOMING_CALL.type -> {
-                if (app != null && !app.isAppVisible()) {
+                var channel = ""
+                var contactId = 0
+                var isVideoCall = false
+
+                if (data.containsKey(Constants.CallKeys.CHANNEL)) {
+                    channel = "private-${data[Constants.CallKeys.CHANNEL]}"
+                }
+
+                if (data.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
+                    isVideoCall = data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
+                }
+
+                if (data.containsKey(Constants.CallKeys.CONTACT_ID)) {
+                    contactId = data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
+                }
+
+                if (channel != "private-" && contactId != 0) {
+                    val service = Intent(context, WebRTCCallService::class.java)
+
+                    val bundle = Bundle()
+
+                    bundle.putString(
+                        Constants.CallKeys.CHANNEL,
+                        channel
+                    )
+
+                    bundle.putBoolean(
+                        Constants.CallKeys.IS_VIDEO_CALL,
+                        isVideoCall
+                    )
+
+                    bundle.putInt(
+                        Constants.CallKeys.CONTACT_ID,
+                        contactId
+                    )
+
+                    service.putExtras(bundle)
+
+                    context.startService(service)
+                }
+                /*if (app != null && !app.isAppVisible()) {
                     val jsonObject = JSONObject()
                     jsonObject.put(
                         Constants.CallKeys.CHANNEL,
@@ -223,15 +276,95 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                         PREF_PENDING_CALL,
                         jsonObject.toString()
                     )
-                }
+                }*/
             }
         }
     }
 
-    private fun createNotificationChannel(context: Context, channelId: String) {
+    fun createCallNotification(
+        channel: String,
+        contactId: Int,
+        isVideoCall: Boolean,
+        context: Context
+    ): Notification {
+
+        val soundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+
+        val fullScreenIntent =
+            Intent(context, ConversationCallActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putInt(ConversationCallActivity.CONTACT_ID, contactId)
+                    putString(ConversationCallActivity.CHANNEL, channel)
+                    putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
+                    putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                    putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
+                })
+            }
+
+        val fullScreenPendingIntent = PendingIntent.getActivity(
+            context, 0,
+            fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val notificationBuilder = Builder(
+            context,
+            context.getString(R.string.calls_channel_id)
+        )
+            .setSmallIcon(R.drawable.ic_notification_icon)
+            .setContentTitle("Incoming secure call")
+            .setPriority(PRIORITY_HIGH)
+            .setCategory(CATEGORY_CALL)
+            .addAction(
+                getServiceNotificationAction(
+                    context,
+                    WebRTCCallService.ACTION_DENY_CALL,
+                    R.drawable.ic_close_black_24,
+                    R.string.text_hang_up_call,
+                    channel, contactId, isVideoCall
+                )
+            )
+            .addAction(
+                getServiceNotificationAction(
+                    context,
+                    WebRTCCallService.ACTION_ANSWER_CALL,
+                    R.drawable.ic_call_black_24,
+                    R.string.text_answer_call,
+                    channel, contactId, isVideoCall
+                )
+            )
+            .setSound(soundUri)
+
+        if (callActivityRestricted(context)) {
+            // Use a full-screen intent only for the highest-priority alerts where you
+            // have an associated activity that you would like to launch after the user
+            // interacts with the notification. Also, if your app targets Android 10
+            // or higher, you need to request the USE_FULL_SCREEN_INTENT permission in
+            // order for the platform to invoke this notification.
+            notificationBuilder.setFullScreenIntent(fullScreenPendingIntent, true)
+            notificationBuilder.priority = PRIORITY_HIGH
+            notificationBuilder.setCategory(CATEGORY_CALL)
+        }
+
+        return notificationBuilder.build()
+    }
+
+    fun getNotificationId(context: Context, type: Int): Int {
+        return if (callActivityRestricted(context) && type == Constants.NotificationType.INCOMING_CALL.type) {
+            NOTIFICATION_RINGING
+        } else {
+            NOTIFICATION
+        }
+    }
+
+    private fun callActivityRestricted(context: Context): Boolean {
+        return Build.VERSION.SDK_INT >= 29 && !(context as NapoleonApplication).isAppVisible()
+    }
+
+    private fun createNotificationChannel(context: Context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = context.getString(R.string.default_notification_channel_id)
             val name = context.getString(R.string.default_notification_channel_id)
             val descriptionText = context.getString(R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_HIGH
@@ -246,4 +379,66 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
+    private fun createCallNotificationChannel(context: Context) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val (id: String, name) = context.getString(R.string.calls_channel_id) to
+                    context.getString(R.string.calls_channel_name)
+            val descriptionText = context.getString(R.string.calls_channel_description)
+            val importance = NotificationManager.IMPORTANCE_HIGH
+
+            val channel = NotificationChannel(id, name, importance).apply {
+                description = descriptionText
+                setShowBadge(true)
+                lockscreenVisibility = PRIORITY_MAX
+            }
+
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun getServiceNotificationAction(
+        context: Context,
+        action: String,
+        iconResId: Int,
+        titleResId: Int,
+        channel: String,
+        contactId: Int,
+        isVideoCall: Boolean
+    ): Action? {
+
+        val intent = Intent(context, WebRTCCallService::class.java)
+        intent.action = action
+        val bundle = Bundle()
+
+        bundle.putString(
+            Constants.CallKeys.CHANNEL,
+            channel
+        )
+
+        bundle.putBoolean(
+            Constants.CallKeys.IS_VIDEO_CALL,
+            isVideoCall
+        )
+
+        bundle.putInt(
+            Constants.CallKeys.CONTACT_ID,
+            contactId
+        )
+        intent.putExtras(bundle)
+        val pendingIntent =
+            PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return Action(
+            iconResId,
+            context.getString(titleResId),
+            pendingIntent
+        )
+    }
+
 }

@@ -63,4 +63,6 @@
     <string name="text_yesterday">Ontem</string>
     <string name="text_close">Perto</string>
     <string name="text_confirm">Confirm</string>
+    <string name="text_hang_up_call">Desligar</string>
+    <string name="text_answer_call">Responda</string>
 </resources>

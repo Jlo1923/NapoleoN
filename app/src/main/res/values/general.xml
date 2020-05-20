@@ -4,8 +4,6 @@
     <string name="label_nickname" translatable="false">\@%1$s</string>
     <string name="text_power_by" translatable="false">Powered by</string>
     <string name="middle_dash" translatable="false">-</string>
-    <string name="channel_description" translatable="false">Default channel</string>
-    <string name="default_notification_channel_id" translatable="false">Default channel</string>
     <string name="okay" translatable="false">OK</string>
     <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="only_letters_upper_case_and_numbers" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
@@ -80,4 +78,6 @@
     <string name="text_yesterday">Yesterday</string>
     <string name="text_close">Close</string>
     <string name="text_confirm">Confirm</string>
+    <string name="text_hang_up_call">Reject</string>
+    <string name="text_answer_call">Answer</string>
 </resources>

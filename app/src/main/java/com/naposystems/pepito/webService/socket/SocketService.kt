@@ -334,11 +334,11 @@ class SocketService @Inject constructor(
         if (conversationCall.channel.isNotEmpty() && conversationCall.contactId > 0) {
 
             if (isPendingCall) {
-                startService(
+                /*startService(
                     conversationCall.channel,
                     conversationCall.contactId,
                     conversationCall.isVideoCall
-                )
+                )*/
                 sharedPreferencesManager.putString(PREF_PENDING_CALL, "")
             } else {
                 RxBus.publish(

@@ -18,11 +18,14 @@ import com.naposystems.pepito.databinding.ActivityConversationCallBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.notificationUtils.NotificationUtils
+import com.naposystems.pepito.utility.notificationUtils.WebRTCCallService
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.webRTC.IContractWebRTCClient
 import com.naposystems.pepito.webRTC.WebRTCClient
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import dagger.android.AndroidInjection
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -99,6 +102,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
         binding.fabAnswer.setOnClickListener {
             if (isIncomingCall) {
+                NotificationUtils.cancelWebRTCCallNotification(this)
                 webRTCClient.emitJoinToCall()
                 webRTCClient.stopRingAndVibrate()
                 binding.fabAnswer.visibility = View.GONE
@@ -207,6 +211,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
             if (bundle.containsKey(IS_FROM_CLOSED_APP)) {
                 isFromClosedApp = bundle.getBoolean(IS_FROM_CLOSED_APP, false)
+            }
+
+            if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
+                NotificationUtils.cancelWebRTCCallNotification(this)
+                Timber.d("Contestar puto")
             }
         }
     }
