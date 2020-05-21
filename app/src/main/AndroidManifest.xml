@@ -33,7 +33,7 @@
         tools:targetApi="n">
 
         <service android:name=".firebase.TestService" />
-        <service android:name=".utility.notificationUtils.WebRTCCallService" />
+        <service android:name=".service.webRTCCall.WebRTCCallService" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

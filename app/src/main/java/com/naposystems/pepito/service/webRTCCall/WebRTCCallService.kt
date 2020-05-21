@@ -1,19 +1,33 @@
-package com.naposystems.pepito.utility.notificationUtils
+package com.naposystems.pepito.service.webRTCCall
 
 import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import com.naposystems.pepito.repository.webRTCCallService.WebRTCCallServiceRepository
 import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.notificationUtils.NotificationUtils
+import dagger.android.support.DaggerApplication
 import timber.log.Timber
+import javax.inject.Inject
 
 class WebRTCCallService : Service() {
 
     companion object {
         const val ACTION_ANSWER_CALL = "ANSWER_CALL"
         const val ACTION_DENY_CALL = "DENY_CALL"
+        const val ACTION_CALL_CONNECTED = "CALL_CONNECTED"
+        const val ACTION_CALL_END = "CALL_END"
+    }
+
+    @Inject
+    lateinit var repository: WebRTCCallServiceRepository
+
+    override fun onCreate() {
+        super.onCreate()
+        (applicationContext as DaggerApplication).androidInjector().inject(this)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -24,6 +38,7 @@ class WebRTCCallService : Service() {
         Timber.d("onStartCommand")
         nullableIntent?.let { intent ->
             intent.action?.let { action ->
+                Timber.d("onStartCommand action: $action")
                 when (action) {
                     ACTION_ANSWER_CALL -> {
                         intent.extras?.let { bundle ->
@@ -34,7 +49,26 @@ class WebRTCCallService : Service() {
                         }
                     }
                     ACTION_DENY_CALL -> {
-                        Timber.d("Colgar jajaja")
+                        intent.extras?.let { bundle ->
+                            var channel = ""
+                            var contactId = 0
+
+                            if (bundle.containsKey(Constants.CallKeys.CHANNEL)) {
+                                channel = bundle.getString(Constants.CallKeys.CHANNEL) ?: ""
+                            }
+
+                            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {
+                                contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
+                            }
+
+                            repository.rejectCall(contactId, channel)
+                            stopForeground(true)
+                            stopSelf()
+                        }
+                    }
+                    ACTION_CALL_CONNECTED, ACTION_CALL_END -> {
+                        stopForeground(true)
+                        stopSelf()
                     }
                     else -> {
                         //Intentionally empty
@@ -42,6 +76,7 @@ class WebRTCCallService : Service() {
                 }
             } ?: run {
                 intent.extras?.let { bundle ->
+                    Timber.d("onStartCommand bundle")
                     if (Build.VERSION.SDK_INT >= 29) {
                         getExtrasAndShowCallNotif(bundle)
                     } else {
@@ -136,6 +171,7 @@ class WebRTCCallService : Service() {
             newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
             startActivity(newIntent)
+            stopForeground(true)
 
         }
     }

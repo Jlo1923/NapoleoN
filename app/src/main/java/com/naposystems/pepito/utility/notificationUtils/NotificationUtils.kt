@@ -7,9 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat.*
@@ -20,6 +17,7 @@ import com.naposystems.pepito.app.NapoleonApplication
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.repository.notificationUtils.NotificationUtilsRepository
+import com.naposystems.pepito.service.webRTCCall.WebRTCCallService
 import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
@@ -288,8 +286,6 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
         context: Context
     ): Notification {
 
-        val soundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-
         val fullScreenIntent =
             Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
@@ -332,7 +328,6 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                     channel, contactId, isVideoCall
                 )
             )
-            .setSound(soundUri)
 
         if (callActivityRestricted(context)) {
             // Use a full-screen intent only for the highest-priority alerts where you

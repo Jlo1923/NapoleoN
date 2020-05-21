@@ -27,12 +27,6 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
     val contactHasFoto = contact?.getImage()?.isNotEmpty() ?: false
     val bitmapTransformation = mutableListOf<Transformation<Bitmap>>()
     if (contactHasFoto) {
-        val layoutParams = imageView.layoutParams
-        layoutParams.height = MATCH_PARENT
-        layoutParams.width = MATCH_PARENT
-
-        imageView.layoutParams = layoutParams
-
         bitmapTransformation.add(CenterCrop())
         bitmapTransformation.add(BlurTransformation(context))
 
