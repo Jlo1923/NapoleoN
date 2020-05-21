@@ -1,6 +1,8 @@
 package com.naposystems.pepito.ui.conversationCall
 
+import android.content.Intent
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -18,11 +20,15 @@ import com.naposystems.pepito.databinding.ActivityConversationCallBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.notificationUtils.NotificationUtils
+import com.naposystems.pepito.service.webRTCCall.WebRTCCallService
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.webRTC.IContractWebRTCClient
 import com.naposystems.pepito.webRTC.WebRTCClient
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import dagger.android.AndroidInjection
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -62,6 +68,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
+        Timber.d("onCreate")
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
         webRTCClient = WebRTCClient(this, socketService, sharedPreferencesManager)
@@ -92,13 +100,16 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         if (isIncomingCall) {
-            webRTCClient.playRingtone()
+            if (Build.VERSION.SDK_INT < 29) {
+                webRTCClient.playRingtone()
+            }
         } else {
             webRTCClient.playCallingTone()
         }
 
         binding.fabAnswer.setOnClickListener {
             if (isIncomingCall) {
+                NotificationUtils.cancelWebRTCCallNotification(this)
                 webRTCClient.emitJoinToCall()
                 webRTCClient.stopRingAndVibrate()
                 binding.fabAnswer.visibility = View.GONE
@@ -108,6 +119,23 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         binding.fabHangup.setOnClickListener {
             if (!isIncomingCall && !webRTCClient.isActiveCall()) {
                 viewModel.sendMissedCall(contactId, isVideoCall)
+            }
+            if (!isFromClosedApp){
+                val intent = Intent(this, WebRTCCallService::class.java)
+                intent.action = WebRTCCallService.ACTION_CALL_END
+                val bundle = Bundle()
+
+                bundle.putString(
+                    Constants.CallKeys.CHANNEL,
+                    channel
+                )
+
+                bundle.putInt(
+                    Constants.CallKeys.CONTACT_ID,
+                    contactId
+                )
+                intent.putExtras(bundle)
+                this.startService(intent)
             }
             webRTCClient.emitHangUp()
             webRTCClient.dispose()
@@ -179,19 +207,22 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         super.onStop()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null && intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
+            NotificationUtils.cancelWebRTCCallNotification(this)
+            if (isIncomingCall) {
+                Timber.d("ACTION_ANSWER_CALL")
+                NotificationUtils.cancelWebRTCCallNotification(this)
+                webRTCClient.emitJoinToCall()
+                webRTCClient.stopRingAndVibrate()
+                binding.fabAnswer.visibility = View.GONE
+            }
+        }
+    }
+
     private fun getExtras() {
         intent.extras?.let { bundle ->
-            if (bundle.containsKey(IS_VIDEO_CALL)) {
-                isVideoCall = bundle.getBoolean(IS_VIDEO_CALL, false)
-                binding.isVideoCall = isVideoCall
-                webRTCClient.setIsVideoCall(isVideoCall)
-            }
-
-            if (bundle.containsKey(CONTACT_ID)) {
-                contactId = bundle.getInt(CONTACT_ID)
-                viewModel.getContact(contactId)
-            }
-
             if (bundle.containsKey(IS_INCOMING_CALL)) {
                 isIncomingCall = bundle.getBoolean(IS_INCOMING_CALL)
                 binding.isIncomingCall = isIncomingCall
@@ -205,8 +236,30 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 }
             }
 
+            if (bundle.containsKey(IS_VIDEO_CALL)) {
+                isVideoCall = bundle.getBoolean(IS_VIDEO_CALL, false)
+                binding.isVideoCall = isVideoCall
+                webRTCClient.setIsVideoCall(isVideoCall)
+            }
+
+            if (bundle.containsKey(CONTACT_ID)) {
+                contactId = bundle.getInt(CONTACT_ID)
+                viewModel.getContact(contactId)
+            }
+
             if (bundle.containsKey(IS_FROM_CLOSED_APP)) {
                 isFromClosedApp = bundle.getBoolean(IS_FROM_CLOSED_APP, false)
+            }
+
+            if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
+                NotificationUtils.cancelWebRTCCallNotification(this)
+                if (isIncomingCall) {
+                    Timber.d("ACTION_ANSWER_CALL")
+                    NotificationUtils.cancelWebRTCCallNotification(this)
+                    webRTCClient.emitJoinToCall()
+                    webRTCClient.stopRingAndVibrate()
+                    binding.fabAnswer.visibility = View.GONE
+                }
             }
         }
     }
@@ -322,6 +375,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         runOnUiThread {
             if (isIncomingCall) {
                 binding.containerControls.visibility = View.VISIBLE
+                binding.fabAnswer.visibility = View.GONE
             }
 
             if (!isVideoCall) {

@@ -1,6 +1,7 @@
 package com.naposystems.pepito.webRTC
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -22,6 +23,7 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.adapters.toJSONObject
+import com.naposystems.pepito.service.webRTCCall.WebRTCCallService
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.naposystems.pepito.webService.socket.SocketService
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -181,7 +183,6 @@ class WebRTCClient constructor(
         bluetoothStateManager = BluetoothStateManager(context, this)
         createPeerConnection()
         subscribeToRXEvents()
-        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
     }
 
     private fun subscribeToRXEvents() {
@@ -316,6 +317,11 @@ class WebRTCClient constructor(
     private fun playSound(uriSound: Uri, isLooping: Boolean, completionCallback: () -> Unit) {
         mediaPlayer.apply {
             reset()
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .build()
+            )
             if (isPlaying) {
                 stop()
                 reset()
@@ -391,6 +397,9 @@ class WebRTCClient constructor(
                     super.onSignalingChange(signalingState)
                     Timber.d("onSignalingChange: $signalingState")
                     if (signalingState == PeerConnection.SignalingState.CLOSED) {
+                        val intent = Intent(context, WebRTCCallService::class.java)
+                        intent.action = WebRTCCallService.ACTION_CALL_END
+                        context.startService(intent)
                         mListener?.resetIsOnCallPref()
                         playSound(
                             Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone),
@@ -414,6 +423,12 @@ class WebRTCClient constructor(
                             mCallTimeRunnable,
                             TimeUnit.SECONDS.toMillis(1)
                         )
+
+                        val intent = Intent(context, WebRTCCallService::class.java)
+                        intent.action = WebRTCCallService.ACTION_CALL_CONNECTED
+                        context.startService(intent)
+
+                        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
                     }
 
                     if (iceConnectionState == PeerConnection.IceConnectionState.FAILED) {
@@ -424,6 +439,10 @@ class WebRTCClient constructor(
                         ) {
                             dispose()
                         }
+
+                        val intent = Intent(context, WebRTCCallService::class.java)
+                        intent.action = WebRTCCallService.ACTION_CALL_END
+                        context.startService(intent)
                     }
                 }
             })
@@ -726,6 +745,7 @@ class WebRTCClient constructor(
     }
 
     override fun playRingtone() {
+        mediaPlayerHasStopped = false
         playSound(Settings.System.DEFAULT_RINGTONE_URI, true) {
             // Intentionally empty
         }
@@ -784,6 +804,7 @@ class WebRTCClient constructor(
 
     override fun dispose() {
         Timber.d("Dispose")
+        audioManager.mode = AudioManager.MODE_NORMAL
 
         isActiveCall = false
         unregisterProximityListener()

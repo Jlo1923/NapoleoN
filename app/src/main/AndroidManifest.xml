@@ -18,6 +18,8 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".app.NapoleonApplication"
@@ -31,6 +33,7 @@
         tools:targetApi="n">
 
         <service android:name=".firebase.TestService" />
+        <service android:name=".service.webRTCCall.WebRTCCallService" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -49,6 +52,9 @@
         <activity
             android:name=".ui.conversationCall.ConversationCallActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/FullscreenTheme" />
 
         <!-- uCrop cropping activity -->

@@ -63,4 +63,6 @@
     <string name="text_yesterday">Ieri</string>
     <string name="text_close">Vicino</string>
     <string name="text_confirm">Conferma</string>
+    <string name="text_hang_up_call">Appendere</string>
+    <string name="text_answer_call">Risposta</string>
 </resources>

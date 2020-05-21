@@ -62,4 +62,6 @@
     <string name="text_yesterday">Ayer</string>
     <string name="text_close">Cerrar</string>
     <string name="text_confirm">Confirmar</string>
+    <string name="text_hang_up_call">Rechazar</string>
+    <string name="text_answer_call">Contestar</string>
 </resources>
