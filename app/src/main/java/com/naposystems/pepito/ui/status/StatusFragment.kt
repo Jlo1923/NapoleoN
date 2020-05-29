@@ -166,7 +166,7 @@ class StatusFragment : Fragment() {
                         binding.textInputEditTextStatus.clearFocus()
                     } else {
                         Utils.alertDialogInformative(
-                            R.string.text_status_limit,
+                            getString(R.string.text_status_limit),
                             true,
                             requireContext(),
                             R.string.text_accept,

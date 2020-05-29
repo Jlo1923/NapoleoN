@@ -1,23 +1,26 @@
 package com.naposystems.pepito.utility
 
+import java.util.concurrent.TimeUnit
+
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
     const val GIPHY_API_KEY = "R6CTqCVGyxWIAEad1tbbRFouJ6C6hFQX"
     const val DATA_CRYPT = "datacrypt"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
+    const val REMOTE_CONFIG_VERSION_KEY = "version_android"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 3
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
     const val QUANTITY_ATTACHMENTS = 0
+    const val MAX_VIDEO_RECORD_TIME = 30000L
 
     object NapoleonApi {
         /*const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
         const val SOCKET_BASE_URL = "http://192.168.1.222:6001"*/
         /*const val BASE_URL = "http://pruebita.napoleon-chat.com/api/"
         const val SOCKET_BASE_URL = "http://pruebita.napoleon-chat.com:6001"*/
-        const val BASE_URL = "http://dev.napoleon-chat.com/api/"
-        const val SOCKET_BASE_URL = "http://dev.napoleon-chat.com:6001"
+//        const val BASE_URL = "http://dev.napoleon-chat.com/api/"
         const val GENERATE_CODE = "auth/sendverificationcode"
         const val VERIFICATE_CODE = "auth/validateverificationcode"
         const val VALIDATE_NICKNAME = "auth/validatenick"
@@ -305,7 +308,8 @@ object Constants {
         CHAT_BACKGROUND("chatBackground"),
         AVATAR("avatars"),
         HEADER("headers"),
-        IMAGE_FAKE_CONTACT("fakeContact")
+        IMAGE_FAKE_CONTACT("fakeContact"),
+        TEMPS("temps")
     }
 
     enum class ExistingAttack(val type: Int) {

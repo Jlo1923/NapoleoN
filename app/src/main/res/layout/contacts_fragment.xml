@@ -76,8 +76,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         custom:description="@string/text_empty_state_contacts_description"
-                        custom:image="@drawable/image_empty_state_friendship"
-                        custom:titleEmptyState="@string/text_empty_state_contacts_title"/>
+                        custom:image="?attr/attrImageEmptyStateNoContacts"
+                        custom:titleEmptyState="@string/text_empty_state_contacts_title" />
 
                 </ViewSwitcher>
 

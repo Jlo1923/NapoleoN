@@ -13,8 +13,9 @@ class RecoveryAccountModule {
     @Provides
     @Singleton
     fun provideRepository(
-        napoleonApi: NapoleonApi
+        napoleonApi: NapoleonApi,
+        sharedPreferencesManager: SharedPreferencesManager
     ): IContractRecoveryAccount.Repository {
-        return RecoveryAccountRepository(napoleonApi)
+        return RecoveryAccountRepository(napoleonApi, sharedPreferencesManager)
     }
 }

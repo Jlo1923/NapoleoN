@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.entity.Contact
 import kotlinx.android.parcel.Parcelize
 
@@ -24,7 +25,7 @@ data class Message(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") var id: Int,
     @ColumnInfo(name = "web_id") val webId: String,
-    @ColumnInfo(name = "body") val body: String,
+    @ColumnInfo(name = "body") @get:JvmName("getBody_") var body: String,
     @ColumnInfo(name = "quoted") val quoted: String,
     @ColumnInfo(name = "contact_id") val contactId: Int,
     @ColumnInfo(name = "updated_at") var updatedAt: Int,
@@ -37,6 +38,10 @@ data class Message(
     @ColumnInfo(name = "total_self_destruction_at") var totalSelfDestructionAt: Int = 0,
     @ColumnInfo(name = "type_message") val messageType: Int
 ) : Parcelable {
+
+    fun getBody(): String {
+        return this.body
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -54,6 +59,10 @@ data class Message(
         var result = id
         result = 31 * result + webId.hashCode()
         return result
+    }
+
+    fun encryptBody(cryptoMessage: CryptoMessage) {
+        this.body = cryptoMessage.encryptMessageBody(this.body)
     }
 
 }

@@ -46,6 +46,7 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -167,17 +168,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-
-                val intent = Intent(this, ConversationCallActivity::class.java).apply {
-                    putExtras(Bundle().apply {
-                        putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
-                        putString(ConversationCallActivity.CHANNEL, it.channel)
-                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
-                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
-                    })
+                if (this.hasMicAndCameraPermission()) {
+                    val intent = Intent(this, ConversationCallActivity::class.java).apply {
+                        putExtras(Bundle().apply {
+                            putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
+                            putString(ConversationCallActivity.CHANNEL, it.channel)
+                            putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
+                            putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                        })
+                    }
+                    startActivity(intent)
                 }
-                startActivity(intent)
-
             }
 
         disposable.add(disposableIncomingCall)
@@ -274,7 +275,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         viewModel.contact.observe(this, Observer { contact ->
-            if (contact != null) {
+            if (contact != null && this.hasMicAndCameraPermission()) {
                 val intent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putSerializable(ConversationCallActivity.CONTACT_ID, contact)

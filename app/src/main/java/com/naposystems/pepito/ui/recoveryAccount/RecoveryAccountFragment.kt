@@ -12,12 +12,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RecoveryAccountFragmentBinding
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
+import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -36,6 +39,7 @@ class RecoveryAccountFragment : Fragment() {
     }
 
     private lateinit var snackbarUtils: SnackbarUtils
+    private var successToken: Boolean = false
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -51,13 +55,17 @@ class RecoveryAccountFragment : Fragment() {
             R.layout.recovery_account_fragment, container, false
         )
 
+        setupCallbackFirebase()
+
         binding.textInputEditTextNickname.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.buttonRecoveryAccount.isEnabled = s!!.length >= 5
+                binding.buttonRecoveryAccount.isEnabled = s!!.length >= 5 && successToken
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 //Nothing
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 //Nothing
             }
@@ -70,6 +78,22 @@ class RecoveryAccountFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun setupCallbackFirebase() {
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    context?.let { context ->
+                        this.showToast(context.getString(R.string.text_fail))
+                    }
+                    return@OnCompleteListener
+                }
+
+                task.result?.token?.let { token ->
+                    viewModel.setFirebaseId(token)
+                }
+            })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -116,6 +140,10 @@ class RecoveryAccountFragment : Fragment() {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
             snackbarUtils.showSnackbar()
             binding.viewSwitcherRecoveryAccount.showPrevious()
+        })
+
+        viewModel.successToken.observe(viewLifecycleOwner, Observer {
+            this.successToken = it
         })
     }
 }

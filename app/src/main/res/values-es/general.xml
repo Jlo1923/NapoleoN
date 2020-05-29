@@ -53,15 +53,19 @@
     <string name="text_display_name">Nombre a mostrar (opcional)</string>
     <string name="text_nickname_not_contain_enough_char">El apodo debe contener mínimo 2 caracteres.</string>
     <string name="text_empty_state_conversation_title">Inicia una conversación</string>
-    <string name="text_empty_state_conversation_description">Conversa con tus amigos y comparte con ellos de una manera segura y privada</string>
+    <string name="text_empty_state_conversation_description">Comunícate con tus contactos de una manera segura y privada.</string>
     <string name="text_empty_state_friendship_title">Solicitudes de amistad</string>
-    <string name="text_empty_state_friendship_description">No tienes solicitudes de amistad</string>
+    <string name="text_empty_state_friendship_description">No tienes solicitudes de amistad pendientes</string>
     <string name="text_empty_state_search_title">Busca a tus amigos</string>
-    <string name="text_empty_state_search_description">Busca un apodo, agrégalo y comparte con esa persona de una forma privada y segura</string>
+    <string name="text_empty_state_search_description">Busca a tus amigos por apodo y comunícate</string>
     <string name="text_now">Ahora</string>
     <string name="text_yesterday">Ayer</string>
     <string name="text_close">Cerrar</string>
     <string name="text_confirm">Confirmar</string>
     <string name="text_hang_up_call">Rechazar</string>
     <string name="text_answer_call">Contestar</string>
+    <string name="text_update_title">Una nueva versión de Napoleón está disponible</string>
+    <string name="text_update_message">La versión %1$s ahora está disponible en la App Store</string>
+    <string name="text_update">Actualizar</string>
+    <string name="text_explanation_camera_to_receive_calls">NapoleoN necesita aceso a la cámara y micrófono para hacer y recibir llamadas</string>
 </resources>

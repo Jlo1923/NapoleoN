@@ -17,6 +17,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
 import java.io.File
@@ -47,10 +49,11 @@ class MediaPlayerManager(private val context: Context) :
     private var mImageButtonSpeed: ImageButton? = null
     private var mPreviousAudioId: Int? = null
     private var mPreviousUri: Uri? = null
+    private var mPreviousFileName: String? = null
     private var mSeekBar: AppCompatSeekBar? = null
     private var mTextViewDuration: TextView? = null
     private var mListener: Listener? = null
-    private lateinit var tempFile: File
+    private var tempFile: File? = null
     private val mHandler: Handler by lazy {
         Handler()
     }
@@ -84,33 +87,9 @@ class MediaPlayerManager(private val context: Context) :
         mSeekBar?.progress = mediaPlayer.currentPosition
     }
 
-    private fun createTempFile(uri: Uri) {
-        val audioFile = File(uri.toString())
-        val encryptedFile =
-            Utils.getEncryptedFile(
-                context,
-                audioFile
-            )
-        val fileInputStream = encryptedFile.openFileInput()
-
-        val outputDir = File(context.cacheDir, "Audios")
-        if (!outputDir.exists()) {
-            outputDir.mkdir()
-        }
-        tempFile = File.createTempFile("AUD", ".0", outputDir)
-
-        tempFile.outputStream().use { fileOutPut ->
-            fileInputStream.copyTo(fileOutPut)
-            fileOutPut.flush()
-            fileOutPut.close()
-        }
-
-        fileInputStream.close()
-    }
-
     private fun deleteTempFile() {
-        if (mIsEncryptedFile && ::tempFile.isInitialized && tempFile.exists()) {
-            tempFile.delete()
+        if (mIsEncryptedFile && tempFile?.exists() == true) {
+            tempFile?.delete()
         }
     }
 
@@ -137,19 +116,70 @@ class MediaPlayerManager(private val context: Context) :
                 if (mPreviousAudioId != audioId) {
                     mPreviousAudioId = audioId
                     reset()
-                    if (mIsEncryptedFile) {
-                        if (::tempFile.isInitialized) {
-                            deleteTempFile()
-                        }
-                        createTempFile(uri)
+                    val stream = context.contentResolver.openFileDescriptor(uri, "r")
+                    setDataSource(stream!!.fileDescriptor)
+                    prepare()
+                }
 
-                        setDataSource(tempFile.absolutePath)
-                        prepare()
-                    } else {
-                        val stream = context.contentResolver.openFileDescriptor(uri, "r")
-                        setDataSource(stream!!.fileDescriptor)
-                        prepare()
-                    }
+                mediaPlayer.setOnPreparedListener {
+                    mSensorManager.registerListener(
+                        this@MediaPlayerManager,
+                        mProximitySensor,
+                        SensorManager.SENSOR_DELAY_NORMAL
+                    )
+                    mSeekBar?.max = duration
+                }
+
+                mediaPlayer.setOnCompletionListener {
+                    deleteTempFile()
+                    resetMediaPlayer()
+                }
+
+                mRunnable = Runnable {
+                    setSeekbarProgress()
+
+                    mHandler.postDelayed(
+                        mRunnable,
+                        50
+                    )
+                }
+
+                if (isPlaying) {
+                    pause()
+                    mImageButtonPlay?.reverseAnimation()
+                } else {
+                    start()
+                    mHandler.postDelayed(mRunnable, 0)
+                    mImageButtonPlay?.playAnimation()
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            mListener?.onErrorPlayingAudio()
+        }
+    }
+
+    override fun playAudio(audioId: Int, fileName: String) {
+        try {
+            mStartAudioTime = System.currentTimeMillis()
+            if (mPreviousFileName != fileName) {
+                mPreviousFileName = fileName
+            }
+
+            mediaPlayer.apply {
+
+                if (mPreviousAudioId != audioId) {
+                    mPreviousAudioId = audioId
+                    reset()
+                    tempFile = FileManager.createTempFileFromEncryptedFile(
+                        context,
+                        Constants.AttachmentType.AUDIO.type,
+                        fileName,
+                        "mp3"
+                    )
+
+                    setDataSource(tempFile?.absolutePath)
+                    prepare()
                 }
 
                 mediaPlayer.setOnPreparedListener {

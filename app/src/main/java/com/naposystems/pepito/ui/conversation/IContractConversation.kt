@@ -87,7 +87,7 @@ interface IContractConversation {
         fun insertAttachments(listAttachment: List<Attachment>): List<Long>
         fun updateAttachment(attachment: Attachment)
         suspend fun suspendUpdateAttachment(attachment: Attachment)
-        fun insertQuote(quoteWebId: String, message: Message)
+        suspend fun insertQuote(quoteWebId: String, message: Message)
         fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>

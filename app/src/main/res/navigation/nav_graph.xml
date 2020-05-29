@@ -538,7 +538,8 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_conversationCameraFragment_to_attachmentPreviewFragment"
-            app:destination="@id/attachmentPreviewFragment" />
+            app:destination="@id/attachmentPreviewFragment"
+            app:popUpTo="@id/conversationCameraFragment" />
         <argument
             android:name="quote"
             android:defaultValue='""'
@@ -610,7 +611,8 @@
             app:argType="com.naposystems.pepito.model.attachment.gallery.GalleryFolder" />
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentPreviewFragment"
-            app:destination="@id/attachmentPreviewFragment" />
+            app:destination="@id/attachmentPreviewFragment"
+            app:popUpTo="@id/attachmentGalleryFragment" />
         <argument
             android:name="quoteWebId"
             android:defaultValue='""'

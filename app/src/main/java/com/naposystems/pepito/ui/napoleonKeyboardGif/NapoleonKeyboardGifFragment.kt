@@ -100,7 +100,8 @@ class NapoleonKeyboardGifFragment : Fragment() {
                         uri = it.fileName,
                         origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
                         thumbnailUri = "",
-                        status = Constants.AttachmentStatus.SENDING.status
+                        status = Constants.AttachmentStatus.SENDING.status,
+                        extension = "gif"
                     )
 
                     shareViewModel.setGifSelected(attachment)

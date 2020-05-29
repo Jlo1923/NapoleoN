@@ -9,6 +9,7 @@ import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorV
 
 interface IContractMediaPlayer {
     fun playAudio(audioId: Int, uri: Uri)
+    fun playAudio(audioId: Int, fileName: String)
     fun pauseAudio()
     fun registerProximityListener()
     fun unregisterProximityListener()

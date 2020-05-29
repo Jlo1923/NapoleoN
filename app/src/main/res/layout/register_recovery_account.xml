@@ -22,7 +22,7 @@
             app:layout_constraintStart_toStartOf="@id/guideline_start"
             app:layout_constraintTop_toTopOf="@+id/guideline_top"
             app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@drawable/image_register_recovery_account" />
+            app:srcCompat="?attr/attrImageEmptyStateInfoRecovery" />
 
         <TextView
             android:id="@+id/textView_description"

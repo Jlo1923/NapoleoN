@@ -18,8 +18,10 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AttachmentPreviewFragmentBinding
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
+import timber.log.Timber
 import java.io.File
 
 class AttachmentPreviewFragment : Fragment() {
@@ -141,6 +143,7 @@ class AttachmentPreviewFragment : Fragment() {
         }
 
         binding.imageButtonClose.setOnClickListener {
+            deleteFile()
             findNavController().navigateUp()
         }
 
@@ -183,13 +186,7 @@ class AttachmentPreviewFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        if (!hasSentAttachment) {
-            val file = File(args.attachment.uri)
-
-            if (file.exists()) {
-                file.delete()
-            }
-        }
+        deleteFile()
         super.onDestroy()
     }
 
@@ -201,5 +198,11 @@ class AttachmentPreviewFragment : Fragment() {
 
     private fun setSeekbarProgress() {
         binding.seekbar.progress = binding.videoView.currentPosition
+    }
+
+    private fun deleteFile() {
+        if (!hasSentAttachment) {
+            FileManager.deleteAttachmentFile(requireContext(), attachment)
+        }
     }
 }

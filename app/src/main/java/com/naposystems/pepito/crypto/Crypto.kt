@@ -1,4 +1,4 @@
-package com.naposystems.pepito.utility
+package com.naposystems.pepito.crypto
 
 import android.util.Base64
 import java.io.UnsupportedEncodingException
@@ -12,6 +12,7 @@ import javax.crypto.spec.SecretKeySpec
 class Crypto {
     /**
      * Encryption mode enumeration
+     * Esta clase sostiene el lema de Napoleon "El chat más seguro del mundo"
      */
     private enum class EncryptMode {
         ENCRYPT, DECRYPT
@@ -78,7 +79,12 @@ class Crypto {
         iv: String
     ): String {
         val bytes =
-            encryptDecrypt(plainText, getSHA256(key, 32), EncryptMode.ENCRYPT, iv)
+            encryptDecrypt(plainText,
+                getSHA256(
+                    key,
+                    32
+                ),
+                EncryptMode.ENCRYPT, iv)
         return Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 
@@ -89,7 +95,12 @@ class Crypto {
         iv: String
     ): String {
         val bytes =
-            encryptDecrypt(cipherText, getSHA256(key, 32), EncryptMode.DECRYPT, iv)
+            encryptDecrypt(cipherText,
+                getSHA256(
+                    key,
+                    32
+                ),
+                EncryptMode.DECRYPT, iv)
         return String(bytes)
     }
 

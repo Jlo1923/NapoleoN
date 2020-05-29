@@ -33,7 +33,7 @@
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toTopOf="@+id/guideline_top"
                     app:layout_constraintVertical_chainStyle="packed"
-                    app:srcCompat="@drawable/image_recovery_account" />
+                    app:srcCompat="?attr/attrImageEmptyStateRecoveryAccount" />
 
                 <TextView
                     android:id="@+id/textView_description"
@@ -132,9 +132,9 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_recovery_account"
                         style="@style/AppPrimaryButton"
-                        android:enabled="false"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:enabled="false"
                         android:text="@string/text_btn_recovery" />
 
                     <ProgressBar

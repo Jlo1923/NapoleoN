@@ -3,9 +3,15 @@ package com.naposystems.pepito.utility
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.ThumbnailUtils
+import android.net.Uri
 import android.provider.MediaStore
+import android.util.Size
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.MutableLiveData
+import androidx.security.crypto.EncryptedFile
+import androidx.security.crypto.MasterKeys
+import com.naposystems.pepito.BuildConfig
+import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants.AttachmentType.*
 import com.naposystems.pepito.utility.Constants.NapoleonCacheDirectories.*
 import id.zelory.compressor.Compressor
@@ -284,6 +290,134 @@ class FileManager {
                 e.printStackTrace()
             }
             return returnBitmap
+        }
+
+        fun copyEncryptedFile(
+            context: Context,
+            attachment: Attachment
+        ): File {
+
+            val folder = getSubfolderByAttachmentType(attachment.type)
+
+            val fileInputStream = getFileInputStreamFromAttachment(context, attachment, folder)
+
+            val fileName = "${attachment.webId}.${attachment.extension}"
+            val path = File(context.cacheDir!!, folder)
+            if (!path.exists())
+                path.mkdirs()
+            val file = File(path, fileName)
+            if (file.exists()) {
+                file.delete()
+            }
+
+            val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+            val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+
+            val encryptedFile = EncryptedFile.Builder(
+                file,
+                context,
+                masterKeyAlias,
+                EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
+            ).build()
+
+            encryptedFile.openFileOutput().use { fileOut ->
+                fileInputStream.copyTo(fileOut)
+                fileOut.flush()
+                fileOut.close()
+            }
+
+            fileInputStream.close()
+            deleteAttachmentFile(context, attachment)
+            return file
+        }
+
+        fun createTempFileFromEncryptedFile(
+            context: Context,
+            attachmentType: String,
+            fileName: String,
+            extensionWithoutDot: String
+        ): File? {
+
+            var tempFile: File? = null
+            try {
+                val folder = getSubfolderByAttachmentType(attachmentType)
+
+                val path = File(context.cacheDir!!, folder)
+                if (!path.exists())
+                    path.mkdirs()
+                val file = File(path, fileName)
+
+                tempFile = File.createTempFile("NNS", ".${extensionWithoutDot}")
+                val encryptedFile = Utils.getEncryptedFile(context, file)
+
+                tempFile.outputStream().use { fileOut ->
+                    encryptedFile.openFileInput().copyTo(fileOut)
+                    fileOut.flush()
+                    fileOut.close()
+                }
+
+                tempFile.inputStream().close()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+
+            return tempFile
+        }
+
+        fun getFileInputStreamFromAttachment(
+            context: Context,
+            attachment: Attachment,
+            folder: String
+        ): InputStream {
+
+            val path = File(context.cacheDir!!, folder)
+            if (!path.exists())
+                path.mkdirs()
+            val file = File(path, attachment.uri)
+            return FileInputStream(file)
+        }
+
+        fun getFileInputStreamFromEncryptedFile(
+            context: Context,
+            fileName: String,
+            folder: String
+        ): InputStream {
+            val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+            val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+
+            val path = File(context.cacheDir!!, folder)
+            if (!path.exists())
+                path.mkdirs()
+            val file = File(path, fileName)
+
+            val encryptedFile = EncryptedFile.Builder(
+                file,
+                context,
+                masterKeyAlias,
+                EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
+            ).build()
+
+            return encryptedFile.openFileInput()
+        }
+
+        fun deleteAttachmentFile(context: Context, attachment: Attachment) {
+            val folder = getSubfolderByAttachmentType(attachment.type)
+            val path = File(context.cacheDir!!, folder)
+            val file = File(path, attachment.uri)
+
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+
+        fun deleteAttachmentEncryptedFile(context: Context, attachment: Attachment) {
+            val folder = getSubfolderByAttachmentType(attachment.type)
+            val path = File(context.cacheDir!!, folder)
+            val file = File(path, "${attachment.webId}.${attachment.extension}")
+
+            if (file.exists()) {
+                file.delete()
+            }
         }
     }
 }

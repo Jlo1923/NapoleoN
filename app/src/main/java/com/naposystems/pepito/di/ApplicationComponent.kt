@@ -32,7 +32,7 @@ import javax.inject.Singleton
         RecoveryOlderAccountQuestionsModule::class, AccountAttackDialogModule::class,
         SubscriptionModule::class, NapoleonKeyboardGifModule::class,
         AttachmentLocationModule::class, ConversationCallModule::class, NotificationUtilsModule::class,
-        WebRTCCallServiceModule::class,
+        WebRTCCallServiceModule::class, PreviewMediaModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {

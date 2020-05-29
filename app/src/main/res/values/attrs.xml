@@ -13,6 +13,10 @@
         <attr name="showOnlySendIcon" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="CameraButton">
+        <attr name="allowSlide" format="boolean" />
+    </declare-styleable>
+
     <declare-styleable name="SearchView">
         <attr name="hint" format="string" />
         <attr name="characterCount" format="integer" />
@@ -161,6 +165,14 @@
     <attr name="attrIdentifierColorMyQuote" format="reference" />
     <attr name="attrIdentifierColorYourQuote" format="reference" />
 
+    <!-- Empty State -->
+    <attr name="attrImageEmptyStateHome" format="reference" />
+    <attr name="attrImageEmptyStateFriendshipRequest" format="reference" />
+    <attr name="attrImageEmptyStateNoContacts" format="reference" />
+    <attr name="attrImageEmptyStateSearchContact" format="reference" />
+    <attr name="attrImageEmptyStateBlockContact" format="reference" />
+    <attr name="attrImageEmptyStateInfoRecovery" format="reference" />
+    <attr name="attrImageEmptyStateRecoveryAccount" format="reference" />
 
     <!-- Declare custom theme attributes that allow changing which styles are
          used for button bars depending on the API level.

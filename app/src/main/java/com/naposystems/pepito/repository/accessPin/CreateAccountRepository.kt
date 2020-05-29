@@ -9,7 +9,7 @@ import com.naposystems.pepito.dto.accessPin.CreateAccountResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.register.accessPin.IContractAccessPin
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.Crypto
+import com.naposystems.pepito.crypto.Crypto
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi

@@ -1,5 +1,7 @@
 package com.naposystems.pepito.ui.conversationCamera
 
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
@@ -7,18 +9,23 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.camera.core.*
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationCameraFragmentBinding
 import com.naposystems.pepito.entity.message.attachments.Attachment
+import com.naposystems.pepito.ui.custom.cameraButton.CameraButton
 import com.naposystems.pepito.ui.custom.verticalSlider.VerticalSlider
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import timber.log.Timber
@@ -29,9 +36,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
-
 @SuppressLint("RestrictedApi")
-class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
+class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
+    CameraButton.CameraButtonListener {
 
     private lateinit var binding: ConversationCameraFragmentBinding
     private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
@@ -65,8 +72,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
     }
 
     companion object {
-        private const val PHOTO_EXTENSION = ".jpg"
-        private const val VIDEO_EXTENSION = ".mp4"
+        private const val PHOTO_EXTENSION = "jpg"
+        private const val VIDEO_EXTENSION = "mp4"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +100,13 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
 
         binding.verticalSlider.setListener(this)
 
+        binding.imageButtonLock.post {
+            with(binding.imageButtonCamera) {
+                setListener(this@ConversationCameraFragment)
+                setMaxY(binding.imageButtonLock.y)
+            }
+        }
+
         return binding.root
     }
 
@@ -109,16 +123,24 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
         args.location.let { location ->
             when (location) {
                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
-                    imageButtonCameraTouchListener()
+                    binding.imageButtonCamera.setAllowSlide(true)
                 }
                 else -> {
-                    binding.imageButtonCamera.setOnClickListener {
-                        takePhoto()
-                    }
+                    binding.imageButtonCamera.setAllowSlide(false)
                 }
             }
         }
 
+        binding.imageButtonCamera.setOnClickListener {
+            Timber.d("setOnClickListener")
+            if (!binding.viewFinder.isRecording) {
+                takePhoto()
+            }
+
+            if (binding.viewFinder.isRecording && binding.imageButtonCamera.isLocked()) {
+                stopRecording()
+            }
+        }
 
         viewFinderTouchListener()
 
@@ -148,7 +170,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun imageButtonCameraTouchListener() {
-        binding.imageButtonCamera.setOnTouchListener { _, event ->
+        /*binding.imageButtonCamera.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     mHandler.postDelayed(mStartToRecordRunnable, 500)
@@ -163,7 +185,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
                 }
             }
             true
-        }
+        }*/
     }
 
     private fun imageButtonFlashClickListener() {
@@ -190,6 +212,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
     }
 
     private fun takePhoto() {
+        binding.imageButtonCamera.isEnabled = false
         photoFile = createFile(PHOTO_EXTENSION)
 
         binding.viewFinder.takePicture(
@@ -210,7 +233,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
                                     uri = photoFile.name,
                                     origin = Constants.AttachmentOrigin.CAMERA.origin,
                                     thumbnailUri = "",
-                                    status = Constants.AttachmentStatus.SENDING.status
+                                    status = Constants.AttachmentStatus.SENDING.status,
+                                    extension = PHOTO_EXTENSION
                                 )
 
 
@@ -271,8 +295,49 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
     }
 
     private fun startRecording() {
+        startRunnableTimer()
         binding.imageButtonCamera.setBackgroundResource(R.drawable.bg_button_recoding)
         binding.imageButtonCamera.setImageResource(android.R.color.transparent)
+
+        if (flashMode == ImageCapture.FLASH_MODE_ON) {
+            binding.viewFinder.enableTorch(true)
+        }
+
+        binding.imageButtonSwitchCamera.visibility = View.GONE
+        binding.imageButtonFlash.visibility = View.GONE
+
+        val animationSlideIn: Animation =
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_up)
+
+        animationSlideIn.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {
+                // Intentionally empty
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                with(binding.imageButtonCamera) {
+                    setListener(this@ConversationCameraFragment)
+                    setMaxY(binding.imageButtonLock.y)
+
+                    val animationScale: AnimatorSet =
+                        AnimatorInflater.loadAnimator(
+                            requireContext(),
+                            R.animator.animator_scale_up_down_infinite
+                        ) as AnimatorSet
+
+                    animationScale.setTarget(binding.imageButtonLock)
+                    animationScale.start()
+                }
+            }
+
+            override fun onAnimationStart(animation: Animation?) {
+                // Intentionally empty
+            }
+        })
+
+        binding.imageButtonLock.visibility = View.VISIBLE
+        binding.imageButtonLock.startAnimation(animationSlideIn)
+
         videoFile = createFile(VIDEO_EXTENSION)
         binding.viewFinder.startRecording(
             videoFile,
@@ -290,7 +355,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
                         uri = videoFile.name,
                         origin = Constants.AttachmentOrigin.CAMERA.origin,
                         thumbnailUri = "",
-                        status = Constants.AttachmentStatus.SENDING.status
+                        status = Constants.AttachmentStatus.SENDING.status,
+                        extension = VIDEO_EXTENSION
                     )
 
                     mHandler.removeCallbacks(mRecordingTimeRunnable)
@@ -315,7 +381,9 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
                     Timber.e("Video Error: $message")
                 }
             })
+    }
 
+    private fun startRunnableTimer() {
         mRecordingTimeRunnable = Runnable {
             binding.lottieRecording.visibility = View.VISIBLE
             binding.textViewRecordingTime.apply {
@@ -325,7 +393,12 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
 
             val oneSecond = TimeUnit.SECONDS.toMillis(1)
             recordingTime += oneSecond
-            mHandler.postDelayed(mRecordingTimeRunnable, oneSecond)
+            Timber.d("recordingTime: $recordingTime")
+            if (recordingTime == Constants.MAX_VIDEO_RECORD_TIME) {
+                stopRecording()
+            } else {
+                mHandler.postDelayed(mRecordingTimeRunnable, oneSecond)
+            }
         }
         mHandler.postDelayed(mRecordingTimeRunnable, 0)
     }
@@ -337,6 +410,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
 
     private fun stopRecording() {
         try {
+            binding.imageButtonCamera.isEnabled = false
             binding.imageButtonCamera.background =
                 resources.getDrawable(R.drawable.bg_button_take_picture, requireContext().theme)
             binding.viewFinder.stopRecording()
@@ -352,17 +426,12 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
 
         val subFolder = when (extension) {
             PHOTO_EXTENSION -> Constants.NapoleonCacheDirectories.IMAGES.folder
-            VIDEO_EXTENSION -> Constants.NapoleonCacheDirectories.VIDEOS.folder
-            else -> ""
+            else -> Constants.NapoleonCacheDirectories.VIDEOS.folder
         }
 
-        fileName = "${timeStamp}$extension"
-        path = File(requireContext().cacheDir!!, subFolder)
-        if (!path.exists())
-            path.mkdirs()
-
+        fileName = "${timeStamp}.$extension"
         // Create an image file name
-        return File(path, fileName)
+        return FileManager.createFile(requireContext(), fileName, subFolder)
     }
 
     //region Implementation VerticalSlider.Listener
@@ -382,5 +451,24 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener {
             Timber.e(e, "Error al hacer zoom")
         }
     }
+    //endregion
+
+    //region Implementation CameraButton.CameraButtonListener
+    override fun startToRecord() {
+        startRecording()
+    }
+
+    override fun hasLocked() {
+        binding.imageButtonLock.visibility = View.GONE
+        binding.imageButtonCamera.setBackgroundResource(R.drawable.bg_button_take_picture)
+        binding.imageButtonCamera.setImageResource(R.drawable.ic_stop_black)
+    }
+
+    override fun actionUp(hasLocked: Boolean) {
+        if (!hasLocked && binding.viewFinder.isRecording) {
+            stopRecording()
+        }
+    }
+
     //endregion
 }

@@ -11,6 +11,14 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'io.fabric'
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('C:\\Users\\Giussep\\Documents\\pepito.jks')
+            keyAlias = 'napoleonsecretchat'
+            storePassword 'gQADhnGTHEcQAn9U'
+            keyPassword 'gQADhnGTHEcQAn9U'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
@@ -35,16 +43,41 @@ android {
     }
     buildTypes {
         debug {
+            buildConfigField("String", "BASE_URL", "\"https://dev.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"dev.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"http://dev.napoleon-chat.com:6001\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "false")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
         }
         release {
+            buildConfigField("String", "BASE_URL", "\"https://prod.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"prod.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com:6001\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
-            buildConfigField("boolean", "ENCRYPT_API", "false")
-            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        releaseDebug {
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"https://prod.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"prod.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com:6001\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     dataBinding {

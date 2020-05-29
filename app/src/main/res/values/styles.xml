@@ -74,6 +74,20 @@
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_F2F2F2</item>
         <item name="attrIdentifierColorMyQuote">@color/color_A27800</item>
         <item name="attrIdentifierColorYourQuote">@color/color_8F8F8F</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts</item>
+        <item name="attrImageEmptyStateSearchContact">@drawable/image_empty_state_search_contacts
+        </item>
+        <item name="attrImageEmptyStateBlockContact">@drawable/image_empty_state_block_contact
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">@drawable/image_empty_state_info_recovery
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account
+        </item>
     </style>
 
     <style name="AppThemePinkDream" parent="AppTheme">
@@ -141,6 +155,24 @@
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_FBC1E4</item>
         <item name="attrIdentifierColorMyQuote">@color/color_BF5D96</item>
         <item name="attrIdentifierColorYourQuote">@color/color_703E5C</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_light</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_light
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_light
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_light
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_light
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_light
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_light
+        </item>
     </style>
 
     <style name="AppThemeClearSky" parent="AppTheme">
@@ -206,6 +238,24 @@
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_C4E3F1</item>
         <item name="attrIdentifierColorMyQuote">@color/color_035B81</item>
         <item name="attrIdentifierColorYourQuote">@color/color_9B9B9B</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_light</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_light
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_light
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_light
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_light
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_light
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_light
+        </item>
     </style>
 
     <style name="AppThemePurpleBluebonnets" parent="AppTheme">
@@ -269,6 +319,24 @@
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_F2F2F2</item>
         <item name="attrIdentifierColorMyQuote">@color/color_703E5C</item>
         <item name="attrIdentifierColorYourQuote">@color/color_9B9B9B</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_light</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_light
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_light
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_light
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_light
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_light
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_light
+        </item>
     </style>
 
     <style name="AppThemeCamouflage" parent="AppTheme">
@@ -332,6 +400,24 @@
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_9B9B9B</item>
         <item name="attrIdentifierColorMyQuote">@color/color_004500</item>
         <item name="attrIdentifierColorYourQuote">@color/color_F2F2F2</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_dark</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_dark
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_dark
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_dark
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_dark
+        </item>
     </style>
 
     <style name="AppThemeBlackGoldAlloy" parent="AppTheme">
@@ -393,6 +479,24 @@
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_9B9B9B</item>
         <item name="attrIdentifierColorMyQuote">@color/color_423F3F</item>
         <item name="attrIdentifierColorYourQuote">@color/color_F2F2F2</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_dark</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_dark
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_dark
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_dark
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_dark
+        </item>
     </style>
 
     <style name="AppThemeColdOcean" parent="AppTheme">
@@ -456,6 +560,24 @@
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_A19EA5</item>
         <item name="attrIdentifierColorMyQuote">@color/color_2F2D77</item>
         <item name="attrIdentifierColorYourQuote">@color/color_59BC88</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_dark</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_dark
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_dark
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_dark
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_dark
+        </item>
     </style>
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">

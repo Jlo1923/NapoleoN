@@ -26,6 +26,10 @@ class RecoveryAccountViewModel @Inject constructor(
     val recoveryQuestionsCreatingError: LiveData<List<String>>
         get() = _recoveryQuestionsCreatingError
 
+    private val _successToken = MutableLiveData<Boolean>()
+    val successToken: LiveData<Boolean>
+        get() = _successToken
+
     override fun sendNickname(nickname: String) {
         viewModelScope.launch {
             try {
@@ -54,5 +58,12 @@ class RecoveryAccountViewModel @Inject constructor(
 
     override fun resetRecoveryQuestions() {
         _userType.value = null
+    }
+
+    override fun setFirebaseId(token: String) {
+        viewModelScope.launch {
+            repository.setFirebaseId(token)
+            _successToken.value = true
+        }
     }
 }

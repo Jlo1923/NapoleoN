@@ -6,6 +6,9 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
@@ -198,10 +201,15 @@ class ConversationRepository @Inject constructor(
                         }
 
                         updateAttachment(attachment)
+                        if (BuildConfig.ENCRYPT_API) {
+                            saveEncryptedFile(attachment)
+                        }
                         offer(UploadResult.Success(attachment))
+                        close()
                     } else {
                         setStatusErrorMessageAndAttachment(message, attachment)
                         offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
+                        close()
                     }
                 }
                 offer(UploadResult.Start(attachment, job))
@@ -209,10 +217,18 @@ class ConversationRepository @Inject constructor(
         } catch (e: FileNotFoundException) {
             Timber.e(e)
             offer(UploadResult.Cancel(attachment, message))
+            close()
         } catch (e: Exception) {
             Timber.e(e)
-            offer(UploadResult.Cancel(attachment, message))
+            if (e !is ClosedSendChannelException && !isClosedForSend) {
+                offer(UploadResult.Cancel(attachment, message))
+                close()
+            }
         }
+    }
+
+    private fun saveEncryptedFile(attachment: Attachment) {
+        FileManager.copyEncryptedFile(context, attachment)
     }
 
     private fun setStatusErrorMessageAndAttachment(message: Message, attachment: Attachment?) {
@@ -352,7 +368,7 @@ class ConversationRepository @Inject constructor(
         attachmentLocalDataSource.suspendUpdateAttachment(attachment)
     }
 
-    override fun insertQuote(quoteWebId: String, message: Message) {
+    override suspend fun insertQuote(quoteWebId: String, message: Message) {
 
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(quoteWebId)
@@ -491,7 +507,7 @@ class ConversationRepository @Inject constructor(
     override suspend fun downloadAttachment(
         attachment: Attachment,
         itemPosition: Int
-    ): Flow<DownloadAttachmentResult> = channelFlow {
+    ): Flow<DownloadAttachmentResult> = channelFlow<DownloadAttachmentResult> {
         withContext(Dispatchers.IO) {
             val job = launch(Dispatchers.IO) {
                 try {
@@ -532,7 +548,8 @@ class ConversationRepository @Inject constructor(
                                 if (!path.exists())
                                     path.mkdirs()
 
-                                val fileName = "${attachment.webId}.${attachment.extension}"
+                                val fileName =
+                                    "${System.currentTimeMillis()}.${attachment.extension}"
 
                                 val file = File(
                                     path,
@@ -567,7 +584,7 @@ class ConversationRepository @Inject constructor(
                                             )
                                         )
                                         Timber.d(
-                                            "Progress: $progress/${contentLength} >>>> $finalPercentage"
+                                            "${attachment.webId}, Progress: $progress/${contentLength} >>>> $finalPercentage"
                                         )
                                     }
                                     outputStream.flush()
@@ -578,6 +595,10 @@ class ConversationRepository @Inject constructor(
                                             itemPosition
                                         )
                                     )
+                                    if (BuildConfig.ENCRYPT_API) {
+                                        saveEncryptedFile(attachment)
+                                    }
+                                    close()
                                 } catch (e: CancellationException) {
                                     Timber.d("Job canceled")
                                     attachment.status =
@@ -591,6 +612,7 @@ class ConversationRepository @Inject constructor(
                                             "File not downloaded"
                                         )
                                     )
+                                    close()
                                     Timber.d("Failed to save the file!")
                                 } finally {
                                     inputStream?.close()
@@ -603,6 +625,7 @@ class ConversationRepository @Inject constructor(
                                         "File not downloaded"
                                     )
                                 )
+                                close()
                                 Timber.e(e)
                             }
                         }
@@ -613,6 +636,7 @@ class ConversationRepository @Inject constructor(
                                 "File not downloaded"
                             )
                         )
+                        close()
                     }
                 } catch (e: Exception) {
                     offer(
@@ -621,6 +645,7 @@ class ConversationRepository @Inject constructor(
                             "File not downloaded"
                         )
                     )
+                    close()
                     Timber.e(e)
                 }
             }

@@ -114,6 +114,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 webRTCClient.stopRingAndVibrate()
                 binding.fabAnswer.visibility = View.GONE
             }
+            if (!isFromClosedApp){
+                val intent = Intent(this, WebRTCCallService::class.java)
+                intent.action = WebRTCCallService.ACTION_CALL_CONNECTED
+                this.startService(intent)
+            }
         }
 
         binding.fabHangup.setOnClickListener {

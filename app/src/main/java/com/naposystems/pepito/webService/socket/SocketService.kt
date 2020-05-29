@@ -334,11 +334,6 @@ class SocketService @Inject constructor(
         if (conversationCall.channel.isNotEmpty() && conversationCall.contactId > 0) {
 
             if (isPendingCall) {
-                /*startService(
-                    conversationCall.channel,
-                    conversationCall.contactId,
-                    conversationCall.isVideoCall
-                )*/
                 sharedPreferencesManager.putString(PREF_PENDING_CALL, "")
             } else {
                 RxBus.publish(
@@ -351,30 +346,5 @@ class SocketService @Inject constructor(
             }
 
         }
-    }
-
-    private fun startService(channel: String, contactId: Int, isVideoCall: Boolean) {
-        val service = Intent(context, TestService::class.java)
-
-        val bundle = Bundle()
-
-        bundle.putString(
-            Constants.CallKeys.CHANNEL,
-            channel
-        )
-
-        bundle.putBoolean(
-            Constants.CallKeys.IS_VIDEO_CALL,
-            isVideoCall
-        )
-
-        bundle.putInt(
-            Constants.CallKeys.CONTACT_ID,
-            contactId
-        )
-
-        service.putExtras(bundle)
-
-        context.startService(service)
     }
 }

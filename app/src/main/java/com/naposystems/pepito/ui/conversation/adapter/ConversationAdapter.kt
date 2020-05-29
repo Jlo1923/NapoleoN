@@ -78,31 +78,51 @@ class ConversationAdapter constructor(
     }
 
     fun setStartDownload(itemPosition: Int, job: Job) {
-        notifyItemChanged(itemPosition, job)
+        try {
+            notifyItemChanged(itemPosition, job)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     fun setProgress(position: Int, progress: Long) {
-        notifyItemChanged(position, Bundle().apply { putLong(PROGRESS, progress) })
+        try {
+            notifyItemChanged(position, Bundle().apply { putLong(PROGRESS, progress) })
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     fun setUploadStart(attachment: Attachment, job: Job) {
-        notifyItemChanged(getPositionByItem(attachment), job)
+        try {
+            notifyItemChanged(getPositionByItem(attachment), job)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     fun setUploadProgress(
         attachment: Attachment,
         progress: Long
     ) {
-        notifyItemChanged(
-            getPositionByItem(attachment),
-            Bundle().apply { putLong(PROGRESS, progress) })
+        try {
+            notifyItemChanged(
+                getPositionByItem(attachment),
+                Bundle().apply { putLong(PROGRESS, progress) })
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     fun setUploadComplete(attachment: Attachment) {
-        notifyItemChanged(
-            getPositionByItem(attachment),
-            Bundle().apply { putBoolean(UPLOAD_COMPLETE, true) }
-        )
+        try {
+            notifyItemChanged(
+                getPositionByItem(attachment),
+                Bundle().apply { putBoolean(UPLOAD_COMPLETE, true) }
+            )
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     fun getPositionByItem(attachment: Attachment) =
@@ -211,8 +231,16 @@ class ConversationAdapter constructor(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
 
-        isFirst = (position + 1 == itemCount ||
-                (position + 1 < itemCount && item?.message?.isMine != getItem(position + 1)?.message?.isMine))
+        try {
+            isFirst = if (position == 0) {
+                true
+            } else {
+                (position - 1 == itemCount ||
+                        (position - 1 < itemCount && item?.message?.isMine != getItem(position - 1)?.message?.isMine))
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
 
         item?.let {
             when (getItemViewType(position)) {

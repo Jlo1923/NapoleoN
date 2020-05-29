@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.previewMedia
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -9,8 +10,11 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -21,12 +25,17 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.PreviewMediaFragmentBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.viewModel.ViewModelFactory
+import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
+import java.io.File
+import javax.inject.Inject
 
 class PreviewMediaFragment : Fragment() {
 
@@ -34,8 +43,13 @@ class PreviewMediaFragment : Fragment() {
         fun newInstance() = PreviewMediaFragment()
     }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel: PreviewMediaViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewMediaFragmentBinding
 
+    private var tempFile: File? = null
     private val args: PreviewMediaFragmentArgs by navArgs()
     private var isPlayingVideo: Boolean = false
     private var isUIVisible: Boolean = true
@@ -65,6 +79,11 @@ class PreviewMediaFragment : Fragment() {
         Handler()
     }
     private lateinit var mRunnable: Runnable
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,13 +115,16 @@ class PreviewMediaFragment : Fragment() {
                     binding.containerSeekbar.visibility = View.VISIBLE
                     binding.containerVideoView.visibility = View.VISIBLE
 
-                    contentUri = Utils.getFileUri(
-                        context = requireContext(),
-                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                        fileName = firstAttachment.uri
-                    )
-
-                    initializePlayer()
+                    if (BuildConfig.ENCRYPT_API) {
+                        viewModel.createTempFile(firstAttachment)
+                    } else {
+                        contentUri = Utils.getFileUri(
+                            context = requireContext(),
+                            subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                            fileName = firstAttachment.uri
+                        )
+                        initializePlayer()
+                    }
                 } catch (e: Exception) {
                     Timber.e(e)
                 }
@@ -148,6 +170,18 @@ class PreviewMediaFragment : Fragment() {
         binding.executePendingBindings()
 
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel.tempFile.observe(viewLifecycleOwner, Observer { tempFile ->
+            if (tempFile != null) {
+                this.tempFile = tempFile
+                contentUri = tempFile.toUri()
+                initializePlayer()
+            }
+        })
     }
 
     private fun initializePlayer() {
@@ -268,20 +302,6 @@ class PreviewMediaFragment : Fragment() {
         isUIVisible = !isUIVisible
     }
 
-    override fun onStart() {
-        super.onStart()
-        /*if (Util.SDK_INT >= 24) {
-            initializePlayer()
-        }*/
-    }
-
-    override fun onResume() {
-        super.onResume()
-        /*if ((Util.SDK_INT < 24)) {
-            initializePlayer()
-        }*/
-    }
-
     override fun onPause() {
         super.onPause()
         if (Util.SDK_INT < 24) {
@@ -296,5 +316,11 @@ class PreviewMediaFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (tempFile?.exists() == true) {
+            tempFile?.delete()
+        }
+    }
 
 }

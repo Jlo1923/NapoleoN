@@ -28,6 +28,7 @@ import com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.pepito.ui.previewImage.PreviewImageViewModel
+import com.naposystems.pepito.ui.previewMedia.PreviewMediaViewModel
 import com.naposystems.pepito.ui.profile.ProfileViewModel
 import com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -338,4 +339,8 @@ abstract class ViewModelModule {
     @ViewModelKey(ConversationCallViewModel::class)
     internal abstract fun bindConversationCallViewModel(viewModel: ConversationCallViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(PreviewMediaViewModel::class)
+    internal abstract fun bindPreviewMediaViewModel(viewModel: PreviewMediaViewModel): ViewModel
 }
