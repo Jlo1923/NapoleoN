@@ -54,15 +54,19 @@
     <string name="text_display_name">Nome visualizzato (opzionale)</string>
     <string name="text_nickname_not_contain_enough_char">Il nickname deve contenere almeno 2 caratteri.</string>
     <string name="text_empty_state_conversation_title">Inizia una conversazione</string>
-    <string name="text_empty_state_conversation_description">Chattare con i tuoi amici e condividere con loro in modo sicuro e privato</string>
+    <string name="text_empty_state_conversation_description">Comunicare con i tuoi contatti in modo sicuro e privato</string>
     <string name="text_empty_state_friendship_title">Richieste di amicizia</string>
-    <string name="text_empty_state_friendship_description">Non hai richieste di amicizia</string>
+    <string name="text_empty_state_friendship_description">Non si dispone di richieste di amicizia in sospeso.</string>
     <string name="text_empty_state_search_title">Trova i tuoi amici</string>
-    <string name="text_empty_state_search_description">Trova un soprannome, aggiungilo e condividi con quella persona in modo privato e sicuro</string>
+    <string name="text_empty_state_search_description">Cerca i tuoi amici nickname e comunicare</string>
     <string name="text_now">Ora</string>
     <string name="text_yesterday">Ieri</string>
     <string name="text_close">Vicino</string>
     <string name="text_confirm">Conferma</string>
     <string name="text_hang_up_call">Appendere</string>
     <string name="text_answer_call">Risposta</string>
+    <string name="text_update_title">Una nuova versione di Napoleone è disponibile</string>
+    <string name="text_update_message">Version (%1$s) è ora disponibile su App Store</string>
+    <string name="text_update">Aggiornare</string>
+    <string name="text_explanation_camera_to_receive_calls">NapoleoN ha bisogno di accedere alla videocamera e microfono per effettuare e ricevere chiamate</string>
 </resources>

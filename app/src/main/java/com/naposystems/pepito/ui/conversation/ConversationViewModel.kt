@@ -3,11 +3,9 @@ package com.naposystems.pepito.ui.conversation
 import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.naposystems.pepito.R
+import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
@@ -21,6 +19,7 @@ import com.naposystems.pepito.utility.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -31,6 +30,8 @@ class ConversationViewModel @Inject constructor(
     private val context: Context,
     private val repository: IContractConversation.Repository
 ) : ViewModel(), IContractConversation.ViewModel {
+
+    private val cryptoMessage = CryptoMessage(context)
 
     private lateinit var user: User
     private lateinit var contact: Contact

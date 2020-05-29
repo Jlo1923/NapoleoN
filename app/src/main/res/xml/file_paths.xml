@@ -30,4 +30,7 @@
     <cache-path
         name="fakeContact"
         path="fakeContact/" />
+    <cache-path
+        name="temps"
+        path="temps/" />
 </paths>

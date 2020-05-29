@@ -8,6 +8,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -26,6 +27,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.toRect
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
@@ -601,6 +603,10 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    // Permission is not granted
+                }
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
@@ -652,10 +658,10 @@ class ConversationFragment : BaseFragment(),
             when (it) {
                 is UploadResult.Start -> conversationAdapter.setUploadStart(it.attachment, it.job)
                 is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
-                is UploadResult.Progress -> {
-                    Timber.d("Progreso subida: ${it.progress}")
-                    conversationAdapter.setUploadProgress(it.attachment, it.progress)
-                }
+                is UploadResult.Progress -> conversationAdapter.setUploadProgress(
+                    it.attachment,
+                    it.progress
+                )
                 is UploadResult.Cancel -> {
                     val attachment: Attachment = it.attachment
                     val message: Message = it.message
@@ -714,7 +720,8 @@ class ConversationFragment : BaseFragment(),
                 uri = file.name,
                 origin = Constants.AttachmentOrigin.RECORD_AUDIO.origin,
                 thumbnailUri = "",
-                status = Constants.AttachmentStatus.SENDING.status
+                status = Constants.AttachmentStatus.SENDING.status,
+                extension = "aac"
             )
 
             viewModel.saveMessageAndAttachment(

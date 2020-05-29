@@ -1,12 +1,15 @@
 package com.naposystems.pepito.entity.message.attachments
 
+import android.content.Context
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.utility.Constants.AttachmentStatus
+import com.naposystems.pepito.utility.FileManager
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -35,4 +38,10 @@ data class Attachment(
     @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = "",
     @ColumnInfo(name = "status") var status: Int,
     @ColumnInfo(name = "extension") var extension: String = ""
-) : Parcelable
+) : Parcelable {
+
+    fun deleteFile(context: Context) {
+        FileManager.deleteAttachmentEncryptedFile(context, this)
+        FileManager.deleteAttachmentFile(context, this)
+    }
+}

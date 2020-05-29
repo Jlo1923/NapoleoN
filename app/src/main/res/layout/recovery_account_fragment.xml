@@ -34,7 +34,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toTopOf="@+id/guideline_top"
-                    app:srcCompat="@drawable/image_recovery_account" />
+                    app:srcCompat="?attr/attrImageEmptyStateRecoveryAccount" />
 
                 <TextView
                     android:id="@+id/textView_description"

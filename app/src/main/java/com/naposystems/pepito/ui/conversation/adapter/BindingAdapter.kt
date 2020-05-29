@@ -23,10 +23,11 @@ import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @BindingAdapter("messageDate", "formatTime")
 fun bindMessageDate(textView: TextView, timestamp: Int, format: Int) {
-    try {
+    /*try {
         val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
             SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         } else {
@@ -34,6 +35,51 @@ fun bindMessageDate(textView: TextView, timestamp: Int, format: Int) {
         }
         val netDate = Date(timestamp.toLong() * 1000)
         textView.text = sdf.format(netDate)
+        textView.visibility = View.VISIBLE
+    } catch (e: Exception) {
+        Timber.e("Error parsing date")
+    }*/
+
+    val context = textView.context
+
+    try {
+        val timeInit = TimeUnit.MINUTES.toSeconds(1) + timestamp
+        val timeSevenMoreDays = TimeUnit.DAYS.toSeconds(7) + timestamp
+        val timeActual = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dayNext = sdf.format(Date((timestamp.toLong() + TimeUnit.DAYS.toSeconds(1)) * 1000))
+        val dayMessage = sdf.format(Date(timestamp.toLong() * 1000))
+        val dayActual = sdf.format(Date(timeActual * 1000))
+
+        when {
+            timeInit > timeActual -> {
+                textView.text = context.getString(R.string.text_now)
+            }
+            timeInit < timeActual && dayMessage == dayActual -> {
+                val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+                    SimpleDateFormat("HH:mm", Locale.getDefault())
+                } else {
+                    SimpleDateFormat("hh:mm aa", Locale.getDefault())
+                }
+                textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+            }
+            timeInit < timeActual && dayNext == dayActual -> {
+                textView.text = context.getString(R.string.text_yesterday)
+            }
+            else -> {
+                val sdf = if (timeSevenMoreDays > timeActual) {
+                    SimpleDateFormat("EEEE", Locale.getDefault())
+                } else {
+                    if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+                        SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                    } else {
+                        SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
+                    }
+                }
+                textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+            }
+        }
+
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.e("Error parsing date")
@@ -157,11 +203,11 @@ fun bindImageAttachment(
                 imageView.visibility = View.VISIBLE
 
                 if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
-                    loadAttachment(attachment, imageView)
+                    loadAttachment(attachment, imageView, true)
                 } else {
                     when (attachment.status) {
                         Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
-                            loadAttachment(attachment, imageView)
+                            loadAttachment(attachment, imageView, false)
                         }
                         Constants.AttachmentStatus.NOT_DOWNLOADED.status,
                         Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
@@ -186,6 +232,7 @@ private fun loadBlurAttachment(
     imageView: ImageView,
     context: Context?
 ) {
+    Timber.d("loadBlurAttachment")
     when (firstAttachment.type) {
         Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
             Glide.with(imageView)
@@ -215,7 +262,8 @@ private fun loadBlurAttachment(
 
 private fun loadAttachment(
     firstAttachment: Attachment,
-    imageView: ImageView
+    imageView: ImageView,
+    isMine: Boolean
 ) {
     when (firstAttachment.type) {
         Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
@@ -225,11 +273,20 @@ private fun loadAttachment(
                 .into(imageView)
         }
         Constants.AttachmentType.VIDEO.type -> {
-            val uri = Utils.getFileUri(
-                imageView.context,
-                firstAttachment.uri,
-                Constants.NapoleonCacheDirectories.VIDEOS.folder
-            )
+            val uri = if (isMine) {
+                Utils.getFileUri(
+                    imageView.context,
+                    firstAttachment.uri,
+                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                )
+            } else {
+                Utils.getFileUri(
+                    imageView.context,
+                    "${firstAttachment.webId}.${firstAttachment.extension}",
+                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                )
+            }
+            Timber.d("uri: $uri")
             Glide.with(imageView)
                 .load(uri)
                 .thumbnail(0.1f)

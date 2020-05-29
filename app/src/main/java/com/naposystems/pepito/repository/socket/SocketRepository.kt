@@ -56,7 +56,7 @@ class SocketRepository @Inject constructor(
         }
     }
 
-    private fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
+    private suspend fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(messageRes.quoted)
 

@@ -7,6 +7,6 @@
     <string name="text_blocked_contact">Contacto bloqueado</string>
     <string name="text_deleted_contact">Contacto eliminado</string>
     <string name="search_by_nickname">Pesquisa por apelido</string>
-    <string name="text_empty_state_contacts_title">Contactos</string>
-    <string name="text_empty_state_contacts_description">Você não adicionou contatos</string>
+    <string name="text_empty_state_contacts_title">Não tiver contactos adicionados</string>
+    <string name="text_empty_state_contacts_description">Procurar seus amigos pelo apelido e comunicar</string>
 </resources>

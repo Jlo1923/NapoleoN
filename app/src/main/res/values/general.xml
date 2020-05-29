@@ -69,15 +69,19 @@
     <string name="text_display_name">Display Name (Optional)</string>
     <string name="text_nickname_not_contain_enough_char">The nickname must contain at least 2 characters.</string>
     <string name="text_empty_state_conversation_title">Start a conversation</string>
-    <string name="text_empty_state_conversation_description">Chat with your friends and share with them in a safe and private way</string>
+    <string name="text_empty_state_conversation_description">Communicate with your contacts in a secure and private manner</string>
     <string name="text_empty_state_friendship_title">Friend requests</string>
-    <string name="text_empty_state_friendship_description">You have no friend requests</string>
+    <string name="text_empty_state_friendship_description">You do not have pending friend requests.</string>
     <string name="text_empty_state_search_title">Find your friends</string>
-    <string name="text_empty_state_search_description">Find a nickname, add it and share with that person privately and securely</string>
+    <string name="text_empty_state_search_description">Search for your friends by nickname and communicate</string>
     <string name="text_now">Now</string>
     <string name="text_yesterday">Yesterday</string>
     <string name="text_close">Close</string>
     <string name="text_confirm">Confirm</string>
     <string name="text_hang_up_call">Reject</string>
     <string name="text_answer_call">Answer</string>
+    <string name="text_update_title">A new version of Napoleon is available</string>
+    <string name="text_update_message">Version %1$s is now available on the Play Store</string>
+    <string name="text_update">Update</string>
+    <string name="text_explanation_camera_to_receive_calls">NapoleoN needs access to the camera and microphone to make and receive calls</string>
 </resources>

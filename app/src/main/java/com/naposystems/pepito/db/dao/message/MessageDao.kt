@@ -4,18 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
 
     @Query("SELECT * FROM message WHERE web_id=:webId")
-    fun getMessageByWebId(webId: String): MessageAndAttachment?
+    suspend fun getMessageByWebId(webId: String): MessageAndAttachment?
 
     @Query("SELECT * FROM message WHERE contact_id=:contact AND (total_self_destruction_at > strftime('%s','now') OR total_self_destruction_at >= 0) ORDER BY id ASC")
-    fun getMessagesAndAttachments(contact: Int): LiveData<List<MessageAndAttachment>>
+    fun getMessagesAndAttachments(contact: Int): Flow<List<MessageAndAttachment>>
 
     @Query("SELECT *, COUNT(CASE WHEN status=3 AND is_mine=0 THEN 1 END) AS messagesUnReads FROM message WHERE (total_self_destruction_at > strftime('%s','now') OR total_self_destruction_at >= 0) GROUP BY contact_id ORDER BY id DESC")
-    fun getMessagesForHome(): LiveData<List<MessageAndAttachment>>
+    fun getMessagesForHome(): Flow<List<MessageAndAttachment>>
 
     @Query("SELECT id FROM message WHERE web_id=:quoteWebId")
     fun getQuoteId(quoteWebId: String): Int
@@ -81,4 +82,10 @@ interface MessageDao {
 
     @Query("DELETE FROM message WHERE total_self_destruction_at <> 0 AND total_self_destruction_at < strftime('%s','now')")
     fun verifyMessagesToDelete()
+
+    @Query("SELECT * FROM message WHERE contact_id=:contactId")
+    suspend fun getMessagesByContact(contactId: Int): List<MessageAndAttachment>
+
+    @Query("SELECT * FROM message WHERE contact_id = :contactId AND status =:status AND is_mine = 1")
+    suspend fun getMessagesByStatusForMe(contactId: Int, status: Int): List<MessageAndAttachment>
 }

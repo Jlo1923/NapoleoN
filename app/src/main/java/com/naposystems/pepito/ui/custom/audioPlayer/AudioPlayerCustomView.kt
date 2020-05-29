@@ -23,6 +23,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     private var mTintColor: Int = 0
     private var mIsEncryptedFile: Boolean = false
     private var mAudioFileUri: Uri? = null
+    private var mEncryptedFileName: String = ""
     private var mAudioId: Int = 0
     private var mSeekbarProgressBackgroundTint: Int = 0
     private var mSeekbarProgressTint: Int = 0
@@ -126,6 +127,11 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     audioId = mAudioId,
                     uri = it
                 )
+            } ?: run {
+                mediaPlayerManager?.playAudio(
+                    audioId = mAudioId,
+                    fileName = mEncryptedFileName
+                )
             }
         }
 
@@ -201,6 +207,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     override fun setAudioFileUri(uri: Uri) {
         this.mAudioFileUri = uri
+    }
+
+    override fun setEncryptedFileName(fileName: String) {
+        this.mEncryptedFileName = fileName
     }
 
     override fun setAudioId(id: Int) {

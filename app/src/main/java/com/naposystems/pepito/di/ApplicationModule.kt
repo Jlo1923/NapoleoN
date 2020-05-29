@@ -5,15 +5,15 @@ import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.Constants.NapoleonApi.BASE_URL
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GENERATE_CODE
+import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS_OLD_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_ANSWERS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
-import com.naposystems.pepito.utility.Crypto
+import com.naposystems.pepito.crypto.Crypto
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
@@ -42,7 +42,8 @@ val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
     CREATE_ACCOUNT,
     GET_RECOVERY_QUESTIONS,
     SEND_ANSWERS,
-    SEND_MESSAGE_ATTACHMENT
+    SEND_MESSAGE_ATTACHMENT,
+    GET_QUESTIONS_OLD_USER
 )
 
 @Module(includes = [ViewModelModule::class])
@@ -73,38 +74,49 @@ class ApplicationModule {
         httpClient.addNetworkInterceptor(StethoInterceptor())
 
 //        httpClient.addInterceptor(NetworkConnectionInterceptor(context))
-        httpClient.addInterceptor { chain ->
+        try {
+            httpClient.addInterceptor { chain ->
 
-            val firebaseInstanceId = sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_FIREBASE_ID,
-                ""
-            )
+                val firebaseInstanceId = sharedPreferencesManager.getString(
+                    Constants.SharedPreferences.PREF_FIREBASE_ID,
+                    ""
+                )
 
-            val socketId = sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_SOCKET_ID,
-                ""
-            )
+                val socketId = sharedPreferencesManager.getString(
+                    Constants.SharedPreferences.PREF_SOCKET_ID,
+                    ""
+                )
 
-            val secretKey = sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_SECRET_KEY,
-                ""
-            )
+                val secretKey = sharedPreferencesManager.getString(
+                    Constants.SharedPreferences.PREF_SECRET_KEY,
+                    ""
+                )
 
-            val original = chain.request()
+                val original = chain.request()
 
-            if (BuildConfig.ENCRYPT_API) {
-                encryptRequest(original, context, firebaseInstanceId, socketId, secretKey, chain)
-            } else {
-                val request: Request = original.newBuilder()
-                    .header("languageIso", LocaleHelper.getLanguagePreference(context))
-                    .header("X-API-Key", firebaseInstanceId)
-                    .header("X-Socket-ID", socketId)
-                    .method(original.method(), original.body())
-                    .build()
+                if (BuildConfig.ENCRYPT_API) {
+                    encryptRequest(
+                        original,
+                        context,
+                        firebaseInstanceId,
+                        socketId,
+                        secretKey,
+                        chain
+                    )
+                } else {
+                    val request: Request = original.newBuilder()
+                        .header("languageIso", LocaleHelper.getLanguagePreference(context))
+                        .header("X-API-Key", firebaseInstanceId)
+                        .header("X-Socket-ID", socketId)
+                        .method(original.method(), original.body())
+                        .build()
 
-                chain.proceed(request)
+                    chain.proceed(request)
+                }
+
             }
-
+        } catch (e: Exception) {
+            Timber.e(e)
         }
 
 //        httpClient.addInterceptor(GzipRequestInterceptor())
@@ -131,29 +143,70 @@ class ApplicationModule {
             .header("X-API-Key", firebaseInstanceId)
             .header("X-Socket-ID", socketId)
 
-        val isNotEncryptedRequest = !NO_ENCRYPT_REQUESTS.none {
-            BASE_URL + it == original.url().uri().toString()
-        }
+        val isNotEncryptedRequest = NO_ENCRYPT_REQUESTS.find {
+            val originalUrl = original.url()
+            val algo = BuildConfig.BASE_URL + it
+
+            if (algo == BuildConfig.BASE_URL + GET_RECOVERY_QUESTIONS || algo == BuildConfig.BASE_URL + GET_QUESTIONS_OLD_USER) {
+
+                var pathSegments = ""
+
+                originalUrl.pathSegments().forEachIndexed { index, s ->
+                    if (index < originalUrl.pathSegments().size - 1) {
+                        pathSegments += "$s/"
+                    }
+                }
+
+                val rawUrl = "${originalUrl.scheme()}://${originalUrl.host()}/$pathSegments"
+                val cleanUrl = ((BuildConfig.BASE_URL + it).replaceAfter("/{", "")).replace("{", "")
+
+                pathSegments.isNotEmpty() && rawUrl == cleanUrl
+            } else {
+                BuildConfig.BASE_URL + it == original.url().uri().toString()
+            }
+        } != null
 
         if (original.method() == "GET" || isNotEncryptedRequest) {
             request.method(original.method(), original.body())
         } else {
-            val jsonObject = JSONObject()
-            jsonObject.put(
-                Constants.DATA_CRYPT,
-                cripto.encryptPlainTextWithRandomIV(rawBodyRequest!!, secretKey)
-            )
+            body?.let { requestBody ->
+                if (requestBody.contentLength() > 0L) {
 
-            val newRequestBody: RequestBody =
-                RequestBody.create(MediaType.parse("application/json"), jsonObject.toString())
+                    val jsonObject = JSONObject()
+                    jsonObject.put(
+                        Constants.DATA_CRYPT,
+                        cripto.encryptPlainTextWithRandomIV(rawBodyRequest!!, secretKey)
+                    )
 
-            request.method(original.method(), newRequestBody)
+                    val newRequestBody: RequestBody =
+                        RequestBody.create(
+                            MediaType.parse("application/json"),
+                            jsonObject.toString()
+                        )
+
+                    request.method(original.method(), newRequestBody)
+
+                } else {
+                    request.method(original.method(), original.body())
+                }
+            }
         }
 
-        return if (BuildConfig.ENCRYPT_API && !isNotEncryptedRequest) {
-            decryptResponse(chain, request, cripto, secretKey)
-        } else if (BASE_URL + SEND_MESSAGE_ATTACHMENT == original.url().uri().toString()) {
-            decryptResponse(chain, request, cripto, secretKey)
+        Timber.d(
+            "BuildConfig: ${BuildConfig.ENCRYPT_API} && isNotEncryptedRequest: $isNotEncryptedRequest"
+        )
+
+        return if (original.url().host() != BuildConfig.HOST_URL) {
+            chain.proceed(request.build())
+        } else if (BuildConfig.ENCRYPT_API && !isNotEncryptedRequest ||
+            BuildConfig.BASE_URL + SEND_MESSAGE_ATTACHMENT == original.url().uri().toString()
+        ) {
+            try {
+                decryptResponse(chain, request, cripto, secretKey)
+            } catch (e: Exception) {
+                Timber.e(e)
+                chain.proceed(request.build())
+            }
         } else {
             chain.proceed(request.build())
         }
@@ -208,7 +261,7 @@ class ApplicationModule {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .client(httpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
@@ -218,7 +271,7 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideSocket(): Socket = IO.socket(Constants.NapoleonApi.SOCKET_BASE_URL)
+    fun provideSocket(): Socket = IO.socket(BuildConfig.SOCKET_BASE_URL)
 
     @Provides
     @Singleton

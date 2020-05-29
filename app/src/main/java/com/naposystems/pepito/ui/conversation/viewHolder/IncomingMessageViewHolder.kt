@@ -21,6 +21,7 @@ class IncomingMessageViewHolder constructor(
         super.containerQuote = binding.containerQuote
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
+        super.imageViewAttachment = binding.imageViewAttachment
     }
 
     /*private var job: Job? = null

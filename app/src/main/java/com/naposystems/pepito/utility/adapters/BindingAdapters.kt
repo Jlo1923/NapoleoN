@@ -1,6 +1,8 @@
 package com.naposystems.pepito.utility.adapters
 
 import android.Manifest
+import android.app.Service
+import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -12,6 +14,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.Nullable
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -86,6 +90,24 @@ fun Fragment.verifyCameraAndMicPermission(successCallback: () -> Unit) {
 
 fun Fragment.showToast(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+fun AppCompatActivity.hasMicAndCameraPermission(): Boolean {
+    val checkSelfMicPermission =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+    val checkSelfCameraPermission =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+    return (checkSelfMicPermission == PackageManager.PERMISSION_GRANTED &&
+            checkSelfCameraPermission == PackageManager.PERMISSION_GRANTED)
+}
+
+fun Service.hasMicAndCameraPermission(): Boolean {
+    val checkSelfMicPermission =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+    val checkSelfCameraPermission =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+    return (checkSelfMicPermission == PackageManager.PERMISSION_GRANTED &&
+            checkSelfCameraPermission == PackageManager.PERMISSION_GRANTED)
 }
 
 fun JSONObject.toIceCandidate(): IceCandidate {

@@ -5,7 +5,7 @@ import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.recoveryAccountQuestions.*
 import com.naposystems.pepito.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.Crypto
+import com.naposystems.pepito.crypto.Crypto
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi

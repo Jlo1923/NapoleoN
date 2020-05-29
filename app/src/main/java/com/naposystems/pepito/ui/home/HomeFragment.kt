@@ -1,6 +1,9 @@
 package com.naposystems.pepito.ui.home
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -13,6 +16,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.storage.FirebaseStorage
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentBinding
 import com.naposystems.pepito.entity.Contact
@@ -22,8 +28,13 @@ import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.home.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.pepito.utility.ItemAnimator
+import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
+import com.naposystems.pepito.utility.adapters.showToast
+import com.naposystems.pepito.utility.adapters.verifyCameraAndMicPermission
+import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
@@ -68,6 +79,10 @@ class HomeFragment : Fragment() {
         super.onAttach(context)
     }
 
+    private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
+    private lateinit var mFirebaseStorage: FirebaseStorage
+    private var isShowingVersionDialog: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -81,6 +96,14 @@ class HomeFragment : Fragment() {
             layoutInflater,
             R.layout.home_fragment, container, false
         )
+
+        this.verifyPermission(
+            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+            drawableIconId = R.drawable.ic_camera_primary,
+            message = R.string.text_explanation_camera_to_receive_calls
+        ) {
+            //Intentionally empty
+        }
 
         setAdapter()
 
@@ -98,11 +121,12 @@ class HomeFragment : Fragment() {
             )
         }
 
-        val disposableNewMessageReceived = RxBus.listen(RxEvent.NewFriendshipRequest::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                viewModel.getFriendshipQuantity()
-            }
+        val disposableNewMessageReceived =
+            RxBus.listen(RxEvent.NewFriendshipRequest::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    viewModel.getFriendshipQuantity()
+                }
 
         disposable.add(disposableNewMessageReceived)
 
@@ -202,6 +226,50 @@ class HomeFragment : Fragment() {
 
         actionView.setOnClickListener {
             onOptionsItemSelected(menuItem)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isShowingVersionDialog)
+            getRemoteConfig()
+    }
+
+    private fun getRemoteConfig() {
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        mFirebaseStorage = FirebaseStorage.getInstance()
+
+        mFirebaseRemoteConfig.fetchAndActivate()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    getVersion()
+                } else {
+                    this.showToast("No se han podido obtener el remote config")
+                }
+            }
+    }
+
+    private fun getVersion() {
+        val versionApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
+
+        if (versionApp != BuildConfig.VERSION_NAME) {
+            Utils.alertDialogInformative(
+                message = getString(R.string.text_update_message, versionApp),
+                titleButton = R.string.text_update,
+                childFragmentManager = requireContext(),
+                clickTopButton = {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(
+                            "https://play.google.com/store/apps/details?id=com.naposystems.pepito"
+                        )
+                        setPackage("com.android.vending")
+                    }
+                    startActivity(intent)
+                    isShowingVersionDialog = false
+                },
+                isCancelable = false
+            )
+            isShowingVersionDialog = true
         }
     }
 

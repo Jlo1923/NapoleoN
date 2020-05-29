@@ -12,6 +12,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
 import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
@@ -121,9 +122,9 @@ class WebRTCClient constructor(
 
 
     private var peerIceServer: MutableList<PeerConnection.IceServer> = arrayListOf(
-        PeerConnection.IceServer.builder("stun:stun-dev.napoleon-chat.com:3478")
+        PeerConnection.IceServer.builder(BuildConfig.STUN_SERVER)
             .createIceServer(),
-        PeerConnection.IceServer.builder("turn:turn-dev.napoleon-chat.com:3478")
+        PeerConnection.IceServer.builder(BuildConfig.TURN_SERVER)
             .setUsername("wPJlHAYY")
             .setPassword("GrI09zxkwFuOihIf")
             .createIceServer()

@@ -8,6 +8,7 @@ import android.os.IBinder
 import com.naposystems.pepito.repository.webRTCCallService.WebRTCCallServiceRepository
 import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.pepito.utility.notificationUtils.NotificationUtils
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
@@ -108,7 +109,7 @@ class WebRTCCallService : Service() {
             isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
         }
 
-        if (channel.isNotEmpty() && contactId > 0) {
+        if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
             val notificationUtils =
                 NotificationUtils(
                     applicationContext
@@ -136,43 +137,45 @@ class WebRTCCallService : Service() {
     }
 
     private fun startConversationCallActivity(bundle: Bundle, action: String = "") {
-        var channel = ""
-        var contactId = 0
-        var isVideoCall = false
+        if (this.hasMicAndCameraPermission()) {
+            var channel = ""
+            var contactId = 0
+            var isVideoCall = false
 
-        if (bundle.containsKey(Constants.CallKeys.CHANNEL)) {
-            channel = bundle.getString(Constants.CallKeys.CHANNEL) ?: ""
-        }
-
-        if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {
-            contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
-        }
-
-        if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
-            isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
-        }
-
-        if (channel.isNotEmpty() && contactId > 0) {
-
-            val newIntent = Intent(this, ConversationCallActivity::class.java).apply {
-                putExtras(Bundle().apply {
-                    putInt(ConversationCallActivity.CONTACT_ID, contactId)
-                    putString(ConversationCallActivity.CHANNEL, channel)
-                    putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
-                    putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
-                    putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
-                })
+            if (bundle.containsKey(Constants.CallKeys.CHANNEL)) {
+                channel = bundle.getString(Constants.CallKeys.CHANNEL) ?: ""
             }
 
-            if (action.isNotEmpty()) {
-                newIntent.action = action
+            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {
+                contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
             }
 
-            newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
+                isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
+            }
 
-            startActivity(newIntent)
-            stopForeground(true)
+            if (channel.isNotEmpty() && contactId > 0) {
 
+                val newIntent = Intent(this, ConversationCallActivity::class.java).apply {
+                    putExtras(Bundle().apply {
+                        putInt(ConversationCallActivity.CONTACT_ID, contactId)
+                        putString(ConversationCallActivity.CHANNEL, channel)
+                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
+                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                        putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
+                    })
+                }
+
+                if (action.isNotEmpty()) {
+                    newIntent.action = action
+                }
+
+                newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+                startActivity(newIntent)
+                stopForeground(true)
+
+            }
         }
     }
 }

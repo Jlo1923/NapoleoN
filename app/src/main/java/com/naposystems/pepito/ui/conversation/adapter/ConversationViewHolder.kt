@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
@@ -94,7 +95,6 @@ open class ConversationViewHolder constructor(
     fun setProgress(
         progress: Long
     ) {
-        Timber.d("setProgressP: $progress")
         progressBar?.visibility = View.VISIBLE
         progressBar?.setProgress(progress.toFloat())
         imageButtonState?.visibility = View.VISIBLE
@@ -123,6 +123,8 @@ open class ConversationViewHolder constructor(
         Timber.d("setDownloadStart")
         this.downloadJob = job
         imageButtonState?.visibility = View.VISIBLE
+        progressBar?.setProgress(0f)
+        progressBar?.visibility = View.INVISIBLE
         progressBarIndeterminate?.visibility = View.VISIBLE
     }
 
@@ -158,6 +160,11 @@ open class ConversationViewHolder constructor(
             containerQuote?.visibility = View.GONE
         }
 
+        imageButtonState?.visibility = View.GONE
+        progressBar?.setProgress(0.0f)
+        progressBar?.visibility = View.GONE
+        progressBarIndeterminate?.visibility = View.GONE
+
         val firstAttachment: Attachment? = item.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
@@ -186,13 +193,17 @@ open class ConversationViewHolder constructor(
                     imageButtonState?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.SENT.status -> {
+                    imageButtonState?.visibility = View.INVISIBLE
+                    progressBarIndeterminate?.visibility = View.INVISIBLE
+                    progressBar?.visibility = View.INVISIBLE
+                    progressBar?.setProgress(0f)
                     if (audioPlayer != null) {
                         audioPlayer?.enablePlayButton(true)
                     }
                 }
                 Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
-                    progressBar?.visibility = View.INVISIBLE
                     progressBar?.setProgress(0f)
+                    progressBar?.visibility = View.INVISIBLE
                     progressBarIndeterminate?.visibility = View.VISIBLE
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
                     imageButtonState?.visibility = View.VISIBLE
@@ -233,7 +244,9 @@ open class ConversationViewHolder constructor(
             )
 
             imageViewAttachment?.setOnClickListener {
-                if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status) {
+                if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
+                    attachment.status == Constants.AttachmentStatus.SENT.status
+                ) {
                     clickListener.onPreviewClick(item)
                 }
             }
@@ -275,14 +288,18 @@ open class ConversationViewHolder constructor(
     ) {
         with(audioPlayer!!) {
             setMediaPlayerManager(mediaPlayerManager)
-            isEncryptedFile(false)
-            setAudioFileUri(
-                Utils.getFileUri(
-                    context = context,
-                    fileName = attachment.uri,
-                    subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+            isEncryptedFile(BuildConfig.ENCRYPT_API)
+            if (BuildConfig.ENCRYPT_API) {
+                setEncryptedFileName("${attachment.webId}.${attachment.extension}")
+            } else {
+                setAudioFileUri(
+                    Utils.getFileUri(
+                        context = context,
+                        fileName = attachment.uri,
+                        subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                    )
                 )
-            )
+            }
             setAudioId(item.attachmentList[0].id)
             setListener(object : AudioPlayerCustomView.Listener {
                 override fun onErrorPlayingAudio() {
@@ -328,7 +345,8 @@ open class ConversationViewHolder constructor(
                 progressBarIndeterminate?.visibility = View.VISIBLE
                 clickListener.downloadAttachment(attachment, adapterPosition)
             }
-            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
+            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,
+            Constants.AttachmentStatus.SENT.status -> {
                 clickListener.onPreviewClick(item)
             }
         }

@@ -5,6 +5,9 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.DialogInterface
+import android.content.DialogInterface.BUTTON_NEUTRAL
+import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -307,7 +310,7 @@ class Utils {
         }
 
         fun alertDialogInformative(
-            message: Int,
+            message: String,
             isCancelable: Boolean,
             childFragmentManager: Context,
             titleButton: Int,
@@ -442,57 +445,6 @@ class Utils {
             fileInputStream.close()
 
             return file
-        }
-
-        fun copyEncryptedFile(
-            context: Context,
-            fileInputStream: FileInputStream,
-            subFolder: String,
-            fileName: String
-        ): File {
-            val path = File(context.cacheDir!!, subFolder)
-            if (!path.exists())
-                path.mkdirs()
-            val audioFile = File(path, fileName)
-
-            val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
-            val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
-
-            val encryptedFile = EncryptedFile.Builder(
-                audioFile,
-                context,
-                masterKeyAlias,
-                EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-            ).build()
-
-            encryptedFile.openFileOutput().use { fileOut ->
-                fileInputStream.copyTo(fileOut)
-                fileOut.flush()
-                fileOut.close()
-            }
-
-            fileInputStream.close()
-
-            return audioFile
-        }
-
-        fun createTempFileFromEncryptedFile(
-            context: Context,
-            file: File,
-            extension: String
-        ): File {
-            val tempFile = File.createTempFile("NNS", extension)
-            val encryptedFile = getEncryptedFile(context, file)
-
-            tempFile.outputStream().use { fileOut ->
-                encryptedFile.openFileInput().copyTo(fileOut)
-                fileOut.flush()
-                fileOut.close()
-            }
-
-            tempFile.inputStream().close()
-
-            return tempFile
         }
 
         fun getEncryptedFile(context: Context, file: File): EncryptedFile {

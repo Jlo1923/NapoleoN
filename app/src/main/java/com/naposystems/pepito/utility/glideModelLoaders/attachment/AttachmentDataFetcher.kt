@@ -4,10 +4,12 @@ import android.content.Context
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
+import timber.log.Timber
 import java.io.InputStream
 
 class AttachmentDataFetcher constructor(
@@ -44,15 +46,35 @@ class AttachmentDataFetcher constructor(
                 Constants.AttachmentType.GIF.type,
                 Constants.AttachmentType.GIF_NN.type,
                 Constants.AttachmentType.LOCATION.type -> {
-                    val inputStream = context.contentResolver.openInputStream(fileUri)
 
-                    callback.onDataReady(inputStream)
+                    if (BuildConfig.ENCRYPT_API) {
+                        val extension = attachment.extension
+                        if (attachment.webId.isNotEmpty()) {
+                            val fileName = "${attachment.webId}.$extension"
+                            callback.onDataReady(
+                                FileManager.getFileInputStreamFromEncryptedFile(
+                                    context,
+                                    fileName,
+                                    subFolder
+                                )
+                            )
+                        } else {
+                            val inputStream = context.contentResolver.openInputStream(fileUri)
+                            callback.onDataReady(inputStream)
+                        }
+                    } else {
+                        val inputStream = context.contentResolver.openInputStream(fileUri)
+                        callback.onDataReady(inputStream)
+                    }
                 }
-                Constants.AttachmentType.VIDEO.type -> callback.onDataReady(
-                    FileManager.getThumbnailFromVideo(
-                        fileUri.toString()
+                Constants.AttachmentType.VIDEO.type -> {
+                    Timber.d("loadData VIDEO")
+                    callback.onDataReady(
+                        FileManager.getThumbnailFromVideo(
+                            fileUri.toString()
+                        )
                     )
-                )
+                }
             }
         } catch (e: Exception) {
             callback.onLoadFailed(e)

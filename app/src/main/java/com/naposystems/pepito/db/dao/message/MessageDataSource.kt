@@ -3,10 +3,11 @@ package com.naposystems.pepito.db.dao.message
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import kotlinx.coroutines.flow.Flow
 
 interface MessageDataSource {
 
-    fun getMessageByWebId(webId: String): MessageAndAttachment?
+    suspend fun getMessageByWebId(webId: String): MessageAndAttachment?
 
     fun getMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
 

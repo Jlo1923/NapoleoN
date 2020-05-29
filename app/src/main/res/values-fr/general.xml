@@ -54,15 +54,19 @@
     <string name="text_display_name">Affichage du nom (en option)</string>
     <string name="text_nickname_not_contain_enough_char">Le surnom doit contenir au moins 2 caractères.</string>
     <string name="text_empty_state_conversation_title">Démarrer une conversation</string>
-    <string name="text_empty_state_conversation_description">Discuter avec vos amis et partager avec eux de manière sûre et privée</string>
+    <string name="text_empty_state_conversation_description">Communiquez avec vos contacts de manière sécurisée et privée</string>
     <string name="text_empty_state_friendship_title">Demandes d\'amis</string>
-    <string name="text_empty_state_friendship_description">Vous n\'avez aucune demande d\'ami</string>
+    <string name="text_empty_state_friendship_description">Vous n\'avez pas en attente des demandes d\'amis.</string>
     <string name="text_empty_state_search_title">Trouvez vos amis</string>
-    <string name="text_empty_state_search_description">Trouvez un surnom, ajoutez-le et partagez-le avec cette personne en privé et en toute sécurité</string>
+    <string name="text_empty_state_search_description">Recherchez vos amis par pseudonyme et communiquer</string>
     <string name="text_now">Maintenant</string>
     <string name="text_yesterday">Hier</string>
     <string name="text_close">Fermer</string>
     <string name="text_confirm">Confirmer</string>
     <string name="text_hang_up_call">Raccrocher</string>
     <string name="text_answer_call">Réponse</string>
+    <string name="text_update_title">Une nouvelle version de Napoléon est disponible</string>
+    <string name="text_update_message">Version %1$s est maintenant disponible sur l\'App Store</string>
+    <string name="text_update">Mettre à jour</string>
+    <string name="text_explanation_camera_to_receive_calls">NapoleoN a besoin d\'accéder à la caméra et d\'un microphone pour faire et recevoir des appels</string>
 </resources>
