@@ -101,11 +101,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setUploadProgress(
-        attachment: Attachment,
-        progress: Long,
-        job: Job
-    ) {
+    fun setUploadProgress(attachment: Attachment, progress: Long, job: Job) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
@@ -391,7 +387,7 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_GIF_NN,
             TYPE_INCOMING_MESSAGE_DOCUMENT,
             TYPE_INCOMING_MESSAGE_AUDIO -> {
-                (holder as ConversationViewHolder).setProgress(progress)
+                (holder as ConversationViewHolder).setDownloadProgressAndJob(progress, job)
             }
         }
     }
@@ -403,7 +399,7 @@ class ConversationAdapter constructor(
         fun errorPlayingAudio()
         fun onPreviewClick(item: MessageAndAttachment)
         fun goToQuote(messageAndAttachment: MessageAndAttachment)
-        fun downloadAttachment(attachment: Attachment, itemPosition: Int?)
+        fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int?)
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
     }

@@ -9,9 +9,6 @@ import retrofit2.Call
 
 sealed class UploadResult {
 
-    data class StartCall(val attachment: Attachment, val call: Call<AttachmentResDTO>) :
-        UploadResult()
-
     data class Start(val attachment: Attachment, val job: Job) : UploadResult()
 
     data class Success(val attachment: Attachment) : UploadResult()

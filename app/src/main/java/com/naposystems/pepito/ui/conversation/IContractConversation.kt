@@ -43,7 +43,7 @@ interface IContractConversation {
             quote: String
         )
 
-        fun sendMessagesRead()
+        fun sendTextMessagesRead()
         fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Boolean)
         fun cleanSelectionMessages(contactId: Int)
         fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)
@@ -63,12 +63,13 @@ interface IContractConversation {
         fun isVideoCall(): Boolean
         fun resetIsVideoCall()
         fun uploadAttachment(attachment: Attachment, message: Message)
-        fun downloadAttachment(attachment: Attachment, itemPosition: Int)
+        fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int)
         fun updateMessage(message: Message)
         fun updateAttachment(attachment: Attachment)
         fun sendDocumentAttachment(fileUri: Uri)
         fun resetDocumentCopied()
         fun resetUploadProgress()
+        fun sendMessageRead(message: Message)
     }
 
     interface Repository {
@@ -103,12 +104,13 @@ interface IContractConversation {
         suspend fun callContact(contact: Contact, isVideoCall: Boolean): Response<CallContactResDTO>
         fun subscribeToCallChannel(channel: String)
         suspend fun downloadAttachment(
-            attachment: Attachment,
+            messageAndAttachment: MessageAndAttachment,
             itemPosition: Int
         ): Flow<DownloadAttachmentResult>
 
         fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int)
         suspend fun copyFile(fileUri: Uri): File?
         fun verifyMessagesToDelete()
+        suspend fun sendMessageRead(message: Message)
     }
 }

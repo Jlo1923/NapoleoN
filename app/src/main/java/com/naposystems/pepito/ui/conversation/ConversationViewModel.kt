@@ -381,7 +381,7 @@ class ConversationViewModel @Inject constructor(
         return stringOfReturn
     }
 
-    override fun sendMessagesRead() {
+    override fun sendTextMessagesRead() {
         viewModelScope.launch {
             repository.sendMessagesRead(contact.id)
         }
@@ -467,9 +467,9 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun downloadAttachment(attachment: Attachment, itemPosition: Int) {
+    override fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int) {
         viewModelScope.launch {
-            repository.downloadAttachment(attachment, itemPosition)
+            repository.downloadAttachment(messageAndAttachment, itemPosition)
                 .flowOn(Dispatchers.IO)
                 .collect {
                     _downloadProgress.value = it
@@ -501,6 +501,12 @@ class ConversationViewModel @Inject constructor(
 
     override fun resetUploadProgress() {
         _uploadProgress.value = null
+    }
+
+    override fun sendMessageRead(message: Message) {
+        viewModelScope.launch {
+            repository.sendMessageRead(message)
+        }
     }
 
     //endregion

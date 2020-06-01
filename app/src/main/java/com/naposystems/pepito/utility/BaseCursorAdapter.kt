@@ -11,7 +11,6 @@ abstract class BaseCursorAdapter<V : RecyclerView.ViewHolder?>(c: Cursor?) :
     private var mRowIDColumn = 0
 
     init {
-        setHasStableIds(true)
         swapCursor(c)
     }
 

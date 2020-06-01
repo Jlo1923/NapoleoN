@@ -43,7 +43,7 @@ interface MessageDataSource {
 
     fun getMessagesForHome() : LiveData<List<MessageAndAttachment>>
 
-    suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
+    suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
 
     suspend fun deleteMessages(contactId: Int)
 
