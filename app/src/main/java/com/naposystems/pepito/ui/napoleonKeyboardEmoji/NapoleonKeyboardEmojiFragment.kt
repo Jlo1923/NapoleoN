@@ -23,8 +23,7 @@ class NapoleonKeyboardEmojiFragment : Fragment() {
     }
 
     private lateinit var binding: NapoleonKeyboardEmojiFragmentBinding
-//    private lateinit var mListener: NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener
-    private lateinit var mContext: Context
+    private var mContext: Context? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,11 +38,12 @@ class NapoleonKeyboardEmojiFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setupAdapter(mContext)
+        this.mContext?.let {
+            setupAdapter(it)
+        }
     }
 
     fun setListener(context: Context) {
-//        this.mListener = listener
         this.mContext = context
     }
 

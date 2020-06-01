@@ -17,5 +17,5 @@
     <string name="text_every_twelve_hours">12 stunden</string>
     <string name="text_every_one_day">1 tag</string>
     <string name="text_info_conversation_message_self_destruction">Nachrichten in dieser Konversation gesendet werden nach der gewählten Zeit gelöscht werden.</string>
-    <string name="text_info_message_autodestruction_time_failed_messages">Nachrichten von unseren Gesprächen gesendet, die ihr Ziel nicht erreichen werden nach der gewählten Zeit gelöscht werden</string>
+    <string name="text_info_message_autodestruction_time_failed_messages">Gesendete Nachrichten in Gesprächen, die ihr Ziel nicht erreichen oder nicht lesen, wird nach der gewählten Zeit gelöscht werden</string>
 </resources>

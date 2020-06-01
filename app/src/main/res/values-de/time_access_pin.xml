@@ -8,5 +8,5 @@
     <string name="text_one_hour">1 Stunde</string>
     <string name="text_one_day">1 Tag</string>
     <string name="text_never">Niemals</string>
-    <string name="text_desc_pin_locked_time">Der Zugangs-PIN wird aufgefordert, nach Ablauf der eingestellten Zeit und die App im Hintergrund</string>
+    <string name="text_desc_pin_locked_time">Der Zugangs-PIN wird aufgefordert, nach Ablauf der eingestellten Zeit und die Anwendung geschlossen werden oder im Hintergrund.</string>
 </resources>

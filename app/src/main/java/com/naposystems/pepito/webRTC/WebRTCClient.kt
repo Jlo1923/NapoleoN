@@ -316,25 +316,24 @@ class WebRTCClient constructor(
     }
 
     private fun playSound(uriSound: Uri, isLooping: Boolean, completionCallback: () -> Unit) {
-        mediaPlayer.apply {
-            reset()
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                    .build()
-            )
-            if (isPlaying) {
-                stop()
+        try {
+            mediaPlayer.apply {
                 reset()
+                if (isPlaying) {
+                    stop()
+                    reset()
+                }
+                setDataSource(
+                    context,
+                    uriSound
+                )
+                this.isLooping = isLooping
+                prepare()
+                setOnCompletionListener { completionCallback() }
+                start()
             }
-            setDataSource(
-                context,
-                uriSound
-            )
-            this.isLooping = isLooping
-            prepare()
-            setOnCompletionListener { completionCallback() }
-            start()
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
@@ -434,6 +433,17 @@ class WebRTCClient constructor(
 
                     if (iceConnectionState == PeerConnection.IceConnectionState.FAILED) {
                         mListener?.resetIsOnCallPref()
+
+                        val intent = Intent(context, WebRTCCallService::class.java)
+                        intent.action = WebRTCCallService.ACTION_CALL_END
+                        context.startService(intent)
+                    }
+
+                    if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED ||
+                        iceConnectionState == PeerConnection.IceConnectionState.CLOSED
+                    ) {
+                        mListener?.resetIsOnCallPref()
+
                         playSound(
                             Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone),
                             false

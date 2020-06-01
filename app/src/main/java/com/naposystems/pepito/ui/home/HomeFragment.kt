@@ -98,7 +98,9 @@ class HomeFragment : Fragment() {
         )
 
         this.verifyPermission(
-            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_PHONE_STATE,
             drawableIconId = R.drawable.ic_camera_primary,
             message = R.string.text_explanation_camera_to_receive_calls
         ) {

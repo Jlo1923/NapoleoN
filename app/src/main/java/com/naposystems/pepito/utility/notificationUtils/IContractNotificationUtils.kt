@@ -4,5 +4,6 @@ interface IContractNotificationUtils {
 
     interface Repository {
         fun notifyMessageReceived(messageId: String)
+        fun getIsOnCallPref(): Boolean
     }
 }

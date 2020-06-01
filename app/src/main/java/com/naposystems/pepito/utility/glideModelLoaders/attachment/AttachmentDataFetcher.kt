@@ -47,7 +47,7 @@ class AttachmentDataFetcher constructor(
                 Constants.AttachmentType.GIF_NN.type,
                 Constants.AttachmentType.LOCATION.type -> {
 
-                    if (BuildConfig.ENCRYPT_API) {
+                    if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
                         val extension = attachment.extension
                         if (attachment.webId.isNotEmpty()) {
                             val fileName = "${attachment.webId}.$extension"

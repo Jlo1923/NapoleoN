@@ -103,12 +103,14 @@ class ConversationAdapter constructor(
 
     fun setUploadProgress(
         attachment: Attachment,
-        progress: Long
+        progress: Long,
+        job: Job
     ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
-                Bundle().apply { putLong(PROGRESS, progress) })
+                listOf(Bundle().apply { putLong(PROGRESS, progress) }, job)
+            )
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -283,6 +285,22 @@ class ConversationAdapter constructor(
                     when (val any = payloads.first()) {
                         is Bundle -> handleBundlePayload(any, position, holder)
                         is Job -> handleJobPayload(any, position, holder)
+                        is List<*> -> {
+                            if (any.isNotEmpty()) {
+                                handleBundleAndJobPayload(
+                                    any[0] as Bundle,
+                                    any[1] as Job,
+                                    position,
+                                    holder
+                                )
+                                /*any.forEach { anyItem: Any? ->
+                                    when (anyItem) {
+                                        is Bundle -> handleBundlePayload(anyItem, position, holder)
+                                        is Job -> handleJobPayload(anyItem, position, holder)
+                                    }
+                                }*/
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     Timber.e(e, "Que mierda pasa")
@@ -333,6 +351,37 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE_DOCUMENT -> {
                 (holder as ConversationViewHolder).apply {
                     setProgress(progress)
+                    setUploadComplete(uploadComplete)
+                }
+            }
+            TYPE_INCOMING_MESSAGE,
+            TYPE_INCOMING_MESSAGE_GIF,
+            TYPE_INCOMING_MESSAGE_VIDEO,
+            TYPE_INCOMING_MESSAGE_GIF_NN,
+            TYPE_INCOMING_MESSAGE_DOCUMENT,
+            TYPE_INCOMING_MESSAGE_AUDIO -> {
+                (holder as ConversationViewHolder).setProgress(progress)
+            }
+        }
+    }
+
+    private fun handleBundleAndJobPayload(
+        bundle: Bundle,
+        job: Job,
+        position: Int,
+        holder: RecyclerView.ViewHolder
+    ) {
+        val progress = bundle.getLong(PROGRESS)
+        val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
+        when (getItemViewType(position)) {
+            TYPE_MY_MESSAGE,
+            TYPE_MY_MESSAGE_GIF,
+            TYPE_MY_MESSAGE_VIDEO,
+            TYPE_MY_MESSAGE_GIF_NN,
+            TYPE_MY_MESSAGE_AUDIO,
+            TYPE_MY_MESSAGE_DOCUMENT -> {
+                (holder as ConversationViewHolder).apply {
+                    setUploadProgressAndJob(progress, job)
                     setUploadComplete(uploadComplete)
                 }
             }

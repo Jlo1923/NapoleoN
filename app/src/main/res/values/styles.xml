@@ -554,8 +554,8 @@
         <item name="attrTextColorNameConversation">@color/color_59BC88</item>
         <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
         <item name="attrTextColorConversationInputPanel">@color/white</item>
-        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
-        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrSeekbarProgressTint">@color/color_B1B0CF</item>
+        <item name="attrSeekbarThumbTint">@color/color_81819E</item>
         <item name="attrBackgroundColorQuoteMyMessage">@color/color_81819E</item>
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_A19EA5</item>
         <item name="attrIdentifierColorMyQuote">@color/color_2F2D77</item>

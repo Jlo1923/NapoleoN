@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/attrBackgroundSectionColor"
                 android:padding="@dimen/small_padding"
-                android:text="CONVERSACIÓN!!"
+                android:text="@string/text_conversation"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -186,7 +186,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/attrBackgroundSectionColor"
                 android:padding="@dimen/small_padding"
-                android:text="@string/text_security"
+                android:text="@string/text_access"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct_time_not_sent" />

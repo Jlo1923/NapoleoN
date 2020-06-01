@@ -6,8 +6,6 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -37,6 +35,7 @@ import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.*
 import okhttp3.*
 import retrofit2.Response
@@ -147,35 +146,57 @@ class ConversationRepository @Inject constructor(
 
                 val job = launch(Dispatchers.IO) {
                     val requestBodyFilePart =
-                        createPartFromFile(attachment, this, object : ProgressRequestBody.Listener {
-                            override fun onRequestProgress(
-                                bytesWritten: Int,
-                                contentLength: Long,
-                                progress: Int
-                            ) {
-                                offer(UploadResult.Progress(attachment, progress.toLong()))
-                            }
-
-                            override fun onRequestCancel() {
-                                try {
-                                    if (!isClosedForSend) {
-                                        offer(UploadResult.Cancel(attachment, message))
-                                    } else {
+                        createPartFromFile(
+                            this@channelFlow,
+                            message,
+                            attachment,
+                            this as Job,
+                            object : ProgressRequestBody.Listener {
+                                override fun onRequestProgress(
+                                    bytesWritten: Int,
+                                    contentLength: Long,
+                                    progress: Int
+                                ) {
+                                    Timber.d("progress: $progress")
+                                    try {
+                                        offer(
+                                            UploadResult.Progress(
+                                                attachment,
+                                                progress.toLong(),
+                                                this@launch as Job
+                                            )
+                                        )
+                                    } catch (e: ClosedSendChannelException) {
                                         message.status = Constants.MessageStatus.SENDING.status
                                         updateMessage(message)
                                         attachment.status =
                                             Constants.AttachmentStatus.UPLOAD_CANCEL.status
                                         updateAttachment(attachment)
                                     }
-                                } catch (e: ClosedSendChannelException) {
-                                    message.status = Constants.MessageStatus.SENDING.status
-                                    updateMessage(message)
-                                    attachment.status =
-                                        Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                                    updateAttachment(attachment)
                                 }
-                            }
-                        })
+
+                                override fun onRequestCancel() {
+                                    Timber.d("onRequestCancel")
+                                    try {
+                                        if (!isClosedForSend) {
+                                            offer(UploadResult.Cancel(attachment, message))
+                                        } else {
+                                            message.status = Constants.MessageStatus.SENDING.status
+                                            updateMessage(message)
+                                            attachment.status =
+                                                Constants.AttachmentStatus.UPLOAD_CANCEL.status
+                                            updateAttachment(attachment)
+                                        }
+                                        close()
+                                    } catch (e: ClosedSendChannelException) {
+                                        message.status = Constants.MessageStatus.SENDING.status
+                                        updateMessage(message)
+                                        attachment.status =
+                                            Constants.AttachmentStatus.UPLOAD_CANCEL.status
+                                        updateAttachment(attachment)
+                                    }
+                                }
+                            })
 
                     val response = napoleonApi.sendMessageAttachment(
                         messageId = requestBodyMessageId,
@@ -201,7 +222,7 @@ class ConversationRepository @Inject constructor(
                         }
 
                         updateAttachment(attachment)
-                        if (BuildConfig.ENCRYPT_API) {
+                        if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
                             saveEncryptedFile(attachment)
                         }
                         offer(UploadResult.Success(attachment))
@@ -220,10 +241,17 @@ class ConversationRepository @Inject constructor(
             close()
         } catch (e: Exception) {
             Timber.e(e)
-            if (e !is ClosedSendChannelException && !isClosedForSend) {
+            if (!isClosedForSend) {
                 offer(UploadResult.Cancel(attachment, message))
                 close()
             }
+        } catch (e: ClosedSendChannelException) {
+            Timber.e("ClosedSendChannelException")
+            message.status = Constants.MessageStatus.SENDING.status
+            updateMessage(message)
+            attachment.status =
+                Constants.AttachmentStatus.UPLOAD_CANCEL.status
+            updateAttachment(attachment)
         }
     }
 
@@ -245,8 +273,10 @@ class ConversationRepository @Inject constructor(
     }
 
     private fun createPartFromFile(
+        channel: ProducerScope<UploadResult>,
+        message: Message,
         attachment: Attachment,
-        job: CoroutineScope,
+        job: Job,
         listener: ProgressRequestBody.Listener
     ): MultipartBody.Part {
 
@@ -279,6 +309,9 @@ class ConversationRepository @Inject constructor(
 
         val progressRequestBody =
             ProgressRequestBody(
+                message,
+                attachment,
+                channel,
                 job,
                 byteArray,
                 mediaType!!,
@@ -595,7 +628,7 @@ class ConversationRepository @Inject constructor(
                                             itemPosition
                                         )
                                     )
-                                    if (BuildConfig.ENCRYPT_API) {
+                                    if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
                                         saveEncryptedFile(attachment)
                                     }
                                     close()

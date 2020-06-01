@@ -301,6 +301,8 @@ class SocketService @Inject constructor(
                     false
                 )
 
+                Timber.d("listenIncomingCall: $isOnCallPref")
+
                 val jsonObject = data[1] as JSONObject
 
                 Timber.d(jsonObject.toString())

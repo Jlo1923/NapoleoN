@@ -22,7 +22,7 @@ sealed class UploadResult {
         val cause: Exception? = null
     ) : UploadResult()
 
-    data class Progress(val attachment: Attachment, val progress: Long) : UploadResult()
+    data class Progress(val attachment: Attachment, val progress: Long, val job: Job) : UploadResult()
 
     data class Cancel(val attachment: Attachment, val message: Message) : UploadResult()
 }

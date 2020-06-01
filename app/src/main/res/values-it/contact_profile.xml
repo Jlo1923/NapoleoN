@@ -6,7 +6,7 @@
     <string name="text_want_mute_conversation">Tem certeza de que quer contato restabelecer?</string>
     <string name="text_alert_nickname">Il soprannome deve contenere almeno 5 e un massimo di 20 caratteri</string>
     <string name="text_alert_name">Il nome deve contenere almeno 3 e un massimo di 50 caratteri</string>
-    <string name="text_name_not_contain_enough_char">Il nome deve contenere almeno 5 caratteri.</string>
+    <string name="text_name_not_contain_enough_char">Il nome deve contenere almeno 2 caratteri.</string>
     <string name="text_name_invalid">Nome non valido</string>
     <string name="text_nickname_invalid">Soprannome non valido</string>
     <string name="text_change_contact_photo">Contatto cambia foto</string>

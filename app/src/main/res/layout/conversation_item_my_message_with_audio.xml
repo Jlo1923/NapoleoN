@@ -78,14 +78,14 @@
                 android:id="@+id/audio_player"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:controlColors="@color/colorTextMyMessage"
+                app:controlColors="?attr/attrTextColorColorTextMyMessage"
                 app:isEncryptedFile="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/container_quote"
                 app:seekbarProgressBackgroundTint="@color/black"
-                app:seekbarProgressTint="@color/colorSecondaryLight"
-                app:seekbarThumbTint="@color/colorSecondary" />
+                app:seekbarProgressTint="?attr/attrSeekbarProgressTint"
+                app:seekbarThumbTint="?attr/attrSeekbarThumbTint" />
 
             <TextView
                 style="@style/MyMessageDateTextView"

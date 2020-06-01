@@ -34,7 +34,7 @@
                     app:layout_constraintHeight_percent="0.3"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/image_register_recovery_account" />
+                    app:srcCompat="?attr/attrImageEmptyStateInfoRecovery" />
 
                 <TextView
                     android:id="@+id/textView_info"

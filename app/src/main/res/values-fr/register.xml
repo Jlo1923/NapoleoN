@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_terms_and_conditions_line_one">En cliquant sur Inscription, vous acceptez les</string>
+    <string name="text_terms_and_conditions_line_one">Pour faire le cliquez sur Suivant, accepter</string>
     <string name="text_terms_and_conditions_line_two">termes, conditions et politiques de confidentialité.</string>
     <string name="text_nickname_required">Le pseudo est requis</string>
     <string name="text_nickname_must_not_contain_space">Ne peut pas contenir d\'espaces vides</string>
     <string name="text_cant_contain_special_characters">Ne peut pas contenir de caractères spéciaux</string>
     <string name="text_nickname_contain_at_least_one_number">Il doit contenir au moins un numéro</string>
+    <string name="text_nickname_not_contain_enough_char_and_number">Le pseudo ne doit contenir au moins quatre caractères et un numéro</string>
+    <string name="text_nickname_contain_at_least_one_letter">Le pseudo ne doit contenir au moins une lettre</string>
 </resources>

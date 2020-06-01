@@ -100,7 +100,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         if (isIncomingCall) {
-            if (Build.VERSION.SDK_INT < 29) {
+            if (Build.VERSION.SDK_INT < 29 || !isFromClosedApp) {
                 webRTCClient.playRingtone()
             }
         } else {
@@ -114,7 +114,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 webRTCClient.stopRingAndVibrate()
                 binding.fabAnswer.visibility = View.GONE
             }
-            if (!isFromClosedApp){
+            if (!isFromClosedApp) {
                 val intent = Intent(this, WebRTCCallService::class.java)
                 intent.action = WebRTCCallService.ACTION_CALL_CONNECTED
                 this.startService(intent)
@@ -125,7 +125,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             if (!isIncomingCall && !webRTCClient.isActiveCall()) {
                 viewModel.sendMissedCall(contactId, isVideoCall)
             }
-            if (!isFromClosedApp){
+            if (!isFromClosedApp) {
                 val intent = Intent(this, WebRTCCallService::class.java)
                 intent.action = WebRTCCallService.ACTION_CALL_END
                 val bundle = Bundle()

@@ -8,5 +8,6 @@
     <string name="text_account_recovery_information">Account recovery information</string>
     <string name="text_allow_download_attachments">Allow download attachments sent</string>
     <string name="text_unlock_options">Unlock options</string>
-    <string name="text_message_self_destruct_time_not_send">Messages self-destruct time failed</string>
+    <string name="text_message_self_destruct_time_not_send">Destruct time and unread messages failed</string>
+    <string name="text_conversation">CONVERSATION</string>
 </resources>

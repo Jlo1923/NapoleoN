@@ -499,5 +499,9 @@ class ConversationViewModel @Inject constructor(
         _documentCopied.value = null
     }
 
+    override fun resetUploadProgress() {
+        _uploadProgress.value = null
+    }
+
     //endregion
 }
