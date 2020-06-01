@@ -111,7 +111,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onStop() {
         super.onStop()
-        searchView.showSearchView()
+        searchView.close()
     }
 
     private fun getContacts() {

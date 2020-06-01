@@ -211,6 +211,64 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         anim.start()
     }
 
+    fun close() {
+        if (isOpen) {
+            val x = imageButtonClose.right - (imageButtonClose.width / 2)
+            val y = imageButtonClose.bottom - (imageButtonClose.height / 2)
+
+            val endRadius = 0.0f
+            val anim: Animator
+
+            val startRadius: Float = hypot(
+                this.width.toDouble(),
+                this.height.toDouble()
+            ).toFloat()
+
+            anim = ViewAnimationUtils.createCircularReveal(
+                this,
+                x,
+                y,
+                startRadius,
+                endRadius
+            )
+
+            anim.duration = 500
+
+            anim.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationRepeat(animation: Animator?) {
+                    //nothing
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    if (isOpen) {
+                        listener.onClosed()
+                        visibility = View.GONE
+                        isOpen = false
+                        textInput.setText("")
+                        Utils.hideKeyboard(textInput)
+                    } else {
+                        isOpen = true
+                        listener.onOpened()
+                    }
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                    //nothing
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                    //nothing
+                }
+            })
+
+            visibility = View.VISIBLE
+
+            textInput.requestFocus()
+            Utils.openKeyboard(textInput)
+            anim.start()
+        }
+    }
+
     fun setListener(listener: OnSearchView) {
         this.listener = listener
     }
