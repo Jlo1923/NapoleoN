@@ -67,4 +67,8 @@ class MainActivityRepository @Inject constructor(
 
     override suspend fun getContactById(contactId: Int) =
         contactLocalDataSource.getContactById(contactId)
+
+    override fun resetIsOnCallPref() {
+        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+    }
 }

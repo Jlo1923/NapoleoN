@@ -129,4 +129,8 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     override fun resetIsVideoCall() {
         isVideoCall = null
     }
+
+    override fun resetIsOnCallPref() {
+        repository.resetIsOnCallPref()
+    }
 }

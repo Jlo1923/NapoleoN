@@ -307,7 +307,7 @@ class ConversationFragment : BaseFragment(),
                     linearLayoutManager.findLastVisibleItemPosition()
 
                 val invisibleItems = friendlyMessageCount - lastVisiblePosition
-                Timber.d("invisibleItems: $invisibleItems")
+//                Timber.d("invisibleItems: $invisibleItems")
 
                 if (invisibleItems >= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION) {
                     showFabScroll(View.VISIBLE, animationScaleUp)
@@ -603,8 +603,12 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR)
-                    != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.WRITE_CALENDAR
+                    )
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
                     // Permission is not granted
                 }
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
@@ -655,20 +659,27 @@ class ConversationFragment : BaseFragment(),
         })
 
         viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is UploadResult.Start -> conversationAdapter.setUploadStart(it.attachment, it.job)
-                is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
-                is UploadResult.Progress -> conversationAdapter.setUploadProgress(
-                    it.attachment,
-                    it.progress
-                )
-                is UploadResult.Cancel -> {
-                    val attachment: Attachment = it.attachment
-                    val message: Message = it.message
-                    message.status = Constants.MessageStatus.SENDING.status
-                    viewModel.updateMessage(message)
-                    attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                    viewModel.updateAttachment(attachment)
+            if (it != null) {
+                when (it) {
+                    is UploadResult.Start -> conversationAdapter.setUploadStart(
+                        it.attachment,
+                        it.job
+                    )
+                    is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
+                    is UploadResult.Progress -> conversationAdapter.setUploadProgress(
+                        it.attachment,
+                        it.progress,
+                        it.job
+                    )
+                    is UploadResult.Cancel -> {
+                        val attachment: Attachment = it.attachment
+                        val message: Message = it.message
+                        message.status = Constants.MessageStatus.SENDING.status
+                        viewModel.updateMessage(message)
+                        attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
+                        viewModel.updateAttachment(attachment)
+                        viewModel.resetUploadProgress()
+                    }
                 }
             }
         })
@@ -766,6 +777,8 @@ class ConversationFragment : BaseFragment(),
 
     private fun observeMessageMessages() {
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
+            Timber.d("observeMessageMessages")
+
             conversationAdapter.submitList(conversationList)
 
             if (!messagedLoadedFirstTime) {
@@ -887,8 +900,16 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
+        Timber.d("onResume")
         mediaPlayerManager.registerProximityListener()
 //        setConversationBackground()
+        binding.floatingActionButtonSend.morphToMic()
+        messagedLoadedFirstTime = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.d("onStop")
     }
 
     override fun onDestroy() {
@@ -1245,7 +1266,7 @@ class ConversationFragment : BaseFragment(),
                     val friendlyMessageCount: Int = conversationAdapter.itemCount
                     val lastVisiblePosition: Int =
                         linearLayoutManager.findLastCompletelyVisibleItemPosition()
-                    Timber.d("friendlyMessageCount: $friendlyMessageCount, lastVisiblePosition: $lastVisiblePosition, positionStart: $positionStart, itemCount: $itemCount")
+//                    Timber.d("friendlyMessageCount: $friendlyMessageCount, lastVisiblePosition: $lastVisiblePosition, positionStart: $positionStart, itemCount: $itemCount")
                     if (lastVisiblePosition == -1 ||
                         positionStart >= friendlyMessageCount - 1 &&
                         lastVisiblePosition == positionStart - 1
@@ -1372,6 +1393,7 @@ class ConversationFragment : BaseFragment(),
 
     override fun onPause() {
         super.onPause()
+        Timber.d("onPause")
         resetAudioRecording()
         mediaPlayerManager.pauseAudio()
         mediaPlayerManager.unregisterProximityListener()

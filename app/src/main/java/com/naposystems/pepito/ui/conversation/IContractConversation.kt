@@ -68,6 +68,7 @@ interface IContractConversation {
         fun updateAttachment(attachment: Attachment)
         fun sendDocumentAttachment(fileUri: Uri)
         fun resetDocumentCopied()
+        fun resetUploadProgress()
     }
 
     interface Repository {

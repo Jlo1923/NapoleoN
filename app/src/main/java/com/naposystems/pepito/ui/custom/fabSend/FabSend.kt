@@ -362,6 +362,8 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
             val drawable = micToSend
             setImageDrawable(drawable)
             drawable?.start()
+            this.scaleX = 1.0f
+            this.scaleY = 1.0f
             isShowingMic = false
         }
     }
@@ -372,6 +374,8 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
             val drawable = sendToMic
             setImageDrawable(drawable)
             drawable?.start()
+            this.scaleX = 1.0f
+            this.scaleY = 1.0f
             isShowingMic = true
         }
     }

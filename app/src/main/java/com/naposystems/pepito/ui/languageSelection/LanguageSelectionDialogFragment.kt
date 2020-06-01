@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -15,13 +16,14 @@ import com.naposystems.pepito.model.languageSelection.Language
 import com.naposystems.pepito.ui.languageSelection.adapter.LanguageSelectionAdapter
 import com.naposystems.pepito.utility.LocaleHelper
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
 import javax.inject.Inject
 
 class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: LanguageSelectionViewModel
+    private val viewModel: LanguageSelectionViewModel by viewModels { viewModelFactory }
     private lateinit var binding: LanguageSelectionDialogFragmentBinding
     private lateinit var adapter: LanguageSelectionAdapter
 
@@ -34,9 +36,6 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(LanguageSelectionViewModel::class.java)
-
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.language_selection_dialog_fragment,
@@ -48,11 +47,12 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
             LanguageSelectionAdapter(
                 viewModel.languagesList,
                 LanguageSelectionAdapter.LanguageSelectionListener {
+                    Timber.d("Buenooo hpta")
                     viewModel.setSelectedLanguage(it)
                     val languageSelected = it
                     changeLocale(languageSelected)
                 },
-                LocaleHelper.getLanguagePreference(context!!)
+                LocaleHelper.getLanguagePreference(requireContext())
             )
 
         binding.recyclerViewLanguages.adapter = adapter
@@ -65,8 +65,9 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun changeLocale(language: Language) {
-        LocaleHelper.setNewLanguage(context!!, language)
-        activity?.recreate()
+        Timber.d("changeLocale: ${language.iso}")
+        LocaleHelper.setNewLanguage(requireContext(), language)
+        requireActivity().recreate()
         dismiss()
     }
 }

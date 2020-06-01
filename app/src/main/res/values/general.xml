@@ -67,7 +67,7 @@
     <string name="text_preview_my_message">Hi</string>
     <string name="text_preview_incoming_message">Hi, how are you?</string>
     <string name="text_display_name">Display Name (Optional)</string>
-    <string name="text_nickname_not_contain_enough_char">The nickname must contain at least 2 characters.</string>
+    <string name="text_nickname_not_contain_enough_char">The nickname must contain at least 5 characters.</string>
     <string name="text_empty_state_conversation_title">Start a conversation</string>
     <string name="text_empty_state_conversation_description">Communicate with your contacts in a secure and private manner</string>
     <string name="text_empty_state_friendship_title">Friend requests</string>
@@ -84,4 +84,6 @@
     <string name="text_update_message">Version %1$s is now available on the Play Store</string>
     <string name="text_update">Update</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN needs access to the camera and microphone to make and receive calls</string>
+    <string name="text_twentyfour_hours">24 hours</string>
+    <string name="text_access">ACCESS</string>
 </resources>

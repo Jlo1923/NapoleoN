@@ -42,7 +42,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
-    private val contactRepositoryShareViewModel : ContactRepositoryShareViewModel by viewModels{
+    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
         viewModelFactory
     }
     private lateinit var shareContactViewModel: ShareContactViewModel
@@ -107,6 +107,11 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         })
 
         observeContactsForSearch()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        searchView.showSearchView()
     }
 
     private fun getContacts() {

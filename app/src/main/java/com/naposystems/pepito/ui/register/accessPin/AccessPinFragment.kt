@@ -2,6 +2,8 @@ package com.naposystems.pepito.ui.register.accessPin
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +31,7 @@ class AccessPinFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
@@ -71,7 +74,7 @@ class AccessPinFragment : Fragment() {
         recoveredAccount = args.isRecoveredAccount
 
         if (recoveredAccount) {
-            binding.textViewTitle.text = "Restablecer Pin de Acceso|!!"
+            binding.textViewTitle.text = getString(R.string.text_reset_access_pin_title)
             binding.buttonRegister.text = getString(R.string.text_recovery_account)
         }
 
@@ -115,6 +118,9 @@ class AccessPinFragment : Fragment() {
                 viewModel.onOpenedHomeFragment()
             }
         })
+
+        binding.textInputEditTextAccessPin.addTextChangedListener(textWatcherAccessPin())
+        binding.textInputEditTextConfirmAccessPin.addTextChangedListener(textWatcherConfirmAccessPin())
 
         return binding.root
     }
@@ -177,6 +183,37 @@ class AccessPinFragment : Fragment() {
         binding.textInputLayoutAccessPin.isEnabled = true
         binding.textInputLayoutConfirmAccessPin.isEnabled = true
         binding.buttonRegister.isEnabled = true
+    }
+
+    private fun textWatcherAccessPin(): TextWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            // Intentionally empty
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // Intentionally empty
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            FieldsValidator.isAccessPinValid(binding.textInputLayoutAccessPin)
+        }
+    }
+
+    private fun textWatcherConfirmAccessPin(): TextWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            // Intentionally empty
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // Intentionally empty
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            FieldsValidator.isConfirmAccessPinValid(
+                binding.textInputLayoutAccessPin,
+                binding.textInputLayoutConfirmAccessPin
+            )
+        }
     }
 
 }

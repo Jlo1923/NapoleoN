@@ -8,6 +8,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Display
@@ -121,10 +122,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        /*window.setFlags(
+        window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
-        )*/
+        )
 
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
@@ -248,6 +249,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.attachmentAudioFragment -> {
                     showToolbar()
+                    resetToolbar()
                     supportActionBar?.subtitle = getString(R.string.text_tap_to_select)
                     disableDrawer()
                 }
@@ -471,6 +473,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(LocaleHelper.setLocale(newBase))
+        applyOverrideConfiguration(newBase?.resources?.configuration)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -519,14 +522,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+    /*override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
         if (overrideConfiguration != null) {
             val uiMode = overrideConfiguration.uiMode
             overrideConfiguration.setTo(baseContext.resources.configuration)
             overrideConfiguration.uiMode = uiMode
         }
         super.applyOverrideConfiguration(overrideConfiguration)
-    }
+    }*/
 
     override fun onResume() {
         super.onResume()
@@ -544,6 +547,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         disposable.clear()
+        viewModel.resetIsOnCallPref()
         super.onDestroy()
     }
 

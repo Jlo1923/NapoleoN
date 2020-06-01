@@ -40,7 +40,7 @@
             app:layout_constraintTop_toTopOf="@id/imageButton_play"
             custom:progress="0"
             custom:progressBarThickness="@dimen/circle_progress_bar"
-            custom:progressbarColor="@color/colorTextMyMessage"
+            custom:progressbarColor="?attr/attrTextColorColorTextMyMessage"
             tools:progress="70"
             tools:visibility="visible" />
 
@@ -49,7 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:indeterminate="true"
-            android:indeterminateTint="@color/colorTextMyMessage"
+            android:indeterminateTint="?attr/attrTextColorColorTextMyMessage"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/progressBar"
             app:layout_constraintEnd_toEndOf="@id/progressBar"
@@ -131,8 +131,8 @@
             app:layout_constraintTop_toBottomOf="@id/container_controls"
             tools:progress="50"
             tools:progressBackgroundTint="@color/black"
-            tools:progressTint="@color/colorSecondaryLight"
-            tools:thumbTint="@color/colorSecondary" />
+            tools:progressTint="?attr/attrSeekbarProgressTint"
+            tools:thumbTint="?attr/attrSeekbarThumbTint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

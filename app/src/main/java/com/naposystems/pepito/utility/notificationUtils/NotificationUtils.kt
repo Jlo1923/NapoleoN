@@ -7,8 +7,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.core.app.NotificationCompat.*
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
@@ -215,45 +217,47 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             }
 
             Constants.NotificationType.INCOMING_CALL.type -> {
-                var channel = ""
-                var contactId = 0
-                var isVideoCall = false
+                if (app != null && !app.isAppVisible() && !repository.getIsOnCallPref()) {
+                    var channel = ""
+                    var contactId = 0
+                    var isVideoCall = false
 
-                if (data.containsKey(Constants.CallKeys.CHANNEL)) {
-                    channel = "private-${data[Constants.CallKeys.CHANNEL]}"
-                }
+                    if (data.containsKey(Constants.CallKeys.CHANNEL)) {
+                        channel = "private-${data[Constants.CallKeys.CHANNEL]}"
+                    }
 
-                if (data.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
-                    isVideoCall = data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
-                }
+                    if (data.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
+                        isVideoCall = data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
+                    }
 
-                if (data.containsKey(Constants.CallKeys.CONTACT_ID)) {
-                    contactId = data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
-                }
+                    if (data.containsKey(Constants.CallKeys.CONTACT_ID)) {
+                        contactId = data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
+                    }
 
-                if (channel != "private-" && contactId != 0) {
-                    val service = Intent(context, WebRTCCallService::class.java)
+                    if (channel != "private-" && contactId != 0) {
+                        val service = Intent(context, WebRTCCallService::class.java)
 
-                    val bundle = Bundle()
+                        val bundle = Bundle()
 
-                    bundle.putString(
-                        Constants.CallKeys.CHANNEL,
-                        channel
-                    )
+                        bundle.putString(
+                            Constants.CallKeys.CHANNEL,
+                            channel
+                        )
 
-                    bundle.putBoolean(
-                        Constants.CallKeys.IS_VIDEO_CALL,
-                        isVideoCall
-                    )
+                        bundle.putBoolean(
+                            Constants.CallKeys.IS_VIDEO_CALL,
+                            isVideoCall
+                        )
 
-                    bundle.putInt(
-                        Constants.CallKeys.CONTACT_ID,
-                        contactId
-                    )
+                        bundle.putInt(
+                            Constants.CallKeys.CONTACT_ID,
+                            contactId
+                        )
 
-                    service.putExtras(bundle)
+                        service.putExtras(bundle)
 
-                    context.startService(service)
+                        context.startService(service)
+                    }
                 }
                 /*if (app != null && !app.isAppVisible()) {
                     val jsonObject = JSONObject()
@@ -389,6 +393,16 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                 description = descriptionText
                 setShowBadge(true)
                 lockscreenVisibility = PRIORITY_MAX
+            }
+
+            if (Build.VERSION.SDK_INT >= 29) {
+                val soundUri = Settings.System.DEFAULT_RINGTONE_URI
+
+                val audioAttributes: AudioAttributes = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build()
+                channel.setSound(soundUri, audioAttributes)
             }
 
             // Register the channel with the system

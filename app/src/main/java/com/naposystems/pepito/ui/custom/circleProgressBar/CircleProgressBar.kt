@@ -102,6 +102,8 @@ class CircleProgressBar constructor(context: Context, attrs: AttributeSet) : Vie
 
     //region Implementation IContractCircleProgressBar
 
+    override fun getProgress() = this.mProgress
+
     override fun setProgressColor(colorId: Int) {
         this.mColor = colorId
         mForegroundPaint.apply {

@@ -52,7 +52,7 @@
     <string name="text_preview_my_message">Ola</string>
     <string name="text_preview_incoming_message">Oi, como vai?</string>
     <string name="text_display_name">Display Name (Opcional)</string>
-    <string name="text_nickname_not_contain_enough_char">O apelido deve conter pelo menos 2 caracteres.</string>
+    <string name="text_nickname_not_contain_enough_char">O apelido deve conter pelo menos 5 caracteres.</string>
     <string name="text_empty_state_conversation_title">Iniciar uma conversa</string>
     <string name="text_empty_state_conversation_description">Comunicar com seus contatos de uma forma segura e privada.</string>
     <string name="text_empty_state_friendship_title">Pedidos de amizade</string>
@@ -69,4 +69,6 @@
     <string name="text_update_message">Version %1$s já está disponível na App Store</string>
     <string name="text_update">Atualizar</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN precisa de acesso à câmera e microfone para fazer e receber chamadas</string>
+    <string name="text_twentyfour_hours">24 horas</string>
+    <string name="text_access">ACESSO</string>
 </resources>

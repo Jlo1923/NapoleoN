@@ -1,6 +1,8 @@
 package com.naposystems.pepito.repository.notificationUtils
 
 import com.naposystems.pepito.dto.conversation.message.MessageReceivedReqDTO
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.pepito.webService.NapoleonApi
 import kotlinx.coroutines.Dispatchers
@@ -10,12 +12,15 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-class NotificationUtilsRepository @Inject constructor(private val napoleonApi: NapoleonApi) :
+class NotificationUtilsRepository @Inject constructor(
+    private val napoleonApi: NapoleonApi,
+    private val sharedPreferencesManager: SharedPreferencesManager
+) :
     IContractNotificationUtils.Repository {
 
     override fun notifyMessageReceived(messageId: String) {
         GlobalScope.launch {
-            withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO) {
                 try {
                     val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
                     napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
@@ -25,4 +30,7 @@ class NotificationUtilsRepository @Inject constructor(private val napoleonApi: N
             }
         }
     }
+
+    override fun getIsOnCallPref() =
+        sharedPreferencesManager.getBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
 }

@@ -14,6 +14,9 @@ class FieldsValidator {
         private val containNumberPattern: Pattern =
             Pattern.compile(".*[0-9].*")
 
+        private val containAtLeastLetterPattern: Pattern =
+            Pattern.compile(".*[a-zA-Z].*")
+
         fun isNicknameValid(textInputLayout: TextInputLayout): Boolean {
             val nickname = textInputLayout.editText!!.text.toString()
             val context = textInputLayout.context
@@ -25,9 +28,34 @@ class FieldsValidator {
                 return false
             }
 
-            if (nickname.length < 5) {
-                textInputLayout.error = context.getString(R.string.text_nickname_not_contain_enough_char)
+            if (nickname.length < 4) {
+                textInputLayout.error =
+                    context.getString(R.string.text_nickname_not_contain_enough_char_and_number)
                 return false
+            } else if (nickname.length == 4) {
+                if (!textContainLetter(nickname)) {
+                    textInputLayout.error =
+                        context.getString(R.string.text_nickname_contain_at_least_one_letter)
+                    return false
+                }
+
+                if (!textContainNumber(nickname)) {
+                    textInputLayout.error =
+                        context.getString(R.string.text_nickname_contain_at_least_one_number)
+                    return false
+                }
+            } else {
+                if (!textContainLetter(nickname)) {
+                    textInputLayout.error =
+                        context.getString(R.string.text_nickname_contain_at_least_one_letter)
+                    return false
+                }
+
+                if (!textContainNumber(nickname)) {
+                    textInputLayout.error =
+                        context.getString(R.string.text_nickname_contain_at_least_one_number)
+                    return false
+                }
             }
 
             if (textContainWitheSpaces(nickname)) {
@@ -42,11 +70,6 @@ class FieldsValidator {
                 return false
             }
 
-            if (!textContainNumber(nickname)) {
-                textInputLayout.error = context.getString(R.string.text_nickname_contain_at_least_one_number)
-                return false
-            }
-
             return true
         }
 
@@ -58,7 +81,8 @@ class FieldsValidator {
 
             if (displayName.isNotEmpty()) {
                 if (displayName.length < 2) {
-                    textInputLayout.error = context.getString(R.string.text_nickname_not_contain_enough_char)
+                    textInputLayout.error =
+                        context.getString(R.string.text_name_not_contain_enough_char)
                     return false
                 }
 
@@ -104,10 +128,12 @@ class FieldsValidator {
             val confirmAccessPin = textInputLayoutConfirm.editText!!.text.toString()
             val context = textInputLayoutConfirm.context
 
+            textInputLayout.error = null
             textInputLayoutConfirm.error = null
 
             if (confirmAccessPin.isEmpty()) {
-                textInputLayoutConfirm.error = context.getString(R.string.text_confirm_pin_access_required)
+                textInputLayoutConfirm.error =
+                    context.getString(R.string.text_confirm_pin_access_required)
                 return false
             }
 
@@ -137,5 +163,8 @@ class FieldsValidator {
 
         private fun textContainNumber(text: String) =
             containNumberPattern.matcher(text).find()
+
+        private fun textContainLetter(text: String) =
+            containAtLeastLetterPattern.matcher(text).find()
     }
 }

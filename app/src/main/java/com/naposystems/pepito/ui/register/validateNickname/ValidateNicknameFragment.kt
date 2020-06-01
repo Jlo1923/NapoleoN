@@ -123,6 +123,7 @@ class ValidateNicknameFragment : Fragment() {
         })
 
         binding.textInputEditTextNickname.addTextChangedListener(textWatcherNickname())
+        binding.textInputEditTextName.addTextChangedListener(textWatcherDisplayName())
 
         return binding.root
     }
@@ -167,30 +168,51 @@ class ValidateNicknameFragment : Fragment() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val nicknameRegex: Pattern =
-                Pattern.compile(Constants.RegularExpressions.NICKNAME)
+            s?.let { charSequence ->
 
-            if (nicknameRegex.matcher(s!!).find()) {
-                val string = s.toString().toLowerCase(Locale.getDefault())
-                val lastChar = string.last()
-                val lastCharIsDigit = lastChar.isDigit()
-                val lastCharIsNumberOne = if (lastCharIsDigit) {
-                    Character.getNumericValue(lastChar) == 1
-                } else {
-                    false
+                val nicknameRegex: Pattern =
+                    Pattern.compile(Constants.RegularExpressions.NICKNAME)
+
+                if (FieldsValidator.isNicknameValid(binding.textInputLayoutNickname)) {
+                    if (nicknameRegex.matcher(charSequence).find()) {
+                        val string = charSequence.toString().toLowerCase(Locale.getDefault())
+                        val lastChar = string.last()
+                        val lastCharIsDigit = lastChar.isDigit()
+                        val lastCharIsNumberOne = if (lastCharIsDigit) {
+                            Character.getNumericValue(lastChar) == 1
+                        } else {
+                            false
+                        }
+                        val restOfString = string.substring(IntRange(0, string.length - 2))
+
+                        val restContainsNumber = restOfString.contains(Regex("\\d"))
+
+                        if (lastCharIsNumberOne && !restContainsNumber) {
+                            viewModel.setNoValidNickname()
+                        } else {
+                            val validateNicknameReqDTO = ValidateNicknameReqDTO(string)
+                            viewModel.validateNickname(validateNicknameReqDTO)
+                        }
+                    } else {
+                        resetDrawableTextInput(binding.textInputEditTextNickname)
+                    }
                 }
-                val restOfString = string.substring(IntRange(0, string.length - 2))
+            }
+        }
+    }
 
-                val restContainsNumber = restOfString.contains(Regex("\\d"))
+    private fun textWatcherDisplayName(): TextWatcher = object: TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            //Intentionally empty
+        }
 
-                if (lastCharIsNumberOne && !restContainsNumber) {
-                    viewModel.setNoValidNickname()
-                } else {
-                    val validateNicknameReqDTO = ValidateNicknameReqDTO(string)
-                    viewModel.validateNickname(validateNicknameReqDTO)
-                }
-            } else {
-                resetDrawableTextInput(binding.textInputEditTextNickname)
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            //Intentionally empty
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            s?.let { _ ->
+                FieldsValidator.isDisplayNameValid(binding.textInputLayoutDisplayName)
             }
         }
     }

@@ -30,7 +30,7 @@ open class ConversationViewHolder constructor(
     private val context: Context
 ) : RecyclerView.ViewHolder(view) {
 
-    private var uploadJob: Job? = null
+    var uploadJob: Job? = null
     private var downloadJob: Job? = null
     private var countDownTimer: CountDownTimer? = null
 
@@ -95,6 +95,7 @@ open class ConversationViewHolder constructor(
     fun setProgress(
         progress: Long
     ) {
+        Timber.d("this.uploadjob: ${this.uploadJob}, this.downloadJob: ${this.downloadJob}")
         progressBar?.visibility = View.VISIBLE
         progressBar?.setProgress(progress.toFloat())
         imageButtonState?.visibility = View.VISIBLE
@@ -105,15 +106,31 @@ open class ConversationViewHolder constructor(
         }
     }
 
+    fun setUploadProgressAndJob(
+        progress: Long,
+        job: Job
+    ) {
+        Timber.d("progress: $progress, job: $job")
+        progressBar?.visibility = View.VISIBLE
+        progressBar?.setProgress(progress.toFloat())
+
+        if (progress == 100L) {
+            progressBar?.visibility = View.GONE
+            imageButtonState?.visibility = View.GONE
+        }
+        this.uploadJob = job
+    }
+
     fun setUploadComplete(boolean: Boolean) {
         if (boolean) {
             progressBar?.visibility = View.GONE
+            imageButtonState?.visibility = View.GONE
             audioPlayer?.enablePlayButton(true)
         }
     }
 
     fun setUploadStart(job: Job) {
-        Timber.d("setUploadStart")
+        Timber.d("setUploadStart: $job")
         this.uploadJob = job
         imageButtonState?.visibility = View.VISIBLE
         progressBarIndeterminate?.visibility = View.VISIBLE
@@ -140,7 +157,8 @@ open class ConversationViewHolder constructor(
             textViewCountDown,
             itemToEliminate = { messageAndAttachment ->
                 clickListener.messageToEliminate(messageAndAttachment)
-            })
+            }
+        )
 
         if (item.message.isSelected) {
             containerMessage?.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
@@ -316,6 +334,7 @@ open class ConversationViewHolder constructor(
     ) = View.OnClickListener {
         when (attachment.status) {
             Constants.AttachmentStatus.SENDING.status -> {
+                Timber.d("this.uploadJob: ${this.uploadJob}")
                 if (this.uploadJob?.isActive == true) {
                     this.uploadJob?.cancel()
                 } else {
