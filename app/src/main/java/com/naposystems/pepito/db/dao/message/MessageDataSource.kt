@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MessageDataSource {
 
-    suspend fun getMessageByWebId(webId: String): MessageAndAttachment?
+    suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment?
 
     fun getMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
 

@@ -63,7 +63,7 @@ interface IContractConversation {
         fun isVideoCall(): Boolean
         fun resetIsVideoCall()
         fun uploadAttachment(attachment: Attachment, message: Message)
-        fun downloadAttachment(attachment: Attachment, itemPosition: Int)
+        fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int)
         fun updateMessage(message: Message)
         fun updateAttachment(attachment: Attachment)
         fun sendDocumentAttachment(fileUri: Uri)
@@ -103,7 +103,7 @@ interface IContractConversation {
         suspend fun callContact(contact: Contact, isVideoCall: Boolean): Response<CallContactResDTO>
         fun subscribeToCallChannel(channel: String)
         suspend fun downloadAttachment(
-            attachment: Attachment,
+            messageAndAttachment: MessageAndAttachment,
             itemPosition: Int
         ): Flow<DownloadAttachmentResult>
 

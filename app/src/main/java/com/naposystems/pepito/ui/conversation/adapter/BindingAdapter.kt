@@ -211,7 +211,8 @@ fun bindImageAttachment(
                         }
                         Constants.AttachmentStatus.NOT_DOWNLOADED.status,
                         Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
-                        Constants.AttachmentStatus.DOWNLOAD_ERROR.status -> {
+                        Constants.AttachmentStatus.DOWNLOAD_ERROR.status,
+                        Constants.AttachmentStatus.DOWNLOADING.status -> {
                             loadBlurAttachment(
                                 attachment,
                                 imageView,
@@ -368,6 +369,14 @@ fun bindIconForState(
                     R.drawable.ic_play_arrow_black
                 } else {
                     imageButton.visibility = View.GONE
+                    R.drawable.ic_file_download_black
+                }
+            }
+            Constants.AttachmentStatus.ERROR.status -> {
+                imageButton.visibility = View.VISIBLE
+                if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
+                    R.drawable.ic_file_upload_black
+                } else {
                     R.drawable.ic_file_download_black
                 }
             }

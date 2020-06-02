@@ -8,7 +8,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -27,7 +26,6 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.toRect
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
@@ -603,14 +601,6 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.WRITE_CALENDAR
-                    )
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
-                    // Permission is not granted
-                }
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
@@ -635,11 +625,18 @@ class ConversationFragment : BaseFragment(),
                     conversationAdapter.setStartDownload(it.itemPosition, it.job)
                 }
                 is DownloadAttachmentResult.Success -> {
-                    it.attachment.status =
-                        Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
-                    viewModel.updateAttachment(
-                        it.attachment
-                    )
+                    it.messageAndAttachment.getFirstAttachment()?.let { firstAttachment ->
+                        /*if (firstAttachment.type != Constants.AttachmentType.AUDIO.type) {
+                            val message = it.messageAndAttachment.message
+                            viewModel.sendMessageRead(message)
+                        }*/
+
+                        firstAttachment.status =
+                            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
+                        viewModel.updateAttachment(
+                            firstAttachment
+                        )
+                    }
                 }
                 is DownloadAttachmentResult.Progress -> {
                     conversationAdapter.setProgress(
@@ -674,11 +671,13 @@ class ConversationFragment : BaseFragment(),
                     is UploadResult.Cancel -> {
                         val attachment: Attachment = it.attachment
                         val message: Message = it.message
-                        message.status = Constants.MessageStatus.SENDING.status
-                        viewModel.updateMessage(message)
+
                         attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
                         viewModel.updateAttachment(attachment)
                         viewModel.resetUploadProgress()
+
+                        message.status = Constants.MessageStatus.SENDING.status
+                        viewModel.updateMessage(message)
                     }
                 }
             }
@@ -1232,13 +1231,12 @@ class ConversationFragment : BaseFragment(),
             }
 
             override fun downloadAttachment(
-                attachment: Attachment,
+                messageAndAttachment: MessageAndAttachment,
                 itemPosition: Int?
             ) {
                 Timber.d("downloadAttachment")
-                if (itemPosition != null) {
-                    viewModel.updateAttachment(attachment)
-                    viewModel.downloadAttachment(attachment, itemPosition)
+                if (itemPosition != null && messageAndAttachment.getFirstAttachment() != null) {
+                    viewModel.downloadAttachment(messageAndAttachment, itemPosition)
                 }
             }
 

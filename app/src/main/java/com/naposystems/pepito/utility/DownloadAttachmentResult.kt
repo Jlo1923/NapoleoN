@@ -1,5 +1,6 @@
 package com.naposystems.pepito.utility
 
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import kotlinx.coroutines.Job
 
@@ -7,7 +8,8 @@ sealed class DownloadAttachmentResult {
 
     data class Start(val itemPosition: Int, val job: Job) : DownloadAttachmentResult()
 
-    data class Success(val attachment: Attachment, val itemPosition: Int) : DownloadAttachmentResult()
+    data class Success(val messageAndAttachment: MessageAndAttachment, val itemPosition: Int) :
+        DownloadAttachmentResult()
 
     data class Error(
         val attachment: Attachment,

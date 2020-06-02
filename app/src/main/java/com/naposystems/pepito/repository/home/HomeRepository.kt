@@ -114,7 +114,7 @@ class HomeRepository @Inject constructor(
 
     private suspend fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
         val originalMessage =
-            messageLocalDataSource.getMessageByWebId(messageRes.quoted)
+            messageLocalDataSource.getMessageByWebId(messageRes.quoted, false)
 
         if (originalMessage != null) {
             var firstAttachment: Attachment? = null

@@ -42,7 +42,7 @@ class ProgressRequestBody(
                 var read: Int
 
                 while (inputStream.read(buffer).also { read = it } != -1) {
-                    if (job.isActive) {
+                    if (job.isActive && !channel.isClosedForSend) {
                         sink.write(buffer, 0, read)
                         uploaded += read
 
@@ -61,6 +61,7 @@ class ProgressRequestBody(
                         )*/
                     } else {
                         Timber.e("Job no active")
+                        listener.onRequestCancel()
                         break
                     }
                 }

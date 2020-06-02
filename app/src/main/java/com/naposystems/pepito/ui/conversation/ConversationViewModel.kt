@@ -155,6 +155,7 @@ class ConversationViewModel @Inject constructor(
             )
 
             val messageId = repository.insertMessage(message).toInt()
+            Timber.d("insertMessage")
 
             message.id = messageId
 
@@ -256,6 +257,7 @@ class ConversationViewModel @Inject constructor(
                         if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
                         else Constants.MessageStatus.SENT.status
                     repository.updateMessage(messageEntity)
+                    Timber.d("updateMessage")
                 }
             } else {
                 setStatusErrorMessageAndAttachment(message, attachment)
@@ -467,9 +469,9 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun downloadAttachment(attachment: Attachment, itemPosition: Int) {
+    override fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int) {
         viewModelScope.launch {
-            repository.downloadAttachment(attachment, itemPosition)
+            repository.downloadAttachment(messageAndAttachment, itemPosition)
                 .flowOn(Dispatchers.IO)
                 .collect {
                     _downloadProgress.value = it
