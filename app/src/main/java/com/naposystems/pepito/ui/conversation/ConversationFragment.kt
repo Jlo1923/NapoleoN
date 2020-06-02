@@ -626,10 +626,10 @@ class ConversationFragment : BaseFragment(),
                 }
                 is DownloadAttachmentResult.Success -> {
                     it.messageAndAttachment.getFirstAttachment()?.let { firstAttachment ->
-                        if (firstAttachment.type != Constants.AttachmentType.AUDIO.type) {
+                        /*if (firstAttachment.type != Constants.AttachmentType.AUDIO.type) {
                             val message = it.messageAndAttachment.message
                             viewModel.sendMessageRead(message)
-                        }
+                        }*/
 
                         firstAttachment.status =
                             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
@@ -671,11 +671,13 @@ class ConversationFragment : BaseFragment(),
                     is UploadResult.Cancel -> {
                         val attachment: Attachment = it.attachment
                         val message: Message = it.message
-                        message.status = Constants.MessageStatus.SENDING.status
-                        viewModel.updateMessage(message)
+
                         attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
                         viewModel.updateAttachment(attachment)
                         viewModel.resetUploadProgress()
+
+                        message.status = Constants.MessageStatus.SENDING.status
+                        viewModel.updateMessage(message)
                     }
                 }
             }
@@ -785,7 +787,7 @@ class ConversationFragment : BaseFragment(),
             }
 
             if (conversationList.isNotEmpty()) {
-                viewModel.sendTextMessagesRead()
+                viewModel.sendMessagesRead()
             }
 
         })

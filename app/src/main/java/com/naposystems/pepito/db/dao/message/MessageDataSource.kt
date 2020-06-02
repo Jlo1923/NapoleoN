@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MessageDataSource {
 
-    suspend fun getMessageByWebId(webId: String): MessageAndAttachment?
+    suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment?
 
     fun getMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
 
@@ -43,7 +43,7 @@ interface MessageDataSource {
 
     fun getMessagesForHome() : LiveData<List<MessageAndAttachment>>
 
-    suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
+    suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
 
     suspend fun deleteMessages(contactId: Int)
 

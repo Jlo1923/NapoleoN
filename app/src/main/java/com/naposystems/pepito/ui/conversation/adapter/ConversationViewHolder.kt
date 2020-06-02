@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
@@ -31,7 +32,7 @@ open class ConversationViewHolder constructor(
     private val context: Context
 ) : RecyclerView.ViewHolder(view) {
 
-    var uploadJob: Job? = null
+    private var uploadJob: Job? = null
     private var downloadJob: Job? = null
     private var countDownTimer: CountDownTimer? = null
 
@@ -211,11 +212,10 @@ open class ConversationViewHolder constructor(
         val firstAttachment: Attachment? = item.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
-            Timber.d("attachment.status ${attachment.status}")
+            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
 
-            if (item.message.status == Constants.MessageStatus.UNREAD.status &&
-                attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status &&
-                attachment.uri.isEmpty()
+            if (item.message.status == Constants.MessageStatus.READED.status &&
+                attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status
             ) {
                 Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.uri}")
                 clickListener.downloadAttachment(item, adapterPosition)

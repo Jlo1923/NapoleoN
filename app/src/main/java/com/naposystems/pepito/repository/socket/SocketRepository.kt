@@ -39,6 +39,7 @@ class SocketRepository @Inject constructor(
                         )
 
                         val messageId = messageLocalDataSource.insertMessage(message)
+                        Timber.d("Conversation insertó mensajes")
 
                         if (messageRes.quoted.isNotEmpty()) {
                             insertQuote(messageRes, messageId.toInt())
@@ -50,6 +51,7 @@ class SocketRepository @Inject constructor(
                         )
 
                         attachmentLocalDataSource.insertAttachments(listAttachments)
+                        Timber.d("Conversation insertó attachment")
                     }
                 }
             }
@@ -58,7 +60,7 @@ class SocketRepository @Inject constructor(
 
     private suspend fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
         val originalMessage =
-            messageLocalDataSource.getMessageByWebId(messageRes.quoted)
+            messageLocalDataSource.getMessageByWebId(messageRes.quoted, false)
 
         if (originalMessage != null) {
             var firstAttachment: Attachment? = null

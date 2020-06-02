@@ -155,6 +155,7 @@ class ConversationViewModel @Inject constructor(
             )
 
             val messageId = repository.insertMessage(message).toInt()
+            Timber.d("insertMessage")
 
             message.id = messageId
 
@@ -256,6 +257,7 @@ class ConversationViewModel @Inject constructor(
                         if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
                         else Constants.MessageStatus.SENT.status
                     repository.updateMessage(messageEntity)
+                    Timber.d("updateMessage")
                 }
             } else {
                 setStatusErrorMessageAndAttachment(message, attachment)
@@ -381,7 +383,7 @@ class ConversationViewModel @Inject constructor(
         return stringOfReturn
     }
 
-    override fun sendTextMessagesRead() {
+    override fun sendMessagesRead() {
         viewModelScope.launch {
             repository.sendMessagesRead(contact.id)
         }
@@ -501,12 +503,6 @@ class ConversationViewModel @Inject constructor(
 
     override fun resetUploadProgress() {
         _uploadProgress.value = null
-    }
-
-    override fun sendMessageRead(message: Message) {
-        viewModelScope.launch {
-            repository.sendMessageRead(message)
-        }
     }
 
     //endregion

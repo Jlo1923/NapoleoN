@@ -359,20 +359,17 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun sendMessagesRead(contactId: Int) {
-        val messagesUnread = messageLocalDataSource.getTextMessagesByStatus(
-            contactId,
-            Constants.MessageStatus.UNREAD.status
-        )
+        val messagesUnread =
+            messageLocalDataSource.getMessagesByStatus(
+                contactId,
+                Constants.MessageStatus.UNREAD.status
+            )
 
-        val messagesWithOutAttachments = messagesUnread.filter { it.attachmentList.isEmpty() }
-
-        val messagesWithOutAttachmentsWebIds = messagesWithOutAttachments.map { it.message.webId }
-
-        if (messagesWithOutAttachmentsWebIds.isNotEmpty()) {
+        if (messagesUnread.isNotEmpty()) {
             try {
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
-                        messagesWithOutAttachmentsWebIds
+                        messagesUnread
                     )
                 )
 
@@ -407,7 +404,7 @@ class ConversationRepository @Inject constructor(
     override suspend fun insertQuote(quoteWebId: String, message: Message) {
 
         val originalMessage =
-            messageLocalDataSource.getMessageByWebId(quoteWebId)
+            messageLocalDataSource.getMessageByWebId(quoteWebId, false)
 
         if (originalMessage != null) {
             var firstAttachment: Attachment? = null
@@ -685,12 +682,12 @@ class ConversationRepository @Inject constructor(
                         Timber.e(e)
                     }
                 }
-                offer(DownloadAttachmentResult.Start(itemPosition, job))
                 val fileName = "${firstAttachment.webId}.${firstAttachment.extension}"
                 firstAttachment.status = Constants.AttachmentStatus.DOWNLOADING.status
                 firstAttachment.uri = fileName
                 Timber.d("Attachment status: ${firstAttachment.status}, uri: ${firstAttachment.uri}")
                 updateAttachment(firstAttachment)
+                offer(DownloadAttachmentResult.Start(itemPosition, job))
             }
         }
     }
@@ -748,24 +745,5 @@ class ConversationRepository @Inject constructor(
 
     override fun verifyMessagesToDelete() {
         messageLocalDataSource.verifyMessagesToDelete()
-    }
-
-    override suspend fun sendMessageRead(message: Message) {
-        try {
-            val response = napoleonApi.sendMessagesRead(
-                MessagesReadReqDTO(
-                    listOf(message.webId)
-                )
-            )
-
-            if (response.isSuccessful) {
-                messageLocalDataSource.updateMessageStatus(
-                    response.body()!!,
-                    Constants.MessageStatus.READED.status
-                )
-            }
-        } catch (ex: Exception) {
-            Timber.e(ex)
-        }
     }
 }

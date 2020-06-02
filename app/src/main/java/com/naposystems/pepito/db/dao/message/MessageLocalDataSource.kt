@@ -24,9 +24,9 @@ class MessageLocalDataSource @Inject constructor(
 
     val cryptoMessage = CryptoMessage(context)
 
-    override suspend fun getMessageByWebId(webId: String): MessageAndAttachment? {
+    override suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment? {
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
-        if (BuildConfig.ENCRYPT_API) {
+        if (BuildConfig.ENCRYPT_API && decrypt) {
             with(messageAndAttachment?.message) {
                 this?.let {
                     it.body = cryptoMessage.decryptMessageBody(it.body)
@@ -188,7 +188,7 @@ class MessageLocalDataSource @Inject constructor(
             .asLiveData()
     }
 
-    override suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {
+    override suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String> {
         return messageDao.getMessagesByStatus(contactId, status)
     }
 
