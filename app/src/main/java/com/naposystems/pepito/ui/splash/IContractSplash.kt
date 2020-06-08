@@ -10,7 +10,7 @@ interface IContractSplash {
         fun getLockStatus()
         fun getLockType()
         fun getUnlockTimeApp()
-        fun getAccountStatus(): Int
+        fun getAccountStatus()
         fun setDefaultPreferences()
         fun setDefaultLanguage(language: String)
         fun setDefaultBiometricsOption(biometricOption: Int)

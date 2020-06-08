@@ -9,11 +9,8 @@ import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -29,7 +26,7 @@ class MessageLocalDataSource @Inject constructor(
         if (BuildConfig.ENCRYPT_API && decrypt) {
             with(messageAndAttachment?.message) {
                 this?.let {
-                    it.body = cryptoMessage.decryptMessageBody(it.body)
+                    it.body = it.getBody(cryptoMessage)
                 }
             }
         }
@@ -38,13 +35,13 @@ class MessageLocalDataSource @Inject constructor(
     }
 
     override fun getMessages(contactId: Int) =
-        messageDao.getMessagesAndAttachments(contactId)
+        messageDao.getMessagesAndAttachmentsDistinctUntilChanged(contactId)
             .map { listMessages: List<MessageAndAttachment> ->
                 if (BuildConfig.ENCRYPT_API) {
                     listMessages.forEach { messageAndAttachment: MessageAndAttachment ->
                         with(messageAndAttachment.message) {
                             this.let {
-                                it.body = cryptoMessage.decryptMessageBody(it.body)
+                                it.body = it.getBody(cryptoMessage)
                             }
                         }
                     }
@@ -62,11 +59,7 @@ class MessageLocalDataSource @Inject constructor(
     }
 
     override fun insertMessage(message: Message): Long {
-        val messageCopy = message.copy()
-        if (BuildConfig.ENCRYPT_API) {
-            messageCopy.encryptBody(cryptoMessage)
-        }
-        return messageDao.insertMessage(messageCopy)
+        return messageDao.insertMessage(message)
     }
 
     override fun insertListMessage(messageList: List<Message>) {
@@ -79,9 +72,9 @@ class MessageLocalDataSource @Inject constructor(
     }
 
     override fun updateMessage(message: Message) {
-        if (BuildConfig.ENCRYPT_API) {
+        /*if (BuildConfig.ENCRYPT_API) {
             message.encryptBody(cryptoMessage)
-        }
+        }*/
         messageDao.updateMessage(message)
     }
 
@@ -128,7 +121,7 @@ class MessageLocalDataSource @Inject constructor(
 
         with(messageAndAttachment.message) {
             this.let {
-                it.body = cryptoMessage.decryptMessageBody(it.body)
+                it.body = it.getBody(cryptoMessage)
             }
         }
 
@@ -136,7 +129,14 @@ class MessageLocalDataSource @Inject constructor(
     }
 
     override suspend fun copyMessagesSelected(contactId: Int): List<String> {
-        return messageDao.copyMessagesSelected(contactId)
+        val messages = messageDao.copyMessagesSelected(contactId)
+        val returnMessages = arrayListOf<String>()
+
+        if (BuildConfig.ENCRYPT_API) {
+            messages.forEach { returnMessages.add(cryptoMessage.decryptMessageBody(it)) }
+        }
+
+        return returnMessages
     }
 
     override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>> {
@@ -146,7 +146,7 @@ class MessageLocalDataSource @Inject constructor(
             listMessages.value?.forEach { messageAndAttachment: MessageAndAttachment ->
                 with(messageAndAttachment.message) {
                     this.let {
-                        it.body = cryptoMessage.decryptMessageBody(it.body)
+                        it.body = it.getBody(cryptoMessage)
                     }
                 }
             }
@@ -178,7 +178,7 @@ class MessageLocalDataSource @Inject constructor(
                     listMessages.forEach { messageAndAttachment: MessageAndAttachment ->
                         with(messageAndAttachment.message) {
                             this.let {
-                                it.body = cryptoMessage.decryptMessageBody(it.body)
+                                it.body = it.getBody(cryptoMessage)
                             }
                         }
                     }
@@ -188,8 +188,11 @@ class MessageLocalDataSource @Inject constructor(
             .asLiveData()
     }
 
-    override suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String> {
-        return messageDao.getMessagesByStatus(contactId, status)
+    override suspend fun getTextMessagesByStatus(
+        contactId: Int,
+        status: Int
+    ): List<MessageAndAttachment> {
+        return messageDao.getTextMessagesByStatus(contactId, status)
     }
 
     override suspend fun deleteMessages(contactId: Int) {

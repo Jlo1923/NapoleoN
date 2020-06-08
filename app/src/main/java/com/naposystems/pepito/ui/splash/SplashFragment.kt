@@ -7,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.biometric.BiometricManager
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
+import com.naposystems.pepito.databinding.SplashFragmentBinding
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
@@ -24,7 +27,8 @@ class SplashFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: SplashViewModel
+    private val viewModel: SplashViewModel by viewModels { viewModelFactory }
+    private lateinit var binding: SplashFragmentBinding
     private lateinit var user: User
 
     //region Variables Access Pin
@@ -44,90 +48,95 @@ class SplashFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(SplashViewModel::class.java)
 
+        binding = DataBindingUtil.inflate(inflater, R.layout.splash_fragment, container, false)
+
+        return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         //region Assignment of Observables
         viewModel.getTimeRequestAccessPin()
+        viewModel.getLockTime()
+        viewModel.getLockType()
+        viewModel.getUnlockTimeApp()
+        viewModel.getLockStatus()
+        viewModel.getAccountStatus()
+
+
         viewModel.timeAccessPin.observe(viewLifecycleOwner, Observer {
             timeAccessPin = it
         })
 
-        viewModel.getLockTime()
         viewModel.lockTimeApp.observe(viewLifecycleOwner, Observer {
             lockTime = it
         })
 
-        viewModel.getLockType()
         viewModel.typeLock.observe(viewLifecycleOwner, Observer {
             lockTypeApp = it
         })
 
-        viewModel.getUnlockTimeApp()
         viewModel.unlockTimeApp.observe(viewLifecycleOwner, Observer {
             timeUnlockApp = it
         })
 
-        viewModel.getLockStatus()
         viewModel.lockStatus.observe(viewLifecycleOwner, Observer {
             lockStatus = it
         })
         //endregion
 
-        viewModel.navigateToLanding.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                when (viewModel.getAccountStatus()) {
-                    Constants.AccountStatus.CODE_VALIDATED.id -> findNavController().navigate(
+        viewModel.accountStatus.observe(viewLifecycleOwner, Observer { accountStatus ->
+            when (accountStatus) {
+                Constants.AccountStatus.NO_ACCOUNT.id -> {
+                    binding.viewWhite.visibility = View.GONE
+                    findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLandingFragment())
+                    viewModel.doneNavigateToLanding()
+                }
+                Constants.AccountStatus.CODE_VALIDATED.id -> {
+                    findNavController().navigate(
                         SplashFragmentDirections.actionSplashFragmentToRegisterFragment()
                     )
-                    Constants.AccountStatus.ACCOUNT_CREATED.id -> {
-                        when (lockTypeApp) {
-                            Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type -> {
-                                validateTimeLock()
-                            }
-                            Constants.LockTypeApp.LOCK_APP_FOR_ATTEMPTS.type -> {
-                                validateTimeForUnlockApp()
-                            }
-                            Constants.LockTypeApp.FOREVER_UNLOCK.type -> {
-                                findNavController().navigate(
-                                    SplashFragmentDirections.actionSplashFragmentToHomeFragment()
-                                )
-                            }
+                    viewModel.doneNavigateToLanding()
+                }
+                Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+                    when (lockTypeApp) {
+                        Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type -> {
+                            validateTimeLock()
+                        }
+                        Constants.LockTypeApp.LOCK_APP_FOR_ATTEMPTS.type -> {
+                            validateTimeForUnlockApp()
+                        }
+                        Constants.LockTypeApp.FOREVER_UNLOCK.type -> {
+                            findNavController().navigate(
+                                SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                            )
+                            viewModel.doneNavigateToLanding()
                         }
                     }
-                    Constants.AccountStatus.ACCOUNT_RECOVERED.id -> {
-                        viewModel.getUser()
-                        viewModel.user.observe(viewLifecycleOwner, Observer {
-                            user = it
-                        })
-                        findNavController().navigate(
-                            SplashFragmentDirections.actionSplashFragmentToAccessPinFragment(
-                                user.nickname,
-                                user.displayName,
-                                true
-                            )
-                        )
-                    }
-                    else -> findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLandingFragment())
                 }
-                viewModel.doneNavigateToLanding()
+                Constants.AccountStatus.ACCOUNT_RECOVERED.id -> {
+                    viewModel.getUser()
+                }
             }
         })
 
-        Handler().postDelayed({
-            context?.let {
-                viewModel.onLoadingTimeEnd()
-            }
-        }, TimeUnit.SECONDS.toMillis(1))
-
+        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
+            findNavController().navigate(
+                SplashFragmentDirections.actionSplashFragmentToAccessPinFragment(
+                    user.nickname,
+                    user.displayName,
+                    true
+                )
+            )
+            viewModel.doneNavigateToLanding()
+        })
 
         //region Set DefaultPreferences
         viewModel.setDefaultPreferences()
         viewModel.setDefaultLanguage(LocaleHelper.getLanguagePreference(requireContext()))
         setDefaultBiometricsOption()
         //endregion
-
-        return inflater.inflate(R.layout.splash_fragment, container, false)
     }
 
     //region Local Methods

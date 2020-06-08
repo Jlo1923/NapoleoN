@@ -140,13 +140,13 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        contactRepositoryShareViewModel.getContacts()
+
         viewModel.getConversation()
 
         viewModel.getUserLiveData()
 
         viewModel.getMessages()
-
-        contactRepositoryShareViewModel.getContacts()
 
         viewModel.getDeletedMessages()
 
@@ -233,7 +233,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (!isShowingVersionDialog)
+        if (!isShowingVersionDialog && !BuildConfig.DEBUG)
             getRemoteConfig()
     }
 
@@ -256,6 +256,7 @@ class HomeFragment : Fragment() {
 
         if (versionApp != BuildConfig.VERSION_NAME) {
             Utils.alertDialogInformative(
+                title = getString(R.string.text_alert_failure),
                 message = getString(R.string.text_update_message, versionApp),
                 titleButton = R.string.text_update,
                 childFragmentManager = requireContext(),

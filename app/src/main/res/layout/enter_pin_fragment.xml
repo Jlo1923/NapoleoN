@@ -56,7 +56,7 @@
                 app:layout_constraintTop_toBottomOf="@id/enter_code_widget"
                 app:layout_constraintBottom_toTopOf="@id/numeric_keyboard"/>
 
-            <com.naposystems.pepito.ui.custom.NumericKeyboardCustomView
+            <com.naposystems.pepito.ui.custom.numericKeyboard.NumericKeyboardCustomView
                 android:id="@+id/numeric_keyboard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

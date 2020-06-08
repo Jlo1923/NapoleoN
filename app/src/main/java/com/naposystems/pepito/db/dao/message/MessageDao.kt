@@ -16,6 +16,9 @@ interface MessageDao {
     @Query("SELECT * FROM message WHERE contact_id=:contact AND (total_self_destruction_at > strftime('%s','now') OR total_self_destruction_at >= 0) ORDER BY id ASC")
     fun getMessagesAndAttachments(contact: Int): Flow<List<MessageAndAttachment>>
 
+    fun getMessagesAndAttachmentsDistinctUntilChanged(contactId: Int) =
+        getMessagesAndAttachments(contactId).distinctUntilChanged()
+
     @Query("SELECT *, COUNT(CASE WHEN status=3 AND is_mine=0 THEN 1 END) AS messagesUnReads FROM message WHERE (total_self_destruction_at > strftime('%s','now') OR total_self_destruction_at >= 0) GROUP BY contact_id ORDER BY id DESC")
     fun getMessagesForHome(): Flow<List<MessageAndAttachment>>
 
@@ -63,8 +66,8 @@ interface MessageDao {
         status: Int
     )
 
-    @Query("SELECT web_id FROM message WHERE contact_id=:contactId AND status=:status AND is_mine=0")
-    suspend fun getMessagesByStatus(contactId: Int, status: Int): List<String>
+    @Query("SELECT * FROM message WHERE contact_id=:contactId AND status=:status AND is_mine=0")
+    suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
 
     @Query("DELETE FROM message WHERE contact_id = :contactId")
     suspend fun deleteMessages(contactId: Int)

@@ -1,5 +1,8 @@
 package com.naposystems.pepito.repository.socket
 
+import android.content.Context
+import com.naposystems.pepito.BuildConfig
+import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
@@ -17,43 +20,55 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SocketRepository @Inject constructor(
+    private val context: Context,
     private val napoleonApi: NapoleonApi,
     private val messageLocalDataSource: MessageDataSource,
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val quoteDataSource: QuoteDataSource
 ) : IContractSocketService.Repository {
 
+    val cryptoMessage = CryptoMessage(context)
+
     override fun getMyMessages() {
         GlobalScope.launch {
-            val response = napoleonApi.getMyMessages()
+            try {
+                val response = napoleonApi.getMyMessages()
 
-            if (response.isSuccessful) {
-                val messageResList: MutableList<MessageResDTO> = response.body()!!.toMutableList()
+                if (response.isSuccessful) {
+                    val messageResList: MutableList<MessageResDTO> =
+                        response.body()!!.toMutableList()
 
-                if (messageResList.isNotEmpty()) {
+                    if (messageResList.isNotEmpty()) {
 
-                    for (messageRes in messageResList) {
+                        for (messageRes in messageResList) {
 
-                        val message = MessageResDTO.toMessageEntity(
-                            null, messageRes, Constants.IsMine.NO.value
-                        )
+                            val message = MessageResDTO.toMessageEntity(
+                                null, messageRes, Constants.IsMine.NO.value
+                            )
 
-                        val messageId = messageLocalDataSource.insertMessage(message)
-                        Timber.d("Conversation insertó mensajes")
+                            if (BuildConfig.ENCRYPT_API) {
+                                message.encryptBody(cryptoMessage)
+                            }
 
-                        if (messageRes.quoted.isNotEmpty()) {
-                            insertQuote(messageRes, messageId.toInt())
+                            val messageId = messageLocalDataSource.insertMessage(message)
+                            Timber.d("Conversation insertó mensajes")
+
+                            if (messageRes.quoted.isNotEmpty()) {
+                                insertQuote(messageRes, messageId.toInt())
+                            }
+
+                            val listAttachments = AttachmentResDTO.toListConversationAttachment(
+                                messageId.toInt(),
+                                messageRes.attachments
+                            )
+
+                            attachmentLocalDataSource.insertAttachments(listAttachments)
+                            Timber.d("Conversation insertó attachment")
                         }
-
-                        val listAttachments = AttachmentResDTO.toListConversationAttachment(
-                            messageId.toInt(),
-                            messageRes.attachments
-                        )
-
-                        attachmentLocalDataSource.insertAttachments(listAttachments)
-                        Timber.d("Conversation insertó attachment")
                     }
                 }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }

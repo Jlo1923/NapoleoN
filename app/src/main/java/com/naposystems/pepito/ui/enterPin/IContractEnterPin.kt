@@ -10,6 +10,7 @@ interface IContractEnterPin {
         fun setTotalAttempts(attempts: Int)
         fun setLockStatus(state: Int)
         fun getBiometricsOption()
+        fun setBiometricPreference(option: Int)
     }
     interface Repository {
         suspend fun getAccessPin(): User
@@ -21,5 +22,6 @@ interface IContractEnterPin {
         suspend fun setLockType(type: Int)
         suspend fun setLockStatus(state: Int)
         suspend fun getBiometricsOption(): Int
+        fun setBiometricPreference(option: Int)
     }
 }

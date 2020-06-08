@@ -6,7 +6,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.utility.Constants.AttachmentStatus
 import com.naposystems.pepito.utility.FileManager
@@ -44,4 +43,51 @@ data class Attachment(
         FileManager.deleteAttachmentEncryptedFile(context, this)
         FileManager.deleteAttachmentFile(context, this)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Attachment
+
+        if (id != other.id) return false
+        if (messageId != other.messageId) return false
+        if (webId != other.webId) return false
+        if (messageWebId != other.messageWebId) return false
+        if (status != other.status) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + messageId
+        result = 31 * result + webId.hashCode()
+        result = 31 * result + messageWebId.hashCode()
+        result = 31 * result + status
+        return result
+    }
+
+    /*override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Attachment
+
+        if (id != other.id) return false
+        if (messageId != other.messageId) return false
+        if (webId != other.webId) return false
+        if (messageWebId != other.messageWebId) return false
+        if (status != other.status) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }*/
+
+
+
+
 }

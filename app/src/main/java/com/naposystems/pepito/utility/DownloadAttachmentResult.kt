@@ -2,11 +2,11 @@ package com.naposystems.pepito.utility
 
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ProducerScope
 
 sealed class DownloadAttachmentResult {
 
-    data class Start(val itemPosition: Int, val job: Job) : DownloadAttachmentResult()
+    data class Start(val itemPosition: Int, val job: ProducerScope<DownloadAttachmentResult>) : DownloadAttachmentResult()
 
     data class Success(val messageAndAttachment: MessageAndAttachment, val itemPosition: Int) :
         DownloadAttachmentResult()

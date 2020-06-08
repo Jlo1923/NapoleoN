@@ -215,8 +215,12 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
         binding.imageButtonCamera.isEnabled = false
         photoFile = createFile(PHOTO_EXTENSION)
 
+        val optionsCapture = ImageCapture.OutputFileOptions.Builder(
+            photoFile
+        ).build()
+
         binding.viewFinder.takePicture(
-            photoFile,
+            optionsCapture,
             mainExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {

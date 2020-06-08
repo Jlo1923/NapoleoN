@@ -52,13 +52,34 @@ data class MessageAndAttachment(
         other as MessageAndAttachment
 
         if (message != other.message) return false
+        if (attachmentList != other.attachmentList) return false
+        if (quote != other.quote) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = message.hashCode()
+        result = 31 * result + attachmentList.hashCode()
+        result = 31 * result + (quote?.hashCode() ?: 0)
+        return result
+    }
+
+    /*override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MessageAndAttachment
+
+        if (message != other.message) return false
+        if (attachmentList != other.attachmentList) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         return message.hashCode()
-    }
+    }*/
 
 
 }

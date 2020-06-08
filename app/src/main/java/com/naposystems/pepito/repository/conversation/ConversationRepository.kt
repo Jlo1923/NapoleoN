@@ -34,7 +34,6 @@ import com.naposystems.pepito.webService.ProgressRequestBody
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.*
 import okhttp3.*
@@ -140,118 +139,61 @@ class ConversationRepository @Inject constructor(
         message: Message
     ) = channelFlow<UploadResult> {
         try {
-            withContext(Dispatchers.IO) {
-                val requestBodyMessageId = createPartFromString(attachment.messageWebId)
-                val requestBodyType = createPartFromString(attachment.type)
-
-                val job = launch(Dispatchers.IO) {
-                    val requestBodyFilePart =
-                        createPartFromFile(
-                            this@channelFlow,
-                            message,
-                            attachment,
-                            this as Job,
-                            object : ProgressRequestBody.Listener {
-                                override fun onRequestProgress(
-                                    bytesWritten: Int,
-                                    contentLength: Long,
-                                    progress: Int
-                                ) {
-                                    Timber.d("progress: $progress")
-                                    try {
-                                        offer(
-                                            UploadResult.Progress(
-                                                attachment,
-                                                progress.toLong(),
-                                                this@launch as Job
-                                            )
-                                        )
-                                    } catch (e: ClosedSendChannelException) {
-                                        message.status = Constants.MessageStatus.SENDING.status
-                                        updateMessage(message)
-                                        attachment.status =
-                                            Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                                        updateAttachment(attachment)
-                                    }
-                                }
-
-                                override fun onRequestCancel() {
-                                    Timber.d("onRequestCancel")
-                                    try {
-                                        if (!isClosedForSend) {
-                                            offer(UploadResult.Cancel(attachment, message))
-                                        } else {
-                                            message.status = Constants.MessageStatus.SENDING.status
-                                            updateMessage(message)
-                                            attachment.status =
-                                                Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                                            updateAttachment(attachment)
-                                        }
-                                        close()
-                                    } catch (e: ClosedSendChannelException) {
-                                        message.status = Constants.MessageStatus.SENDING.status
-                                        updateMessage(message)
-                                        attachment.status =
-                                            Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                                        updateAttachment(attachment)
-                                    }
-                                }
-                            })
-
-                    val response = napoleonApi.sendMessageAttachment(
-                        messageId = requestBodyMessageId,
-                        attachmentType = requestBodyType,
-                        file = requestBodyFilePart
-                    )
-
-                    if (response.isSuccessful) {
-                        Timber.d("Envió el puto archivo")
-
-                        message.status =
-                            if (message.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
-                            else Constants.MessageStatus.SENT.status
-                        updateMessage(message)
-
-                        response.body()?.let { attachmentResDTO ->
-                            attachment.apply {
-                                webId = attachmentResDTO.id
-                                messageWebId = attachmentResDTO.messageId
-                                body = attachmentResDTO.body
-                                status = Constants.AttachmentStatus.SENT.status
-                            }
-                        }
-
-                        updateAttachment(attachment)
-                        if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
-                            saveEncryptedFile(attachment)
-                        }
-                        offer(UploadResult.Success(attachment))
-                        close()
-                    } else {
-                        setStatusErrorMessageAndAttachment(message, attachment)
-                        offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
-                        close()
-                    }
-                }
-                offer(UploadResult.Start(attachment, job))
-            }
-        } catch (e: FileNotFoundException) {
-            Timber.e(e)
-            offer(UploadResult.Cancel(attachment, message))
-            close()
-        } catch (e: Exception) {
-            Timber.e(e)
-            if (!isClosedForSend) {
-                offer(UploadResult.Cancel(attachment, message))
-                close()
-            }
-        } catch (e: ClosedSendChannelException) {
-            Timber.e("ClosedSendChannelException")
+            updateAttachment(attachment)
             message.status = Constants.MessageStatus.SENDING.status
             updateMessage(message)
+            offer(UploadResult.Start(attachment, this))
+
+            val requestBodyMessageId = createPartFromString(attachment.messageWebId)
+            val requestBodyType = createPartFromString(attachment.type)
+
+            val requestBodyFilePart =
+                createPartFromFile(
+                    this@channelFlow,
+                    attachment,
+                    this as Job
+                )
+
+            val response = napoleonApi.sendMessageAttachment(
+                messageId = requestBodyMessageId,
+                attachmentType = requestBodyType,
+                file = requestBodyFilePart
+            )
+
+            if (response.isSuccessful) {
+                Timber.d("Envió el puto archivo")
+
+                message.status =
+                    if (message.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
+                    else Constants.MessageStatus.SENT.status
+                updateMessage(message)
+
+                response.body()?.let { attachmentResDTO ->
+                    attachment.apply {
+                        webId = attachmentResDTO.id
+                        messageWebId = attachmentResDTO.messageId
+                        body = attachmentResDTO.body
+                        status = Constants.AttachmentStatus.SENT.status
+                    }
+                }
+
+                updateAttachment(attachment)
+                if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
+                    saveEncryptedFile(attachment)
+                }
+                offer(UploadResult.Success(attachment))
+            } else {
+                setStatusErrorMessageAndAttachment(message, attachment)
+                offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
+            }
+        } catch (e: Exception) {
+            Timber.e("ClosedSendChannelException")
             attachment.status =
                 Constants.AttachmentStatus.UPLOAD_CANCEL.status
             updateAttachment(attachment)
+
+            message.status = Constants.MessageStatus.ERROR.status
+            updateMessage(message)
         }
     }
 
@@ -274,10 +216,8 @@ class ConversationRepository @Inject constructor(
 
     private fun createPartFromFile(
         channel: ProducerScope<UploadResult>,
-        message: Message,
         attachment: Attachment,
-        job: Job,
-        listener: ProgressRequestBody.Listener
+        job: Job
     ): MultipartBody.Part {
 
         val subfolder =
@@ -309,16 +249,13 @@ class ConversationRepository @Inject constructor(
 
         val progressRequestBody =
             ProgressRequestBody(
-                message,
                 attachment,
                 channel,
-                job,
                 byteArray,
-                mediaType!!,
-                listener
+                mediaType!!
             )
 
-        Timber.d("before return MultiparBody")
+        Timber.d("before return MultiparBody, $job")
         return MultipartBody.Part.createFormData(
             "body",
             "${System.currentTimeMillis()}.$extension",
@@ -339,6 +276,7 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun updateMessage(message: Message) {
+        Timber.d("updateMessage")
         when (message.status) {
             Constants.MessageStatus.ERROR.status -> {
                 val selfDestructTime = sharedPreferencesManager.getInt(
@@ -358,18 +296,21 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override suspend fun sendMessagesRead(contactId: Int) {
+    override suspend fun sendTextMessagesRead(contactId: Int) {
         val messagesUnread =
-            messageLocalDataSource.getMessagesByStatus(
+            messageLocalDataSource.getTextMessagesByStatus(
                 contactId,
                 Constants.MessageStatus.UNREAD.status
             )
+
+        val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
+        val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
 
         if (messagesUnread.isNotEmpty()) {
             try {
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
-                        messagesUnread
+                        textMessagesUnreadIds
                     )
                 )
 
@@ -394,6 +335,7 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun updateAttachment(attachment: Attachment) {
+        Timber.d("update attachment")
         attachmentLocalDataSource.updateAttachment(attachment)
     }
 
@@ -541,153 +483,138 @@ class ConversationRepository @Inject constructor(
         messageAndAttachment: MessageAndAttachment,
         itemPosition: Int
     ): Flow<DownloadAttachmentResult> = channelFlow<DownloadAttachmentResult> {
-        withContext(Dispatchers.IO) {
-            if (messageAndAttachment.getFirstAttachment() != null) {
-                val firstAttachment = messageAndAttachment.getFirstAttachment()!!
-                val job = launch(Dispatchers.IO) {
-                    Timber.d("Job: ${this@launch as Job}")
-                    try {
-                        val response = napoleonApi.downloadFileByUrl(firstAttachment.body)
+        messageAndAttachment.getFirstAttachment()?.let { attachment ->
 
-                        if (response.isSuccessful) {
-                            response.body()?.let { body ->
-                                try {
-                                    var folder = ""
+            val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
+            attachment.status = Constants.AttachmentStatus.DOWNLOADING.status
+            attachment.uri = fileName
+            Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.uri}")
+            updateAttachment(attachment)
+            offer(DownloadAttachmentResult.Start(itemPosition, this))
 
-                                    when (firstAttachment.type) {
-                                        Constants.AttachmentType.IMAGE.type,
-                                        Constants.AttachmentType.LOCATION.type -> {
-                                            folder =
-                                                Constants.NapoleonCacheDirectories.IMAGES.folder
-                                        }
-                                        Constants.AttachmentType.AUDIO.type -> {
-                                            folder =
-                                                Constants.NapoleonCacheDirectories.AUDIOS.folder
-                                        }
-                                        Constants.AttachmentType.VIDEO.type -> {
-                                            folder =
-                                                Constants.NapoleonCacheDirectories.VIDEOS.folder
-                                        }
-                                        Constants.AttachmentType.DOCUMENT.type -> {
-                                            folder =
-                                                Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
-                                        }
-                                        Constants.AttachmentType.GIF.type -> {
-                                            folder = Constants.NapoleonCacheDirectories.GIFS.folder
-                                        }
-                                        Constants.AttachmentType.GIF_NN.type -> {
-                                            folder = Constants.NapoleonCacheDirectories.GIFS.folder
-                                        }
-                                    }
+            try {
+                val response = napoleonApi.downloadFileByUrl(attachment.body)
 
-                                    val path = File(context.cacheDir!!, folder)
-                                    if (!path.exists())
-                                        path.mkdirs()
+                if (response.isSuccessful) {
+                    response.body()?.let { body ->
+                        var folder = ""
 
-                                    val fileName =
-                                        "${System.currentTimeMillis()}.${firstAttachment.extension}"
-
-                                    val file = File(
-                                        path,
-                                        fileName
-                                    )
-
-                                    firstAttachment.uri = fileName
-                                    updateAttachment(firstAttachment)
-
-                                    var inputStream: InputStream? = null
-                                    var outputStream: OutputStream? = null
-
-                                    try {
-
-                                        Timber.d("File Size=${body.contentLength()}")
-                                        val contentLength = body.contentLength()
-                                        inputStream = body.byteStream()
-                                        outputStream =
-                                            file.outputStream() /*encryptedFile.openFileOutput()*/
-                                        val data = ByteArray(contentLength.toInt())
-                                        var count: Int
-                                        var progress = 0
-                                        while (inputStream.read(data).also { count = it } != -1) {
-                                            yield()
-                                            outputStream.write(data, 0, count)
-                                            progress += count
-                                            val finalPercentage = (progress * 100 / contentLength)
-                                            offer(
-                                                DownloadAttachmentResult.Progress(
-                                                    itemPosition,
-                                                    finalPercentage
-                                                )
-                                            )
-                                        }
-                                        outputStream.flush()
-                                        Timber.d("File saved successfully!")
-                                        offer(
-                                            DownloadAttachmentResult.Success(
-                                                messageAndAttachment,
-                                                itemPosition
-                                            )
-                                        )
-                                        if (BuildConfig.ENCRYPT_API && firstAttachment.type != Constants.AttachmentType.GIF_NN.type) {
-                                            saveEncryptedFile(firstAttachment)
-                                        }
-                                        close()
-                                    } catch (e: CancellationException) {
-                                        Timber.d("Job canceled")
-                                        firstAttachment.status =
-                                            Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
-                                        updateAttachment(firstAttachment)
-                                    } catch (e: IOException) {
-                                        e.printStackTrace()
-                                        offer(
-                                            DownloadAttachmentResult.Error(
-                                                firstAttachment,
-                                                "File not downloaded"
-                                            )
-                                        )
-                                        close()
-                                        Timber.d("Failed to save the file!")
-                                    } finally {
-                                        inputStream?.close()
-                                        outputStream?.close()
-                                    }
-                                } catch (e: IOException) {
-                                    offer(
-                                        DownloadAttachmentResult.Error(
-                                            firstAttachment,
-                                            "File not downloaded"
-                                        )
-                                    )
-                                    close()
-                                    Timber.e(e)
-                                }
+                        when (attachment.type) {
+                            Constants.AttachmentType.IMAGE.type,
+                            Constants.AttachmentType.LOCATION.type -> {
+                                folder =
+                                    Constants.NapoleonCacheDirectories.IMAGES.folder
                             }
-                        } else {
+                            Constants.AttachmentType.AUDIO.type -> {
+                                folder =
+                                    Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            }
+                            Constants.AttachmentType.VIDEO.type -> {
+                                folder =
+                                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                            }
+                            Constants.AttachmentType.DOCUMENT.type -> {
+                                folder =
+                                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                            }
+                            Constants.AttachmentType.GIF.type -> {
+                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                            }
+                            Constants.AttachmentType.GIF_NN.type -> {
+                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                            }
+                        }
+
+                        val path = File(context.cacheDir!!, folder)
+                        if (!path.exists())
+                            path.mkdirs()
+
+                        val file = File(
+                            path,
+                            fileName
+                        )
+
+                        attachment.uri = fileName
+                        updateAttachment(attachment)
+
+                        var inputStream: InputStream? = null
+                        var outputStream: OutputStream? = null
+
+                        try {
+
+                            Timber.d("File Size=${body.contentLength()}")
+                            val contentLength = body.contentLength()
+                            inputStream = body.byteStream()
+                            outputStream =
+                                file.outputStream() /*encryptedFile.openFileOutput()*/
+                            val data = ByteArray(contentLength.toInt())
+                            var count: Int
+                            var progress = 0
+                            while (inputStream.read(data).also { count = it } != -1) {
+                                yield()
+                                outputStream.write(data, 0, count)
+                                progress += count
+                                val finalPercentage = (progress * 100 / contentLength)
+                                offer(
+                                    DownloadAttachmentResult.Progress(
+                                        itemPosition,
+                                        finalPercentage
+                                    )
+                                )
+
+                                Timber.d(
+                                    "Progress: $progress/${contentLength} >>>> $finalPercentage"
+                                )
+                            }
+                            outputStream.flush()
+                            Timber.d("File saved successfully!")
+                            offer(
+                                DownloadAttachmentResult.Success(
+                                    messageAndAttachment,
+                                    itemPosition
+                                )
+                            )
+                            attachment.status =
+                                Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
+                            updateAttachment(attachment)
+                            if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
+                                saveEncryptedFile(attachment)
+                            }
+                            close()
+                        } catch (e: CancellationException) {
+                            Timber.d("Job canceled")
+                            attachment.status =
+                                Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
+                            updateAttachment(attachment)
+                        } catch (e: IOException) {
+                            Timber.e("IOException $e")
                             offer(
                                 DownloadAttachmentResult.Error(
-                                    firstAttachment,
+                                    attachment,
                                     "File not downloaded"
                                 )
                             )
                             close()
+                            Timber.d("Failed to save the file!")
+                        } finally {
+                            inputStream?.close()
+                            outputStream?.close()
                         }
-                    } catch (e: Exception) {
-                        offer(
-                            DownloadAttachmentResult.Error(
-                                firstAttachment,
-                                "File not downloaded"
-                            )
-                        )
-                        close()
-                        Timber.e(e)
                     }
+                } else {
+                    Timber.e("Response failure")
+                    offer(
+                        DownloadAttachmentResult.Error(
+                            attachment,
+                            "File not downloaded"
+                        )
+                    )
+                    close()
                 }
-                val fileName = "${firstAttachment.webId}.${firstAttachment.extension}"
-                firstAttachment.status = Constants.AttachmentStatus.DOWNLOADING.status
-                firstAttachment.uri = fileName
-                Timber.d("Attachment status: ${firstAttachment.status}, uri: ${firstAttachment.uri}")
-                updateAttachment(firstAttachment)
-                offer(DownloadAttachmentResult.Start(itemPosition, job))
+            } catch (e: Exception) {
+                Timber.e("Last catch $e")
+                attachment.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
+                updateAttachment(attachment)
             }
         }
     }
@@ -745,5 +672,24 @@ class ConversationRepository @Inject constructor(
 
     override fun verifyMessagesToDelete() {
         messageLocalDataSource.verifyMessagesToDelete()
+    }
+
+    override suspend fun setMessageRead(messageAndAttachment: MessageAndAttachment) {
+        try {
+            val response = napoleonApi.sendMessagesRead(
+                MessagesReadReqDTO(
+                    arrayListOf(messageAndAttachment.message.webId)
+                )
+            )
+
+            if (response.isSuccessful) {
+                messageLocalDataSource.updateMessageStatus(
+                    response.body()!!,
+                    Constants.MessageStatus.READED.status
+                )
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        }
     }
 }

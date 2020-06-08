@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di.modules
 
+import android.content.Context
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -20,6 +21,7 @@ class HomeModule {
     @Provides
     @Singleton
     fun provideRepository(
+        context: Context,
         napoleonApi: NapoleonApi,
         userLocalDataSource: UserLocalDataSource,
         sharedPreferencesManager: SharedPreferencesManager,
@@ -30,6 +32,7 @@ class HomeModule {
         quoteDataSource: QuoteDataSource
     ): IContractHome.Repository {
         return HomeRepository(
+            context,
             napoleonApi,
             userLocalDataSource,
             sharedPreferencesManager,

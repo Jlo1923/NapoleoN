@@ -10,8 +10,11 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.viewHolder.*
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.DownloadAttachmentResult
+import com.naposystems.pepito.utility.UploadResult
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ProducerScope
 import timber.log.Timber
 
 class ConversationAdapter constructor(
@@ -77,7 +80,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setStartDownload(itemPosition: Int, job: Job) {
+    fun setStartDownload(itemPosition: Int, job: ProducerScope<DownloadAttachmentResult>) {
         try {
             notifyItemChanged(itemPosition, job)
         } catch (e: Exception) {
@@ -93,7 +96,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setUploadStart(attachment: Attachment, job: Job) {
+    fun setUploadStart(attachment: Attachment, job: ProducerScope<UploadResult>) {
         try {
             notifyItemChanged(getPositionByItem(attachment), job)
         } catch (e: Exception) {
@@ -101,7 +104,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setUploadProgress(attachment: Attachment, progress: Long, job: Job) {
+    fun setUploadProgress(attachment: Attachment, progress: Long, job: ProducerScope<UploadResult>) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
@@ -280,12 +283,12 @@ class ConversationAdapter constructor(
                 try {
                     when (val any = payloads.first()) {
                         is Bundle -> handleBundlePayload(any, position, holder)
-                        is Job -> handleJobPayload(any, position, holder)
+                        is ProducerScope<*> -> handleProducerScopePayload(any, position, holder)
                         is List<*> -> {
                             if (any.isNotEmpty()) {
                                 handleBundleAndJobPayload(
                                     any[0] as Bundle,
-                                    any[1] as Job,
+                                    any[1] as ProducerScope<*>,
                                     position,
                                     holder
                                 )
@@ -305,8 +308,8 @@ class ConversationAdapter constructor(
         }
     }
 
-    private fun handleJobPayload(job: Job, position: Int, holder: RecyclerView.ViewHolder) {
-        Timber.d("handleJobPayload: ${getItemViewType(position)}")
+    private fun handleProducerScopePayload(job: ProducerScope<*>, position: Int, holder: RecyclerView.ViewHolder) {
+        Timber.d("handleProducerScopePayload: ${getItemViewType(position)}")
         when (getItemViewType(position)) {
             TYPE_INCOMING_MESSAGE,
             TYPE_INCOMING_MESSAGE_VIDEO,
@@ -363,7 +366,7 @@ class ConversationAdapter constructor(
 
     private fun handleBundleAndJobPayload(
         bundle: Bundle,
-        job: Job,
+        job: ProducerScope<*>,
         position: Int,
         holder: RecyclerView.ViewHolder
     ) {
@@ -402,5 +405,6 @@ class ConversationAdapter constructor(
         fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int?)
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
+        fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
     }
 }

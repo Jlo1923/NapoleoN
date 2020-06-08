@@ -1,32 +1,24 @@
 package com.naposystems.pepito.webService
 
-import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.UploadResult
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.flow.channelFlow
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
 import timber.log.Timber
 import java.io.ByteArrayInputStream
-import java.net.SocketException
 
 class ProgressRequestBody(
-    private val message: Message,
     private val attachment: Attachment,
     private val channel: ProducerScope<UploadResult>,
-    private val job: Job,
     private val bytes: ByteArray,
-    private val mediaType: MediaType,
-    private val listener: Listener
+    private val mediaType: MediaType
 ) : RequestBody() {
 
     private val mLength = bytes.size.toLong()
 
     interface Listener {
-        fun onRequestProgress(bytesWritten: Int, contentLength: Long, progress: Int)
         fun onRequestCancel()
     }
 
@@ -35,6 +27,7 @@ class ProgressRequestBody(
     override fun contentLength(): Long = mLength
 
     override fun writeTo(sink: BufferedSink) {
+        Timber.d("writeTo")
         try {
             ByteArrayInputStream(bytes).use { inputStream ->
                 val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
@@ -42,33 +35,21 @@ class ProgressRequestBody(
                 var read: Int
 
                 while (inputStream.read(buffer).also { read = it } != -1) {
-                    if (job.isActive && !channel.isClosedForSend) {
-                        sink.write(buffer, 0, read)
-                        uploaded += read
+                    sink.write(buffer, 0, read)
+                    uploaded += read
 
-                        channel.offer(
-                            UploadResult.Progress(
-                                attachment,
-                                (100f * uploaded / mLength).toLong(),
-                                job
-                            )
+                    channel.offer(
+                        UploadResult.Progress(
+                            attachment,
+                            (100f * uploaded / mLength).toLong(),
+                            channel
                         )
-
-                        /*listener.onRequestProgress(
-                            uploaded,
-                            mLength,
-                            (100f * uploaded / mLength).toInt()
-                        )*/
-                    } else {
-                        Timber.e("Job no active")
-                        listener.onRequestCancel()
-                        break
-                    }
+                    )
                 }
             }
         } catch (e: Exception) {
+            channel.close()
             Timber.e(e)
-            listener.onRequestCancel()
         }
     }
 }

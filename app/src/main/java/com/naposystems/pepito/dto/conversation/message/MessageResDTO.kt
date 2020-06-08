@@ -31,7 +31,7 @@ MessageResDTO(
             return Message(
                 id = message?.id ?: 0,
                 webId = messageResDTO.id,
-                body = messageResDTO.body,
+                body = message?.body ?: messageResDTO.body,
                 quoted = messageResDTO.quoted,
                 contactId = if (isMine == Constants.IsMine.NO.value) messageResDTO.userAddressee else messageResDTO.userDestination,
                 updatedAt = messageResDTO.updatedAt,

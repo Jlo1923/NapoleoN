@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.EnterCodeFragmentBinding
 import com.naposystems.pepito.ui.custom.EnterCodeWidget
-import com.naposystems.pepito.ui.custom.NumericKeyboardCustomView
+import com.naposystems.pepito.ui.custom.numericKeyboard.NumericKeyboardCustomView
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -257,6 +257,8 @@ class EnterCodeFragment :
     //region Implementation NumericKeyboardCustomView.OnEventListener
     override fun onKeyPressed(keyCode: Int) {
         binding.enterCodeWidget.setAddNumber(keyCode)
+
+        binding.numericKeyboard.showDeleteKey(binding.enterCodeWidget.getCode().isNotEmpty())
     }
 
     override fun onDeletePressed() {

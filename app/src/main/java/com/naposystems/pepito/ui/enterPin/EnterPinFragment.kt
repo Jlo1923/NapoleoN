@@ -10,13 +10,14 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.EnterPinFragmentBinding
 import com.naposystems.pepito.ui.custom.EnterCodeWidget
-import com.naposystems.pepito.ui.custom.NumericKeyboardCustomView
+import com.naposystems.pepito.ui.custom.numericKeyboard.NumericKeyboardCustomView
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -34,7 +35,7 @@ class EnterPinFragment : Fragment(),
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: EnterPinViewModel
+    private val viewModel: EnterPinViewModel by viewModels { viewModelFactory }
     private lateinit var binding: EnterPinFragmentBinding
 
     private var biometricsOption = 0
@@ -68,8 +69,6 @@ class EnterPinFragment : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(EnterPinViewModel::class.java)
 
         viewModel.getBiometricsOption()
         viewModel.biometricsOption.observe(viewLifecycleOwner, Observer {
@@ -83,7 +82,6 @@ class EnterPinFragment : Fragment(),
                 )
                 Utils.hideKeyboard(binding.container)
             } else {
-                binding.textViewPinStatus.text = getString(R.string.text_pin_fail)
                 binding.enterCodeWidget.showError()
             }
         })
@@ -137,13 +135,11 @@ class EnterPinFragment : Fragment(),
             .setNegativeButtonText(getText(R.string.text_cancel))
             .build()
 
-
-
         biometricPrompt.authenticate(promptInfo)
     }
 
     private fun validateBiometrics() {
-        val biometricManager = BiometricManager.from(context!!)
+        val biometricManager = BiometricManager.from(requireContext())
 
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
@@ -158,6 +154,7 @@ class EnterPinFragment : Fragment(),
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE,
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 binding.imageButtonFingerprint.visibility = View.GONE
+                viewModel.setBiometricPreference(Constants.Biometrics.WITHOUT_BIOMETRICS.option)
             }
         }
     }
@@ -169,9 +166,11 @@ class EnterPinFragment : Fragment(),
 
     override fun onKeyPressed(keyCode: Int) {
         binding.enterCodeWidget.setAddNumber(keyCode)
+        binding.numericKeyboard.showDeleteKey(binding.enterCodeWidget.getCode().isNotEmpty())
     }
 
     override fun onDeletePressed() {
         binding.enterCodeWidget.deleteNumber()
+        binding.numericKeyboard.showDeleteKey(binding.enterCodeWidget.getCode().isNotEmpty())
     }
 }

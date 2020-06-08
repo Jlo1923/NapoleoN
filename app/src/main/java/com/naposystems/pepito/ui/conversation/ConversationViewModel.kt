@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import androidx.lifecycle.*
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
@@ -19,7 +20,6 @@ import com.naposystems.pepito.utility.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -154,6 +154,10 @@ class ConversationViewModel @Inject constructor(
                 selfDestructionAt = selfDestructTime
             )
 
+            if (BuildConfig.ENCRYPT_API) {
+                message.encryptBody(cryptoMessage)
+            }
+
             val messageId = repository.insertMessage(message).toInt()
             Timber.d("insertMessage")
 
@@ -234,7 +238,7 @@ class ConversationViewModel @Inject constructor(
             val messageReqDTO = MessageReqDTO(
                 userDestination = contact.id,
                 quoted = quote,
-                body = message.body,
+                body = message.getBody(cryptoMessage),
                 numberAttachments = numberAttachments,
                 destroy = selfDestructTime,
                 messageType = Constants.MessageType.MESSAGE.type
@@ -383,9 +387,9 @@ class ConversationViewModel @Inject constructor(
         return stringOfReturn
     }
 
-    override fun sendMessagesRead() {
+    override fun sendTextMessagesRead() {
         viewModelScope.launch {
-            repository.sendMessagesRead(contact.id)
+            repository.sendTextMessagesRead(contact.id)
         }
     }
 
@@ -503,6 +507,12 @@ class ConversationViewModel @Inject constructor(
 
     override fun resetUploadProgress() {
         _uploadProgress.value = null
+    }
+
+    override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
+        viewModelScope.launch {
+            repository.setMessageRead(messageAndAttachment)
+        }
     }
 
     //endregion

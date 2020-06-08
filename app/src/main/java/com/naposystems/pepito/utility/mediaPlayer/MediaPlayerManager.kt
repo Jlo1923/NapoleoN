@@ -81,6 +81,8 @@ class MediaPlayerManager(private val context: Context) :
 
     interface Listener {
         fun onErrorPlayingAudio()
+        fun onPauseAudio()
+        fun onCompleteAudio()
     }
 
     private fun setSeekbarProgress() {
@@ -133,6 +135,7 @@ class MediaPlayerManager(private val context: Context) :
                 mediaPlayer.setOnCompletionListener {
                     deleteTempFile()
                     resetMediaPlayer()
+                    mListener?.onCompleteAudio()
                 }
 
                 mRunnable = Runnable {
@@ -147,6 +150,7 @@ class MediaPlayerManager(private val context: Context) :
                 if (isPlaying) {
                     pause()
                     mImageButtonPlay?.reverseAnimation()
+                    mListener?.onPauseAudio()
                 } else {
                     start()
                     mHandler.postDelayed(mRunnable, 0)
@@ -194,6 +198,7 @@ class MediaPlayerManager(private val context: Context) :
                 mediaPlayer.setOnCompletionListener {
                     deleteTempFile()
                     resetMediaPlayer()
+                    mListener?.onCompleteAudio()
                 }
 
                 mRunnable = Runnable {
@@ -208,6 +213,7 @@ class MediaPlayerManager(private val context: Context) :
                 if (isPlaying) {
                     pause()
                     mImageButtonPlay?.reverseAnimation()
+                    mListener?.onPauseAudio()
                 } else {
                     start()
                     mHandler.postDelayed(mRunnable, 0)

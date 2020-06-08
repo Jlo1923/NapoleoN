@@ -2,4 +2,5 @@
 <resources>
     <string name="text_recovery_account_false">Sie haben keine registrierten Kontowiederherstellungsinformationen</string>
     <string name="text_recovery_account_ok">Sie haben bereits Informationen für die Kontowiederherstellung registriert. Bei der Bearbeitung werden vorherige Informationen verworfen.</string>
+    <string name="text_terms_and_conditions_line_one_register_recovery_account">Ein einziger Klick tun in Register / bearbeiten, übernehmen die</string>
 </resources>
