@@ -111,6 +111,7 @@ object Constants {
     }
 
     enum class AccountStatus constructor(val id: Int) {
+        NO_ACCOUNT(0),
         CODE_VALIDATED(1),
         ACCOUNT_CREATED(2),
         ACCOUNT_RECOVERED(3)

@@ -121,4 +121,8 @@ class EnterPinViewModel @Inject constructor(
             _biometricsOption.value = repository.getBiometricsOption()
         }
     }
+
+    override fun setBiometricPreference(option: Int) {
+        repository.setBiometricPreference(option)
+    }
 }

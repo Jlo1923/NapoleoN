@@ -100,11 +100,16 @@ class ActivateBiometricsDialogFragment : DialogFragment() {
         viewModel.biometricsOption.observe(viewLifecycleOwner, Observer {
             optionBiometrics = it
             when (it) {
+                Constants.Biometrics.WITHOUT_BIOMETRICS.option -> {
+                    binding.radioButtonWithoutBiometrics.isChecked = true
+                }
                 Constants.Biometrics.UNLOCK_WITH_FINGERPRINT.option ->
                     binding.radioButtonUnlockFingerprint.isChecked = true
                 Constants.Biometrics.UNLOCK_WITH_FACEID.option ->
                     binding.radioButtonUnlockFaceid.isChecked = true
-                else -> binding.radioButtonWithoutBiometrics.isChecked = true
+                else -> {
+                    binding.radioButtonWithoutBiometrics.isChecked = true
+                }
             }
         })
     }

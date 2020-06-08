@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import kotlinx.coroutines.launch
 import java.io.File
@@ -22,5 +23,12 @@ class PreviewMediaViewModel @Inject constructor(private val repository: IContrac
             _tempFile.value = repository.createTempFile(attachment)
         }
     }
+
+    override fun sentMessageReaded(messageAndAttachment: MessageAndAttachment) {
+        viewModelScope.launch {
+            repository.sentMessageReaded(messageAndAttachment)
+        }
+    }
+
     //endregion
 }

@@ -287,7 +287,6 @@ private fun loadAttachment(
                     Constants.NapoleonCacheDirectories.VIDEOS.folder
                 )
             }
-            Timber.d("uri: $uri")
             Glide.with(imageView)
                 .load(uri)
                 .thumbnail(0.1f)
@@ -359,7 +358,7 @@ fun bindIconForState(
             }
             Constants.AttachmentStatus.DOWNLOADING.status,
             Constants.AttachmentStatus.SENDING.status -> {
-                imageButton.visibility = View.VISIBLE
+//                imageButton.visibility = View.VISIBLE
                 R.drawable.ic_close_black_24
             }
             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,

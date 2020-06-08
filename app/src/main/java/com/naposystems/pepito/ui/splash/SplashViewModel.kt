@@ -40,6 +40,10 @@ class SplashViewModel @Inject constructor(
     val unlockTimeApp: LiveData<Long>
         get() = _unlockTimeApp
 
+    private val _accountStatus = MutableLiveData<Int>()
+    val accountStatus: LiveData<Int>
+        get() = _accountStatus
+
     fun onLoadingTimeEnd() {
         _navigateToLanding.value = true
     }
@@ -84,12 +88,10 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    override fun getAccountStatus(): Int {
-        var accountStatus = 0
+    override fun getAccountStatus() {
         viewModelScope.launch {
-            accountStatus = repository.getAccountStatus()
+            _accountStatus.value = repository.getAccountStatus()
         }
-        return accountStatus
     }
 
     override fun setDefaultPreferences() {

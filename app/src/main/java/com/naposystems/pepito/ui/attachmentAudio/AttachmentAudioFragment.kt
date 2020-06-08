@@ -43,19 +43,19 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
     private val args: AttachmentAudioFragmentArgs by navArgs()
 
     private val mediaPlayerManager: MediaPlayerManager by lazy {
-        MediaPlayerManager(context!!)
+        MediaPlayerManager(requireContext())
     }
 
     private val animationScaleUp: Animation by lazy {
         AnimationUtils.loadAnimation(
-            context!!,
+            requireContext(),
             R.anim.scale_up
         )
     }
 
     private val animationScaleDown: Animation by lazy {
         AnimationUtils.loadAnimation(
-            context!!,
+            requireContext(),
             R.anim.scale_down
         )
     }
@@ -105,7 +105,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         //endregion
 
         //region ConversationShareViewModel
-        conversationShareViewModel = ViewModelProvider(activity!!, viewModelFactory)
+        conversationShareViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
             .get(ConversationShareViewModel::class.java)
         //endregion
     }
@@ -175,6 +175,14 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
             getString(R.string.text_error_playing_audio),
             3
         )
+    }
+
+    override fun onPauseAudio() {
+        // Intentionally empty
+    }
+
+    override fun onCompleteAudio() {
+        // Intentionally empty
     }
 
     //endregion

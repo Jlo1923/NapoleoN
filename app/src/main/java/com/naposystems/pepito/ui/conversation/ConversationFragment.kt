@@ -266,7 +266,7 @@ class ConversationFragment : BaseFragment(),
 
         inputPanelEditTextWatcher()
 
-        inputPanelAttachMentButtonClickListener()
+        inputPanelAttachmentButtonClickListener()
 
         inputPanelCameraButtonClickListener()
 
@@ -357,7 +357,7 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun inputPanelAttachMentButtonClickListener() {
+    private fun inputPanelAttachmentButtonClickListener() {
         binding.inputPanel.getImageButtonAttachment().setOnClickListener {
             validateStateOutputControl()
             val attachmentDialog = AttachmentDialogFragment()
@@ -631,11 +631,11 @@ class ConversationFragment : BaseFragment(),
                             viewModel.sendMessageRead(message)
                         }*/
 
-                        firstAttachment.status =
+                        /*firstAttachment.status =
                             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
                         viewModel.updateAttachment(
                             firstAttachment
-                        )
+                        )*/
                     }
                 }
                 is DownloadAttachmentResult.Progress -> {
@@ -668,17 +668,6 @@ class ConversationFragment : BaseFragment(),
                         it.progress,
                         it.job
                     )
-                    is UploadResult.Cancel -> {
-                        val attachment: Attachment = it.attachment
-                        val message: Message = it.message
-
-                        attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                        viewModel.updateAttachment(attachment)
-                        viewModel.resetUploadProgress()
-
-                        message.status = Constants.MessageStatus.SENDING.status
-                        viewModel.updateMessage(message)
-                    }
                 }
             }
         })
@@ -787,7 +776,7 @@ class ConversationFragment : BaseFragment(),
             }
 
             if (conversationList.isNotEmpty()) {
-                viewModel.sendMessagesRead()
+                viewModel.sendTextMessagesRead()
             }
 
         })
@@ -1247,6 +1236,10 @@ class ConversationFragment : BaseFragment(),
             override fun updateAttachmentState(attachment: Attachment) {
                 viewModel.updateAttachment(attachment)
             }
+
+            override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
+                viewModel.sendMessageRead(messageAndAttachment)
+            }
         }, mediaPlayerManager, timeFormatShareViewModel.getValTimeFormat())
 
         linearLayoutManager = LinearLayoutManager(requireContext())
@@ -1289,6 +1282,9 @@ class ConversationFragment : BaseFragment(),
             if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type &&
                 firstAttachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
             ) {
+                if (item.message.status == Constants.MessageStatus.UNREAD.status) {
+                    viewModel.sendMessageRead(item)
+                }
                 openAttachmentDocument(firstAttachment)
             }
         }
@@ -1298,8 +1294,6 @@ class ConversationFragment : BaseFragment(),
         if (visible != binding.fabGoDown.visibility) {
             binding.fabGoDown.visibility = visible
             binding.fabGoDown.startAnimation(animation)
-//        binding.textViewNotificationMessage.startAnimation(animation)
-//        binding.textViewNotificationMessage.visibility = visible
         }
     }
 
@@ -1509,6 +1503,14 @@ class ConversationFragment : BaseFragment(),
             getString(R.string.text_error_playing_audio),
             3
         )
+    }
+
+    override fun onPauseAudio() {
+        // Intentionally empty
+    }
+
+    override fun onCompleteAudio() {
+        // Intentionally empty
     }
 
     //endregion

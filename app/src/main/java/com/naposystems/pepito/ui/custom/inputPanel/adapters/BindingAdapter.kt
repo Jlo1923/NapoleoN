@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.pepito.R
+import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
@@ -106,23 +107,34 @@ fun bindUserQuote(
 @BindingAdapter("bodyQuote", "isFromInputPanelQuote")
 fun bindBodyQuote(
     textView: TextView,
-    @Nullable messageAndAttachment: MessageAndAttachment?,
+    @Nullable nullableMessageAndAttachment: MessageAndAttachment?,
     isFromInputPanel: Boolean
 ) {
-    val context = textView.context
-    val isMine = messageAndAttachment?.message?.isMine == Constants.IsMine.YES.value
-    val body = if (isFromInputPanel) {
-        val messageNull = messageAndAttachment?.message
+    nullableMessageAndAttachment?.let { messageAndAttachment ->
+        val context = textView.context
 
-        messageNull?.body ?: ""
-    } else {
-        messageAndAttachment?.quote?.body ?: ""
-    }
+        val cryptoMessage = CryptoMessage(context)
+        val isMine = messageAndAttachment.message.isMine == Constants.IsMine.YES.value
+        val body = if (isFromInputPanel) {
+            val messageNull = messageAndAttachment.message
 
-    textView.text = if (body.isNotEmpty()) {
-        body
-    } else {
-        if (isMine) context.getString(R.string.text_you_quote) else messageAndAttachment?.contact?.getNickName()
+            messageNull.body
+        } else {
+
+            val quoteBody = messageAndAttachment.quote?.body ?: ""
+
+            if (quoteBody.isNotEmpty()) {
+                cryptoMessage.decryptMessageBody(quoteBody)
+            } else {
+                ""
+            }
+        }
+
+        textView.text = if (body.isNotEmpty()) {
+            body
+        } else {
+            if (isMine) context.getString(R.string.text_you_quote) else messageAndAttachment.contact.getNickName()
+        }
     }
 }
 

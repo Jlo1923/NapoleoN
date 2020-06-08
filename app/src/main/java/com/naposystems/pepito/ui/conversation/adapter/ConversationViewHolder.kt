@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
@@ -22,18 +21,18 @@ import com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.fixedRateTimer
 
 open class ConversationViewHolder constructor(
     view: View,
     private val context: Context
 ) : RecyclerView.ViewHolder(view) {
 
-    private var uploadJob: Job? = null
-    private var downloadJob: Job? = null
+    private var uploadJob: ProducerScope<*>? = null
+    private var downloadJob: ProducerScope<*>? = null
     private var countDownTimer: CountDownTimer? = null
 
 
@@ -97,20 +96,29 @@ open class ConversationViewHolder constructor(
     fun setProgress(
         progress: Long
     ) {
-        Timber.d("this.uploadjob: ${this.uploadJob}, this.downloadJob: ${this.downloadJob}")
-        progressBar?.visibility = View.VISIBLE
-        progressBar?.setProgress(progress.toFloat())
-        imageButtonState?.visibility = View.VISIBLE
-        progressBarIndeterminate?.visibility = View.GONE
+        try {
+            if (this.downloadJob?.isActive == true) {
+                Timber.d(" setProgress this.uploadjob: ${this.uploadJob}, this.downloadJob: ${this.downloadJob}")
+                progressBar?.visibility = View.VISIBLE
+                progressBar?.setProgress(progress.toFloat())
+                imageButtonState?.visibility = View.VISIBLE
+                progressBarIndeterminate?.visibility = View.GONE
 
-        if (progress == 100L) {
+                if (progress == 100L) {
+                    progressBar?.visibility = View.GONE
+                }
+            }
+        } catch (e: Exception) {
+            Timber.d(e)
+            progressBar?.setProgress(0.0f)
             progressBar?.visibility = View.GONE
+            progressBarIndeterminate?.visibility = View.GONE
         }
     }
 
     fun setUploadProgressAndJob(
         progress: Long,
-        job: Job
+        job: ProducerScope<*>
     ) {
         Timber.d("progress: $progress, job: $job")
         progressBar?.visibility = View.VISIBLE
@@ -125,11 +133,16 @@ open class ConversationViewHolder constructor(
             imageButtonState?.visibility = View.GONE
         }
         this.uploadJob = job
+
+        if (job.isClosedForSend) {
+            progressBar?.setProgress(0.0f)
+            progressBar?.visibility = View.GONE
+        }
     }
 
     fun setDownloadProgressAndJob(
         progress: Long,
-        job: Job
+        job: ProducerScope<*>
     ) {
         Timber.d("progress: $progress, job: $job")
         progressBar?.visibility = View.VISIBLE
@@ -155,17 +168,17 @@ open class ConversationViewHolder constructor(
         }
     }
 
-    fun setUploadStart(job: Job) {
+    fun setUploadStart(job: ProducerScope<*>) {
         Timber.d("setUploadStart: $job")
         this.uploadJob = job
         imageButtonState?.visibility = View.VISIBLE
         progressBarIndeterminate?.visibility = View.VISIBLE
     }
 
-    fun setDownloadStart(job: Job) {
+    fun setDownloadStart(job: ProducerScope<*>) {
         Timber.d("setDownloadStart: $job")
         this.downloadJob = job
-        imageButtonState?.visibility = View.VISIBLE
+//        imageButtonState?.visibility = View.VISIBLE
         progressBar?.setProgress(0f)
         progressBar?.visibility = View.INVISIBLE
         progressBarIndeterminate?.visibility = View.VISIBLE
@@ -212,9 +225,9 @@ open class ConversationViewHolder constructor(
         val firstAttachment: Attachment? = item.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
-            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
+            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
 
-            if (item.message.status == Constants.MessageStatus.READED.status &&
+            if (item.message.status == Constants.MessageStatus.UNREAD.status &&
                 attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status
             ) {
                 Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.uri}")
@@ -224,7 +237,7 @@ open class ConversationViewHolder constructor(
             when (attachment.status) {
                 Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
                     progressBar?.setProgress(0.0f)
-                    progressBar?.visibility = View.INVISIBLE
+                    progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
 
                     imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
@@ -245,14 +258,14 @@ open class ConversationViewHolder constructor(
                 }
                 Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
                     progressBar?.setProgress(0f)
-                    progressBar?.visibility = View.INVISIBLE
-                    progressBarIndeterminate?.visibility = View.VISIBLE
+                    progressBar?.visibility = View.GONE
+                    progressBarIndeterminate?.visibility = View.GONE
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
-                    imageButtonState?.visibility = View.VISIBLE
+                    imageButtonState?.visibility = View.GONE
                 }
                 Constants.AttachmentStatus.DOWNLOADING.status -> {
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
-                    imageButtonState?.visibility = View.VISIBLE
+//                    imageButtonState?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
                     progressBar?.visibility = View.GONE
@@ -264,11 +277,15 @@ open class ConversationViewHolder constructor(
                         audioPlayer?.enablePlayButton(true)
                         loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
                     }
+
+                    if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.message.status == Constants.MessageStatus.UNREAD.status) {
+                        clickListener.sendMessageRead(item)
+                    }
                 }
                 Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
                 Constants.AttachmentStatus.DOWNLOAD_ERROR.status -> {
                     progressBar?.setProgress(0.0f)
-                    progressBar?.visibility = View.INVISIBLE
+                    progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
 
                     imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
@@ -328,6 +345,7 @@ open class ConversationViewHolder constructor(
         clickListener: ConversationAdapter.ClickListener
     ) {
         with(audioPlayer!!) {
+            setMessageAndAttachment(item)
             setMediaPlayerManager(mediaPlayerManager)
             isEncryptedFile(BuildConfig.ENCRYPT_API)
             if (BuildConfig.ENCRYPT_API) {
@@ -346,6 +364,14 @@ open class ConversationViewHolder constructor(
                 override fun onErrorPlayingAudio() {
                     clickListener.errorPlayingAudio()
                 }
+
+                override fun onPause(messageAndAttachment: MessageAndAttachment?) {
+                    clickListener.sendMessageRead(item)
+                }
+
+                override fun onComplete(messageAndAttachment: MessageAndAttachment?) {
+                    clickListener.sendMessageRead(item)
+                }
             })
         }
     }
@@ -359,7 +385,7 @@ open class ConversationViewHolder constructor(
             Constants.AttachmentStatus.SENDING.status -> {
                 Timber.d("this.uploadJob: ${this.uploadJob}")
                 if (this.uploadJob?.isActive == true) {
-                    this.uploadJob?.cancel()
+                    this.uploadJob?.close()
                 } else {
                     attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
                     clickListener.updateAttachmentState(attachment)
@@ -376,7 +402,13 @@ open class ConversationViewHolder constructor(
                 clickListener.uploadAttachment(attachment, item.message)
             }
             Constants.AttachmentStatus.DOWNLOADING.status -> {
-                this.downloadJob?.cancel()
+                try {
+                    if (this.downloadJob?.isActive == true) {
+                        this.downloadJob?.close()
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
                 progressBar?.setProgress(0.0f)
                 progressBar?.visibility = View.GONE
                 attachment.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
@@ -385,8 +417,8 @@ open class ConversationViewHolder constructor(
             Constants.AttachmentStatus.DOWNLOAD_ERROR.status,
             Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {
-                attachment.status = Constants.AttachmentStatus.DOWNLOADING.status
                 progressBarIndeterminate?.visibility = View.VISIBLE
+                imageButtonState?.visibility = View.GONE
                 clickListener.downloadAttachment(item, adapterPosition)
             }
             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,

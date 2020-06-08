@@ -1,15 +1,12 @@
 package com.naposystems.pepito.utility
 
-import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
-import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.attachments.Attachment
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import retrofit2.Call
+import kotlinx.coroutines.channels.ProducerScope
 
 sealed class UploadResult {
 
-    data class Start(val attachment: Attachment, val job: Job) : UploadResult()
+    data class Start(val attachment: Attachment, val job: ProducerScope<UploadResult>) : UploadResult()
 
     data class Success(val attachment: Attachment) : UploadResult()
 
@@ -19,7 +16,5 @@ sealed class UploadResult {
         val cause: Exception? = null
     ) : UploadResult()
 
-    data class Progress(val attachment: Attachment, val progress: Long, val job: Job) : UploadResult()
-
-    data class Cancel(val attachment: Attachment, val message: Message) : UploadResult()
+    data class Progress(val attachment: Attachment, val progress: Long, val job: ProducerScope<UploadResult>) : UploadResult()
 }

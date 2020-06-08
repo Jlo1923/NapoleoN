@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterInside
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -234,14 +236,13 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
                 contact.imageUrl
             }
             else -> {
-                ""
+                defaultAvatar
             }
         }
 
         Glide.with(context)
             .load(loadImage)
-            .error(defaultAvatar)
-            .circleCrop()
+            .transform(CircleCrop(), CenterInside())
             .into(imageView)
     }
 }

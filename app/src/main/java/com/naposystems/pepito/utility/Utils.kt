@@ -310,6 +310,7 @@ class Utils {
         }
 
         fun alertDialogInformative(
+            title: String,
             message: String,
             isCancelable: Boolean,
             childFragmentManager: Context,
@@ -317,6 +318,7 @@ class Utils {
             clickTopButton: (Boolean) -> Unit
         ) {
             val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
+                .setTitle(title)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titleButton) { _, _ ->

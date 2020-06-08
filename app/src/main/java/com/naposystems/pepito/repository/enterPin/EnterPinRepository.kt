@@ -10,7 +10,7 @@ import javax.inject.Inject
 class EnterPinRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val userLocalDataSource: UserLocalDataSource
-): IContractEnterPin.Repository {
+) : IContractEnterPin.Repository {
     override suspend fun getAccessPin(): User {
         val firebaseId = sharedPreferencesManager.getString(
             Constants.SharedPreferences.PREF_FIREBASE_ID,
@@ -64,6 +64,13 @@ class EnterPinRepository @Inject constructor(
     override suspend fun getBiometricsOption(): Int {
         return sharedPreferencesManager.getInt(
             Constants.SharedPreferences.PREF_BIOMETRICS_OPTION
+        )
+    }
+
+    override fun setBiometricPreference(option: Int) {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_BIOMETRICS_OPTION,
+            option
         )
     }
 }

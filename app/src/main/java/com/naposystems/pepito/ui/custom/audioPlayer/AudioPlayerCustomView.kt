@@ -5,20 +5,21 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ProgressBar
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.CustomViewAudioPlayerBinding
-import com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class AudioPlayerCustomView constructor(context: Context, attributeSet: AttributeSet) :
-    ConstraintLayout(context, attributeSet), IContractAudioPlayer {
+    ConstraintLayout(context, attributeSet), IContractAudioPlayer, MediaPlayerManager.Listener {
+
+    private var messageAndAttachment: MessageAndAttachment? = null
 
     private var mTintColor: Int = 0
     private var mIsEncryptedFile: Boolean = false
@@ -36,6 +37,8 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     interface Listener {
         fun onErrorPlayingAudio()
+        fun onPause(messageAndAttachment: MessageAndAttachment?)
+        fun onComplete(messageAndAttachment: MessageAndAttachment?)
     }
 
     init {
@@ -109,11 +112,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     private fun setListeners() {
 
-        mediaPlayerManager?.setListener(object : MediaPlayerManager.Listener {
-            override fun onErrorPlayingAudio() {
-                this@AudioPlayerCustomView.mListener?.onErrorPlayingAudio()
-            }
-        })
+        mediaPlayerManager?.setListener(this)
 
         binding.imageButtonPlay.setOnClickListener {
 
@@ -200,6 +199,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this.mediaPlayerManager?.isEncryptedFile(isEncryptedFile)
     }
 
+    override fun setMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
+        this.messageAndAttachment = messageAndAttachment
+    }
+
     override fun setMediaPlayerManager(mediaPlayerManager: MediaPlayerManager) {
         this.mediaPlayerManager = mediaPlayerManager
         setListeners()
@@ -219,6 +222,26 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     override fun setListener(listener: Listener) {
         this.mListener = listener
+    }
+    //endregion
+
+    //region Implementation MediaPlayerManager.Listener
+    override fun onErrorPlayingAudio() {
+        this@AudioPlayerCustomView.mListener?.onErrorPlayingAudio()
+    }
+
+    override fun onPauseAudio() {
+        if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
+            messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
+            this.mListener?.onPause(messageAndAttachment)
+        }
+    }
+
+    override fun onCompleteAudio() {
+        if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
+            messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
+            this.mListener?.onComplete(messageAndAttachment)
+        }
     }
     //endregion
 }

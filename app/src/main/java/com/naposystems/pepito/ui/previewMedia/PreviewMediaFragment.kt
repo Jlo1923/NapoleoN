@@ -52,7 +52,9 @@ class PreviewMediaFragment : Fragment() {
     private var tempFile: File? = null
     private val args: PreviewMediaFragmentArgs by navArgs()
     private var isPlayingVideo: Boolean = false
+    private var isFirstPause: Boolean = false
     private var isUIVisible: Boolean = true
+    private var isEndFirstTime: Boolean = false
     private var contentUri: Uri? = null
     private var playWhenReady = true
     private var currentWindow = 0
@@ -78,7 +80,7 @@ class PreviewMediaFragment : Fragment() {
     private val mHandler: Handler by lazy {
         Handler()
     }
-    private lateinit var mRunnable: Runnable
+    private var mRunnable: Runnable? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -109,6 +111,9 @@ class PreviewMediaFragment : Fragment() {
             Constants.AttachmentType.GIF.type,
             Constants.AttachmentType.LOCATION.type -> {
                 binding.imageViewPreview.visibility = View.VISIBLE
+                if (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+                    viewModel.sentMessageReaded(messageAndAttachment)
+                }
             }
             Constants.AttachmentType.VIDEO.type -> {
                 try {
@@ -164,12 +169,30 @@ class PreviewMediaFragment : Fragment() {
         })
 
         binding.imageButtonPlay.setOnClickListener {
-            exoplayer.playWhenReady = !isPlayingVideo
+            val isPlaying = !isPlayingVideo
+            exoplayer.playWhenReady = isPlaying
+
+            sentMessageReaded(isPlaying)
+
+            if (isEndFirstTime) {
+                isEndFirstTime = false
+                initializePlayer()
+            }
+
         }
 
         binding.executePendingBindings()
 
         return binding.root
+    }
+
+    private fun sentMessageReaded(isPlaying: Boolean) {
+        if (!isFirstPause && !isPlaying && messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+            isFirstPause = true
+            messageAndAttachment.message.status = Constants.MessageStatus.READED.status
+            Timber.d("isFirstPause: $isFirstPause")
+            viewModel.sentMessageReaded(messageAndAttachment)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -198,7 +221,7 @@ class PreviewMediaFragment : Fragment() {
                 when (playbackState) {
                     Player.STATE_READY -> {
                         Timber.d("STATE READY: playReadyWhen: $playWhenReady")
-                        if (!::mRunnable.isInitialized) {
+                        if (mRunnable == null) {
                             binding.seekbar.max = exoplayer.duration.toInt()
                             mRunnable = Runnable {
                                 setSeekbarProgress()
@@ -214,14 +237,19 @@ class PreviewMediaFragment : Fragment() {
                     }
 
                     Player.STATE_ENDED -> {
-                        if (::mRunnable.isInitialized) {
+                        if (mRunnable != null) {
                             mHandler.removeCallbacks(mRunnable)
+                            mRunnable = null
                         }
 
                         binding.seekbar.apply {
                             progress = 0
                             max = exoplayer.duration.toInt()
                         }
+
+                        isEndFirstTime = true
+
+                        sentMessageReaded(false)
                     }
                 }
             }

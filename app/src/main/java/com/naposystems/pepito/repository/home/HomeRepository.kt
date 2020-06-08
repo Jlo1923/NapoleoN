@@ -1,6 +1,9 @@
 package com.naposystems.pepito.repository.home
 
+import android.content.Context
 import androidx.lifecycle.LiveData
+import com.naposystems.pepito.BuildConfig
+import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -29,6 +32,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(
+    private val context: Context,
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
@@ -39,6 +43,8 @@ class HomeRepository @Inject constructor(
     private val quoteDataSource: QuoteDataSource
 ) :
     IContractHome.Repository {
+
+    private val cryptoMessage = CryptoMessage(context)
 
     private val firebaseId by lazy {
         sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
@@ -94,6 +100,10 @@ class HomeRepository @Inject constructor(
                     val message = MessageResDTO.toMessageEntity(
                         null, messageRes, Constants.IsMine.NO.value
                     )
+
+                    if (BuildConfig.ENCRYPT_API) {
+                        message.encryptBody(cryptoMessage)
+                    }
 
                     val messageId = messageLocalDataSource.insertMessage(message)
 

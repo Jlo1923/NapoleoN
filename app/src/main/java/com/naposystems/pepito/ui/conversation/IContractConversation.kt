@@ -43,7 +43,7 @@ interface IContractConversation {
             quote: String
         )
 
-        fun sendMessagesRead()
+        fun sendTextMessagesRead()
         fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Boolean)
         fun cleanSelectionMessages(contactId: Int)
         fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>)
@@ -69,6 +69,7 @@ interface IContractConversation {
         fun sendDocumentAttachment(fileUri: Uri)
         fun resetDocumentCopied()
         fun resetUploadProgress()
+        fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
     }
 
     interface Repository {
@@ -83,7 +84,7 @@ interface IContractConversation {
         fun insertMessage(message: Message): Long
         fun insertListMessage(messageList: List<Message>)
         fun updateMessage(message: Message)
-        suspend fun sendMessagesRead(contactId: Int)
+        suspend fun sendTextMessagesRead(contactId: Int)
         fun insertAttachment(attachment: Attachment): Long
         fun insertAttachments(listAttachment: List<Attachment>): List<Long>
         fun updateAttachment(attachment: Attachment)
@@ -110,5 +111,6 @@ interface IContractConversation {
         fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int)
         suspend fun copyFile(fileUri: Uri): File?
         fun verifyMessagesToDelete()
+        suspend fun setMessageRead(messageAndAttachment: MessageAndAttachment)
     }
 }
