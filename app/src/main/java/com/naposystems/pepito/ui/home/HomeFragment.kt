@@ -233,8 +233,8 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (!isShowingVersionDialog && !BuildConfig.DEBUG)
-            getRemoteConfig()
+        /*if (!isShowingVersionDialog && !BuildConfig.DEBUG)
+            getRemoteConfig()*/
     }
 
     private fun getRemoteConfig() {
