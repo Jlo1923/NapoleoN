@@ -17,7 +17,7 @@ fun bindNameContact(textView: TextView, @Nullable contact: Contact?) {
     if (contact != null) {
         when {
             contact.displayNameFake.isNotEmpty() -> {
-                if (contact.displayNameFake.count() <= 2) {
+                if (contact.displayNameFake.count() < 2) {
                     textView.text = ""
                     textView.hint = context.getString(R.string.text_display_name)
                 } else {

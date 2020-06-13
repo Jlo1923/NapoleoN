@@ -175,7 +175,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
                 binding.editTextDisplay.text?.count() in 1..4 &&
                         arguments?.getInt(OPTION) == Constants.ChangeParams.NICKNAME_FAKE.option ->
                     enabledButtonAccept(false)
-                binding.editTextDisplay.text?.count() in 1..2 && (
+                binding.editTextDisplay.text?.count() in 1..1 && (
                         arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_FAKE.option ||
                                 arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_USER.option) ->
                     enabledButtonAccept(false)
