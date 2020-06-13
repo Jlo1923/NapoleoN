@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,8 +18,8 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val user: LiveData<User>
         get() = _user
 
-    private lateinit var _conversations: LiveData<List<MessageAndAttachment>>
-    val conversations: LiveData<List<MessageAndAttachment>>
+    private var _conversations : LiveData<List<MessageAndAttachment>>?
+    val conversations : LiveData<List<MessageAndAttachment>>?
         get() = _conversations
 
     private val _quantityFriendshipRequest = MutableLiveData<Int>()
@@ -35,8 +34,8 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val contact: LiveData<Contact>
         get() = _contact
 
-
     init {
+        _conversations = null
         _contact.value = null
         _jsonNotification.value = null
         _quantityFriendshipRequest.value = -1
@@ -128,6 +127,10 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
             _jsonNotification.value = null
             repository.cleanJsonNotification()
         }
+    }
+
+    override fun resetConversations() {
+        _conversations = null
     }
 
     override fun verifyMessagesToDelete() {

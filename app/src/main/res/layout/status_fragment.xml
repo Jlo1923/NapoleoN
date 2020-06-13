@@ -53,7 +53,7 @@
                     android:lines="1"
                     android:maxLength="@dimen/max_length_status"
                     android:singleLine="true"
-                    android:textColor="?attr/attrTextColorHint"
+                    android:textColor="?attr/attrTextColorConversationInputPanel"
                     android:text="@{viewModel.user.status}" />
             </com.google.android.material.textfield.TextInputLayout>
 

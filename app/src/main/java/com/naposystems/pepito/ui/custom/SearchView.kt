@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatImageButton
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import kotlin.math.hypot
 
@@ -41,6 +42,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         fun onOpened()
         fun onQuery(text: String)
         fun onClosed()
+        fun onClosedCompleted()
     }
 
     init {
@@ -114,6 +116,10 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
 
             layoutParams = linearLayoutParams
         }
+    }
+
+    fun setTextSearch(text: String) {
+        textInput.setText(text)
     }
 
     private fun createImageButtonClose() {
@@ -211,7 +217,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         anim.start()
     }
 
-    fun close() {
+    fun close(location : Int = 0) {
         if (isOpen) {
             val x = imageButtonClose.right - (imageButtonClose.width / 2)
             val y = imageButtonClose.bottom - (imageButtonClose.height / 2)
@@ -241,11 +247,14 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
 
                 override fun onAnimationEnd(animation: Animator?) {
                     if (isOpen) {
-                        listener.onClosed()
                         visibility = View.GONE
                         isOpen = false
                         textInput.setText("")
                         Utils.hideKeyboard(textInput)
+                        if(location == Constants.LocationAddContact.CONTACTS.location) {
+                            listener.onClosedCompleted()
+                        }
+                        listener.onClosed()
                     } else {
                         isOpen = true
                         listener.onOpened()

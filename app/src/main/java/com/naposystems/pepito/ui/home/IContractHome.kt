@@ -22,6 +22,7 @@ interface IContractHome {
         fun getJsonNotification()
         fun getContact(contactId : Int)
         fun cleanJsonNotification()
+        fun resetConversations()
         fun verifyMessagesToDelete()
     }
 

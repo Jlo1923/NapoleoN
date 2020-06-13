@@ -11,11 +11,11 @@ class ContactsRepository @Inject constructor(
 ) :
     IContractContacts.Repository {
 
-    override suspend fun getLocalContacts(): LiveData<List<Contact>> {
+    override suspend fun getLocalContacts(): LiveData<MutableList<Contact>> {
         return contactLocalDataSource.getContacts()
     }
 
-    override suspend fun getLocalContactsForSearch(): LiveData<List<Contact>> {
+    override suspend fun getLocalContactsForSearch(): LiveData<MutableList<Contact>> {
         return contactLocalDataSource.getContacts()
     }
 }

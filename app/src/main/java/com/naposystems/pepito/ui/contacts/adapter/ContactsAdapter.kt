@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ContactsItemBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
@@ -44,15 +45,32 @@ class ContactsAdapter constructor(
                  clickListener: ContactClickListener,
                  userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
         ) {
-            binding.contact = item
             binding.clickListener = clickListener
-            binding.viewModel = userDisplayFormatShareViewModel
 
-            binding.buttonMore.setOnClickListener {
-                clickListener.onMoreClick(item, it)
+            binding.apply {
+                contact = item
+                viewModel = userDisplayFormatShareViewModel
+
+                buttonMore.setOnClickListener {
+                    clickListener.onMoreClick(item, it)
+                }
+
+                val context = container.context
+
+                if (item.id == 0) {
+                    container.background = context.resources.getDrawable(
+                        R.drawable.bg_add_contact_item, context.theme
+                    )
+                    buttonMore.visibility = View.GONE
+                } else {
+                    container.background = context.resources.getDrawable(
+                        R.drawable.bg_home_item, context.theme
+                    )
+                    buttonMore.visibility = View.VISIBLE
+                }
+
+                executePendingBindings()
             }
-
-            binding.executePendingBindings()
         }
 
         companion object {

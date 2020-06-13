@@ -200,7 +200,7 @@ open class ConversationViewHolder constructor(
         )
 
         if (item.message.isSelected) {
-            containerMessage?.setBackgroundColor(Color.parseColor("#BBCCCCCC"))
+            containerMessage?.setBackgroundColor(Color.parseColor("#59CCCCCC"))
         } else {
             containerMessage?.setBackgroundColor(Color.TRANSPARENT)
         }

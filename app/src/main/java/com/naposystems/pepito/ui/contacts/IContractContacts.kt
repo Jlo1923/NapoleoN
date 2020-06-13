@@ -9,10 +9,13 @@ interface IContractContacts {
         fun getLocalContacts()
         fun resetContactsLoaded()
         fun searchContact(query: String)
+        fun setTextSearch(text : String)
+        fun getTextSearch() : String
+        fun resetTextSearch()
     }
 
     interface Repository {
-        suspend fun getLocalContacts(): LiveData<List<Contact>>
-        suspend fun getLocalContactsForSearch(): LiveData<List<Contact>>
+        suspend fun getLocalContacts(): LiveData<MutableList<Contact>>
+        suspend fun getLocalContactsForSearch(): LiveData<MutableList<Contact>>
     }
 }

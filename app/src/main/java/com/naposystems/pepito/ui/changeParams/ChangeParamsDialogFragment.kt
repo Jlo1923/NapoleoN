@@ -166,18 +166,20 @@ class ChangeParamsDialogFragment : DialogFragment() {
     }
 
     private fun listenerEditText(): TextWatcher = object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            // Intentionally empty
-        }
+        override fun afterTextChanged(s: Editable?) {}
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            // Intentionally empty
-        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            when (binding.editTextDisplay.text?.count()) {
-                in 1..4 -> enabledButtonAccept(false)
-                0 -> enabledButtonAccept(true)
+            when  {
+                binding.editTextDisplay.text?.count() in 1..4 &&
+                        arguments?.getInt(OPTION) == Constants.ChangeParams.NICKNAME_FAKE.option ->
+                    enabledButtonAccept(false)
+                binding.editTextDisplay.text?.count() in 1..2 && (
+                        arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_FAKE.option ||
+                                arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_USER.option) ->
+                    enabledButtonAccept(false)
+                binding.editTextDisplay.text?.count() == 0 -> enabledButtonAccept(true)
                 else -> enabledButtonAccept(true)
             }
         }

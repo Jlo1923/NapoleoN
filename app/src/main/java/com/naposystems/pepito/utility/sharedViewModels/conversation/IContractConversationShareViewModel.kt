@@ -9,9 +9,11 @@ interface IContractConversationShareViewModel {
     fun getMessage(): String?
     fun resetMessage()
     fun setAttachmentSelected(attachment: Attachment)
+    fun setAttachmentTaken(attachment: Attachment)
     fun resetAttachmentSelected()
     fun setGifSelected(attachment: Attachment)
     fun resetGifSelected()
+    fun resetAttachmentTaken()
     fun getQuoteWebId(): String?
     fun setQuoteWebId(webId: String)
     fun resetQuoteWebId()

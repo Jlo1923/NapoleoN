@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AddContactFragmentBinding
 import com.naposystems.pepito.entity.Contact
@@ -17,6 +18,7 @@ import com.naposystems.pepito.ui.addContact.adapter.AddContactAdapter
 import com.naposystems.pepito.ui.addContact.adapter.FriendshipRequestAdapter
 import com.naposystems.pepito.ui.custom.SearchView
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -37,7 +39,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
     private lateinit var binding: AddContactFragmentBinding
-        private lateinit var mainActivity: MainActivity
+    private val args : AddContactFragmentArgs by navArgs()
+    private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
     private lateinit var adapter: AddContactAdapter
     private lateinit var friendshipRequestsAdapter: FriendshipRequestAdapter
@@ -87,6 +90,12 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             searchView.setHint(R.string.search_by_nickname)
             searchView.setMenuItem(menu.findItem(R.id.search))
             searchView.setListener(this)
+            if(args.location == Constants.LocationAddContact.CONTACTS.location) {
+                if (!searchView.isOpened()) {
+                    searchView.showSearchView()
+                }
+                searchView.setTextSearch(args.text)
+            }
         }
     }
 
@@ -231,5 +240,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             binding.viewSwitcher.showNext()
         }
     }
+
+    override fun onClosedCompleted() {}
     //endregion
 }

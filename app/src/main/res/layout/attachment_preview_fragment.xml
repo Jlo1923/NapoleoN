@@ -6,9 +6,8 @@
 
     <data>
         <variable
-            name="attachment"
-            type="com.naposystems.pepito.entity.message.attachments.Attachment" />
-
+            name="viewModel"
+            type="com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel" />
         <variable
             name="galleryItemId"
             type="Integer" />
@@ -60,7 +59,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/black"
                 android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
-                app:attachmentImage="@{attachment}"
+                app:attachmentImage="@{viewModel.attachmentTaken}"
                 tools:src="@drawable/vertical_photo" />
         </ViewSwitcher>
 

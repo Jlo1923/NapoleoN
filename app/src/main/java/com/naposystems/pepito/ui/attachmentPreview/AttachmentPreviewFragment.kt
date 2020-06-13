@@ -70,8 +70,10 @@ class AttachmentPreviewFragment : Fragment() {
             inflater, R.layout.attachment_preview_fragment, container, false
         )
 
-        binding.attachment = attachment
+        binding.viewModel = conversationShareViewModel
         binding.galleryItemId = args.galleryItemId
+
+        conversationShareViewModel.setAttachmentTaken(attachment)
 
         when (attachment.type) {
             Constants.AttachmentType.IMAGE.type,
@@ -187,6 +189,7 @@ class AttachmentPreviewFragment : Fragment() {
 
     override fun onDestroy() {
         deleteFile()
+        conversationShareViewModel.resetAttachmentTaken()
         super.onDestroy()
     }
 

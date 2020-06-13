@@ -5,14 +5,17 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 
 @BindingAdapter("attachmentImage")
-fun bindGalleryImage(imageView: ImageView, attachment: Attachment) {
-
-    when (attachment.type) {
+fun bindGalleryImage(imageView: ImageView, attachment: Attachment?) {
+    when (attachment?.type) {
         Constants.AttachmentType.IMAGE.type -> {
+            val uri = Utils.getFileUri(
+                imageView.context, attachment.uri, Constants.NapoleonCacheDirectories.IMAGES.folder
+            )
             Glide.with(imageView)
-                .load(attachment)
+                .load(uri)
                 .centerInside()
                 .into(imageView)
         }

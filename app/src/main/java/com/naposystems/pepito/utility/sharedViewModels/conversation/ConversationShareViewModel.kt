@@ -19,6 +19,10 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
     val attachmentSelected: LiveData<Attachment>
         get() = _attachmentSelected
 
+    private val _attachmentTaken = MutableLiveData<Attachment>()
+    val attachmentTaken: LiveData<Attachment>
+        get() = _attachmentTaken
+
     private val _hasAudioSendClicked = MutableLiveData<Boolean>()
     val hasAudioSendClicked: LiveData<Boolean>
         get() = _hasAudioSendClicked
@@ -54,6 +58,10 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
         _attachmentSelected.value = attachment
     }
 
+    override fun setAttachmentTaken(attachment: Attachment) {
+        _attachmentTaken.value = attachment
+    }
+
     override fun resetAttachmentSelected() {
         _attachmentSelected.value = null
     }
@@ -64,6 +72,10 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     override fun resetGifSelected() {
         this._gifSelected.value = null
+    }
+
+    override fun resetAttachmentTaken() {
+        _attachmentTaken.value = null
     }
 
     override fun getQuoteWebId() = this._quoteWebId.value

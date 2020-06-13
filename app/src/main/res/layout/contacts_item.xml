@@ -19,9 +19,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_home_item"
         android:foreground="?attr/selectableItemBackground"
         android:onClick="@{() -> clickListener.onClick(contact)}">
 
@@ -34,10 +34,11 @@
             android:layout_marginBottom="@dimen/normal_margin"
             android:background="@drawable/border_avatar_contact"
             app:avatar="@{contact}"
+            tools:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            tools:src="@drawable/ic_default_avatar" />
 
         <TextView
             android:id="@+id/textView_user_name"
@@ -49,6 +50,7 @@
             android:ellipsize="end"
             android:lines="1"
             app:name="@{contact}"
+            app:contactIdNameFormat="@{contact.id}"
             app:nameFormatContact="@{viewModel.userDisplayFormat}"
             app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
             app:layout_constraintEnd_toStartOf="@id/button_more"
@@ -73,6 +75,7 @@
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
             app:nickNameFormat="@{viewModel.userDisplayFormat}"
+            app:contactIdNickNameFormat="@{contact.id}"
             app:nickname="@{contact}"
             tools:text="@tools:sample/first_names" />
 

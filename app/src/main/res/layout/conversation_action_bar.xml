@@ -73,6 +73,7 @@
                         android:ellipsize="end"
                         android:lines="1"
                         app:nameFormatContact="@{viewModel.userDisplayFormat}"
+                        app:contactIdNameFormat="@{contact.id}"
                         app:nameActionBar="@{contact}"
                         tools:text="Giussep Ricardo Cachaya" />
 
@@ -85,6 +86,7 @@
                         android:ellipsize="end"
                         android:lines="1"
                         app:nickNameFormat="@{viewModel.userDisplayFormat}"
+                        app:contactIdNickNameFormat="@{contact.id}"
                         app:nicknameActionBar="@{contact}"
                         tools:text="\@giussepr" />
                 </LinearLayout>

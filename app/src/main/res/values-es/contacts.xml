@@ -7,6 +7,9 @@
     <string name="text_blocked_contact">Contacto bloqueado</string>
     <string name="text_deleted_contact">Contacto eliminado</string>
     <string name="search_by_nickname">Busca por apodo</string>
-    <string name="text_empty_state_contacts_title">Añade nuevos amigos</string>
+    <string name="text_empty_state_contacts_title">No tienes contactos agregados</string>
     <string name="text_empty_state_contacts_description">No tienes contactos agregados</string>
+    <string name="text_add_new_contact">Agregar nuevo contacto</string>
+    <string name="text_add_contacts">Agregar contactos</string>
+    <string name="text_search_contact">Buscar en mis contactos</string>
 </resources>

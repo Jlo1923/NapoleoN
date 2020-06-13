@@ -187,5 +187,6 @@
         <attr name="image" format="reference" />
         <attr name="titleEmptyState" format="string" />
         <attr name="description" format="string" />
+        <attr name="location" format="integer"/>
     </declare-styleable>
 </resources>
