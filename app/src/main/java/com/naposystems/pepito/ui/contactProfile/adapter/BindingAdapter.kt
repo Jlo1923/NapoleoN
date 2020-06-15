@@ -5,7 +5,6 @@ import androidx.annotation.Nullable
 import androidx.databinding.BindingAdapter
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
-import com.naposystems.pepito.utility.Utils
 
 @BindingAdapter("nicknameContact")
 fun bindNickNameContact(textView: TextView, @Nullable contact: Contact?) {
@@ -18,7 +17,7 @@ fun bindNameContact(textView: TextView, @Nullable contact: Contact?) {
     if (contact != null) {
         when {
             contact.displayNameFake.isNotEmpty() -> {
-                if (contact.displayNameFake.count() < 4) {
+                if (contact.displayNameFake.count() < 2) {
                     textView.text = ""
                     textView.hint = context.getString(R.string.text_display_name)
                 } else {

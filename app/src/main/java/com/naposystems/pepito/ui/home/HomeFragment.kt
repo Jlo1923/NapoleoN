@@ -158,12 +158,15 @@ class HomeFragment : Fragment() {
 
         timeFormatShareViewModel.getTimeFormat()
 
-        viewModel.conversations.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-            if (it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
-                binding.viewSwitcherChats.showNext()
-            } else if (it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id) {
-                binding.viewSwitcherChats.showNext()
+        viewModel.conversations?.observe(viewLifecycleOwner, Observer {
+            if(it != null) {
+                adapter.submitList(it)
+                if (it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
+                    binding.viewSwitcherChats.showNext()
+                } else if (it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id) {
+                    binding.viewSwitcherChats.showNext()
+                }
+                viewModel.resetConversations()
             }
         })
 
@@ -192,9 +195,7 @@ class HomeFragment : Fragment() {
                     }
                     Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
                         viewModel.cleanJsonNotification()
-                        findNavController().navigate(
-                            HomeFragmentDirections.actionHomeFragmentToAddContactFragment()
-                        )
+                        goToAddContactFragment()
                     }
                     Constants.NotificationType.FRIEND_REQUEST_ACCEPTED.type -> {
                         viewModel.cleanJsonNotification()
@@ -216,6 +217,14 @@ class HomeFragment : Fragment() {
         })
 
         (activity as MainActivity).getUser()
+    }
+
+    private fun goToAddContactFragment(){
+        findNavController().navigate(
+            HomeFragmentDirections.actionHomeFragmentToAddContactFragment(
+                location = Constants.LocationAddContact.HOME.location
+            )
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -302,9 +311,7 @@ class HomeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_contact -> {
-                findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToAddContactFragment()
-                )
+                goToAddContactFragment()
                 true
             }
             else -> super.onOptionsItemSelected(item)

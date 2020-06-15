@@ -9,8 +9,8 @@ import javax.inject.Inject
 class ContactsViewModel @Inject constructor(private val repository: IContractContacts.Repository) :
     ViewModel(), IContractContacts.ViewModel {
 
-    private lateinit var _contacts: LiveData<List<Contact>>
-    val contacts: LiveData<List<Contact>>
+    private lateinit var _contacts: LiveData<MutableList<Contact>>
+    val contacts: LiveData<MutableList<Contact>>
         get() = _contacts
 
     private val _contactsForSearch = MutableLiveData<List<Contact>>()
@@ -24,6 +24,8 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
     private val _contactsLoaded = MutableLiveData<Boolean>()
     val contactsLoaded: LiveData<Boolean>
         get() = _contactsLoaded
+
+    var textBarSearch : String = ""
 
     init {
         _contactsLoaded.value = false
@@ -56,6 +58,16 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
                 Timber.e(ex)
             }
         }
+    }
+
+    override fun setTextSearch(text: String) {
+        textBarSearch = text
+    }
+
+    override fun getTextSearch() = textBarSearch
+
+    override fun resetTextSearch() {
+        textBarSearch = ""
     }
 
     override fun resetContactsLoaded() {

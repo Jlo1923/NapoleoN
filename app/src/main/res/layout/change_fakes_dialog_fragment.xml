@@ -64,7 +64,7 @@
                 android:maxLength="@dimen/max_length_display_name"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textColor="?attr/attrTextColorHint"
+                android:textColor="?attr/attrTextColorConversationInputPanel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_title_separator" />

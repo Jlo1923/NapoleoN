@@ -8,7 +8,7 @@ import com.naposystems.pepito.entity.Contact
 interface ContactDao {
 
     @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
-    fun getContacts(): LiveData<List<Contact>>
+    fun getContacts(): LiveData<MutableList<Contact>>
 
     @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
     suspend fun getLocalContacts(): List<Contact>

@@ -37,7 +37,6 @@ class StatusFragment : Fragment() {
     private lateinit var viewModel: StatusViewModel
     private lateinit var binding: StatusFragmentBinding
     private lateinit var adapter: StatusAdapter
-    private lateinit var user: User
     private val args: StatusFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
@@ -98,17 +97,6 @@ class StatusFragment : Fragment() {
                 )
             }
         })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_status, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.done -> createStatus()
-        }
-        return true
     }
 
     private fun observeStatus() {

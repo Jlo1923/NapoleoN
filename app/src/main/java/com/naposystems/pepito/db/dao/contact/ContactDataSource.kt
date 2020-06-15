@@ -5,7 +5,7 @@ import com.naposystems.pepito.entity.Contact
 
 interface ContactDataSource {
 
-    suspend fun getContacts(): LiveData<List<Contact>>
+    suspend fun getContacts(): LiveData<MutableList<Contact>>
 
     suspend fun getLocaleContacts(): List<Contact>
 

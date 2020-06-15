@@ -31,7 +31,7 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
         return contactDao.getContactById(contactId)
     }
 
-    override suspend fun getContacts(): LiveData<List<Contact>> {
+    override suspend fun getContacts(): LiveData<MutableList<Contact>> {
         return contactDao.getContacts()
     }
 

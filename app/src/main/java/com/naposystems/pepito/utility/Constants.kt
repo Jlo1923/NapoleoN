@@ -318,6 +318,11 @@ object Constants {
         EXISTING(2)
     }
 
+    enum class LocationAddContact(val location: Int) {
+        HOME(1),
+        CONTACTS(2)
+    }
+
     enum class UserType(val type: Int) {
         NEW_USER(1),
         OLD_USER(2)
@@ -341,6 +346,15 @@ object Constants {
         CONTACT_PROFILE(3),
         APPEARANCE_SETTINGS(4),
         CONVERSATION(5)
+    }
+
+    enum class LocationEmptyState(val location: Int) {
+        WITHOUT_LOCATION(0),
+        ADD_CONTACT_FRIENDSHIP_REQUEST(1),
+        ADD_CONTACT_SEARCH(2),
+        BLOCKED_CONTACTS(3),
+        CONTACTS(4),
+        HOME(5)
     }
 
     enum class EmojiCategory(val category: Int) {

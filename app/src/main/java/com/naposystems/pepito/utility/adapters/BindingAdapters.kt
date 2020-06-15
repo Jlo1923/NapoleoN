@@ -3,6 +3,7 @@ package com.naposystems.pepito.utility.adapters
 import android.Manifest
 import android.app.Service
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -216,8 +217,8 @@ fun bindBackground(imageView: ImageView, imageUrl: String) {
 
 @BindingAdapter("avatar")
 fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
-    if (contact != null) {
-        val context = imageView.context
+    val context = imageView.context
+    if (contact != null && contact.id != 0) {
 
         val defaultAvatar = context.resources.getDrawable(
             R.drawable.ic_default_avatar,
@@ -236,14 +237,28 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
                 contact.imageUrl
             }
             else -> {
-                defaultAvatar
+                ""
             }
         }
 
-        Glide.with(context)
-            .load(loadImage)
-            .transform(CircleCrop(), CenterInside())
-            .into(imageView)
+        if(loadImage != "") {
+            Glide.with(context)
+                .load(loadImage)
+                .transform(CircleCrop(), CenterInside())
+                .into(imageView)
+        } else {
+            imageView.setImageDrawable(defaultAvatar)
+        }
+
+        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+    } else {
+        val addContact = context.resources.getDrawable(
+            R.drawable.ic_person_add,
+            context.theme
+        )
+
+        imageView.setImageDrawable(addContact)
+        imageView.scaleType = ImageView.ScaleType.CENTER
     }
 }
 
@@ -304,29 +319,35 @@ fun bindNameFormat(textView: TextView, format: Int) {
     }
 }
 
-@BindingAdapter("nickNameFormat")
-fun bindNickNameFormat(textView: TextView, format: Int) {
-    when (format) {
-        Constants.UserDisplayFormat.ONLY_NAME.format -> {
-            textView.visibility = View.GONE
-        }
-        else -> {
-            textView.visibility = View.VISIBLE
+@BindingAdapter("nickNameFormat", "contactIdNickNameFormat")
+fun bindNickNameFormat(textView: TextView, format: Int, contactId: Int) {
+    if(contactId == 0) {
+        textView.visibility = View.GONE
+    } else {
+        when (format) {
+            Constants.UserDisplayFormat.ONLY_NAME.format -> {
+                textView.visibility = View.GONE
+            }
+            else -> {
+                textView.visibility = View.VISIBLE
+            }
         }
     }
 }
 
-@BindingAdapter("nameFormatContact")
-fun bindNameFormatContact(textView: TextView, format: Int) {
-    when (format) {
-        Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
-            textView.visibility = View.GONE
-        }
-        else -> {
-            if (textView.text == " ") {
+@BindingAdapter("nameFormatContact", "contactIdNameFormat")
+fun bindNameFormatContact(textView: TextView, format: Int, contactId: Int) {
+    if (contactId != 0) {
+        when (format) {
+            Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
                 textView.visibility = View.GONE
-            } else {
-                textView.visibility = View.VISIBLE
+            }
+            else -> {
+                if (textView.text == " ") {
+                    textView.visibility = View.GONE
+                } else {
+                    textView.visibility = View.VISIBLE
+                }
             }
         }
     }

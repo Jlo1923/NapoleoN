@@ -17,7 +17,9 @@ import com.naposystems.pepito.databinding.ContactsFragmentBinding
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.pepito.ui.custom.SearchView
+import com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
 import com.naposystems.pepito.ui.mainActivity.MainActivity
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.SnackbarUtils
@@ -30,7 +32,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class ContactsFragment : Fragment(), SearchView.OnSearchView {
+class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomView.OnEventListener {
 
     companion object {
         fun newInstance() = ContactsFragment()
@@ -68,6 +70,10 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
 
         binding.lifecycleOwner = this
 
+        binding.emptyState.setListener(this)
+
+        binding.emptyStateSearch.setListener(this)
+
         setAdapter()
 
         binding.swipeRefresh.setOnRefreshListener {
@@ -84,11 +90,13 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         try {
-            shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
+            shareContactViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
                 .get(ShareContactViewModel::class.java)
         } catch (e: Exception) {
             Timber.e(e)
         }
+
+        viewModel.resetTextSearch()
 
         binding.viewModel = viewModel
 
@@ -109,11 +117,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         observeContactsForSearch()
     }
 
-    override fun onStop() {
-        super.onStop()
-        searchView.close()
-    }
-
     private fun getContacts() {
         contactRepositoryShareViewModel.getContacts()
         viewModel.getLocalContacts()
@@ -123,7 +126,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         viewModel.contactsForSearch.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
             if (it.isNotEmpty()) {
-                if (binding.viewSwitcherSearchContact.currentView.id == binding.containerSearchContactNotFound.id) {
+                if (binding.viewSwitcherSearchContact.currentView.id == binding.emptyStateSearch.id) {
                     binding.viewSwitcherSearchContact.showNext()
                 }
             } else {
@@ -135,12 +138,21 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun observeContacts() {
-        viewModel.contacts.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                adapter.submitList(it)
-                if (it.isNotEmpty()) {
+        viewModel.contacts.observe(viewLifecycleOwner, Observer { listContacts ->
+            if (listContacts != null) {
+                if(listContacts.count() >= 1) {
+                    listContacts.add(Contact(0, displayName = getString(R.string.text_add_new_contact)))
+                    listContacts.sortBy { contact ->
+                        contact.id
+                    }
+                }
+                adapter.submitList(listContacts)
+                if (listContacts.isNotEmpty()) {
                     if (binding.viewSwitcher.nextView.id == binding.viewSwitcherSearchContact.id) {
                         binding.viewSwitcher.showNext()
+                    }
+                    if(binding.viewSwitcherSearchContact.nextView.id == binding.recyclerViewContacts.id) {
+                        binding.viewSwitcherSearchContact.showNext()
                     }
                 } else {
                     if (binding.viewSwitcher.nextView.id == binding.emptyState.id) {
@@ -156,7 +168,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
             searchView = mainActivity.findViewById(R.id.searchView)
-            searchView.setHint(R.string.text_search)
+            searchView.setHint(R.string.text_search_contact)
             searchView.setMenuItem(menu.findItem(R.id.search_contacts))
             searchView.setListener(this)
         }
@@ -165,7 +177,11 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     private fun setAdapter() {
         adapter = ContactsAdapter(object : ContactsAdapter.ContactClickListener {
             override fun onClick(item: Contact) {
-                goToConversation(item)
+                if (item.id != 0) {
+                    goToConversation(item)
+                } else {
+                    verifyStateSearch()
+                }
             }
 
             override fun onMoreClick(item: Contact, view: View) {
@@ -194,8 +210,18 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun goToConversation(item: Contact) {
+        searchView.close()
         findNavController().navigate(
             ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
+        )
+    }
+
+    private fun goToAddContacts() {
+        findNavController().navigate(
+            ContactsFragmentDirections.actionContactsFragmentToAddContactFragment(
+                location = Constants.LocationAddContact.CONTACTS.location,
+                text = viewModel.getTextSearch()
+            )
         )
     }
 
@@ -248,6 +274,11 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
     }
 
     override fun onQuery(text: String) {
+        if(text.isNotEmpty())
+            viewModel.setTextSearch(text)
+        else if(text.isEmpty() && viewModel.getTextSearch().count() == 1) {
+            viewModel.setTextSearch("")
+        }
         if (text.length >= 4) {
             viewModel.searchContact(text.toLowerCase(Locale.getDefault()))
         } else {
@@ -259,12 +290,28 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView {
         refreshView()
         binding.swipeRefresh.isEnabled = true
     }
+
+    override fun onClosedCompleted() {
+        goToAddContacts()
+    }
     //endregion
 
     private fun refreshView() {
         adapter.submitList(viewModel.contacts.value)
-        if (binding.viewSwitcherSearchContact.currentView.id == binding.containerSearchContactNotFound.id) {
+        if (binding.viewSwitcherSearchContact.currentView.id == binding.emptyStateSearch.id) {
             binding.viewSwitcherSearchContact.showNext()
+        }
+    }
+
+    override fun onAddContact(click: Boolean) {
+        verifyStateSearch()
+    }
+
+    private fun verifyStateSearch() {
+        if (!searchView.isOpened()) {
+            goToAddContacts()
+        } else {
+            searchView.close(Constants.LocationAddContact.CONTACTS.location)
         }
     }
 }

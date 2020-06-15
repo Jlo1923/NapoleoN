@@ -110,6 +110,7 @@
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
             app:nickNameFormat="@{displayFormat}"
+            app:contactIdNickNameFormat="@{conversation.contact.id}"
             app:nickname="@{conversation.contact}"
             tools:text="@tools:sample/first_names" />
 

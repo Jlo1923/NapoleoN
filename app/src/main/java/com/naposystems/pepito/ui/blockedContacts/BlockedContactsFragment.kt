@@ -124,6 +124,8 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     override fun onClosed() {
         showRecycler()
     }
+
+    override fun onClosedCompleted() {}
     //endregion
 
     private fun showNoResults() {

@@ -368,6 +368,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_contactsFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/contactUsFragment"
@@ -522,7 +529,16 @@
         android:id="@+id/addContactFragment"
         android:name="com.naposystems.pepito.ui.addContact.AddContactFragment"
         android:label="@string/text_friend_requests"
-        tools:layout="@layout/add_contact_fragment" />
+        tools:layout="@layout/add_contact_fragment" >
+        <argument
+            android:name="location"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="text"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
     <fragment
         android:id="@+id/conversationCameraFragment"
         android:name="com.naposystems.pepito.ui.conversationCamera.ConversationCameraFragment"

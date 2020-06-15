@@ -371,6 +371,8 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     override fun onClosed() {
         showMap()
     }
+
+    override fun onClosedCompleted() {}
     //endregion
 
     //region Implementation AttachmentLocationAdapter.AttachmentLocationListener

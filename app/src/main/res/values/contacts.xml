@@ -7,6 +7,9 @@
     <string name="text_blocked_contact">Contact blocked</string>
     <string name="text_deleted_contact">Contact deleted</string>
     <string name="search_by_nickname">Search by nickname</string>
-    <string name="text_empty_state_contacts_title">Add New Friends</string>
+    <string name="text_empty_state_contacts_title">You have no contacts added</string>
     <string name="text_empty_state_contacts_description">You have no contacts added</string>
+    <string name="text_add_new_contact">Add new contact</string>
+    <string name="text_add_contacts">Add contacts</string>
+    <string name="text_search_contact">Search my contacts</string>
 </resources>

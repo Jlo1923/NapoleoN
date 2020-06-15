@@ -1,12 +1,10 @@
 package com.naposystems.pepito.entity
 
-import android.content.Context
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.naposystems.pepito.R
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
@@ -14,14 +12,14 @@ import java.io.Serializable
 @Entity(tableName = "contact")
 data class Contact(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = "image_url") var imageUrl: String,
+    @ColumnInfo(name = "image_url") var imageUrl: String = "",
     @ColumnInfo(name = "image_url_fake") val imageUrlFake: String = "",
-    @ColumnInfo(name = "nickname") val nickname: String,
+    @ColumnInfo(name = "nickname") val nickname: String = "",
     @ColumnInfo(name = "nickname_fake") val nicknameFake: String = "",
     @ColumnInfo(name = "display_name") var displayName: String,
     @ColumnInfo(name = "display_name_fake") val displayNameFake: String = "",
-    @ColumnInfo(name = "status") var status: String,
-    @ColumnInfo(name = "last_seen") var lastSeen: String,
+    @ColumnInfo(name = "status") var status: String = "",
+    @ColumnInfo(name = "last_seen") var lastSeen: String = "",
     @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false,
     @ColumnInfo(name = "silenced") val silenced: Boolean = false,
     @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1

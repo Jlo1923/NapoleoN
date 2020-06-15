@@ -9,4 +9,7 @@
     <string name="search_by_nickname">Pesquisa por apelido</string>
     <string name="text_empty_state_contacts_title">Não tiver contactos adicionados</string>
     <string name="text_empty_state_contacts_description">Procurar seus amigos pelo apelido e comunicar</string>
+    <string name="text_add_new_contact">Adicionar novo contato</string>
+    <string name="text_add_contacts">Adicionar contatos</string>
+    <string name="text_search_contact">Pesquisar meus contatos</string>
 </resources>

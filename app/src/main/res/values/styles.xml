@@ -794,6 +794,7 @@
 
     <style name="TextInputLayoutOutlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="hintTextColor">?attr/attrHintTextColorSecondaryTextColor</item>
+        <item name="android:textColorHint">?attr/attrTextColorConversationInputPanel</item>
         <item name="boxStrokeColor">@color/textinput_layout_box_color</item>
         <item name="boxStrokeErrorColor">?attr/attrBoxStrokeErrorColorColorError</item>
         <item name="android:colorAccent">?attr/attrColorButtonTint</item>
@@ -988,6 +989,17 @@
         <item name="android:textOn">@null</item>
         <item name="android:textOff">@null</item>
         <item name="android:layout_height">36dp</item>
+    </style>
+
+    <style name="AppOutlinedPrimaryButtonPackage" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
+        <item name="strokeColor">?attr/attrStrokeColorButtonTint</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingTop">@dimen/x_small_padding</item>
+        <item name="android:paddingBottom">@dimen/x_small_padding</item>
     </style>
 
 </resources>
