@@ -84,7 +84,7 @@ class AttachmentPreviewFragment : Fragment() {
             Constants.AttachmentType.VIDEO.type -> {
                 binding.containerSeekbar.visibility = View.VISIBLE
 
-                if (binding.viewSwitcher.currentView.id == binding.imageViewPreview.id) {
+                if (binding.viewSwitcher.currentView.id == binding.scrollView.id) {
                     binding.viewSwitcher.showNext()
                 }
 
@@ -179,6 +179,10 @@ class AttachmentPreviewFragment : Fragment() {
                 // Intentionally empty.
             }
         })
+
+        binding.scrollView.setOnClickListener {
+            
+        }
 
         binding.executePendingBindings()
 

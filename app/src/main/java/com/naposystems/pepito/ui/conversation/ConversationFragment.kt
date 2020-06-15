@@ -931,7 +931,7 @@ class ConversationFragment : BaseFragment(),
     override fun onResume() {
         super.onResume()
         Timber.d("onResume")
-        mediaPlayerManager.registerProximityListener()
+//        mediaPlayerManager.registerProximityListener()
 //        setConversationBackground()
         binding.floatingActionButtonSend.morphToMic()
         messagedLoadedFirstTime = false

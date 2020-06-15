@@ -49,40 +49,26 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.7">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_quote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/small_margin"
-                android:layout_marginBottom="4dp"
-                android:maxHeight="100dp"
+            <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+                android:id="@+id/quote"
+                style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
-                android:visibility="gone"
+                app:isGoTo="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible">
-
-                <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
-                    android:id="@+id/quote"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:isGoTo="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintWidth_min="wrap"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_document_type"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_marginTop="@dimen/small_margin"
                 app:attachmentDocumentIcon="@{conversation}"
                 app:layout_constraintEnd_toStartOf="@id/textView_document_name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/container_quote"
+                app:layout_constraintTop_toBottomOf="@id/quote"
                 app:tint="@color/colorTextMyMessage"
                 tools:src="@drawable/ic_attachment_doc" />
 

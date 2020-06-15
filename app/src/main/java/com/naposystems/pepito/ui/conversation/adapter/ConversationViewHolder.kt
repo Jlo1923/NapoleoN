@@ -37,7 +37,6 @@ open class ConversationViewHolder constructor(
 
 
     var containerMessage: ConstraintLayout? = null
-    var containerQuote: ConstraintLayout? = null
     var textViewCountDown: TextView? = null
     var quote: InputPanelQuote? = null
     var progressBarIndeterminate: ProgressBar? = null
@@ -164,6 +163,7 @@ open class ConversationViewHolder constructor(
         if (boolean) {
             progressBar?.visibility = View.GONE
             imageButtonState?.visibility = View.GONE
+            Timber.d("enablePlayButton setUploadComplete: true")
             audioPlayer?.enablePlayButton(true)
         }
     }
@@ -212,11 +212,14 @@ open class ConversationViewHolder constructor(
 
         item.quote?.let {
             quote?.setupMessageAndAttachment(item)
-            containerQuote?.visibility = View.VISIBLE
+            quote?.visibility = View.VISIBLE
         } ?: run {
-            containerQuote?.visibility = View.GONE
+            quote?.visibility = View.GONE
         }
 
+        audioPlayer?.enablePlayButton(false)
+        quote?.visibility = View.GONE
+        imageViewAttachment?.visibility = View.GONE
         imageButtonState?.visibility = View.GONE
         progressBar?.setProgress(0.0f)
         progressBar?.visibility = View.GONE
@@ -252,9 +255,8 @@ open class ConversationViewHolder constructor(
                     progressBarIndeterminate?.visibility = View.GONE
                     progressBar?.visibility = View.INVISIBLE
                     progressBar?.setProgress(0f)
-                    if (audioPlayer != null) {
-                        audioPlayer?.enablePlayButton(true)
-                    }
+                    Timber.d("enablePlayButton SENT: true")
+                    audioPlayer?.enablePlayButton(true)
                 }
                 Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
                     progressBar?.setProgress(0f)
@@ -271,9 +273,9 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     progressBar?.setProgress(0f)
                     progressBarIndeterminate?.visibility = View.GONE
-                    audioPlayer?.enablePlayButton(true)
                     imageButtonState?.visibility = View.GONE
                     if (audioPlayer != null && mediaPlayerManager != null) {
+                        Timber.d("enablePlayButton DOWNLOAD_COMPLETE: true")
                         audioPlayer?.enablePlayButton(true)
                         loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
                     }
@@ -288,8 +290,10 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
 
+                    Timber.d("imageButtonState?.visibility = ${imageButtonState?.visibility}")
                     imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
                     imageButtonState?.visibility = View.VISIBLE
+                    Timber.d("imageButtonState?.visibility = ${imageButtonState?.visibility}")
                 }
             }
 

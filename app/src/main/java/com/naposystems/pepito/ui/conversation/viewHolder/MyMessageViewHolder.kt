@@ -18,7 +18,6 @@ class MyMessageViewHolder constructor(
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
-        super.containerQuote = binding.containerQuote
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
     }

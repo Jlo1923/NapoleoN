@@ -18,29 +18,10 @@ class IncomingMessageViewHolder constructor(
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonCancel
-        super.containerQuote = binding.containerQuote
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
         super.imageViewAttachment = binding.imageViewAttachment
     }
-
-    /*private var job: Job? = null
-
-    fun setStart(job: Job) {
-        this.job = job
-        binding.imageButtonCancel.visibility = View.VISIBLE
-    }
-
-    fun setProgress(
-        progress: Long
-    ) {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.progressBar.setProgress(progress.toFloat())
-
-        if (progress == 100L){
-            binding.progressBar.visibility = View.GONE
-        }
-    }*/
 
     override fun bind(
         item: MessageAndAttachment,

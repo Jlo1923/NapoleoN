@@ -22,6 +22,7 @@ import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class MediaPlayerManager(private val context: Context) :
@@ -42,8 +43,11 @@ class MediaPlayerManager(private val context: Context) :
         }
     }
 
-    private var mStartAudioTime: Long? = null
+    private var mStartAudioTime: Long = 0L
     private var mIsEncryptedFile: Boolean = false
+    private var currentAudioId: Int = 0
+    private var currentAudioUri: Uri? = null
+    private var currentAudioFileName: String? = null
     private var mSpeed: Float = 1.0f
     private var mImageButtonPlay: AnimatedTwoVectorView? = null
     private var mImageButtonSpeed: ImageButton? = null
@@ -70,14 +74,13 @@ class MediaPlayerManager(private val context: Context) :
             Context.SENSOR_SERVICE
         ) as SensorManager
     }
-    private val mProximitySensor: Sensor? by lazy {
+    private val mProximitySensor: Sensor by lazy {
         mSensorManager.getDefaultSensor(
             Sensor.TYPE_PROXIMITY
         )
     }
-    private val mAudioManager: AudioManager by lazy {
+    private val mAudioManager: AudioManager =
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
 
     interface Listener {
         fun onErrorPlayingAudio()
@@ -95,143 +98,164 @@ class MediaPlayerManager(private val context: Context) :
         }
     }
 
-    //region Implementation SensorEventListener
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        //nothing
+    private fun stop() {
+        mediaPlayer.stop()
+        mediaPlayer.release()
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        // Intentionally empty
-    }
-    //endregion
-
-    //region Implementation
-    override fun playAudio(audioId: Int, uri: Uri) {
-        try {
-            mStartAudioTime = System.currentTimeMillis()
-            if (mPreviousUri != uri) {
-                mPreviousUri = uri
-            }
-
-            mediaPlayer.apply {
-
-                if (mPreviousAudioId != audioId) {
-                    mPreviousAudioId = audioId
-                    reset()
-                    val stream = context.contentResolver.openFileDescriptor(uri, "r")
-                    setDataSource(stream!!.fileDescriptor)
-                    prepare()
-                }
-
-                mediaPlayer.setOnPreparedListener {
-                    mSensorManager.registerListener(
-                        this@MediaPlayerManager,
-                        mProximitySensor,
-                        SensorManager.SENSOR_DELAY_NORMAL
-                    )
-                    mSeekBar?.max = duration
-                }
-
-                mediaPlayer.setOnCompletionListener {
-                    deleteTempFile()
-                    resetMediaPlayer()
-                    mListener?.onCompleteAudio()
-                }
-
-                mRunnable = Runnable {
-                    setSeekbarProgress()
-
-                    mHandler.postDelayed(
-                        mRunnable,
-                        50
-                    )
-                }
-
-                if (isPlaying) {
-                    pause()
-                    mImageButtonPlay?.reverseAnimation()
-                    mListener?.onPauseAudio()
-                } else {
-                    start()
-                    mHandler.postDelayed(mRunnable, 0)
-                    mImageButtonPlay?.playAnimation()
-                }
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-            mListener?.onErrorPlayingAudio()
-        }
-    }
-
-    override fun playAudio(audioId: Int, fileName: String) {
-        try {
-            mStartAudioTime = System.currentTimeMillis()
-            if (mPreviousFileName != fileName) {
-                mPreviousFileName = fileName
-            }
-
-            mediaPlayer.apply {
-
-                if (mPreviousAudioId != audioId) {
-                    mPreviousAudioId = audioId
-                    reset()
-                    tempFile = FileManager.createTempFileFromEncryptedFile(
-                        context,
-                        Constants.AttachmentType.AUDIO.type,
-                        fileName,
-                        "mp3"
-                    )
-
-                    setDataSource(tempFile?.absolutePath)
-                    prepare()
-                }
-
-                mediaPlayer.setOnPreparedListener {
-                    mSensorManager.registerListener(
-                        this@MediaPlayerManager,
-                        mProximitySensor,
-                        SensorManager.SENSOR_DELAY_NORMAL
-                    )
-                    mSeekBar?.max = duration
-                }
-
-                mediaPlayer.setOnCompletionListener {
-                    deleteTempFile()
-                    resetMediaPlayer()
-                    mListener?.onCompleteAudio()
-                }
-
-                mRunnable = Runnable {
-                    setSeekbarProgress()
-
-                    mHandler.postDelayed(
-                        mRunnable,
-                        50
-                    )
-                }
-
-                if (isPlaying) {
-                    pause()
-                    mImageButtonPlay?.reverseAnimation()
-                    mListener?.onPauseAudio()
-                } else {
-                    start()
-                    mHandler.postDelayed(mRunnable, 0)
-                    mImageButtonPlay?.playAnimation()
-                }
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-            mListener?.onErrorPlayingAudio()
-        }
-    }
-
-    override fun registerProximityListener() {
+    fun registerProximityListener() {
         mSensorManager.registerListener(
             this,
             mProximitySensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
+    }
+
+    //region Implementation SensorEventListener
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        //nothing
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        Timber.d("onSensorChanged")
+        if (event.sensor.type != Sensor.TYPE_PROXIMITY) return
+
+        mediaPlayer.let { mediaPlayer ->
+            val streamType: Int =
+                if (event.values[0] < 5f && event.values[0] != mProximitySensor.maximumRange) {
+                    AudioManager.STREAM_VOICE_CALL
+                } else {
+                    AudioManager.STREAM_MUSIC
+                }
+
+            if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn
+            ) {
+                val position = mediaPlayer.currentPosition.toDouble()
+                val duration = mediaPlayer.duration.toDouble()
+                val progress = position / duration
+                wakeLock.acquire()
+                try {
+                    mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
+                    mSpeed = NORMAL_SPEED
+                    mediaPlayer.stop()
+                    mediaPlayer.reset()
+                    playAudio(progress = progress, isEarpiece = true)
+                } catch (e: IOException) {
+                    Timber.e(e)
+                }
+            } else if (streamType == AudioManager.STREAM_MUSIC && System.currentTimeMillis() - mStartAudioTime > 500) {
+                unregisterProximityListener()
+                if (wakeLock.isHeld) {
+                    wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
+                }
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.pause()
+                    mImageButtonPlay?.reverseAnimation()
+                    mListener?.onPauseAudio()
+                }
+            }
+        }
+    }
+    //endregion
+
+    //region Implementation
+    override fun setAudioId(audioId: Int) {
+        this.currentAudioId = audioId
+    }
+
+    override fun setAudioUri(uri: Uri?) {
+        this.currentAudioUri = uri
+    }
+
+    override fun setAudioFileName(fileName: String) {
+        this.currentAudioFileName = fileName
+    }
+
+    override fun playAudio(progress: Double, isEarpiece: Boolean) {
+        try {
+            mStartAudioTime = System.currentTimeMillis()
+
+            mediaPlayer.apply {
+
+                mSensorManager.registerListener(
+                    this@MediaPlayerManager,
+                    mProximitySensor,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setContentType(if (isEarpiece) AudioAttributes.CONTENT_TYPE_SPEECH else AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(if (isEarpiece) AudioAttributes.USAGE_VOICE_COMMUNICATION else AudioAttributes.USAGE_MEDIA)
+                        .build()
+                )
+
+                if (mPreviousAudioId != currentAudioId || progress > 0) {
+
+                    mediaPlayer.stop()
+                    mediaPlayer.reset()
+
+                    mPreviousAudioId = currentAudioId
+
+                    if (mIsEncryptedFile) {
+                        tempFile = FileManager.createTempFileFromEncryptedFile(
+                            context,
+                            Constants.AttachmentType.AUDIO.type,
+                            currentAudioFileName!!,
+                            "mp3"
+                        )
+
+                        setDataSource(tempFile?.absolutePath)
+                    } else {
+                        val stream =
+                            context.contentResolver.openFileDescriptor(currentAudioUri!!, "r")
+                        setDataSource(stream!!.fileDescriptor)
+                    }
+
+                    prepare()
+                }
+
+                mediaPlayer.setOnPreparedListener {
+
+                    mSeekBar?.max = duration
+
+                    if (progress > 0) {
+                        mediaPlayer.seekTo((it.duration * progress).toInt())
+                    }
+                }
+
+                mediaPlayer.setOnCompletionListener {
+                    deleteTempFile()
+                    resetMediaPlayer()
+                    mListener?.onCompleteAudio()
+                    unregisterProximityListener()
+                }
+
+                mRunnable = Runnable {
+                    setSeekbarProgress()
+
+                    mHandler.postDelayed(
+                        mRunnable,
+                        50
+                    )
+                }
+
+                if (isPlaying) {
+                    pause()
+                    mImageButtonPlay?.reverseAnimation()
+                    mListener?.onPauseAudio()
+                } else {
+                    mAudioManager.isSpeakerphoneOn = !isEarpiece
+                    start()
+
+                    mHandler.postDelayed(mRunnable, 0)
+                    mImageButtonPlay?.playAnimation()
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            mListener?.onErrorPlayingAudio()
+        }
     }
 
     override fun unregisterProximityListener() {

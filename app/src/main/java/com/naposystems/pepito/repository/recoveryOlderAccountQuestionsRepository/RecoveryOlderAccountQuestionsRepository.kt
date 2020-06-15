@@ -1,5 +1,7 @@
 package com.naposystems.pepito.repository.recoveryOlderAccountQuestionsRepository
 
+import com.naposystems.pepito.BuildConfig
+import com.naposystems.pepito.crypto.Crypto
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.RecoveryOlderAccountDTO
 import com.naposystems.pepito.dto.recoveryOlderAccountQuestions.getQuestions.RecoveryOlderAccountQuestionsErrorDTO
@@ -100,5 +102,15 @@ class RecoveryOlderAccountQuestionsRepository @Inject constructor(
         val updateUserInfoError = adapter.fromJson(response.errorBody()!!.string())
 
         return arrayListOf(updateUserInfoError!!.error)
+    }
+
+    override fun saveSecretKey(secretKey: String) {
+
+        val crypto = Crypto()
+
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_SECRET_KEY,
+            crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
+        )
     }
 }

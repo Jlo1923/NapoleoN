@@ -16,7 +16,6 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
-        super.containerQuote = binding.containerQuote
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
     }

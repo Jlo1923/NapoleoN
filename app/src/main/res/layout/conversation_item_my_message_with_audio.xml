@@ -48,31 +48,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.7">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_quote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:maxHeight="100dp"
+            <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+                android:id="@+id/quote"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/audio_player"
+                app:isGoTo="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible">
-
-                <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
-                    android:id="@+id/quote"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:isGoTo="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintWidth_min="wrap"
+                tools:visibility="visible"
+                style="@style/QuoteConversation" />
 
             <com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
                 android:id="@+id/audio_player"
@@ -82,7 +67,7 @@
                 app:isEncryptedFile="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_quote"
+                app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:seekbarProgressBackgroundTint="@color/black"
                 app:seekbarProgressTint="?attr/attrSeekbarProgressTint"
                 app:seekbarThumbTint="?attr/attrSeekbarThumbTint" />

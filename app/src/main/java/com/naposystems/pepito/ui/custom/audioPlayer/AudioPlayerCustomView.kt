@@ -116,21 +116,20 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
         binding.imageButtonPlay.setOnClickListener {
 
-            mediaPlayerManager?.setImageButtonPlay(binding.imageButtonPlay)
-            mediaPlayerManager?.setSeekbar(binding.seekbar)
-            mediaPlayerManager?.setImageButtonSpeed(binding.imageButtonSpeed)
-            mediaPlayerManager?.setTextViewDuration(binding.textViewDuration)
+            mediaPlayerManager?.apply {
+                setAudioId(mAudioId)
+                setImageButtonPlay(binding.imageButtonPlay)
+                setSeekbar(binding.seekbar)
+                setImageButtonSpeed(binding.imageButtonSpeed)
+                setTextViewDuration(binding.textViewDuration)
 
-            mAudioFileUri?.let {
-                mediaPlayerManager?.playAudio(
-                    audioId = mAudioId,
-                    uri = it
-                )
-            } ?: run {
-                mediaPlayerManager?.playAudio(
-                    audioId = mAudioId,
-                    fileName = mEncryptedFileName
-                )
+                if (mIsEncryptedFile) {
+                    setAudioFileName(mEncryptedFileName)
+                } else {
+                    setAudioUri(mAudioFileUri)
+                }
+
+                playAudio()
             }
         }
 
@@ -150,6 +149,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     //region Implementation IContractAudioPlayer
 
     override fun enablePlayButton(isEnable: Boolean) {
+        Timber.d("enablePlayButton: $isEnable")
         binding.imageButtonPlay.visibility = if (isEnable) View.VISIBLE else View.INVISIBLE
         binding.imageButtonPlay.isEnabled = isEnable
     }
@@ -184,11 +184,12 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     override fun showImageButtonState() {
         binding.imageButtonState.visibility = View.VISIBLE
-        Timber.d("entró")
+        Timber.d("showImageButtonState")
     }
 
     override fun hideImageButtonState() {
         binding.imageButtonState.visibility = View.GONE
+        Timber.d("hideImageButtonState")
     }
 
     override fun playAudio() {
