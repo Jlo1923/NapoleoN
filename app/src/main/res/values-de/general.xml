@@ -73,4 +73,6 @@
     <string name="text_access">ZUGRIFF</string>
     <string name="text_yes">Ja</string>
     <string name="text_no">Nein</string>
+    <string name="text_empty_state_search_contacts">Ihre Suche ergab keine Ergebnisse</string>
+    <string name="text_contact">KONTAKT</string>
 </resources>

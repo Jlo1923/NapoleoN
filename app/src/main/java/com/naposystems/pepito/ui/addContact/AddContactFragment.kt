@@ -117,6 +117,11 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         observeFriendshipRequestAcceptedSuccessfully()
     }
 
+    override fun onStop() {
+        super.onStop()
+        searchView.close()
+    }
+
     private fun observeFriendshipRequestAcceptedSuccessfully() {
         viewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {

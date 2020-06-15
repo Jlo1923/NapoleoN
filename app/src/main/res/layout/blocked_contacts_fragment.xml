@@ -27,7 +27,7 @@
                 android:id="@+id/empty_state"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                custom:description="@string/text_empty_state_blocked_contacts_description"
+                custom:titleEmptyState="@string/text_empty_state_blocked_contacts_description"
                 custom:image="?attr/attrImageEmptyStateBlockContact" />
 
             <!-- RECYCLERVIEW -->
@@ -83,26 +83,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- SEARCH NOT FOUND -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_search_not_found"
+            <com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
+                android:id="@+id/empty_state_search"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView_search_not_found"
-                    style="@style/TextViewSecondaryTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/normal_padding"
-                    android:paddingEnd="@dimen/normal_padding"
-                    android:text="@string/text_blocked_contact_not_found"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="match_parent"
+                custom:image="?attr/attrImageEmptyStateSearchContact"
+                custom:titleEmptyState="@string/text_empty_state_search_contacts" />
 
         </ViewFlipper>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

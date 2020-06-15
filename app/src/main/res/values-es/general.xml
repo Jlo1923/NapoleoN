@@ -72,4 +72,6 @@
     <string name="text_access">ACCESO</string>
     <string name="text_yes">Si</string>
     <string name="text_no">No</string>
+    <string name="text_empty_state_search_contacts">Tu búsqueda no produjo resultado</string>
+    <string name="text_contact">CONTACTO</string>
 </resources>

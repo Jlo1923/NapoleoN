@@ -2,8 +2,13 @@ package com.naposystems.pepito.ui.status
 
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -15,11 +20,12 @@ import com.naposystems.pepito.databinding.StatusFragmentBinding
 import com.naposystems.pepito.entity.Status
 import com.naposystems.pepito.ui.status.adapter.StatusAdapter
 import com.naposystems.pepito.utility.SharedPreferencesManager
-import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
+
 
 class StatusFragment : Fragment() {
 
@@ -73,27 +79,20 @@ class StatusFragment : Fragment() {
 
         viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                val message = getString(R.string.text_error_getting_local_status)
-
-                Utils.showSimpleSnackbar(binding.coordinator, message, 3)
+                showToast(getString(R.string.text_error_getting_local_status))
             }
         })
 
         viewModel.errorUpdatingStatus.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
-                val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
+                showToast(it.toString())
             }
         })
 
         viewModel.statusUpdatedSuccessfully.observe(viewLifecycleOwner, Observer { isUpdated ->
             if (isUpdated == true) {
                 Utils.hideKeyboard(binding.coordinator)
-                Utils.showSimpleSnackbar(
-                    binding.coordinator,
-                    getString(R.string.text_status_updated_successfully),
-                    3
-                )
+                showToast(getString(R.string.text_status_updated_successfully))
             }
         })
     }
@@ -181,5 +180,17 @@ class StatusFragment : Fragment() {
                 binding.textInputEditTextStatus.setText(statusByDefect)
             }
         }
+    }
+
+    private fun showToast(string : String) {
+        val vwToast: Toast = Toast.makeText(
+            requireContext(),
+            string,
+            Toast.LENGTH_SHORT
+        )
+        val tv = vwToast.view.findViewById<View>(android.R.id.message) as TextView
+        tv.gravity = Gravity.CENTER
+        tv.textSize = 14F
+        vwToast.show()
     }
 }

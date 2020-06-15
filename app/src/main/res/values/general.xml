@@ -90,4 +90,6 @@
     <integer name="location_empty_state_contacts">4</integer>
     <string name="text_yes">Yes</string>
     <string name="text_no">No</string>
+    <string name="text_empty_state_search_contacts">Your search yielded no results</string>
+    <string name="text_contact">CONTACT</string>
 </resources>

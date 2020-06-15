@@ -66,6 +66,7 @@
                         android:maxLength="500"
                         android:maxLines="5"
                         android:singleLine="false"
+                        android:textColor="?attr/attrTextColorConversationInputPanel"
                         tools:text="@tools:sample/lorem/random" />
 
                 </com.google.android.material.textfield.TextInputLayout>

@@ -204,17 +204,29 @@
                     android:layout_height="match_parent"
                     android:background="?attr/attrBackgroundSectionColor"
                     android:padding="@dimen/small_padding"
-                    android:text="@string/text_general"
+                    android:text="@string/text_conversation"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/option_change_nickname" />
+
+                <TextView
+                    android:id="@+id/textView_contact"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="?attr/attrBackgroundSectionColor"
+                    android:padding="@dimen/small_padding"
+                    android:text="@string/text_contact"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/option_delete_conversation" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/option_block_contact"
                     style="@style/Option"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_general">
+                    app:layout_constraintTop_toBottomOf="@+id/textView_contact">
 
                     <ImageView
                         android:id="@+id/imageView_block_contact_start_icon"
@@ -238,7 +250,7 @@
                     style="@style/Option"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/option_block_contact">
+                    app:layout_constraintTop_toBottomOf="@+id/option_silence_conversation">
 
                     <ImageView
                         android:id="@+id/imageView_delete_chat_start_icon"
@@ -262,7 +274,7 @@
                     style="@style/Option"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/option_delete_conversation">
+                    app:layout_constraintTop_toBottomOf="@+id/textView_general">
 
                     <ImageView
                         android:id="@+id/imageView_silence_conversation_start_icon"
@@ -293,8 +305,8 @@
                     android:id="@+id/option_restore_contact_chat"
                     style="@style/Option"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/option_silence_conversation">
+                    app:layout_constraintStart_toStartOf="@+id/option_block_contact"
+                    app:layout_constraintTop_toBottomOf="@+id/option_delete_contact">
 
                     <ImageView
                         android:id="@+id/imageView_restore_contact_start_icon"
@@ -318,7 +330,7 @@
                     style="@style/Option"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/option_restore_contact_chat">
+                    app:layout_constraintTop_toBottomOf="@+id/option_block_contact">
 
                     <ImageView
                         android:id="@+id/imageView_delete_contact_start_icon"

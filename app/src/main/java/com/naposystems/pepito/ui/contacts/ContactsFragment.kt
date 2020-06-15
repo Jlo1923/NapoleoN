@@ -138,10 +138,9 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
         viewModel.contacts.observe(viewLifecycleOwner, Observer { listContacts ->
             if (listContacts != null) {
                 if(listContacts.count() >= 1) {
-                    listContacts.add(Contact(0, displayName = getString(R.string.text_add_new_contact)))
-                    listContacts.sortBy { contact ->
-                        contact.id
-                    }
+                    listContacts.add(
+                        0, Contact(0, displayName = getString(R.string.text_add_new_contact))
+                    )
                 }
                 adapter.submitList(listContacts)
                 if (listContacts.isNotEmpty()) {
