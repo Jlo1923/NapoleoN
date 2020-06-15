@@ -7,13 +7,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -55,7 +56,7 @@ class AppearanceSettingsFragment : BaseFragment() {
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: AppearanceSettingsViewModel
+    private val viewModel: AppearanceSettingsViewModel by viewModels { viewModelFactory }
 
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
@@ -300,8 +301,6 @@ class AppearanceSettingsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(AppearanceSettingsViewModel::class.java)
 
         binding.viewModel = viewModel
 

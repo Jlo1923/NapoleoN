@@ -9,4 +9,5 @@
     <string name="text_nickname_contain_at_least_one_number">It must contain at least one number</string>
     <string name="text_nickname_not_contain_enough_char_and_number">The nickname must contain at least four characters and one number</string>
     <string name="text_nickname_contain_at_least_one_letter">The nickname must contain at the least one letter</string>
+    <string name="text_only_start_letter">Nickname must start with a letter</string>
 </resources>

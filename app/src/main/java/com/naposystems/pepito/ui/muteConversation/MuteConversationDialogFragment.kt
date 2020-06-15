@@ -1,7 +1,6 @@
 package com.naposystems.pepito.ui.muteConversation
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationMuteDialogFragmentBinding
@@ -39,7 +39,7 @@ class MuteConversationDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: MuteConversationViewModel
+    private val viewModel: MuteConversationViewModel by viewModels { viewModelFactory }
     private lateinit var binding: ConversationMuteDialogFragmentBinding
     private lateinit var listener: MuteConversationListener
 
@@ -75,8 +75,8 @@ class MuteConversationDialogFragment : DialogFragment() {
         binding.buttonAccept.setOnClickListener {
             if (viewModel.timeMuteConversation != Constants.TimeMuteConversation.WITHOUT_TIME.time) {
                 viewModel.updateContactSilenced(
-                    arguments!!.getInt(ID_CONTACT),
-                    arguments!!.getBoolean(CONTACT_SILENCED)
+                    requireArguments().getInt(ID_CONTACT),
+                    requireArguments().getBoolean(CONTACT_SILENCED)
                 )
             }
         }
@@ -86,14 +86,13 @@ class MuteConversationDialogFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog?.window?.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(MuteConversationViewModel::class.java)
+        dialog?.window?.let {
+            it.attributes.windowAnimations = R.style.DialogAnimation
+            it.setLayout(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
 
         binding.viewmodel = viewModel
 

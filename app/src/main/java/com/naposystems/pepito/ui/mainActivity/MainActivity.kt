@@ -8,7 +8,6 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Display

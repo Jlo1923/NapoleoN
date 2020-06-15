@@ -5,10 +5,11 @@
     <string name="text_power_by" translatable="false">Powered by</string>
     <string name="middle_dash" translatable="false">-</string>
     <string name="okay" translatable="false">OK</string>
-    <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz 0123456789</string>
+    <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="only_letters_upper_case_and_numbers" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
+    <string name="nickname_configuration" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._</string>
     <string name="only_numbers" translatable="false">0123456789</string>
-    <string name="only_letters" translatable="false">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ abcdefghijklmnñopqrstuvwxyz</string>
+    <string name="only_letters" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz</string>
     <string name="text_napoleon_secret_chat" translatable="false">NapoleoN Secret Chat</string>
     <string name="text_duration_and_size" translatable="false">%1$s - %2$s</string>
     <string name="transition_name_gallery_thumbnail" translatable="false">gallery_item_thumbnail_%1$d</string>
@@ -87,4 +88,6 @@
     <string name="text_twentyfour_hours">24 hours</string>
     <string name="text_access">ACCESS</string>
     <integer name="location_empty_state_contacts">4</integer>
+    <string name="text_yes">Yes</string>
+    <string name="text_no">No</string>
 </resources>

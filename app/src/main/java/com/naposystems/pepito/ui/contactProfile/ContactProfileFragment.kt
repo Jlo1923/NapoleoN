@@ -58,7 +58,6 @@ class ContactProfileFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
-
     private lateinit var viewModel: ContactProfileViewModel
     private lateinit var shareContactViewModel: ShareContactViewModel
     private val baseViewModel: BaseViewModel by viewModels {
@@ -125,6 +124,8 @@ class ContactProfileFragment : BaseFragment() {
 
         binding.optionBlockContact.setOnClickListener(optionBlockContactClickListener())
 
+        binding.optionDeleteContact.setOnClickListener(optionDeleteContactClickListener())
+
         binding.imageButtonEditHeader.setOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
             verifyCameraAndMediaPermission()
@@ -172,9 +173,7 @@ class ContactProfileFragment : BaseFragment() {
             getString(R.string.text_block_contact),
             getString(
                 R.string.text_wish_block_contact,
-                contactProfileShareViewModel.contact.value?.let { contact ->
-                    contact.getName()
-                }
+                contactProfileShareViewModel.contact.value?.getName()
             ),
             true,
             childFragmentManager
@@ -186,6 +185,25 @@ class ContactProfileFragment : BaseFragment() {
                     shareContactViewModel.sendBlockedContact(contact)
                     findNavController().popBackStack(R.id.homeFragment, false)
                 }
+            }
+        }
+    }
+
+    private fun optionDeleteContactClickListener() = View.OnClickListener {
+        val getContact = contactProfileShareViewModel.contact.value
+        getContact?.let { contact ->
+            Utils.generalDialog(
+                getString(R.string.text_delete_contact),
+                getString(
+                    R.string.text_wish_delete_contact,
+                    if (contact.displayNameFake.isEmpty()) contact.displayName
+                    else contact.displayNameFake
+                ),
+                true,
+                childFragmentManager
+            ) {
+                shareContactViewModel.sendDeleteContact(contact)
+                findNavController().popBackStack(R.id.homeFragment, false)
             }
         }
     }
@@ -220,13 +238,13 @@ class ContactProfileFragment : BaseFragment() {
             .get(ContactProfileViewModel::class.java)
 
         try {
-            shareContactViewModel = ViewModelProvider(activity!!, viewModelFactory)
+            shareContactViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
                 .get(ShareContactViewModel::class.java)
         } catch (e: Exception) {
             Timber.e(e)
         }
 
-        binding.viewmodel = contactProfileShareViewModel
+        binding.viewModel = contactProfileShareViewModel
 
         baseViewModel.getOutputControl()
 
@@ -240,9 +258,11 @@ class ContactProfileFragment : BaseFragment() {
         })
 
         contactProfileShareViewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
-            checkSilenceConversation(contact.silenced)
-            setTextToolbar(contact)
-            setTextBlockedContact(contact.statusBlocked)
+            contact?.let {
+                checkSilenceConversation(contact.silenced)
+                setTextToolbar(contact)
+                setTextBlockedContact(contact.statusBlocked)
+            }
         })
     }
 

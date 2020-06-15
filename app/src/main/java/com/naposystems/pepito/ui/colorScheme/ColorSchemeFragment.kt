@@ -1,12 +1,11 @@
 package com.naposystems.pepito.ui.colorScheme
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ColorSchemeFragmentBinding
@@ -26,7 +25,7 @@ class ColorSchemeFragment : BaseFragment() {
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: ColorSchemeViewModel
+    private val viewModel: ColorSchemeViewModel by viewModels { viewModelFactory }
     private lateinit var binding: ColorSchemeFragmentBinding
     private lateinit var adapter: ColorSchemeAdapter
     private var acceptMenuItem: MenuItem? = null
@@ -71,8 +70,6 @@ class ColorSchemeFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(ColorSchemeViewModel::class.java)
 
         binding.viewModel = viewModel
 

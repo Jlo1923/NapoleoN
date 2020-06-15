@@ -11,12 +11,10 @@ import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_HIDDEN
 import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_SHOWN
 import android.widget.PopupWindow
-import androidx.activity.addCallback
 import androidx.emoji.widget.EmojiAppCompatEditText
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.napoleonKeyboard.view.NapoleonKeyboardView
 import com.naposystems.pepito.ui.napoleonKeyboard.view.NapoleonKeyboardView.Companion.GIF_PAGE
-import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.napoleonKeyboardSticker.NapoleonKeyboardStickerFragment
 import com.naposystems.pepito.utility.Utils

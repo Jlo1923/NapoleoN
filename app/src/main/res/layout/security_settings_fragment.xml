@@ -358,7 +358,7 @@
                 <TextView
                     android:id="@+id/textView_mask_app_title"
                     style="@style/OptionTitle"
-                    android:text="Enmascarar la App!!"
+                    android:text="Enmascarar la App|!!"
                     app:layout_constraintEnd_toStartOf="@id/imageButton_mask_app_end_icon"
                     app:layout_constraintStart_toEndOf="@id/imageView_mask_app_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />

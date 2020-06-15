@@ -96,7 +96,7 @@ class RegisterRecoveryAccountFragment : Fragment() {
     private fun openTermsAndConditions() {
         val termsAndConditionsUri: Uri = Uri.parse(Constants.URL_TERMS_AND_CONDITIONS)
         val intent = Intent(Intent.ACTION_VIEW, termsAndConditionsUri)
-        if (intent.resolveActivity(context!!.packageManager) != null) {
+        if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
         }
     }

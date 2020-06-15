@@ -1,14 +1,12 @@
 package com.naposystems.pepito.ui.inviteSomeone
 
 import android.content.Intent
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-
+import androidx.fragment.app.Fragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.InviteSomeoneFragmentBinding
 
@@ -18,7 +16,6 @@ class InviteSomeoneFragment : Fragment() {
         fun newInstance() = InviteSomeoneFragment()
     }
 
-    private lateinit var viewModel: InviteSomeoneViewModel
     private lateinit var binding: InviteSomeoneFragmentBinding
 
     override fun onCreateView(
@@ -41,11 +38,6 @@ class InviteSomeoneFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(InviteSomeoneViewModel::class.java)
     }
 
 }

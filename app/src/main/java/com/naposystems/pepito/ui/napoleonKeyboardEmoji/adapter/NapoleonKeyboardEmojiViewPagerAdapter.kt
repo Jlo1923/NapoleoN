@@ -5,7 +5,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.naposystems.pepito.model.emojiKeyboard.EmojiCategory
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.NapoleonKeyboardEmojiPageFragment
-import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 
 class NapoleonKeyboardEmojiViewPagerAdapter constructor(
     fragmentActivity: FragmentActivity

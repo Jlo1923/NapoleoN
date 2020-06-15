@@ -66,7 +66,7 @@ class EditAccessPinFragment : Fragment() {
                 }
             } else {
                 binding.textInputLayoutOldAccessPin.error =
-                    context!!.getString(R.string.text_access_pin_not_correspond)
+                    requireContext().getString(R.string.text_access_pin_not_correspond)
             }
         }
 
@@ -83,26 +83,22 @@ class EditAccessPinFragment : Fragment() {
         viewModel.accessPinUpdatedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Toast.makeText(
-                    context!!,
+                    requireContext(),
                     R.string.text_access_pin_updated_successfully,
                     Toast.LENGTH_LONG
                 ).show()
                 this.findNavController().popBackStack()
             } else if (it == false) {
-                val message = context!!.getString(R.string.text_error_updating_access_pin)
+                val message = requireContext().getString(R.string.text_error_updating_access_pin)
                 Utils.showSimpleSnackbar(binding.coordinator, message, 3)
             }
         })
     }
 
     private fun editTextTextWatcher() = object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            //Nothing
-        }
+        override fun afterTextChanged(s: Editable?) = Unit
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            //Nothing
-        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             binding.buttonEdit.isEnabled =

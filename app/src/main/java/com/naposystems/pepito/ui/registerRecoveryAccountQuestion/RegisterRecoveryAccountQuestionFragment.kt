@@ -102,13 +102,13 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         viewModel.questions.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
 
-                val selectQuestion = context!!.getString(R.string.text_security_questions)
+                val selectQuestion = requireContext().getString(R.string.text_security_questions)
 
                 val newListQuestion = it.toMutableList()
                 newListQuestion.add(0, Questions(0, selectQuestion))
 
                 val adapter = ArrayAdapter(
-                    context!!,
+                    requireContext(),
                     R.layout.register_recovery_account_question_item,
                     R.id.textView_question_item,
                     newListQuestion
@@ -125,14 +125,14 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         viewModel.recoveryQuestionsSavedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Toast.makeText(
-                    context!!,
+                    requireContext(),
                     getString(R.string.text_successful_message),
                     Toast.LENGTH_LONG
                 ).show()
                 findNavController().popBackStack()
             } else if (it == false) {
                 Toast.makeText(
-                    context!!,
+                    requireContext(),
                     getString(R.string.text_error_message),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -169,7 +169,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
                 verifyAnswers(selectedQuestion, textInputAnswer, flag)
             } else {
                 Toast.makeText(
-                    context!!, getString(R.string.text_select_question), Toast.LENGTH_SHORT
+                    requireContext(), getString(R.string.text_select_question), Toast.LENGTH_SHORT
                 ).show()
             }
         }

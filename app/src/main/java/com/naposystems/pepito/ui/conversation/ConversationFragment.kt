@@ -583,6 +583,7 @@ class ConversationFragment : BaseFragment(),
 
         selfDestructTimeViewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer {
             selfDestructTimeViewModel.selfDestructTimeByContact = it
+            setIconTimeDestruction()
         })
 
         observeMessagesSelected()
@@ -867,10 +868,51 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menuOptionsContact = menu
         inflater.inflate(R.menu.menu_conversation, menu)
+        menuOptionsContact = menu
+
         contactProfileShareViewModel.contact.value?.let { contact ->
             setTextSilenceOfMenu(contact)
+        }
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun setIconTimeDestruction() {
+        menuOptionsContact?.let {
+            it.getItem(0).icon = when (obtainTimeSelfDestruct()) {
+                Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time ->
+                    requireContext().getDrawable(R.drawable.ic_five_seconds)
+
+                Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time ->
+                    requireContext().getDrawable(R.drawable.ic_fifteen_seconds)
+
+                Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time ->
+                    requireContext().getDrawable(R.drawable.ic_thirty_seconds)
+
+                Constants.SelfDestructTime.EVERY_ONE_MINUTE.time ->
+                    requireContext().getDrawable(R.drawable.ic_one_minute)
+
+                Constants.SelfDestructTime.EVERY_TEN_MINUTES.time ->
+                    requireContext().getDrawable(R.drawable.ic_ten_minutes)
+
+                Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time ->
+                    requireContext().getDrawable(R.drawable.ic_thirty_minutes)
+
+                Constants.SelfDestructTime.EVERY_ONE_HOUR.time ->
+                    requireContext().getDrawable(R.drawable.ic_one_hour)
+
+                Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time ->
+                    requireContext().getDrawable(R.drawable.ic_twelve_hours)
+
+                Constants.SelfDestructTime.EVERY_ONE_DAY.time ->
+                    requireContext().getDrawable(R.drawable.ic_one_day)
+
+                Constants.SelfDestructTime.EVERY_SEVEN_DAY.time ->
+                    requireContext().getDrawable(R.drawable.ic_seven_days)
+
+                else -> null
+            }
         }
     }
 
@@ -930,6 +972,7 @@ class ConversationFragment : BaseFragment(),
                 dialog.setListener(object :
                     SelfDestructTimeDialogFragment.SelfDestructTimeListener {
                     override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
+
                         selfDestructTimeViewModel.setSelfDestructTimeByContact(
                             selfDestructTimeSelected,
                             args.contact.id
@@ -1048,11 +1091,10 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun obtainTimeSelfDestruct(): Int {
-        return if (selfDestructTimeViewModel.selfDestructTimeByContact!! < 0) {
-            selfDestructTimeViewModel.selfDestructTimeGlobal.value!!
-        } else {
-            selfDestructTimeViewModel.selfDestructTimeByContact!!
-        }
+        return selfDestructTimeViewModel.selfDestructTimeByContact?.let {
+            if (it < 0) selfDestructTimeViewModel.selfDestructTimeGlobal.value
+            else it
+        } ?: kotlin.run { -1 }
     }
 
     private fun resetConversationBackground() {

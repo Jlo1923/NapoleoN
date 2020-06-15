@@ -77,7 +77,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
         AttachmentLocationAdapter(this)
     }
     private val placesClient: PlacesClient by lazy {
-        Places.createClient(context!!)
+        Places.createClient(requireContext())
     }
     private val token: AutocompleteSessionToken by lazy {
         AutocompleteSessionToken.newInstance()
@@ -191,7 +191,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     private fun initializeFusedLocationClient() {
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(context as MainActivity)
-
+        //TODO Pepe
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 location?.let {
@@ -398,7 +398,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                     val statusCode = apiException.statusCode
                     // Handle error with given status code.
                     Timber.e("Place not found: " + exception.message)
-                    this.showToast("No se pudo encontrar el sitio")
+                    this.showToast("No se pudo encontrar el sitio|!!")
                 }
             }
     }

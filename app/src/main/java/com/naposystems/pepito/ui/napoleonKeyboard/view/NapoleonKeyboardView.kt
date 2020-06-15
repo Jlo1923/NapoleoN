@@ -14,7 +14,6 @@ import com.naposystems.pepito.databinding.NapoleonKeyboardViewBinding
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.napoleonKeyboard.adapter.NapoleonKeyboardViewPagerAdapter
 import com.naposystems.pepito.ui.napoleonKeyboardEmoji.NapoleonKeyboardEmojiFragment
-import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.napoleonKeyboardSticker.NapoleonKeyboardStickerFragment
 import com.naposystems.pepito.utility.Utils

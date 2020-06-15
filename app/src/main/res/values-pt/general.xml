@@ -71,4 +71,6 @@
     <string name="text_explanation_camera_to_receive_calls">NapoleoN precisa de acesso à câmera e microfone para fazer e receber chamadas</string>
     <string name="text_twentyfour_hours">24 horas</string>
     <string name="text_access">ACESSO</string>
+    <string name="text_yes">sim</string>
+    <string name="text_no">Não</string>
 </resources>

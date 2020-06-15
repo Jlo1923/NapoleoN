@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AboutFragmentBinding
@@ -19,7 +18,6 @@ class AboutFragment : Fragment() {
         fun newInstance() = AboutFragment()
     }
 
-    private lateinit var viewModel: AboutViewModel
     private lateinit var binding: AboutFragmentBinding
 
     @SuppressLint("ClickableViewAccessibility")
@@ -35,16 +33,10 @@ class AboutFragment : Fragment() {
 
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
             binding.imageViewLogoNapoleon.setImageDrawable(
-                context!!.getDrawable(R.drawable.logo_napoleon_vertical_white)
+                requireContext().getDrawable(R.drawable.logo_napoleon_vertical_white)
             )
         }
 
         return binding.root
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(AboutViewModel::class.java)
-    }
-
 }

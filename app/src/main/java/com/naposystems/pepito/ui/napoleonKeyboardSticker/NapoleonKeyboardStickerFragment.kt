@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.crashlytics.android.Crashlytics
-import com.google.android.gms.tasks.Task
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.NapoleonKeyboardStickerFragmentBinding

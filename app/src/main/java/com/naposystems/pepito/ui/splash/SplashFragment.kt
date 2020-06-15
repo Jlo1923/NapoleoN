@@ -2,7 +2,6 @@ package com.naposystems.pepito.ui.splash
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +10,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SplashFragmentBinding
-import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashFragment : Fragment() {
@@ -29,7 +25,6 @@ class SplashFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: SplashViewModel by viewModels { viewModelFactory }
     private lateinit var binding: SplashFragmentBinding
-    private lateinit var user: User
 
     //region Variables Access Pin
     private var lockStatus: Int = 0

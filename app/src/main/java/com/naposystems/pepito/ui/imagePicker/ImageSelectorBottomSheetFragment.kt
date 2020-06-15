@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ImageSelectorBottomSheetFragmentBinding
-import com.naposystems.pepito.utility.Constants
 
 const val TITLE = "TITLE"
 const val LOCATION = "LOCATION"
@@ -92,7 +90,7 @@ class ImageSelectorBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
     }
 
     fun setListener(listener: OnOptionSelected) {

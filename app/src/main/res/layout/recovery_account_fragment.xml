@@ -66,8 +66,9 @@
                         android:id="@+id/textInputEditText_nickname"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:digits="@string/nickname_configuration"
                         android:lines="1"
-                        android:maxLength="20"
+                        android:maxLength="@dimen/max_length_nickname"
                         android:maxLines="1"
                         android:singleLine="true" />
 

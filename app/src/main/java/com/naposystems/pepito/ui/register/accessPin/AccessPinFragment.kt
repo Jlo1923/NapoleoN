@@ -151,7 +151,7 @@ class AccessPinFragment : Fragment() {
     private fun createAccount() {
         val languageIso = viewModel.getLanguage()
 
-        val defaultStatus = context!!.getString(R.string.text_status_available)
+        val defaultStatus = requireContext().getString(R.string.text_status_available)
 
         val createAccountReqDTO = CreateAccountReqDTO(
             firebaseId,
@@ -186,13 +186,9 @@ class AccessPinFragment : Fragment() {
     }
 
     private fun textWatcherAccessPin(): TextWatcher = object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            // Intentionally empty
-        }
+        override fun afterTextChanged(s: Editable?) = Unit
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            // Intentionally empty
-        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             FieldsValidator.isAccessPinValid(binding.textInputLayoutAccessPin)
@@ -200,13 +196,9 @@ class AccessPinFragment : Fragment() {
     }
 
     private fun textWatcherConfirmAccessPin(): TextWatcher = object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            // Intentionally empty
-        }
+        override fun afterTextChanged(s: Editable?) = Unit
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            // Intentionally empty
-        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             FieldsValidator.isConfirmAccessPinValid(

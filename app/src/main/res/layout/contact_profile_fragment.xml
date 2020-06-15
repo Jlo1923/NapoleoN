@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="viewmodel"
+            name="viewModel"
             type="com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel" />
 
     </data>
@@ -19,7 +19,8 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -39,7 +40,7 @@
                         android:layout_height="250dp"
                         android:scaleType="centerCrop"
                         android:transitionName="transition_image_preview"
-                        app:avatarWithoutCircle="@{viewmodel.contact}"
+                        app:avatarWithoutCircle="@{viewModel.contact}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -51,8 +52,10 @@
                         android:background="@drawable/bg_black_gradient"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <ImageButton
                         android:id="@+id/imageButton_edit_header"
@@ -134,7 +137,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/textView_name"
                         app:layout_constraintStart_toStartOf="@+id/textView_name"
-                        app:nameContact="@{viewmodel.contact}"
+                        app:nameContact="@{viewModel.contact}"
                         tools:text="Cecilia Maidana" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -189,7 +192,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/textView_nickname"
                         app:layout_constraintStart_toStartOf="@+id/textView_nickname"
-                        app:nicknameContact="@{viewmodel.contact}"
+                        app:nicknameContact="@{viewModel.contact}"
                         tools:text="Ceci Maidana" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -273,9 +276,8 @@
                         android:id="@+id/textView_label_silence_conversation"
                         style="@style/OptionTitle"
                         android:text="@string/text_mute_conversation"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/imageView_silence_conversation_start_icon"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="@+id/imageView_silence_conversation_start_icon" />
 
                     <Switch
                         android:id="@+id/switch_silence_conversation"
@@ -290,7 +292,6 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/option_restore_contact_chat"
                     style="@style/Option"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/option_silence_conversation">
@@ -307,8 +308,31 @@
                         android:id="@+id/textView_label_restore_contact_chat"
                         style="@style/OptionTitle"
                         android:text="@string/text_reset_contact"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/imageView_restore_contact_start_icon"
+                        app:layout_constraintTop_toTopOf="@+id/imageView_restore_contact_start_icon" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/option_delete_contact"
+                    style="@style/Option"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/option_restore_contact_chat">
+
+                    <ImageView
+                        android:id="@+id/imageView_delete_contact_start_icon"
+                        style="@style/OptionStartIcon"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_delete_contact" />
+
+                    <TextView
+                        android:id="@+id/textView_label_delete_contact"
+                        style="@style/OptionTitle"
+                        android:text="@string/text_delete_contact"
+                        app:layout_constraintStart_toEndOf="@id/imageView_delete_contact_start_icon"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,8 +21,6 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
-import timber.log.Timber
-import java.io.File
 
 class AttachmentPreviewFragment : Fragment() {
 
