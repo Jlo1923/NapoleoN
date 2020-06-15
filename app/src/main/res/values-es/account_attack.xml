@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_block_attacker">Están intentando recuperar tu cuenta, ¿eres tú?</string>
+    <string name="text_title_block_attacker">Ataque de cuenta</string>
+</resources>

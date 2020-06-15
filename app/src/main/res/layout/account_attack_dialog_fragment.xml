@@ -21,7 +21,7 @@
             android:gravity="center_vertical"
             android:paddingStart="@dimen/large_padding"
             android:paddingEnd="0dp"
-            android:text="Ataque de Cuenta|!!"
+            android:text="@string/text_title_block_attacker"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +54,7 @@
             android:layout_marginTop="@dimen/small_margin"
             android:paddingStart="@dimen/large_padding"
             android:paddingEnd="@dimen/large_padding"
-            android:text="Están intentando entrar a tu cuenta eres tu?|!!"
+            android:text="@string/text_block_attacker"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/view_radio_group_separator" />

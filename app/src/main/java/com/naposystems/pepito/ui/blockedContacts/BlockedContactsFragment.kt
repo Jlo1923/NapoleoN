@@ -183,14 +183,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     private fun unblockContact(contact: Contact) {
         Utils.generalDialog(
             getString(R.string.text_unblock_contact),
-            getString(
-                R.string.text_wish_unblock_contact,
-                if (contact.displayNameFake.isEmpty()) {
-                    contact.displayName
-                } else {
-                    contact.displayNameFake
-                }
-            ),
+            getString(R.string.text_wish_unblock_contact),
             true,
             childFragmentManager
         ) {

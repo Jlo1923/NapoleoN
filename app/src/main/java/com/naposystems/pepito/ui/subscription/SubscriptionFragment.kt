@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -21,6 +22,7 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SubscriptionFragment : Fragment() {
@@ -175,7 +177,10 @@ class SubscriptionFragment : Fragment() {
                 netDate = Date(subscriptionUser.dateExpires)
             } else {
                 netDate = Date(viewModel.getFreeTrial())
-                binding.textViewSubscriptionActual.text = getString(R.string.text_trial_period)
+                val daysMillis = viewModel.getFreeTrial() - System.currentTimeMillis()
+
+                binding.textViewSubscriptionActual.text =
+                    getString(R.string.text_trial_period, TimeUnit.MILLISECONDS.toDays(daysMillis))
             }
             binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
         }

@@ -2,7 +2,7 @@
 <resources>
     <string name="text_btn_recovery">Récupérer</string>
     <string name="text_count_questions_recovery_account">Question %1$d / %2$d</string>
-    <string name="text_description_recovery">Vos contacts vous attendent, ramenez-les. Récupérez rapidement et en toute sécurité vos contacts, préférences et surnom précédent en répondant correctement aux questions de sécurité</string>
+    <string name="text_description_recovery">Récupérez vos contacts rapidement et en toute sécurité en répondant correctement aux questions de sécurité.</string>
     <string name="text_recovery_success">Votre compte a été récupéré, vous pouvez désormais discuter en privé et en toute sécurité avec vos contacts.</string>
     <string name="text_title_success">Récupération de compte</string>
     <string name="text_placeholder_password">Entrez votre mot de passe</string>
@@ -10,4 +10,6 @@
     <string name="text_description_validate_old_answers">Questions de sécurité. Vous êtes plus près de récupérer votre compte, veuillez nous aider à confirmer votre identité. Répondez correctement aux questions de sécurité suivantes</string>
     <string name="text_password_incorrect">Le mot de passe saisi est incorrect</string>
     <string name="text_answers_incorrect">Les réponses saisies sont incorrectes.</string>
+    <string name="text_title_block_attempts">fermé à clé</string>
+    <string name="text_description_block_attempts">Vous avez été bloqué pour avoir dépassé le nombre de tentatives de récupération de compte</string>
 </resources>

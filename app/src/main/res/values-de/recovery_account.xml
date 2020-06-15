@@ -2,7 +2,7 @@
 <resources>
     <string name="text_btn_recovery">Erholen</string>
     <string name="text_count_questions_recovery_account">Frage %1$d / %2$d</string>
-    <string name="text_description_recovery">Ihre Kontakte warten auf Sie, bringen Sie sie zurück. Stellen Sie schnell und sicher Ihre Kontakte, Einstellungen und vorherigen Spitznamen wieder her, indem Sie die Sicherheitsfragen richtig beantworten</string>
+    <string name="text_description_recovery">Stellen Sie Ihre Kontakte schnell und sicher wieder her, indem Sie Sicherheitsfragen richtig beantworten.</string>
     <string name="text_recovery_success">Ihr Konto wurde wiederhergestellt, jetzt können Sie privat und sicher mit Ihren Kontakten chatten.</string>
     <string name="text_title_success">Kontowiederherstellung</string>
     <string name="text_placeholder_password">Geben Sie Ihr Passwort ein</string>
@@ -10,4 +10,6 @@
     <string name="text_description_validate_old_answers">Sicherheitsfragen. Sie sind näher an der Wiederherstellung Ihres Kontos. Bitte helfen Sie uns, Ihre Identität zu bestätigen. Beantworten Sie die folgenden Sicherheitsfragen richtig</string>
     <string name="text_password_incorrect">Das eingegebene Passwort ist falsch</string>
     <string name="text_answers_incorrect">Die eingegebenen Antworten sind falsch.</string>
+    <string name="text_title_block_attempts">gesperrt</string>
+    <string name="text_description_block_attempts">Sie wurden blockiert, weil die Anzahl der Kontowiederherstellungsversuche überschritten wurde</string>
 </resources>

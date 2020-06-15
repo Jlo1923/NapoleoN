@@ -88,7 +88,7 @@ class SplashRepository @Inject constructor(
     override suspend fun setDefaultTimeFormat() {
         defaultPreferencesPutInt(
             Constants.SharedPreferences.PREF_TIME_FORMAT,
-            Constants.TimeFormat.EVERY_TWELVE_HOURS.time
+            Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time
         )
     }
 

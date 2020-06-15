@@ -401,7 +401,7 @@ class HomeFragment : Fragment() {
     private fun blockContact(contact: Contact) {
         generalDialog(
             getString(R.string.text_block_contact),
-            getString(R.string.text_wish_block_contact, contact.displayName),
+            getString(R.string.text_wish_block_contact),
             true,
             childFragmentManager
         ) {
