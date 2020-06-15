@@ -77,9 +77,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
         setAdapter()
 
         binding.swipeRefresh.setOnRefreshListener {
-            if (binding.viewSwitcher.nextView.id == binding.emptyState.id) {
-                binding.viewSwitcher.showNext()
-            }
             getContacts()
             binding.swipeRefresh.isRefreshing = false
         }

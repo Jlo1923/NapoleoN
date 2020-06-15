@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.LanguageSelectionDialogFragmentBinding
@@ -47,7 +46,6 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
             LanguageSelectionAdapter(
                 viewModel.languagesList,
                 LanguageSelectionAdapter.LanguageSelectionListener {
-                    Timber.d("Buenooo hpta")
                     viewModel.setSelectedLanguage(it)
                     val languageSelected = it
                     changeLocale(languageSelected)
@@ -61,7 +59,7 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
     }
 
     private fun changeLocale(language: Language) {

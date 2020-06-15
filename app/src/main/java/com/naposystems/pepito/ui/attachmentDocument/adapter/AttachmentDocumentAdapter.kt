@@ -11,7 +11,6 @@ import androidx.databinding.DataBindingUtil
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AttachmentDocumentItemBinding
 import com.naposystems.pepito.utility.Utils
-import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

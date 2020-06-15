@@ -4,7 +4,6 @@ import android.content.Context
 import android.text.InputType
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
-import android.view.KeyCharacterMap
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
@@ -51,7 +50,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
                 //Obtenemos los atributos ingresados en el .xml
                 numBoxes = getInt(R.styleable.EnterCodeWidget_numBoxes, 0)
                 isSecureText = getBoolean(R.styleable.EnterCodeWidget_isSecureText, false)
-                errorText = getString(R.styleable.EnterCodeWidget_errorText)!!
+                getString(R.styleable.EnterCodeWidget_errorText)?.let { errorText = it }
 
                 createLinearLayout(context)
 
@@ -221,6 +220,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
     }
 
     private fun focusAfter(keyCode: Int) {
+        val context = textViews[position].context
         textViews[position].text = keyCode.toString()
         textViews[position].background =
             resources.getDrawable(

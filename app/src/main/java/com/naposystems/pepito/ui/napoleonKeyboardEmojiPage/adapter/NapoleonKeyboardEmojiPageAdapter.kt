@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.databinding.NapoleonKeyboardEmojiPageFragmentItemBinding
 import com.naposystems.pepito.model.emojiKeyboard.Emoji
-import java.io.Serializable
 
 class NapoleonKeyboardEmojiPageAdapter constructor(private val listener: OnNapoleonKeyboardEmojiPageAdapterListener) :
     ListAdapter<Emoji, NapoleonKeyboardEmojiPageAdapter.EmojiViewHolder>(Emoji.DiffCallback) {

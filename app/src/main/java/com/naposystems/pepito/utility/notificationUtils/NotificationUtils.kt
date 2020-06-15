@@ -181,7 +181,6 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                         notify(Random().nextInt(), builder.build())
                     }
                 }
-                Timber.d("Mensaje perro")
             }
 
             Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {

@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
@@ -93,7 +92,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
             container,
             false
         )
-
+        //TODO Pepe
         binding.viewFinder.bindToLifecycle(viewLifecycleOwner)
 
         flashMode = ImageCapture.FLASH_MODE_OFF

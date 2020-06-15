@@ -59,16 +59,13 @@ class RecoveryAccountFragment : Fragment() {
 
         binding.textInputEditTextNickname.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.buttonRecoveryAccount.isEnabled = s!!.length >= 5 && successToken
+                binding.buttonRecoveryAccount.isEnabled = s!!.length >= 4 && successToken
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //Nothing
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                //Nothing
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
         })
 
         binding.buttonRecoveryAccount.setOnClickListener {

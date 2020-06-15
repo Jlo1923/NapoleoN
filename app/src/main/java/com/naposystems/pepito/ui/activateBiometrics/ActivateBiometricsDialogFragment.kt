@@ -12,7 +12,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ActivateBiometricsDialogFragmentBinding
 import com.naposystems.pepito.utility.Constants
@@ -70,7 +69,7 @@ class ActivateBiometricsDialogFragment : DialogFragment() {
                 BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                     Toast.makeText(
                         context,
-                        "El dispositivo no tiene asignado un desbloqueo biometrico",
+                        "El dispositivo no tiene asignado un desbloqueo biometrico|!!",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -91,11 +90,13 @@ class ActivateBiometricsDialogFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog?.window?.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+        dialog?.window?.let {
+            it.attributes.windowAnimations = R.style.DialogAnimation
+            it.setLayout(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
 
         viewModel.biometricsOption.observe(viewLifecycleOwner, Observer {
             optionBiometrics = it

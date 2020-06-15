@@ -12,7 +12,6 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.NapoleonKeyboardEmojiFragmentBinding
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.ui.napoleonKeyboardEmoji.adapter.NapoleonKeyboardEmojiViewPagerAdapter
-import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.emojiManager.EmojiManager
 

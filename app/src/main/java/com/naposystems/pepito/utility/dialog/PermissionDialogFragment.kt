@@ -30,7 +30,7 @@ class PermissionDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = activity?.layoutInflater?.inflate(R.layout.fragment_permission_dialog, null)
 
-        val alert = AlertDialog.Builder(context!!)
+        val alert = AlertDialog.Builder(requireContext())
             .setView(view)
 
         val dialog = alert.create()
@@ -41,9 +41,9 @@ class PermissionDialogFragment : DialogFragment() {
         val buttonCancel = view?.findViewById<MaterialButton>(R.id.button_cancel)
 
         imageViewIcon?.setImageDrawable(
-            context!!.resources.getDrawable(
+            requireContext().resources.getDrawable(
                 iconDrawable!!,
-                context!!.theme
+                requireContext().theme
             )
         )
         textViewMessage?.text = message
@@ -72,7 +72,7 @@ class PermissionDialogFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
     }
 
     override fun onCancel(dialog: DialogInterface) {

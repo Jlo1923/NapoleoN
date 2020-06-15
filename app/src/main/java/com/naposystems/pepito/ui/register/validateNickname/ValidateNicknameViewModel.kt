@@ -53,7 +53,9 @@ class ValidateNicknameViewModel @Inject constructor(private val repository: Vali
                 val response = repository.validateNickname(validateNicknameReqDTO)
 
                 if (response.isSuccessful) {
-                    _itsNicknameValid.value = response.body()!!.nicknameExist
+                    response.body()?.let {
+                        _itsNicknameValid.value = it.nicknameExist
+                    }
                 } else {
                     when (response.code()) {
                         422 -> {
@@ -65,12 +67,12 @@ class ValidateNicknameViewModel @Inject constructor(private val repository: Vali
 
                             _webServiceError.value = sendCodeErrorDTO!!.error
                         }
-                        else -> _webServiceError.value = "Error inesperado"
+                        else -> _webServiceError.value = "Error inesperado|!!"
                     }
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                _webServiceError.value = "Error inesperado"
+                _webServiceError.value = "Error inesperado|!!"
             }
         }
     }

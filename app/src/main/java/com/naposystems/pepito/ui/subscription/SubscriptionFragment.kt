@@ -57,7 +57,7 @@ class SubscriptionFragment : Fragment() {
 
         binding.checkBoxPaymentDescription.isChecked = false
         binding.imageButtonPaypal.isEnabled = false
-        binding.checkBoxPaymentDescription.setOnCheckedChangeListener { _, isChecked ->
+        binding.checkBoxPaymentDescription.setOnCheckedChangeListener { _, _ ->
             enableButtonPaypal()
         }
 
@@ -99,7 +99,7 @@ class SubscriptionFragment : Fragment() {
                 newListSubscription.add(0, TypeSubscription(0, selectSubscription, 0, 0, 0))
 
                 val adapter = ArrayAdapter(
-                    context!!,
+                    requireContext(),
                     R.layout.subscription_item,
                     R.id.textView_subscription_item,
                     newListSubscription

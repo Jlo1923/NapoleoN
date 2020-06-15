@@ -1,22 +1,17 @@
 package com.naposystems.pepito.ui.accountAttack
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.AccountAttackDialogFragmentBinding
-import com.naposystems.pepito.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -67,11 +62,13 @@ class AccountAttackDialogFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog?.window?.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+        dialog?.window?.let {
+            it.attributes.windowAnimations = R.style.DialogAnimation
+            it.setLayout(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
 
         viewModel.closeModal.observe(viewLifecycleOwner, Observer {
             if (it == true){

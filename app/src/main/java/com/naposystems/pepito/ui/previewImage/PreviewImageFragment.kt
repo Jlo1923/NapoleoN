@@ -2,13 +2,13 @@ package com.naposystems.pepito.ui.previewImage
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import androidx.transition.ChangeBounds
 import com.bumptech.glide.Glide
@@ -27,7 +27,7 @@ class PreviewImageFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: PreviewImageViewModel
+    private val viewModel: PreviewImageViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewImageFragmentBinding
     private val args: PreviewImageFragmentArgs by navArgs()
 
@@ -66,8 +66,6 @@ class PreviewImageFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-            .get(PreviewImageViewModel::class.java)
 
         context?.let {context ->
             args.contact?.let {contact ->

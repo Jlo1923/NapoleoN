@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.TimeAccessPinDialogFragmentBinding
 import com.naposystems.pepito.utility.Constants
@@ -29,7 +29,7 @@ class TimeAccessPinDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: TimeAccessPinDialogViewModel
+    private val viewModel: TimeAccessPinDialogViewModel by viewModels { viewModelFactory }
     private lateinit var binding: TimeAccessPinDialogFragmentBinding
     private lateinit var listener: TimeAccessPinListener
 
@@ -82,13 +82,13 @@ class TimeAccessPinDialogFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog?.window?.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(TimeAccessPinDialogViewModel::class.java)
+        dialog?.window?.let {
+            it.attributes.windowAnimations = R.style.DialogAnimation
+            it.setLayout(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
 
         binding.viewModel = viewModel
 

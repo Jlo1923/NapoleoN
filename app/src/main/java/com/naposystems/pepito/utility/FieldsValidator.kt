@@ -1,6 +1,5 @@
 package com.naposystems.pepito.utility
 
-import android.widget.Spinner
 import com.google.android.material.textfield.TextInputLayout
 import com.naposystems.pepito.R
 import java.util.regex.Pattern
@@ -9,7 +8,7 @@ class FieldsValidator {
 
     companion object {
         private val specialCharactersPattern: Pattern =
-            Pattern.compile("[$&+,:;=\\\\?@#|/'<>.^*()%!-]")
+            Pattern.compile("[$&+,:;=\\\\?@#|/'<>^*()%!-]")
 
         private val containNumberPattern: Pattern =
             Pattern.compile(".*[0-9].*")
@@ -18,63 +17,60 @@ class FieldsValidator {
             Pattern.compile(".*[a-zA-Z].*")
 
         fun isNicknameValid(textInputLayout: TextInputLayout): Boolean {
-            val nickname = textInputLayout.editText!!.text.toString()
+            val nickname = textInputLayout.editText?.text.toString()
             val context = textInputLayout.context
 
             textInputLayout.error = null
 
-            if (nickname.isEmpty()) {
-                textInputLayout.error = context.getString(R.string.text_nickname_required)
-                return false
-            }
-
-            if (nickname.length < 4) {
-                textInputLayout.error =
-                    context.getString(R.string.text_nickname_not_contain_enough_char_and_number)
-                return false
-            } else if (nickname.length == 4) {
-                if (!textContainLetter(nickname)) {
-                    textInputLayout.error =
-                        context.getString(R.string.text_nickname_contain_at_least_one_letter)
+            when {
+                (nickname.isEmpty()) -> {
+                    textInputLayout.error = context.getString(R.string.text_nickname_required)
                     return false
                 }
-
-                if (!textContainNumber(nickname)) {
+                (textContainWitheSpaces(nickname)) -> {
                     textInputLayout.error =
-                        context.getString(R.string.text_nickname_contain_at_least_one_number)
+                        context.getString(R.string.text_nickname_must_not_contain_space)
                     return false
                 }
-            } else {
-                if (!textContainLetter(nickname)) {
+                (textContainSpecialCharacters(nickname)) -> {
                     textInputLayout.error =
-                        context.getString(R.string.text_nickname_contain_at_least_one_letter)
+                        context.getString(R.string.text_cant_contain_special_characters)
                     return false
                 }
-
-                if (!textContainNumber(nickname)) {
-                    textInputLayout.error =
-                        context.getString(R.string.text_nickname_contain_at_least_one_number)
+                (!textContainLetter(nickname.substring(0, 1)))->{
+                    textInputLayout.error = context.getString(R.string.text_only_start_letter)
                     return false
                 }
-            }
+                (nickname.length < 4) -> {
+                    textInputLayout.error =
+                        context.getString(R.string.text_nickname_not_contain_enough_char_and_number)
+                    return false
+                }
+                (nickname.length > 3) -> {
+                    if (!textContainLetter(nickname)) {
+                        textInputLayout.error =
+                            context.getString(R.string.text_nickname_contain_at_least_one_letter)
+                        return false
+                    }
 
-            if (textContainWitheSpaces(nickname)) {
-                textInputLayout.error =
-                    context.getString(R.string.text_nickname_must_not_contain_space)
-                return false
-            }
+                    if (!textContainNumber(nickname)) {
+                        textInputLayout.error =
+                            context.getString(R.string.text_nickname_contain_at_least_one_number)
+                        return false
+                    }
 
-            if (textContainSpecialCharacters(nickname)) {
-                textInputLayout.error =
-                    context.getString(R.string.text_cant_contain_special_characters)
-                return false
+                    if (!textValidLastNumber(nickname)) {
+                        textInputLayout.error = context.getString(R.string.text_nickname_unavailable)
+                        return false
+                    }
+                }
             }
 
             return true
         }
 
         fun isDisplayNameValid(textInputLayout: TextInputLayout): Boolean {
-            val displayName = textInputLayout.editText!!.text.toString()
+            val displayName = textInputLayout.editText?.text.toString()
             val context = textInputLayout.context
 
             textInputLayout.error = null
@@ -97,22 +93,22 @@ class FieldsValidator {
         }
 
         fun isAccessPinValid(textInputLayout: TextInputLayout): Boolean {
-            val acessPin = textInputLayout.editText!!.text.toString()
+            val accessPin = textInputLayout.editText?.text.toString()
             val context = textInputLayout.context
 
             textInputLayout.error = null
 
-            if (acessPin.isEmpty()) {
+            if (accessPin.isEmpty()) {
                 textInputLayout.error = context.getString(R.string.text_access_pin_required)
                 return false
             }
 
-            if (acessPin.length < 4) {
+            if (accessPin.length < 4) {
                 textInputLayout.error = context.getString(R.string.text_access_pin_length)
                 return false
             }
 
-            if (textContainSpecialCharacters(acessPin)) {
+            if (textContainSpecialCharacters(accessPin)) {
                 textInputLayout.error =
                     context.getString(R.string.text_cant_contain_special_characters)
                 return false
@@ -166,5 +162,14 @@ class FieldsValidator {
 
         private fun textContainLetter(text: String) =
             containAtLeastLetterPattern.matcher(text).find()
+
+        private fun textValidLastNumber(text: String): Boolean {
+            val lastCharacter: String = text.substring(text.length - 1)
+            return if (lastCharacter == "1") {
+                val str: String = text.substring(text.length - 2)
+                val beforeTheLastOne = str.substring(0, str.length - 1)
+                textContainNumber(beforeTheLastOne)
+            } else true
+        }
     }
 }

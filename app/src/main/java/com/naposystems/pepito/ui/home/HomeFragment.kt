@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
@@ -33,7 +32,6 @@ import com.naposystems.pepito.utility.ItemAnimator
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
 import com.naposystems.pepito.utility.adapters.showToast
-import com.naposystems.pepito.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.pepito.utility.adapters.verifyPermission
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
@@ -44,7 +42,6 @@ import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
-import timber.log.Timber
 import javax.inject.Inject
 
 class HomeFragment : Fragment() {
@@ -255,7 +252,7 @@ class HomeFragment : Fragment() {
                 if (task.isSuccessful) {
                     getVersion()
                 } else {
-                    this.showToast("No se han podido obtener el remote config")
+                    this.showToast("No se han podido obtener el remote config|!!")
                 }
             }
     }

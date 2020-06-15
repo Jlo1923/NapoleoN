@@ -21,7 +21,7 @@
             android:gravity="center_vertical"
             android:paddingStart="@dimen/large_padding"
             android:paddingEnd="0dp"
-            android:text="Ataque de Cuenta!!"
+            android:text="Ataque de Cuenta|!!"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +54,7 @@
             android:layout_marginTop="@dimen/small_margin"
             android:paddingStart="@dimen/large_padding"
             android:paddingEnd="@dimen/large_padding"
-            android:text="Están intentando entrar a tu cuenta eres tu?!!"
+            android:text="Están intentando entrar a tu cuenta eres tu?|!!"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/view_radio_group_separator" />
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_margin"
             android:layout_marginEnd="@dimen/small_margin"
-            android:text="Si!!"
+            android:text="@string/text_yes"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_info" />
 
@@ -76,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
-            android:text="No!!"
+            android:text="@string/text_no"
             app:layout_constraintEnd_toStartOf="@id/button_i_am"
             app:layout_constraintTop_toTopOf="@id/button_i_am" />
 

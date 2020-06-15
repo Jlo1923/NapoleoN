@@ -8,4 +8,5 @@
     <string name="text_nickname_contain_at_least_one_number">Deve contenere almeno un numero</string>
     <string name="text_nickname_not_contain_enough_char_and_number">Il soprannome deve contenere almeno quattro caratteri e un numero</string>
     <string name="text_nickname_contain_at_least_one_letter">Il soprannome deve contenere almeno una lettera</string>
+    <string name="text_only_start_letter">Il soprannome deve iniziare con una lettera</string>
 </resources>

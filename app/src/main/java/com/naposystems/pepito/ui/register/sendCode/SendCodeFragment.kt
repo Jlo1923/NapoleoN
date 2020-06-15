@@ -97,7 +97,7 @@ class SendCodeFragment : Fragment() {
         })
 
         viewModel.successToken.observe(viewLifecycleOwner, Observer {
-            if(it != null && it) {
+            it?.let {
                 if(binding.viewSwitcher.nextView.id == binding.containerButtonSendCode.id) {
                     binding.viewSwitcher.showNext()
                 }
@@ -131,10 +131,6 @@ class SendCodeFragment : Fragment() {
             timeForWait = timeForNewCode
         }
         setTimeForWait(timeForWait - System.currentTimeMillis())
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     private fun setTimeForWait(time: Long) {

@@ -24,9 +24,7 @@ import com.naposystems.pepito.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FieldsValidator
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import java.util.*
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 class ValidateNicknameFragment : Fragment() {
@@ -104,12 +102,11 @@ class ValidateNicknameFragment : Fragment() {
             }
         })
 
-        viewModel.itsNicknameValid.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                if (it == false) {
+        viewModel.itsNicknameValid.observe(viewLifecycleOwner, Observer { nickname ->
+            nickname?.let {
+                if (!it) {
                     itsNicknameAvailable = true
                     binding.buttonNext.isEnabled = true
-
                     setDrawableTextInput(binding.textInputEditTextNickname)
                     binding.textInputLayoutNickname.error = null
                 } else {
@@ -141,15 +138,9 @@ class ValidateNicknameFragment : Fragment() {
             R.drawable.ic_language_selected,
             requireContext().theme
         )
-
-        textInputEditText.apply {
-            setCompoundDrawablesWithIntrinsicBounds(
-                null,
-                null,
-                drawable,
-                null
-            )
-        }
+        textInputEditText.setCompoundDrawablesWithIntrinsicBounds(
+            null, null, drawable, null
+        )
     }
 
     private fun resetDrawableTextInput(textInputEditText: TextInputEditText) {
@@ -159,56 +150,27 @@ class ValidateNicknameFragment : Fragment() {
     }
 
     private fun textWatcherNickname(): TextWatcher = object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            //Nothing
-        }
+        override fun afterTextChanged(editable: Editable?) = Unit
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            //Nothing
-        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            s?.let { charSequence ->
-
-                val nicknameRegex: Pattern =
-                    Pattern.compile(Constants.RegularExpressions.NICKNAME)
-
+            s?.let {
                 if (FieldsValidator.isNicknameValid(binding.textInputLayoutNickname)) {
-                    if (nicknameRegex.matcher(charSequence).find()) {
-                        val string = charSequence.toString().toLowerCase(Locale.getDefault())
-                        val lastChar = string.last()
-                        val lastCharIsDigit = lastChar.isDigit()
-                        val lastCharIsNumberOne = if (lastCharIsDigit) {
-                            Character.getNumericValue(lastChar) == 1
-                        } else {
-                            false
-                        }
-                        val restOfString = string.substring(IntRange(0, string.length - 2))
-
-                        val restContainsNumber = restOfString.contains(Regex("\\d"))
-
-                        if (lastCharIsNumberOne && !restContainsNumber) {
-                            viewModel.setNoValidNickname()
-                        } else {
-                            val validateNicknameReqDTO = ValidateNicknameReqDTO(string)
-                            viewModel.validateNickname(validateNicknameReqDTO)
-                        }
-                    } else {
-                        resetDrawableTextInput(binding.textInputEditTextNickname)
-                    }
+                    val validateNicknameReqDTO =
+                        ValidateNicknameReqDTO(binding.textInputEditTextNickname.text.toString())
+                    viewModel.validateNickname(validateNicknameReqDTO)
+                } else {
+                    binding.buttonNext.isEnabled = false
                 }
             }
         }
     }
 
-    private fun textWatcherDisplayName(): TextWatcher = object: TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            //Intentionally empty
-        }
+    private fun textWatcherDisplayName(): TextWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) = Unit
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            //Intentionally empty
-        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             s?.let { _ ->

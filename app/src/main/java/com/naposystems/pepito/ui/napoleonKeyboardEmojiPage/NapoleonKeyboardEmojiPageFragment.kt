@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.Fragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.NapoleonKeyboardEmojiPageFragmentBinding
@@ -14,7 +13,6 @@ import com.naposystems.pepito.model.emojiKeyboard.EmojiCategory
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
-import com.naposystems.pepito.utility.adapters.showToast
 
 class NapoleonKeyboardEmojiPageFragment : Fragment() {
 

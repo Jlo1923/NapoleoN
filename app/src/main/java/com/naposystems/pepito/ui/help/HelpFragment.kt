@@ -2,15 +2,13 @@ package com.naposystems.pepito.ui.help
 
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HelpFragmentBinding
 import com.naposystems.pepito.utility.Constants
@@ -22,7 +20,6 @@ class HelpFragment : Fragment() {
     }
 
     private lateinit var binding: HelpFragmentBinding
-    private lateinit var viewModel: HelpViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,15 +45,10 @@ class HelpFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(HelpViewModel::class.java)
-    }
-
     private fun frequentQuestionsClickListener() = View.OnClickListener {
         val uri: Uri = Uri.parse(Constants.URL_FREQUENT_QUESTIONS)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(context!!.packageManager) != null) {
+        if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
         }
     }
@@ -64,7 +56,7 @@ class HelpFragment : Fragment() {
     private fun termsAndConditionsClickListener() = View.OnClickListener {
         val uri: Uri = Uri.parse(Constants.URL_TERMS_AND_CONDITIONS)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(context!!.packageManager) != null) {
+        if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
         }
     }

@@ -71,4 +71,6 @@
     <string name="text_explanation_camera_to_receive_calls">NapoleoN muss Zugriff auf die Kamera und das Mikrofon um Anrufe tätigen und empfangen</string>
     <string name="text_twentyfour_hours">24 Stunden</string>
     <string name="text_access">ZUGRIFF</string>
+    <string name="text_yes">Ja</string>
+    <string name="text_no">Nein</string>
 </resources>

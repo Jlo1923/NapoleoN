@@ -69,7 +69,7 @@
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/button_video_call"
                     style="@style/ConversationToolbarIcon"
-                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_marginEnd="@dimen/x_small_margin"
                     android:tint="?attr/attrConversationIconColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

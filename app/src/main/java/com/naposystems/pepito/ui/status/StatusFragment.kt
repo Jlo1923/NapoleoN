@@ -13,7 +13,6 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.StatusFragmentBinding
 import com.naposystems.pepito.entity.Status
-import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.status.adapter.StatusAdapter
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.SnackbarUtils

@@ -17,7 +17,6 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.RecoveryAccountQuestionsFragmentBinding
 import com.naposystems.pepito.model.recoveryAccount.RecoveryQuestions
 import com.naposystems.pepito.model.recoveryAccountQuestions.RecoveryAccountAnswers
-import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -32,7 +31,6 @@ class RecoveryAccountQuestionsFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: RecoveryAccountQuestionsViewModel
     private lateinit var binding: RecoveryAccountQuestionsFragmentBinding
-    private lateinit var snackbarUtils: SnackbarUtils
     private val args: RecoveryAccountQuestionsFragmentArgs by navArgs()
 
     private var indexQuestion = 0

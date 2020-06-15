@@ -69,13 +69,13 @@
                             android:id="@+id/textInputEditText_nickname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:digits="@string/only_letters_upper_case_and_numbers"
+                            android:digits="@string/nickname_configuration"
                             android:inputType="text"
                             android:lines="1"
                             android:maxLength="@dimen/max_length_nickname"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="@={viewModel.nickName}"/>
+                            android:text="@={viewModel.nickName}" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,6 +96,7 @@
                             android:id="@+id/textInputEditText_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:digits="@string/only_letters"
                             android:inputType="textCapWords"
                             android:lines="1"
                             android:maxLength="@dimen/max_length_display_name"
