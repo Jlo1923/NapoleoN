@@ -52,10 +52,9 @@
                             android:id="@+id/empty_state_search"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            custom:description="@string/text_empty_state_search_description"
                             custom:image="?attr/attrImageEmptyStateSearchContact"
                             custom:location="@integer/location_empty_state_contacts"
-                            custom:titleEmptyState="@string/text_empty_state_contacts_title" />
+                            custom:titleEmptyState="@string/text_empty_state_search_contacts" />
 
                     </ViewSwitcher>
 

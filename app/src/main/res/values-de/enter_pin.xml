@@ -5,6 +5,6 @@
     <string name="text_pin_unlock_time">Zeit freischalten</string>
     <string name="text_pin_unlock_note">Sie haben die zulässige Anzahl an Versuchen überschritten, sodass wir Ihr Konto für eine Weile gesperrt haben.</string>
     <string name="text_pin_enter">PIN eingeben</string>
-    <string name="text_title_dialog_biometrics">Bloqueo de la aplicación</string>
-    <string name="text_description_dialog_biometrics">Desbloquee la aplicación ingresando con el biometrico</string>
+    <string name="text_title_dialog_biometrics">Anwendungssperre</string>
+    <string name="text_description_dialog_biometrics">Entsperren Sie die Anwendung, indem Sie sie mit der Biometrie eingeben</string>
 </resources>

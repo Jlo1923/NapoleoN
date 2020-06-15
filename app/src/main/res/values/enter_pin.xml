@@ -5,6 +5,6 @@
     <string name="text_pin_unlock_time">Unlock Time</string>
     <string name="text_pin_unlock_note">You exceeded the number of attempts allowed, so we blocked your account for a while.</string>
     <string name="text_pin_enter">Enter PIN</string>
-    <string name="text_title_dialog_biometrics">Bloqueo de la aplicación</string>
-    <string name="text_description_dialog_biometrics">Desbloquee la aplicación ingresando con el biometrico</string>
+    <string name="text_title_dialog_biometrics">Application lock</string>
+    <string name="text_description_dialog_biometrics">Unlock the application by entering with the biometric</string>
 </resources>
