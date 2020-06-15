@@ -6,12 +6,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.Gravity
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewAnimationUtils
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.pepito.R
@@ -34,8 +32,10 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         AppCompatImageButton(context)
     }
 
-    private val textInput by lazy {
-        TextInputEditText(context)
+    private val textInput: TextView by lazy {
+        TextInputEditText(
+            ContextThemeWrapper(context, R.style.SearchStyle)
+        )
     }
 
     interface OnSearchView {
@@ -89,16 +89,12 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         }
 
         textInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                //nothing
-            }
+            override fun afterTextChanged(s: Editable?) = Unit
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //nothing
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                //nothing
                 listener.onQuery(s.toString())
             }
         })
@@ -119,7 +115,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     fun setTextSearch(text: String) {
-        textInput.setText(text)
+        textInput.text = text
     }
 
     private fun createImageButtonClose() {
@@ -193,7 +189,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
                     listener.onClosed()
                     visibility = View.GONE
                     isOpen = false
-                    textInput.setText("")
+                    textInput.text = ""
                     Utils.hideKeyboard(textInput)
                 } else {
                     isOpen = true
@@ -217,7 +213,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         anim.start()
     }
 
-    fun close(location : Int = 0) {
+    fun close(location: Int = 0) {
         if (isOpen) {
             val x = imageButtonClose.right - (imageButtonClose.width / 2)
             val y = imageButtonClose.bottom - (imageButtonClose.height / 2)
@@ -249,9 +245,9 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
                     if (isOpen) {
                         visibility = View.GONE
                         isOpen = false
-                        textInput.setText("")
+                        textInput.text = ""
                         Utils.hideKeyboard(textInput)
-                        if(location == Constants.LocationAddContact.CONTACTS.location) {
+                        if (location == Constants.LocationAddContact.CONTACTS.location) {
                             listener.onClosedCompleted()
                         }
                         listener.onClosed()

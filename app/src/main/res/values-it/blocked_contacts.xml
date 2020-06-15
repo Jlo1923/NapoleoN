@@ -4,6 +4,6 @@
     <string name="text_empty_state_blocked_contacts_title">Contatti bloccati</string>
     <string name="text_empty_state_blocked_contacts_description">Non ha contatti bloccati</string>
     <string name="text_blocked_contact_not_found">Ups! Tu búsqueda no trajo resultados</string>
-    <string name="text_wish_unblock_contact">Vuoi sbloccare %1$s?</string>
+    <string name="text_wish_unblock_contact">Vuoi sbloccare questo contatto?</string>
     <string name="text_unblocked_contact">Contatto sbloccato</string>
 </resources>

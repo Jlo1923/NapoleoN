@@ -123,8 +123,8 @@ class RecoveryAccountFragment : Fragment() {
         viewModel.recoveryErrorForAttempts.observe(viewLifecycleOwner, Observer {
             if (!it.isNullOrEmpty()) {
                 generalDialog(
-                    "Intentos Agotados|!!",
-                    "Se le ha bloqueado por cantidad de intentos|!!",
+                    getString(R.string.text_title_block_attempts),
+                    getString(R.string.text_description_block_attempts),
                     false,
                     childFragmentManager
                 ) {

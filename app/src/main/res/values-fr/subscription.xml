@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_trial_period">Période d\'essai</string>
+    <string name="text_trial_period">Période d\'essai - %1$d jours restants</string>
     <string name="text_current_subscription">Abonnement actuel</string>
     <string name="text_get_subscription">Acheter un abonnement</string>
     <string name="text_subscription_type">Type d\'abonnement</string>

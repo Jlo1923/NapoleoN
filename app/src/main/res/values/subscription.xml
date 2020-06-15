@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="text_trial_period">Trial period</string>
+    <string name="text_trial_period">Trial period - %1$d days remaining</string>
     <string name="text_current_subscription">Current subscription</string>
     <string name="text_get_subscription">Buy a subscription</string>
     <string name="text_subscription_type">Subscription type</string>
@@ -11,6 +10,6 @@
     <string name="text_subscription_expiration">Subscription expiration</string>
     <string name="text_check_conditions">You are about to go to a platform external to the application. Napoleon Secret Chat does not save or have access to the data provided on this platform. Are you sure you want to go to this site?</string>
     <string name="text_payment_method">Payment method</string>
-    <string name="text_message_selection_type_subscription">Sie müssen einen Abonnementtyp auswählen</string>
+    <string name="text_message_selection_type_subscription">You must select a subscription type</string>
     <string name="text_warning">Next, you will be redirected to a payment portal, this portal is external to Napoleon Secret Chat, therefore, it does not have the same characteristics as our application and you must accept the terms and conditions stipulated for its use. We are not responsible for the treatment of the data provided in the payment module.</string>
 </resources>

@@ -137,17 +137,23 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     private fun observeContacts() {
         viewModel.contacts.observe(viewLifecycleOwner, Observer { listContacts ->
             if (listContacts != null) {
-                if(listContacts.count() >= 1) {
+                if (listContacts.count() >= 1) {
                     listContacts.add(
-                        0, Contact(0, displayName = getString(R.string.text_add_new_contact))
+                        Contact(
+                            0,
+                            displayName = getString(R.string.text_add_new_contact)
+                        )
                     )
+                    listContacts.sortBy { contact ->
+                        contact.id
+                    }
                 }
                 adapter.submitList(listContacts)
                 if (listContacts.isNotEmpty()) {
                     if (binding.viewSwitcher.nextView.id == binding.viewSwitcherSearchContact.id) {
                         binding.viewSwitcher.showNext()
                     }
-                    if(binding.viewSwitcherSearchContact.nextView.id == binding.recyclerViewContacts.id) {
+                    if (binding.viewSwitcherSearchContact.nextView.id == binding.recyclerViewContacts.id) {
                         binding.viewSwitcherSearchContact.showNext()
                     }
                 } else {
@@ -231,14 +237,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     private fun blockedContact(contact: Contact) {
         generalDialog(
             getString(R.string.text_block_contact),
-            getString(
-                R.string.text_wish_block_contact,
-                if (contact.displayNameFake.isEmpty()) {
-                    contact.displayName
-                } else {
-                    contact.displayNameFake
-                }
-            ),
+            getString(R.string.text_wish_block_contact),
             true,
             childFragmentManager
         ) {
@@ -249,14 +248,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     private fun deleteContact(contact: Contact) {
         generalDialog(
             getString(R.string.text_delete_contact),
-            getString(
-                R.string.text_wish_delete_contact,
-                if (contact.displayNameFake.isEmpty()) {
-                    contact.displayName
-                } else {
-                    contact.displayNameFake
-                }
-            ),
+            getString(R.string.text_wish_delete_contact),
             true,
             childFragmentManager
         ) {
@@ -270,9 +262,9 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     }
 
     override fun onQuery(text: String) {
-        if(text.isNotEmpty())
+        if (text.isNotEmpty())
             viewModel.setTextSearch(text)
-        else if(text.isEmpty() && viewModel.getTextSearch().count() == 1) {
+        else if (text.isEmpty() && viewModel.getTextSearch().count() == 1) {
             viewModel.setTextSearch("")
         }
         if (text.length >= 4) {
