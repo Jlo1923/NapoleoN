@@ -7,6 +7,7 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import timber.log.Timber
 
 class IncomingMessageAudioViewHolder constructor(
     private val binding: ConversationItemIncomingMessageWithAudioBinding
@@ -18,7 +19,6 @@ class IncomingMessageAudioViewHolder constructor(
         super.progressBar = binding.audioPlayer.getProgressBar()
         super.progressBarIndeterminate = binding.audioPlayer.getIndeterminateProgress()
         super.imageButtonState = binding.audioPlayer.getImageButtonState()
-        super.containerQuote = binding.containerQuote
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
         super.audioPlayer = binding.audioPlayer

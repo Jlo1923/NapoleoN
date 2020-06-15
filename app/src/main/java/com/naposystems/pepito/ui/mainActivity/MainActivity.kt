@@ -1,6 +1,7 @@
 package com.naposystems.pepito.ui.mainActivity
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -532,6 +533,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
+
         if (viewModel.getOutputControl() == Constants.OutputControl.TRUE.state) {
             viewModel.setOutputControl(Constants.OutputControl.FALSE.state)
         } else {

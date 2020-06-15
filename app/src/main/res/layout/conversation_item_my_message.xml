@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="itemPosition"
             type="Integer" />
@@ -50,41 +52,24 @@
             android:paddingTop="@dimen/x_small_padding"
             android:paddingEnd="20dp"
             android:paddingBottom="@dimen/x_small_padding"
-            app:isFirstMyMessage="@{isFirst}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
-            app:layout_constraintWidth_min="wrap"
-            app:layout_constraintWidth_percent="0.7">
+            app:layout_constraintWidth_percent="0.7"
+            custom:isFirstMyMessage="@{isFirst}">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_quote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/small_margin"
-                android:layout_marginBottom="4dp"
-                android:maxHeight="100dp"
+            <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+                android:id="@+id/quote"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/imageView_attachment"
+                app:isGoTo="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible">
+                app:layout_constraintWidth_min="wrap"
+                tools:visibility="visible"
+                style="@style/QuoteConversation" />
 
-                <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
-                    android:id="@+id/quote"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:isGoTo="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/imageView_attachment"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
@@ -94,9 +79,10 @@
                 android:visibility="gone"
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
+                app:layout_constraintDimensionRatio="4:3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_quote"
+                app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:layout_constraintWidth_max="wrap"
                 app:layout_constraintWidth_percent="1"
                 tools:src="@drawable/vertical_photo"
@@ -115,7 +101,7 @@
                 custom:progressBarThickness="@dimen/circle_progress_bar"
                 custom:progressbarColor="@color/colorPrimary"
                 tools:progress="70"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <!-- BUTTON ATTACHMENT STATE -->
             <androidx.appcompat.widget.AppCompatImageButton
@@ -134,7 +120,7 @@
                 app:layout_constraintTop_toTopOf="@id/progressBar"
                 app:srcCompat="@drawable/ic_close_black_24"
                 custom:iconForState="@{conversation}"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <ProgressBar
                 android:id="@+id/progressBar_indeterminate"
@@ -150,15 +136,16 @@
             <androidx.emoji.widget.EmojiAppCompatTextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x_small_margin"
                 android:text="@{conversation.message.body}"
+                android:visibility="@{conversation.message.body.empty ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
-                app:layout_constraintWidth_max="wrap"
-                app:layout_constraintWidth_percent="1"
-                tools:text="@tools:sample/lorem" />
+                tools:text="@tools:sample/lorem[3]" />
 
             <TextView
                 style="@style/MyMessageDateTextView"
@@ -166,11 +153,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/small_margin"
                 android:visibility="gone"
-                app:formatTime="@{timeFormat}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
-                app:messageDate="@{conversation.message.createdAt}"
+                custom:formatTime="@{timeFormat}"
+                custom:messageDate="@{conversation.message.createdAt}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 
@@ -180,10 +167,17 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
-                app:messageStatus="@{conversation.message.status}"
+                custom:messageStatus="@{conversation.message.status}"
                 tools:srcCompat="@drawable/ic_message_sent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3" />
 
         <TextView
             android:id="@+id/textView_count_down"
@@ -192,12 +186,12 @@
             android:layout_marginEnd="@dimen/normal_margin"
             android:background="@drawable/bg_self_destruct_time_my_message"
             android:elevation="1dp"
+            android:ellipsize="end"
             android:gravity="center"
+            android:maxLines="1"
             android:textColor="?attr/attrTextColorColorTextIncomingMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
             android:visibility="gone"
-            android:maxLines="1"
-            android:ellipsize="end"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"

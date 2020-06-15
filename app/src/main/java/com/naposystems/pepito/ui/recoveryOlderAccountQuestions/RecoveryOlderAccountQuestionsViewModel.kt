@@ -72,9 +72,12 @@ class RecoveryOlderAccountQuestionsViewModel @Inject constructor(
                 val response = repository.sendAnswers(nickname, answerOne, answerTwo)
 
                 if (response.isSuccessful){
-                    repository.insertUser(response.body()!!.user)
-                    repository.setRecoveredAccountPref()
-                    _accountCreatedSuccess.value = response.body()!!.user
+                    response.body()?.let { body ->
+                        repository.insertUser(body.user)
+                        repository.setRecoveredAccountPref()
+                        repository.saveSecretKey(body.user.secretKey)
+                        _accountCreatedSuccess.value = body.user
+                    }
                 } else {
                     when (response.code()) {
                         422 -> {

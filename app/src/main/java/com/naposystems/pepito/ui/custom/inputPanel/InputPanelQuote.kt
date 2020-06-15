@@ -6,9 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.pepito.R
+import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.databinding.CustomInputPanelQuoteBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 
 class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
     IContractInputPanelQuote {
@@ -17,7 +23,6 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     private var isCancelable: Boolean = false
     private var isFromInputPanel: Boolean = false
     private var messageAndAttachment: MessageAndAttachment? = null
-
 
     init {
         context.theme.obtainStyledAttributes(
@@ -35,13 +40,8 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                     true
                 )
 
-                binding.messageAndAttachment = messageAndAttachment
-
                 isCancelable = getBoolean(R.styleable.Quote_isCancelable, false)
                 isFromInputPanel = getBoolean(R.styleable.Quote_isFromInputPanel, false)
-
-                binding.isFromInputPanel = isFromInputPanel
-
 
                 if (isCancelable) {
                     binding.imageButtonCloseQuote.visibility = View.VISIBLE
@@ -57,9 +57,15 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     }
 
     override fun setupMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
-        this.messageAndAttachment = messageAndAttachment
-        binding.messageAndAttachment = messageAndAttachment
-//        binding.containerQuote.visibility = View.VISIBLE
+        with(messageAndAttachment) {
+            this@InputPanelQuote.messageAndAttachment = this
+            bindUserBackground(this)
+            bindUserQuote(this)
+            bindBodyQuote(this)
+            bindImageQuote(this)
+            bindAttachmentTypeQuote(this)
+        }
+
         binding.executePendingBindings()
     }
 
@@ -82,4 +88,224 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     }
 
     override fun getMessageAndAttachment() = this.messageAndAttachment
+
+    private fun bindUserBackground(messageAndAttachment: MessageAndAttachment) {
+        val quoteNull = messageAndAttachment.quote
+
+        if (isFromInputPanel) {
+            messageAndAttachment.message.let { message ->
+                binding.container.background = if (message.isMine == Constants.IsMine.YES.value) {
+                    context.getDrawable(R.drawable.bg_my_quote_my_message)
+                } else {
+                    context.getDrawable(R.drawable.bg_your_quote_my_message)
+                }
+            }
+        } else {
+            quoteNull?.let { quote ->
+                binding.container.background = when {
+                    quote.isMine == Constants.IsMine.YES.value
+                            && messageAndAttachment.message.isMine == 1 -> {
+                        context.getDrawable(R.drawable.bg_my_quote_my_message)
+                    }
+                    quote.isMine == Constants.IsMine.YES.value
+                            && messageAndAttachment.message.isMine == 0 -> {
+                        context.getDrawable(R.drawable.bg_my_quote_incoming_message)
+                    }
+                    quote.isMine == Constants.IsMine.NO.value
+                            && messageAndAttachment.message.isMine == 1 -> {
+                        context.getDrawable(R.drawable.bg_your_quote_my_message)
+                    }
+                    quote.isMine == Constants.IsMine.NO.value
+                            && messageAndAttachment.message.isMine == 0 -> {
+                        context.getDrawable(R.drawable.bg_your_quote_incoming_message)
+                    }
+                    else -> {
+                        context.getDrawable(R.drawable.bg_my_quote_my_message)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun bindUserQuote(messageAndAttachment: MessageAndAttachment) {
+        var isMineNull: Int? = null
+
+        messageAndAttachment.quote?.let { quote ->
+            isMineNull = if (isFromInputPanel) {
+                messageAndAttachment.message.isMine
+            } else {
+                quote.isMine
+            }
+        } ?: run {
+            messageAndAttachment.message.let { message ->
+                isMineNull = message.isMine
+            }
+        }
+
+        val textColorYourName =
+            Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorYourQuote)
+        val textColorMyName =
+            Utils.convertAttrToColorResource(context, R.attr.attrIdentifierColorMyQuote)
+
+        if (isMineNull == Constants.IsMine.YES.value) {
+            binding.textViewTitleQuote.setTextColor(textColorMyName)
+            binding.textViewTitleQuote.text = context.getString(R.string.text_you_quote)
+        } else {
+            val contact = messageAndAttachment.contact
+            binding.textViewTitleQuote.setTextColor(textColorYourName)
+            binding.textViewTitleQuote.text = contact.let {
+                if (contact.nicknameFake.isNotEmpty()) {
+                    contact.nicknameFake
+                } else {
+                    contact.nickname
+                }
+            }
+        }
+    }
+
+    private fun bindBodyQuote(
+        messageAndAttachment: MessageAndAttachment
+    ) {
+        val context = binding.textViewMessageQuote.context
+
+        val cryptoMessage = CryptoMessage(context)
+        val isMine = messageAndAttachment.message.isMine == Constants.IsMine.YES.value
+        val body = if (isFromInputPanel) {
+            val messageNull = messageAndAttachment.message
+
+            messageNull.body
+        } else {
+
+            val quoteBody = messageAndAttachment.quote?.body ?: ""
+
+            if (quoteBody.isNotEmpty()) {
+                cryptoMessage.decryptMessageBody(quoteBody)
+            } else {
+                ""
+            }
+        }
+
+        binding.textViewMessageQuote.text = if (body.isNotEmpty()) {
+            body
+        } else {
+            if (isMine) context.getString(R.string.text_you_quote) else messageAndAttachment.contact.getNickName()
+        }
+    }
+
+    private fun bindImageQuote(
+        messageAndAttachment: MessageAndAttachment
+    ) {
+
+        if (isFromInputPanel) {
+            val firstAttachmentNull = messageAndAttachment.getFirstAttachment()
+
+            firstAttachmentNull?.let { attachment ->
+                if (attachment.type == Constants.AttachmentType.IMAGE.type) {
+                    Glide.with(binding.imageViewQuote)
+                        .load(attachment)
+                        .transform(CenterCrop(), RoundedCorners(4))
+                        .into(binding.imageViewQuote)
+                } else if (attachment.type == Constants.AttachmentType.VIDEO.type) {
+                    val uri = Utils.getFileUri(
+                        binding.imageViewQuote.context,
+                        attachment.uri,
+                        Constants.NapoleonCacheDirectories.VIDEOS.folder
+                    )
+                    Glide.with(binding.imageViewQuote)
+                        .load(uri)
+                        .thumbnail(0.1f)
+                        .transform(CenterCrop(), RoundedCorners(4))
+                        .into(binding.imageViewQuote)
+                }
+                binding.imageViewQuote.visibility = View.VISIBLE
+            } ?: run {
+                binding.imageViewQuote.visibility = View.GONE
+            }
+        } else {
+            messageAndAttachment.quote?.let { quote ->
+
+                when (quote.attachmentType) {
+                    Constants.AttachmentType.IMAGE.type -> {
+
+                        val uri = Utils.getFileUri(
+                            binding.imageViewQuote.context,
+                            quote.thumbnailUri,
+                            Constants.NapoleonCacheDirectories.IMAGES.folder
+                        )
+
+                        Glide.with(binding.imageViewQuote)
+                            .load(uri)
+                            .transform(CenterCrop(), RoundedCorners(4))
+                            .into(binding.imageViewQuote)
+
+                        binding.imageViewQuote.visibility = View.VISIBLE
+                    }
+                    Constants.AttachmentType.VIDEO.type -> {
+
+                        val uri = Utils.getFileUri(
+                            binding.imageViewQuote.context,
+                            quote.thumbnailUri,
+                            Constants.NapoleonCacheDirectories.VIDEOS.folder
+                        )
+
+                        Glide.with(binding.imageViewQuote)
+                            .load(uri)
+                            .thumbnail(0.1f)
+                            .transform(CenterCrop(), RoundedCorners(4))
+                            .into(binding.imageViewQuote)
+
+                        binding.imageViewQuote.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        binding.imageViewQuote.visibility = View.GONE
+                    }
+                }
+            }
+        }
+    }
+
+    private fun bindAttachmentTypeQuote(
+        messageAndAttachment: MessageAndAttachment
+    ) {
+        val resourceId: Int? = when (getAttachmentType(messageAndAttachment, isFromInputPanel)) {
+            Constants.AttachmentType.IMAGE.type -> R.drawable.ic_image
+            Constants.AttachmentType.AUDIO.type -> R.drawable.ic_headset
+            Constants.AttachmentType.VIDEO.type -> R.drawable.ic_video
+            Constants.AttachmentType.DOCUMENT.type -> R.drawable.ic_docs
+            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.drawable.ic_gif
+            Constants.AttachmentType.LOCATION.type -> R.drawable.ic_location
+            else -> null
+        }
+
+        resourceId?.let {
+            binding.imageViewTypeQuote.visibility = View.VISIBLE
+            binding.imageViewTypeQuote.setImageResource(resourceId)
+        } ?: run {
+            binding.imageViewTypeQuote.visibility = View.GONE
+        }
+    }
+
+    private fun getAttachmentType(
+        messageAndAttachment: MessageAndAttachment,
+        isFromInputPanel: Boolean
+    ): String {
+        var attachmentType = ""
+
+        messageAndAttachment.quote?.let { quote ->
+            attachmentType =
+                if (messageAndAttachment.attachmentList.count() == 0 && isFromInputPanel)
+                    ""
+                else if (messageAndAttachment.attachmentList.count() > 0 && isFromInputPanel)
+                    messageAndAttachment.attachmentList.first().type
+                else
+                    quote.attachmentType
+
+        } ?: run {
+            val firstAttachment = messageAndAttachment.getFirstAttachment()
+            firstAttachment?.let { attachment ->
+                attachmentType = attachment.type
+            }
+        }
+        return attachmentType
+    }
 }

@@ -104,34 +104,36 @@ class PreviewMediaFragment : Fragment() {
             binding.containerMessageAndSeekbar.visibility = View.GONE
         }
 
-        val firstAttachment = messageAndAttachment.attachmentList[0]
+        val firstAttachment = messageAndAttachment.getFirstAttachment()
 
-        when (firstAttachment.type) {
-            Constants.AttachmentType.IMAGE.type,
-            Constants.AttachmentType.GIF.type,
-            Constants.AttachmentType.LOCATION.type -> {
-                binding.imageViewPreview.visibility = View.VISIBLE
-                if (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
-                    viewModel.sentMessageReaded(messageAndAttachment)
-                }
-            }
-            Constants.AttachmentType.VIDEO.type -> {
-                try {
-                    binding.containerSeekbar.visibility = View.VISIBLE
-                    binding.containerVideoView.visibility = View.VISIBLE
-
-                    if (BuildConfig.ENCRYPT_API) {
-                        viewModel.createTempFile(firstAttachment)
-                    } else {
-                        contentUri = Utils.getFileUri(
-                            context = requireContext(),
-                            subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                            fileName = firstAttachment.uri
-                        )
-                        initializePlayer()
+        firstAttachment?.let { attachment ->
+            when (attachment.type) {
+                Constants.AttachmentType.IMAGE.type,
+                Constants.AttachmentType.GIF.type,
+                Constants.AttachmentType.LOCATION.type -> {
+                    binding.imageViewPreview.visibility = View.VISIBLE
+                    if (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+                        viewModel.sentMessageReaded(messageAndAttachment)
                     }
-                } catch (e: Exception) {
-                    Timber.e(e)
+                }
+                Constants.AttachmentType.VIDEO.type -> {
+                    try {
+                        binding.containerSeekbar.visibility = View.VISIBLE
+                        binding.containerVideoView.visibility = View.VISIBLE
+
+                        if (BuildConfig.ENCRYPT_API) {
+                            viewModel.createTempFile(attachment)
+                        } else {
+                            contentUri = Utils.getFileUri(
+                                context = requireContext(),
+                                subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                fileName = attachment.uri
+                            )
+                            initializePlayer()
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
                 }
             }
         }

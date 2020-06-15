@@ -14,6 +14,8 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHM
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.pepito.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.pepito.crypto.Crypto
+import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_ANSWERS_OLD_USER
+import com.naposystems.pepito.utility.Constants.NapoleonApi.VALIDATE_PASSWORD_OLD_ACCOUNT
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
@@ -43,7 +45,9 @@ val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
     GET_RECOVERY_QUESTIONS,
     SEND_ANSWERS,
     SEND_MESSAGE_ATTACHMENT,
-    GET_QUESTIONS_OLD_USER
+    GET_QUESTIONS_OLD_USER,
+    VALIDATE_PASSWORD_OLD_ACCOUNT,
+    VALIDATE_ANSWERS_OLD_USER
 )
 
 @Module(includes = [ViewModelModule::class])

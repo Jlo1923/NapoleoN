@@ -201,10 +201,11 @@ fun bindImageAttachment(
 ) {
     try {
         messageAndAttachmentParam?.let { messageAndAttachment ->
-            Timber.d("bindImageAttachment")
 
             val context = imageView.context
             messageAndAttachment.getFirstAttachment()?.let { attachment ->
+                Timber.d("bindImageAttachment")
+
                 imageView.visibility = View.VISIBLE
 
                 if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
@@ -275,7 +276,7 @@ private fun loadAttachment(
         Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
             Glide.with(imageView)
                 .load(firstAttachment)
-                .transform(CenterCrop(), RoundedCorners(8))
+                .transform(RoundedCorners(8))
                 .into(imageView)
         }
         Constants.AttachmentType.VIDEO.type -> {

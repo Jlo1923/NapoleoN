@@ -19,7 +19,6 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
     companion object {
 
         const val CATEGORY_KEY: String = "category"
-        const val LISTENER_KEY: String = "listener"
 
         fun newInstance(
             category: EmojiCategory
@@ -47,12 +46,6 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
                 categoryValue?.let { category ->
                     emojiCategory = category as EmojiCategory
                     setupAdapter()
-                    /*if (bundle.containsKey(LISTENER_KEY)) {
-                        val listenerValue = bundle.getSerializable(LISTENER_KEY)
-                        listenerValue?.let { listener ->
-                            setupAdapter(listener as NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener)
-                        }
-                    }*/
                 }
             }
         }

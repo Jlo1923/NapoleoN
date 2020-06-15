@@ -151,11 +151,13 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
                 mediaStoreAudio: MediaStoreAudio,
                 imageButtonPlay: AnimatedTwoVectorView
             ) {
-
-                mediaPlayerManager.playAudio(
-                    mediaStoreAudio.id.toInt(),
-                    mediaStoreAudio.contentUri
-                )
+                mediaPlayerManager.apply {
+                    setImageButtonPlay(imageButtonPlay)
+                    setAudioId(mediaStoreAudio.id.toInt())
+                    isEncryptedFile(false)
+                    setAudioUri(mediaStoreAudio.contentUri)
+                    playAudio()
+                }
             }
         })
 
