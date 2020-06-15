@@ -109,13 +109,11 @@ class RecoveryAccountQuestionsFragment : Fragment() {
             .get(RecoveryAccountQuestionsViewModel::class.java)
 
         viewModel.userAccountDisplayName.observe(viewLifecycleOwner, Observer { fullName ->
-            if (fullName.isNotEmpty()) {
+            fullName?.let {
                 findNavController().navigate(
                     RecoveryAccountQuestionsFragmentDirections
                         .actionRecoveryAccountQuestionsFragmentToAccessPinFragment(
-                            args.nickname,
-                            fullName,
-                            true
+                            args.nickname, fullName, true
                         )
                 )
             }

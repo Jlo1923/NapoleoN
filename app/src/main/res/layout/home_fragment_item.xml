@@ -69,7 +69,8 @@
             app:layout_constraintEnd_toEndOf="@id/textView_hora"
             app:layout_constraintTop_toTopOf="@+id/linear_container"
             app:unreadMessages="@{conversation.messagesUnReads}"
-            tools:text="99" />
+            tools:text="99"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/imageView_status_message"
@@ -78,7 +79,9 @@
             app:layout_constraintBottom_toBottomOf="@+id/linear_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/linear_container"
-            app:statusMessage="@{conversation.message}" />
+            app:statusMessage="@{conversation.message}"
+            tools:src="@drawable/ic_message_readed"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/textView_user_name"
@@ -105,12 +108,12 @@
             android:ellipsize="end"
             android:lines="1"
             android:textColor="?attr/attrColorButtonTint"
+            app:contactIdNickNameFormat="@{conversation.contact.id}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
             app:nickNameFormat="@{displayFormat}"
-            app:contactIdNickNameFormat="@{conversation.contact.id}"
             app:nickname="@{conversation.contact}"
             tools:text="@tools:sample/first_names" />
 

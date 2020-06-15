@@ -97,26 +97,31 @@ class HomeRepository @Inject constructor(
 
                 for (messageRes in messageResList) {
 
-                    val message = MessageResDTO.toMessageEntity(
-                        null, messageRes, Constants.IsMine.NO.value
-                    )
+                    val databaseMessage =
+                        messageLocalDataSource.getMessageByWebId(messageRes.id, false)
 
-                    if (BuildConfig.ENCRYPT_API) {
-                        message.encryptBody(cryptoMessage)
-                    }
-
-                    val messageId = messageLocalDataSource.insertMessage(message)
-
-                    if (messageRes.quoted.isNotEmpty()) {
-                        insertQuote(messageRes, messageId.toInt())
-                    }
-
-                    attachmentLocalDataSource.insertAttachments(
-                        AttachmentResDTO.toListConversationAttachment(
-                            messageId.toInt(),
-                            messageRes.attachments
+                    if (databaseMessage == null) {
+                        val message = MessageResDTO.toMessageEntity(
+                            null, messageRes, Constants.IsMine.NO.value
                         )
-                    )
+
+                        if (BuildConfig.ENCRYPT_API) {
+                            message.encryptBody(cryptoMessage)
+                        }
+
+                        val messageId = messageLocalDataSource.insertMessage(message)
+
+                        if (messageRes.quoted.isNotEmpty()) {
+                            insertQuote(messageRes, messageId.toInt())
+                        }
+
+                        attachmentLocalDataSource.insertAttachments(
+                            AttachmentResDTO.toListConversationAttachment(
+                                messageId.toInt(),
+                                messageRes.attachments
+                            )
+                        )
+                    }
                 }
             }
         }

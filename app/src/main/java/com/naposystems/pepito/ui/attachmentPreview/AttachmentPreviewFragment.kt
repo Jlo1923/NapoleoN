@@ -181,7 +181,7 @@ class AttachmentPreviewFragment : Fragment() {
         })
 
         binding.scrollView.setOnClickListener {
-            
+
         }
 
         binding.executePendingBindings()

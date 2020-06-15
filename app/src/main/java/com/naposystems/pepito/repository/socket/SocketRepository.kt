@@ -42,28 +42,33 @@ class SocketRepository @Inject constructor(
 
                         for (messageRes in messageResList) {
 
-                            val message = MessageResDTO.toMessageEntity(
-                                null, messageRes, Constants.IsMine.NO.value
-                            )
+                            val databaseMessage =
+                                messageLocalDataSource.getMessageByWebId(messageRes.id, false)
 
-                            if (BuildConfig.ENCRYPT_API) {
-                                message.encryptBody(cryptoMessage)
+                            if (databaseMessage == null) {
+                                val message = MessageResDTO.toMessageEntity(
+                                    null, messageRes, Constants.IsMine.NO.value
+                                )
+
+                                if (BuildConfig.ENCRYPT_API) {
+                                    message.encryptBody(cryptoMessage)
+                                }
+
+                                val messageId = messageLocalDataSource.insertMessage(message)
+                                Timber.d("Conversation insertó mensajes")
+
+                                if (messageRes.quoted.isNotEmpty()) {
+                                    insertQuote(messageRes, messageId.toInt())
+                                }
+
+                                val listAttachments = AttachmentResDTO.toListConversationAttachment(
+                                    messageId.toInt(),
+                                    messageRes.attachments
+                                )
+
+                                attachmentLocalDataSource.insertAttachments(listAttachments)
+                                Timber.d("Conversation insertó attachment")
                             }
-
-                            val messageId = messageLocalDataSource.insertMessage(message)
-                            Timber.d("Conversation insertó mensajes")
-
-                            if (messageRes.quoted.isNotEmpty()) {
-                                insertQuote(messageRes, messageId.toInt())
-                            }
-
-                            val listAttachments = AttachmentResDTO.toListConversationAttachment(
-                                messageId.toInt(),
-                                messageRes.attachments
-                            )
-
-                            attachmentLocalDataSource.insertAttachments(listAttachments)
-                            Timber.d("Conversation insertó attachment")
                         }
                     }
                 }

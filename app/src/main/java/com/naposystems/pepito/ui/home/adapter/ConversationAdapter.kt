@@ -3,11 +3,17 @@ package com.naposystems.pepito.ui.home.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HomeFragmentItemBinding
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
+import com.naposystems.pepito.utility.Constants
 
 class ConversationAdapter(
     private val clickListener: ClickListener,
@@ -49,9 +55,10 @@ class ConversationAdapter(
         private val binding: HomeFragmentItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(conversation: MessageAndAttachment, clickListener: ClickListener,
-                 displayFormat : Int?,
-                 timeFormat : Int?
+        fun bind(
+            conversation: MessageAndAttachment, clickListener: ClickListener,
+            displayFormat: Int?,
+            timeFormat: Int?
         ) {
             binding.conversation = conversation
             binding.clickListener = clickListener
@@ -68,6 +75,10 @@ class ConversationAdapter(
             }
 
             binding.executePendingBindings()
+
+            if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                binding.textViewUnreadMessages.visibility = View.GONE
+            }
         }
 
         companion object {
