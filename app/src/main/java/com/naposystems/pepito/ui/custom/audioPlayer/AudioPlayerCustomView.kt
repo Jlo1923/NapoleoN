@@ -197,6 +197,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun isEncryptedFile(isEncryptedFile: Boolean) {
+        this.mIsEncryptedFile = isEncryptedFile
         this.mediaPlayerManager?.isEncryptedFile(isEncryptedFile)
     }
 

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="com.naposystems.pepito.BuildConfig" />
 
         <variable
             name="conversation"
@@ -62,14 +65,14 @@
                 android:id="@+id/audio_player"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:controlColors="?attr/attrTextColorColorTextIncomingMessage"
-                app:isEncryptedFile="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
-                app:seekbarProgressBackgroundTint="@color/black"
-                app:seekbarProgressTint="?attr/attrTextColorColorTextIncomingMessage"
-                app:seekbarThumbTint="?attr/attrTintColorSecondaryDark" />
+                custom:controlColors="?attr/attrTextColorColorTextIncomingMessage"
+                custom:isEncryptedFile="@{BuildConfig.ENCRYPT_API ? true : false}"
+                custom:seekbarProgressBackgroundTint="@color/black"
+                custom:seekbarProgressTint="?attr/attrTextColorColorTextIncomingMessage"
+                custom:seekbarThumbTint="?attr/attrTintColorSecondaryDark" />
 
             <TextView
                 style="@style/IncomingMessageDateTextView"

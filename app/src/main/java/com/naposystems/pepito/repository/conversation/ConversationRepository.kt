@@ -306,7 +306,7 @@ class ConversationRepository @Inject constructor(
         val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
         val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
 
-        if (messagesUnread.isNotEmpty()) {
+        if (textMessagesUnread.isNotEmpty()) {
             try {
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(

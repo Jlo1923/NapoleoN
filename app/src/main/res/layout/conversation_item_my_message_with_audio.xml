@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.naposystems.pepito.BuildConfig" />
+
         <variable
             name="conversation"
             type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
@@ -50,21 +52,21 @@
 
             <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
+                style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
                 app:isGoTo="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_min="wrap"
-                tools:visibility="visible"
-                style="@style/QuoteConversation" />
+                tools:visibility="visible" />
 
             <com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
                 android:id="@+id/audio_player"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:controlColors="?attr/attrTextColorColorTextMyMessage"
-                app:isEncryptedFile="false"
+                app:isEncryptedFile="@{BuildConfig.ENCRYPT_API ? true : false}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"

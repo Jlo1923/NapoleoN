@@ -216,8 +216,6 @@
             <com.naposystems.pepito.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_mute_video"
                 style="@style/ConversationCallButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
                 android:background="@drawable/conversation_call_button_mute_video"
                 android:checked="false"
                 android:visibility="@{isVideoCall ? View.VISIBLE : View.GONE}"
@@ -225,19 +223,19 @@
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_mic_off"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_change_to_video"
                 app:layout_constraintTop_toTopOf="parent"
+                tools:checked="true"
                 tools:visibility="visible" />
 
             <com.naposystems.pepito.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_mic_off"
                 style="@style/ConversationCallButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
                 android:background="@drawable/conversation_call_button_mic_off"
                 android:checked="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_mute_video"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:checked="true" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

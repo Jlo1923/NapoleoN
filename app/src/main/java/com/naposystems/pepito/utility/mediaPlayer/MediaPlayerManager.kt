@@ -17,16 +17,18 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+import com.naposystems.pepito.utility.BluetoothStateManager
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.audioManagerCompat.AudioManagerCompat
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class MediaPlayerManager(private val context: Context) :
-    SensorEventListener, IContractMediaPlayer {
+    SensorEventListener, IContractMediaPlayer, BluetoothStateManager.BluetoothStateListener {
 
     companion object {
         private const val NORMAL_SPEED = 1.0f
@@ -45,6 +47,8 @@ class MediaPlayerManager(private val context: Context) :
 
     private var mStartAudioTime: Long = 0L
     private var mIsEncryptedFile: Boolean = false
+    private var mIsBluetoothConnected: Boolean = false
+    private var mIsInitialized: Boolean = false
     private var currentAudioId: Int = 0
     private var currentAudioUri: Uri? = null
     private var currentAudioFileName: String? = null
@@ -82,10 +86,19 @@ class MediaPlayerManager(private val context: Context) :
     private val mAudioManager: AudioManager =
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
+    private var bluetoothStateManager: BluetoothStateManager? = null
+
+    private var audioManagerCompat = AudioManagerCompat.create(context)
+
     interface Listener {
         fun onErrorPlayingAudio()
         fun onPauseAudio()
         fun onCompleteAudio()
+    }
+
+    init {
+        bluetoothStateManager = BluetoothStateManager(context, this)
+        audioManagerCompat.requestCallAudioFocus()
     }
 
     private fun setSeekbarProgress() {
@@ -103,7 +116,7 @@ class MediaPlayerManager(private val context: Context) :
         mediaPlayer.release()
     }
 
-    fun registerProximityListener() {
+    private fun registerProximityListener() {
         mSensorManager.registerListener(
             this,
             mProximitySensor,
@@ -177,11 +190,8 @@ class MediaPlayerManager(private val context: Context) :
 
             mediaPlayer.apply {
 
-                mSensorManager.registerListener(
-                    this@MediaPlayerManager,
-                    mProximitySensor,
-                    SensorManager.SENSOR_DELAY_NORMAL
-                )
+                if (!mIsBluetoothConnected)
+                    registerProximityListener()
 
                 setAudioAttributes(
                     AudioAttributes.Builder()
@@ -391,6 +401,18 @@ class MediaPlayerManager(private val context: Context) :
         mSensorManager.unregisterListener(this, mProximitySensor)
         if (wakeLock.isHeld) {
             wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
+        }
+    }
+    //endregion
+
+    //region Implementation BluetoothStateManager.BluetoothStateListener
+    override fun onBluetoothStateChanged(isAvailable: Boolean) {
+        Timber.d("onBluetoothStateChanged: $isAvailable")
+        mIsBluetoothConnected = isAvailable
+        if (isAvailable) {
+            unregisterProximityListener()
+        } else {
+            registerProximityListener()
         }
     }
     //endregion
