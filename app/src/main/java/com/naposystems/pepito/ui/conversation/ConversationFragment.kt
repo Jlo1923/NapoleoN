@@ -937,11 +937,6 @@ class ConversationFragment : BaseFragment(),
         messagedLoadedFirstTime = false
     }
 
-    override fun onStop() {
-        super.onStop()
-        Timber.d("onStop")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")

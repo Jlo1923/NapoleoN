@@ -277,6 +277,8 @@ open class ConversationViewHolder constructor(
                         Timber.d("enablePlayButton DOWNLOAD_COMPLETE: true")
                         audioPlayer?.enablePlayButton(true)
                         loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
+                        progressBar?.visibility = View.GONE
+                        imageButtonState?.visibility = View.GONE
                     }
 
                     if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.message.status == Constants.MessageStatus.UNREAD.status) {

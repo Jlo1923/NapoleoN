@@ -992,6 +992,7 @@
         <item name="android:textOn">@null</item>
         <item name="android:textOff">@null</item>
         <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginBottom">@dimen/x_small_margin</item>
     </style>
 
     <style name="AppOutlinedPrimaryButtonPackage" parent="Widget.MaterialComponents.Button.OutlinedButton">

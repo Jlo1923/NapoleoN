@@ -816,6 +816,7 @@ class WebRTCClient constructor(
     override fun dispose() {
         Timber.d("Dispose")
         audioManager.mode = AudioManager.MODE_NORMAL
+        audioManager.isBluetoothScoOn = false
 
         isActiveCall = false
         unregisterProximityListener()
