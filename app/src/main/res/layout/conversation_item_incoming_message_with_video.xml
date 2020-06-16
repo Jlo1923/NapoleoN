@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="itemPosition"
             type="Integer" />
@@ -55,27 +57,30 @@
 
             <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
+                style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation)}"
                 app:isGoTo="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_min="wrap"
-                tools:visibility="visible"
-                style="@style/QuoteConversation" />
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_attachment"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="@dimen/small_margin"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
+                app:layout_constraintDimensionRatio="4:3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/quote"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintWidth_percent="1"
                 tools:src="@drawable/vertical_photo"
                 tools:visibility="visible" />
 
@@ -131,6 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x_small_margin"
                 android:text="@{conversation.message.body}"
+                android:visibility="@{conversation.message.body.empty ? View.GONE : View.VISIBLE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
                 app:layout_constraintWidth_max="wrap"
