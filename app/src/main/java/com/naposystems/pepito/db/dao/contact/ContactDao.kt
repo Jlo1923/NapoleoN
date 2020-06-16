@@ -7,7 +7,7 @@ import com.naposystems.pepito.entity.Contact
 @Dao
 interface ContactDao {
 
-    @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
+    @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY nickname ASC")
     fun getContacts(): LiveData<MutableList<Contact>>
 
     @Query("SELECT * FROM contact WHERE status_blocked = 0 ORDER BY display_name ASC")
@@ -20,7 +20,7 @@ interface ContactDao {
     fun getContact(contactId: Int): LiveData<Contact>
 
     @Query("UPDATE contact SET silenced = :contactSilenced WHERE id = :contactId")
-    fun updateContactSilenced(contactId: Int, contactSilenced : Int)
+    fun updateContactSilenced(contactId: Int, contactSilenced: Int)
 
     @Query("UPDATE contact SET display_name_fake = :nameFake WHERE id = :contactId ")
     suspend fun updateNameFakeContact(contactId: Int, nameFake: String)
@@ -65,5 +65,5 @@ interface ContactDao {
     suspend fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int)
 
     @Query("SELECT self_destruct_time FROM contact WHERE id=:contactId ")
-    fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int>
+    fun getSelfDestructTimeByContact(contactId: Int): LiveData<Int>
 }

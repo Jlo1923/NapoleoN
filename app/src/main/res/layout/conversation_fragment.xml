@@ -88,7 +88,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/container_status"
                 tools:itemCount="2"
-                tools:listitem="@layout/conversation_item_my_message" />
+                tools:listitem="@layout/conversation_item_incoming_message" />
 
             <!-- INPUT PANEL -->
             <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget

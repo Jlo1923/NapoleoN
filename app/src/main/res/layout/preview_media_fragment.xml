@@ -102,7 +102,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
-                android:maxLines="3"
                 android:padding="@dimen/normal_padding"
                 android:text="@{message.message.body}"
                 android:textAlignment="center"

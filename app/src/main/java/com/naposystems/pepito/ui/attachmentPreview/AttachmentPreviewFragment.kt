@@ -68,6 +68,7 @@ class AttachmentPreviewFragment : Fragment() {
             inflater, R.layout.attachment_preview_fragment, container, false
         )
 
+        binding.viewModel = conversationShareViewModel
         binding.galleryItemId = args.galleryItemId
 
         conversationShareViewModel.setAttachmentTaken(attachment)

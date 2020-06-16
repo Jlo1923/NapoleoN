@@ -218,7 +218,6 @@ open class ConversationViewHolder constructor(
         }
 
         audioPlayer?.enablePlayButton(false)
-        quote?.visibility = View.GONE
         imageViewAttachment?.visibility = View.GONE
         imageButtonState?.visibility = View.GONE
         progressBar?.setProgress(0.0f)

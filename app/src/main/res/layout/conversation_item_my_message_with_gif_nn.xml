@@ -35,7 +35,7 @@
             android:id="@+id/container_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginTop="@dimen/normal_margin"
             android:background="@android:color/transparent"
             android:paddingStart="@dimen/x_small_padding"
             android:paddingTop="@dimen/x_small_padding"

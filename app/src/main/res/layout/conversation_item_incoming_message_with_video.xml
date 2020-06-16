@@ -41,7 +41,7 @@
             android:id="@+id/container_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginTop="@dimen/normal_margin"
             android:background="@drawable/bg_incoming_message"
             android:paddingStart="20dp"
             android:paddingTop="@dimen/x_small_padding"
@@ -51,7 +51,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
-            app:layout_constraintWidth_min="wrap"
             app:layout_constraintWidth_percent="0.7">
 
             <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote

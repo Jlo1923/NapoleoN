@@ -9,6 +9,7 @@
         <variable
             name="viewModel"
             type="com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel" />
+
         <variable
             name="galleryItemId"
             type="Integer" />
@@ -63,8 +64,9 @@
                     android:id="@+id/imageView_preview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
                     android:background="@color/black"
-                    android:scaleType="centerCrop"
+                    android:scaleType="centerInside"
                     android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
                     app:attachmentImage="@{viewModel.attachmentTaken}"
                     tools:src="@drawable/vertical_photo" />

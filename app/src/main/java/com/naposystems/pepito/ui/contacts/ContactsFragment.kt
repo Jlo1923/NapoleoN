@@ -139,13 +139,14 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
             if (listContacts != null) {
                 if (listContacts.count() >= 1) {
                     listContacts.add(
+                        0,
                         Contact(
                             0,
                             displayName = getString(R.string.text_add_new_contact)
                         )
                     )
                     listContacts.sortBy { contact ->
-                        contact.id
+                        contact.getNickName()
                     }
                 }
                 adapter.submitList(listContacts)
