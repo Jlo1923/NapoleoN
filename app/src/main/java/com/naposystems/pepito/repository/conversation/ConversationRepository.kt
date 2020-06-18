@@ -33,10 +33,17 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.ProgressRequestBody
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.flow.*
-import okhttp3.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.yield
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import timber.log.Timber
 import java.io.*
@@ -494,6 +501,7 @@ class ConversationRepository @Inject constructor(
 
             try {
                 val response = napoleonApi.downloadFileByUrl(attachment.body)
+//                val response = napoleonApi.downloadFileByUrl("https://video-lga3-1.xx.fbcdn.net/v/t39.24130-2/10000000_252314952661745_7854699925195670435_n.mp4?_nc_cat=101&_nc_sid=985c63&efg=eyJ2ZW5jb2RlX3RhZyI6Im9lcF9oZCJ9&_nc_ohc=yZMEbG8J9AsAX91wp5i&_nc_ht=video-lga3-1.xx&oh=d84d0cad44e97099db93202661c50217&oe=5F0F53B3")
 
                 if (response.isSuccessful) {
                     response.body()?.let { body ->
@@ -547,7 +555,7 @@ class ConversationRepository @Inject constructor(
                             inputStream = body.byteStream()
                             outputStream =
                                 file.outputStream() /*encryptedFile.openFileOutput()*/
-                            val data = ByteArray(contentLength.toInt())
+                            val data = ByteArray(4096)
                             var count: Int
                             var progress = 0
                             while (inputStream.read(data).also { count = it } != -1) {
@@ -586,6 +594,12 @@ class ConversationRepository @Inject constructor(
                             attachment.status =
                                 Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
                             updateAttachment(attachment)
+                            offer(
+                                DownloadAttachmentResult.Cancel(
+                                    messageAndAttachment, itemPosition
+                                )
+                            )
+                            close()
                         } catch (e: IOException) {
                             Timber.e("IOException $e")
                             offer(

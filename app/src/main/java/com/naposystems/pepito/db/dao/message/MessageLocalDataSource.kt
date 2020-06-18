@@ -154,18 +154,27 @@ class MessageLocalDataSource @Inject constructor(
         return listMessages
     }
 
-    override fun updateMessageStatus(messagesWebIds: List<String>, status: Int) {
+    override suspend fun updateMessageStatus(messagesWebIds: List<String>, status: Int) {
         messagesWebIds.forEach { messageWebId ->
-            when (status) {
-                Constants.MessageStatus.READED.status -> {
-                    val timeByMessage = messageDao.getSelfDestructTimeByMessage(messageWebId)
-                    val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
-                    val time = currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
+            val message = getMessageByWebId(messageWebId, false)
 
-                    messageDao.updateMessageStatus(messageWebId, currentTime, time, status)
-                }
-                else -> {
-                    messageDao.updateMessageStatus(messageWebId, 0, 0, status)
+            message?.let { messageAndAttachment ->
+                if (messageAndAttachment.message.status != Constants.MessageStatus.READED.status) {
+                    when (status) {
+                        Constants.MessageStatus.READED.status -> {
+                            val timeByMessage =
+                                messageDao.getSelfDestructTimeByMessage(messageWebId)
+                            val currentTime =
+                                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+                            val time =
+                                currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
+
+                            messageDao.updateMessageStatus(messageWebId, currentTime, time, status)
+                        }
+                        else -> {
+                            messageDao.updateMessageStatus(messageWebId, 0, 0, status)
+                        }
+                    }
                 }
             }
         }

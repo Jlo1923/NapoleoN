@@ -18,6 +18,7 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import com.naposystems.pepito.utility.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
@@ -477,6 +478,24 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             repository.downloadAttachment(messageAndAttachment, itemPosition)
                 .flowOn(Dispatchers.IO)
+                .catch {
+
+                    Timber.e("catch flow")
+
+                    val message = messageAndAttachment.message
+                    val firstAttachment = messageAndAttachment.getFirstAttachment()
+
+                    message.status = Constants.MessageStatus.ERROR.status
+                    updateMessage(message)
+
+                    if (firstAttachment != null) {
+                        firstAttachment.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
+                        updateAttachment(firstAttachment)
+                    }
+
+                    _downloadProgress.value =
+                        DownloadAttachmentResult.Cancel(messageAndAttachment, itemPosition)
+                }
                 .collect {
                     _downloadProgress.value = it
                 }

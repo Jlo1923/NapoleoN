@@ -6,7 +6,8 @@ import kotlinx.coroutines.channels.ProducerScope
 
 sealed class DownloadAttachmentResult {
 
-    data class Start(val itemPosition: Int, val job: ProducerScope<DownloadAttachmentResult>) : DownloadAttachmentResult()
+    data class Start(val itemPosition: Int, val job: ProducerScope<DownloadAttachmentResult>) :
+        DownloadAttachmentResult()
 
     data class Success(val messageAndAttachment: MessageAndAttachment, val itemPosition: Int) :
         DownloadAttachmentResult()
@@ -16,6 +17,9 @@ sealed class DownloadAttachmentResult {
         val message: String,
         val cause: Exception? = null
     ) : DownloadAttachmentResult()
+
+    data class Cancel(val messageAndAttachment: MessageAndAttachment, val itemPosition: Int) :
+        DownloadAttachmentResult()
 
     data class Progress(val itemPosition: Int, val progress: Long) : DownloadAttachmentResult()
 }

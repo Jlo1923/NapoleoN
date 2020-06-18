@@ -98,7 +98,6 @@ class MediaPlayerManager(private val context: Context) :
 
     init {
         bluetoothStateManager = BluetoothStateManager(context, this)
-        audioManagerCompat.requestCallAudioFocus()
     }
 
     private fun setSeekbarProgress() {
@@ -255,6 +254,7 @@ class MediaPlayerManager(private val context: Context) :
                     mImageButtonPlay?.reverseAnimation()
                     mListener?.onPauseAudio()
                 } else {
+                    audioManagerCompat.requestCallAudioFocus()
                     mAudioManager.isSpeakerphoneOn = !isEarpiece
                     start()
 

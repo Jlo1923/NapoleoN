@@ -26,6 +26,7 @@ class ConversationAdapter constructor(
 
     companion object {
         const val PROGRESS = "progress"
+        const val DOWNLOAD_CANCEL = "download_cancel"
         const val UPLOAD_COMPLETE = "upload_complete"
         const val TYPE_MY_MESSAGE = 1
         const val TYPE_INCOMING_MESSAGE = 2
@@ -96,6 +97,14 @@ class ConversationAdapter constructor(
         }
     }
 
+    fun setDownloadCancel(position: Int) {
+        try {
+            notifyItemChanged(position, Bundle().apply { putBoolean(DOWNLOAD_CANCEL, true) })
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
     fun setUploadStart(attachment: Attachment, job: ProducerScope<UploadResult>) {
         try {
             notifyItemChanged(getPositionByItem(attachment), job)
@@ -104,7 +113,11 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setUploadProgress(attachment: Attachment, progress: Long, job: ProducerScope<UploadResult>) {
+    fun setUploadProgress(
+        attachment: Attachment,
+        progress: Long,
+        job: ProducerScope<UploadResult>
+    ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
@@ -308,7 +321,11 @@ class ConversationAdapter constructor(
         }
     }
 
-    private fun handleProducerScopePayload(job: ProducerScope<*>, position: Int, holder: RecyclerView.ViewHolder) {
+    private fun handleProducerScopePayload(
+        job: ProducerScope<*>,
+        position: Int,
+        holder: RecyclerView.ViewHolder
+    ) {
         Timber.d("handleProducerScopePayload: ${getItemViewType(position)}")
         when (getItemViewType(position)) {
             TYPE_INCOMING_MESSAGE,
@@ -341,6 +358,7 @@ class ConversationAdapter constructor(
     ) {
         val progress = bundle.getLong(PROGRESS)
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
+        val downloadCancel = bundle.getBoolean(DOWNLOAD_CANCEL, false)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE,
             TYPE_MY_MESSAGE_GIF,
@@ -351,6 +369,7 @@ class ConversationAdapter constructor(
                 (holder as ConversationViewHolder).apply {
                     setProgress(progress)
                     setUploadComplete(uploadComplete)
+                    setDownloadCancel(downloadCancel)
                 }
             }
             TYPE_INCOMING_MESSAGE,
