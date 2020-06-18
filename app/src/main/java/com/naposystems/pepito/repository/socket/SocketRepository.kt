@@ -14,6 +14,8 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber

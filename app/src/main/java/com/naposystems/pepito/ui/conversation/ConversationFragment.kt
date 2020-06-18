@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.media.AudioManager
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
@@ -625,20 +626,6 @@ class ConversationFragment : BaseFragment(),
                 is DownloadAttachmentResult.Start -> {
                     conversationAdapter.setStartDownload(it.itemPosition, it.job)
                 }
-                is DownloadAttachmentResult.Success -> {
-                    it.messageAndAttachment.getFirstAttachment()?.let { firstAttachment ->
-                        /*if (firstAttachment.type != Constants.AttachmentType.AUDIO.type) {
-                            val message = it.messageAndAttachment.message
-                            viewModel.sendMessageRead(message)
-                        }*/
-
-                        /*firstAttachment.status =
-                            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
-                        viewModel.updateAttachment(
-                            firstAttachment
-                        )*/
-                    }
-                }
                 is DownloadAttachmentResult.Progress -> {
                     conversationAdapter.setProgress(
                         it.itemPosition,
@@ -652,6 +639,9 @@ class ConversationFragment : BaseFragment(),
                         it.attachment
                     )
                     Timber.d("Error")
+                }
+                is DownloadAttachmentResult.Cancel -> {
+                    conversationAdapter.setDownloadCancel(it.itemPosition)
                 }
             }
         })
@@ -930,6 +920,7 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
+        requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
 //        mediaPlayerManager.registerProximityListener()
         setConversationBackground()

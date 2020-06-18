@@ -39,7 +39,7 @@ interface MessageDataSource {
 
     suspend fun deletedMessages(listWebIdMessages: List<String>)
 
-    fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
+    suspend fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
 
     fun getMessagesForHome() : LiveData<List<MessageAndAttachment>>
 

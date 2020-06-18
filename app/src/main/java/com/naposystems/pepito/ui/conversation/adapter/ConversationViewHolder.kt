@@ -98,10 +98,13 @@ open class ConversationViewHolder constructor(
         try {
             if (this.downloadJob?.isActive == true) {
                 Timber.d(" setProgress this.uploadjob: ${this.uploadJob}, this.downloadJob: ${this.downloadJob}")
-                progressBar?.visibility = View.VISIBLE
-                progressBar?.setProgress(progress.toFloat())
-                imageButtonState?.visibility = View.VISIBLE
-                progressBarIndeterminate?.visibility = View.GONE
+
+                if (progress > 0) {
+                    progressBar?.visibility = View.VISIBLE
+                    progressBar?.setProgress(progress.toFloat())
+                    imageButtonState?.visibility = View.VISIBLE
+                    progressBarIndeterminate?.visibility = View.GONE
+                }
 
                 if (progress == 100L) {
                     progressBar?.visibility = View.GONE
@@ -182,6 +185,16 @@ open class ConversationViewHolder constructor(
         progressBar?.setProgress(0f)
         progressBar?.visibility = View.INVISIBLE
         progressBarIndeterminate?.visibility = View.VISIBLE
+    }
+
+    fun setDownloadCancel(isCancel: Boolean) {
+        if (isCancel) {
+            progressBar?.setProgress(0.0f)
+            progressBar?.visibility = View.GONE
+            progressBarIndeterminate?.visibility = View.GONE
+            imageButtonState?.visibility = View.VISIBLE
+            imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+        }
     }
 
     open fun bind(
@@ -266,7 +279,7 @@ open class ConversationViewHolder constructor(
                 }
                 Constants.AttachmentStatus.DOWNLOADING.status -> {
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
-//                    imageButtonState?.visibility = View.VISIBLE
+                    progressBarIndeterminate?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
                     progressBar?.visibility = View.GONE
@@ -295,6 +308,19 @@ open class ConversationViewHolder constructor(
                     imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
                     imageButtonState?.visibility = View.VISIBLE
                     Timber.d("imageButtonState?.visibility = ${imageButtonState?.visibility}")
+                }
+                Constants.AttachmentStatus.ERROR.status -> {
+                    progressBar?.setProgress(0.0f)
+                    progressBar?.visibility = View.GONE
+                    progressBarIndeterminate?.visibility = View.GONE
+
+                    if (item.message.isMine == Constants.IsMine.YES.value) {
+                        imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
+                    } else {
+                        imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+                    }
+
+                    imageButtonState?.visibility = View.VISIBLE
                 }
             }
 
@@ -416,6 +442,7 @@ open class ConversationViewHolder constructor(
                 }
                 progressBar?.setProgress(0.0f)
                 progressBar?.visibility = View.GONE
+                imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
                 attachment.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
                 clickListener.updateAttachmentState(attachment)
             }

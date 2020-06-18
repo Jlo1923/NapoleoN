@@ -196,10 +196,20 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        if (binding.viewFinder.isRecording) {
+            binding.viewFinder.stopRecording()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         Timber.e("onDestroyView")
-        CameraX.unbindAll()
+        if (binding.viewFinder.isRecording) {
+            binding.viewFinder.stopRecording()
+        }
+//        CameraX.unbindAll()
     }
 
     private fun takePhoto() {

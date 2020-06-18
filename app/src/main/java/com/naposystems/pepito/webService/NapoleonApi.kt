@@ -92,6 +92,7 @@ import retrofit2.http.*
 
 interface NapoleonApi {
 
+    @Streaming
     @GET
     suspend fun downloadFileByUrl(@Url fileUrl: String): Response<ResponseBody>
 

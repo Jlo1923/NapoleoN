@@ -70,6 +70,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         super.onCreate(savedInstanceState)
         Timber.d("onCreate")
 
+        volumeControlStream = AudioManager.STREAM_MUSIC
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
         webRTCClient = WebRTCClient(this, socketService, sharedPreferencesManager)
