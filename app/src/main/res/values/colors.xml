@@ -45,6 +45,15 @@
     <color name="color_E8D8AB">#E8D8AB</color>
     <color name="color_808080">#808080</color>
 
+    <!--   Dark Napoleon-->
+    <color name="color_383838">#383838</color>
+    <color name="color_80383838">#80383838</color>
+    <color name="color_505564">#505564</color>
+    <color name="color_4Df2f2f2">#4Df2f2f2</color>
+    <color name="color_000015">#000015</color>
+    <color name="color_CCCACA">#CCCACA</color>
+    <color name="color_101010">#101010</color>
+
     <!--   Cold Ocean-->
     <color name="color_20202E">#20202e</color>
     <color name="color_2A2C45">#2a2c45</color>

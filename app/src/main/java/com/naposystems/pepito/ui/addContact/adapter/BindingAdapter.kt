@@ -1,9 +1,11 @@
 package com.naposystems.pepito.ui.addContact.adapter
 
 import android.graphics.drawable.Animatable
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.button.MaterialButton
 import com.naposystems.pepito.R
+import com.naposystems.pepito.entity.addContact.FriendshipRequestTitle
 
 @BindingAdapter("haveFriendshipRequest")
 fun haveFriendShipRequest(button: MaterialButton, haveFriendShipRequest: Boolean) {
@@ -24,4 +26,15 @@ fun haveFriendShipRequest(button: MaterialButton, haveFriendShipRequest: Boolean
         button.setStrokeColorResource(R.color.buttonTint)
     }
 
+}
+
+@BindingAdapter("titleFriendshipRequest")
+fun bindTitleFriendshipRequest(textView: TextView, friendshipRequestTitle: FriendshipRequestTitle) {
+    val context = textView.context
+    val title = if (friendshipRequestTitle.id == -1) {
+        R.string.text_friend_requests_received
+    } else {
+        R.string.text_friend_requests_sent
+    }
+    textView.text = context.getString(title)
 }

@@ -932,7 +932,7 @@ class ConversationFragment : BaseFragment(),
         super.onResume()
         Timber.d("onResume")
 //        mediaPlayerManager.registerProximityListener()
-//        setConversationBackground()
+        setConversationBackground()
         binding.floatingActionButtonSend.morphToMic()
         messagedLoadedFirstTime = false
     }
@@ -1063,24 +1063,22 @@ class ConversationFragment : BaseFragment(),
 
     private fun setConversationBackground() {
         val chatBackgroundFileName = viewModel.getUser().chatBackground
-        activity?.let { activity ->
-            context?.let { context ->
-                if (chatBackgroundFileName.isNotEmpty()) {
-                    val uri = Utils.getFileUri(
-                        context = context,
-                        fileName = chatBackgroundFileName,
-                        subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
-                    )
-                    val inputStream: InputStream = context.contentResolver.openInputStream(uri)!!
-                    val backgroundDrawable = Drawable.createFromStream(inputStream, uri.toString())
-                    backgroundDrawable.alpha = (255 * 0.3).toInt()
-                    activity.window.setBackgroundDrawable(backgroundDrawable)
-                } else {
-                    activity.window.decorView.background = resources.getDrawable(
-                        R.drawable.bg_default_conversation,
-                        requireContext().theme
-                    )
-                }
+        context?.let { context ->
+            if (chatBackgroundFileName.isNotEmpty()) {
+                val uri = Utils.getFileUri(
+                    context = context,
+                    fileName = chatBackgroundFileName,
+                    subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                )
+                val inputStream: InputStream = context.contentResolver.openInputStream(uri)!!
+                val backgroundDrawable = Drawable.createFromStream(inputStream, uri.toString())
+                binding.imageViewBackground.setImageDrawable(backgroundDrawable)
+            } else {
+                val defaultDrawable = context.resources.getDrawable(
+                    R.drawable.bg_default_conversation,
+                    context.theme
+                )
+                binding.imageViewBackground.background = defaultDrawable
             }
         }
     }

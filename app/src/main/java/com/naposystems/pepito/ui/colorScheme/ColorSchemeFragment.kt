@@ -3,7 +3,6 @@ package com.naposystems.pepito.ui.colorScheme
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -109,9 +108,6 @@ class ColorSchemeFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.done) {
             viewModel.saveTheme(theme)
-            if (theme == Constants.ThemesApplication.DARK_NAPOLEON.theme) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
             validateStateOutputControl()
             activity?.recreate()
         }

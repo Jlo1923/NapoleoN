@@ -7,21 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.LanguageSelectionDialogFragmentBinding
 import com.naposystems.pepito.model.languageSelection.Language
 import com.naposystems.pepito.ui.languageSelection.adapter.LanguageSelectionAdapter
 import com.naposystems.pepito.utility.LocaleHelper
+import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import javax.inject.Inject
 
 class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: LanguageSelectionViewModel by viewModels { viewModelFactory }
     private lateinit var binding: LanguageSelectionDialogFragmentBinding
     private lateinit var adapter: LanguageSelectionAdapter
@@ -45,9 +44,8 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
         adapter =
             LanguageSelectionAdapter(
                 viewModel.languagesList,
-                LanguageSelectionAdapter.LanguageSelectionListener {
-                    viewModel.setSelectedLanguage(it)
-                    val languageSelected = it
+                LanguageSelectionAdapter.LanguageSelectionListener { languageSelected ->
+                    viewModel.setSelectedLanguage(languageSelected)
                     changeLocale(languageSelected)
                 },
                 LocaleHelper.getLanguagePreference(requireContext())
@@ -63,7 +61,6 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun changeLocale(language: Language) {
-        Timber.d("changeLocale: ${language.iso}")
         LocaleHelper.setNewLanguage(requireContext(), language)
         requireActivity().recreate()
         dismiss()
