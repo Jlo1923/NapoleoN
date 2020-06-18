@@ -1069,7 +1069,7 @@ class ConversationFragment : BaseFragment(),
                     R.drawable.bg_default_conversation,
                     context.theme
                 )
-                binding.imageViewBackground.background = defaultDrawable
+                binding.imageViewBackground.setImageDrawable(defaultDrawable)
             }
         }
     }
