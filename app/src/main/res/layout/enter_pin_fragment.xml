@@ -23,7 +23,7 @@
                 style="@style/BodyTextView.Tint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/large_margin"
+                android:layout_marginTop="@dimen/normal_margin"
                 android:text="@string/text_number_attempts"
                 app:layout_constraintEnd_toStartOf="@id/guideline_end"
                 app:layout_constraintTop_toBottomOf="@id/guideline_top" />
@@ -49,7 +49,7 @@
                 style="@style/BodyTextView.Tint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/normal_margin"
+                android:layout_marginTop="@dimen/small_margin"
                 android:text="@string/text_pin_enter"
                 app:layout_constraintEnd_toStartOf="@id/guideline_end"
                 app:layout_constraintStart_toEndOf="@id/guideline_start"
@@ -64,7 +64,6 @@
                 android:tint="?attr/attrColorButtonTint"
                 app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
                 app:layout_constraintEnd_toEndOf="@id/guideline_end"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/guideline_start"
                 app:layout_constraintTop_toBottomOf="@+id/textView_pin_status" />
 
@@ -101,7 +100,7 @@
                 android:id="@+id/imageButton_fingerprint"
                 android:layout_width="62dp"
                 android:layout_height="62dp"
-                android:layout_margin="@dimen/normal_margin"
+                android:layout_marginStart="@dimen/normal_margin"
                 android:background="@android:color/transparent"
                 android:tint="?attr/attrColorButtonTint"
                 android:scaleType="fitCenter"

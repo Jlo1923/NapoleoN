@@ -29,6 +29,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <com.naposystems.pepito.ui.custom.noScrollView.NoScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black">
+
+                <ImageView
+                    android:id="@+id/imageView_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:background="@color/black"
+                    android:scaleType="centerInside"
+                    android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
+                    app:attachmentImage="@{viewModel.attachmentTaken}"
+                    tools:src="@drawable/vertical_photo" />
+
+            </com.naposystems.pepito.ui.custom.noScrollView.NoScrollView>
+
             <FrameLayout
                 android:id="@+id/container_video_view"
                 android:layout_width="match_parent"
@@ -55,23 +74,6 @@
                     app:tint="@color/white" />
             </FrameLayout>
 
-            <com.naposystems.pepito.ui.custom.noScrollView.NoScrollView
-                android:id="@+id/scrollView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/imageView_preview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:background="@color/black"
-                    android:scaleType="centerInside"
-                    android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
-                    app:attachmentImage="@{viewModel.attachmentTaken}"
-                    tools:src="@drawable/vertical_photo" />
-            </com.naposystems.pepito.ui.custom.noScrollView.NoScrollView>
-
         </ViewSwitcher>
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -80,6 +82,7 @@
             android:layout_height="32dp"
             android:background="@android:color/transparent"
             android:foreground="?attr/actionBarItemBackground"
+            android:layout_marginTop="@dimen/normal_margin"
             android:padding="@dimen/x_small_padding"
             android:scaleType="fitCenter"
             android:tint="@color/white"
@@ -130,6 +133,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_margin"
+            android:layout_marginHorizontal="@dimen/x_small_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/floatingActionButton_send"
             app:layout_constraintStart_toStartOf="parent"

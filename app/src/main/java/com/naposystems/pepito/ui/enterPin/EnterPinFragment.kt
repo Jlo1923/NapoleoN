@@ -76,6 +76,8 @@ class EnterPinFragment : Fragment(),
 
         viewModel.validPassword.observe(viewLifecycleOwner, Observer {
             if (it == true) {
+                binding.textViewAttempts.visibility = View.GONE
+                binding.imageButtonFingerprint.visibility = View.GONE
                 findNavController().navigate(
                     EnterPinFragmentDirections.actionEnterPinFragmentToHomeFragment()
                 )
