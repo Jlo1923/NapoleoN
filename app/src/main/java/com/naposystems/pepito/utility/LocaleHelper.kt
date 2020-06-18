@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.os.Build
-import android.os.LocaleList
 import com.naposystems.pepito.R
 import com.naposystems.pepito.model.languageSelection.Language
 import com.squareup.moshi.JsonAdapter
@@ -22,12 +21,11 @@ class LocaleHelper(base: Context) : ContextWrapper(base) {
             return updateResources(context, getLanguagePreference(context!!))
         }
 
-        fun setNewLanguage(context: Context, languageSelected: Language): ContextWrapper {
+        fun setNewLanguage(context: Context, languageSelected: Language) {
             setLanguagePreference(context, languageSelected)
-            return updateResources(context, languageSelected.iso)
         }
 
-        private fun updateResources(context: Context?, iso: String): ContextWrapper {
+        fun updateResources(context: Context?, iso: String): ContextWrapper {
             Timber.d("el puto iso de mierda: $iso")
             val newContext: Context?
 

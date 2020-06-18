@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -133,15 +134,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-            1 -> setNewTheme(Constants.ColorScheme.LIGHT_THEME.scheme)
-            2 -> setNewTheme(Constants.ColorScheme.DARK_THEME.scheme)
-            3 -> setNewTheme(R.style.AppThemeBlackGoldAlloy)
-            4 -> setNewTheme(R.style.AppThemeColdOcean)
-            5 -> setNewTheme(R.style.AppThemeCamouflage)
-            6 -> setNewTheme(R.style.AppThemePurpleBluebonnets)
-            7 -> setNewTheme(R.style.AppThemePinkDream)
-            8 -> setNewTheme(R.style.AppThemeClearSky)
+            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
+            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
+            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
+            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
+            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
+            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
+            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
+            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
         }
+
+       val language = LocaleHelper.getLanguagePreference(this)
+       LocaleHelper.updateResources(this, language)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -320,15 +324,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setMarginToNavigationView()
     }
 
-    private fun setNewTheme(style: Int) {
-        if (style != Constants.ColorScheme.DARK_THEME.scheme) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            setTheme(style)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-    }
-
     private fun openMenu() {
         binding.toolbar.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
@@ -474,11 +469,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(LocaleHelper.setLocale(newBase))
         applyOverrideConfiguration(newBase?.resources?.configuration)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        LocaleHelper.setLocale(this)
-        super.onConfigurationChanged(newConfig)
     }
 
     override fun onBackPressed() {

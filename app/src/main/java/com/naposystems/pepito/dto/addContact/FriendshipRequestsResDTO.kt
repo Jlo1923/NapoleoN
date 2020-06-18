@@ -19,16 +19,9 @@ data class FriendshipRequestsResDTO(
         ): List<FriendShipRequestAdapterType> {
             val list: MutableList<FriendShipRequestAdapterType> = ArrayList()
 
-            val receivedTitle = FriendshipRequestTitle(
-                -1,
-                context.getString(R.string.text_friend_requests_received)
-            )
-            val offerTitle = FriendshipRequestTitle(
-                -2,
-                context.getString(R.string.text_friend_requests_sent)
-            )
-
             if (response.friendshipRequestReceived.isNotEmpty()) {
+                val receivedTitle = FriendshipRequestTitle(-1)
+
                 list.add(receivedTitle)
 
                 for (friendshipRequestReceived in response.friendshipRequestReceived) {
@@ -40,6 +33,8 @@ data class FriendshipRequestsResDTO(
             }
 
             if (response.friendshipRequestOffer.isNotEmpty()) {
+                val offerTitle = FriendshipRequestTitle(-2)
+
                 list.add(offerTitle)
 
                 for (friendshipRequestOffer in response.friendshipRequestOffer) {
