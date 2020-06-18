@@ -1,6 +1,5 @@
 package com.naposystems.pepito.ui.registerRecoveryAccountQuestion
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +13,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
-    private val context: Context,
     private val repository: IContractRegisterRecoveryAccountQuestion.Repository
 ) : ViewModel(), IContractRegisterRecoveryAccountQuestion.ViewModel {
 

@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.camera.core.*
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -55,6 +57,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
     private var mStartToRecordRunnable: Runnable = Runnable { startRecording() }
     private lateinit var mRecordingTimeRunnable: Runnable
 
+    private var isBackPressed = false
+
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private val mHandler: Handler by lazy {
         Handler()
@@ -77,6 +81,14 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if(binding.viewFinder.isRecording){
+                binding.viewFinder.stopRecording()
+                isBackPressed = true
+            } else {
+                findNavController().popBackStack()
+            }
+        }
         Timber.d("onCreate")
         mainExecutor = ContextCompat.getMainExecutor(requireContext())
     }
@@ -92,7 +104,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
             container,
             false
         )
-        //TODO Pepe
+
         binding.viewFinder.bindToLifecycle(viewLifecycleOwner)
 
         flashMode = ImageCapture.FLASH_MODE_OFF
@@ -165,26 +177,6 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
                 }
             }
         }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun imageButtonCameraTouchListener() {
-        /*binding.imageButtonCamera.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    mHandler.postDelayed(mStartToRecordRunnable, 500)
-                }
-                MotionEvent.ACTION_UP -> {
-                    mHandler.removeCallbacks(mStartToRecordRunnable)
-                    if (!binding.viewFinder.isRecording) {
-                        takePhoto()
-                    } else {
-                        stopRecording()
-                    }
-                }
-            }
-            true
-        }*/
     }
 
     private fun imageButtonFlashClickListener() {
@@ -348,30 +340,35 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
             object : VideoCapture.OnVideoSavedCallback {
                 override fun onVideoSaved(file: File) {
 
-                    val attachment = Attachment(
-                        id = 0,
-                        messageId = 0,
-                        webId = "",
-                        messageWebId = "",
-                        type = Constants.AttachmentType.VIDEO.type,
-                        body = "",
-                        uri = videoFile.name,
-                        origin = Constants.AttachmentOrigin.CAMERA.origin,
-                        thumbnailUri = "",
-                        status = Constants.AttachmentStatus.SENDING.status,
-                        extension = VIDEO_EXTENSION
-                    )
-
-                    mHandler.removeCallbacks(mRecordingTimeRunnable)
-                    hideRecordingTime()
-
-                    findNavController().navigate(
-                        ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
-                            attachment,
-                            0,
-                            args.quote
+                    if (!isBackPressed){
+                        val attachment = Attachment(
+                            id = 0,
+                            messageId = 0,
+                            webId = "",
+                            messageWebId = "",
+                            type = Constants.AttachmentType.VIDEO.type,
+                            body = "",
+                            uri = videoFile.name,
+                            origin = Constants.AttachmentOrigin.CAMERA.origin,
+                            thumbnailUri = "",
+                            status = Constants.AttachmentStatus.SENDING.status,
+                            extension = VIDEO_EXTENSION
                         )
-                    )
+
+                        mHandler.removeCallbacks(mRecordingTimeRunnable)
+                        hideRecordingTime()
+
+                        findNavController().navigate(
+                            ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
+                                attachment,
+                                0,
+                                args.quote
+                            )
+                        )
+                    } else {
+                        if (videoFile.exists()) videoFile.delete()
+                        findNavController().popBackStack()
+                    }
                 }
 
                 override fun onError(

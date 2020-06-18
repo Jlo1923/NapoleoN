@@ -1,7 +1,5 @@
 package com.naposystems.pepito.ui.custom.cameraButton
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
 import android.content.Context
 import android.os.SystemClock
 import android.util.AttributeSet

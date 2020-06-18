@@ -7,7 +7,7 @@
     <string name="okay" translatable="false">OK</string>
     <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="only_letters_upper_case_and_numbers" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
-    <string name="nickname_configuration" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._</string>
+    <string name="nickname_configuration" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789._</string>
     <string name="only_numbers" translatable="false">0123456789</string>
     <string name="only_letters" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz</string>
     <string name="text_napoleon_secret_chat" translatable="false">NapoleoN Secret Chat</string>
