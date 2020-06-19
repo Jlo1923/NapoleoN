@@ -461,12 +461,46 @@ class ConversationViewModel @Inject constructor(
     ) {
         try {
             viewModelScope.launch {
-                repository.suspendUpdateAttachment(attachment)
-                repository.uploadAttachment(attachment, message)
-                    .flowOn(Dispatchers.IO)
-                    .collect {
-                        _uploadProgress.value = it
+
+                if (message.status == Constants.MessageStatus.ERROR.status && message.webId.isEmpty()) {
+                    val messageReqDTO = MessageReqDTO(
+                        userDestination = contact.id,
+                        quoted = message.quoted,
+                        body = message.getBody(cryptoMessage),
+                        numberAttachments = 1,
+                        destroy = message.selfDestructionAt,
+                        messageType = Constants.MessageType.MESSAGE.type
+                    )
+
+                    val messageResponse = repository.sendMessage(messageReqDTO)
+
+                    if (messageResponse.isSuccessful) {
+                        val messageEntity = MessageResDTO.toMessageEntity(
+                            message,
+                            messageResponse.body()!!,
+                            Constants.IsMine.YES.value
+                        )
+
+                        attachment.messageWebId = messageResponse.body()!!.id
+                        uploadAttachment(attachment, messageEntity)
+                    } else {
+                        setStatusErrorMessageAndAttachment(message, attachment)
+
+                        when (messageResponse.code()) {
+                            422 -> _webServiceError.value =
+                                repository.get422ErrorMessage(messageResponse)
+                            else -> _webServiceError.value =
+                                repository.getErrorMessage(messageResponse)
+                        }
                     }
+                } else {
+                    repository.suspendUpdateAttachment(attachment)
+                    repository.uploadAttachment(attachment, message)
+                        .flowOn(Dispatchers.IO)
+                        .collect {
+                            _uploadProgress.value = it
+                        }
+                }
             }
         } catch (e: Exception) {
             setStatusErrorMessageAndAttachment(message, attachment)

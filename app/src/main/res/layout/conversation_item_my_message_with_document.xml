@@ -79,6 +79,7 @@
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@id/textView_document_name"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline"
                 app:layout_constraintTop_toTopOf="@id/textView_document_name"
                 custom:progress="0"
                 custom:progressBarThickness="@dimen/circle_progress_bar"
@@ -92,10 +93,11 @@
                 android:layout_height="0dp"
                 android:indeterminate="true"
                 android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@id/progressBar"
-                app:layout_constraintEnd_toEndOf="@id/progressBar"
-                app:layout_constraintStart_toStartOf="@id/progressBar"
-                app:layout_constraintTop_toTopOf="@id/progressBar" />
+                app:layout_constraintBottom_toBottomOf="@id/textView_document_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/guideline"
+                app:layout_constraintTop_toTopOf="@id/textView_document_name"
+                tools:visibility="visible" />
 
             <!-- BUTTON ATTACHMENT STATE -->
             <androidx.appcompat.widget.AppCompatImageButton
@@ -108,10 +110,10 @@
                 android:scaleType="fitCenter"
                 android:tint="@color/white"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/progressBar"
-                app:layout_constraintEnd_toEndOf="@id/progressBar"
-                app:layout_constraintStart_toStartOf="@id/progressBar"
-                app:layout_constraintTop_toTopOf="@id/progressBar"
+                app:layout_constraintBottom_toBottomOf="@id/textView_document_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/guideline"
+                app:layout_constraintTop_toTopOf="@id/textView_document_name"
                 app:srcCompat="@drawable/ic_close_black_24"
                 custom:iconForState="@{conversation}"
                 tools:visibility="visible" />
@@ -157,6 +159,13 @@
                 app:messageStatus="@{conversation.message.status}"
                 tools:srcCompat="@drawable/ic_access_time_black" />
 
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="32dp" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -169,8 +178,7 @@
             android:gravity="center"
             android:textColor="?attr/attrTextColorColorTextIncomingMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
-            android:visibility="gone"
-            app:countDown="@{conversation}"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"
