@@ -34,6 +34,7 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
@@ -122,22 +123,22 @@ class AppearanceSettingsFragment : BaseFragment() {
 
         binding.textViewLanguageSelected.text = getLanguageSelected()
 
-        binding.optionColorScheme.setOnClickListener(colorSchemeClickListener())
-        binding.imageButtonColorOptionEndIcon.setOnClickListener(colorSchemeClickListener())
+        binding.optionColorScheme.setSafeOnClickListener { colorSchemeClickListener() }
+        binding.imageButtonColorOptionEndIcon.setSafeOnClickListener { colorSchemeClickListener() }
 
-        binding.optionDisplayFormat.setOnClickListener(userDisplayFormatClickListener())
-        binding.imageButtonUserDisplayOptionEndIcon.setOnClickListener(
+        binding.optionDisplayFormat.setSafeOnClickListener { userDisplayFormatClickListener() }
+        binding.imageButtonUserDisplayOptionEndIcon.setSafeOnClickListener {
             userDisplayFormatClickListener()
-        )
-        binding.optionTimeFormat.setOnClickListener(timeFormatClickListener())
+        }
+        binding.optionTimeFormat.setSafeOnClickListener { timeFormatClickListener() }
 
-        binding.optionLanguage.setOnClickListener(languageClickListener())
-        binding.imageButtonLanguageOptionEndIcon.setOnClickListener(languageClickListener())
+        binding.optionLanguage.setSafeOnClickListener { languageClickListener() }
+        binding.imageButtonLanguageOptionEndIcon.setSafeOnClickListener { languageClickListener() }
 
-        binding.optionChatBackground.setOnClickListener(chatBackgroundClickListener())
-        binding.imageButtonChatBackgroundOptionEndIcon.setOnClickListener(
+        binding.optionChatBackground.setSafeOnClickListener { chatBackgroundClickListener() }
+        binding.imageButtonChatBackgroundOptionEndIcon.setSafeOnClickListener {
             chatBackgroundClickListener()
-        )
+        }
 
         return binding.root
     }
@@ -154,19 +155,19 @@ class AppearanceSettingsFragment : BaseFragment() {
         }
     }
 
-    private fun colorSchemeClickListener() = View.OnClickListener {
+    private fun colorSchemeClickListener() {
         findNavController().navigate(
             AppearanceSettingsFragmentDirections
                 .actionAppearanceSettingsFragmentToColorSchemeFragment()
         )
     }
 
-    private fun languageClickListener() = View.OnClickListener {
+    private fun languageClickListener() {
         val languageSelectionDialog = LanguageSelectionDialogFragment()
         languageSelectionDialog.show(childFragmentManager, "LanguageSelection")
     }
 
-    private fun userDisplayFormatClickListener() = View.OnClickListener {
+    private fun userDisplayFormatClickListener() {
         val userDisplayFormatDialog = UserDisplayFormatDialogFragment()
         userDisplayFormatDialog.setListener(object :
             UserDisplayFormatDialogFragment.UserDisplayFormatListener {
@@ -177,7 +178,7 @@ class AppearanceSettingsFragment : BaseFragment() {
         userDisplayFormatDialog.show(childFragmentManager, "UserDisplayFormat")
     }
 
-    private fun timeFormatClickListener() = View.OnClickListener {
+    private fun timeFormatClickListener() {
         val dialog = TimeFormatDialogFragment.newInstance()
         dialog.setListener(object : TimeFormatDialogFragment.TimeFormatListener {
             override fun onTimeFormatChange() {
@@ -187,7 +188,7 @@ class AppearanceSettingsFragment : BaseFragment() {
         dialog.show(childFragmentManager, "TimeFormat")
     }
 
-    private fun chatBackgroundClickListener() = View.OnClickListener {
+    private fun chatBackgroundClickListener() {
         verifyCameraAndMediaPermission()
     }
 

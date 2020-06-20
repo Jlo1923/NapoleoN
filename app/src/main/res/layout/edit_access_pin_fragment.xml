@@ -55,7 +55,6 @@
                     android:layout_marginTop="@dimen/normal_margin"
                     android:hint="@string/text_old_access_pin"
                     android:nextFocusDown="@id/textInputLayout_access_pin"
-                    android:textColorHint="?attr/attrTextColorHint"
                     app:errorEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/textInputLayout_access_pin"
                     app:layout_constraintEnd_toStartOf="@+id/guideline_end"
@@ -67,7 +66,7 @@
                         android:id="@+id/textInputEditText_old_access_pin"
                         style="@style/AccessPinEditText"
                         android:text="@{viewModel.oldAccessPin}"
-                        android:textColor="?attr/attrTextColorHint" />
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,7 +78,6 @@
                     android:layout_marginTop="@dimen/normal_margin"
                     android:hint="@string/text_new_access_pin"
                     android:nextFocusDown="@id/text_input_layout_confirm_access_pin"
-                    android:textColorHint="?attr/attrTextColorHint"
                     app:errorEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/text_input_layout_confirm_access_pin"
                     app:layout_constraintEnd_toEndOf="@+id/textInputLayout_old_access_pin"
@@ -90,7 +88,7 @@
                         android:id="@+id/textInputEditText_access_pin"
                         style="@style/AccessPinEditText"
                         android:text="@{viewModel.newAccessPin}"
-                        android:textColor="?attr/attrTextColorHint" />
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -102,7 +100,6 @@
                     android:layout_marginTop="@dimen/normal_margin"
                     android:layout_marginBottom="@dimen/normal_margin"
                     android:hint="@string/text_confirm_access_pin"
-                    android:textColorHint="?attr/attrTextColorHint"
                     app:errorEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/viewSwitcher"
                     app:layout_constraintEnd_toEndOf="@+id/textInputLayout_access_pin"
@@ -114,7 +111,7 @@
                         style="@style/AccessPinEditText"
                         android:imeOptions="actionDone"
                         android:text="@{viewModel.confirmAccessPin}"
-                        android:textColor="?attr/attrTextColorHint" />
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -24,11 +26,11 @@ import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.utility.Utils.Companion.setupNotificationSound
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
-
 
 class NotificationUtils @Inject constructor(applicationContext: Context) {
 
@@ -157,6 +159,8 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                 contact=194097,
                 type_notification=1,
                 silence=false}*/
+                setupNotificationSound(context, R.raw.sound_message_received)
+
                 val titleKey =
                     Constants.NotificationKeys.TITLE
                 val bodyKey =

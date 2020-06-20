@@ -37,6 +37,7 @@ import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userProfile.UserProfileShareViewModel
@@ -91,17 +92,17 @@ class ProfileFragment : BaseFragment() {
         )
         binding.lifecycleOwner = this
 
-        binding.floatingButtonProfileImage.setOnClickListener {
+        binding.floatingButtonProfileImage.setSafeOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.AVATAR.folder
             verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
         }
 
-        binding.imageViewProfileImage.setOnClickListener {
+        binding.imageViewProfileImage.setSafeOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.AVATAR.folder
             verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
         }
 
-        binding.imageViewProfileImage.setOnClickListener {
+        binding.imageViewProfileImage.setSafeOnClickListener {
             viewModel.getUser()?.let { user ->
                 val extra = FragmentNavigatorExtras(
                     binding.imageViewProfileImage to "transition_image_preview"
@@ -117,25 +118,25 @@ class ProfileFragment : BaseFragment() {
 
         }
 
-        binding.imageButtonEditHeader.setOnClickListener {
+        binding.imageButtonEditHeader.setSafeOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
             verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location)
         }
 
-        binding.imageButtonNameOptionEndIcon.setOnClickListener {
+        binding.imageButtonNameOptionEndIcon.setSafeOnClickListener {
             val dialog = ChangeParamsDialogFragment.newInstance(
                 0, Constants.ChangeParams.NAME_USER.option
             )
             dialog.show(childFragmentManager, "ChangeFakesDialog")
         }
 
-        binding.optionStatus.setOnClickListener(statusClickListener())
-        binding.imageButtonStatusOptionEndIcon.setOnClickListener(statusClickListener())
+        binding.optionStatus.setSafeOnClickListener {statusClickListener()}
+        binding.imageButtonStatusOptionEndIcon.setSafeOnClickListener {statusClickListener()}
 
-        binding.optionBlockedContacts.setOnClickListener(blockedContactClickListener())
-        binding.imageButtonBlockedContactsOptionEndIcon.setOnClickListener(
+        binding.optionBlockedContacts.setSafeOnClickListener {blockedContactClickListener()}
+        binding.imageButtonBlockedContactsOptionEndIcon.setSafeOnClickListener {
             blockedContactClickListener()
-        )
+        }
 
         return binding.root
     }
@@ -230,7 +231,7 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    private fun statusClickListener() = View.OnClickListener {
+    private fun statusClickListener() {
         if (viewModel.getUser() != null) {
             findNavController()
                 .navigate(
@@ -240,7 +241,7 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    private fun blockedContactClickListener() = View.OnClickListener {
+    private fun blockedContactClickListener() {
         findNavController()
             .navigate(
                 ProfileFragmentDirections.actionProfileFragmentToBlockedContactsFragment()

@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
@@ -22,7 +21,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -133,6 +131,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             accountStatus = it
         })
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
             Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
             Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
@@ -235,12 +235,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
                     binding.frameLayout.elevation = 0f
-                    /*binding.toolbar.setBackgroundColor(
-                        resources.getColor(
-                            R.color.flatActionBarColor,
-                            this.theme
-                        )
-                    )*/
                 }
                 R.id.accessPinFragment -> {
                     if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {

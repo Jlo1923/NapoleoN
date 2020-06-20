@@ -62,7 +62,7 @@ interface IContractConversation {
         fun setIsVideoCall(isVideoCall: Boolean)
         fun isVideoCall(): Boolean
         fun resetIsVideoCall()
-        fun uploadAttachment(attachment: Attachment, message: Message)
+        fun uploadAttachment(attachment: Attachment, message: Message, selfDestructTime: Int)
         fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int)
         fun updateMessage(message: Message)
         fun updateAttachment(attachment: Attachment)

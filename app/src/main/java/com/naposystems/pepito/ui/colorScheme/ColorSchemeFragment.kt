@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ColorSchemeFragmentBinding
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
-import com.naposystems.pepito.ui.colorScheme.adapter.ColorSchemeAdapter
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -26,11 +25,10 @@ class ColorSchemeFragment : BaseFragment() {
 
     private val viewModel: ColorSchemeViewModel by viewModels { viewModelFactory }
     private lateinit var binding: ColorSchemeFragmentBinding
-    private lateinit var adapter: ColorSchemeAdapter
     private var acceptMenuItem: MenuItem? = null
 
     var theme: Int = 0
-    var defaultTheme: Int = 0
+    private var defaultTheme: Int = 0
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
