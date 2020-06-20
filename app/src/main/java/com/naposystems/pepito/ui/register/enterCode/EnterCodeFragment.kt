@@ -84,13 +84,13 @@ class EnterCodeFragment :
         viewModel.getAttemptsForNewCode()
         viewModel.attemptsForNewCode.observe(viewLifecycleOwner, Observer {
             attemptsForNewCode = it
-            if (attemptsForNewCode > 0) {
+            /*if (attemptsForNewCode > 0) {
                 binding.textViewAttemptForNewCode.text =
                     getString(R.string.text_number_attempts, attemptsForNewCode, MAX_ATTEMPTS)
                 binding.textViewAttemptForNewCode.visibility = View.VISIBLE
             } else {
                 binding.textViewAttemptForNewCode.visibility = View.GONE
-            }
+            }*/
         })
 
         viewModel.getAttemptsForRetryCode()
@@ -104,9 +104,7 @@ class EnterCodeFragment :
         })
 
         viewModel.forwardedCode.observe(viewLifecycleOwner, Observer { success ->
-            if (success) {
-                timeForNewCode()
-            }
+            if (success) timeForNewCode()
         })
 
         viewModel.invalidCode.observe(viewLifecycleOwner, Observer { success ->
@@ -174,13 +172,11 @@ class EnterCodeFragment :
         else
             viewModel.setTimeForNewCode(Constants.TimeSendCode.THIRTY_SECONDS.time)
 
-        binding.textViewTimeForNewCode.visibility = View.VISIBLE
         binding.buttonCodeForwarding.isEnabled = false
         timerNewCode = object : CountDownTimer(
             time - System.currentTimeMillis(), 1000
         ) {
             override fun onFinish() {
-                binding.textViewTimeForNewCode.visibility = View.GONE
                 if (attemptsForNewCode == MAX_ATTEMPTS &&
                     System.currentTimeMillis() > viewModel.getTimeForNewCode()
                 ) {
@@ -191,7 +187,7 @@ class EnterCodeFragment :
             }
 
             override fun onTick(millisUntilFinished: Long) {
-                if (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toInt() > 0) {
+                /*if (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toInt() > 0) {
                     binding.textViewTimeForNewCode.text =
                         if (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toInt() >= 60) {
                             resources.getQuantityString(
@@ -210,7 +206,7 @@ class EnterCodeFragment :
                                 TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toInt()
                             )
                         }
-                }
+                }*/
             }
         }
         timerNewCode?.start()
@@ -220,19 +216,19 @@ class EnterCodeFragment :
         binding.textViewAttemptsForEnterCode.text =
             getString(R.string.text_number_attempts, attemptsForEnterCode, MAX_ATTEMPTS)
         binding.textViewAttemptsForEnterCode.visibility = View.VISIBLE
-        binding.textViewError.visibility = View.VISIBLE
         binding.textViewTimeForEnterCode.visibility = View.VISIBLE
         binding.numericKeyboard.visibility = View.GONE
         binding.enterCodeWidget.showError()
         binding.buttonContinue.isEnabled = false
+        binding.buttonCodeForwarding.isEnabled = false
         binding.viewSwitcher.showNext()
     }
 
     private fun restoreConfigurationEnterCode() {
-        binding.textViewError.visibility = View.GONE
         binding.textViewTimeForEnterCode.visibility = View.GONE
         binding.numericKeyboard.visibility = View.VISIBLE
         binding.buttonContinue.isEnabled = true
+        binding.buttonCodeForwarding.isEnabled = true
         binding.enterCodeWidget.deleteNumber()
     }
 
