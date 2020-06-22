@@ -103,8 +103,10 @@ open class ConversationViewHolder constructor(
                 if (progress > 0) {
                     progressBar?.visibility = View.VISIBLE
                     progressBar?.setProgress(progress.toFloat())
-//                    imageButtonState?.visibility = View.VISIBLE
+                    imageButtonState?.visibility = View.VISIBLE
                     progressBarIndeterminate?.visibility = View.GONE
+                } else {
+                    imageButtonState?.visibility = View.GONE
                 }
 
                 if (progress == 100L) {
@@ -181,7 +183,7 @@ open class ConversationViewHolder constructor(
     fun setDownloadStart(job: ProducerScope<*>) {
         Timber.d("setDownloadStart: $job")
         this.downloadJob = job
-//        imageButtonState?.visibility = View.VISIBLE
+        imageButtonState?.visibility = View.GONE
         progressBar?.setProgress(0f)
         progressBar?.visibility = View.INVISIBLE
         progressBarIndeterminate?.visibility = View.VISIBLE
@@ -192,8 +194,8 @@ open class ConversationViewHolder constructor(
             progressBar?.setProgress(0.0f)
             progressBar?.visibility = View.GONE
             progressBarIndeterminate?.visibility = View.GONE
-//            imageButtonState?.visibility = View.VISIBLE
-//            imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+            imageButtonState?.visibility = View.VISIBLE
+            imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
         }
     }
 
@@ -440,7 +442,7 @@ open class ConversationViewHolder constructor(
                 }
                 progressBar?.setProgress(0.0f)
                 progressBar?.visibility = View.GONE
-//                imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+                imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
                 attachment.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
                 clickListener.updateAttachmentState(attachment)
             }
@@ -448,7 +450,7 @@ open class ConversationViewHolder constructor(
             Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {
                 progressBarIndeterminate?.visibility = View.VISIBLE
-//                imageButtonState?.visibility = View.GONE
+                imageButtonState?.visibility = View.GONE
                 clickListener.downloadAttachment(item, adapterPosition)
             }
             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,

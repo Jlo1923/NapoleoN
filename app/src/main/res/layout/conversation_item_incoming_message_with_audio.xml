@@ -29,6 +29,7 @@
         android:id="@+id/container_incoming_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
         android:paddingStart="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

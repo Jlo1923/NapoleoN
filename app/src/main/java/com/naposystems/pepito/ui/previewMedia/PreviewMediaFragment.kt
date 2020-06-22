@@ -344,6 +344,7 @@ class PreviewMediaFragment : Fragment() {
         if (Util.SDK_INT >= 24) {
             releasePlayer()
         }
+        sentMessageReaded(false)
     }
 
     override fun onDestroy() {

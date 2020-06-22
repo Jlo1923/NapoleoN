@@ -60,15 +60,15 @@ class SplashRepository @Inject constructor(
     }
 
     override suspend fun setDefaultTheme() {
-        val nightModeFlags: Int = context.resources.configuration.uiMode and
+        /*val nightModeFlags: Int = context.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK
         val defaultTheme = when (nightModeFlags) {
             Configuration.UI_MODE_NIGHT_YES -> Constants.ColorScheme.DARK_THEME.scheme
             else -> Constants.ColorScheme.LIGHT_THEME.scheme
-        }
+        }*/
         defaultPreferencesPutInt(
             Constants.SharedPreferences.PREF_COLOR_SCHEME,
-            defaultTheme
+            Constants.ColorScheme.LIGHT_THEME.scheme
         )
     }
 

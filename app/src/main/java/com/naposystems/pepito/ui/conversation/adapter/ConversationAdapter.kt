@@ -375,7 +375,6 @@ class ConversationAdapter constructor(
                 (holder as ConversationViewHolder).apply {
                     setProgress(progress)
                     setUploadComplete(uploadComplete)
-                    setDownloadCancel(downloadCancel)
                 }
             }
             TYPE_INCOMING_MESSAGE_IMAGE,
@@ -384,7 +383,10 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_GIF_NN,
             TYPE_INCOMING_MESSAGE_DOCUMENT,
             TYPE_INCOMING_MESSAGE_AUDIO -> {
-                (holder as ConversationViewHolder).setProgress(progress)
+                (holder as ConversationViewHolder).apply {
+                    setProgress(progress)
+                    setDownloadCancel(downloadCancel)
+                }
             }
         }
     }
