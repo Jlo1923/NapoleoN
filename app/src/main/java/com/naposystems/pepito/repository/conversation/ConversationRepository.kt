@@ -706,4 +706,8 @@ class ConversationRepository @Inject constructor(
             Timber.e(ex)
         }
     }
+
+    override suspend fun reSendMessage(messageAndAttachment: MessageAndAttachment) {
+
+    }
 }

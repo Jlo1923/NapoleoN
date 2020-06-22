@@ -459,10 +459,14 @@ class ConversationViewModel @Inject constructor(
         this.isVideoCall = false
     }
 
-    override fun uploadAttachment(attachment: Attachment, message: Message, selfDestructTime: Int) {
-        try {
-            viewModelScope.launch {
-                message.selfDestructionAt = selfDestructTime
+    override fun uploadAttachment(
+        attachment: Attachment,
+        message: Message,
+        selfDestructTime: Int
+    ) {
+        viewModelScope.launch {
+            message.selfDestructionAt = selfDestructTime
+            try {
                 if (message.status == Constants.MessageStatus.ERROR.status && message.webId.isEmpty()) {
                     val messageReqDTO = MessageReqDTO(
                         userDestination = contact.id,
@@ -502,10 +506,10 @@ class ConversationViewModel @Inject constructor(
                             _uploadProgress.value = it
                         }
                 }
+            } catch (e: Exception) {
+                setStatusErrorMessageAndAttachment(message, attachment)
+                Timber.e(e)
             }
-        } catch (e: Exception) {
-            setStatusErrorMessageAndAttachment(message, attachment)
-            Timber.e(e)
         }
     }
 
@@ -566,6 +570,49 @@ class ConversationViewModel @Inject constructor(
     override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
         viewModelScope.launch {
             repository.setMessageRead(messageAndAttachment)
+        }
+    }
+
+    override fun reSendMessage(message: Message, selfDestructTime: Int) {
+        viewModelScope.launch {
+            try {
+
+                val messageReqDTO = MessageReqDTO(
+                    userDestination = contact.id,
+                    quoted = message.quoted,
+                    body = message.getBody(cryptoMessage),
+                    numberAttachments = 0,
+                    destroy = selfDestructTime,
+                    messageType = Constants.MessageType.MESSAGE.type
+                )
+
+                val messageResponse = repository.sendMessage(messageReqDTO)
+
+                if (messageResponse.isSuccessful) {
+                    val messageEntity = MessageResDTO.toMessageEntity(
+                        message,
+                        messageResponse.body()!!,
+                        Constants.IsMine.YES.value
+                    )
+
+                    messageEntity.status =
+                        if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
+                        else Constants.MessageStatus.SENT.status
+                    repository.updateMessage(messageEntity)
+                    Timber.d("updateMessage")
+                } else {
+                    setStatusErrorMessageAndAttachment(message, null)
+
+                    when (messageResponse.code()) {
+                        422 -> _webServiceError.value =
+                            repository.get422ErrorMessage(messageResponse)
+                        else -> _webServiceError.value = repository.getErrorMessage(messageResponse)
+                    }
+                }
+            } catch (e: Exception) {
+                setStatusErrorMessageAndAttachment(message, null)
+                Timber.e(e)
+            }
         }
     }
 

@@ -44,6 +44,7 @@ open class ConversationViewHolder constructor(
     var imageButtonState: AppCompatImageButton? = null
     var audioPlayer: AudioPlayerCustomView? = null
     var imageViewAttachment: ImageView? = null
+    var imageButtonSend: AppCompatImageButton? = null
 
     fun countDown(
         item: MessageAndAttachment,
@@ -102,7 +103,7 @@ open class ConversationViewHolder constructor(
                 if (progress > 0) {
                     progressBar?.visibility = View.VISIBLE
                     progressBar?.setProgress(progress.toFloat())
-                    imageButtonState?.visibility = View.VISIBLE
+//                    imageButtonState?.visibility = View.VISIBLE
                     progressBarIndeterminate?.visibility = View.GONE
                 }
 
@@ -132,7 +133,7 @@ open class ConversationViewHolder constructor(
 
         if (progress == 100L) {
             progressBar?.visibility = View.GONE
-            imageButtonState?.visibility = View.GONE
+//            imageButtonState?.visibility = View.GONE
         }
         this.uploadJob = job
 
@@ -156,7 +157,7 @@ open class ConversationViewHolder constructor(
 
         if (progress == 100L) {
             progressBar?.visibility = View.GONE
-            imageButtonState?.visibility = View.GONE
+//            imageButtonState?.visibility = View.GONE
         }
 
         this.downloadJob = job
@@ -167,14 +168,13 @@ open class ConversationViewHolder constructor(
             progressBar?.visibility = View.GONE
             imageButtonState?.visibility = View.GONE
             Timber.d("enablePlayButton setUploadComplete: true")
-            audioPlayer?.enablePlayButton(true)
         }
     }
 
     fun setUploadStart(job: ProducerScope<*>) {
         Timber.d("setUploadStart: $job")
         this.uploadJob = job
-        imageButtonState?.visibility = View.VISIBLE
+//        imageButtonState?.visibility = View.VISIBLE
         progressBarIndeterminate?.visibility = View.VISIBLE
     }
 
@@ -192,8 +192,8 @@ open class ConversationViewHolder constructor(
             progressBar?.setProgress(0.0f)
             progressBar?.visibility = View.GONE
             progressBarIndeterminate?.visibility = View.GONE
-            imageButtonState?.visibility = View.VISIBLE
-            imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+//            imageButtonState?.visibility = View.VISIBLE
+//            imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
         }
     }
 
@@ -230,7 +230,6 @@ open class ConversationViewHolder constructor(
             quote?.visibility = View.GONE
         }
 
-        audioPlayer?.enablePlayButton(false)
         imageViewAttachment?.visibility = View.GONE
         imageButtonState?.visibility = View.GONE
         progressBar?.setProgress(0.0f)
@@ -240,8 +239,8 @@ open class ConversationViewHolder constructor(
         val firstAttachment: Attachment? = item.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
-            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
-
+//            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
+//            Timber.d("hasUploadComplete: $hasUploadComplete")
             if (item.message.status == Constants.MessageStatus.UNREAD.status &&
                 attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status
             ) {
@@ -255,43 +254,41 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
 
-                    imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
-                    imageButtonState?.visibility = View.VISIBLE
+//                    imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
+//                    imageButtonState?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.SENDING.status -> {
-                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
-                    imageButtonState?.visibility = View.VISIBLE
+//                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
+//                    imageButtonState?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.SENT.status -> {
-                    imageButtonState?.visibility = View.INVISIBLE
+//                    imageButtonState?.visibility = View.INVISIBLE
                     progressBarIndeterminate?.visibility = View.GONE
                     progressBar?.visibility = View.INVISIBLE
                     progressBar?.setProgress(0f)
                     Timber.d("enablePlayButton SENT: true")
-                    audioPlayer?.enablePlayButton(true)
                 }
                 Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
                     progressBar?.setProgress(0f)
                     progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
-                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
-                    imageButtonState?.visibility = View.GONE
+//                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
+//                    imageButtonState?.visibility = View.GONE
                 }
                 Constants.AttachmentStatus.DOWNLOADING.status -> {
-                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
+//                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
                     progressBarIndeterminate?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
                     progressBar?.visibility = View.GONE
                     progressBar?.setProgress(0f)
                     progressBarIndeterminate?.visibility = View.GONE
-                    imageButtonState?.visibility = View.GONE
+//                    imageButtonState?.visibility = View.GONE
                     if (audioPlayer != null && mediaPlayerManager != null) {
                         Timber.d("enablePlayButton DOWNLOAD_COMPLETE: true")
-                        audioPlayer?.enablePlayButton(true)
                         loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
                         progressBar?.visibility = View.GONE
-                        imageButtonState?.visibility = View.GONE
+//                        imageButtonState?.visibility = View.GONE
                     }
 
                     if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.message.status == Constants.MessageStatus.UNREAD.status) {
@@ -304,10 +301,10 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
 
-                    Timber.d("imageButtonState?.visibility = ${imageButtonState?.visibility}")
-                    imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
-                    imageButtonState?.visibility = View.VISIBLE
-                    Timber.d("imageButtonState?.visibility = ${imageButtonState?.visibility}")
+//                    Timber.d("imageButtonState?.visibility = ${imageButtonState?.visibility}")
+//                    imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+//                    imageButtonState?.visibility = View.VISIBLE
+//                    Timber.d("imageButtonState?.visibility = ${imageButtonState?.visibility}")
                 }
                 Constants.AttachmentStatus.ERROR.status -> {
                     progressBar?.setProgress(0.0f)
@@ -315,12 +312,12 @@ open class ConversationViewHolder constructor(
                     progressBarIndeterminate?.visibility = View.GONE
 
                     if (item.message.isMine == Constants.IsMine.YES.value) {
-                        imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
+//                        imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
                     } else {
-                        imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+//                        imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
                     }
 
-                    imageButtonState?.visibility = View.VISIBLE
+//                    imageButtonState?.visibility = View.VISIBLE
                 }
             }
 
@@ -342,6 +339,12 @@ open class ConversationViewHolder constructor(
 
             if (item.message.isMine == Constants.IsMine.YES.value && audioPlayer != null && mediaPlayerManager != null) {
                 loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
+            }
+        }
+
+        imageButtonSend?.setOnClickListener {
+            if (item.message.status == Constants.MessageStatus.ERROR.status) {
+                clickListener.reSendMessage(item.message)
             }
         }
     }
@@ -420,10 +423,7 @@ open class ConversationViewHolder constructor(
                     clickListener.updateAttachmentState(attachment)
                 }
                 progressBar?.setProgress(0.0f)
-                audioPlayer?.setProgress(0)
-                audioPlayer?.hideIndeterminateProgress()
                 progressBar?.visibility = View.INVISIBLE
-                audioPlayer?.hideProgressBar()
             }
             Constants.AttachmentStatus.UPLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {
@@ -440,7 +440,7 @@ open class ConversationViewHolder constructor(
                 }
                 progressBar?.setProgress(0.0f)
                 progressBar?.visibility = View.GONE
-                imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
+//                imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
                 attachment.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
                 clickListener.updateAttachmentState(attachment)
             }
@@ -448,7 +448,7 @@ open class ConversationViewHolder constructor(
             Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {
                 progressBarIndeterminate?.visibility = View.VISIBLE
-                imageButtonState?.visibility = View.GONE
+//                imageButtonState?.visibility = View.GONE
                 clickListener.downloadAttachment(item, adapterPosition)
             }
             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,

@@ -92,7 +92,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ConversationFragment : BaseFragment(),
-    MediaPlayerManager.Listener, FabSend.FabSendListener {
+    MediaPlayerManager.Listener, FabSend.FabSendListener, ConversationAdapter.ClickListener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -674,6 +674,7 @@ class ConversationFragment : BaseFragment(),
                         it.progress,
                         it.job
                     )
+                    is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
                 }
             }
         })
@@ -1215,73 +1216,11 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     private fun setupAdapter() {
-        conversationAdapter = ConversationAdapter(object : ConversationAdapter.ClickListener {
-            override fun onClick(item: MessageAndAttachment) {
-                conversationAdapterOnClickEvent(item)
-            }
-
-            override fun onLongClick(item: Message) {
-                if (actionMode.mode == null) {
-                    actionMode.startActionMode(view, R.menu.menu_selection_message)
-                    updateStateSelectionMessage(item)
-                }
-            }
-
-            override fun messageToEliminate(item: MessageAndAttachment) {
-                val messages = arrayListOf<MessageAndAttachment>()
-                messages.add(item)
-                viewModel.deleteMessagesSelected(args.contact.id, messages)
-            }
-
-            override fun errorPlayingAudio() {
-                Utils.showSimpleSnackbar(
-                    binding.coordinator,
-                    getString(R.string.text_error_playing_audio),
-                    3
-                )
-            }
-
-            override fun onPreviewClick(item: MessageAndAttachment) {
-                findNavController().navigate(
-                    ConversationFragmentDirections
-                        .actionConversationFragmentToPreviewMediaFragment(item)
-                )
-            }
-
-            override fun goToQuote(messageAndAttachment: MessageAndAttachment) {
-                val position = viewModel.getMessagePosition(messageAndAttachment)
-
-                if (position != -1) {
-                    binding.recyclerViewConversation.smoothScrollToPosition(position)
-                } else {
-                    Toast.makeText(
-                        context, "No se encuentra el mensaje original|!!", Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            override fun downloadAttachment(
-                messageAndAttachment: MessageAndAttachment,
-                itemPosition: Int?
-            ) {
-                Timber.d("downloadAttachment")
-                if (itemPosition != null && messageAndAttachment.getFirstAttachment() != null) {
-                    viewModel.downloadAttachment(messageAndAttachment, itemPosition)
-                }
-            }
-
-            override fun uploadAttachment(attachment: Attachment, message: Message) {
-                viewModel.uploadAttachment(attachment, message, obtainTimeSelfDestruct())
-            }
-
-            override fun updateAttachmentState(attachment: Attachment) {
-                viewModel.updateAttachment(attachment)
-            }
-
-            override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
-                viewModel.sendMessageRead(messageAndAttachment)
-            }
-        }, mediaPlayerManager, timeFormatShareViewModel.getValTimeFormat())
+        conversationAdapter = ConversationAdapter(
+            this,
+            mediaPlayerManager,
+            timeFormatShareViewModel.getValTimeFormat()
+        )
 
         linearLayoutManager = LinearLayoutManager(requireContext())
 
@@ -1315,19 +1254,6 @@ class ConversationFragment : BaseFragment(),
     private fun conversationAdapterOnClickEvent(item: MessageAndAttachment) {
         if (actionMode.mode != null) {
             updateStateSelectionMessage(item.message)
-        }
-
-        if (item.attachmentList.isNotEmpty()) {
-            val firstAttachment = item.attachmentList.first()
-
-            if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type &&
-                firstAttachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
-            ) {
-                if (item.message.status == Constants.MessageStatus.UNREAD.status) {
-                    viewModel.sendMessageRead(item)
-                }
-                openAttachmentDocument(firstAttachment)
-            }
         }
     }
 
@@ -1537,6 +1463,27 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
+    private fun setupVoiceNoteSound(context: Context, sound: Int) {
+        try {
+            mediaPlayer.apply {
+                reset()
+                setDataSource(
+                    context,
+                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
+                )
+                if (isPlaying) {
+                    stop()
+                    reset()
+                    release()
+                }
+                prepare()
+                start()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
     //region Implementation MediaPlayerManager.Listener
     override fun onErrorPlayingAudio() {
         Utils.showSimpleSnackbar(
@@ -1644,24 +1591,86 @@ class ConversationFragment : BaseFragment(),
     }
     //endregion
 
-    private fun setupVoiceNoteSound(context: Context, sound: Int) {
-        try {
-            mediaPlayer.apply {
-                reset()
-                setDataSource(
-                    context,
-                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
-                )
-                if (isPlaying) {
-                    stop()
-                    reset()
-                    release()
-                }
-                prepare()
-                start()
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
+    //region Implementation ConversationAdapter.ClickListener
+    override fun onClick(item: MessageAndAttachment) {
+        conversationAdapterOnClickEvent(item)
+    }
+
+    override fun onLongClick(item: Message) {
+        if (actionMode.mode == null) {
+            actionMode.startActionMode(view, R.menu.menu_selection_message)
+            updateStateSelectionMessage(item)
         }
     }
+
+    override fun messageToEliminate(item: MessageAndAttachment) {
+        val messages = arrayListOf<MessageAndAttachment>()
+        messages.add(item)
+        viewModel.deleteMessagesSelected(args.contact.id, messages)
+    }
+
+    override fun errorPlayingAudio() {
+        Utils.showSimpleSnackbar(
+            binding.coordinator,
+            getString(R.string.text_error_playing_audio),
+            3
+        )
+    }
+
+    override fun onPreviewClick(item: MessageAndAttachment) {
+        if (item.attachmentList.isNotEmpty()) {
+            val firstAttachment = item.attachmentList.first()
+
+            if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
+                if (item.message.status == Constants.MessageStatus.UNREAD.status && item.message.isMine == Constants.IsMine.NO.value) {
+                    viewModel.sendMessageRead(item)
+                }
+                openAttachmentDocument(firstAttachment)
+            } else {
+                findNavController().navigate(
+                    ConversationFragmentDirections
+                        .actionConversationFragmentToPreviewMediaFragment(item)
+                )
+            }
+        }
+    }
+
+    override fun goToQuote(messageAndAttachment: MessageAndAttachment) {
+        val position = viewModel.getMessagePosition(messageAndAttachment)
+
+        if (position != -1) {
+            binding.recyclerViewConversation.smoothScrollToPosition(position)
+        } else {
+            Toast.makeText(
+                context, "No se encuentra el mensaje original|!!", Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    override fun downloadAttachment(
+        messageAndAttachment: MessageAndAttachment,
+        itemPosition: Int?
+    ) {
+        Timber.d("downloadAttachment")
+        if (itemPosition != null && messageAndAttachment.getFirstAttachment() != null) {
+            viewModel.downloadAttachment(messageAndAttachment, itemPosition)
+        }
+    }
+
+    override fun uploadAttachment(attachment: Attachment, message: Message) {
+        viewModel.uploadAttachment(attachment, message, obtainTimeSelfDestruct())
+    }
+
+    override fun updateAttachmentState(attachment: Attachment) {
+        viewModel.updateAttachment(attachment)
+    }
+
+    override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
+        viewModel.sendMessageRead(messageAndAttachment)
+    }
+
+    override fun reSendMessage(message: Message) {
+        viewModel.reSendMessage(message, obtainTimeSelfDestruct())
+    }
+    //endregion
 }

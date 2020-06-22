@@ -52,7 +52,7 @@
                         android:text="@string/text_section_system_themes"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView_theme_preview"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="TextViewEdits" />
 
                     <RadioGroup

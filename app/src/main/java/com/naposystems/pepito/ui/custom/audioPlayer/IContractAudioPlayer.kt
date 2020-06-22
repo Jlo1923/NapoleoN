@@ -8,17 +8,6 @@ import com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 
 interface IContractAudioPlayer {
-    fun enablePlayButton(isEnable: Boolean)
-    fun getProgressBar(): CircleProgressBar
-    fun setProgress(progress: Long)
-    fun hideProgressBar()
-    fun getIndeterminateProgress(): ProgressBar
-    fun showIndeterminateProgress()
-    fun hideIndeterminateProgress()
-    fun changeImageButtonStateIcon(icon: Int)
-    fun getImageButtonState(): AppCompatImageButton
-    fun showImageButtonState()
-    fun hideImageButtonState()
     fun playAudio()
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setMessageAndAttachment(messageAndAttachment: MessageAndAttachment)

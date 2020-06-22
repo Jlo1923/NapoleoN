@@ -131,7 +131,7 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
             }
         }
 
-        if(loadImage != "") {
+        if (loadImage != "") {
             Glide.with(context)
                 .load(loadImage)
                 .circleCrop()
@@ -340,6 +340,8 @@ fun bindIconForState(
 
     firstAttachment?.let { attachment ->
 
+        Timber.d("bindIconForState: ${attachment.id}, ${attachment.status}")
+
         val drawableId = when (attachment.status) {
             Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
                 imageButton.visibility = View.VISIBLE
@@ -352,7 +354,7 @@ fun bindIconForState(
             }
             Constants.AttachmentStatus.DOWNLOADING.status,
             Constants.AttachmentStatus.SENDING.status -> {
-//                imageButton.visibility = View.VISIBLE
+                imageButton.visibility = View.VISIBLE
                 R.drawable.ic_close_black_24
             }
             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,

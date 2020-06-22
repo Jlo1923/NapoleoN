@@ -15,11 +15,9 @@ class MyMessageViewHolder constructor(
 
     init {
         super.containerMessage = binding.containerMyMessage
-        super.progressBar = binding.progressBar
-        super.progressBarIndeterminate = binding.progressBarIndeterminate
-        super.imageButtonState = binding.imageButtonState
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
+        super.imageButtonSend = binding.imageButtonSend
     }
 
     override fun bind(
@@ -33,7 +31,6 @@ class MyMessageViewHolder constructor(
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
-        binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
 

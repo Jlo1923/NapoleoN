@@ -67,6 +67,67 @@
                 app:layout_constraintWidth_min="wrap"
                 tools:visibility="visible" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_attachment"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="@dimen/small_margin"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:imageAttachment="@{conversation}"
+                app:layout_constraintBottom_toTopOf="@id/textView_message"
+                app:layout_constraintDimensionRatio="4:3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quote"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintWidth_percent="1"
+                tools:src="@drawable/vertical_photo"/>
+
+            <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
+                app:layout_constraintStart_toStartOf="@id/imageView_attachment"
+                app:layout_constraintTop_toTopOf="@id/imageView_attachment"
+                custom:progress="0"
+                custom:progressBarThickness="@dimen/circle_progress_bar"
+                custom:progressbarColor="@color/colorPrimary"
+                tools:progress="70"
+                tools:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progressBar_indeterminate"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_cancel"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_black_40"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/x_small_padding"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="@id/progressBar"
+                app:layout_constraintStart_toStartOf="@id/progressBar"
+                app:layout_constraintTop_toTopOf="@id/progressBar"
+                app:srcCompat="@drawable/ic_close_black_24"
+                custom:iconForState="@{conversation}"
+                tools:visibility="gone" />
+
             <TextView
                 android:id="@+id/textView_message"
                 style="@style/IncomingMessageTextView"
@@ -78,8 +139,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/quote"
-                app:layout_goneMarginTop="@dimen/x_small_margin"
+                app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
                 tools:text="@tools:sample/lorem[2]" />
 
             <TextView
