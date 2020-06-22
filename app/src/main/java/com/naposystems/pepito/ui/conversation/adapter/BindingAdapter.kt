@@ -359,13 +359,8 @@ fun bindIconForState(
             }
             Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,
             Constants.AttachmentStatus.SENT.status -> {
-                if (attachment.type == Constants.AttachmentType.VIDEO.type) {
-                    imageButton.visibility = View.VISIBLE
-                    R.drawable.ic_play_arrow_black
-                } else {
-                    imageButton.visibility = View.GONE
-                    R.drawable.ic_file_download_black
-                }
+                imageButton.visibility = View.GONE
+                R.drawable.ic_file_download_black
             }
             Constants.AttachmentStatus.ERROR.status -> {
                 imageButton.visibility = View.VISIBLE
