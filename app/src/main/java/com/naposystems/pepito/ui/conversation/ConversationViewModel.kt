@@ -17,6 +17,7 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import com.naposystems.pepito.utility.*
+import com.naposystems.pepito.utility.Utils.Companion.setupNotificationSound
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -256,7 +257,7 @@ class ConversationViewModel @Inject constructor(
 
                 if (attachment != null) {
                     attachment.messageWebId = messageResponse.body()!!.id
-                    uploadAttachment(attachment, messageEntity)
+                    uploadAttachment(attachment, messageEntity, selfDestructTime)
                 } else {
                     messageEntity.status =
                         if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
@@ -264,6 +265,9 @@ class ConversationViewModel @Inject constructor(
                     repository.updateMessage(messageEntity)
                     Timber.d("updateMessage")
                 }
+
+                setupNotificationSound(context, R.raw.sound_message_sent)
+
             } else {
                 setStatusErrorMessageAndAttachment(message, attachment)
 
@@ -455,13 +459,10 @@ class ConversationViewModel @Inject constructor(
         this.isVideoCall = false
     }
 
-    override fun uploadAttachment(
-        attachment: Attachment,
-        message: Message
-    ) {
+    override fun uploadAttachment(attachment: Attachment, message: Message, selfDestructTime: Int) {
         try {
             viewModelScope.launch {
-
+                message.selfDestructionAt = selfDestructTime
                 if (message.status == Constants.MessageStatus.ERROR.status && message.webId.isEmpty()) {
                     val messageReqDTO = MessageReqDTO(
                         userDestination = contact.id,
@@ -482,7 +483,7 @@ class ConversationViewModel @Inject constructor(
                         )
 
                         attachment.messageWebId = messageResponse.body()!!.id
-                        uploadAttachment(attachment, messageEntity)
+                        uploadAttachment(attachment, messageEntity, selfDestructTime)
                     } else {
                         setStatusErrorMessageAndAttachment(message, attachment)
 

@@ -11,7 +11,9 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.media.AudioAttributes
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
@@ -64,6 +66,7 @@ import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.utility.*
 import com.naposystems.pepito.utility.Utils.Companion.generalDialog
+import com.naposystems.pepito.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.adapters.slideUp
 import com.naposystems.pepito.utility.adapters.verifyCameraAndMicPermission
@@ -136,6 +139,17 @@ class ConversationFragment : BaseFragment(),
     private lateinit var actionMode: ActionModeMenu
     private var menuOptionsContact: Menu? = null
     private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
+
+    private val mediaPlayer: MediaPlayer by lazy {
+        MediaPlayer().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+        }
+    }
 
     private var clipboard: ClipboardManager? = null
     private var recorder: MediaRecorder? = null
@@ -272,18 +286,19 @@ class ConversationFragment : BaseFragment(),
         inputPanelCameraButtonClickListener()
 
         binding.inputPanel.getTextCancelAudio().setOnClickListener {
+            setupVoiceNoteSound(requireContext(), R.raw.sound_voice_note_cancel)
             isRecordingAudio = false
             resetAudioRecording()
         }
 
-        binding.buttonCall.setOnClickListener {
+        binding.buttonCall.setSafeOnClickListener {
             this.verifyCameraAndMicPermission {
                 viewModel.setIsVideoCall(false)
                 viewModel.callContact()
             }
         }
 
-        binding.buttonVideoCall.setOnClickListener {
+        binding.buttonVideoCall.setSafeOnClickListener {
             this.verifyCameraAndMicPermission {
                 viewModel.setIsVideoCall(true)
                 viewModel.callContact()
@@ -359,7 +374,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun inputPanelAttachmentButtonClickListener() {
-        binding.inputPanel.getImageButtonAttachment().setOnClickListener {
+        binding.inputPanel.getImageButtonAttachment().setSafeOnClickListener {
             validateStateOutputControl()
             val attachmentDialog = AttachmentDialogFragment()
             attachmentDialog.setListener(object :
@@ -1256,7 +1271,7 @@ class ConversationFragment : BaseFragment(),
             }
 
             override fun uploadAttachment(attachment: Attachment, message: Message) {
-                viewModel.uploadAttachment(attachment, message)
+                viewModel.uploadAttachment(attachment, message, obtainTimeSelfDestruct())
             }
 
             override fun updateAttachmentState(attachment: Attachment) {
@@ -1575,6 +1590,7 @@ class ConversationFragment : BaseFragment(),
             }
             binding.containerLockAudio.container.visibility = View.GONE
             stopRecording()
+            setupVoiceNoteSound(requireContext(), R.raw.sound_voice_note_action_up)
         }
     }
 
@@ -1627,4 +1643,25 @@ class ConversationFragment : BaseFragment(),
         resetAudioRecording()
     }
     //endregion
+
+    private fun setupVoiceNoteSound(context: Context, sound: Int) {
+        try {
+            mediaPlayer.apply {
+                reset()
+                setDataSource(
+                    context,
+                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
+                )
+                if (isPlaying) {
+                    stop()
+                    reset()
+                    release()
+                }
+                prepare()
+                start()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
 }

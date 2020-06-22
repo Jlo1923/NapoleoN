@@ -21,6 +21,7 @@ import com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -60,8 +61,8 @@ class SecuritySettingsFragment : Fragment() {
         binding.lifecycleOwner = this
 
         //region CONVERSATION
-        binding.optionMessageSelfDestruct.setOnClickListener(optionMessageClickListener())
-        binding.imageButtonMessageOptionEndIcon.setOnClickListener(optionMessageClickListener())
+        binding.optionMessageSelfDestruct.setSafeOnClickListener { optionMessageClickListener() }
+        binding.imageButtonMessageOptionEndIcon.setSafeOnClickListener { optionMessageClickListener() }
 
         binding.optionAllowDownload.setOnClickListener {
             binding.switchAllowDownload.isChecked = !binding.switchAllowDownload.isChecked
@@ -70,33 +71,33 @@ class SecuritySettingsFragment : Fragment() {
             viewModel.updateAllowDownload(isChecked)
         }
 
-        binding.optionMessageSelfDestructTimeNotSent.setOnClickListener(
+        binding.optionMessageSelfDestructTimeNotSent.setSafeOnClickListener {
             optionMessageSelfDestructTimeNotSentClickListener()
-        )
-        binding.imageButtonMessageNotSendOptionEndIcon.setOnClickListener(
+        }
+        binding.imageButtonMessageNotSendOptionEndIcon.setSafeOnClickListener {
             optionMessageSelfDestructTimeNotSentClickListener()
-        )
+        }
         //endregion
 
         //region SECURITY
-        binding.optionEditAccessPin.setOnClickListener(optionEditAccessPinClickListener())
-        binding.imageButtonEditAccessPinOptionEndIcon.setOnClickListener(
+        binding.optionEditAccessPin.setSafeOnClickListener { optionEditAccessPinClickListener() }
+        binding.imageButtonEditAccessPinOptionEndIcon.setSafeOnClickListener {
             optionEditAccessPinClickListener()
-        )
+        }
 
-        binding.optionBiometrics.setOnClickListener{optionBiometrictsClickListener()}
-        binding.imageButtonBiometricsEndIcon.setOnClickListener{optionBiometrictsClickListener()}
+        binding.optionBiometrics.setSafeOnClickListener { optionBiometrictsClickListener() }
+        binding.imageButtonBiometricsEndIcon.setSafeOnClickListener { optionBiometrictsClickListener() }
 
-        binding.optionTimeRequestAccessPin.setOnClickListener(optionTimeAccessPinClickListener())
-        binding.imageButtonTimeOptionEndIcon.setOnClickListener(optionTimeAccessPinClickListener())
+        binding.optionTimeRequestAccessPin.setSafeOnClickListener { optionTimeAccessPinClickListener() }
+        binding.imageButtonTimeOptionEndIcon.setSafeOnClickListener { optionTimeAccessPinClickListener() }
         //endregion
 
-        binding.optionAccountRecoveryInformation.setOnClickListener(
+        binding.optionAccountRecoveryInformation.setSafeOnClickListener {
             optionRegisterRecoveryAccountClickListener()
-        )
-        binding.imageButtonAccountRecoveryOptionEndIcon.setOnClickListener(
+        }
+        binding.imageButtonAccountRecoveryOptionEndIcon.setSafeOnClickListener {
             optionRegisterRecoveryAccountClickListener()
-        )
+        }
 
         return binding.root
     }
@@ -123,7 +124,7 @@ class SecuritySettingsFragment : Fragment() {
         })
     }
 
-    private fun optionMessageClickListener() = View.OnClickListener {
+    private fun optionMessageClickListener() {
         val dialog = SelfDestructTimeDialogFragment.newInstance(0, Location.SECURITY_SETTINGS)
         dialog.setListener(object : SelfDestructTimeDialogFragment.SelfDestructTimeListener {
             override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
@@ -133,7 +134,7 @@ class SecuritySettingsFragment : Fragment() {
         dialog.show(childFragmentManager, "SelfDestructTime")
     }
 
-    private fun optionEditAccessPinClickListener() = View.OnClickListener {
+    private fun optionEditAccessPinClickListener() {
         this.findNavController().navigate(
             SecuritySettingsFragmentDirections
                 .actionSecuritySettingsFragmentToEditAccessPinFragment()
@@ -145,7 +146,7 @@ class SecuritySettingsFragment : Fragment() {
         dialog.show(childFragmentManager, "BiometricsSelection")
     }
 
-    private fun optionTimeAccessPinClickListener() = View.OnClickListener {
+    private fun optionTimeAccessPinClickListener() {
         val dialog = TimeAccessPinDialogFragment()
         dialog.setListener(object : TimeAccessPinDialogFragment.TimeAccessPinListener {
             override fun onTimeAccessChange() {
@@ -155,7 +156,7 @@ class SecuritySettingsFragment : Fragment() {
         dialog.show(childFragmentManager, "TimeRequestAccessPin")
     }
 
-    private fun optionMessageSelfDestructTimeNotSentClickListener() = View.OnClickListener {
+    private fun optionMessageSelfDestructTimeNotSentClickListener() {
         val dialog = SelfDestructTimeMessageNotSentDialogFragment()
         dialog.setListener(
             object : SelfDestructTimeMessageNotSentDialogFragment.MessageSelfDestructTimeNotSentListener {
@@ -166,7 +167,7 @@ class SecuritySettingsFragment : Fragment() {
         dialog.show(childFragmentManager, "MessageSelfDestructTimeNotSent")
     }
 
-    private fun optionRegisterRecoveryAccountClickListener() = View.OnClickListener {
+    private fun optionRegisterRecoveryAccountClickListener() {
         findNavController().navigate(
             SecuritySettingsFragmentDirections
                 .actionSecuritySettingsFragmentToRegisterRecoveryAccountFragment()

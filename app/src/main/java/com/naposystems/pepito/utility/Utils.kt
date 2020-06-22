@@ -5,15 +5,14 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.DialogInterface
-import android.content.DialogInterface.BUTTON_NEUTRAL
-import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Rect
+import android.media.AudioAttributes
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
@@ -51,6 +50,17 @@ import kotlin.math.roundToInt
 class Utils {
 
     companion object {
+
+        private val mediaPlayer: MediaPlayer by lazy {
+            MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build()
+                )
+            }
+        }
 
         fun openKeyboard(view: View) {
             val context = view.context
@@ -503,5 +513,33 @@ class Utils {
 
         fun getAudioManager(context: Context) =
             context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        internal infix fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
+            val safeClickListener = SafeClickListener {
+                onSafeClick(it)
+            }
+            setOnClickListener(safeClickListener)
+        }
+
+        fun setupNotificationSound(context: Context, sound: Int) {
+            try {
+                mediaPlayer.apply {
+                    reset()
+                    setDataSource(
+                        context,
+                        Uri.parse("android.resource://" + context.packageName + "/" + sound)
+                    )
+                    if (isPlaying) {
+                        stop()
+                        reset()
+                        release()
+                    }
+                    prepare()
+                    start()
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
     }
 }

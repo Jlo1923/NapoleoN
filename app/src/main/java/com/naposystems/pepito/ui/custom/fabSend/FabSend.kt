@@ -14,6 +14,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.CustomViewFabSendBinding
+import com.naposystems.pepito.utility.Utils.Companion.setupNotificationSound
 import timber.log.Timber
 import kotlin.math.roundToLong
 
@@ -130,6 +131,7 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
                             actionCancel()
                         }
                         ACTION_DOWN -> {
+                            setupNotificationSound(context, R.raw.sound_voice_note_action_down)
                             Timber.d("ACTION_DOWN")
                             actionDown(ev)
                         }

@@ -36,6 +36,7 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewModel
@@ -114,28 +115,28 @@ class ContactProfileFragment : BaseFragment() {
 
         binding.lifecycleOwner = this
 
-        binding.imageViewProfileContact.setOnClickListener(showPreviewImage())
+        binding.imageViewProfileContact.setSafeOnClickListener {showPreviewImage()}
 
         binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
 
-        binding.optionRestoreContactChat.setOnClickListener(optionRestoreContactChatClickListener())
+        binding.optionRestoreContactChat.setSafeOnClickListener {optionRestoreContactChatClickListener()}
 
-        binding.optionDeleteConversation.setOnClickListener(optionDeleteConversationClickListener())
+        binding.optionDeleteConversation.setSafeOnClickListener {optionDeleteConversationClickListener()}
 
-        binding.optionBlockContact.setOnClickListener(optionBlockContactClickListener())
+        binding.optionBlockContact.setSafeOnClickListener {optionBlockContactClickListener()}
 
-        binding.optionDeleteContact.setOnClickListener(optionDeleteContactClickListener())
+        binding.optionDeleteContact.setSafeOnClickListener {optionDeleteContactClickListener()}
 
-        binding.imageButtonEditHeader.setOnClickListener {
+        binding.imageButtonEditHeader.setSafeOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
             verifyCameraAndMediaPermission()
         }
 
-        binding.imageButtonChangeNameEndIcon.setOnClickListener {
+        binding.imageButtonChangeNameEndIcon.setSafeOnClickListener {
             setupChangeFakeDialog(Constants.ChangeParams.NAME_FAKE.option)
         }
 
-        binding.imageButtonChangeNicknameEndIcon.setOnClickListener {
+        binding.imageButtonChangeNicknameEndIcon.setSafeOnClickListener {
             setupChangeFakeDialog(Constants.ChangeParams.NICKNAME_FAKE.option)
         }
 
@@ -149,7 +150,7 @@ class ContactProfileFragment : BaseFragment() {
         dialog.show(childFragmentManager, "ChangeFakesDialog")
     }
 
-    private fun showPreviewImage() = View.OnClickListener {
+    private fun showPreviewImage() {
         contactProfileShareViewModel.contact.value?.let { contact ->
             val extra = FragmentNavigatorExtras(
                 binding.imageViewProfileContact to "transition_image_preview"
@@ -168,7 +169,7 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun optionBlockContactClickListener() = View.OnClickListener {
+    private fun optionBlockContactClickListener() {
         Utils.generalDialog(
             getString(R.string.text_block_contact),
             getString(
@@ -189,7 +190,7 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun optionDeleteContactClickListener() = View.OnClickListener {
+    private fun optionDeleteContactClickListener() {
         val getContact = contactProfileShareViewModel.contact.value
         getContact?.let { contact ->
             Utils.generalDialog(
@@ -208,7 +209,7 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun optionDeleteConversationClickListener() = View.OnClickListener {
+    private fun optionDeleteConversationClickListener() {
         Utils.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
@@ -220,7 +221,7 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun optionRestoreContactChatClickListener() = View.OnClickListener {
+    private fun optionRestoreContactChatClickListener() {
         Utils.generalDialog(
             getString(R.string.text_reset_contact),
             getString(R.string.text_want_reset_contact),
