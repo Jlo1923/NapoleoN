@@ -1,27 +1,27 @@
 package com.naposystems.pepito.ui.conversation.viewHolder
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithAudioBinding
+import com.naposystems.pepito.databinding.ConversationItemIncomingMessageBinding
+import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithImageBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
-import timber.log.Timber
 
-class IncomingMessageAudioViewHolder constructor(
-    private val binding: ConversationItemIncomingMessageWithAudioBinding
-) :
-    ConversationViewHolder(binding.root, binding.root.context) {
+class IncomingMessageImageViewHolder constructor(
+    private val binding: ConversationItemIncomingMessageWithImageBinding
+) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
         super.containerMessage = binding.containerIncomingMessage
-//        super.progressBar = binding.audioPlayer.getProgressBar()
-//        super.progressBarIndeterminate = binding.audioPlayer.getIndeterminateProgress()
-//        super.imageButtonState = binding.audioPlayer.getImageButtonState()
+        super.progressBar = binding.progressBar
+        super.progressBarIndeterminate = binding.progressBarIndeterminate
+        super.imageButtonState = binding.imageButtonCancel
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
-        super.audioPlayer = binding.audioPlayer
+        super.imageViewAttachment = binding.imageViewAttachment
     }
 
     override fun bind(
@@ -32,8 +32,10 @@ class IncomingMessageAudioViewHolder constructor(
         mediaPlayerManager: MediaPlayerManager?
     ) {
         super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
+        binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
+        binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
 
@@ -43,14 +45,14 @@ class IncomingMessageAudioViewHolder constructor(
     companion object {
         fun from(
             parent: ViewGroup
-        ): IncomingMessageAudioViewHolder {
+        ): IncomingMessageImageViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = ConversationItemIncomingMessageWithAudioBinding.inflate(
+            val binding = ConversationItemIncomingMessageWithImageBinding.inflate(
                 layoutInflater,
                 parent,
                 false
             )
-            return IncomingMessageAudioViewHolder(binding)
+            return IncomingMessageImageViewHolder(binding)
         }
     }
 }

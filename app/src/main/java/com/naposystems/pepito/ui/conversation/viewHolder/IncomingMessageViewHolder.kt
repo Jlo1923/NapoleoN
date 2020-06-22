@@ -15,12 +15,8 @@ class IncomingMessageViewHolder constructor(
 
     init {
         super.containerMessage = binding.containerIncomingMessage
-        super.progressBar = binding.progressBar
-        super.progressBarIndeterminate = binding.progressBarIndeterminate
-        super.imageButtonState = binding.imageButtonCancel
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
-        super.imageViewAttachment = binding.imageViewAttachment
     }
 
     override fun bind(
@@ -34,7 +30,6 @@ class IncomingMessageViewHolder constructor(
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
-        binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
 

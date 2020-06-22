@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_margin"
             android:background="@drawable/bg_my_message"
+            android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
             android:paddingStart="@dimen/x_small_padding"
             android:paddingTop="@dimen/x_small_padding"
             android:paddingEnd="20dp"
@@ -72,52 +73,6 @@
                 app:tint="@color/colorTextMyMessage"
                 tools:src="@drawable/ic_attachment_doc" />
 
-            <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@id/textView_document_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/guideline"
-                app:layout_constraintTop_toTopOf="@id/textView_document_name"
-                custom:progress="0"
-                custom:progressBarThickness="@dimen/circle_progress_bar"
-                custom:progressbarColor="@color/colorTextMyMessage"
-                tools:progress="50"
-                tools:visibility="visible" />
-
-            <ProgressBar
-                android:id="@+id/progressBar_indeterminate"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:indeterminate="true"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@id/textView_document_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/guideline"
-                app:layout_constraintTop_toTopOf="@id/textView_document_name"
-                tools:visibility="visible" />
-
-            <!-- BUTTON ATTACHMENT STATE -->
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/imageButton_state"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:background="@drawable/bg_black_40"
-                android:foreground="?attr/actionBarItemBackground"
-                android:padding="@dimen/x_small_padding"
-                android:scaleType="fitCenter"
-                android:tint="@color/white"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/textView_document_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/guideline"
-                app:layout_constraintTop_toTopOf="@id/textView_document_name"
-                app:srcCompat="@drawable/ic_close_black_24"
-                custom:iconForState="@{conversation}"
-                tools:visibility="visible" />
-
             <TextView
                 android:id="@+id/textView_document_name"
                 style="@style/MyMessageTextView"
@@ -130,7 +85,7 @@
                 android:textAlignment="textStart"
                 app:attachmentDocumentName="@{conversation}"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_document_type"
-                app:layout_constraintEnd_toStartOf="@id/progressBar"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_document_type"
                 app:layout_constraintTop_toTopOf="@id/imageView_document_type"
                 tools:text="El mero packistan.pdf" />
@@ -167,6 +122,53 @@
                 app:layout_constraintGuide_end="32dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- BUTTON ATTACHMENT STATE -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/imageButton_state"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:background="@drawable/bg_black_40"
+            android:padding="@dimen/x_small_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_file_upload_black"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/container_message"
+            app:layout_constraintEnd_toStartOf="@id/container_message"
+            app:layout_constraintTop_toTopOf="@id/container_message"
+            custom:iconForState="@{conversation}"
+            tools:visibility="visible" />
+
+        <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+            app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+            app:layout_constraintStart_toStartOf="@id/imageButton_state"
+            app:layout_constraintTop_toTopOf="@id/imageButton_state"
+            custom:progress="0"
+            custom:progressBarThickness="3dp"
+            custom:progressbarColor="?attr/attrColorButtonTint"
+            tools:progress="70"
+            tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/progressBar_indeterminate"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:indeterminate="true"
+            android:progressBackgroundTint="?attr/attrSeekbarProgressTint"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+            app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+            app:layout_constraintStart_toStartOf="@id/imageButton_state"
+            app:layout_constraintTop_toTopOf="@id/imageButton_state"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/textView_count_down"

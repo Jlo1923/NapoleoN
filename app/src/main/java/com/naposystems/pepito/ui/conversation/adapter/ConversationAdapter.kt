@@ -30,17 +30,19 @@ class ConversationAdapter constructor(
         const val UPLOAD_COMPLETE = "upload_complete"
         const val TYPE_MY_MESSAGE = 1
         const val TYPE_INCOMING_MESSAGE = 2
-        const val TYPE_MY_MESSAGE_AUDIO = 3
-        const val TYPE_INCOMING_MESSAGE_AUDIO = 4
-        const val TYPE_MY_MESSAGE_VIDEO = 5
-        const val TYPE_INCOMING_MESSAGE_VIDEO = 6
-        const val TYPE_MY_MESSAGE_DOCUMENT = 7
-        const val TYPE_INCOMING_MESSAGE_DOCUMENT = 8
-        const val TYPE_MY_MESSAGE_GIF = 9
-        const val TYPE_INCOMING_MESSAGE_GIF = 10
-        const val TYPE_MY_MESSAGE_GIF_NN = 11
-        const val TYPE_INCOMING_MESSAGE_GIF_NN = 12
-        const val TYPE_MISSED_CALL = 13
+        const val TYPE_MY_MESSAGE_IMAGE = 3
+        const val TYPE_INCOMING_MESSAGE_IMAGE = 4
+        const val TYPE_MY_MESSAGE_AUDIO = 5
+        const val TYPE_INCOMING_MESSAGE_AUDIO = 6
+        const val TYPE_MY_MESSAGE_VIDEO = 7
+        const val TYPE_INCOMING_MESSAGE_VIDEO = 8
+        const val TYPE_MY_MESSAGE_DOCUMENT = 9
+        const val TYPE_INCOMING_MESSAGE_DOCUMENT = 10
+        const val TYPE_MY_MESSAGE_GIF = 11
+        const val TYPE_INCOMING_MESSAGE_GIF = 12
+        const val TYPE_MY_MESSAGE_GIF_NN = 13
+        const val TYPE_INCOMING_MESSAGE_GIF_NN = 14
+        const val TYPE_MISSED_CALL = 15
     }
 
     private var isFirst = false
@@ -159,6 +161,12 @@ class ConversationAdapter constructor(
                 Constants.MessageType.MESSAGE.type -> {
                     if (conversation.attachmentList.isNotEmpty()) {
                         when (conversation.attachmentList[0].type) {
+                            Constants.AttachmentType.IMAGE.type -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                    TYPE_MY_MESSAGE_IMAGE
+                                else
+                                    TYPE_INCOMING_MESSAGE_IMAGE
+                            }
                             Constants.AttachmentType.AUDIO.type -> {
                                 if (conversation.message.isMine == Constants.IsMine.YES.value)
                                     TYPE_MY_MESSAGE_AUDIO
@@ -227,14 +235,16 @@ class ConversationAdapter constructor(
         return when (viewType) {
             TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent)
+            TYPE_MY_MESSAGE_IMAGE -> MyMessageImageViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_IMAGE -> IncomingMessageImageViewHolder.from(parent)
             TYPE_MY_MESSAGE_AUDIO -> MyMessageAudioViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_AUDIO -> IncomingMessageAudioViewHolder.from(parent)
             TYPE_MY_MESSAGE_VIDEO -> MyMessageVideoViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_VIDEO -> IncomingMessageVideoViewHolder.from(parent)
             TYPE_MY_MESSAGE_DOCUMENT -> MyMessageDocumentViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_DOCUMENT -> IncomingMessageDocumentViewHolder.from(parent)
-            TYPE_MY_MESSAGE_GIF -> MyMessageViewHolder.from(parent)
-            TYPE_INCOMING_MESSAGE_GIF -> IncomingMessageViewHolder.from(parent)
+            TYPE_MY_MESSAGE_GIF -> MyMessageImageViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_GIF -> IncomingMessageImageViewHolder.from(parent)
             TYPE_MY_MESSAGE_GIF_NN -> MyMessageGifNNViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_GIF_NN -> IncomingMessageGifNNViewHolder.from(parent)
             TYPE_MISSED_CALL -> MessageMissedCallViewHolder.from(parent)
@@ -259,11 +269,13 @@ class ConversationAdapter constructor(
         item?.let {
             when (getItemViewType(position)) {
                 TYPE_MY_MESSAGE,
+                TYPE_MY_MESSAGE_IMAGE,
                 TYPE_MY_MESSAGE_GIF,
                 TYPE_MY_MESSAGE_VIDEO,
                 TYPE_MY_MESSAGE_DOCUMENT,
                 TYPE_MY_MESSAGE_GIF_NN,
                 TYPE_INCOMING_MESSAGE,
+                TYPE_INCOMING_MESSAGE_IMAGE,
                 TYPE_INCOMING_MESSAGE_GIF,
                 TYPE_INCOMING_MESSAGE_VIDEO,
                 TYPE_INCOMING_MESSAGE_GIF_NN,
@@ -305,12 +317,6 @@ class ConversationAdapter constructor(
                                     position,
                                     holder
                                 )
-                                /*any.forEach { anyItem: Any? ->
-                                    when (anyItem) {
-                                        is Bundle -> handleBundlePayload(anyItem, position, holder)
-                                        is Job -> handleJobPayload(anyItem, position, holder)
-                                    }
-                                }*/
                             }
                         }
                     }
@@ -328,7 +334,7 @@ class ConversationAdapter constructor(
     ) {
         Timber.d("handleProducerScopePayload: ${getItemViewType(position)}")
         when (getItemViewType(position)) {
-            TYPE_INCOMING_MESSAGE,
+            TYPE_INCOMING_MESSAGE_IMAGE,
             TYPE_INCOMING_MESSAGE_VIDEO,
             TYPE_INCOMING_MESSAGE_GIF,
             TYPE_INCOMING_MESSAGE_GIF_NN,
@@ -338,7 +344,7 @@ class ConversationAdapter constructor(
                     setDownloadStart(job)
                 }
             }
-            TYPE_MY_MESSAGE,
+            TYPE_MY_MESSAGE_IMAGE,
             TYPE_MY_MESSAGE_VIDEO,
             TYPE_MY_MESSAGE_GIF,
             TYPE_MY_MESSAGE_GIF_NN,
@@ -360,7 +366,7 @@ class ConversationAdapter constructor(
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         val downloadCancel = bundle.getBoolean(DOWNLOAD_CANCEL, false)
         when (getItemViewType(position)) {
-            TYPE_MY_MESSAGE,
+            TYPE_MY_MESSAGE_IMAGE,
             TYPE_MY_MESSAGE_GIF,
             TYPE_MY_MESSAGE_VIDEO,
             TYPE_MY_MESSAGE_GIF_NN,
@@ -372,7 +378,7 @@ class ConversationAdapter constructor(
                     setDownloadCancel(downloadCancel)
                 }
             }
-            TYPE_INCOMING_MESSAGE,
+            TYPE_INCOMING_MESSAGE_IMAGE,
             TYPE_INCOMING_MESSAGE_GIF,
             TYPE_INCOMING_MESSAGE_VIDEO,
             TYPE_INCOMING_MESSAGE_GIF_NN,
@@ -392,7 +398,7 @@ class ConversationAdapter constructor(
         val progress = bundle.getLong(PROGRESS)
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         when (getItemViewType(position)) {
-            TYPE_MY_MESSAGE,
+            TYPE_MY_MESSAGE_IMAGE,
             TYPE_MY_MESSAGE_GIF,
             TYPE_MY_MESSAGE_VIDEO,
             TYPE_MY_MESSAGE_GIF_NN,
@@ -403,7 +409,7 @@ class ConversationAdapter constructor(
                     setUploadComplete(uploadComplete)
                 }
             }
-            TYPE_INCOMING_MESSAGE,
+            TYPE_INCOMING_MESSAGE_IMAGE,
             TYPE_INCOMING_MESSAGE_GIF,
             TYPE_INCOMING_MESSAGE_VIDEO,
             TYPE_INCOMING_MESSAGE_GIF_NN,
@@ -425,5 +431,6 @@ class ConversationAdapter constructor(
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
+        fun reSendMessage(message: Message)
     }
 }
