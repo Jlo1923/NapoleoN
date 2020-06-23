@@ -7,4 +7,5 @@
     <string name="text_pin_enter">Inserisci il PIN</string>
     <string name="text_title_dialog_biometrics">Blocco dell\'applicazione</string>
     <string name="text_description_dialog_biometrics">Sblocca l\'applicazione accedendo con il biometrico</string>
+    <string name="text_unallocated_unlock">Al dispositivo non è assegnato uno sblocco biometrico</string>
 </resources>

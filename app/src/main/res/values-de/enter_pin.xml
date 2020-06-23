@@ -7,4 +7,5 @@
     <string name="text_pin_enter">PIN eingeben</string>
     <string name="text_title_dialog_biometrics">Anwendungssperre</string>
     <string name="text_description_dialog_biometrics">Entsperren Sie die Anwendung, indem Sie sie mit der Biometrie eingeben</string>
+    <string name="text_unallocated_unlock">Dem Gerät ist keine biometrische Entsperrung zugeordnet</string>
 </resources>
