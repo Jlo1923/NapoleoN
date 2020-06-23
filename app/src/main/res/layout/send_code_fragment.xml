@@ -18,7 +18,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary">
+            android:background="?attr/attrBackgroundColorBackground">
 
             <include layout="@layout/background_landing" />
 
@@ -58,6 +58,7 @@
                     android:id="@+id/textView_time_for_new_code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="?attr/attrTextColorSecondaryTextColor"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/viewSwitcher"
                     app:layout_constraintEnd_toEndOf="parent"
