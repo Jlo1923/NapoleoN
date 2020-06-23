@@ -122,8 +122,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/small_padding"
-                android:textColor="?attr/attrTextColorSecondaryTextColor"
                 android:text="@string/text_subscription_type"
+                android:textColor="?attr/attrTextColorSecondaryTextColor"
                 app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
                 app:layout_constraintStart_toStartOf="@+id/spinner_payment"
                 app:layout_constraintTop_toBottomOf="@id/textView_add_subscription_actual" />
@@ -133,8 +133,8 @@
                 style="@style/BackgroundSpinner"
                 android:layout_width="0dp"
                 android:layout_height="54dp"
-                android:textColor="?attr/attrTextColorHint"
                 android:layout_marginTop="@dimen/small_margin"
+                android:textColor="?attr/attrTextColorHint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_type_subscription"
@@ -145,10 +145,10 @@
                 android:id="@+id/textView_payment_method"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/small_padding"
-                android:textColor="?attr/attrTextColorSecondaryTextColor"
-                android:text="@string/text_payment_method"
                 android:layout_marginTop="@dimen/small_margin"
+                android:padding="@dimen/small_padding"
+                android:text="@string/text_payment_method"
+                android:textColor="?attr/attrTextColorSecondaryTextColor"
                 app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
                 app:layout_constraintStart_toStartOf="@+id/spinner_payment"
                 app:layout_constraintTop_toBottomOf="@+id/spinner_payment" />
@@ -166,9 +166,12 @@
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nestedScrollView"
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="@dimen/small_margin"
                 android:layout_marginEnd="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/normal_margin"
+                android:scrollbars="vertical"
+                app:layout_constraintBottom_toTopOf="@id/viewSwitcher"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/checkBox_payment_description"
@@ -178,7 +181,7 @@
                     style="@style/BodyTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:justificationMode="inter_word"
+                    android:layout_gravity="top"
                     android:text="@string/text_warning" />
 
             </androidx.core.widget.NestedScrollView>
@@ -187,11 +190,10 @@
                 android:id="@+id/viewSwitcher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/normal_margin"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nestedScrollView"
-                app:layout_constraintVertical_bias="0.050000012"
                 app:layout_constraintWidth_percent="@dimen/width_app_button">
 
                 <ImageButton

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_info_register_account">Al registrar / modifica le informazioni di recupero dell\'account, è necessario aggiungere un minimo di 3 e un massimo di 5 domande, che verranno visualizzate al momento del recupero della password</string>
+    <string name="text_info_register_account">Nel racconto informazioni di ripristino di registrazione / editing, è necessario aggiungere un minimo di 3 e un massimo di 5 domande, che verrà mostrato al momento di recuperare il tuo account</string>
     <string name="text_title_info">Importante</string>
 </resources>

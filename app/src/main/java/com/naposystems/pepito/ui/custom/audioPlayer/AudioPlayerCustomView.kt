@@ -1,12 +1,14 @@
 package com.naposystems.pepito.ui.custom.audioPlayer
 
 import android.content.Context
+import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.CustomViewAudioPlayerBinding
@@ -95,7 +97,17 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         with(ContextCompat.getColorStateList(context, mTintColor)) {
             binding.imageButtonPlay.imageTintList = this
             binding.imageButtonRewind.imageTintList = this
-            binding.imageButtonSpeed.imageTintList = this
+
+            val layerListSpeed = ResourcesCompat.getDrawable(
+                context.resources,
+                R.drawable.ic_audio_player_speed,
+                null
+            ) as LayerDrawable
+            val iconSpeed = layerListSpeed.getDrawable(1)
+            iconSpeed.setTintList(this)
+            binding.imageButtonSpeed.setBackgroundDrawable(layerListSpeed)
+
+//            binding.imageButtonSpeed.imageTintList = this
             binding.imageButtonForward.imageTintList = this
             binding.textViewDuration.setTextColor(this)
         }

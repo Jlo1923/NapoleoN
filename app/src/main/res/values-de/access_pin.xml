@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_access_pin">Zugangsstift</string>
-    <string name="text_confirm_access_pin">Bestätigen Sie die Zugangsnummer</string>
+    <string name="text_confirm_access_pin">Neue PIN bestätigen Zugang</string>
     <string name="text_access_pin_required">Der Zugangsstift darf nicht leer sein</string>
     <string name="text_confirm_pin_access_required">Sie müssen die Zugangsnummer bestätigen</string>
     <string name="text_access_pin_not_match">Der Zugriffsstift stimmt nicht überein</string>

@@ -39,7 +39,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
     private lateinit var binding: AddContactFragmentBinding
-    private val args : AddContactFragmentArgs by navArgs()
+    private val args: AddContactFragmentArgs by navArgs()
     private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
     private lateinit var adapter: AddContactAdapter
@@ -90,7 +90,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             searchView.setHint(R.string.search_by_nickname)
             searchView.setMenuItem(menu.findItem(R.id.search))
             searchView.setListener(this)
-            if(args.location == Constants.LocationAddContact.CONTACTS.location) {
+            if (args.location == Constants.LocationAddContact.CONTACTS.location) {
                 if (!searchView.isOpened()) {
                     searchView.showSearchView()
                 }
@@ -188,6 +188,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 if (binding.viewSwitcherSearch.currentView.id == binding.recyclerViewContacts.id) {
                     binding.viewSwitcherSearch.showNext()
                 }
+                binding.emptyStateSearch.imageViewSetVisibility(false)
+                binding.emptyStateSearch.textViewTitleSetVisibility(true)
             }
         })
     }
@@ -227,6 +229,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     override fun onOpened() {
         if (binding.viewSwitcher.currentView.id == binding.swipeRefresh.id) {
             binding.viewSwitcher.showNext()
+            binding.emptyStateSearch.imageViewSetVisibility(true)
+            binding.emptyStateSearch.textViewTitleSetVisibility(false)
         }
     }
 
@@ -234,7 +238,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         if (text.length >= 4) {
             viewModel.searchContact(text.toLowerCase(Locale.getDefault()))
         } else {
-            viewModel.resetContacts()
+            binding.emptyStateSearch.imageViewSetVisibility(true)
+            binding.emptyStateSearch.textViewTitleSetVisibility(false)
         }
     }
 

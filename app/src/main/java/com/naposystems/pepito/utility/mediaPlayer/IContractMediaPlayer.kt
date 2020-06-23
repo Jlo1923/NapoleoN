@@ -4,6 +4,7 @@ import android.net.Uri
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
+import com.naposystems.pepito.ui.custom.AccessibleToggleButton
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 
 interface IContractMediaPlayer {
@@ -15,7 +16,7 @@ interface IContractMediaPlayer {
     fun unregisterProximityListener()
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setImageButtonPlay(imageButtonPlay: AnimatedTwoVectorView)
-    fun setImageButtonSpeed(imageButtonSpeed: ImageButton)
+    fun setImageButtonSpeed(imageButtonSpeed: AccessibleToggleButton)
     fun setSeekbar(seekBar: AppCompatSeekBar)
     fun setTextViewDuration(textView: TextView)
     fun setListener(listener: MediaPlayerManager.Listener)

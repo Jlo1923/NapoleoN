@@ -343,6 +343,8 @@ class ConversationFragment : BaseFragment(),
 
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
+        binding.textViewUserStatus.isSelected = true
+
         return binding.root
     }
 

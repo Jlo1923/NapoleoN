@@ -7,7 +7,7 @@
     <string name="text_every_one_hour">1 ora</string>
     <string name="text_every_six_hours">6 ore</string>
     <string name="text_every_twenty_four_hours">24 ore</string>
-    <string name="text_info_message_self_destruction">I messaggi inviati saranno cancellati dopo il tempo selezionato.</string>
+    <string name="text_info_message_self_destruction">I messaggi inviati saranno cancellati dopo il tempo selezionato, una volta che sono stati visti o sentito.</string>
     <string name="text_every_seven_days">7 días</string>
     <string name="text_every_five_seconds">5 secondi</string>
     <string name="text_every_fifteen_seconds">15 secondi</string>
