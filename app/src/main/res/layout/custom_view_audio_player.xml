@@ -43,22 +43,31 @@
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_rewind"
                 style="@style/AudioPlayerControlStyle"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_speed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_fast_rewind_black" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
+            <com.naposystems.pepito.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_speed"
-                style="@style/AudioPlayerControlStyle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="@dimen/x_x_small_margin"
+                android:layout_marginBottom="@dimen/x_x_small_margin"
+                android:background="@drawable/ic_audio_player_speed"
+                android:textOff="@null"
+                android:textOn="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_forward"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_rewind"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_1x_speed_black" />
+                tools:checked="true" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_forward"
                 style="@style/AudioPlayerControlStyle"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_speed"
                 app:layout_constraintTop_toTopOf="parent"

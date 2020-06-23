@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_access_pin">Pin di accesso</string>
-    <string name="text_confirm_access_pin">Conferma il pin di accesso</string>
+    <string name="text_confirm_access_pin">Confermare l\'accesso Nuovo PIN</string>
     <string name="text_access_pin_required">Il pin di accesso non può essere vuoto</string>
     <string name="text_confirm_pin_access_required">È necessario confermare il pin di accesso</string>
     <string name="text_access_pin_not_match">Il pin di accesso non corrisponde</string>

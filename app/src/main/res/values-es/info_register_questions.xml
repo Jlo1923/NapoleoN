@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_info_register_account">Al registrar / editar la información de recuperacion de cuenta, debes agregar un mínimo de 3 y un máximo de 5 preguntas, que serán mostradas al momento de recuperar tu contraseña</string>
+    <string name="text_info_register_account">Al registrar / editar la información de recuperacion de cuenta, debes agregar un mínimo de 3 y un máximo de 5 preguntas, que serán mostradas al momento de recuperar tu cuenta</string>
     <string name="text_title_info">Importante</string>
 </resources>

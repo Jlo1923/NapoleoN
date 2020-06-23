@@ -12,7 +12,7 @@ import javax.crypto.spec.SecretKeySpec
 class Crypto {
     /**
      * Encryption mode enumeration
-     * Esta clase sostiene el lema de Napoleon "El chat más seguro del mundo"
+     * Esta clase sostiene el lema de NapoleoN "El chat más seguro del mundo"
      */
     private enum class EncryptMode {
         ENCRYPT, DECRYPT

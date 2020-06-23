@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_info_register_account">Aux informations d\'enregistrement et de récupération du compte du registraire, vous devez ajouter un minimum de 3 et un maximum de 5 questions, qui s\'afficheront au moment de la récupération de votre mot de passe</string>
+    <string name="text_info_register_account">Dans les informations de récupération compte d\'enregistrement / édition, vous devez ajouter un minimum de 3 et un maximum de 5 questions, qui sera présenté au moment de la récupération de votre compte</string>
     <string name="text_title_info">Important</string>
 </resources>

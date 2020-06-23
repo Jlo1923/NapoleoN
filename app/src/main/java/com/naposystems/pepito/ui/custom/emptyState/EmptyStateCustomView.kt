@@ -20,7 +20,7 @@ class EmptyStateCustomView(context: Context, attrs: AttributeSet) :
     private var imageId: Int = 0
     private var title: String = ""
     private var description: String = ""
-    private var location : Int = 0
+    private var location: Int = 0
 
     interface OnEventListener {
         fun onAddContact(click: Boolean)
@@ -86,6 +86,18 @@ class EmptyStateCustomView(context: Context, attrs: AttributeSet) :
 
     override fun setDescriptionEmptyState(string: Int) {
         binding.textViewDescription.text = context.getString(string)
+    }
+
+    override fun imageViewSetVisibility(isVisible: Boolean) {
+        binding.imageViewEmptyState.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    override fun textViewTitleSetVisibility(isVisible: Boolean) {
+        binding.textViewTitle.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    override fun textViewDescriptionSetVisibility(isVisible: Boolean) {
+        binding.textViewDescription.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun setClickListener() {
