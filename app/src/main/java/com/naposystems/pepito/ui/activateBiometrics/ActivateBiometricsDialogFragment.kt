@@ -69,7 +69,7 @@ class ActivateBiometricsDialogFragment : DialogFragment() {
                 BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                     Toast.makeText(
                         context,
-                        "El dispositivo no tiene asignado un desbloqueo biometrico|!!",
+                        getString(R.string.text_unallocated_unlock),
                         Toast.LENGTH_LONG
                     ).show()
                 }
