@@ -20,6 +20,7 @@
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="attrBackgroundColorPrimary">@color/colorPrimary</item>
+        <item name="attrBackgroundColorSecondary">@color/colorSecondaryBackground</item>
         <item name="attrBackgroundColorPrimary50">@color/colorPrimary_50</item>
         <item name="attrTextColorPrimaryTextColor">@color/primaryTextColor</item>
         <item name="attrIconTintWhite">@color/textColorBadge</item>
@@ -102,6 +103,7 @@
         <item name="colorAccent">@color/color_383838</item>
         <item name="colorControlNormal">@color/color_F2F2F2</item>
         <item name="attrBackgroundColorPrimary">@color/color_383838</item>
+        <item name="attrBackgroundColorSecondary">@color/color_282828</item>
         <item name="attrBackgroundColorPrimary50">@color/color_80383838</item>
         <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
         <item name="attrIconTintWhite">@color/color_000000</item>
@@ -728,7 +730,7 @@
     </style>
 
     <style name="AppPrimaryButtonText" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:textColor">@color/state_button</item>
+        <item name="android:textColor">?attr/attrColorButtonTint</item>
         <item name="android:textSize">@dimen/normal_button_text_size</item>
         <item name="android:textAllCaps">false</item>
     </style>
