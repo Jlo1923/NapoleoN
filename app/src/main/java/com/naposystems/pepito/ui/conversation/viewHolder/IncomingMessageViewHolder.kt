@@ -17,6 +17,7 @@ class IncomingMessageViewHolder constructor(
         super.containerMessage = binding.containerIncomingMessage
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
+        super.textViewMessage = binding.textViewMessage
     }
 
     override fun bind(

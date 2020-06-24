@@ -59,7 +59,7 @@
     <string name="text_empty_state_friendship_description">Vous n\'avez pas en attente des demandes d\'amis.</string>
     <string name="text_empty_state_search_title">Trouvez vos amis</string>
     <string name="text_empty_state_search_description">Recherchez vos amis par pseudonyme et communiquer</string>
-    <string name="text_now">Maintenant</string>
+    <string name="text_now">Maintenant </string>
     <string name="text_yesterday">Hier</string>
     <string name="text_close">Fermer</string>
     <string name="text_confirm">Confirmer</string>
@@ -75,4 +75,5 @@
     <string name="text_no">Non</string>
     <string name="text_empty_state_search_contacts">Votre recherche n\'a pas donné de résultat</string>
     <string name="text_contact">CONTACT</string>
+    <string name="text_error_updating_language">Une erreur est survenue changer la langue, s\'il vous plaît essayer à nouveau</string>
 </resources>

@@ -2,14 +2,26 @@ package com.naposystems.pepito.repository.languageSelection
 
 import android.content.Context
 import com.naposystems.pepito.R
+import com.naposystems.pepito.db.dao.user.UserLocalDataSource
+import com.naposystems.pepito.dto.language.UserLanguageReqDTO
+import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.pepito.model.languageSelection.Language
 import com.naposystems.pepito.ui.languageSelection.IContractLanguageSelection
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import retrofit2.Response
 import javax.inject.Inject
 
-class LanguageSelectionRepository @Inject constructor(private val context: Context) :
+class LanguageSelectionRepository @Inject constructor(
+    private val userLocalDataSource: UserLocalDataSource,
+    private val context: Context,
+    private val sharedPreferencesManager: SharedPreferencesManager,
+    private val napoleonApi: NapoleonApi
+) :
     IContractLanguageSelection.Repository {
 
     override fun getLanguages(): List<Language> {
@@ -24,5 +36,16 @@ class LanguageSelectionRepository @Inject constructor(private val context: Conte
         val adapter: JsonAdapter<List<Language>> = moshi.adapter(listType)
 
         return adapter.fromJson(languages)!!
+    }
+
+    override suspend fun updateUserLanguage(language: Language): Response<UpdateUserInfoResDTO> {
+        return napoleonApi.updateUserLanguage(UserLanguageReqDTO(languageIso = language.iso))
+    }
+
+    override suspend fun updateUserLanguagePreference(languageIso: String) {
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_LANGUAGE_SELECTED,
+            languageIso
+        )
     }
 }

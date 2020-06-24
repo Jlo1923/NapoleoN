@@ -67,7 +67,7 @@
                     style="@style/BodyTextView.White"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
                     android:layout_weight="1"
                     android:ellipsize="marquee"
                     android:fadingEdge="horizontal"
@@ -76,7 +76,7 @@
                     android:singleLine="true"
                     android:text="@{contact.status}"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/button_call"
+                    app:layout_constraintEnd_toStartOf="@id/button_video_call"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Este es un estado casuistico" />
@@ -84,21 +84,21 @@
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/button_call"
                     style="@style/ConversationToolbarIcon"
-                    android:layout_marginEnd="@dimen/normal_margin"
-                    android:tint="?attr/attrConversationIconColor"
-                    app:layout_constraintBottom_toBottomOf="@id/button_video_call"
-                    app:layout_constraintEnd_toStartOf="@id/button_video_call"
-                    app:layout_constraintTop_toTopOf="@id/button_video_call"
-                    app:srcCompat="@drawable/ic_phone_white" />
-
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/button_video_call"
-                    style="@style/ConversationToolbarIcon"
                     android:layout_marginEnd="@dimen/x_small_margin"
                     android:tint="?attr/attrConversationIconColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_phone_white" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/button_video_call"
+                    style="@style/ConversationToolbarIcon"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:tint="?attr/attrConversationIconColor"
+                    app:layout_constraintBottom_toBottomOf="@id/button_call"
+                    app:layout_constraintEnd_toStartOf="@id/button_call"
+                    app:layout_constraintTop_toTopOf="@id/button_call"
                     app:srcCompat="@drawable/ic_video_cam_white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

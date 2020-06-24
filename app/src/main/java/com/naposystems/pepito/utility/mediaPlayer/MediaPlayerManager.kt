@@ -55,7 +55,7 @@ class MediaPlayerManager(private val context: Context) :
     private var currentAudioFileName: String? = null
     private var mSpeed: Float = 1.0f
     private var mImageButtonPlay: AnimatedTwoVectorView? = null
-    private var mImageButtonSpeed: AccessibleToggleButton? = null
+    private var mImageButtonSpeed: ImageButton? = null
     private var mPreviousAudioId: Int? = null
     private var mPreviousUri: Uri? = null
     private var mPreviousFileName: String? = null
@@ -148,7 +148,7 @@ class MediaPlayerManager(private val context: Context) :
                 val progress = position / duration
                 wakeLock.acquire()
                 try {
-//                    mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
+                    mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
                     mSpeed = NORMAL_SPEED
                     mediaPlayer.stop()
                     mediaPlayer.reset()
@@ -298,9 +298,9 @@ class MediaPlayerManager(private val context: Context) :
         this.mImageButtonPlay = imageButtonPlay
     }
 
-    override fun setImageButtonSpeed(imageButtonSpeed: AccessibleToggleButton) {
+    override fun setImageButtonSpeed(imageButtonSpeed: ImageButton) {
         if (this.mImageButtonSpeed != imageButtonSpeed) {
-//            this.mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
+            this.mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
             mSpeed = NORMAL_SPEED
         }
         this.mImageButtonSpeed = imageButtonSpeed
@@ -359,10 +359,10 @@ class MediaPlayerManager(private val context: Context) :
     override fun changeSpeed(audioId: Int) {
         if (mPreviousAudioId == audioId) {
             mSpeed = if (mSpeed == NORMAL_SPEED) {
-//                mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
+                mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
                 TWO_X_SPEED
             } else {
-//                mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
+                mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
                 NORMAL_SPEED
             }
             mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(mSpeed)
@@ -386,7 +386,7 @@ class MediaPlayerManager(private val context: Context) :
             mHandler.removeCallbacks(mRunnable)
         }
 
-//        mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
+        mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
         mImageButtonPlay?.reverseAnimation()
         mImageButtonPlay = null
         mImageButtonSpeed = null

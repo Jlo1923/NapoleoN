@@ -18,6 +18,7 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
         super.imageButtonState = binding.imageButtonState
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
+        super.textViewMessage = binding.textViewMessage
     }
 
     override fun bind(
