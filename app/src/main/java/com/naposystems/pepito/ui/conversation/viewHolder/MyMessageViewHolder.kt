@@ -18,6 +18,7 @@ class MyMessageViewHolder constructor(
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
         super.imageButtonSend = binding.imageButtonSend
+        super.textViewMessage = binding.textViewMessage
     }
 
     override fun bind(

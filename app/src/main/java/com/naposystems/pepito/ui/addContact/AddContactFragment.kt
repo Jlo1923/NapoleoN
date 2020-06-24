@@ -235,7 +235,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     override fun onQuery(text: String) {
-        if (text.length >= 4) {
+        if (text.length >= 3) {
             viewModel.searchContact(text.toLowerCase(Locale.getDefault()))
         } else {
             binding.emptyStateSearch.imageViewSetVisibility(true)

@@ -59,7 +59,7 @@
     <string name="text_empty_state_friendship_description">Você não tem pedidos de amizade pendentes</string>
     <string name="text_empty_state_search_title">Encontre seus amigos</string>
     <string name="text_empty_state_search_description">Procurar seus amigos pelo apelido e comunicar</string>
-    <string name="text_now">Agora</string>
+    <string name="text_now">Agora </string>
     <string name="text_yesterday">Ontem</string>
     <string name="text_close">Perto</string>
     <string name="text_confirm">Confirm</string>
@@ -75,4 +75,5 @@
     <string name="text_no">Não</string>
     <string name="text_empty_state_search_contacts">Sua busca não gerou resultados</string>
     <string name="text_contact">CONTATO</string>
+    <string name="text_error_updating_language">Ocorreu um erro ao mudar de idioma, por favor tente novamente</string>
 </resources>

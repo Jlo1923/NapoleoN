@@ -16,7 +16,7 @@ interface IContractMediaPlayer {
     fun unregisterProximityListener()
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setImageButtonPlay(imageButtonPlay: AnimatedTwoVectorView)
-    fun setImageButtonSpeed(imageButtonSpeed: AccessibleToggleButton)
+    fun setImageButtonSpeed(imageButtonSpeed: ImageButton)
     fun setSeekbar(seekBar: AppCompatSeekBar)
     fun setTextViewDuration(textView: TextView)
     fun setListener(listener: MediaPlayerManager.Listener)

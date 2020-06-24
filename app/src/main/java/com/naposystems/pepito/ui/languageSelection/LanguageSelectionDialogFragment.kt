@@ -7,12 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.LanguageSelectionDialogFragmentBinding
 import com.naposystems.pepito.model.languageSelection.Language
 import com.naposystems.pepito.ui.languageSelection.adapter.LanguageSelectionAdapter
 import com.naposystems.pepito.utility.LocaleHelper
+import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.adapters.showToast
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -46,7 +49,6 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
                 viewModel.languagesList,
                 LanguageSelectionAdapter.LanguageSelectionListener { languageSelected ->
                     viewModel.setSelectedLanguage(languageSelected)
-                    changeLocale(languageSelected)
                 },
                 LocaleHelper.getLanguagePreference(requireContext())
             )
@@ -58,6 +60,18 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
+
+        viewModel.selectedLanguage.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                changeLocale(it)
+            }
+        })
+
+        viewModel.errorUpdatingLanguage.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                this.showToast(getString(R.string.text_error_updating_language))
+            }
+        })
     }
 
     private fun changeLocale(language: Language) {

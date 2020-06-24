@@ -45,24 +45,17 @@ fun bindMessageDate(textView: TextView, timestamp: Int, format: Int) {
             }
             timeInit < timeActual && dayMessage == dayActual -> {
                 val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-                    SimpleDateFormat("HH:mm", Locale.getDefault())
+                    SimpleDateFormat("HH:mm ", Locale.getDefault())
                 } else {
-                    SimpleDateFormat("hh:mm aa", Locale.getDefault())
+                    SimpleDateFormat("hh:mm aa ", Locale.getDefault())
                 }
                 textView.text = sdf.format(Date(timestamp.toLong() * 1000))
             }
-            timeInit < timeActual && dayNext == dayActual -> {
-                textView.text = context.getString(R.string.text_yesterday)
-            }
             else -> {
-                val sdf = if (timeSevenMoreDays > timeActual) {
-                    SimpleDateFormat("EEEE", Locale.getDefault())
+                val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+                    SimpleDateFormat("HH:mm  dd/MM/yyyy ", Locale.getDefault())
                 } else {
-                    if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-                        SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                    } else {
-                        SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
-                    }
+                    SimpleDateFormat("hh:mm aa  dd/MM/yyyy ", Locale.getDefault())
                 }
                 textView.text = sdf.format(Date(timestamp.toLong() * 1000))
             }

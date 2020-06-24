@@ -75,7 +75,7 @@
     <string name="text_empty_state_friendship_description">You do not have pending friend requests.</string>
     <string name="text_empty_state_search_title">Find your friends</string>
     <string name="text_empty_state_search_description">Search for your friends by nickname and communicate</string>
-    <string name="text_now">Now</string>
+    <string name="text_now">Now </string>
     <string name="text_yesterday">Yesterday</string>
     <string name="text_close">Close</string>
     <string name="text_confirm">Confirm</string>
@@ -92,4 +92,5 @@
     <string name="text_no">No</string>
     <string name="text_empty_state_search_contacts">Your search yielded no results</string>
     <string name="text_contact">CONTACT</string>
+    <string name="text_error_updating_language">An error occurred changing language, please try again</string>
 </resources>

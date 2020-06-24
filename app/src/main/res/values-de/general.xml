@@ -59,7 +59,7 @@
     <string name="text_empty_state_friendship_description">Sie haben noch ausstehenden Freundschaftsanfragen</string>
     <string name="text_empty_state_search_title">Finde deine Freunde</string>
     <string name="text_empty_state_search_description">Suchen Sie Ihren Freunden von Nickname und kommunizieren</string>
-    <string name="text_now">Jetzt</string>
+    <string name="text_now">Jetzt </string>
     <string name="text_yesterday">Gestern</string>
     <string name="text_close">Schließen</string>
     <string name="text_confirm">Confirm</string>
@@ -75,4 +75,5 @@
     <string name="text_no">Nein</string>
     <string name="text_empty_state_search_contacts">Ihre Suche ergab keine Ergebnisse</string>
     <string name="text_contact">KONTAKT</string>
+    <string name="text_error_updating_language">Ein Fehler ist aufgetreten Sprache zu ändern, versuchen Sie es erneut</string>
 </resources>

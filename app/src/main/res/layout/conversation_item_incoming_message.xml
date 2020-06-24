@@ -46,6 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_margin"
             android:background="@drawable/bg_incoming_message"
+            android:minWidth="110dp"
             android:paddingStart="20dp"
             android:paddingTop="@dimen/x_small_padding"
             android:paddingEnd="@dimen/small_padding"

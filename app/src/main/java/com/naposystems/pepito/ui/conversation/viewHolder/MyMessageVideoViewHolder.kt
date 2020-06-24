@@ -20,6 +20,7 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
         super.imageButtonState = binding.imageButtonState
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
+        super.textViewMessage = binding.textViewMessage
     }
 
     override fun bind(

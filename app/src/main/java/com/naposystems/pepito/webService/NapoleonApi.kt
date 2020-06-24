@@ -22,6 +22,7 @@ import com.naposystems.pepito.dto.conversation.message.*
 import com.naposystems.pepito.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.pepito.dto.enterCode.EnterCodeResDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
+import com.naposystems.pepito.dto.language.UserLanguageReqDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.pepito.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
@@ -113,6 +114,9 @@ interface NapoleonApi {
 
     @PUT(UPDATE_USER_INFO)
     suspend fun updateUserStatus(@Body userStatusReqDTO: UserStatusReqDTO): Response<UpdateUserInfoResDTO>
+
+    @PUT(UPDATE_USER_INFO)
+    suspend fun updateUserLanguage(@Body userStatusReqDTO: UserLanguageReqDTO): Response<UpdateUserInfoResDTO>
 
     @PUT(UPDATE_MUTE_CONVERSATION)
     suspend fun updateMuteConversation(

@@ -799,13 +799,15 @@
         <item name="android:textColor">@color/secondaryTextColorForAll</item>
     </style>
 
-    <style name="MyMessageTextView" parent="BodyTextView">
+    <style name="MyMessageTextView">
+        <item name="android:textSize">@dimen/text_size_message</item>
         <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
         <item name="android:autoLink">web</item>
         <item name="android:textColorLink">?attr/attrTextColorColorTextMyMessage</item>
     </style>
 
-    <style name="IncomingMessageTextView" parent="SmallBodyTextView">
+    <style name="IncomingMessageTextView">
+        <item name="android:textSize">@dimen/text_size_message</item>
         <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
         <item name="android:autoLink">web</item>
         <item name="android:textColorLink">?attr/attrTextColorColorTextIncomingMessage</item>
@@ -834,12 +836,16 @@
         <item name="android:textColor">?attr/attrTextColorWhite</item>
     </style>
 
-    <style name="MyMessageDateTextView" parent="SmallBodyTextView">
+    <style name="MyMessageDateTextView">
         <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
+        <item name="android:textSize">@dimen/text_size_message_date</item>
+        <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="IncomingMessageDateTextView" parent="SmallBodyTextView">
+    <style name="IncomingMessageDateTextView">
         <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
+        <item name="android:textSize">@dimen/text_size_message_date</item>
+        <item name="android:textStyle">italic</item>
     </style>
 
     <style name="SmallBodyTextView.WhiteBold" parent="SmallBodyTextView">
