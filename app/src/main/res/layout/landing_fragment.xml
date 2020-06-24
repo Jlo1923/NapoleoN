@@ -13,7 +13,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
         tools:context=".ui.landing.LandingFragment">
 
         <include layout="@layout/background_landing" />
@@ -74,7 +73,7 @@
                 android:onClick="@{() -> viewModel.onShowLanguageSelectionPressed()}"
                 android:text="@string/text_select_language"
                 app:icon="@drawable/ic_arrow_right_primary"
-                app:iconTint="@color/buttonTint"
+                app:iconTint="?attr/attrColorButtonTint"
                 app:layout_constraintBottom_toTopOf="@+id/guideline4"
                 app:layout_constraintEnd_toEndOf="@+id/button_recovery_account"
                 app:layout_constraintStart_toStartOf="@+id/button_recovery_account" />

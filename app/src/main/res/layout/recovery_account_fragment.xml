@@ -51,11 +51,10 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayout_nickname"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/TextInputLayoutOutlined"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/normal_margin"
-                    android:hint="@string/text_nickname_with_asterisk"
                     app:errorEnabled="true"
                     app:layout_constraintBottom_toTopOf="@+id/viewSwitcher_recovery_account"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
@@ -67,6 +66,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:digits="@string/nickname_configuration"
+                        android:hint="@string/text_nickname_with_asterisk"
+                        android:textColor="?attr/attrTextColorConversationInputPanel"
                         android:lines="1"
                         android:maxLength="@dimen/max_length_nickname"
                         android:maxLines="1"
