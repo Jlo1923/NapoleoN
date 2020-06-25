@@ -79,7 +79,8 @@ class NapoleonKeyboardStickerPageFragment : Fragment() {
                                 origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
                                 thumbnailUri = "",
                                 status = Constants.AttachmentStatus.SENDING.status,
-                                extension = "gif"
+                                extension = "gif",
+                                duration = 0L
                             )
 
                             with(shareViewModel) {

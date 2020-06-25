@@ -241,7 +241,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
                                     origin = Constants.AttachmentOrigin.CAMERA.origin,
                                     thumbnailUri = "",
                                     status = Constants.AttachmentStatus.SENDING.status,
-                                    extension = PHOTO_EXTENSION
+                                    extension = PHOTO_EXTENSION,
+                                    duration = 0L
                                 )
 
 
@@ -364,7 +365,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
                             origin = Constants.AttachmentOrigin.CAMERA.origin,
                             thumbnailUri = "",
                             status = Constants.AttachmentStatus.SENDING.status,
-                            extension = VIDEO_EXTENSION
+                            extension = VIDEO_EXTENSION,
+                            duration = 0L
                         )
 
                         mHandler.removeCallbacks(mRecordingTimeRunnable)

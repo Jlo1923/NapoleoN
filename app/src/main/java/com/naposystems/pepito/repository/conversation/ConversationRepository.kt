@@ -154,6 +154,7 @@ class ConversationRepository @Inject constructor(
 
             val requestBodyMessageId = createPartFromString(attachment.messageWebId)
             val requestBodyType = createPartFromString(attachment.type)
+            val requestBodyDuration = createPartFromString(attachment.duration.toString())
 
             val requestBodyFilePart =
                 createPartFromFile(
@@ -165,6 +166,7 @@ class ConversationRepository @Inject constructor(
             val response = napoleonApi.sendMessageAttachment(
                 messageId = requestBodyMessageId,
                 attachmentType = requestBodyType,
+                duration = requestBodyDuration,
                 file = requestBodyFilePart
             )
 
@@ -577,23 +579,6 @@ class ConversationRepository @Inject constructor(
                             }
                             outputStream.flush()
                             Timber.d("File saved successfully!")
-
-                            if (attachment.type == Constants.AttachmentType.AUDIO.type) {
-                                try {
-                                    val mediaMetadataRetriever = MediaMetadataRetriever()
-                                    mediaMetadataRetriever.setDataSource(file.absolutePath)
-
-                                    val duration =
-                                        mediaMetadataRetriever.extractMetadata(
-                                            MediaMetadataRetriever.METADATA_KEY_DURATION
-                                        )
-                                            .toLong()
-
-                                    attachment.duration = duration
-                                } catch (e: Exception) {
-                                    Timber.e(e)
-                                }
-                            }
 
                             offer(
                                 DownloadAttachmentResult.Success(

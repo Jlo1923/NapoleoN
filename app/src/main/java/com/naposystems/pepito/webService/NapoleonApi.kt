@@ -150,6 +150,7 @@ interface NapoleonApi {
     suspend fun sendMessageAttachment(
         @Part("message_id") messageId: RequestBody,
         @Part("type") attachmentType: RequestBody,
+        @Part("duration") duration: RequestBody,
         @Part file: MultipartBody.Part
     ): Response<AttachmentResDTO>
 
