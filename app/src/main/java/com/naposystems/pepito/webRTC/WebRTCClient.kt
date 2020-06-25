@@ -178,6 +178,7 @@ class WebRTCClient constructor(
         fun enableControls()
         fun resetIsOnCallPref()
         fun contactNotAnswer()
+        fun showTimer()
     }
 
     init {
@@ -419,6 +420,7 @@ class WebRTCClient constructor(
                         countDownEndCall.cancel()
                         initializeProximitySensor()
                         mListener?.enableControls()
+                        mListener?.showTimer()
                         mHandler.postDelayed(
                             mCallTimeRunnable,
                             TimeUnit.SECONDS.toMillis(1)
@@ -656,7 +658,7 @@ class WebRTCClient constructor(
         )
     }
 
-    override fun setTextViewTitle(textView: TextView) {
+    override fun setTextViewCallDuration(textView: TextView) {
         this.textViewTimer = textView
     }
 

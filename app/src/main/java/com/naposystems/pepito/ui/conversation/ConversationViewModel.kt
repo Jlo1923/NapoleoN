@@ -1,6 +1,7 @@
 package com.naposystems.pepito.ui.conversation
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import androidx.lifecycle.*
@@ -212,7 +213,8 @@ class ConversationViewModel @Inject constructor(
                     origin = Constants.AttachmentOrigin.AUDIO_SELECTION.origin,
                     thumbnailUri = "",
                     status = Constants.AttachmentStatus.SENDING.status,
-                    extension = "mp3"
+                    extension = "mp3",
+                    duration = mediaStoreAudio.duration
                 )
 
                 saveMessageAndAttachment(

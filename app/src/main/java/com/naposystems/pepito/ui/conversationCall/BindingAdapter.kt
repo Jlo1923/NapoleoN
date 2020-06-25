@@ -40,27 +40,21 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
 
 }
 
-@BindingAdapter("callTitle", "isIncomingCall")
-fun bindCallTitle(textView: TextView, @Nullable contact: Contact?, isIncomingCall: Boolean) {
+@BindingAdapter("callTitle")
+fun bindCallTitle(textView: TextView, @Nullable contact: Contact?) {
     if (contact != null) {
         val context = textView.context
 
-        val formattedNickname = when {
-            contact.nicknameFake.isNotEmpty() -> {
-                context.getString(R.string.label_nickname, contact.nicknameFake)
-            }
-            else -> {
-                context.getString(R.string.label_nickname, contact.nickname)
-            }
-        }
+        textView.text = context.getString(R.string.label_nickname, contact.getNickName())
+    }
+}
 
-        val finalText = if (isIncomingCall) {
-            context.getString(R.string.text_incoming_call_title, formattedNickname)
-        } else {
-            context.getString(R.string.text_calling_call_title, formattedNickname)
-        }
+@BindingAdapter("callName")
+fun bindCallName(textView: TextView, @Nullable contact: Contact?) {
+    if (contact != null) {
+        val context = textView.context
 
-        textView.text = finalText
+        textView.text = context.getString(R.string.label_nickname, contact.getName())
     }
 }
 

@@ -714,10 +714,6 @@ class ConversationFragment : BaseFragment(),
     private fun saveAndSendRecordAudio() {
         recordFile?.let { file ->
 
-            recordingTime = 0L
-            isRecordingAudio = false
-            stopRecording()
-
             val attachment = Attachment(
                 id = 0,
                 messageId = 0,
@@ -729,8 +725,13 @@ class ConversationFragment : BaseFragment(),
                 origin = Constants.AttachmentOrigin.RECORD_AUDIO.origin,
                 thumbnailUri = "",
                 status = Constants.AttachmentStatus.SENDING.status,
-                extension = "aac"
+                extension = "aac",
+                duration = recordingTime
             )
+
+            recordingTime = 0L
+            isRecordingAudio = false
+            stopRecording()
 
             viewModel.saveMessageAndAttachment(
                 "",

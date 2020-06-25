@@ -12,4 +12,5 @@
     <string name="text_payment_method">Método de pago</string>
     <string name="text_message_selection_type_subscription">Você deve selecionar um tipo de assinatura</string>
     <string name="text_warning">Em seguida, você será redirecionado para um portal de pagamento, este portal é externo ao NapoleoN Chat, portanto, não possui as mesmas características de nosso aplicativo e você deve aceitar os termos e condições estipulados para seu uso. Não nos responsabilizamos pelo tratamento dos dados fornecidos no módulo de pagamento.</string>
+    <string name="text_subscription_and_time">%1$s - %2$d dias restantes</string>
 </resources>

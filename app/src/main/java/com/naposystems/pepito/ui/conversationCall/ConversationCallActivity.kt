@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -72,13 +73,26 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
+            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
+            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
+            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
+            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
+            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
+            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
+            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
+            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
+        }
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
         webRTCClient = WebRTCClient(this, socketService, sharedPreferencesManager)
 
         getExtras()
 
-        webRTCClient.setTextViewTitle(binding.textViewTitle)
+        webRTCClient.setTextViewCallDuration(binding.textViewCallDuration)
 
         with(window) {
             setFlags(
@@ -315,7 +329,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
             // Cambiamos el margen
             constraintSet.setMargin(id, ConstraintSet.END, Utils.dpToPx(this, 16f))
-            constraintSet.setMargin(id, ConstraintSet.BOTTOM, Utils.dpToPx(this, 16f))
+            constraintSet.setMargin(id, ConstraintSet.BOTTOM, Utils.dpToPx(this, 76f))
 
             // Cambiamos su tamaño
             constraintSet.constrainPercentWidth(id, 0.3f)
@@ -398,6 +412,13 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     override fun contactNotAnswer() {
         if (!isIncomingCall)
             viewModel.sendMissedCall(contactId, isVideoCall)
+    }
+
+    override fun showTimer() {
+        runOnUiThread {
+            binding.textViewCalling.visibility = View.GONE
+            binding.textViewCallDuration.visibility = View.VISIBLE
+        }
     }
 
     //endregion

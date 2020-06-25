@@ -26,13 +26,13 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/attrBackgroundColorBackground">
+        android:background="@color/black_212121">
 
         <ViewSwitcher
             android:id="@+id/viewSwitcher"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/container_controls"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -51,57 +51,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- CONTACT AVATAR -->
-                <ImageView
-                    android:id="@+id/imageView_contact_image"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:background="@drawable/border_avatar_contact"
-                    app:avatar="@{contact}"
-                    app:layout_constraintBottom_toTopOf="@+id/textView_contact_name"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintWidth_percent="0.4"
-                    tools:src="@tools:sample/avatars" />
-
-                <!-- CONTACT NAME -->
-                <TextView
-                    android:id="@+id/textView_contact_name"
-                    style="@style/TextViewSecondaryTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/normal_margin"
-                    android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:singleLine="true"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toTopOf="@+id/textView_contact_nickname"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:name="@{contact}"
-                    tools:text="Giussep Ricardo" />
-
-                <!-- CONTACT NICKNAME -->
-                <TextView
-                    android:id="@+id/textView_contact_nickname"
-                    style="@style/BodyTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@+id/guideline_contact_nickname"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:nickname="@{contact}"
-                    tools:text="\@giusseprc7" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_contact_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.7" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -137,26 +86,139 @@
 
         </ViewSwitcher>
 
-        <TextView
-            android:id="@+id/textView_title"
-            style="@style/CallTitle"
+        <!-- TOP CONTAINER -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_top"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:elevation="2dp"
-            android:fontFamily="@font/roboto"
+            android:background="#998B8989"
+            android:paddingTop="@dimen/small_padding"
+            android:paddingBottom="@dimen/small_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/x_small_margin"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/textView_title"
+                app:layout_constraintEnd_toStartOf="@+id/textView_title"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textView_title"
+                app:srcCompat="@drawable/ic_baseline_lock" />
+
+            <TextView
+                android:id="@+id/textView_title"
+                style="@style/CallTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/x_small_margin"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/text_encrypted_call"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/appCompatImageView2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView_nickname"
+                style="@style/CallTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x_small_margin"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto"
+                android:maxLines="1"
+                android:paddingStart="@dimen/normal_padding"
+                android:paddingEnd="@dimen/normal_padding"
+                android:singleLine="true"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_title"
+                custom:callTitle="@{contact}"
+                tools:text="\@giussepr" />
+
+            <TextView
+                android:id="@+id/textView_name"
+                style="@style/CallTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/x_small_margin"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto"
+                android:paddingStart="@dimen/normal_padding"
+                android:paddingEnd="@dimen/normal_padding"
+                android:singleLine="true"
+                android:text="@{contact.name}"
+                android:textAlignment="center"
+                android:visibility="@{contact.name.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_nickname"
+                tools:text="Giussep Ricardo" />
+
+            <TextView
+                android:id="@+id/textView_call_duration"
+                style="@style/CallDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:elevation="2dp"
+                android:singleLine="true"
+                android:textAlignment="center"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_name"
+                tools:text="00:00:00"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view_top_separator"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/color_D8A605"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container_top" />
+
+        <TextView
+            android:id="@+id/textView_calling"
+            style="@style/CallCalling"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:elevation="4dp"
+            android:singleLine="true"
+            android:text="@{isIncomingCall ? @string/text_incoming_call_title : @string/text_calling_call_title}"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_title"
-            custom:callTitle="@{contact}"
-            custom:isIncomingCall="@{isIncomingCall}"
-            tools:text="Llamando a @giussepr" />
+            app:layout_constraintTop_toBottomOf="@id/view_top_separator"
+            tools:text="Llamando" />
 
+        <View
+            android:id="@+id/view_bottom_separator"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/color_D8A605"
+            app:layout_constraintBottom_toTopOf="@id/container_controls"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- CALL CONTROLS -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="?attr/attrBackgroundColorBackground"
+            android:layout_height="70dp"
+            android:background="#998B8989"
             android:padding="@dimen/normal_padding"
             android:visibility="@{isIncomingCall ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -185,7 +247,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_bluetooth"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_switch_camera"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:checked="true" />
+                tools:checked="false" />
 
             <com.naposystems.pepito.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_bluetooth"
@@ -196,7 +258,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_change_to_video"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_speaker"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:checked="true"
+                tools:checked="false"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -205,7 +267,6 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:foreground="?attr/selectableItemBackground"
-                android:tint="?attr/attrTintColorSecondaryDark"
                 android:visibility="@{isVideoCall ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_mute_video"
@@ -223,7 +284,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_mic_off"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_change_to_video"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:checked="true"
+                tools:checked="false"
                 tools:visibility="visible" />
 
             <com.naposystems.pepito.ui.custom.AccessibleToggleButton
@@ -235,7 +296,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_mute_video"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:checked="true" />
+                tools:checked="false" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -267,13 +328,6 @@
             app:layout_constraintTop_toTopOf="@id/fab_hangup"
             app:srcCompat="@drawable/ic_call_black_24"
             app:tint="@color/white" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.05" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
