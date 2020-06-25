@@ -15,7 +15,7 @@
         android:id="@+id/container_camera_off"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/attrBackgroundColorBackground"
+        android:background="@color/black_212121"
         android:visibility="gone"
         tools:showIn="@layout/activity_conversation_call"
         tools:visibility="visible">
@@ -25,30 +25,36 @@
             layout="@layout/logo_napoleon_blur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
+            app:contact="@{null}"
+            app:layout_constraintBottom_toTopOf="@+id/textView_message"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/textView_message"
-            app:contact="@{null}" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline_text"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/textView_message"
             style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="El contacto ha apagado la cámara|!!"
             android:textAlignment="center"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_call_title"
-            app:layout_constraintBottom_toTopOf="@id/guideline_text"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            custom:callMessage="@{contact}" />
+            app:layout_constraintTop_toBottomOf="@+id/logo_napoleon"
+            custom:callMessage="@{contact}"
+            tools:text="El contacto ha apagado la cámara|!!" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

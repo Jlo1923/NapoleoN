@@ -164,11 +164,16 @@ class SubscriptionFragment : Fragment() {
                         binding.textViewSubscriptionActual.text =
                             getString(R.string.text_expired_subscription)
                     } else {
+                        val daysMillis = subscriptionUser.dateExpires - System.currentTimeMillis()
                         val currentSubscription =
                             listTypeSubscription?.find { typeSubscription ->
                                 typeSubscription.id == subscriptionUser.subscriptionId
                             }?.description
-                        binding.textViewSubscriptionActual.text = currentSubscription
+                        binding.textViewSubscriptionActual.text = getString(
+                            R.string.text_subscription_and_time,
+                            currentSubscription,
+                            TimeUnit.MILLISECONDS.toDays(daysMillis)
+                        )
                     }
                 } else {
                     binding.textViewSubscriptionActual.text =

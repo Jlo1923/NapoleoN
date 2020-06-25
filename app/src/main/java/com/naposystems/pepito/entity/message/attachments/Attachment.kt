@@ -36,7 +36,8 @@ data class Attachment(
     @ColumnInfo(name = "origin") var origin: Int,
     @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = "",
     @ColumnInfo(name = "status") var status: Int,
-    @ColumnInfo(name = "extension") var extension: String = ""
+    @ColumnInfo(name = "extension") var extension: String = "",
+    @ColumnInfo(name = "duration") var duration: Long = 0
 ) : Parcelable {
 
     fun deleteFile(context: Context) {
@@ -86,8 +87,6 @@ data class Attachment(
     override fun hashCode(): Int {
         return id
     }*/
-
-
 
 
 }

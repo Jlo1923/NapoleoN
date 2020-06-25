@@ -245,6 +245,9 @@ open class ConversationViewHolder constructor(
         firstAttachment?.let { attachment ->
 //            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
 //            Timber.d("hasUploadComplete: $hasUploadComplete")
+
+            audioPlayer?.setDuration(attachment.duration)
+
             if (item.message.status == Constants.MessageStatus.UNREAD.status &&
                 attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status
             ) {

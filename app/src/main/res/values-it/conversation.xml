@@ -19,8 +19,8 @@
     <string name="text_title_delete_failed_messages">Eliminar fallidos</string>
     <string name="text_delete_messages_conversation">Elimina i messaggi</string>
     <string name="text_explanation_to_send_location_attachment">Per inviare una posizione, permettere l\'accesso NAPOLEON vostra posizione.</string>
-    <string name="text_incoming_call_title">Chiamata in arrivo da %1$s</string>
-    <string name="text_calling_call_title">Chiamata %1$s</string>
+    <string name="text_incoming_call_title">Chiamata in arrivo</string>
+    <string name="text_calling_call_title">Chiamata…</string>
     <string name="text_contact_want_change_to_video_call">Contatto vuole passare alla videochiamata</string>
     <string name="text_would_you_like_switch_to_video_call">Ti piacerebbe passare alla videochiamata?</string>
     <string name="text_contact_turn_off_camera">%1$s ha trasformato il fuori campo</string>
@@ -39,6 +39,7 @@
     <string name="text_missed_video_call_at">Videochiamata a %1$s di oggi ha perso</string>
     <string name="text_missed_voice_call">Chiamata persa</string>
     <string name="text_missed_video_call">Videochiamata persa</string>
+    <string name="text_encrypted_call">Chiamata criptato</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d giorno</item>
         <item quantity="other">%d giorni</item>

@@ -27,4 +27,5 @@ interface IContractAudioPlayer {
     fun setEncryptedFileName(fileName: String)
     fun setAudioId(id: Int)
     fun setListener(listener: AudioPlayerCustomView.Listener)
+    fun setDuration(duration: Long)
 }

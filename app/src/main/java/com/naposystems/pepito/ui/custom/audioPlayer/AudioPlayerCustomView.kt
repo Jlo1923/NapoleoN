@@ -14,6 +14,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.CustomViewAudioPlayerBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -227,6 +228,12 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     override fun setListener(listener: Listener) {
         this.mListener = listener
     }
+
+    override fun setDuration(duration: Long) {
+        binding.textViewDuration.text = Utils.getDuration(duration, false)
+        binding.textViewDuration.visibility = if (duration == 0L) View.GONE else View.VISIBLE
+    }
+
     //endregion
 
     //region Implementation MediaPlayerManager.Listener

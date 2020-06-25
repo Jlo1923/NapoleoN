@@ -8,7 +8,7 @@ interface IContractWebRTCClient {
     fun setIsVideoCall(isVideoCall: Boolean)
     fun setChannel(channel: String)
     fun subscribeToChannel()
-    fun setTextViewTitle(textView: TextView)
+    fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setSpeakerOn()

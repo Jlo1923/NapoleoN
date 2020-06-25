@@ -781,8 +781,19 @@
         <item name="android:textColor">?attr/attrTextColorWhite</item>
     </style>
 
-    <style name="CallTitle" parent="BodyTextView">
+    <style name="CallTitle">
         <item name="android:textSize">@dimen/text_size_call_title</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CallDuration">
+        <item name="android:textSize">@dimen/text_size_call_duration</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CallCalling">
+        <item name="android:textSize">@dimen/text_size_calling</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="TextViewListTitle" parent="BodyTextView.Bold">
@@ -1068,7 +1079,6 @@
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
         <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
         <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>

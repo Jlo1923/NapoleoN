@@ -12,4 +12,5 @@
     <string name="text_payment_method">Payment method</string>
     <string name="text_message_selection_type_subscription">You must select a subscription type</string>
     <string name="text_warning">Next, you will be redirected to a payment portal, this portal is external to NapoleoN Chat, therefore, it does not have the same characteristics as our application and you must accept the terms and conditions stipulated for its use. We are not responsible for the treatment of the data provided in the payment module.</string>
+    <string name="text_subscription_and_time">%1$s - %2$d days remaining</string>
 </resources>

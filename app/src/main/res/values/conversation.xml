@@ -19,8 +19,8 @@
     <string name="text_title_delete_failed_messages">Delete failed</string>
     <string name="text_delete_messages_conversation">Delete messages</string>
     <string name="text_explanation_to_send_location_attachment">To send a location, allow NAPOLEON access your location.</string>
-    <string name="text_incoming_call_title">Incoming call from %1$s</string>
-    <string name="text_calling_call_title">Calling %1$s</string>
+    <string name="text_incoming_call_title">Incoming call</string>
+    <string name="text_calling_call_title">Calling…</string>
     <string name="text_contact_want_change_to_video_call">Contact want switch to video call</string>
     <string name="text_would_you_like_switch_to_video_call">Would you like to switch to video call?</string>
     <string name="text_contact_turn_off_camera">%1$s has turned the camera off</string>
@@ -39,6 +39,7 @@
     <string name="text_missed_video_call_at">Video call at %1$s today lost</string>
     <string name="text_missed_voice_call">Lost call</string>
     <string name="text_missed_video_call">Missed video call</string>
+    <string name="text_encrypted_call">Encrypted call</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
