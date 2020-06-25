@@ -314,7 +314,8 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                         origin = Constants.AttachmentOrigin.LOCATION.origin,
                         thumbnailUri = "",
                         status = Constants.AttachmentStatus.SENDING.status,
-                        extension = "jpg"
+                        extension = "jpg",
+                        duration = 0L
                     )
 
                     with(conversationShareViewModel) {

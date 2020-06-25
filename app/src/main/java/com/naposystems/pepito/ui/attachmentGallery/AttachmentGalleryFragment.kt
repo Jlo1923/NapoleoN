@@ -149,7 +149,8 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                                 uri = attachmentSelected.name,
                                 origin = Constants.AttachmentOrigin.GALLERY.origin,
                                 thumbnailUri = "",
-                                status = Constants.AttachmentStatus.SENDING.status
+                                status = Constants.AttachmentStatus.SENDING.status,
+                                duration = 0L
                             )
 
                             this@AttachmentGalleryFragment.findNavController().navigate(

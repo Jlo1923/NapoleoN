@@ -92,7 +92,8 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                         origin = Constants.AttachmentOrigin.GALLERY.origin,
                         thumbnailUri = "",
                         status = Constants.AttachmentStatus.SENDING.status,
-                        extension = extension
+                        extension = extension,
+                        duration = 0L
                     )
 
                     with(conversationShareViewModel) {

@@ -13,7 +13,8 @@ data class AttachmentResDTO(
     @Json(name = "width") val width: Int,
     @Json(name = "height") val height: Int,
     @Json(name = "ext") val extension: String,
-    @Json(name = "id") val id: String
+    @Json(name = "id") val id: String,
+    @Json(name = "duration") val duration: Long
 ) {
     companion object {
 
@@ -25,19 +26,19 @@ data class AttachmentResDTO(
 
             for (attachmentDTO in listAttachmentsDTO) {
                 val attachment = Attachment(
-                    0,
-                    conversationId,
-                    attachmentDTO.id,
-                    attachmentDTO.messageId,
-                    attachmentDTO.type,
-                    attachmentDTO.body,
-                    "",
-                    Constants.AttachmentOrigin.DOWNLOADED.origin,
-                    "",
-                    Constants.AttachmentStatus.NOT_DOWNLOADED.status
+                    id = 0,
+                    messageId = conversationId,
+                    webId = attachmentDTO.id,
+                    messageWebId = attachmentDTO.messageId,
+                    type = attachmentDTO.type,
+                    body = attachmentDTO.body,
+                    uri = "",
+                    origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
+                    thumbnailUri = "",
+                    status = Constants.AttachmentStatus.NOT_DOWNLOADED.status,
+                    extension = attachmentDTO.extension,
+                    duration = attachmentDTO.duration
                 )
-
-                attachment.extension = attachmentDTO.extension
 
                 mutableList.add(attachment)
             }
