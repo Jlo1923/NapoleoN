@@ -1,7 +1,6 @@
 package com.naposystems.pepito.ui.conversation.viewHolder
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
@@ -14,7 +13,7 @@ class MyMessageViewHolder constructor(
 ) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
-        super.containerMessage = binding.containerMyMessage
+        super.parentContainerMessage = binding.containerMyMessage
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
         super.imageButtonSend = binding.imageButtonSend
@@ -34,6 +33,7 @@ class MyMessageViewHolder constructor(
         binding.clickListener = clickListener
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
+        binding.itemPosition = adapterPosition
 
         binding.executePendingBindings()
     }

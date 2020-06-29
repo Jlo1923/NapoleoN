@@ -14,7 +14,7 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
 //    private var job: Job? = null
 
     init {
-        super.containerMessage = binding.containerMyMessage
+        super.parentContainerMessage = binding.containerMyMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
@@ -36,6 +36,7 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
         binding.clickListener = clickListener
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
+        binding.itemPosition = adapterPosition
 
         binding.executePendingBindings()
     }

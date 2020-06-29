@@ -542,7 +542,11 @@ class WebRTCClient constructor(
      * Recibe el ice candidate local y lo envía al peer remoto a través del socket
      */
     private fun onIceCandidateReceived(iceCandidate: IceCandidate) {
-        socketService.emitToCall(channel = channel, jsonObject = iceCandidate.toJSONObject())
+        try {
+            socketService.emitToCall(channel = channel, jsonObject = iceCandidate.toJSONObject())
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     private fun startCallTimer() {

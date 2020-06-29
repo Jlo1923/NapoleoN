@@ -25,6 +25,8 @@ import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils.Companion.setupNotificationSound
+import com.naposystems.pepito.webService.socket.IContractSocketService
+import com.naposystems.pepito.webService.socket.SocketService
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import java.util.*
@@ -45,6 +47,9 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
 
     @Inject
     lateinit var repository: NotificationUtilsRepository
+
+    @Inject
+    lateinit var socketService: IContractSocketService.SocketService
 
     init {
         (applicationContext as DaggerApplication).androidInjector().inject(this)
@@ -220,6 +225,7 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             Constants.NotificationType.INCOMING_CALL.type -> {
                 Timber.d("Incoming call")
                 if (app != null && !app.isAppVisible() && !repository.getIsOnCallPref()) {
+                    socketService.initSocket()
                     Timber.d("Incoming call 2")
                     var channel = ""
                     var contactId = 0

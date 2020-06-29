@@ -15,7 +15,7 @@ class MyMessageGifNNViewHolder constructor(
     ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
-        super.containerMessage = binding.containerMyMessage
+        super.parentContainerMessage = binding.containerMyMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
@@ -37,6 +37,7 @@ class MyMessageGifNNViewHolder constructor(
         binding.conversation = item
         binding.imageViewAttachment.visibility = View.GONE
         binding.timeFormat = timeFormat
+        binding.itemPosition = adapterPosition
 
         binding.executePendingBindings()
     }

@@ -1,15 +1,18 @@
 package com.naposystems.pepito.ui.conversation.adapter
 
+import android.animation.*
 import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
@@ -35,8 +38,7 @@ open class ConversationViewHolder constructor(
     private var downloadJob: ProducerScope<*>? = null
     private var countDownTimer: CountDownTimer? = null
 
-
-    var containerMessage: ConstraintLayout? = null
+    var parentContainerMessage: ConstraintLayout? = null
     var textViewCountDown: TextView? = null
     var quote: InputPanelQuote? = null
     var progressBarIndeterminate: ProgressBar? = null
@@ -199,6 +201,43 @@ open class ConversationViewHolder constructor(
         }
     }
 
+    fun startFocusAnim(focusMessage: Boolean) {
+        if (focusMessage) {
+            /*val objectAnimatorMic = AnimatorInflater.loadAnimator(
+                context,
+                R.animator.animator_focus_message
+            ) as ObjectAnimator
+
+            objectAnimatorMic.target = containerMessage
+            objectAnimatorMic.start()*/
+            val colorAnim =
+                ObjectAnimator.ofInt(
+                    parentContainerMessage,
+                    "backgroundColor",
+                    Color.parseColor("#59CCCCCC"),
+                    Color.TRANSPARENT
+                )
+            colorAnim.duration = 300
+            colorAnim.setEvaluator(ArgbEvaluator())
+            colorAnim.interpolator = FastOutSlowInInterpolator()
+            colorAnim.repeatCount = 3
+            colorAnim.repeatMode = ValueAnimator.REVERSE
+            colorAnim.start()
+
+            colorAnim.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationRepeat(animation: Animator) = Unit
+
+                override fun onAnimationEnd(animation: Animator) {
+                    parentContainerMessage?.setBackgroundColor(Color.TRANSPARENT)
+                }
+
+                override fun onAnimationCancel(animation: Animator) = Unit
+
+                override fun onAnimationStart(animation: Animator) = Unit
+            })
+        }
+    }
+
     open fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
@@ -216,12 +255,12 @@ open class ConversationViewHolder constructor(
         )
 
         if (item.message.isSelected) {
-            containerMessage?.setBackgroundColor(Color.parseColor("#59CCCCCC"))
+            parentContainerMessage?.setBackgroundColor(Color.parseColor("#59CCCCCC"))
         } else {
-            containerMessage?.setBackgroundColor(Color.TRANSPARENT)
+            parentContainerMessage?.setBackgroundColor(Color.TRANSPARENT)
         }
 
-        containerMessage?.setOnLongClickListener {
+        parentContainerMessage?.setOnLongClickListener {
             clickListener.onLongClick(item.message)
             true
         }
