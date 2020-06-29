@@ -12,7 +12,7 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
     ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
-        super.containerMessage = binding.containerIncomingMessage
+        super.parentContainerMessage = binding.containerIncomingMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
@@ -34,6 +34,7 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
         binding.clickListener = clickListener
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
+        binding.itemPosition = adapterPosition
 
         binding.executePendingBindings()
     }

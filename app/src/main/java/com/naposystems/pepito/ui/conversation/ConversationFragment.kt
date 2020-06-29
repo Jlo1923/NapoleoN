@@ -41,6 +41,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
@@ -156,6 +157,7 @@ class ConversationFragment : BaseFragment(),
     private var recordFile: File? = null
     private var clipData: ClipData? = null
     private var mRecordingAudioRunnable: Runnable? = null
+    private var mQuotedMessage: Int? = null
 
     private var keyboardHeight: Int = 0
     private var recordingTime: Long = 0
@@ -236,6 +238,19 @@ class ConversationFragment : BaseFragment(),
                 actionState,
                 isCurrentlyActive
             )
+        }
+    }
+
+    private val onScrollQuoteListener = object : RecyclerView.OnScrollListener() {
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            when (newState) {
+                SCROLL_STATE_IDLE -> {
+                    conversationAdapter.startFocusAnimation(mQuotedMessage)
+                    binding.recyclerViewConversation.removeOnScrollListener(this)
+                    mQuotedMessage = null
+                }
+            }
         }
     }
 
@@ -1639,11 +1654,24 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun goToQuote(messageAndAttachment: MessageAndAttachment) {
+    override fun goToQuote(messageAndAttachment: MessageAndAttachment, itemPosition: Int?) {
         val position = viewModel.getMessagePosition(messageAndAttachment)
 
         if (position != -1) {
-            binding.recyclerViewConversation.smoothScrollToPosition(position)
+            binding.recyclerViewConversation.apply {
+                removeOnScrollListener(onScrollQuoteListener)
+                mQuotedMessage = position
+                addOnScrollListener(onScrollQuoteListener)
+
+                val firstItemVisible = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+                Timber.d("firstItemVisible: $firstItemVisible, position: $position")
+
+                if (firstItemVisible > position) {
+                    binding.recyclerViewConversation.smoothScrollToPosition(position)
+                } else {
+                    conversationAdapter.startFocusAnimation(mQuotedMessage)
+                }
+            }
         } else {
             Toast.makeText(
                 context, "No se encuentra el mensaje original|!!", Toast.LENGTH_SHORT

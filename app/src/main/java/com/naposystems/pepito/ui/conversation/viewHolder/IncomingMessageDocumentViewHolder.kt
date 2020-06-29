@@ -12,7 +12,7 @@ class IncomingMessageDocumentViewHolder constructor(private val binding: Convers
     ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
-        super.containerMessage = binding.containerIncomingMessage
+        super.parentContainerMessage = binding.containerIncomingMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
@@ -32,6 +32,7 @@ class IncomingMessageDocumentViewHolder constructor(private val binding: Convers
         binding.clickListener = clickListener
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
+        binding.itemPosition = adapterPosition
 
         binding.executePendingBindings()
     }

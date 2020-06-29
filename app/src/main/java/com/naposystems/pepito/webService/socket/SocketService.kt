@@ -63,7 +63,7 @@ class SocketService @Inject constructor(
     }
 
     override fun subscribe(jsonObject: String) {
-//        socket.emit("subscribe", jsonObject)
+        connectToSocket()
         Timber.d("Subscribe to $jsonObject")
     }
 
@@ -191,46 +191,50 @@ class SocketService @Inject constructor(
     }
 
     private fun subscribeToGeneralChannel() {
-        val userId = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+        try {
+            val userId = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
-        if (userId != 0) {
+            if (userId != 0) {
 
-            val channelName =
-                "private-general.${userId}"
+                val channelName =
+                    "private-general.${userId}"
 
-            generalChannel =
-                pusher.subscribePrivate(channelName, object : PrivateChannelEventListener {
-                    override fun onEvent(event: PusherEvent) {
-                        Timber.d("Subscribe general: ${event.data}")
-                    }
+                generalChannel =
+                    pusher.subscribePrivate(channelName, object : PrivateChannelEventListener {
+                        override fun onEvent(event: PusherEvent) {
+                            Timber.d("Subscribe general: ${event.data}")
+                        }
 
-                    override fun onAuthenticationFailure(
-                        message: String?,
-                        e: java.lang.Exception?
-                    ) {
-                        Timber.d("$message, $e")
-                    }
+                        override fun onAuthenticationFailure(
+                            message: String?,
+                            e: java.lang.Exception?
+                        ) {
+                            Timber.d("$message, $e")
+                        }
 
-                    override fun onSubscriptionSucceeded(channelName: String?) {
-                        Timber.d("onSubscriptionSucceeded: $channelName")
+                        override fun onSubscriptionSucceeded(channelName: String?) {
+                            Timber.d("onSubscriptionSucceeded: $channelName")
 
-                        listenOnDisconnect(generalChannel)
+                            listenOnDisconnect(generalChannel)
 
-                        listenNewMessageEvent(generalChannel)
+                            listenNewMessageEvent(generalChannel)
 
-                        listenNotifyMessagesReceived(generalChannel)
+                            listenNotifyMessagesReceived(generalChannel)
 
-                        listenMessagesRead(generalChannel)
+                            listenMessagesRead(generalChannel)
 
-                        listenMessagesDestroy(generalChannel)
+                            listenMessagesDestroy(generalChannel)
 
-                        listenIncomingCall(generalChannel)
+                            listenIncomingCall(generalChannel)
 
-                        listenCallRejected(generalChannel)
+                            listenCallRejected(generalChannel)
 
-                        repository.getMyMessages()
-                    }
-                })
+                            repository.getMyMessages()
+                        }
+                    })
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 

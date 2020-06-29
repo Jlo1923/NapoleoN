@@ -3,7 +3,6 @@ package com.naposystems.pepito.ui.conversation.viewHolder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.naposystems.pepito.databinding.ConversationItemMyMessageBinding
 import com.naposystems.pepito.databinding.ConversationItemMyMessageWithImageBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
@@ -15,7 +14,7 @@ class MyMessageImageViewHolder constructor(
 ) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
-        super.containerMessage = binding.containerMyMessage
+        super.parentContainerMessage = binding.containerMyMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
@@ -38,6 +37,7 @@ class MyMessageImageViewHolder constructor(
         binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
+        binding.itemPosition = adapterPosition
 
         binding.executePendingBindings()
     }

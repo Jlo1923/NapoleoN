@@ -59,7 +59,7 @@
             <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
                 style="@style/QuoteConversation"
-                android:onClick="@{() -> clickListener.goToQuote(conversation)}"
+                android:onClick="@{() -> clickListener.goToQuote(conversation, itemPosition)}"
                 app:isGoTo="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -2,8 +2,6 @@ package com.naposystems.pepito.app
 
 import android.app.NotificationManager
 import android.content.Context
-import android.content.res.Configuration
-import android.util.Log
 import androidx.core.provider.FontRequest
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
@@ -18,15 +16,12 @@ import com.google.android.libraries.places.api.Places
 import com.naposystems.pepito.R
 import com.naposystems.pepito.di.DaggerApplicationComponent
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.emojiManager.EmojiManager
-import com.naposystems.pepito.webService.socket.SocketService
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 
@@ -36,8 +31,8 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         private const val USE_BUNDLED_EMOJI = true
     }
 
-    @Inject
-    lateinit var socketService: SocketService
+    /*@Inject
+    lateinit var socketService: SocketService*/
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
@@ -58,7 +53,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         Giphy.configure(this, Constants.GIPHY_API_KEY)
         Places.initialize(this, "AIzaSyDcAkhqRS4BO-BoKM89HiXuR4ruLr8fj1w")
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-        socketService.initSocket()
+//        socketService.initSocket()
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancelAll()

@@ -13,7 +13,6 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.DownloadAttachmentResult
 import com.naposystems.pepito.utility.UploadResult
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import timber.log.Timber
 
@@ -28,6 +27,7 @@ class ConversationAdapter constructor(
         const val PROGRESS = "progress"
         const val DOWNLOAD_CANCEL = "download_cancel"
         const val UPLOAD_COMPLETE = "upload_complete"
+        const val FOCUS_MESSAGE = "focus_message"
         const val TYPE_MY_MESSAGE = 1
         const val TYPE_INCOMING_MESSAGE = 2
         const val TYPE_MY_MESSAGE_IMAGE = 3
@@ -140,6 +140,15 @@ class ConversationAdapter constructor(
             )
         } catch (e: Exception) {
             Timber.e(e)
+        }
+    }
+
+    fun startFocusAnimation(mQuotedMessage: Int?) {
+        if (mQuotedMessage != null) {
+            notifyItemChanged(
+                mQuotedMessage,
+                Bundle().apply { putBoolean(FOCUS_MESSAGE, true) }
+            )
         }
     }
 
@@ -380,6 +389,7 @@ class ConversationAdapter constructor(
         val progress = bundle.getLong(PROGRESS)
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         val downloadCancel = bundle.getBoolean(DOWNLOAD_CANCEL, false)
+        val focusMessage = bundle.getBoolean(FOCUS_MESSAGE, false)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,
             TYPE_MY_MESSAGE_GIF,
@@ -391,6 +401,7 @@ class ConversationAdapter constructor(
                 (holder as ConversationViewHolder).apply {
                     setProgress(progress)
                     setUploadComplete(uploadComplete)
+                    startFocusAnim(focusMessage)
                 }
             }
             TYPE_INCOMING_MESSAGE_IMAGE,
@@ -403,6 +414,13 @@ class ConversationAdapter constructor(
                 (holder as ConversationViewHolder).apply {
                     setProgress(progress)
                     setDownloadCancel(downloadCancel)
+                    startFocusAnim(focusMessage)
+                }
+            }
+            TYPE_MY_MESSAGE,
+            TYPE_INCOMING_MESSAGE -> {
+                (holder as ConversationViewHolder).apply {
+                    startFocusAnim(focusMessage)
                 }
             }
         }
@@ -447,7 +465,7 @@ class ConversationAdapter constructor(
         fun messageToEliminate(item: MessageAndAttachment)
         fun errorPlayingAudio()
         fun onPreviewClick(item: MessageAndAttachment)
-        fun goToQuote(messageAndAttachment: MessageAndAttachment)
+        fun goToQuote(messageAndAttachment: MessageAndAttachment, itemPosition: Int?)
         fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int?)
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
