@@ -297,7 +297,7 @@ class ApplicationModule {
 
         pusherOptions.authorizer = authorizer
 
-        return Pusher("36880baf488e08473554", pusherOptions)
+        return Pusher(BuildConfig.PUSHER_KEY, pusherOptions)
     }
 
     @Provides

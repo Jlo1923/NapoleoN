@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.pepito"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 106
+        versionCode 108
 
-        versionName "2.0.0-alpha11"
+        versionName "2.0.0-alpha13"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -51,16 +51,18 @@ android {
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "false")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("String", "PUSHER_KEY", "\"1ec3eaf9ae0f17a766ca\"")
         }
         release {
             buildConfigField("String", "BASE_URL", "\"https://prod.napoleon-chat.com/api/\"")
             buildConfigField("String", "HOST_URL", "\"prod.napoleon-chat.com\"")
             buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
             buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
-            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com:6001\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "true")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            buildConfigField("String", "PUSHER_KEY", "\"6a11211af223541f2069\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
@@ -71,10 +73,11 @@ android {
             buildConfigField("String", "HOST_URL", "\"prod.napoleon-chat.com\"")
             buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
             buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
-            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com:6001\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "true")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("String", "PUSHER_KEY", "\"6a11211af223541f2069\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
