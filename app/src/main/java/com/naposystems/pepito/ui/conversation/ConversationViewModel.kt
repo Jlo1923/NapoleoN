@@ -576,6 +576,12 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    override fun sendMessageRead(messageWebId: String) {
+        viewModelScope.launch {
+            repository.setMessageRead(messageWebId)
+        }
+    }
+
     override fun reSendMessage(message: Message, selfDestructTime: Int) {
         viewModelScope.launch {
             try {

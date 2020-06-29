@@ -470,6 +470,7 @@ class ConversationAdapter constructor(
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
+        fun sendMessageRead(messageWebId: String)
         fun reSendMessage(message: Message)
     }
 }

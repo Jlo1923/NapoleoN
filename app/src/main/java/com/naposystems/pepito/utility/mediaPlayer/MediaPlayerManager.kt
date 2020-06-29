@@ -50,13 +50,13 @@ class MediaPlayerManager(private val context: Context) :
     private var mIsEncryptedFile: Boolean = false
     private var mIsBluetoothConnected: Boolean = false
     private var mIsInitialized: Boolean = false
-    private var currentAudioId: Int = 0
+    private var currentAudioId: String = ""
     private var currentAudioUri: Uri? = null
     private var currentAudioFileName: String? = null
     private var mSpeed: Float = 1.0f
     private var mImageButtonPlay: AnimatedTwoVectorView? = null
     private var mImageButtonSpeed: ImageButton? = null
-    private var mPreviousAudioId: Int? = null
+    private var mPreviousAudioId: String? = null
     private var mPreviousUri: Uri? = null
     private var mPreviousFileName: String? = null
     private var mSeekBar: AppCompatSeekBar? = null
@@ -93,7 +93,7 @@ class MediaPlayerManager(private val context: Context) :
 
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPauseAudio()
+        fun onPauseAudio(audioId: String)
         fun onCompleteAudio()
     }
 
@@ -122,6 +122,10 @@ class MediaPlayerManager(private val context: Context) :
             mProximitySensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
+    }
+
+    private fun enableSpeedControl(isEnabled: Boolean) {
+        mImageButtonSpeed?.isEnabled = isEnabled
     }
 
     //region Implementation SensorEventListener
@@ -164,7 +168,7 @@ class MediaPlayerManager(private val context: Context) :
                 if (mediaPlayer.isPlaying) {
                     mediaPlayer.pause()
                     mImageButtonPlay?.reverseAnimation()
-                    mListener?.onPauseAudio()
+                    mListener?.onPauseAudio(currentAudioId)
                 }
             }
         }
@@ -172,7 +176,7 @@ class MediaPlayerManager(private val context: Context) :
     //endregion
 
     //region Implementation
-    override fun setAudioId(audioId: Int) {
+    override fun setAudioId(audioId: String) {
         this.currentAudioId = audioId
     }
 
@@ -253,8 +257,11 @@ class MediaPlayerManager(private val context: Context) :
                 if (isPlaying) {
                     pause()
                     mImageButtonPlay?.reverseAnimation()
-                    mListener?.onPauseAudio()
+                    Timber.d("Conver mediaplayer pause: $currentAudioId")
+                    mListener?.onPauseAudio(currentAudioId)
+                    enableSpeedControl(false)
                 } else {
+                    enableSpeedControl(true)
                     audioManagerCompat.requestCallAudioFocus()
                     mAudioManager.isSpeakerphoneOn = !isEarpiece
                     start()
@@ -344,7 +351,7 @@ class MediaPlayerManager(private val context: Context) :
         this.mTextViewDuration = textView
     }
 
-    override fun rewindMilliseconds(audioId: Int, millis: Long) {
+    override fun rewindMilliseconds(audioId: String, millis: Long) {
         if (mSeekBar != null && audioId == mPreviousAudioId) {
             val minusValue = mediaPlayer.currentPosition - millis
 
@@ -356,7 +363,7 @@ class MediaPlayerManager(private val context: Context) :
         }
     }
 
-    override fun changeSpeed(audioId: Int) {
+    override fun changeSpeed(audioId: String) {
         if (mPreviousAudioId == audioId) {
             mSpeed = if (mSpeed == NORMAL_SPEED) {
                 mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
@@ -369,7 +376,7 @@ class MediaPlayerManager(private val context: Context) :
         }
     }
 
-    override fun forwardMilliseconds(audioId: Int, millis: Long) {
+    override fun forwardMilliseconds(audioId: String, millis: Long) {
         if (mSeekBar != null && mPreviousAudioId == audioId) {
             val minorValue = mediaPlayer.duration - (millis + TimeUnit.SECONDS.toMillis(1))
 

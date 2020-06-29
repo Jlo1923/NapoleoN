@@ -8,7 +8,7 @@ import com.naposystems.pepito.ui.custom.AccessibleToggleButton
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 
 interface IContractMediaPlayer {
-    fun setAudioId(audioId: Int)
+    fun setAudioId(audioId: String)
     fun setAudioUri(uri: Uri?)
     fun setAudioFileName(fileName: String)
     fun playAudio(progress: Double = 0.0, isEarpiece: Boolean = false)
@@ -20,8 +20,8 @@ interface IContractMediaPlayer {
     fun setSeekbar(seekBar: AppCompatSeekBar)
     fun setTextViewDuration(textView: TextView)
     fun setListener(listener: MediaPlayerManager.Listener)
-    fun rewindMilliseconds(audioId: Int, millis: Long)
-    fun forwardMilliseconds(audioId: Int, millis: Long)
-    fun changeSpeed(audioId: Int)
+    fun rewindMilliseconds(audioId: String, millis: Long)
+    fun forwardMilliseconds(audioId: String, millis: Long)
+    fun changeSpeed(audioId: String)
     fun resetMediaPlayer()
 }

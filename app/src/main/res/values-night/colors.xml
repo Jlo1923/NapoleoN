@@ -9,6 +9,7 @@
     <color name="colorSecondaryDark">#505564</color>
     <color name="primaryTextColor">#F2F2F2</color>
     <color name="secondaryTextColor">#F2F2F2</color>
+    <color name="textColorEnterCode">#000000</color>
     <color name="textColorDrawerAndStatus">#4d4d4d</color>
     <color name="secondaryTextColorForAll">#4d4d4d</color>
     <color name="linkTextColor">#29ABE2</color>

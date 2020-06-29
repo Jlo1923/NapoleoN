@@ -1512,7 +1512,7 @@ class ConversationFragment : BaseFragment(),
         )
     }
 
-    override fun onPauseAudio() {
+    override fun onPauseAudio(audioId: String) {
         // Intentionally empty
     }
 
@@ -1698,7 +1698,13 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
+        Timber.d("sendMessageRead")
         viewModel.sendMessageRead(messageAndAttachment)
+    }
+
+    override fun sendMessageRead(messageWebId: String) {
+        Timber.d("sendMessageRead: $messageWebId")
+        viewModel.sendMessageRead(messageWebId)
     }
 
     override fun reSendMessage(message: Message) {

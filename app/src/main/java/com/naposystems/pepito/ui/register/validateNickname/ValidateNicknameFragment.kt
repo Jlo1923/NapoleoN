@@ -158,7 +158,7 @@ class ValidateNicknameFragment : Fragment() {
             s?.let {
                 if (FieldsValidator.isNicknameValid(binding.textInputLayoutNickname)) {
                     val validateNicknameReqDTO =
-                        ValidateNicknameReqDTO(binding.textInputEditTextNickname.text.toString())
+                        ValidateNicknameReqDTO(binding.textInputEditTextNickname.text.toString().toLowerCase())
                     viewModel.validateNickname(validateNicknameReqDTO)
                 } else {
                     binding.buttonNext.isEnabled = false

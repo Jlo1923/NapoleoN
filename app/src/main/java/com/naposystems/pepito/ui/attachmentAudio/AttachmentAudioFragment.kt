@@ -153,7 +153,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
             ) {
                 mediaPlayerManager.apply {
                     setImageButtonPlay(imageButtonPlay)
-                    setAudioId(mediaStoreAudio.id.toInt())
+                    setAudioId(mediaStoreAudio.id.toString())
                     isEncryptedFile(false)
                     setAudioUri(mediaStoreAudio.contentUri)
                     playAudio()
@@ -179,7 +179,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         )
     }
 
-    override fun onPauseAudio() {
+    override fun onPauseAudio(audioId: String) {
         // Intentionally empty
     }
 

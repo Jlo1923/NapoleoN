@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_biometrics_description">È possibile scegliere il metodo di rilascio; È sempre possibile accedere tramite Access Pin</string>
+    <string name="text_biometrics_description">Scegli il metodo di sblocco preferito</string>
     <string name="text_only_pin">perno</string>
     <string name="text_pin_and_fingerprint">Pin + impronta digitale</string>
     <string name="text_pin_and_unlock_facial">Pin + Face Unlock</string>

@@ -7,7 +7,7 @@
     <string name="text_time_to_request_access_pin">Le temps de demander la broche d\'accès</string>
     <string name="text_account_recovery_information">Récupération du compte</string>
     <string name="text_allow_download_attachments">Autoriser le téléchargement des pièces jointes envoyées</string>
-    <string name="text_unlock_options">Choisissez votre mode de déverrouillage favori</string>
+    <string name="text_unlock_options">Débloquer des options</string>
     <string name="text_message_self_destruct_time_not_send">Temps Destruct et les messages non lus échoué</string>
     <string name="text_conversation">CONVERSATION</string>
 </resources>

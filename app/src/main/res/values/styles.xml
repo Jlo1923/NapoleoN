@@ -26,6 +26,7 @@
         <item name="attrIconTintWhite">@color/textColorBadge</item>
         <item name="attrBackgroundTintColorSecondary">@color/colorSecondary</item>
         <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColor</item>
+        <item name="attrTextColorEnterCode">@color/textColorEnterCode</item>
         <item name="attrTextColorButtonTint">@color/buttonTint</item>
         <item name="attrColorTextButtonTintCamera">@color/buttonTintCamera</item>
         <item name="attrStrokeColorButtonTint">@color/buttonTint</item>
@@ -89,6 +90,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
     </style>
 
     <style name="AppThemeDarkNapoleon" parent="AppTheme">
@@ -109,6 +111,7 @@
         <item name="attrIconTintWhite">@color/color_000000</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrTextColorEnterCode">@color/textColorEnterCode</item>
         <item name="attrTextColorButtonTint">@color/color_F2F2F2</item>
         <item name="attrColorTextButtonTintCamera">@color/color_F2F2F2</item>
         <item name="attrStrokeColorButtonTint">@color/color_F2F2F2</item>
@@ -172,6 +175,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
     </style>
 
     <style name="AppThemePinkDream" parent="AppTheme">
@@ -190,6 +194,7 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_D19DBB</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_903B6E</item>
+        <item name="attrTextColorEnterCode">@color/color_903B6E</item>
         <item name="attrTextColorButtonTint">@color/color_903B6E</item>
         <item name="attrColorTextButtonTintCamera">@color/color_903B6E</item>
         <item name="attrStrokeColorButtonTint">@color/color_903B6E</item>
@@ -257,6 +262,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account_light
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
     </style>
 
     <style name="AppThemeClearSky" parent="AppTheme">
@@ -273,6 +279,7 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorEnterCode">@color/color_4D4D4D</item>
         <item name="attrTextColorButtonTint">@color/color_0074A7</item>
         <item name="attrColorTextButtonTintCamera">@color/color_0074A7</item>
         <item name="attrStrokeColorButtonTint">@color/color_0074A7</item>
@@ -340,6 +347,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account_light
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
     </style>
 
     <style name="AppThemePurpleBluebonnets" parent="AppTheme">
@@ -356,6 +364,7 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorEnterCode">@color/color_4D4D4D</item>
         <item name="attrTextColorButtonTint">@color/color_7D366F</item>
         <item name="attrColorTextButtonTintCamera">@color/color_7D366F</item>
         <item name="attrStrokeColorButtonTint">@color/color_7D366F</item>
@@ -421,6 +430,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account_light
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
     </style>
 
     <style name="AppThemeCamouflage" parent="AppTheme">
@@ -439,6 +449,7 @@
         <item name="attrTextColorMessageAndTimeHome">@color/white</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_38732C</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorEnterCode">@color/color_59BC88</item>
         <item name="attrTextColorButtonTint">@color/color_3CB043</item>
         <item name="attrColorTextButtonTintCamera">@color/color_3CB043</item>
         <item name="attrStrokeColorButtonTint">@color/color_3CB043</item>
@@ -502,6 +513,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account_dark
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
     </style>
 
     <style name="AppThemeBlackGoldAlloy" parent="AppTheme">
@@ -518,6 +530,7 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrTextColorEnterCode">@color/color_F2F2F2</item>
         <item name="attrTextColorButtonTint">@color/color_D8A605</item>
         <item name="attrColorTextButtonTintCamera">@color/color_D8A605</item>
         <item name="attrStrokeColorButtonTint">@color/color_D8A605</item>
@@ -581,6 +594,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account_dark
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
     </style>
 
     <style name="AppThemeColdOcean" parent="AppTheme">
@@ -598,6 +612,7 @@
         <item name="attrBackgroundSectionOtherColor">@color/color_2A2C45</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_81819E</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorEnterCode">@color/color_59BC88</item>
         <item name="attrTextColorButtonTint">@color/color_59BC88</item>
         <item name="attrColorTextButtonTintCamera">@color/color_2A2C45</item>
         <item name="attrStrokeColorButtonTint">@color/color_F2F2F2</item>
@@ -662,6 +677,7 @@
         <item name="attrImageEmptyStateRecoveryAccount">
             @drawable/image_empty_state_recovery_account_dark
         </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
     </style>
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -892,7 +908,7 @@
         <item name="android:background">@drawable/bg_enter_code</item>
         <item name="android:textAlignment">center</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorEnterCode</item>
         <item name="android:textSize">@dimen/text_size_editText_enter_code</item>
         <item name="android:maxLength">1</item>
         <item name="android:hint">@string/middle_dash</item>

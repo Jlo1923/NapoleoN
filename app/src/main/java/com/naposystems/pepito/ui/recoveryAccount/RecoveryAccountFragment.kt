@@ -70,7 +70,7 @@ class RecoveryAccountFragment : Fragment() {
 
         binding.buttonRecoveryAccount.setOnClickListener {
             Utils.hideKeyboard(binding.textInputEditTextNickname)
-            viewModel.sendNickname(binding.textInputEditTextNickname.text.toString())
+            viewModel.sendNickname(binding.textInputEditTextNickname.text.toString().toLowerCase())
             binding.viewSwitcherRecoveryAccount.showNext()
         }
 

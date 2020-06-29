@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_biometrics_description">You can choose the method of release; You can always access through Access Pin</string>
+    <string name="text_biometrics_description">Choose your favorite unlocking method</string>
     <string name="text_only_pin">Pin</string>
     <string name="text_pin_and_fingerprint">Pin + Fingerprint</string>
     <string name="text_pin_and_unlock_facial">Pin + Face Unlock</string>
