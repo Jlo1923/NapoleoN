@@ -74,7 +74,6 @@ interface IContractConversation {
     }
 
     interface Repository {
-        suspend fun subscribeToChannel(userToChat: Contact): String
         fun unSubscribeToChannel(userToChat: Contact, channelName: String)
         fun getLocalMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
         suspend fun getQuoteId(quoteWebId: String): Int
@@ -86,6 +85,7 @@ interface IContractConversation {
         fun insertListMessage(messageList: List<Message>)
         fun updateMessage(message: Message)
         suspend fun sendTextMessagesRead(contactId: Int)
+        suspend fun sendMissedCallRead(contactId: Int)
         fun insertAttachment(attachment: Attachment): Long
         fun insertAttachments(listAttachment: List<Attachment>): List<Long>
         fun updateAttachment(attachment: Attachment)

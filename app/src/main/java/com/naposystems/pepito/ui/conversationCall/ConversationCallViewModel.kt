@@ -19,6 +19,14 @@ class ConversationCallViewModel @Inject constructor(
     val contact: LiveData<Contact>
         get() = _contact
 
+    private val _userDisplayFormat = MutableLiveData<Int>()
+    val userDisplayFormat: LiveData<Int>
+        get() = _userDisplayFormat
+
+    init {
+        _userDisplayFormat.value = repository.getUserDisplayFormat()
+    }
+
     //region Implementation IContractConversationCall.ViewModel
 
     override fun getContact(contactId: Int) {

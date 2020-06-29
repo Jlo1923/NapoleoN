@@ -42,7 +42,9 @@ class ConversationAdapter constructor(
         const val TYPE_INCOMING_MESSAGE_GIF = 12
         const val TYPE_MY_MESSAGE_GIF_NN = 13
         const val TYPE_INCOMING_MESSAGE_GIF_NN = 14
-        const val TYPE_MISSED_CALL = 15
+        const val TYPE_MY_MESSAGE_LOCATION = 15
+        const val TYPE_INCOMING_MESSAGE_LOCATION = 16
+        const val TYPE_MISSED_CALL = 17
     }
 
     private var isFirst = false
@@ -199,6 +201,13 @@ class ConversationAdapter constructor(
                                     TYPE_INCOMING_MESSAGE_GIF_NN
                                 }
                             }
+                            Constants.AttachmentType.LOCATION.type -> {
+                                if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                                    TYPE_MY_MESSAGE_LOCATION
+                                } else {
+                                    TYPE_INCOMING_MESSAGE_LOCATION
+                                }
+                            }
                             else -> {
                                 if (conversation.message.isMine == Constants.IsMine.YES.value)
                                     TYPE_MY_MESSAGE
@@ -247,6 +256,8 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_GIF -> IncomingMessageImageViewHolder.from(parent)
             TYPE_MY_MESSAGE_GIF_NN -> MyMessageGifNNViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_GIF_NN -> IncomingMessageGifNNViewHolder.from(parent)
+            TYPE_MY_MESSAGE_LOCATION -> MyMessageImageViewHolder.from(parent)
+            TYPE_INCOMING_MESSAGE_LOCATION -> IncomingMessageImageViewHolder.from(parent)
             TYPE_MISSED_CALL -> MessageMissedCallViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
@@ -274,12 +285,14 @@ class ConversationAdapter constructor(
                 TYPE_MY_MESSAGE_VIDEO,
                 TYPE_MY_MESSAGE_DOCUMENT,
                 TYPE_MY_MESSAGE_GIF_NN,
+                TYPE_MY_MESSAGE_LOCATION,
                 TYPE_INCOMING_MESSAGE,
                 TYPE_INCOMING_MESSAGE_IMAGE,
                 TYPE_INCOMING_MESSAGE_GIF,
                 TYPE_INCOMING_MESSAGE_VIDEO,
                 TYPE_INCOMING_MESSAGE_GIF_NN,
-                TYPE_INCOMING_MESSAGE_DOCUMENT ->
+                TYPE_INCOMING_MESSAGE_DOCUMENT,
+                TYPE_INCOMING_MESSAGE_LOCATION ->
                     (holder as ConversationViewHolder)
                         .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_AUDIO,
@@ -339,7 +352,8 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_GIF,
             TYPE_INCOMING_MESSAGE_GIF_NN,
             TYPE_INCOMING_MESSAGE_AUDIO,
-            TYPE_INCOMING_MESSAGE_DOCUMENT -> {
+            TYPE_INCOMING_MESSAGE_DOCUMENT,
+            TYPE_INCOMING_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
                     setDownloadStart(job)
                 }
@@ -349,7 +363,8 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE_GIF,
             TYPE_MY_MESSAGE_GIF_NN,
             TYPE_MY_MESSAGE_AUDIO,
-            TYPE_MY_MESSAGE_DOCUMENT -> {
+            TYPE_MY_MESSAGE_DOCUMENT,
+            TYPE_MY_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
                     setUploadStart(job)
                 }
@@ -371,7 +386,8 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE_VIDEO,
             TYPE_MY_MESSAGE_GIF_NN,
             TYPE_MY_MESSAGE_AUDIO,
-            TYPE_MY_MESSAGE_DOCUMENT -> {
+            TYPE_MY_MESSAGE_DOCUMENT,
+            TYPE_MY_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
                     setProgress(progress)
                     setUploadComplete(uploadComplete)
@@ -382,7 +398,8 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_VIDEO,
             TYPE_INCOMING_MESSAGE_GIF_NN,
             TYPE_INCOMING_MESSAGE_DOCUMENT,
-            TYPE_INCOMING_MESSAGE_AUDIO -> {
+            TYPE_INCOMING_MESSAGE_AUDIO,
+            TYPE_INCOMING_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
                     setProgress(progress)
                     setDownloadCancel(downloadCancel)
@@ -405,7 +422,8 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE_VIDEO,
             TYPE_MY_MESSAGE_GIF_NN,
             TYPE_MY_MESSAGE_AUDIO,
-            TYPE_MY_MESSAGE_DOCUMENT -> {
+            TYPE_MY_MESSAGE_DOCUMENT,
+            TYPE_MY_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
                     setUploadProgressAndJob(progress, job)
                     setUploadComplete(uploadComplete)
@@ -416,7 +434,8 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_VIDEO,
             TYPE_INCOMING_MESSAGE_GIF_NN,
             TYPE_INCOMING_MESSAGE_DOCUMENT,
-            TYPE_INCOMING_MESSAGE_AUDIO -> {
+            TYPE_INCOMING_MESSAGE_AUDIO,
+            TYPE_INCOMING_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).setDownloadProgressAndJob(progress, job)
             }
         }

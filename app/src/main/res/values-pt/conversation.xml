@@ -40,6 +40,10 @@
     <string name="text_missed_voice_call">Chamada Perdida</string>
     <string name="text_missed_video_call">Vídeo chamada não atendida</string>
     <string name="text_encrypted_call">Chamada criptografada</string>
+    <string name="text_incoming_secure_call">Chamada recebida segura</string>
+    <string name="text_incoming_secure_video_call">Chamada de vídeo seguro</string>
+    <string name="text_encrypted_video_call">Chamada de vídeo criptografado</string>
+    <string name="text_incoming_video_call_title">Chamada de vídeo</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d dia</item>
         <item quantity="other">%d dias</item>

@@ -40,6 +40,10 @@
     <string name="text_missed_voice_call">Chiamata persa</string>
     <string name="text_missed_video_call">Videochiamata persa</string>
     <string name="text_encrypted_call">Chiamata criptato</string>
+    <string name="text_incoming_secure_call">Chiamata in arrivo sicuro</string>
+    <string name="text_incoming_secure_video_call">Sicuro videochiamata in arrivo</string>
+    <string name="text_encrypted_video_call">Videochiamata crittografata</string>
+    <string name="text_incoming_video_call_title">Videochiamata in arrivo</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d giorno</item>
         <item quantity="other">%d giorni</item>

@@ -26,6 +26,9 @@ class ConversationCallRepository @Inject constructor(
     }
 
     override suspend fun sendMissedCall(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
-       return napoleonApi.sendMessage(messageReqDTO)
+        return napoleonApi.sendMessage(messageReqDTO)
     }
+
+    override fun getUserDisplayFormat() =
+        sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_DISPLAY_FORMAT)
 }

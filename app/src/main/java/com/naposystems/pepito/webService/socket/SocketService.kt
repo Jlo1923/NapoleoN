@@ -1,23 +1,23 @@
 package com.naposystems.pepito.webService.socket
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
-import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
-import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
-import com.naposystems.pepito.firebase.TestService
-import com.naposystems.pepito.model.conversationCall.ConversationCall
+import com.google.gson.JsonObject
+import com.naposystems.pepito.model.conversationCall.IncomingCall
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.Constants.SharedPreferences.PREF_PENDING_CALL
 import com.naposystems.pepito.utility.SharedPreferencesManager
-import com.naposystems.pepito.utility.adapters.toConversationCallModel
 import com.naposystems.pepito.utility.adapters.toIceCandidate
 import com.naposystems.pepito.utility.adapters.toSessionDescription
-import io.socket.client.Ack
-import io.socket.client.Socket
+import com.pusher.client.Pusher
+import com.pusher.client.channel.PrivateChannel
+import com.pusher.client.channel.PrivateChannelEventListener
+import com.pusher.client.channel.PusherEvent
+import com.pusher.client.connection.ConnectionEventListener
+import com.pusher.client.connection.ConnectionState
+import com.pusher.client.connection.ConnectionStateChange
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import org.json.JSONObject
 import org.webrtc.SessionDescription
 import timber.log.Timber
@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 class SocketService @Inject constructor(
     private val context: Context,
-    private val socket: Socket,
+    private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val repository: IContractSocketService.Repository
 ) : IContractSocketService.SocketService {
@@ -33,6 +33,9 @@ class SocketService @Inject constructor(
     private val firebaseId by lazy {
         sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
     }
+
+    private lateinit var generalChannel: PrivateChannel
+    private var callChannel: PrivateChannel? = null
 
     companion object {
         const val CALL_NN = "client-callNN"
@@ -54,205 +57,296 @@ class SocketService @Inject constructor(
 
             connectToSocket()
 
-            listenOnDisconnect()
-
-            listenNewMessageEvent()
-
-            listenNotifyMessagesReceived()
-
-            listenMessagesRead()
-
-            listenMessagesDestroy()
-
-            listenCallEvents()
-
-            listenIncomingCall()
-
-            listenCallRejected()
-
         } catch (e: Exception) {
             Timber.e(e)
         }
     }
 
-    override fun subscribe(jsonObject: JSONObject) {
-        socket.emit("subscribe", jsonObject)
+    override fun subscribe(jsonObject: String) {
+//        socket.emit("subscribe", jsonObject)
         Timber.d("Subscribe to $jsonObject")
     }
 
-    override fun subscribeToCallChannel(
-        channel: String,
-        jsonObject: JSONObject
-    ) {
-        socket.emit("subscribe", jsonObject, Ack {
-            Timber.e("error al suscribirse $it")
+    override fun subscribeToCallChannel(channel: String) {
+        Timber.d("subscribeToCallChannel: $channel")
+        callChannel = pusher.subscribePrivate(channel, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                Timber.d("event: ${event.data}")
+            }
+
+            override fun onAuthenticationFailure(message: String, e: java.lang.Exception) {
+
+            }
+
+            override fun onSubscriptionSucceeded(channelName: String) {
+                listenCallEvents(callChannel!!)
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_IS_ON_CALL,
+                    true
+                )
+
+                Timber.d("Subscribe call channel to $channelName")
+            }
         })
+    }
 
-        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, true)
+    override fun subscribeToCallChannelFromBackground(channel: String) {
+        Timber.d("subscribeToCallChannel: $channel")
+        callChannel = pusher.subscribePrivate(channel, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                Timber.d("event: ${event.data}")
+            }
 
-        Timber.d("Subscribe to $jsonObject")
+            override fun onAuthenticationFailure(message: String, e: java.lang.Exception) {
+
+            }
+
+            override fun onSubscriptionSucceeded(channelName: String) {
+                listenCallEvents(callChannel!!)
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_IS_ON_CALL,
+                    true
+                )
+
+                joinToCall(channelName)
+
+                Timber.d("Subscribe call channel to $channelName")
+            }
+        })
     }
 
     override fun joinToCall(channel: String) {
         emitToCall(channel, CONTACT_JOIN_TO_CALL)
     }
 
-    override fun unSubscribe(jsonObject: JSONObject, channelName: String) {
-        socket.off(channelName)
-        socket.emit("unsubscribe", jsonObject)
+    override fun unSubscribeCallChannel(channelName: String) {
+        pusher.unsubscribe(channelName)
         Timber.d("unsubscribe to channel: $channelName")
     }
 
     override fun emitToCall(channel: String, jsonObject: JSONObject) {
-        val finalJSONObject = JSONObject()
-        finalJSONObject.put("data", jsonObject)
-        finalJSONObject.put("channel", channel)
-        finalJSONObject.put("event", CALL_NN)
+        callChannel?.trigger(CALL_NN, jsonObject.toString())
 
-        socket.emit("client event", finalJSONObject).on(Socket.EVENT_ERROR) {
-            Timber.e("error al emitir a llamada")
-        }
         Timber.d("Emit to Call $jsonObject")
     }
 
     override fun emitToCall(channel: String, eventType: Int) {
-        val finalJSONObject = JSONObject()
-        finalJSONObject.put("data", eventType)
-        finalJSONObject.put("channel", channel)
-        finalJSONObject.put("event", CALL_NN)
-        socket.emit("client event", finalJSONObject).on(Socket.EVENT_ERROR) {
-            Timber.e("error al emitir a llamada")
+        try {
+            callChannel?.trigger(CALL_NN, eventType.toString())
+
+            Timber.d("Emit to Call $eventType")
+        } catch (e: Exception) {
+            Timber.e(e)
         }
-        Timber.d("Emit to Call $eventType")
     }
 
-    private fun listenOnDisconnect() {
-        socket.on("disconnect") { reason ->
-            Timber.d("Socket disconnect $reason")
-            socket.connect()
-        }
+    private fun listenOnDisconnect(privateChannel: PrivateChannel) {
+        privateChannel.bind("disconnect", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                Timber.d("Socket disconnect ${event?.data}")
+                pusher.connect()
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+
+            }
+
+            override fun onSubscriptionSucceeded(channelName: String?) {
+
+            }
+        })
     }
 
     private fun connectToSocket() {
-        socket.connect().on(Socket.EVENT_CONNECT) {
-            sharedPreferencesManager.putString(
-                Constants.SharedPreferences.PREF_SOCKET_ID,
-                socket.id()
-            )
-            Timber.d("Conectó al socket ${socket.id()}")
+        Timber.d("connectToSocket")
+        pusher.connect(object : ConnectionEventListener {
+            override fun onConnectionStateChange(change: ConnectionStateChange?) {
+                when (change?.currentState) {
+                    ConnectionState.CONNECTED -> {
+                        try {
+                            sharedPreferencesManager.putString(
+                                Constants.SharedPreferences.PREF_SOCKET_ID,
+                                pusher.connection.socketId
+                            )
+                            Timber.d("Conectó al socket ${pusher.connection.socketId}")
 
-            val jsonStringPendingCall = sharedPreferencesManager.getString(PREF_PENDING_CALL, "")
-
-            Timber.d("pending $jsonStringPendingCall")
-            if (jsonStringPendingCall.isNotEmpty()) {
-                val jsonObject = JSONObject(jsonStringPendingCall)
-
-                validateCallData(jsonObject.toConversationCallModel(), true)
+                            subscribeToGeneralChannel()
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
+                    }
+                    ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
+                    ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
+                    ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
+                    ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
+                    else -> Timber.d("Alguna mierda pasó")
+                }
             }
 
-            subscribeToGeneralChannel()
-        }.on(Socket.EVENT_CONNECT_ERROR) {
-            Timber.e("No conectó al socket $it")
-            socket.connect()
-        }.on(Socket.EVENT_ERROR) {
-            Timber.e("Error de mierda al conectar al puto socket ${it[0]}")
-        }
+            override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+                Timber.e("Pusher onError $message, code: $code")
+                pusher.connect()
+            }
+        })
     }
 
     private fun subscribeToGeneralChannel() {
         val userId = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
         if (userId != 0) {
-            val headersReqDTO = HeadersReqDTO(
-                firebaseId
-            )
-
-            val authReqDTO = AuthReqDTO(
-                headersReqDTO
-            )
 
             val channelName =
                 "private-general.${userId}"
 
-            val socketReqDTO = SocketReqDTO(
-                channelName,
-                authReqDTO
-            )
+            generalChannel =
+                pusher.subscribePrivate(channelName, object : PrivateChannelEventListener {
+                    override fun onEvent(event: PusherEvent) {
+                        Timber.d("Subscribe general: ${event.data}")
+                    }
 
-            subscribe(SocketReqDTO.toJSONObject(socketReqDTO))
-            repository.getMyMessages()
+                    override fun onAuthenticationFailure(
+                        message: String?,
+                        e: java.lang.Exception?
+                    ) {
+                        Timber.d("$message, $e")
+                    }
+
+                    override fun onSubscriptionSucceeded(channelName: String?) {
+                        Timber.d("onSubscriptionSucceeded: $channelName")
+
+                        listenOnDisconnect(generalChannel)
+
+                        listenNewMessageEvent(generalChannel)
+
+                        listenNotifyMessagesReceived(generalChannel)
+
+                        listenMessagesRead(generalChannel)
+
+                        listenMessagesDestroy(generalChannel)
+
+                        listenIncomingCall(generalChannel)
+
+                        listenCallRejected(generalChannel)
+
+                        repository.getMyMessages()
+                    }
+                })
         }
     }
 
-    private fun listenNewMessageEvent() {
-        socket.on("App\\Events\\NewMessageEvent") {
-            Timber.d("NewMessageEvent")
-            repository.getMyMessages()
-        }
+    private fun listenNewMessageEvent(privateChannel: PrivateChannel) {
+        privateChannel.bind("App\\Events\\NewMessageEvent", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                Timber.d("NewMessageEvent: ${event?.data}")
+                repository.getMyMessages()
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+
+            }
+
+            override fun onSubscriptionSucceeded(channelName: String?) {
+
+            }
+        })
     }
 
-    private fun listenNotifyMessagesReceived() {
-        socket.on("App\\Events\\NotifyMessagesReceived") {
-            Timber.d("NotifyMessagesReceived")
-            repository.verifyMessagesReceived()
-        }
+    private fun listenNotifyMessagesReceived(privateChannel: PrivateChannel) {
+        privateChannel.bind(
+            "App\\Events\\NotifyMessagesReceived",
+            object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent?) {
+                    Timber.d("NotifyMessagesReceived: ${event?.data}")
+                    repository.verifyMessagesReceived()
+                }
+
+                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+
+                }
+
+                override fun onSubscriptionSucceeded(channelName: String?) {
+
+                }
+            })
     }
 
-    private fun listenMessagesRead() {
-        socket.on("App\\Events\\NotifyMessageReaded") {
-            Timber.d("NotifyMessageReaded")
-            repository.verifyMessagesRead()
-        }
+    private fun listenMessagesRead(privateChannel: PrivateChannel) {
+        privateChannel.bind(
+            "App\\Events\\NotifyMessageReaded",
+            object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent?) {
+                    Timber.d("NotifyMessageReaded: ${event?.data}")
+                    repository.verifyMessagesRead()
+                }
+
+                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+
+                }
+
+                override fun onSubscriptionSucceeded(channelName: String?) {
+
+                }
+            })
     }
 
-    private fun listenMessagesDestroy() {
-        socket.on("App\\Events\\SendMessagesDestroyEvent") {
-            Timber.d("SendMessagesDestroyEvent")
-            repository.getDeletedMessages()
-        }
+    private fun listenMessagesDestroy(privateChannel: PrivateChannel) {
+        privateChannel.bind(
+            "App\\Events\\SendMessagesDestroyEvent",
+            object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent?) {
+                    Timber.d("SendMessagesDestroyEvent: ${event?.data}")
+                    repository.getDeletedMessages()
+                }
+
+                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+
+                }
+
+                override fun onSubscriptionSucceeded(channelName: String?) {
+
+                }
+            })
     }
 
-    private fun listenCallEvents() {
-        socket.on(CALL_NN) { socketData ->
-            if (socketData.size >= 2) {
-                val channel: String = socketData[0].toString()
-                when (val data: Any = socketData[1]) {
-                    is Int -> {
-                        val eventType: Int = data
+    private fun listenCallEvents(privateChannel: PrivateChannel) {
+        privateChannel.bind(CALL_NN, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                try {
+                    val eventType = event.data.toIntOrNull()
 
+                    if (eventType != null) {
                         Timber.d("LLegó $CALL_NN $eventType")
 
                         when (eventType) {
                             CONTACT_JOIN_TO_CALL -> RxBus.publish(
                                 RxEvent.ContactHasJoinToCall(
-                                    channel
+                                    event.channelName
                                 )
                             )
-                            HANGUP_CALL -> RxBus.publish(RxEvent.ContactHasHangup(channel))
+                            HANGUP_CALL -> RxBus.publish(RxEvent.ContactHasHangup(event.channelName))
                             CONTACT_WANT_CHANGE_TO_VIDEO -> RxBus.publish(
                                 RxEvent.ContactWantChangeToVideoCall(
-                                    channel
+                                    event.channelName
                                 )
                             )
                             CONTACT_ACCEPT_CHANGE_TO_VIDEO -> RxBus.publish(
                                 RxEvent.ContactAcceptChangeToVideoCall(
-                                    channel
+                                    event.channelName
                                 )
                             )
                             CONTACT_TURN_OFF_CAMERA -> RxBus.publish(
                                 RxEvent.ContactTurnOffCamera(
-                                    channel
+                                    event.channelName
                                 )
                             )
                             CONTACT_TURN_ON_CAMERA -> RxBus.publish(
                                 RxEvent.ContactTurnOnCamera(
-                                    channel
+                                    event.channelName
                                 )
                             )
                         }
-                    }
-                    is JSONObject -> {
-                        val jsonData: JSONObject = data
+                    } else {
+                        val jsonData = JSONObject(event.data)
 
                         Timber.d("LLegó $CALL_NN $jsonData")
 
@@ -261,14 +355,14 @@ class SocketService @Inject constructor(
                             when (jsonData.getString(TYPE)) {
                                 ICE_CANDIDATE -> RxBus.publish(
                                     RxEvent.IceCandidateReceived(
-                                        channel,
+                                        event.channelName,
                                         jsonData.toIceCandidate()
                                     )
                                 )
                                 OFFER -> {
                                     RxBus.publish(
                                         RxEvent.OfferReceived(
-                                            channel,
+                                            event.channelName,
                                             jsonData.toSessionDescription(
                                                 SessionDescription.Type.OFFER
                                             )
@@ -277,7 +371,7 @@ class SocketService @Inject constructor(
                                 }
                                 ANSWER -> RxBus.publish(
                                     RxEvent.AnswerReceived(
-                                        channel,
+                                        event.channelName,
                                         jsonData.toSessionDescription(
                                             SessionDescription.Type.ANSWER
                                         )
@@ -285,68 +379,86 @@ class SocketService @Inject constructor(
                                 )
                             }
                         }
-
                     }
+                } catch (e: Exception) {
+                    Timber.e(e)
                 }
             }
-        }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+
+            }
+
+            override fun onSubscriptionSucceeded(channelName: String?) {
+
+            }
+        })
     }
 
-    private fun listenIncomingCall() {
-        socket.on("App\\Events\\CallFriendEvent") { data ->
-            Timber.d("CallFriendEvent")
-            if (data.size >= 2) {
-                val isOnCallPref = sharedPreferencesManager.getBoolean(
-                    Constants.SharedPreferences.PREF_IS_ON_CALL,
-                    false
-                )
+    private fun listenIncomingCall(privateChannel: PrivateChannel) {
+        privateChannel.bind("App\\Events\\CallFriendEvent", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                Timber.d("CallFriendEvent SocketData: ${event.data}")
+                try {
+                    val moshi = Moshi.Builder().build()
 
-                Timber.d("listenIncomingCall: $isOnCallPref")
+                    val adapter: JsonAdapter<IncomingCall> = moshi.adapter(IncomingCall::class.java)
 
-                val jsonObject = data[1] as JSONObject
+                    adapter.fromJson(event.data)?.let { incomingCall ->
 
-                Timber.d(jsonObject.toString())
+                        val channel = "private-${incomingCall.data.channel}"
 
-                if (jsonObject.has("data")) {
+                        adapter.fromJson(event.data)
 
-                    val jsonData = jsonObject.getJSONObject("data")
+                        val isOnCallPref = sharedPreferencesManager.getBoolean(
+                            Constants.SharedPreferences.PREF_IS_ON_CALL,
+                            false
+                        )
 
-                    val conversationCall = jsonData.toConversationCallModel()
-
-                    if (isOnCallPref) {
-                        repository.rejectCall(conversationCall.contactId, conversationCall.channel)
-                    } else {
-                        validateCallData(conversationCall)
+                        if (isOnCallPref) {
+                            repository.rejectCall(
+                                incomingCall.data.contactId,
+                                channel
+                            )
+                        } else {
+                            RxBus.publish(
+                                RxEvent.IncomingCall(
+                                    channel,
+                                    incomingCall.data.contactId,
+                                    incomingCall.data.isVideoCall
+                                )
+                            )
+                        }
                     }
+                } catch (e: Exception) {
+                    Timber.e(e)
                 }
             }
-        }
-    }
 
-    private fun listenCallRejected() {
-        socket.on("App\\Events\\RejectedCallEvent") {
-            Timber.d("RejectedCallEvent: ${it[0]}")
-            RxBus.publish(RxEvent.ContactRejectCall(it[0].toString()))
-        }
-    }
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
 
-    private fun validateCallData(
-        conversationCall: ConversationCall, isPendingCall: Boolean = false
-    ) {
-        if (conversationCall.channel.isNotEmpty() && conversationCall.contactId > 0) {
-
-            if (isPendingCall) {
-                sharedPreferencesManager.putString(PREF_PENDING_CALL, "")
-            } else {
-                RxBus.publish(
-                    RxEvent.IncomingCall(
-                        conversationCall.channel,
-                        conversationCall.contactId,
-                        conversationCall.isVideoCall
-                    )
-                )
             }
 
-        }
+            override fun onSubscriptionSucceeded(channelName: String?) {
+
+            }
+        })
+    }
+
+    private fun listenCallRejected(privateChannel: PrivateChannel) {
+        privateChannel.bind("App\\Events\\RejectedCallEvent", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                Timber.d("RejectedCallEvent: ${event.data}")
+                RxBus.publish(RxEvent.ContactRejectCall(event.channelName))
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+
+            }
+
+            override fun onSubscriptionSucceeded(channelName: String?) {
+
+            }
+        })
     }
 }

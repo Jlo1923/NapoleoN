@@ -14,9 +14,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
-import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
-import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
-import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.utility.BluetoothStateManager
@@ -420,7 +417,7 @@ class WebRTCClient constructor(
                         countDownEndCall.cancel()
                         initializeProximitySensor()
                         mListener?.enableControls()
-                        mListener?.showTimer()
+                        //mListener?.showTimer()
                         mHandler.postDelayed(
                             mCallTimeRunnable,
                             TimeUnit.SECONDS.toMillis(1)
@@ -639,23 +636,7 @@ class WebRTCClient constructor(
     }
 
     override fun subscribeToChannel() {
-        val headersReqDTO = HeadersReqDTO(
-            firebaseId
-        )
-
-        val authReqDTO = AuthReqDTO(
-            headersReqDTO
-        )
-
-        val socketReqDTO = SocketReqDTO(
-            channel,
-            authReqDTO
-        )
-
-        socketService.subscribeToCallChannel(
-            channel,
-            SocketReqDTO.toJSONObject(socketReqDTO)
-        )
+        socketService.subscribeToCallChannel(channel)
     }
 
     override fun setTextViewCallDuration(textView: TextView) {
@@ -788,6 +769,7 @@ class WebRTCClient constructor(
         isVideoCall = true
         startCaptureVideo()
         socketService.emitToCall(channel, SocketService.CONTACT_ACCEPT_CHANGE_TO_VIDEO)
+        mListener?.changeTextViewTitle(R.string.text_encrypted_video_call)
         //renderRemoteVideo()
     }
 
@@ -840,6 +822,14 @@ class WebRTCClient constructor(
         bluetoothStateManager?.onDestroy()
 
         mListener?.callEnded()
+    }
+
+    override fun unSubscribeCallChannel() {
+        socketService.unSubscribeCallChannel(channel)
+    }
+
+    override fun subscribeToChannelFromBackground() {
+        socketService.subscribeToCallChannelFromBackground(channel)
     }
 
     //endregion

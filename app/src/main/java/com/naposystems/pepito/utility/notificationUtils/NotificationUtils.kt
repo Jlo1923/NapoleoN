@@ -8,8 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -220,7 +218,9 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             }
 
             Constants.NotificationType.INCOMING_CALL.type -> {
+                Timber.d("Incoming call")
                 if (app != null && !app.isAppVisible() && !repository.getIsOnCallPref()) {
+                    Timber.d("Incoming call 2")
                     var channel = ""
                     var contactId = 0
                     var isVideoCall = false
@@ -309,12 +309,18 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
             fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        val notificationTitle = if (isVideoCall) {
+            context.getString(R.string.text_incoming_secure_call)
+        } else {
+            context.getString(R.string.text_incoming_secure_video_call)
+        }
+
         val notificationBuilder = Builder(
             context,
             context.getString(R.string.calls_channel_id)
         )
             .setSmallIcon(R.drawable.ic_notification_icon)
-            .setContentTitle("Incoming secure call")
+            .setContentTitle(notificationTitle)
             .setPriority(PRIORITY_HIGH)
             .setCategory(CATEGORY_CALL)
             .addAction(

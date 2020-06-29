@@ -397,6 +397,7 @@ class ConversationViewModel @Inject constructor(
     override fun sendTextMessagesRead() {
         viewModelScope.launch {
             repository.sendTextMessagesRead(contact.id)
+            repository.sendMissedCallRead(contact.id)
         }
     }
 

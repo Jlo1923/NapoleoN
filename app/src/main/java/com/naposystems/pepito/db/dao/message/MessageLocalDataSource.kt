@@ -204,6 +204,13 @@ class MessageLocalDataSource @Inject constructor(
         return messageDao.getTextMessagesByStatus(contactId, status)
     }
 
+    override suspend fun getMissedCallsByStatus(
+        contactId: Int,
+        status: Int
+    ): List<MessageAndAttachment> {
+        return messageDao.getMissedCallsByStatus(contactId, status)
+    }
+
     override suspend fun deleteMessages(contactId: Int) {
         messageDao.getMessagesByContact(contactId)
             .forEach { messageAndAttachment: MessageAndAttachment ->

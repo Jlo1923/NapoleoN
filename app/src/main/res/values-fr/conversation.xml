@@ -40,6 +40,10 @@
     <string name="text_missed_voice_call">Appel manqué</string>
     <string name="text_missed_video_call">Appel vidéo manqué</string>
     <string name="text_encrypted_call">Appel crypté</string>
+    <string name="text_incoming_secure_call">Entrant des appels en toute sécurité</string>
+    <string name="text_incoming_secure_video_call">Appel sécurisé vidéo entrant</string>
+    <string name="text_encrypted_video_call">Appel vidéo cryptée</string>
+    <string name="text_incoming_video_call_title">Appel vidéo entrant</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d jour</item>
         <item quantity="other">%d jours</item>

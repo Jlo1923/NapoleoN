@@ -30,20 +30,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_margin"
+            android:layout_marginBottom="@dimen/x_x_small_margin"
             android:background="@drawable/bg_container_missed_call"
             android:elevation="1dp"
             android:onClick="@{() -> clickListener.onClick(conversation)}"
             android:padding="@dimen/x_small_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView_count_down"
+                style="@style/MinorBodyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_self_destruct_time"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:elevation="1dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="30 segundos" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
+                android:layout_marginStart="@dimen/small_margin"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/textView_count_down"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@drawable/ic_call_missed_red" />
 

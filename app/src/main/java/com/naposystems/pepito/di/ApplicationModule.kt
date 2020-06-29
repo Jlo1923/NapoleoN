@@ -21,6 +21,9 @@ import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.naposystems.pepito.webService.socket.SocketService
+import com.pusher.client.Pusher
+import com.pusher.client.PusherOptions
+import com.pusher.client.util.HttpAuthorizer
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -279,9 +282,29 @@ class ApplicationModule {
 
     @Provides
     @Singleton
+    fun providePusher(sharedPreferencesManager: SharedPreferencesManager): Pusher {
+        val pusherOptions = PusherOptions()
+
+        val authorizer = HttpAuthorizer(BuildConfig.SOCKET_BASE_URL)
+
+        val mapAuth = HashMap<String, String>()
+
+        mapAuth["X-API-Key"] =
+            sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
+        authorizer.setHeaders(mapAuth)
+
+        pusherOptions.setCluster("us2")
+
+        pusherOptions.authorizer = authorizer
+
+        return Pusher("36880baf488e08473554", pusherOptions)
+    }
+
+    @Provides
+    @Singleton
     fun provideSocketClient(
         context: Context,
-        socket: Socket,
+        socket: Pusher,
         sharedPreferencesManager: SharedPreferencesManager,
         socketRepository: IContractSocketService.Repository
     ): IContractSocketService.SocketService {

@@ -17,5 +17,6 @@ interface IContractConversationCall {
         suspend fun getContactById(contactId: Int): Contact?
         fun resetIsOnCallPref()
         suspend fun sendMissedCall(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
+        fun getUserDisplayFormat(): Int
     }
 }

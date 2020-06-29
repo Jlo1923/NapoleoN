@@ -69,6 +69,9 @@ interface MessageDao {
     @Query("SELECT DISTINCT * FROM message WHERE contact_id=:contactId AND status=:status AND is_mine=0")
     suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
 
+    @Query("SELECT DISTINCT * FROM message WHERE contact_id=:contactId AND status=:status AND is_mine=0 AND (type_message=2 OR type_message=3)")
+    suspend fun getMissedCallsByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
+
     @Query("DELETE FROM message WHERE contact_id = :contactId")
     suspend fun deleteMessages(contactId: Int)
 

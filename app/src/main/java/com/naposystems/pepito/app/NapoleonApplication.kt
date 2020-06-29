@@ -39,6 +39,9 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
     @Inject
     lateinit var socketService: SocketService
 
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
+
     private var isAppVisible: Boolean = false
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
@@ -63,12 +66,18 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onStart(owner: LifecycleOwner) {
         Timber.d("onStart")
+        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
         isAppVisible = true
     }
 
     override fun onStop(owner: LifecycleOwner) {
         Timber.d("onStop")
         isAppVisible = false
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+        super.onDestroy(owner)
     }
 
     fun isAppVisible() = this.isAppVisible

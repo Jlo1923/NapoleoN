@@ -422,7 +422,6 @@ object Constants {
         //endregion
 
         const val PREF_IS_ON_CALL = "is_on_call"
-        const val PREF_PENDING_CALL = "pending_call"
     }
 
     object RegularExpressions {
