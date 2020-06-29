@@ -45,6 +45,8 @@ interface MessageDataSource {
 
     suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
 
+    suspend fun getMissedCallsByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
+
     suspend fun deleteMessages(contactId: Int)
 
     suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)

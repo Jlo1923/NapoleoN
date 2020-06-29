@@ -796,6 +796,11 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="CallNickname">
+        <item name="android:textSize">@dimen/text_size_call_nickname</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="TextViewListTitle" parent="BodyTextView.Bold">
         <item name="android:background">?attr/attrBackgroundSectionOtherColor</item>
         <item name="android:padding">@dimen/small_padding</item>

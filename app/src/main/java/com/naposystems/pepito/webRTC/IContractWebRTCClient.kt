@@ -30,4 +30,6 @@ interface IContractWebRTCClient {
     fun handleKeyDown(keyCode: Int): Boolean
     fun isActiveCall(): Boolean
     fun dispose()
+    fun unSubscribeCallChannel()
+    fun subscribeToChannelFromBackground()
 }

@@ -1084,11 +1084,12 @@ class ConversationFragment : BaseFragment(),
                 val backgroundDrawable = Drawable.createFromStream(inputStream, uri.toString())
                 binding.imageViewBackground.setImageDrawable(backgroundDrawable)
             } else {
-                val defaultDrawable = context.resources.getDrawable(
-                    R.drawable.bg_default_conversation,
-                    context.theme
+                binding.imageViewBackground.setBackgroundColor(
+                    Utils.convertAttrToColorResource(
+                        requireContext(),
+                        R.attr.attrBackgroundColorBackground
+                    )
                 )
-                binding.imageViewBackground.setImageDrawable(defaultDrawable)
             }
         }
     }

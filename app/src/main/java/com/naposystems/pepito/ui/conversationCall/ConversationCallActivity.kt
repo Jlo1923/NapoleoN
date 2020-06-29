@@ -92,7 +92,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
         getExtras()
 
-        webRTCClient.setTextViewCallDuration(binding.textViewCallDuration)
+        webRTCClient.setTextViewCallDuration(binding.textViewCalling)
 
         with(window) {
             setFlags(
@@ -193,6 +193,24 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 binding.executePendingBindings()
             }
         })
+
+        viewModel.userDisplayFormat.observe(this, Observer { format ->
+            when (format) {
+                Constants.UserDisplayFormat.NAME_AND_NICKNAME.format -> {
+                    binding.textViewName.visibility = View.VISIBLE
+                    binding.textViewNickname.visibility = View.VISIBLE
+                }
+                Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
+                    binding.textViewName.visibility = View.GONE
+                    binding.textViewNickname.visibility = View.VISIBLE
+                }
+                else -> {
+                    // ONLY NAME
+                    binding.textViewName.visibility = View.VISIBLE
+                    binding.textViewNickname.visibility = View.GONE
+                }
+            }
+        })
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -228,9 +246,16 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         super.onStop()
     }
 
+    override fun onDestroy() {
+        Timber.d("onDestroy")
+        webRTCClient.unSubscribeCallChannel()
+        super.onDestroy()
+    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent != null && intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
+        Timber.d("onNewIntent")
+        /*if (intent != null && intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
             NotificationUtils.cancelWebRTCCallNotification(this)
             if (isIncomingCall) {
                 Timber.d("ACTION_ANSWER_CALL")
@@ -239,21 +264,40 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 webRTCClient.stopRingAndVibrate()
                 binding.fabAnswer.visibility = View.GONE
             }
-        }
+        }*/
     }
 
     private fun getExtras() {
         intent.extras?.let { bundle ->
+            Timber.d("getExtras: $bundle")
             if (bundle.containsKey(IS_INCOMING_CALL)) {
                 isIncomingCall = bundle.getBoolean(IS_INCOMING_CALL)
                 binding.isIncomingCall = isIncomingCall
             }
 
-            if (bundle.containsKey(CHANNEL)) {
-                channel = bundle.getString(CHANNEL, "")
-                webRTCClient.setChannel(channel)
+            if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
+                NotificationUtils.cancelWebRTCCallNotification(this)
                 if (isIncomingCall) {
-                    webRTCClient.subscribeToChannel()
+                    Timber.d("ACTION_ANSWER_CALL")
+                    NotificationUtils.cancelWebRTCCallNotification(this)
+                    channel = bundle.getString(CHANNEL, "")
+
+                    webRTCClient.setChannel(channel)
+
+                    if (isIncomingCall) {
+                        webRTCClient.subscribeToChannelFromBackground()
+                    }
+
+                    webRTCClient.stopRingAndVibrate()
+                    binding.fabAnswer.visibility = View.GONE
+                }
+            } else {
+                if (bundle.containsKey(CHANNEL)) {
+                    channel = bundle.getString(CHANNEL, "")
+                    webRTCClient.setChannel(channel)
+                    if (isIncomingCall) {
+                        webRTCClient.subscribeToChannel()
+                    }
                 }
             }
 
@@ -270,17 +314,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
             if (bundle.containsKey(IS_FROM_CLOSED_APP)) {
                 isFromClosedApp = bundle.getBoolean(IS_FROM_CLOSED_APP, false)
-            }
-
-            if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
-                NotificationUtils.cancelWebRTCCallNotification(this)
-                if (isIncomingCall) {
-                    Timber.d("ACTION_ANSWER_CALL")
-                    NotificationUtils.cancelWebRTCCallNotification(this)
-                    webRTCClient.emitJoinToCall()
-                    webRTCClient.stopRingAndVibrate()
-                    binding.fabAnswer.visibility = View.GONE
-                }
             }
         }
     }
@@ -300,6 +333,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             childFragmentManager = supportFragmentManager
         ) {
             webRTCClient.acceptChangeToVideoCall()
+            binding.textViewTitle.text =
+                getString(R.string.text_encrypted_video_call)
         }
     }
 

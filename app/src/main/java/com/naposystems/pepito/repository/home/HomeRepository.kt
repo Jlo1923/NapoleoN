@@ -61,23 +61,10 @@ class HomeRepository @Inject constructor(
             user = userLocalDataSource.getUser(firebaseId)
         }
 
-        val headersReqDTO = HeadersReqDTO(
-            firebaseId
-        )
-
-        val authReqDTO = AuthReqDTO(
-            headersReqDTO
-        )
-
         val channelName =
             "private-general.${user!!.id}"
 
-        val socketReqDTO = SocketReqDTO(
-            channelName,
-            authReqDTO
-        )
-
-        socketService.subscribe(SocketReqDTO.toJSONObject(socketReqDTO))
+        socketService.subscribe(channelName)
     }
 
     override suspend fun getUserLiveData(): LiveData<User> {

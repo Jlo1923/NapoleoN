@@ -39,7 +39,11 @@
     <string name="text_missed_video_call_at">Videollamada perdida hoy a %1$s</string>
     <string name="text_missed_voice_call">Llamada perdida</string>
     <string name="text_missed_video_call">Videollamada perdida</string>
-    <string name="text_encrypted_call">Llamada crifrada</string>
+    <string name="text_encrypted_call">Llamada cifrada</string>
+    <string name="text_incoming_secure_call">LLamada segura entrante</string>
+    <string name="text_incoming_secure_video_call">Videollamada segura entrante</string>
+    <string name="text_encrypted_video_call">Videollamada cifrada</string>
+    <string name="text_incoming_video_call_title">Videollamada entrante</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>

@@ -40,6 +40,10 @@
     <string name="text_missed_voice_call">Anruf in Abwesenheit</string>
     <string name="text_missed_video_call">Verpasster Videoanruf</string>
     <string name="text_encrypted_call">Verschlüsselter Anruf</string>
+    <string name="text_incoming_secure_call">Sicher eingehenden Anruf</string>
+    <string name="text_incoming_secure_video_call">Sichere eingehender Videoanruf</string>
+    <string name="text_encrypted_video_call">Verschlüsselter Videoanruf</string>
+    <string name="text_incoming_video_call_title">Eingehender Videoanruf</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>

@@ -1,7 +1,6 @@
 package com.naposystems.pepito.repository.conversation
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
@@ -37,7 +36,6 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.yield
@@ -72,43 +70,6 @@ class ConversationRepository @Inject constructor(
             .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
     }
 
-    override suspend fun subscribeToChannel(userToChat: Contact): String {
-
-        var user: User? = null
-
-        coroutineScope {
-            user = getLocalUser()
-        }
-
-        val headersReqDTO = HeadersReqDTO(
-            firebaseId
-        )
-
-        val authReqDTO = AuthReqDTO(
-            headersReqDTO
-        )
-
-        var minorId: String = userToChat.id.toString()
-        var mayorId: String = user!!.id.toString()
-
-        if (user!!.id < userToChat.id) {
-            mayorId = userToChat.id.toString()
-            minorId = user!!.id.toString()
-        }
-
-        val channelName =
-            "private-private.${minorId}.${mayorId}"
-
-        val socketReqDTO = SocketReqDTO(
-            channelName,
-            authReqDTO
-        )
-
-        socketService.subscribe(SocketReqDTO.toJSONObject(socketReqDTO))
-
-        return channelName
-    }
-
     override fun unSubscribeToChannel(userToChat: Contact, channelName: String) {
         val headersReqDTO = HeadersReqDTO(
             firebaseId
@@ -123,7 +84,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketService.unSubscribe(SocketReqDTO.toJSONObject(socketReqDTO), channelName)
+        socketService.unSubscribeCallChannel(channelName)
     }
 
     override fun getLocalMessages(contactId: Int): LiveData<List<MessageAndAttachment>> {
@@ -316,7 +277,7 @@ class ConversationRepository @Inject constructor(
         val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
         val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
 
-        if (textMessagesUnread.isNotEmpty()) {
+        if (textMessagesUnreadIds.isNotEmpty()) {
             try {
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
@@ -326,7 +287,37 @@ class ConversationRepository @Inject constructor(
 
                 if (response.isSuccessful) {
                     messageLocalDataSource.updateMessageStatus(
-                        response.body()!!,
+                        textMessagesUnreadIds,
+                        Constants.MessageStatus.READED.status
+                    )
+                }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    override suspend fun sendMissedCallRead(contactId: Int) {
+        val messagesUnread =
+            messageLocalDataSource.getMissedCallsByStatus(
+                contactId,
+                Constants.MessageStatus.UNREAD.status
+            )
+
+        val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
+        val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
+
+        if (textMessagesUnreadIds.isNotEmpty()) {
+            try {
+                val response = napoleonApi.sendMessagesRead(
+                    MessagesReadReqDTO(
+                        textMessagesUnreadIds
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    messageLocalDataSource.updateMessageStatus(
+                        textMessagesUnreadIds,
                         Constants.MessageStatus.READED.status
                     )
                 }
@@ -483,10 +474,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketService.subscribeToCallChannel(
-            channel,
-            SocketReqDTO.toJSONObject(socketReqDTO)
-        )
+        socketService.subscribeToCallChannel(channel)
     }
 
     override suspend fun downloadAttachment(

@@ -8,13 +8,15 @@ interface IContractSocketService {
 
         fun initSocket()
 
-        fun subscribe(jsonObject: JSONObject)
+        fun subscribe(jsonObject: String)
 
-        fun subscribeToCallChannel(channel: String, jsonObject: JSONObject)
+        fun subscribeToCallChannel(channel: String)
+
+        fun subscribeToCallChannelFromBackground(channel: String)
 
         fun joinToCall(channel: String)
 
-        fun unSubscribe(jsonObject: JSONObject, channelName: String)
+        fun unSubscribeCallChannel(channelName: String)
 
         fun emitToCall(channel: String, jsonObject: JSONObject)
 

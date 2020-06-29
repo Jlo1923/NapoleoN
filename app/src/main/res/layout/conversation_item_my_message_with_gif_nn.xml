@@ -51,7 +51,7 @@
                 android:id="@+id/imageView_attachment"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 android:visibility="gone"
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintEnd_toEndOf="parent"
