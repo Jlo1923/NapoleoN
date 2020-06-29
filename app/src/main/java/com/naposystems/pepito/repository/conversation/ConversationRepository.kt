@@ -682,6 +682,7 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun setMessageRead(messageAndAttachment: MessageAndAttachment) {
         try {
+            Timber.d("setMessageRead: ${messageAndAttachment.message.webId}")
             val response = napoleonApi.sendMessagesRead(
                 MessagesReadReqDTO(
                     arrayListOf(messageAndAttachment.message.webId)
@@ -689,10 +690,36 @@ class ConversationRepository @Inject constructor(
             )
 
             if (response.isSuccessful) {
+                Timber.d("Success: ${response.body()}")
                 messageLocalDataSource.updateMessageStatus(
                     response.body()!!,
                     Constants.MessageStatus.READED.status
                 )
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        }
+    }
+
+    override suspend fun setMessageRead(messageWebId: String) {
+        try {
+            Timber.d("setMessageRead: $messageWebId")
+            val messageAndAttachment = messageLocalDataSource.getMessageByWebId(messageWebId, false)
+
+            if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
+                val response = napoleonApi.sendMessagesRead(
+                    MessagesReadReqDTO(
+                        arrayListOf(messageWebId)
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    Timber.d("Success: ${response.body()}")
+                    messageLocalDataSource.updateMessageStatus(
+                        response.body()!!,
+                        Constants.MessageStatus.READED.status
+                    )
+                }
             }
         } catch (ex: Exception) {
             Timber.e(ex)

@@ -28,7 +28,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     private var mIsEncryptedFile: Boolean = false
     private var mAudioFileUri: Uri? = null
     private var mEncryptedFileName: String = ""
-    private var mAudioId: Int = 0
+    private var mAudioId: String = ""
     private var mSeekbarProgressBackgroundTint: Int = 0
     private var mSeekbarProgressTint: Int = 0
     private var mSeekbarThumbTint: Int = 0
@@ -40,7 +40,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPause(messageAndAttachment: MessageAndAttachment?)
+        fun onPause(audioId: String)
         fun onComplete(messageAndAttachment: MessageAndAttachment?)
     }
 
@@ -72,7 +72,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     false
                 )
 
-                mAudioId = getInt(R.styleable.AudioPlayerCustomView_audioId, 0)
+                mAudioId = getString(R.styleable.AudioPlayerCustomView_audioId) ?: ""
                 mSeekbarProgressBackgroundTint = getResourceId(
                     R.styleable.AudioPlayerCustomView_seekbarProgressBackgroundTint,
                     R.color.white
@@ -221,7 +221,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this.mEncryptedFileName = fileName
     }
 
-    override fun setAudioId(id: Int) {
+    override fun setAudioId(id: String) {
         this.mAudioId = id
     }
 
@@ -241,11 +241,14 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this@AudioPlayerCustomView.mListener?.onErrorPlayingAudio()
     }
 
-    override fun onPauseAudio() {
-        if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
+    override fun onPauseAudio(audioId: String) {
+        Timber.d("Conver onPauseAudio: $audioId")
+        /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
             messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
-            this.mListener?.onPause(messageAndAttachment)
-        }
+            Timber.d("Conver audioPlayerCustom pause")
+            this.mListener?.onPause(audioId)
+        }*/
+        this.mListener?.onPause(audioId)
     }
 
     override fun onCompleteAudio() {

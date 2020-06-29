@@ -341,7 +341,7 @@
     <fragment
         android:id="@+id/editAccessPinFragment"
         android:name="com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment"
-        android:label="@string/text_edit_access_pin"
+        android:label="@string/text_access_pin"
         tools:layout="@layout/edit_access_pin_fragment" />
     <fragment
         android:id="@+id/aboutFragment"
@@ -374,7 +374,7 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/contactUsFragment"
@@ -529,15 +529,15 @@
         android:id="@+id/addContactFragment"
         android:name="com.naposystems.pepito.ui.addContact.AddContactFragment"
         android:label="@string/text_friend_requests"
-        tools:layout="@layout/add_contact_fragment" >
+        tools:layout="@layout/add_contact_fragment">
         <argument
             android:name="location"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <argument
             android:name="text"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/conversationCameraFragment"

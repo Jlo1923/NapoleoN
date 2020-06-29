@@ -36,9 +36,11 @@ class MyMessageAudioViewHolder constructor(
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
+        binding.audioPlayer?.enablePlayButton(true)
 
         binding.executePendingBindings()
     }
+
     companion object {
         fun from(parent: ViewGroup): MyMessageAudioViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)

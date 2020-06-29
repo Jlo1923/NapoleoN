@@ -44,7 +44,8 @@
             app:layout_constraintHeight_percent="0.3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline_start"
-            app:srcCompat="@drawable/logo_napoleon_app" />
+            app:srcCompat="@drawable/logo_napoleon_app"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/textView"

@@ -221,7 +221,7 @@
                 <TextView
                     android:id="@+id/textView_label_edit_access_pin"
                     style="@style/OptionTitle"
-                    android:text="@string/text_edit_access_pin"
+                    android:text="@string/text_access_pin"
                     app:layout_constraintEnd_toStartOf="@id/imageButton_edit_access_pin_option_end_icon"
                     app:layout_constraintStart_toEndOf="@id/imageView_edit_access_pin_option_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />

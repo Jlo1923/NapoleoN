@@ -439,14 +439,15 @@ open class ConversationViewHolder constructor(
                     )
                 )
             }
-            setAudioId(item.attachmentList[0].id)
+            setAudioId(item.message.webId)
             setListener(object : AudioPlayerCustomView.Listener {
                 override fun onErrorPlayingAudio() {
                     clickListener.errorPlayingAudio()
                 }
 
-                override fun onPause(messageAndAttachment: MessageAndAttachment?) {
-                    clickListener.sendMessageRead(item)
+                override fun onPause(audioId: String) {
+                    Timber.d("onPause")
+                    clickListener.sendMessageRead(audioId)
                 }
 
                 override fun onComplete(messageAndAttachment: MessageAndAttachment?) {
