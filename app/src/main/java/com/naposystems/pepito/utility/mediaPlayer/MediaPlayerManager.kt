@@ -16,7 +16,6 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
 import com.naposystems.pepito.R
-import com.naposystems.pepito.ui.custom.AccessibleToggleButton
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 import com.naposystems.pepito.utility.BluetoothStateManager
 import com.naposystems.pepito.utility.Constants
@@ -91,10 +90,12 @@ class MediaPlayerManager(private val context: Context) :
 
     private var audioManagerCompat = AudioManagerCompat.create(context)
 
+    private var isProximitySensorActive: Boolean = false
+
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPauseAudio(audioId: String)
-        fun onCompleteAudio()
+        fun onPauseAudio(messageWebId: String)
+        fun onCompleteAudio(messageWebId: String)
     }
 
     init {
@@ -152,6 +153,7 @@ class MediaPlayerManager(private val context: Context) :
                 val progress = position / duration
                 wakeLock.acquire()
                 try {
+                    isProximitySensorActive = true
                     mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
                     mSpeed = NORMAL_SPEED
                     mediaPlayer.stop()
@@ -162,6 +164,7 @@ class MediaPlayerManager(private val context: Context) :
                 }
             } else if (streamType == AudioManager.STREAM_MUSIC && System.currentTimeMillis() - mStartAudioTime > 500) {
                 unregisterProximityListener()
+                isProximitySensorActive = false
                 if (wakeLock.isHeld) {
                     wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                 }
@@ -240,9 +243,9 @@ class MediaPlayerManager(private val context: Context) :
 
                 mediaPlayer.setOnCompletionListener {
                     deleteTempFile()
-                    resetMediaPlayer()
-                    mListener?.onCompleteAudio()
-                    unregisterProximityListener()
+//                    resetMediaPlayer()
+                    mListener?.onCompleteAudio(currentAudioId)
+                    //unregisterProximityListener()
                 }
 
                 mRunnable = Runnable {
@@ -263,7 +266,7 @@ class MediaPlayerManager(private val context: Context) :
                 } else {
                     enableSpeedControl(true)
                     audioManagerCompat.requestCallAudioFocus()
-                    mAudioManager.isSpeakerphoneOn = !isEarpiece
+                    mAudioManager.isSpeakerphoneOn = !(isProximitySensorActive || isEarpiece)
                     start()
 
                     mHandler.postDelayed(mRunnable, 0)
@@ -345,9 +348,6 @@ class MediaPlayerManager(private val context: Context) :
     }
 
     override fun setTextViewDuration(textView: TextView) {
-        if (this.mTextViewDuration != textView) {
-            this.mTextViewDuration?.text = ""
-        }
         this.mTextViewDuration = textView
     }
 
@@ -404,12 +404,9 @@ class MediaPlayerManager(private val context: Context) :
         mTextViewDuration = null
         mSpeed = NORMAL_SPEED
 
+        unregisterProximityListener()
         mediaPlayer.pause()
         mediaPlayer.reset()
-        mSensorManager.unregisterListener(this, mProximitySensor)
-        if (wakeLock.isHeld) {
-            wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
-        }
     }
     //endregion
 

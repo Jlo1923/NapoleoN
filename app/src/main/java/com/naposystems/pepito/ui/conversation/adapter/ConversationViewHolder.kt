@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer
 import android.view.View
-import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -112,7 +111,12 @@ open class ConversationViewHolder constructor(
 
                 if (progress == 100L) {
                     progressBar?.visibility = View.GONE
+                    imageButtonState?.visibility = View.GONE
                 }
+            } else {
+                progressBarIndeterminate?.visibility = View.GONE
+                progressBar?.visibility = View.GONE
+                imageButtonState?.visibility = View.GONE
             }
         } catch (e: Exception) {
             Timber.d(e)
@@ -235,6 +239,12 @@ open class ConversationViewHolder constructor(
 
                 override fun onAnimationStart(animation: Animator) = Unit
             })
+        }
+    }
+
+    fun playAudio(playAudio: Boolean) {
+        if (playAudio) {
+            audioPlayer?.playAudio()
         }
     }
 
@@ -447,11 +457,12 @@ open class ConversationViewHolder constructor(
 
                 override fun onPause(audioId: String) {
                     Timber.d("onPause")
-                    clickListener.sendMessageRead(audioId)
+                    clickListener.sendMessageRead(audioId, false, adapterPosition)
                 }
 
-                override fun onComplete(messageAndAttachment: MessageAndAttachment?) {
-                    clickListener.sendMessageRead(item)
+                override fun onComplete(audioId: String) {
+                    Timber.d("onComplete")
+                    clickListener.sendMessageRead(audioId, true, adapterPosition)
                 }
             })
         }

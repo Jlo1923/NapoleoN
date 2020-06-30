@@ -74,7 +74,6 @@
                 android:layout_marginTop="@dimen/small_margin"
                 android:scaleType="centerCrop"
                 android:visibility="visible"
-                app:imageAttachment="@{conversation}"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintDimensionRatio="4:3"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +125,7 @@
                 app:layout_constraintTop_toTopOf="@id/progressBar"
                 app:srcCompat="@drawable/ic_close_black_24"
                 custom:iconForState="@{conversation}"
-                tools:visibility="gone" />
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/textView_message"

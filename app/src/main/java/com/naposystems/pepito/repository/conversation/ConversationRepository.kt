@@ -706,7 +706,9 @@ class ConversationRepository @Inject constructor(
             Timber.d("setMessageRead: $messageWebId")
             val messageAndAttachment = messageLocalDataSource.getMessageByWebId(messageWebId, false)
 
-            if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
+            if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status &&
+                messageAndAttachment.message.isMine == Constants.IsMine.NO.value
+            ) {
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
                         arrayListOf(messageWebId)
