@@ -158,6 +158,7 @@ class ConversationFragment : BaseFragment(),
     private var clipData: ClipData? = null
     private var mRecordingAudioRunnable: Runnable? = null
     private var mQuotedMessage: Int? = null
+    private var mNextAudioPosition: Int? = null
 
     private var keyboardHeight: Int = 0
     private var recordingTime: Long = 0
@@ -249,6 +250,21 @@ class ConversationFragment : BaseFragment(),
                     conversationAdapter.startFocusAnimation(mQuotedMessage)
                     binding.recyclerViewConversation.removeOnScrollListener(this)
                     mQuotedMessage = null
+                }
+            }
+        }
+    }
+
+    private val onScrollPLayNextAudioListener = object : RecyclerView.OnScrollListener() {
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            when (newState) {
+                SCROLL_STATE_IDLE -> {
+                    mNextAudioPosition?.let {
+                        conversationAdapter.notifyPlayAudio(it)
+                        binding.recyclerViewConversation.removeOnScrollListener(this)
+                        mNextAudioPosition = null
+                    }
                 }
             }
         }
@@ -1129,6 +1145,11 @@ class ConversationFragment : BaseFragment(),
 
         actionBarCustomView.lifecycleOwner = this
 
+        val params = ActionBar.LayoutParams(
+            ActionBar.LayoutParams.MATCH_PARENT,
+            ActionBar.LayoutParams.MATCH_PARENT
+        )
+
         with((activity as MainActivity).supportActionBar!!) {
             displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
             setDisplayShowCustomEnabled(true)
@@ -1136,7 +1157,7 @@ class ConversationFragment : BaseFragment(),
             setDisplayHomeAsUpEnabled(false)
             setHomeButtonEnabled(false)
             setHasOptionsMenu(true)
-            customView = actionBarCustomView.root
+            setCustomView(actionBarCustomView.root, params)
         }
 
         actionBarCustomView.contact = args.contact
@@ -1512,11 +1533,11 @@ class ConversationFragment : BaseFragment(),
         )
     }
 
-    override fun onPauseAudio(audioId: String) {
+    override fun onPauseAudio(messageWebId: String) {
         // Intentionally empty
     }
 
-    override fun onCompleteAudio() {
+    override fun onCompleteAudio(messageWebId: String) {
         // Intentionally empty
     }
 
@@ -1702,13 +1723,39 @@ class ConversationFragment : BaseFragment(),
         viewModel.sendMessageRead(messageAndAttachment)
     }
 
-    override fun sendMessageRead(messageWebId: String) {
+    override fun sendMessageRead(messageWebId: String, isComplete: Boolean, position: Int) {
         Timber.d("sendMessageRead: $messageWebId")
         viewModel.sendMessageRead(messageWebId)
+
+        if (isComplete) {
+            conversationAdapter.checkIfNextIsAudio(messageWebId)
+        }
     }
 
     override fun reSendMessage(message: Message) {
         viewModel.reSendMessage(message, obtainTimeSelfDestruct())
     }
+
+    override fun scrollToNextAudio(position: Int) {
+        binding.recyclerViewConversation.smoothScrollToPosition(position)
+
+        binding.recyclerViewConversation.apply {
+            removeOnScrollListener(onScrollPLayNextAudioListener)
+            mNextAudioPosition = position
+            addOnScrollListener(onScrollPLayNextAudioListener)
+
+            val lastItemVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+
+            Timber.d("lastItemVisible: $lastItemVisible, position: $position")
+
+            if (lastItemVisible < position) {
+                Timber.d("scrollTo $position")
+                binding.recyclerViewConversation.smoothScrollToPosition(position)
+            } else {
+                conversationAdapter.notifyPlayAudio(position)
+            }
+        }
+    }
+
     //endregion
 }

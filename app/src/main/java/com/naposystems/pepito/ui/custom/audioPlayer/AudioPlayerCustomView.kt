@@ -1,19 +1,16 @@
 package com.naposystems.pepito.ui.custom.audioPlayer
 
 import android.content.Context
-import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.CustomViewAudioPlayerBinding
 import com.naposystems.pepito.entity.message.MessageAndAttachment
-import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
@@ -41,7 +38,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     interface Listener {
         fun onErrorPlayingAudio()
         fun onPause(audioId: String)
-        fun onComplete(messageAndAttachment: MessageAndAttachment?)
+        fun onComplete(audioId: String)
     }
 
     init {
@@ -196,6 +193,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun playAudio() {
+        Timber.d("Conver playAudio: $mAudioId")
         binding.imageButtonPlay.performClick()
     }
 
@@ -230,6 +228,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun setDuration(duration: Long) {
+        Timber.d("setDuration: $duration")
         binding.textViewDuration.text = Utils.getDuration(duration, false)
         binding.textViewDuration.visibility = if (duration == 0L) View.GONE else View.VISIBLE
     }
@@ -241,21 +240,23 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this@AudioPlayerCustomView.mListener?.onErrorPlayingAudio()
     }
 
-    override fun onPauseAudio(audioId: String) {
-        Timber.d("Conver onPauseAudio: $audioId")
+    override fun onPauseAudio(messageWebId: String) {
+        Timber.d("Conver onPauseAudio: $messageWebId")
         /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
             messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
             Timber.d("Conver audioPlayerCustom pause")
             this.mListener?.onPause(audioId)
         }*/
-        this.mListener?.onPause(audioId)
+        this.mListener?.onPause(messageWebId)
     }
 
-    override fun onCompleteAudio() {
-        if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
+    override fun onCompleteAudio(messageWebId: String) {
+        Timber.d("Conver onCompleteAudio: $messageWebId")
+        /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
             messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
-            this.mListener?.onComplete(messageAndAttachment)
-        }
+            this.mListener?.onComplete(audioId)
+        }*/
+        this.mListener?.onComplete(messageWebId)
     }
     //endregion
 }

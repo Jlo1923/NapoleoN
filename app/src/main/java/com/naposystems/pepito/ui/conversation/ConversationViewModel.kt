@@ -23,6 +23,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -537,6 +538,10 @@ class ConversationViewModel @Inject constructor(
 
                     _downloadProgress.value =
                         DownloadAttachmentResult.Cancel(messageAndAttachment, itemPosition)
+                }
+                .onCompletion {
+                    _downloadProgress.value =
+                        DownloadAttachmentResult.Success(messageAndAttachment, itemPosition)
                 }
                 .collect {
                     _downloadProgress.value = it

@@ -51,7 +51,7 @@ android {
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "false")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
-            buildConfigField("String", "PUSHER_KEY", "\"1ec3eaf9ae0f17a766ca\"")
+            buildConfigField("String", "PUSHER_KEY", "\"36880baf488e08473554\"")
         }
         release {
             buildConfigField("String", "BASE_URL", "\"https://prod.napoleon-chat.com/api/\"")

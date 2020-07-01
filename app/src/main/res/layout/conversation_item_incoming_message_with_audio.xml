@@ -73,6 +73,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
+                custom:audioId="@{conversation.message.webId}"
                 custom:controlColors="?attr/attrTextColorColorTextIncomingMessage"
                 custom:isEncryptedFile="@{BuildConfig.ENCRYPT_API ? true : false}"
                 custom:seekbarProgressBackgroundTint="@color/black"

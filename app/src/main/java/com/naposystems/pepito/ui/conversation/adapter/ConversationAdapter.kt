@@ -28,6 +28,7 @@ class ConversationAdapter constructor(
         const val DOWNLOAD_CANCEL = "download_cancel"
         const val UPLOAD_COMPLETE = "upload_complete"
         const val FOCUS_MESSAGE = "focus_message"
+        const val PLAY_AUDIO = "play_audio"
         const val TYPE_MY_MESSAGE = 1
         const val TYPE_INCOMING_MESSAGE = 2
         const val TYPE_MY_MESSAGE_IMAGE = 3
@@ -152,7 +153,49 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun getPositionByItem(attachment: Attachment) =
+    fun checkIfNextIsAudio(messageWebId: String) {
+        val positionActualAudio = getPositionByMessageWebId(messageWebId)
+        val actualMessageAndAttachment = getItem(positionActualAudio)
+        val nextPosition = positionActualAudio + 1
+
+        if (nextPosition < currentList.size) {
+            val nextItem = getItem(nextPosition)
+
+            nextItem.getFirstAttachment()?.let { attachment ->
+                if (attachment.type == Constants.AttachmentType.AUDIO.type &&
+                    nextItem.message.isMine == actualMessageAndAttachment.message.isMine
+                ) {
+                    if (nextItem.message.isMine == Constants.IsMine.NO.value) {
+                        if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status) {
+                            clickListener.scrollToNextAudio(nextPosition)
+                        } else {
+                            mediaPlayerManager.resetMediaPlayer()
+                        }
+                    } else {
+                        clickListener.scrollToNextAudio(nextPosition)
+                    }
+                } else {
+                    mediaPlayerManager.resetMediaPlayer()
+                }
+            }
+        } else {
+            mediaPlayerManager.resetMediaPlayer()
+        }
+    }
+
+    fun notifyPlayAudio(position: Int) {
+        notifyItemChanged(
+            position,
+            Bundle().apply { putBoolean(PLAY_AUDIO, true) }
+        )
+    }
+
+    private fun getPositionByMessageWebId(messageWebId: String) =
+        currentList.indexOfFirst { messageAndAttachment ->
+            messageAndAttachment.message.webId == messageWebId
+        }
+
+    private fun getPositionByItem(attachment: Attachment) =
         currentList.indexOfFirst { messageAndAttachment ->
             if (messageAndAttachment.attachmentList.isNotEmpty()) {
                 messageAndAttachment.attachmentList.first().id == attachment.id
@@ -390,6 +433,7 @@ class ConversationAdapter constructor(
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         val downloadCancel = bundle.getBoolean(DOWNLOAD_CANCEL, false)
         val focusMessage = bundle.getBoolean(FOCUS_MESSAGE, false)
+        val playAudio = bundle.getBoolean(PLAY_AUDIO, false)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,
             TYPE_MY_MESSAGE_GIF,
@@ -402,6 +446,7 @@ class ConversationAdapter constructor(
                     setProgress(progress)
                     setUploadComplete(uploadComplete)
                     startFocusAnim(focusMessage)
+                    playAudio(playAudio)
                 }
             }
             TYPE_INCOMING_MESSAGE_IMAGE,
@@ -415,6 +460,7 @@ class ConversationAdapter constructor(
                     setProgress(progress)
                     setDownloadCancel(downloadCancel)
                     startFocusAnim(focusMessage)
+                    playAudio(playAudio)
                 }
             }
             TYPE_MY_MESSAGE,
@@ -470,7 +516,8 @@ class ConversationAdapter constructor(
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
-        fun sendMessageRead(messageWebId: String)
+        fun sendMessageRead(messageWebId: String, isComplete: Boolean, position: Int = -1)
         fun reSendMessage(message: Message)
+        fun scrollToNextAudio(nextPosition: Int)
     }
 }
