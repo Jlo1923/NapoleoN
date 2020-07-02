@@ -181,7 +181,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
     fun deleteNumber() {
         mListener.onCodeCompleted(false)
         if (isErrorShowing) {
-            changeBackgroundAllTextInputs(R.drawable.bg_enter_code)
+//            changeBackgroundAllTextInputs(R.drawable.bg_enter_code)
             clearAllTextInputs()
         } else {
             if (position > 0) {
@@ -200,6 +200,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
             AnimationUtils.loadAnimation(context, R.anim.shake)
         )
         Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type)
+        clearAllTextInputs()
     }
 
     private fun changeBackgroundAllTextInputs(drawable: Int) {
@@ -209,7 +210,21 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
         }
     }
 
+    private fun cleanForError() {
+        changeBackgroundAllTextInputs(R.drawable.bg_enter_code)
+        textViewError.visibility = View.GONE
+    }
+
     private fun clearAllTextInputs() {
+        for (textInput in textViews) {
+            textInput.text = ""
+        }
+        position = 0
+//        textViewError.visibility = View.GONE
+//        isErrorShowing = false
+    }
+
+    /*private fun clearAllTextInputs() {
         for (textInput in textViews) {
             textInput.text = ""
         }
@@ -217,9 +232,14 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
         position = 0
         textViewError.visibility = View.GONE
         isErrorShowing = false
-    }
+    }*/
 
     private fun focusAfter(keyCode: Int) {
+        if (isErrorShowing) {
+            cleanForError()
+            isErrorShowing = false
+        }
+
         val context = textViews[position].context
         textViews[position].text = keyCode.toString()
         textViews[position].background =

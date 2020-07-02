@@ -95,7 +95,7 @@ class EnterPinFragment : Fragment(),
             } else {
 
                 binding.textViewAttempts.apply {
-                    text = getString(R.string.text_number_attempts, it, MAX_ATTEMPTS)
+                    text = getString(R.string.text_number_attempts, it + 1, MAX_ATTEMPTS)
                 }
             }
         })
