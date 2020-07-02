@@ -160,7 +160,7 @@
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
                 custom:formatTime="@{timeFormat}"
-                custom:messageDate="@{conversation.message.createdAt}"
+                custom:messageDateSend="@{conversation.message.createdAt}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

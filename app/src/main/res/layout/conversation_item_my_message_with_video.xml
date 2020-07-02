@@ -174,7 +174,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toTopOf="@id/imageView_message_status"
-                app:messageDate="@{conversation.message.createdAt}"
+                app:messageDateSend="@{conversation.message.createdAt}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 

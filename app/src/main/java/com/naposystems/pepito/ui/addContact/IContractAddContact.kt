@@ -6,6 +6,7 @@ import com.naposystems.pepito.dto.addContact.FriendshipRequestsResDTO
 import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.addContact.FriendShipRequest
+import com.naposystems.pepito.entity.addContact.FriendShipRequestAdapterType
 import retrofit2.Response
 
 interface IContractAddContact {
@@ -13,6 +14,10 @@ interface IContractAddContact {
     interface ViewModel {
         fun searchContact(query: String)
         fun resetContacts()
+        fun getUsers() : List<Contact>?
+        fun getSearchOpened() : Boolean?
+        fun setSearchOpened()
+        fun getRequestSend() : List<FriendShipRequestAdapterType>?
         fun sendFriendshipRequest(contact: Contact)
         fun getFriendshipRequests()
         fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest)
