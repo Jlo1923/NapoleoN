@@ -1,7 +1,6 @@
 package com.naposystems.pepito.ui.conversation
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import androidx.lifecycle.*
@@ -20,10 +19,7 @@ import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import com.naposystems.pepito.utility.*
 import com.naposystems.pepito.utility.Utils.Companion.setupNotificationSound
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -521,6 +517,18 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             repository.downloadAttachment(messageAndAttachment, itemPosition)
                 .flowOn(Dispatchers.IO)
+                .onStart {
+                    messageAndAttachment.getFirstAttachment()?.let { attachment ->
+
+                        val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
+                        attachment.status = Constants.AttachmentStatus.DOWNLOADING.status
+                        attachment.uri = fileName
+                        Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.uri}")
+                        updateAttachment(attachment)
+                        _downloadProgress.value =
+                            DownloadAttachmentResult.Start(itemPosition, this@launch as Job)
+                    }
+                }
                 .catch {
 
                     Timber.e("catch flow")
@@ -538,10 +546,6 @@ class ConversationViewModel @Inject constructor(
 
                     _downloadProgress.value =
                         DownloadAttachmentResult.Cancel(messageAndAttachment, itemPosition)
-                }
-                .onCompletion {
-                    _downloadProgress.value =
-                        DownloadAttachmentResult.Success(messageAndAttachment, itemPosition)
                 }
                 .collect {
                     _downloadProgress.value = it
@@ -594,7 +598,7 @@ class ConversationViewModel @Inject constructor(
                 val messageReqDTO = MessageReqDTO(
                     userDestination = contact.id,
                     quoted = message.quoted,
-                    body = message.getBody(cryptoMessage),
+                    body = message.body,
                     numberAttachments = 0,
                     destroy = selfDestructTime,
                     messageType = Constants.MessageType.MESSAGE.type

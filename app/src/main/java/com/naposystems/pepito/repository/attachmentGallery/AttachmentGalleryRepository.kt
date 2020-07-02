@@ -29,20 +29,23 @@ class AttachmentGalleryRepository @Inject constructor(private val context: Conte
                 MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
                 MediaStore.Files.FileColumns.MEDIA_TYPE,
-                MediaStore.Files.FileColumns.DATE_MODIFIED
+                MediaStore.Files.FileColumns.DATE_MODIFIED,
+                MediaStore.Files.FileColumns.MIME_TYPE
             )
 
             val selectionFilesFolder =
                 "${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=? " +
                         "AND (${MediaStore.Files.FileColumns.MEDIA_TYPE}=? " +
                         "OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=?) " +
-                        "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+                        "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? " +
+                        "AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> ?"
 
             val selectionArgsFilesFolder = arrayOf(
                 folderName,
                 MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
                 MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
-                MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString()
+                MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString(),
+                "image/svg+xml"
             )
 
             context.contentResolver.query(

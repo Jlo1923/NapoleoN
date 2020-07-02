@@ -15,9 +15,9 @@ class IncomingMessageAudioViewHolder constructor(
 
     init {
         super.parentContainerMessage = binding.containerIncomingMessage
-        super.progressBar = binding.audioPlayer.getProgressBar()
-        super.progressBarIndeterminate = binding.audioPlayer.getIndeterminateProgress()
-        super.imageButtonState = binding.audioPlayer.getImageButtonState()
+        super.progressBar = binding.progressBar
+        super.progressBarIndeterminate = binding.progressBarIndeterminate
+        super.imageButtonState = binding.imageButtonState
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
         super.audioPlayer = binding.audioPlayer

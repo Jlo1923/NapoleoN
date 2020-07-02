@@ -386,6 +386,11 @@ class MediaPlayerManager(private val context: Context) :
         }
     }
 
+    override fun setDuration(duration: Long) {
+        mSeekBar?.max = duration.toInt()
+        mSeekBar?.progress = mediaPlayer.currentPosition
+    }
+
     override fun resetMediaPlayer() {
         deleteTempFile()
 

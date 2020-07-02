@@ -10,9 +10,9 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.ui.conversation.viewHolder.*
 import com.naposystems.pepito.utility.Constants
-import com.naposystems.pepito.utility.DownloadAttachmentResult
 import com.naposystems.pepito.utility.UploadResult
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import timber.log.Timber
 
@@ -25,6 +25,8 @@ class ConversationAdapter constructor(
 
     companion object {
         const val PROGRESS = "progress"
+        const val DOWNLOAD_START = "download_start"
+        const val DOWNLOAD_COMPLETE = "download_complete"
         const val DOWNLOAD_CANCEL = "download_cancel"
         const val UPLOAD_COMPLETE = "upload_complete"
         const val FOCUS_MESSAGE = "focus_message"
@@ -86,8 +88,9 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setStartDownload(itemPosition: Int, job: ProducerScope<DownloadAttachmentResult>) {
+    fun setStartDownload(itemPosition: Int, job: Job) {
         try {
+            Timber.d("setStartDownload")
             notifyItemChanged(itemPosition, job)
         } catch (e: Exception) {
             Timber.e(e)
@@ -97,6 +100,14 @@ class ConversationAdapter constructor(
     fun setProgress(position: Int, progress: Long) {
         try {
             notifyItemChanged(position, Bundle().apply { putLong(PROGRESS, progress) })
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    fun setDownloadComplete(position: Int) {
+        try {
+            notifyItemChanged(position, Bundle().apply { putBoolean(DOWNLOAD_COMPLETE, true) })
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -374,6 +385,7 @@ class ConversationAdapter constructor(
                     when (val any = payloads.first()) {
                         is Bundle -> handleBundlePayload(any, position, holder)
                         is ProducerScope<*> -> handleProducerScopePayload(any, position, holder)
+                        is Job -> handleJobPayload(any, position, holder)
                         is List<*> -> {
                             if (any.isNotEmpty()) {
                                 handleBundleAndJobPayload(
@@ -407,7 +419,7 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_DOCUMENT,
             TYPE_INCOMING_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
-                    setDownloadStart(job)
+//                    setDownloadStart()
                 }
             }
             TYPE_MY_MESSAGE_IMAGE,
@@ -434,6 +446,7 @@ class ConversationAdapter constructor(
         val downloadCancel = bundle.getBoolean(DOWNLOAD_CANCEL, false)
         val focusMessage = bundle.getBoolean(FOCUS_MESSAGE, false)
         val playAudio = bundle.getBoolean(PLAY_AUDIO, false)
+        val downloadComplete = bundle.getBoolean(DOWNLOAD_COMPLETE, false)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,
             TYPE_MY_MESSAGE_GIF,
@@ -461,6 +474,7 @@ class ConversationAdapter constructor(
                     setDownloadCancel(downloadCancel)
                     startFocusAnim(focusMessage)
                     playAudio(playAudio)
+                    setDownloadComplete(downloadComplete)
                 }
             }
             TYPE_MY_MESSAGE,
@@ -501,6 +515,26 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE_AUDIO,
             TYPE_INCOMING_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).setDownloadProgressAndJob(progress, job)
+            }
+        }
+    }
+
+    private fun handleJobPayload(
+        job: Job,
+        position: Int,
+        holder: RecyclerView.ViewHolder
+    ) {
+        when (getItemViewType(position)) {
+            TYPE_INCOMING_MESSAGE_IMAGE,
+            TYPE_INCOMING_MESSAGE_GIF,
+            TYPE_INCOMING_MESSAGE_VIDEO,
+            TYPE_INCOMING_MESSAGE_GIF_NN,
+            TYPE_INCOMING_MESSAGE_DOCUMENT,
+            TYPE_INCOMING_MESSAGE_AUDIO,
+            TYPE_INCOMING_MESSAGE_LOCATION -> {
+                (holder as ConversationViewHolder).apply {
+                    setDownloadStart(job)
+                }
             }
         }
     }

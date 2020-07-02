@@ -352,6 +352,7 @@ class PreviewMediaFragment : Fragment() {
         if (tempFile?.exists() == true) {
             tempFile?.delete()
         }
+        sentMessageReaded(false)
     }
 
 }

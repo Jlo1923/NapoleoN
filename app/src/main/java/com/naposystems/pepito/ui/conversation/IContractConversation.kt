@@ -2,6 +2,7 @@ package com.naposystems.pepito.ui.conversation
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.naposystems.pepito.dto.conversation.call.CallContactResDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.pepito.dto.conversation.deleteMessages.DeleteMessagesResDTO

@@ -29,7 +29,9 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.FileProvider
 import androidx.core.graphics.toRect
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.activityViewModels
@@ -42,6 +44,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ConversationActionBarBinding
 import com.naposystems.pepito.databinding.ConversationFragmentBinding
@@ -228,17 +231,36 @@ class ConversationFragment : BaseFragment(),
             actionState: Int,
             isCurrentlyActive: Boolean
         ) {
-            actionSwipeQuote(actionState, recyclerView, dX, viewHolder, c)
+            if (viewHolder.adapterPosition >= 0) {
+                conversationAdapter.getMessageAndAttachment(viewHolder.adapterPosition)
+                    ?.let { messageAndAttachment ->
+                        if (messageAndAttachment.message.messageType == Constants.MessageType.MESSAGE.type &&
+                            (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status ||
+                                    messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
+                                    messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
+                                    messageAndAttachment.getFirstAttachment()?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status)
+                        ) {
+                            actionSwipeQuote(
+                                actionState,
+                                recyclerView,
+                                dX,
+                                viewHolder,
+                                c,
+                                messageAndAttachment
+                            )
 
-            super.onChildDraw(
-                c,
-                recyclerView,
-                viewHolder,
-                dX / 2,
-                dY,
-                actionState,
-                isCurrentlyActive
-            )
+                            super.onChildDraw(
+                                c,
+                                recyclerView,
+                                viewHolder,
+                                dX / 2,
+                                dY,
+                                actionState,
+                                isCurrentlyActive
+                            )
+                        }
+                    }
+            }
         }
     }
 
@@ -667,26 +689,31 @@ class ConversationFragment : BaseFragment(),
         })
 
         viewModel.downloadAttachmentProgress.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is DownloadAttachmentResult.Start -> {
-                    conversationAdapter.setStartDownload(it.itemPosition, it.job)
-                }
-                is DownloadAttachmentResult.Progress -> {
-                    conversationAdapter.setProgress(
-                        it.itemPosition,
-                        it.progress
-                    )
-                }
-                is DownloadAttachmentResult.Error -> {
-                    it.attachment.status =
-                        Constants.AttachmentStatus.DOWNLOAD_ERROR.status
-                    viewModel.updateAttachment(
-                        it.attachment
-                    )
-                    Timber.d("Error")
-                }
-                is DownloadAttachmentResult.Cancel -> {
-                    conversationAdapter.setDownloadCancel(it.itemPosition)
+            binding.recyclerViewConversation.post {
+                when (it) {
+                    is DownloadAttachmentResult.Start -> {
+                        conversationAdapter.setStartDownload(it.itemPosition, it.job)
+                    }
+                    is DownloadAttachmentResult.Progress -> {
+                        conversationAdapter.setProgress(
+                            it.itemPosition,
+                            it.progress
+                        )
+                    }
+                    is DownloadAttachmentResult.Error -> {
+                        it.attachment.status =
+                            Constants.AttachmentStatus.DOWNLOAD_ERROR.status
+                        viewModel.updateAttachment(
+                            it.attachment
+                        )
+                        Timber.d("Error")
+                    }
+                    is DownloadAttachmentResult.Cancel -> {
+                        conversationAdapter.setDownloadCancel(it.itemPosition)
+                    }
+                    is DownloadAttachmentResult.Success -> {
+                        conversationAdapter.setDownloadComplete(it.itemPosition)
+                    }
                 }
             }
         })
@@ -987,6 +1014,7 @@ class ConversationFragment : BaseFragment(),
             mHandler.removeCallbacks(mRecordingAudioRunnable!!)
             mRecordingAudioRunnable = null
         }
+        FileManager.deleteTempsFiles(requireContext())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -1315,27 +1343,49 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun openAttachmentDocument(attachment: Attachment) {
-        val intent = Intent(Intent.ACTION_VIEW)
 
-        val uri: Uri = Utils.getFileUri(
-            requireContext(),
-            attachment.uri,
-            Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
-        )
-        val extension = MimeTypeMap.getFileExtensionFromUrl(
-            uri.toString()
-        )
-        val mimeType =
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-        if (extension.equals("", ignoreCase = true) || mimeType == null) {
-            // if there is no extension or there is no definite mimetype, still try to open the file
-            intent.setDataAndType(uri, "text/*")
-        } else {
-            intent.setDataAndType(uri, mimeType)
+        try {
+            var tempFile: File? = null
+
+            val uri: Uri = if (BuildConfig.ENCRYPT_API) {
+                tempFile = FileManager.createTempFileFromEncryptedFile(
+                    requireContext(),
+                    attachment.type,
+                    "${attachment.webId}.${attachment.extension}",
+                    attachment.extension
+                )!!
+                FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.naposystems.pepito.provider",
+                    tempFile
+                )
+            } else {
+                Utils.getFileUri(
+                    requireContext(),
+                    attachment.uri,
+                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                )
+            }
+
+            val intent = Intent(Intent.ACTION_VIEW)
+
+            val extension = MimeTypeMap.getFileExtensionFromUrl(
+                uri.toString()
+            )
+            val mimeType =
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            if (extension.equals("", ignoreCase = true) || mimeType == null) {
+                // if there is no extension or there is no definite mimetype, still try to open the file
+                intent.setDataAndType(uri, "text/*")
+            } else {
+                intent.setDataAndType(uri, mimeType)
+            }
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            // custom message for the intent
+            startActivity(Intent.createChooser(intent, "Choose an Application:"))
+        } catch (e: Exception) {
+            Timber.e(e)
         }
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        // custom message for the intent
-        startActivity(Intent.createChooser(intent, "Choose an Application:"))
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -1344,7 +1394,8 @@ class ConversationFragment : BaseFragment(),
         recyclerView: RecyclerView,
         dX: Float,
         viewHolder: RecyclerView.ViewHolder,
-        c: Canvas
+        c: Canvas,
+        messageAndAttachment: MessageAndAttachment
     ) {
         val icon = resources.getDrawable(R.drawable.ic_quote_new, null)
 
@@ -1353,16 +1404,12 @@ class ConversationFragment : BaseFragment(),
                 swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
                         event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
-                    val position = viewHolder.adapterPosition
                     binding.inputPanel.resetImage()
-                    conversationAdapter
-                        .getMessageAndAttachment(position)?.let { messageAndAttachment ->
-                            if (messageAndAttachment.message.status == Constants.MessageStatus.ERROR.status) {
-                                this.showToast("No se puede citar de un mensaje fallido|!!")
-                            } else {
-                                binding.inputPanel.openQuote(messageAndAttachment)
-                            }
-                        }
+                    if (messageAndAttachment.message.status == Constants.MessageStatus.ERROR.status) {
+                        this.showToast("No se puede citar de un mensaje fallido|!!")
+                    } else {
+                        binding.inputPanel.openQuote(messageAndAttachment)
+                    }
                 }
                 false
             }

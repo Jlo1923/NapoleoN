@@ -79,7 +79,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 custom:audioId="@{conversation.message.webId}"
                 custom:controlColors="?attr/attrTextColorColorTextMyMessage"
-                custom:isEncryptedFile="@{BuildConfig.ENCRYPT_API ? true : false}"
                 custom:seekbarProgressBackgroundTint="@color/black"
                 custom:seekbarProgressTint="?attr/attrSeekbarProgressTint"
                 custom:seekbarThumbTint="?attr/attrSeekbarThumbTint" />

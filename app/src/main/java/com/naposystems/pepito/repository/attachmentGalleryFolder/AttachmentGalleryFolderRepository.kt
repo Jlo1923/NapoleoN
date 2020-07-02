@@ -32,15 +32,18 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                     MediaStore.Files.FileColumns.MEDIA_TYPE,
                     MediaStore.Files.FileColumns._ID,
                     MediaStore.Files.FileColumns.HEIGHT,
-                    MediaStore.Files.FileColumns.WIDTH
+                    MediaStore.Files.FileColumns.WIDTH,
+                    MediaStore.Files.FileColumns.MIME_TYPE
                 )
 
                 //WHERE
                 val selection = if (isConversation) {
                     "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
-                            "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+                            "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.SIZE} > 0 " +
+                            "AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
                 } else {
-                    "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+                    "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? " +
+                            "AND ${MediaStore.Files.FileColumns.SIZE} > 0 AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
                 }
 
                 //WHERE ARGS

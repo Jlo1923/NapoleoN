@@ -26,12 +26,11 @@ class MessageMissedCallViewHolder constructor(
 
     private var countDownTimer: CountDownTimer? = null
 
-    fun countDown(
+    private fun countDown(
         item: MessageAndAttachment,
         textView: TextView?,
         itemToEliminate: (MessageAndAttachment) -> Unit
     ) {
-
         countDownTimer?.cancel()
         val endTime = item.message.totalSelfDestructionAt.toLong()
         if (endTime > 0) {
@@ -40,10 +39,14 @@ class MessageMissedCallViewHolder constructor(
             remainingTime.let { time ->
                 val timeInDays = TimeUnit.SECONDS.toDays(time).toInt()
                 when {
-                    TimeUnit.SECONDS.toDays(time) >= 1 -> {
+                    TimeUnit.SECONDS.toDays(time) > 1 -> {
                         textView?.text = textView?.resources?.getQuantityString(
                             R.plurals.text_self_destruct_time_days, timeInDays, timeInDays
                         )
+                    }
+                    TimeUnit.SECONDS.toDays(time) == 1L -> {
+                        textView?.text =
+                            textView?.resources?.getString(R.string.text_every_twenty_four_hours_min)
                     }
                     else -> {
                         countDownTimer = object : CountDownTimer(
@@ -84,7 +87,7 @@ class MessageMissedCallViewHolder constructor(
             Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time -> R.string.text_every_thirty_minutes
             Constants.SelfDestructTime.EVERY_ONE_HOUR.time -> R.string.text_every_one_hour
             Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time -> R.string.text_every_twelve_hours
-            Constants.SelfDestructTime.EVERY_ONE_DAY.time -> R.string.text_every_one_day
+            Constants.SelfDestructTime.EVERY_ONE_DAY.time -> R.string.text_every_twenty_four_hours_min
             Constants.SelfDestructTime.EVERY_SEVEN_DAY.time -> R.string.text_every_seven_days
             else -> -1
         }

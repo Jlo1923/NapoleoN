@@ -31,51 +31,6 @@
             app:srcCompat="@drawable/ic_play_arrow_black"
             tools:visibility="visible" />
 
-        <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            custom:progress="0"
-            custom:progressBarThickness="@dimen/circle_progress_bar"
-            custom:progressbarColor="?attr/attrTextColorColorTextMyMessage"
-            tools:progress="0"
-            tools:visibility="gone" />
-
-        <ProgressBar
-            android:id="@+id/progressBar_indeterminate"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:indeterminate="true"
-            android:indeterminateTint="?attr/attrTextColorColorTextMyMessage"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone" />
-
-        <!-- BUTTON ATTACHMENT STATE -->
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/imageButton_state"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@android:color/transparent"
-            android:foreground="?attr/actionBarItemBackground"
-            android:padding="@dimen/x_small_padding"
-            android:scaleType="fitCenter"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_close_black_24"
-            tools:visibility="gone" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"
             android:layout_width="0dp"

@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -25,7 +27,7 @@ class PreviewMediaViewModel @Inject constructor(private val repository: IContrac
     }
 
     override fun sentMessageReaded(messageAndAttachment: MessageAndAttachment) {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             repository.sentMessageReaded(messageAndAttachment)
         }
     }
