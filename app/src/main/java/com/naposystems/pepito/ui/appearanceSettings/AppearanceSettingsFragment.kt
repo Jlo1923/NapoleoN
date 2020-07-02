@@ -163,7 +163,10 @@ class AppearanceSettingsFragment : BaseFragment() {
     }
 
     private fun languageClickListener() {
-        val languageSelectionDialog = LanguageSelectionDialogFragment()
+        val languageSelectionDialog = LanguageSelectionDialogFragment
+            .newInstance(
+                Constants.LocationSelectionLanguage.APPEARANCE_SETTINGS.location
+            )
         languageSelectionDialog.show(childFragmentManager, "LanguageSelection")
     }
 
