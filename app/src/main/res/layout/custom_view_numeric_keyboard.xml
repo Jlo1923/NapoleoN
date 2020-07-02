@@ -209,14 +209,15 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
 
-                    <androidx.appcompat.widget.AppCompatButton
+                    <ImageButton
                         android:id="@+id/button_0"
                         style="@style/AppPrimaryButtonText.Keyboard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:contentDescription="zero"
-                        android:text="0" />
+                        app:srcCompat="@drawable/ic_zero" />
+
 
                 </FrameLayout>
 
