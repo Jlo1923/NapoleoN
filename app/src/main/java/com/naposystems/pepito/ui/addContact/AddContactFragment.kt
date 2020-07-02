@@ -165,6 +165,9 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                     binding.viewSwitcherFriendshipRequest.showNext()
                 }
             }
+            if (args.location == Constants.LocationAddContact.HOME.location) {
+                validateSearch()
+            }
         })
     }
 
@@ -253,4 +256,15 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onClosedCompleted() {}
     //endregion
+
+    private fun validateSearch() {
+        if (!searchView.isOpened() &&
+            viewModel.getUsers()?.count()!! <= 0 &&
+            viewModel.getRequestSend()?.count()!! <= 0 &&
+            viewModel.getSearchOpened() == false
+        ) {
+            searchView.showSearchView()
+            viewModel.setSearchOpened()
+        }
+    }
 }

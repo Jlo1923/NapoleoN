@@ -26,6 +26,10 @@ class AddContactViewModel @Inject constructor(
     val users: LiveData<List<Contact>>
         get() = _users
 
+    private val _opened = MutableLiveData<Boolean>()
+    val opened: LiveData<Boolean>
+        get() = _opened
+
     private val _friendShipRequestSendSuccessfully = MutableLiveData<Boolean>()
     val friendShipRequestSendSuccessfully: LiveData<Boolean>
         get() = _friendShipRequestSendSuccessfully
@@ -88,6 +92,22 @@ class AddContactViewModel @Inject constructor(
 
     override fun resetContacts() {
         _users.value = emptyList()
+    }
+
+    override fun getUsers(): List<Contact>? {
+        return _users.value
+    }
+
+    override fun getSearchOpened(): Boolean? {
+        return _opened.value ?: false
+    }
+
+    override fun setSearchOpened() {
+        _opened.value = true
+    }
+
+    override fun getRequestSend(): List<FriendShipRequestAdapterType>? {
+        return _friendshipRequests.value
     }
 
     override fun sendFriendshipRequest(contact: Contact) {

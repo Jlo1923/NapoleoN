@@ -162,7 +162,7 @@
                 app:formatTime="@{timeFormat}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
-                app:messageDate="@{conversation.message.createdAt}"
+                app:messageDateIncoming="@{conversation.message.createdAt}"
                 tools:text="10:34"
                 tools:visibility="visible" />
 
