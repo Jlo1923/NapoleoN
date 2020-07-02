@@ -218,7 +218,7 @@ open class ConversationViewHolder constructor(
                 ObjectAnimator.ofInt(
                     parentContainerMessage,
                     "backgroundColor",
-                    Color.parseColor("#59CCCCCC"),
+                    Color.parseColor("#99CCCCCC"),
                     Color.TRANSPARENT
                 )
             colorAnim.duration = 300
@@ -265,7 +265,7 @@ open class ConversationViewHolder constructor(
         )
 
         if (item.message.isSelected) {
-            parentContainerMessage?.setBackgroundColor(Color.parseColor("#59CCCCCC"))
+            parentContainerMessage?.setBackgroundColor(Color.parseColor("#99CCCCCC"))
         } else {
             parentContainerMessage?.setBackgroundColor(Color.TRANSPARENT)
         }

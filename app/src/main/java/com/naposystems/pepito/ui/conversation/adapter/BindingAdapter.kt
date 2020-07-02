@@ -25,42 +25,47 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-@BindingAdapter("messageDate", "formatTime")
-fun bindMessageDate(textView: TextView, timestamp: Int, format: Int) {
-
-    val context = textView.context
-
+@BindingAdapter("messageDateSend", "formatTime")
+fun bindMessageDateSend(textView: TextView, timestamp: Int, format: Int) {
     try {
-        val timeInit = TimeUnit.MINUTES.toSeconds(1) + timestamp
-        val timeSevenMoreDays = TimeUnit.DAYS.toSeconds(7) + timestamp
         val timeActual = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val dayNext = sdf.format(Date((timestamp.toLong() + TimeUnit.DAYS.toSeconds(1)) * 1000))
         val dayMessage = sdf.format(Date(timestamp.toLong() * 1000))
         val dayActual = sdf.format(Date(timeActual * 1000))
 
-        when {
-            timeInit > timeActual -> {
-                textView.text = context.getString(R.string.text_now)
-            }
-            timeInit < timeActual && dayMessage == dayActual -> {
+        when (dayMessage) {
+            dayActual -> {
                 val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-                    SimpleDateFormat("HH:mm ", Locale.getDefault())
+                    SimpleDateFormat("HH:mm", Locale.getDefault())
                 } else {
-                    SimpleDateFormat("hh:mm aa ", Locale.getDefault())
+                    SimpleDateFormat("hh:mm aa", Locale.getDefault())
                 }
                 textView.text = sdf.format(Date(timestamp.toLong() * 1000))
             }
             else -> {
                 val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-                    SimpleDateFormat("HH:mm  dd/MM/yyyy ", Locale.getDefault())
+                    SimpleDateFormat("dd/MM/yyyy   HH:mm ", Locale.getDefault())
                 } else {
-                    SimpleDateFormat("hh:mm aa  dd/MM/yyyy ", Locale.getDefault())
+                    SimpleDateFormat("dd/MM/yyyy   hh:mm aa ", Locale.getDefault())
                 }
                 textView.text = sdf.format(Date(timestamp.toLong() * 1000))
             }
         }
+        textView.visibility = View.VISIBLE
+    } catch (e: Exception) {
+        Timber.e("Error parsing date")
+    }
+}
 
+@BindingAdapter("messageDateIncoming", "formatTime")
+fun bindMessageDateIncoming(textView: TextView, timestamp: Int, format: Int) {
+    try {
+        val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+            SimpleDateFormat("dd/MM/yyyy   HH:mm ", Locale.getDefault())
+        } else {
+            SimpleDateFormat("dd/MM/yyyy   hh:mm aa ", Locale.getDefault())
+        }
+        textView.text = sdf.format(Date(timestamp.toLong() * 1000))
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.e("Error parsing date")
