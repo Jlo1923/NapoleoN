@@ -67,26 +67,26 @@
                     <TextView
                         android:id="@+id/textView_user_display_name"
                         style="@style/SmallBodyTextView.WhiteBold"
-                        android:textColor="?attr/attrTextColorNameConversation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:lines="1"
-                        app:nameFormatContact="@{viewModel.userDisplayFormat}"
+                        android:textColor="?attr/attrTextColorNameConversation"
                         app:contactIdNameFormat="@{contact.id}"
                         app:nameActionBar="@{contact}"
+                        app:nameFormatContact="@{viewModel.userDisplayFormat}"
                         tools:text="Giussep Ricardo Cachaya" />
 
                     <TextView
                         android:id="@+id/textView_user_nickname"
-                        style="@style/MinorBodyTextView.White"
-                        android:textColor="?attr/attrTextColorNicknameConversation"
+                        style="@style/SmallBodyTextView.White"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:lines="1"
-                        app:nickNameFormat="@{viewModel.userDisplayFormat}"
+                        android:textColor="?attr/attrTextColorNicknameConversation"
                         app:contactIdNickNameFormat="@{contact.id}"
+                        app:nickNameFormat="@{viewModel.userDisplayFormat}"
                         app:nicknameActionBar="@{contact}"
                         tools:text="\@giussepr" />
                 </LinearLayout>

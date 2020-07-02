@@ -23,6 +23,7 @@ import com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.isActive
 import timber.log.Timber
@@ -34,7 +35,7 @@ open class ConversationViewHolder constructor(
 ) : RecyclerView.ViewHolder(view) {
 
     private var uploadJob: ProducerScope<*>? = null
-    private var downloadJob: ProducerScope<*>? = null
+    private var downloadJob: Job? = null
     private var countDownTimer: CountDownTimer? = null
 
     var parentContainerMessage: ConstraintLayout? = null
@@ -47,6 +48,7 @@ open class ConversationViewHolder constructor(
     var imageViewAttachment: ImageView? = null
     var imageButtonSend: AppCompatImageButton? = null
     var textViewMessage: TextView? = null
+    var imageButtonPlay: AppCompatImageButton? = null
 
     fun countDown(
         item: MessageAndAttachment,
@@ -112,14 +114,11 @@ open class ConversationViewHolder constructor(
                 if (progress == 100L) {
                     progressBar?.visibility = View.GONE
                     imageButtonState?.visibility = View.GONE
+                    imageButtonPlay?.visibility = View.VISIBLE
                 }
-            } else {
-                progressBarIndeterminate?.visibility = View.GONE
-                progressBar?.visibility = View.GONE
-                imageButtonState?.visibility = View.GONE
             }
         } catch (e: Exception) {
-            Timber.d(e)
+            Timber.e(e)
             progressBar?.setProgress(0.0f)
             progressBar?.visibility = View.GONE
             progressBarIndeterminate?.visibility = View.GONE
@@ -167,7 +166,7 @@ open class ConversationViewHolder constructor(
 //            imageButtonState?.visibility = View.GONE
         }
 
-        this.downloadJob = job
+//        this.downloadJob = job
     }
 
     fun setUploadComplete(boolean: Boolean) {
@@ -186,7 +185,7 @@ open class ConversationViewHolder constructor(
         progressBarIndeterminate?.visibility = View.VISIBLE
     }
 
-    fun setDownloadStart(job: ProducerScope<*>) {
+    fun setDownloadStart(job: Job) {
         Timber.d("setDownloadStart: $job")
         this.downloadJob = job
         imageButtonState?.visibility = View.GONE
@@ -195,7 +194,20 @@ open class ConversationViewHolder constructor(
         progressBarIndeterminate?.visibility = View.VISIBLE
     }
 
+    fun setDownloadComplete(isDownloadComplete: Boolean) {
+        Timber.d("isDownloadComplete: $isDownloadComplete")
+        if (isDownloadComplete) {
+            progressBar?.setProgress(0.0f)
+            progressBar?.visibility = View.GONE
+            progressBarIndeterminate?.visibility = View.GONE
+            imageButtonState?.visibility = View.GONE
+            imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
+            imageButtonPlay?.visibility = View.VISIBLE
+        }
+    }
+
     fun setDownloadCancel(isCancel: Boolean) {
+        Timber.d("setDownloadCancel: $isCancel")
         if (isCancel) {
             progressBar?.setProgress(0.0f)
             progressBar?.visibility = View.GONE
@@ -255,7 +267,6 @@ open class ConversationViewHolder constructor(
         timeFormat: Int?,
         mediaPlayerManager: MediaPlayerManager? = null
     ) {
-
         countDown(
             item,
             textViewCountDown,
@@ -288,11 +299,12 @@ open class ConversationViewHolder constructor(
         progressBar?.setProgress(0.0f)
         progressBar?.visibility = View.GONE
         progressBarIndeterminate?.visibility = View.GONE
+        imageButtonPlay?.visibility = View.GONE
 
         val firstAttachment: Attachment? = item.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
-//            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
+            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
 //            Timber.d("hasUploadComplete: $hasUploadComplete")
 
             audioPlayer?.setDuration(attachment.duration)
@@ -352,6 +364,8 @@ open class ConversationViewHolder constructor(
                     if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.message.status == Constants.MessageStatus.UNREAD.status) {
                         clickListener.sendMessageRead(item)
                     }
+
+                    imageButtonPlay?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
                 Constants.AttachmentStatus.DOWNLOAD_ERROR.status -> {
@@ -434,20 +448,49 @@ open class ConversationViewHolder constructor(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener
     ) {
+        Timber.d("loadMediaPlayer")
         with(audioPlayer!!) {
             setMessageAndAttachment(item)
             setMediaPlayerManager(mediaPlayerManager)
-            isEncryptedFile(BuildConfig.ENCRYPT_API)
-            if (BuildConfig.ENCRYPT_API) {
-                setEncryptedFileName("${attachment.webId}.${attachment.extension}")
-            } else {
-                setAudioFileUri(
-                    Utils.getFileUri(
-                        context = context,
-                        fileName = attachment.uri,
-                        subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+            setDuration(attachment.duration)
+
+            if (item.message.isMine == Constants.IsMine.YES.value) {
+                if (attachment.status == Constants.AttachmentStatus.SENT.status) {
+                    isEncryptedFile(BuildConfig.ENCRYPT_API)
+                    if (BuildConfig.ENCRYPT_API) {
+                        setEncryptedFileName("${attachment.webId}.${attachment.extension}")
+                    } else {
+                        setAudioFileUri(
+                            Utils.getFileUri(
+                                context = context,
+                                fileName = attachment.uri,
+                                subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            )
+                        )
+                    }
+                } else {
+                    isEncryptedFile(false)
+                    setAudioFileUri(
+                        Utils.getFileUri(
+                            context = context,
+                            fileName = attachment.uri,
+                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                        )
                     )
-                )
+                }
+            } else {
+                isEncryptedFile(BuildConfig.ENCRYPT_API)
+                if (BuildConfig.ENCRYPT_API) {
+                    setEncryptedFileName("${attachment.webId}.${attachment.extension}")
+                } else {
+                    setAudioFileUri(
+                        Utils.getFileUri(
+                            context = context,
+                            fileName = attachment.uri,
+                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                        )
+                    )
+                }
             }
             setAudioId(item.message.webId)
             setListener(object : AudioPlayerCustomView.Listener {
@@ -483,10 +526,7 @@ open class ConversationViewHolder constructor(
                     clickListener.updateAttachmentState(attachment)
                 }
                 progressBar?.setProgress(0.0f)
-                audioPlayer?.setProgress(0)
-                audioPlayer?.hideIndeterminateProgress()
                 progressBar?.visibility = View.INVISIBLE
-                audioPlayer?.hideProgressBar()
             }
             Constants.AttachmentStatus.UPLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {
@@ -495,8 +535,9 @@ open class ConversationViewHolder constructor(
             }
             Constants.AttachmentStatus.DOWNLOADING.status -> {
                 try {
+                    Timber.d("Cancel job: $downloadJob")
                     if (this.downloadJob?.isActive == true) {
-                        this.downloadJob?.close()
+                        this.downloadJob?.cancel()
                     }
                 } catch (e: Exception) {
                     Timber.e(e)

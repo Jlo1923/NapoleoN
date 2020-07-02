@@ -84,6 +84,7 @@
                             android:scrollbarThumbVertical="@color/colorSecondaryDark"
                             android:scrollbars="vertical"
                             android:singleLine="false"
+                            android:textSize="17sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/container_action_input"
                             app:layout_constraintStart_toEndOf="@id/imageButton_emoji"

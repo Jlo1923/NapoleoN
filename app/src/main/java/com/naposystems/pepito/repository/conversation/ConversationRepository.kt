@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -275,13 +276,20 @@ class ConversationRepository @Inject constructor(
             )
 
         val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
+        val locationMessagesUnread =
+            messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
         val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
+        val locationMessagesUnreadIds = locationMessagesUnread.map { it.message.webId }
 
-        if (textMessagesUnreadIds.isNotEmpty()) {
+        val listIds = mutableListOf<String>()
+        listIds.addAll(textMessagesUnreadIds)
+        listIds.addAll(locationMessagesUnreadIds)
+
+        if (listIds.isNotEmpty()) {
             try {
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
-                        textMessagesUnreadIds
+                        listIds
                     )
                 )
 
@@ -482,13 +490,13 @@ class ConversationRepository @Inject constructor(
         itemPosition: Int
     ): Flow<DownloadAttachmentResult> = channelFlow<DownloadAttachmentResult> {
         messageAndAttachment.getFirstAttachment()?.let { attachment ->
-
             val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
+            /*val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
             attachment.status = Constants.AttachmentStatus.DOWNLOADING.status
             attachment.uri = fileName
             Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.uri}")
             updateAttachment(attachment)
-            offer(DownloadAttachmentResult.Start(itemPosition, this))
+            offer(DownloadAttachmentResult.Start(itemPosition, this))*/
 
             try {
                 val response = napoleonApi.downloadFileByUrl(attachment.body)
@@ -554,19 +562,28 @@ class ConversationRepository @Inject constructor(
                                 outputStream.write(data, 0, count)
                                 progress += count
                                 val finalPercentage = (progress * 100 / contentLength)
-                                offer(
-                                    DownloadAttachmentResult.Progress(
-                                        itemPosition,
-                                        finalPercentage
+                                if (finalPercentage > 0) {
+                                    offer(
+                                        DownloadAttachmentResult.Progress(
+                                            itemPosition,
+                                            finalPercentage
+                                        )
                                     )
-                                )
+                                }
 
-                                Timber.d(
+                                /*Timber.d(
                                     "Progress: $progress/${contentLength} >>>> $finalPercentage"
-                                )
+                                )*/
                             }
                             outputStream.flush()
                             Timber.d("File saved successfully!")
+
+                            attachment.status =
+                                Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
+                            updateAttachment(attachment)
+                            if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
+                                saveEncryptedFile(attachment)
+                            }
 
                             offer(
                                 DownloadAttachmentResult.Success(
@@ -574,12 +591,6 @@ class ConversationRepository @Inject constructor(
                                     itemPosition
                                 )
                             )
-                            attachment.status =
-                                Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
-                            updateAttachment(attachment)
-                            if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
-                                saveEncryptedFile(attachment)
-                            }
                             close()
                         } catch (e: CancellationException) {
                             Timber.d("Job canceled")

@@ -97,9 +97,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             binding.imageButtonRewind.imageTintList = this
             binding.imageButtonSpeed.imageTintList = this
             binding.imageButtonForward.imageTintList = this
-            binding.progressBar.setProgressColor(mTintColor)
-            binding.progressBarIndeterminate.indeterminateTintList = this
-            binding.imageButtonState.imageTintList = this
             binding.textViewDuration.setTextColor(this)
         }
 
@@ -152,44 +149,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         Timber.d("enablePlayButton: $isEnable")
         binding.imageButtonPlay.visibility = if (isEnable) View.VISIBLE else View.INVISIBLE
         binding.imageButtonPlay.isEnabled = isEnable
-    }
-
-    override fun getProgressBar() = binding.progressBar
-
-    override fun setProgress(progress: Long) {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.progressBar.setProgress(progress.toFloat())
-        hideIndeterminateProgress()
-    }
-
-    override fun hideProgressBar() {
-        binding.progressBar.visibility = View.GONE
-    }
-
-    override fun getIndeterminateProgress() = binding.progressBarIndeterminate
-
-    override fun showIndeterminateProgress() {
-        binding.progressBarIndeterminate.visibility = View.VISIBLE
-    }
-
-    override fun hideIndeterminateProgress() {
-        binding.progressBarIndeterminate.visibility = View.INVISIBLE
-    }
-
-    override fun changeImageButtonStateIcon(icon: Int) {
-        binding.imageButtonState.setImageResource(icon)
-    }
-
-    override fun getImageButtonState() = binding.imageButtonState
-
-    override fun showImageButtonState() {
-        binding.imageButtonState.visibility = View.VISIBLE
-        Timber.d("showImageButtonState")
-    }
-
-    override fun hideImageButtonState() {
-        binding.imageButtonState.visibility = View.GONE
-        Timber.d("hideImageButtonState")
     }
 
     override fun playAudio() {

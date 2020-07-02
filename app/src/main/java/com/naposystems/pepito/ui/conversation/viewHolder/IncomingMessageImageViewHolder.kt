@@ -1,9 +1,11 @@
 package com.naposystems.pepito.ui.conversation.viewHolder
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.pepito.databinding.ConversationItemIncomingMessageWithImageBinding
@@ -11,6 +13,7 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.pepito.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.pepito.utility.BlurTransformation
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
 
@@ -22,7 +25,7 @@ class IncomingMessageImageViewHolder constructor(
         super.parentContainerMessage = binding.containerIncomingMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
-        super.imageButtonState = binding.imageButtonCancel
+        super.imageButtonState = binding.imageButtonState
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
         super.imageViewAttachment = binding.imageViewAttachment
@@ -58,12 +61,19 @@ class IncomingMessageImageViewHolder constructor(
 
                 binding.imageViewAttachment.visibility = View.VISIBLE
 
+                val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
+
+                transformationList.add(CenterCrop())
+                transformationList.add(RoundedCorners(8))
+
+                if (attachment.type != Constants.AttachmentType.LOCATION.type) {
+                    transformationList.add(BlurTransformation(context))
+                }
+
                 Glide.with(binding.imageViewAttachment)
                     .load(attachment.body)
                     .transform(
-                        CenterCrop(),
-                        RoundedCorners(8),
-                        BlurTransformation(context)
+                        *transformationList.toTypedArray()
                     )
                     .into(binding.imageViewAttachment)
             }

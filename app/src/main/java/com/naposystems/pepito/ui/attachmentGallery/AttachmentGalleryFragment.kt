@@ -87,18 +87,6 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
         toolbar?.title = args.galleryFolder.folderName
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        /*viewModel.loadGalleryItemsByFolder(args.galleryFolder)
-
-        viewModel.galleryItems.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                adapter.submitList(it)
-            }
-        })*/
-    }
-
     private fun setupAdapter() {
         adapter = AttachmentGalleryAdapter(this)
 
@@ -112,6 +100,9 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
                     lifecycleScope.launch {
                         context?.let { context ->
+
+                            var extension = ""
+
                             val extras = FragmentNavigatorExtras(
                                 imageView to imageView.transitionName
                             )
@@ -126,11 +117,12 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                                 FileInputStream(parcelFileDescriptor!!.fileDescriptor)
 
                             if (galleryItem.attachmentType == Constants.AttachmentType.IMAGE.type) {
+                                extension = "jpg"
                                 attachmentSelected = FileManager.compressImageFromFileInputStream(
                                     context, fileInputStream
                                 )
                             } else if (galleryItem.attachmentType == Constants.AttachmentType.VIDEO.type) {
-
+                                extension = "mp4"
                                 attachmentSelected = FileManager.copyFile(
                                     context,
                                     fileInputStream,
@@ -150,7 +142,8 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                                 origin = Constants.AttachmentOrigin.GALLERY.origin,
                                 thumbnailUri = "",
                                 status = Constants.AttachmentStatus.SENDING.status,
-                                duration = 0L
+                                duration = 0L,
+                                extension = extension
                             )
 
                             this@AttachmentGalleryFragment.findNavController().navigate(
@@ -195,7 +188,8 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
-            MediaStore.Files.FileColumns.DATE_MODIFIED
+            MediaStore.Files.FileColumns.DATE_MODIFIED,
+            MediaStore.Files.FileColumns.MIME_TYPE
         )
 
         val isConversation =
@@ -204,9 +198,9 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
         //WHERE
         var selection = if (isConversation) {
             "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
-                    "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+                    "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
         } else {
-            "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ?"
+            "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
         }
 
         selection = "$selection AND ${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=?"
