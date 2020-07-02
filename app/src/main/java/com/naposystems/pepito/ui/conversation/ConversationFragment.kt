@@ -496,13 +496,10 @@ class ConversationFragment : BaseFragment(),
 
     private fun inputPanelEditTextWatcher() {
         binding.inputPanel.setEditTextWatcher(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                //Nothing
-            }
+            override fun afterTextChanged(s: Editable?) = Unit
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //Nothing
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.inputPanel.apply {
@@ -898,14 +895,14 @@ class ConversationFragment : BaseFragment(),
         binding.recyclerViewConversation.smoothScrollToPosition(friendlyMessageCount - 1)
     }
 
-    override fun onDetach() {
+    /*override fun onDetach() {
         with(activity as MainActivity) {
             supportActionBar?.displayOptions = ActionBar.DISPLAY_HOME_AS_UP
             supportActionBar?.setDisplayShowCustomEnabled(false)
 
         }
         super.onDetach()
-    }
+    }*/
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_conversation, menu)
@@ -1023,7 +1020,7 @@ class ConversationFragment : BaseFragment(),
             R.id.menu_item_mute_conversation -> {
                 contactProfileShareViewModel.contact.value?.let { contact ->
                     if (contact.silenced)
-                        desactiveSilence()
+                        disableSilence()
                     else
                         silenceConversation()
                 }
@@ -1079,7 +1076,7 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun desactiveSilence() {
+    private fun disableSilence() {
         contactProfileShareViewModel.contact.value?.let { contact ->
             shareContactViewModel.muteConversation(args.contact.id, contact.silenced)
         }
@@ -1150,29 +1147,34 @@ class ConversationFragment : BaseFragment(),
             ActionBar.LayoutParams.MATCH_PARENT
         )
 
-        with((activity as MainActivity).supportActionBar!!) {
-            displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
-            setDisplayShowCustomEnabled(true)
-            setDisplayShowTitleEnabled(false)
-            setDisplayHomeAsUpEnabled(false)
-            setHomeButtonEnabled(false)
-            setHasOptionsMenu(true)
-            setCustomView(actionBarCustomView.root, params)
+        val toolbar = (activity as MainActivity).supportActionBar
+        toolbar?.let { actionBar ->
+            with(actionBar) {
+                displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+                setDisplayShowTitleEnabled(false)
+                setDisplayHomeAsUpEnabled(false)
+                setHomeButtonEnabled(false)
+                setDisplayShowCustomEnabled(true)
+                setHasOptionsMenu(true)
+                setCustomView(actionBarCustomView.root, params)
+            }
         }
 
         actionBarCustomView.contact = args.contact
 
         actionBarCustomView.viewModel = userDisplayFormatShareViewModel
 
-        actionBarCustomView.buttonBack.setOnClickListener {
+        actionBarCustomView.containerBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        actionBarCustomView.containerDescriptionUser.setOnClickListener {
-            findNavController().navigate(
-                ConversationFragmentDirections
-                    .actionConversationFragmentToContactProfileFragment(args.contact.id)
-            )
+        actionBarCustomView.containerProfile.setOnClickListener {
+            Handler().postDelayed({
+                findNavController().navigate(
+                    ConversationFragmentDirections
+                        .actionConversationFragmentToContactProfileFragment(args.contact.id)
+                )
+            }, 100)
         }
     }
 

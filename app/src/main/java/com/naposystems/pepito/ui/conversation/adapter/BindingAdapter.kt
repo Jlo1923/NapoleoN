@@ -129,14 +129,10 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
             }
         }
 
-        if (loadImage != "") {
-            Glide.with(context)
-                .load(loadImage)
-                .circleCrop()
-                .into(imageView)
-        } else {
-            imageView.setImageDrawable(defaultAvatar)
-        }
+        Glide.with(context)
+            .load(if (loadImage != "") loadImage else defaultAvatar)
+            .circleCrop()
+            .into(imageView)
 
     }
 }

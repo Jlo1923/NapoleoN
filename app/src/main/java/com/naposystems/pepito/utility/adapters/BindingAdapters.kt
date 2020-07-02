@@ -241,14 +241,10 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
             }
         }
 
-        if(loadImage != "") {
-            Glide.with(context)
-                .load(loadImage)
-                .transform(CircleCrop(), CenterInside())
-                .into(imageView)
-        } else {
-            imageView.setImageDrawable(defaultAvatar)
-        }
+        Glide.with(context)
+            .load(if (loadImage != "") loadImage else defaultAvatar)
+            .transform(CircleCrop(), CenterInside())
+            .into(imageView)
 
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
     } else {
