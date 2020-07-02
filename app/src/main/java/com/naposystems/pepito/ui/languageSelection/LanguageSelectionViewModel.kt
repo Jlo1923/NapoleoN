@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.model.languageSelection.Language
 import com.naposystems.pepito.repository.languageSelection.LanguageSelectionRepository
+import com.naposystems.pepito.utility.Constants
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,16 +23,26 @@ class LanguageSelectionViewModel @Inject constructor(private val repository: Lan
     val errorUpdatingLanguage: LiveData<Boolean>
         get() = _errorUpdatingLanguage
 
-    fun setSelectedLanguage(language: Language) {
+    init {
+        repository.getLanguages()
+    }
+
+    override fun setSelectedLanguage(language: Language, location: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.updateUserLanguage(language)
+                when (location) {
+                    Constants.LocationSelectionLanguage.LANDING.location -> {
+                        updateLanguageLocal(language)
+                    }
+                    else -> {
+                        val response = repository.updateUserLanguage(language)
 
-                if (response.isSuccessful) {
-                    repository.updateUserLanguagePreference(language.iso)
-                    _selectedLanguage.value = language
-                } else {
-                    _errorUpdatingLanguage.value = true
+                        if (response.isSuccessful) {
+                            updateLanguageLocal(language)
+                        } else {
+                            _errorUpdatingLanguage.value = true
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 _errorUpdatingLanguage.value = true
@@ -39,11 +50,12 @@ class LanguageSelectionViewModel @Inject constructor(private val repository: Lan
         }
     }
 
-    init {
-        repository.getLanguages()
-    }
-
     override fun getLanguages() = repository.getLanguages()
+
+    override suspend fun updateLanguageLocal(language: Language) {
+        repository.updateUserLanguagePreference(language.iso)
+        _selectedLanguage.value = language
+    }
 
     override fun resetErrorUpdatingLanguage() {
         _errorUpdatingLanguage.value = null

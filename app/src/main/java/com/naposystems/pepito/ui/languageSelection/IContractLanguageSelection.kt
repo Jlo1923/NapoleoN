@@ -7,7 +7,9 @@ import retrofit2.Response
 interface IContractLanguageSelection {
 
     interface ViewModel {
+        fun setSelectedLanguage(language: Language, location : Int)
         fun getLanguages(): List<Language>
+        suspend fun updateLanguageLocal(language: Language)
         fun resetErrorUpdatingLanguage()
     }
 

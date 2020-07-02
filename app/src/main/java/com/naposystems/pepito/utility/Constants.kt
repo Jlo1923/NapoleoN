@@ -323,6 +323,11 @@ object Constants {
         CONTACTS(2)
     }
 
+    enum class LocationSelectionLanguage(val location: Int) {
+        LANDING(1),
+        APPEARANCE_SETTINGS(2)
+    }
+
     enum class UserType(val type: Int) {
         NEW_USER(1),
         OLD_USER(2)

@@ -12,7 +12,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.LanguageSelectionDialogFragmentBinding
 import com.naposystems.pepito.model.languageSelection.Language
+import com.naposystems.pepito.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.pepito.ui.languageSelection.adapter.LanguageSelectionAdapter
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.LocaleHelper
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.adapters.showToast
@@ -20,7 +22,16 @@ import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
+const val LOCATION = "location"
 class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
+
+    companion object {
+        fun newInstance(location : Int) = LanguageSelectionDialogFragment().apply {
+            arguments = Bundle().apply {
+                putInt(LOCATION, location)
+            }
+        }
+    }
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -48,7 +59,9 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
             LanguageSelectionAdapter(
                 viewModel.languagesList,
                 LanguageSelectionAdapter.LanguageSelectionListener { languageSelected ->
-                    viewModel.setSelectedLanguage(languageSelected)
+                    arguments?.getInt(LOCATION)?.let { location ->
+                        viewModel.setSelectedLanguage(languageSelected, location)
+                    }
                 },
                 LocaleHelper.getLanguagePreference(requireContext())
             )
