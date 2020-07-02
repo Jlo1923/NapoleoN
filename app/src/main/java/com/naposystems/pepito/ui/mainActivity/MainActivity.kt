@@ -144,8 +144,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
         }
 
-       val language = LocaleHelper.getLanguagePreference(this)
-       LocaleHelper.updateResources(this, language)
+        val language = LocaleHelper.getLanguagePreference(this)
+        LocaleHelper.updateResources(this, language)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -229,8 +229,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     openMenu()
                 }
                 R.id.conversationFragment -> {
-                    disableDrawer()
-                    showToolbar()
                     dontOpenMenu()
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
@@ -411,6 +409,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun showToolbar() {
+        resetToolbar()
         val value = TypedValue()
         this.theme.resolveAttribute(R.attr.attrBackgroundTintIconToolbar, value, true)
 
@@ -426,12 +425,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun resetToolbar() {
-        with(supportActionBar!!) {
-            subtitle = ""
-            setDisplayShowCustomEnabled(false)
-            setDisplayShowTitleEnabled(true)
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
+        supportActionBar?.let { actionBar ->
+            with(actionBar) {
+                subtitle = ""
+                setDisplayShowCustomEnabled(false)
+                setDisplayShowTitleEnabled(true)
+                setDisplayHomeAsUpEnabled(true)
+                setHomeButtonEnabled(true)
+            }
         }
     }
 

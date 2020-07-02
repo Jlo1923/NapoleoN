@@ -62,7 +62,7 @@ class HelpFragment : Fragment() {
     }
 
     private fun aboutClickListener() = View.OnClickListener {
-        this.findNavController().navigate(
+        findNavController().navigate(
             HelpFragmentDirections.actionHelpFragmentToAboutFragment()
         )
     }

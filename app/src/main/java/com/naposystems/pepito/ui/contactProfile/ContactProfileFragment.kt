@@ -155,10 +155,10 @@ class ContactProfileFragment : BaseFragment() {
             val extra = FragmentNavigatorExtras(
                 binding.imageViewProfileContact to "transition_image_preview"
             )
-            val titleToolbar = if (contact.displayNameFake.isNotEmpty()) {
-                contact.displayNameFake
+            val titleToolbar = if (contact.nicknameFake.isNotEmpty()) {
+                contact.nicknameFake
             } else {
-                contact.displayName
+                contact.nickname
             }
             findNavController().navigate(
                 ContactProfileFragmentDirections
@@ -315,10 +315,10 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun setTextToolbar(contact: Contact) {
-        val text = if (contact.displayNameFake.isNotEmpty()) {
-            contact.displayNameFake
+        val text = if (contact.nicknameFake.isNotEmpty()) {
+            contact.nicknameFake
         } else {
-            contact.displayName
+            contact.nickname
         }
         (activity as MainActivity).supportActionBar?.title = text
     }

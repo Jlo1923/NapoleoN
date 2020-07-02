@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.conversation.ConversationFragment">
 
     <data>
 
@@ -15,87 +16,111 @@
 
     </data>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@android:color/transparent"
+        android:orientation="vertical"
+        tools:background="@color/colorPrimary">
 
-        <LinearLayout
-            android:id="@+id/initial_menu"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_back"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:elevation="@dimen/elevation"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="0dp"
-            tools:background="@color/colorPrimary">
+            android:layout_marginStart="@dimen/small_margin"
+            android:background="@drawable/ripple_action_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="0dp"
+            android:paddingTop="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/x_small_padding"
+            android:paddingBottom="@dimen/x_small_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/button_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/normal_margin"
-                android:layout_marginEnd="@dimen/small_margin"
-                android:background="?attr/selectableItemBackgroundBorderless"
+            <ImageButton
+                android:id="@+id/imageButton_back"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:scaleType="fitCenter"
                 android:tint="?attr/attrBackgroundTintIconToolbar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back_white" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/container_description_user"
-                android:layout_width="wrap_content"
-                android:layout_height="?android:attr/actionBarSize"
-                android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/imageView_user"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="false"
+                android:foreground="@drawable/border_avatar_conversation"
+                android:padding="1dp"
+                android:scaleType="fitCenter"
+                app:avatarActionBar="@{contact}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageButton_back"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_default_avatar" />
 
-                <ImageView
-                    android:id="@+id/imageView_avatar"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/border_avatar_contact"
-                    app:avatarActionBar="@{contact}"
-                    tools:src="@drawable/ic_spanish_flag" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/small_margin"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/container_profile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingEnd="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/container_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/container_back"
+            app:layout_constraintTop_toTopOf="@id/container_back">
 
-                    <TextView
-                        android:id="@+id/textView_user_display_name"
-                        style="@style/SmallBodyTextView.WhiteBold"
-                        android:textColor="?attr/attrTextColorNameConversation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        app:nameFormatContact="@{viewModel.userDisplayFormat}"
-                        app:contactIdNameFormat="@{contact.id}"
-                        app:nameActionBar="@{contact}"
-                        tools:text="Giussep Ricardo Cachaya" />
+            <TextView
+                android:id="@+id/textView_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:contactIdNameFormat="@{contact.id}"
+                app:nameActionBar="@{contact}"
+                app:nameFormatContact="@{viewModel.userDisplayFormat}"
+                tools:text="Giussep Ricardo Cachaya" />
 
-                    <TextView
-                        android:id="@+id/textView_user_nickname"
-                        style="@style/MinorBodyTextView.White"
-                        android:textColor="?attr/attrTextColorNicknameConversation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        app:nickNameFormat="@{viewModel.userDisplayFormat}"
-                        app:contactIdNickNameFormat="@{contact.id}"
-                        app:nicknameActionBar="@{contact}"
-                        tools:text="\@giussepr" />
-                </LinearLayout>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            <TextView
+                android:id="@+id/textView_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/small_text_size"
+                app:contactIdNickNameFormat="@{contact.id}"
+                app:layout_constraintBottom_toBottomOf="@+id/container_back"
+                app:layout_constraintEnd_toStartOf="@+id/textView_user_tokens"
+                app:layout_constraintStart_toStartOf="@+id/textView_user_name"
+                app:layout_constraintTop_toBottomOf="@id/textView_user_name"
+                app:nickNameFormat="@{viewModel.userDisplayFormat}"
+                app:nicknameActionBar="@{contact}"
+                tools:text="\@giussepr" />
 
         </LinearLayout>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
