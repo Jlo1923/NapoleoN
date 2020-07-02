@@ -166,31 +166,33 @@ class ConversationAdapter constructor(
 
     fun checkIfNextIsAudio(messageWebId: String) {
         val positionActualAudio = getPositionByMessageWebId(messageWebId)
-        val actualMessageAndAttachment = getItem(positionActualAudio)
-        val nextPosition = positionActualAudio + 1
+        if (positionActualAudio >= 0) {
+            val actualMessageAndAttachment = getItem(positionActualAudio)
+            val nextPosition = positionActualAudio + 1
 
-        if (nextPosition < currentList.size) {
-            val nextItem = getItem(nextPosition)
+            if (nextPosition < currentList.size) {
+                val nextItem = getItem(nextPosition)
 
-            nextItem.getFirstAttachment()?.let { attachment ->
-                if (attachment.type == Constants.AttachmentType.AUDIO.type &&
-                    nextItem.message.isMine == actualMessageAndAttachment.message.isMine
-                ) {
-                    if (nextItem.message.isMine == Constants.IsMine.NO.value) {
-                        if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status) {
-                            clickListener.scrollToNextAudio(nextPosition)
+                nextItem.getFirstAttachment()?.let { attachment ->
+                    if (attachment.type == Constants.AttachmentType.AUDIO.type &&
+                        nextItem.message.isMine == actualMessageAndAttachment.message.isMine
+                    ) {
+                        if (nextItem.message.isMine == Constants.IsMine.NO.value) {
+                            if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status) {
+                                clickListener.scrollToNextAudio(nextPosition)
+                            } else {
+                                mediaPlayerManager.resetMediaPlayer()
+                            }
                         } else {
-                            mediaPlayerManager.resetMediaPlayer()
+                            clickListener.scrollToNextAudio(nextPosition)
                         }
                     } else {
-                        clickListener.scrollToNextAudio(nextPosition)
+                        mediaPlayerManager.resetMediaPlayer()
                     }
-                } else {
-                    mediaPlayerManager.resetMediaPlayer()
                 }
+            } else {
+                mediaPlayerManager.resetMediaPlayer()
             }
-        } else {
-            mediaPlayerManager.resetMediaPlayer()
         }
     }
 

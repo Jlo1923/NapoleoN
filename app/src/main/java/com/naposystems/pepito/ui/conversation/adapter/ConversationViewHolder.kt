@@ -448,7 +448,7 @@ open class ConversationViewHolder constructor(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener
     ) {
-        Timber.d("loadMediaPlayer")
+        Timber.d("loadMediaPlayer, $mediaPlayerManager, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
         with(audioPlayer!!) {
             setMessageAndAttachment(item)
             setMediaPlayerManager(mediaPlayerManager)

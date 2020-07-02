@@ -1,5 +1,6 @@
 package com.naposystems.pepito.utility.mediaPlayer
 
+import android.content.Context
 import android.net.Uri
 import android.widget.ImageButton
 import android.widget.TextView
@@ -8,6 +9,8 @@ import com.naposystems.pepito.ui.custom.AccessibleToggleButton
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 
 interface IContractMediaPlayer {
+    fun setContext(context: Context)
+    fun initializeBluetoothManager()
     fun setAudioId(audioId: String)
     fun setAudioUri(uri: Uri?)
     fun setAudioFileName(fileName: String)
@@ -25,4 +28,7 @@ interface IContractMediaPlayer {
     fun changeSpeed(audioId: String)
     fun resetMediaPlayer()
     fun setDuration(duration: Long)
+    fun getCurrentPosition(): Int
+    fun getMax(): Int
+    fun getAudioId(): String
 }
