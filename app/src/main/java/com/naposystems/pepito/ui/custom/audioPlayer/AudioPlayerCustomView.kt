@@ -83,6 +83,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     R.color.white
                 )
 
+                binding.textViewDuration.text = "00:00"
+                binding.seekbar.progress = 0
+                binding.seekbar.max = 100
+
                 setTintColor()
 
             } finally {
@@ -190,7 +194,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         Timber.d("setDuration: $duration")
         binding.textViewDuration.text = Utils.getDuration(duration, false)
         binding.textViewDuration.visibility = if (duration == 0L) View.GONE else View.VISIBLE
-        mediaPlayerManager?.setSeekbar(binding.seekbar)
         mediaPlayerManager?.setDuration(duration)
     }
 
@@ -208,7 +211,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             Timber.d("Conver audioPlayerCustom pause")
             this.mListener?.onPause(audioId)
         }*/
-        this.mListener?.onPause(messageWebId)
+        //this.mListener?.onPause(messageWebId)
     }
 
     override fun onCompleteAudio(messageWebId: String) {
