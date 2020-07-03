@@ -23,6 +23,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     private var characterCount: Int = 0
     private var isOpen: Boolean = false
     private lateinit var listener: OnSearchView
+    private var location: Int = 0
 
     private val normalMargin by lazy {
         resources.getDimension(R.dimen.normal_margin).toInt()
@@ -33,9 +34,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     private val textInput: TextView by lazy {
-        TextInputEditText(
-            ContextThemeWrapper(context, R.style.SearchStyle)
-        )
+        TextInputEditText(context)
     }
 
     interface OnSearchView {
@@ -72,6 +71,11 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
 
     private fun createTextInput() {
         textInput.apply {
+            if (location != 0) {
+                ContextThemeWrapper(context, R.style.SearchStyle)
+            } else {
+                ContextThemeWrapper(context, R.style.SearchStyleLocation)
+            }
             setBackgroundColor(
                 resources.getColor(
                     android.R.color.transparent,
@@ -281,6 +285,10 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     fun setHint(resourceId: Int) {
         textInput.setHint(resourceId)
         invalidate()
+    }
+
+    fun setStyleable(location : Int = 0) {
+        this.location = location
     }
 
     fun setMenuItem(menuItem: MenuItem) {

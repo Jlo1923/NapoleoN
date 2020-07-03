@@ -168,6 +168,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
             searchView = mainActivity.findViewById(R.id.searchView)
+            searchView.setStyleable(Constants.LocationSearchView.LOCATION.location)
             searchView.setMenuItem(menu.findItem(R.id.search))
             searchView.setListener(this)
         }
@@ -191,7 +192,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     private fun initializeFusedLocationClient() {
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(context as MainActivity)
-        //TODO Pepe
+
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 location?.let {

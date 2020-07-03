@@ -295,7 +295,7 @@ class ConversationRepository @Inject constructor(
 
                 if (response.isSuccessful) {
                     messageLocalDataSource.updateMessageStatus(
-                        textMessagesUnreadIds,
+                        listIds,
                         Constants.MessageStatus.READED.status
                     )
                 }
