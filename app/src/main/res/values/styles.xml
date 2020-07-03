@@ -1055,6 +1055,10 @@
         <item name="android:digits">@string/nickname_configuration</item>
     </style>
 
+    <style name="SearchStyleLocation">
+        <item name="android:digits">@string/location_configuration</item>
+    </style>
+
     <style name="MyAppActionBarTheme" parent="android:Theme.Holo.Light">
         <item name="android:popupMenuStyle">@style/MyApp.PopupMenu</item>
     </style>

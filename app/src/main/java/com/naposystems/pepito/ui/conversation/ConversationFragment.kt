@@ -464,6 +464,7 @@ class ConversationFragment : BaseFragment(),
                 override fun locationPressed() {
                     this@ConversationFragment.verifyPermission(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
                         drawableIconId = R.drawable.ic_location_on_primary,
                         message = R.string.text_explanation_to_send_location_attachment
                     ) {

@@ -323,6 +323,11 @@ object Constants {
         CONTACTS(2)
     }
 
+    enum class LocationSearchView(val location: Int) {
+        OTHER(0),
+        LOCATION(1)
+    }
+
     enum class LocationSelectionLanguage(val location: Int) {
         LANDING(1),
         APPEARANCE_SETTINGS(2)
