@@ -102,7 +102,19 @@ object MediaPlayerManager :
     }
 
     private fun setSeekbarProgress() {
-        mSeekBar?.progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
+        if (mediaPlayer.duration > 0) {
+            val progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
+
+            Timber.d("Conver setSeekbarProgress: $progress")
+
+            mSeekBar?.progress = progress
+
+            if (progress >= 100) {
+                mImageButtonPlay?.reverseAnimation()
+                mHandler.removeCallbacks(mRunnable)
+                mListener?.onCompleteAudio(currentAudioId)
+            }
+        }
     }
 
     private fun deleteTempFile() {
@@ -252,21 +264,13 @@ object MediaPlayerManager :
                     }
                 }
 
-                mediaPlayer.setOnCompletionListener {
+                /*mediaPlayer.setOnCompletionListener {
+                    Timber.d("Conver setOnCompletionListener")
                     deleteTempFile()
 //                    resetMediaPlayer()
                     mListener?.onCompleteAudio(currentAudioId)
                     //unregisterProximityListener()
-                }
-
-                mRunnable = Runnable {
-                    setSeekbarProgress()
-
-                    mHandler.postDelayed(
-                        mRunnable,
-                        50
-                    )
-                }
+                }*/
 
                 if (isPlaying) {
                     pause()
@@ -274,12 +278,23 @@ object MediaPlayerManager :
                     Timber.d("Conver mediaplayer pause: $currentAudioId")
                     mListener?.onPauseAudio(currentAudioId)
                     enableSpeedControl(false)
+                    mHandler.removeCallbacks(mRunnable)
+                    setSeekbarProgress()
+
                 } else {
                     enableSpeedControl(true)
                     audioManagerCompat.requestCallAudioFocus()
                     mAudioManager.isSpeakerphoneOn = !(isProximitySensorActive || isEarpiece)
                     start()
 
+                    mRunnable = Runnable {
+                        setSeekbarProgress()
+
+                        mHandler.postDelayed(
+                            mRunnable,
+                            50
+                        )
+                    }
                     mHandler.postDelayed(mRunnable, 0)
                     mImageButtonPlay?.playAnimation()
                 }
@@ -413,6 +428,8 @@ object MediaPlayerManager :
 
     override fun getAudioId() = this.currentAudioId
 
+    override fun isPlaying() = mediaPlayer.isPlaying
+
     override fun resetMediaPlayer() {
         deleteTempFile()
 
@@ -434,6 +451,31 @@ object MediaPlayerManager :
         unregisterProximityListener()
         mediaPlayer.pause()
         mediaPlayer.reset()
+    }
+
+    override fun resetMediaPlayer(messageWebId: String) {
+        if (currentAudioId == messageWebId) {
+            deleteTempFile()
+
+            if (::mRunnable.isInitialized) {
+                mHandler.removeCallbacks(mRunnable)
+            }
+
+            mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
+            mImageButtonPlay?.reverseAnimation()
+            mImageButtonPlay = null
+            mImageButtonSpeed = null
+            mPreviousAudioId = null
+            mSeekBar?.progress = 0
+            mSeekBar = null
+            mTextViewDuration?.text = ""
+            mTextViewDuration = null
+            mSpeed = NORMAL_SPEED
+
+            unregisterProximityListener()
+            mediaPlayer.pause()
+            mediaPlayer.reset()
+        }
     }
     //endregion
 

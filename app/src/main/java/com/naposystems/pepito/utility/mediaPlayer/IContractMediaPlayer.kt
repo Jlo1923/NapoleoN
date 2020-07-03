@@ -27,8 +27,10 @@ interface IContractMediaPlayer {
     fun forwardMilliseconds(audioId: String, millis: Long)
     fun changeSpeed(audioId: String)
     fun resetMediaPlayer()
+    fun resetMediaPlayer(attachmentWebId: String)
     fun setDuration(duration: Long)
     fun getCurrentPosition(): Int
     fun getMax(): Int
     fun getAudioId(): String
+    fun isPlaying(): Boolean
 }

@@ -1,6 +1,7 @@
 package com.naposystems.pepito.db.dao.message
 
 import android.content.Context
+import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.naposystems.pepito.BuildConfig
@@ -10,7 +11,10 @@ import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -233,6 +237,9 @@ class MessageLocalDataSource @Inject constructor(
                 if (messageAndAttachment.attachmentList.isNotEmpty()) {
                     messageAndAttachment.attachmentList.forEach { attachment: Attachment ->
                         attachment.deleteFile(context)
+                        withContext(Dispatchers.Main) {
+                            MediaPlayerManager.resetMediaPlayer(messageAndAttachment.message.webId)
+                        }
                     }
                 }
             }

@@ -256,6 +256,8 @@ open class ConversationViewHolder constructor(
 
     fun playAudio(playAudio: Boolean) {
         if (playAudio) {
+            audioPlayer?.apply {
+            }
             audioPlayer?.playAudio()
         }
     }
@@ -449,6 +451,7 @@ open class ConversationViewHolder constructor(
         clickListener: ConversationAdapter.ClickListener
     ) {
         Timber.d("loadMediaPlayer, $mediaPlayerManager, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
+//        mediaPlayerManager.resetMediaPlayer()
         with(audioPlayer!!) {
             setMessageAndAttachment(item)
             setMediaPlayerManager(mediaPlayerManager)
