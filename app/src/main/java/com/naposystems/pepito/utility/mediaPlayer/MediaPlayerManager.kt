@@ -400,7 +400,7 @@ object MediaPlayerManager :
 
     override fun setDuration(duration: Long) {
         Timber.d("Conver setDuration, $this, current: ${getCurrentPosition()}, max: ${getMax()}, audioId: ${getAudioId()}")
-        if (duration > 0) {
+        if (duration > 0 && mediaPlayer.duration > 0) {
             mSeekBar?.max = 100
             mSeekBar?.progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
             mediaPlayer.seekTo(mediaPlayer.currentPosition)

@@ -760,6 +760,12 @@ class ConversationFragment : BaseFragment(),
                 viewModel.resetDocumentCopied()
             }
         })
+
+        shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                findNavController().popBackStack(R.id.homeFragment, false)
+            }
+        })
     }
 
     @ExperimentalCoroutinesApi
@@ -1116,7 +1122,6 @@ class ConversationFragment : BaseFragment(),
             childFragmentManager
         ) {
             shareContactViewModel.deleteConversation(args.contact.id)
-            findNavController().popBackStack(R.id.homeFragment, false)
         }
     }
 

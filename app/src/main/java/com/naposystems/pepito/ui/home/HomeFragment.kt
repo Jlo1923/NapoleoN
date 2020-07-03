@@ -216,7 +216,7 @@ class HomeFragment : Fragment() {
         (activity as MainActivity).getUser()
     }
 
-    private fun goToAddContactFragment(){
+    private fun goToAddContactFragment() {
         findNavController().navigate(
             HomeFragmentDirections.actionHomeFragmentToAddContactFragment(
                 location = Constants.LocationAddContact.HOME.location

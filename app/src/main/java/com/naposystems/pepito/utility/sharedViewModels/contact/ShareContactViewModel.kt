@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class ShareContactViewModel @Inject constructor(
     private val repository: ShareContactRepository
-): ViewModel(), IContractShareContact.ViewModel  {
+) : ViewModel(), IContractShareContact.ViewModel {
 
     private val _webServiceErrors = MutableLiveData<List<String>>()
     val webServiceErrors: LiveData<List<String>>
@@ -24,6 +24,10 @@ class ShareContactViewModel @Inject constructor(
     private val _muteConversationWsError = MutableLiveData<List<String>>()
     val muteConversationWsError: LiveData<List<String>>
         get() = _muteConversationWsError
+
+    private val _conversationDeleted = MutableLiveData<Boolean>()
+    val conversationDeleted: LiveData<Boolean>
+        get() = _conversationDeleted
 
     override fun sendBlockedContact(contact: Contact) {
         viewModelScope.launch {
@@ -77,6 +81,7 @@ class ShareContactViewModel @Inject constructor(
     override fun deleteConversation(contactId: Int) {
         viewModelScope.launch {
             repository.deleteConversation(contactId)
+            _conversationDeleted.value = true
         }
     }
 
@@ -85,8 +90,11 @@ class ShareContactViewModel @Inject constructor(
             try {
                 val response = repository.muteConversation(contactId, MuteConversationReqDTO())
 
-                if(response.isSuccessful) {
-                    repository.muteConversationLocal(contactId, Utils.convertBooleanToInvertedInt(contactSilenced))
+                if (response.isSuccessful) {
+                    repository.muteConversationLocal(
+                        contactId,
+                        Utils.convertBooleanToInvertedInt(contactSilenced)
+                    )
                 } else {
                     _muteConversationWsError.value = repository.muteError(response)
                 }
