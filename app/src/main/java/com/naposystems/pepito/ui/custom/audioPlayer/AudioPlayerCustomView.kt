@@ -146,7 +146,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     //region Implementation IContractAudioPlayer
 
     override fun enablePlayButton(isEnable: Boolean) {
-        Timber.d("enablePlayButton: $isEnable")
+        Timber.d("Conver enablePlayButton: $isEnable, currentPosition: ${mediaPlayerManager?.getCurrentPosition()}, max: ${mediaPlayerManager?.getMax()}")
         binding.imageButtonPlay.visibility = if (isEnable) View.VISIBLE else View.INVISIBLE
         binding.imageButtonPlay.isEnabled = isEnable
     }
@@ -190,6 +190,8 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         Timber.d("setDuration: $duration")
         binding.textViewDuration.text = Utils.getDuration(duration, false)
         binding.textViewDuration.visibility = if (duration == 0L) View.GONE else View.VISIBLE
+        mediaPlayerManager?.setSeekbar(binding.seekbar)
+        mediaPlayerManager?.setDuration(duration)
     }
 
     //endregion

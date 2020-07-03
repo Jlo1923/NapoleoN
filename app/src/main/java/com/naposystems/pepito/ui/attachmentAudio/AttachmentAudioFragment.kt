@@ -42,9 +42,6 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
     private lateinit var adapter: AttachmentAudioAdapter
     private val args: AttachmentAudioFragmentArgs by navArgs()
 
-    private val mediaPlayerManager: MediaPlayerManager by lazy {
-        MediaPlayerManager(requireContext())
-    }
 
     private val animationScaleUp: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -82,8 +79,10 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
             findNavController().navigateUp()
         }
 
-        mediaPlayerManager.isEncryptedFile(false)
-        mediaPlayerManager.setListener(this)
+        MediaPlayerManager.setContext(requireContext())
+        MediaPlayerManager.initializeBluetoothManager()
+        MediaPlayerManager.isEncryptedFile(false)
+        MediaPlayerManager.setListener(this)
 
         setupAdapter()
 
@@ -151,7 +150,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
                 mediaStoreAudio: MediaStoreAudio,
                 imageButtonPlay: AnimatedTwoVectorView
             ) {
-                mediaPlayerManager.apply {
+                MediaPlayerManager.apply {
                     setImageButtonPlay(imageButtonPlay)
                     setAudioId(mediaStoreAudio.id.toString())
                     isEncryptedFile(false)
@@ -166,7 +165,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     override fun onDestroy() {
-        mediaPlayerManager.resetMediaPlayer()
+        MediaPlayerManager.resetMediaPlayer()
         super.onDestroy()
     }
 

@@ -27,13 +27,11 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class MediaPlayerManager(private val context: Context) :
+object MediaPlayerManager :
     SensorEventListener, IContractMediaPlayer, BluetoothStateManager.BluetoothStateListener {
 
-    companion object {
-        private const val NORMAL_SPEED = 1.0f
-        private const val TWO_X_SPEED = 1.5f
-    }
+    private const val NORMAL_SPEED = 1.0f
+    private const val TWO_X_SPEED = 1.5f
 
     private val mediaPlayer: MediaPlayer by lazy {
         MediaPlayer().apply {
@@ -44,6 +42,8 @@ class MediaPlayerManager(private val context: Context) :
             )
         }
     }
+
+    private lateinit var context: Context
 
     private var mStartAudioTime: Long = 0L
     private var mIsEncryptedFile: Boolean = false
@@ -83,12 +83,15 @@ class MediaPlayerManager(private val context: Context) :
             Sensor.TYPE_PROXIMITY
         )
     }
-    private val mAudioManager: AudioManager =
+    private val mAudioManager: AudioManager by lazy {
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
 
     private var bluetoothStateManager: BluetoothStateManager? = null
 
-    private var audioManagerCompat = AudioManagerCompat.create(context)
+    private val audioManagerCompat by lazy {
+        AudioManagerCompat.create(context)
+    }
 
     private var isProximitySensorActive: Boolean = false
 
@@ -98,12 +101,8 @@ class MediaPlayerManager(private val context: Context) :
         fun onCompleteAudio(messageWebId: String)
     }
 
-    init {
-        bluetoothStateManager = BluetoothStateManager(context, this)
-    }
-
     private fun setSeekbarProgress() {
-        mSeekBar?.progress = mediaPlayer.currentPosition
+        mSeekBar?.progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
     }
 
     private fun deleteTempFile() {
@@ -179,6 +178,15 @@ class MediaPlayerManager(private val context: Context) :
     //endregion
 
     //region Implementation
+
+    override fun setContext(context: Context) {
+        this.context = context
+    }
+
+    override fun initializeBluetoothManager() {
+        bluetoothStateManager = BluetoothStateManager(context, this)
+    }
+
     override fun setAudioId(audioId: String) {
         this.currentAudioId = audioId
     }
@@ -194,6 +202,8 @@ class MediaPlayerManager(private val context: Context) :
     override fun playAudio(progress: Double, isEarpiece: Boolean) {
         try {
             mStartAudioTime = System.currentTimeMillis()
+
+            Timber.d("Conver currentPosition: ${mediaPlayer.currentPosition}, seekbar.max: ${mSeekBar?.max}")
 
             mediaPlayer.apply {
 
@@ -234,7 +244,8 @@ class MediaPlayerManager(private val context: Context) :
 
                 mediaPlayer.setOnPreparedListener {
 
-                    mSeekBar?.max = duration
+                    Timber.d("Conver setOnPreparedListener: ${mSeekBar?.max}, duration: $duration, progress: $progress")
+                    mSeekBar?.max = 100
 
                     if (progress > 0) {
                         mediaPlayer.seekTo((it.duration * progress).toInt())
@@ -328,8 +339,9 @@ class MediaPlayerManager(private val context: Context) :
                     mediaPlayer.seekTo(progress)
                 }
                 try {
+                    Timber.d("Conve onProgressChanged: $progress, duration: ${mediaPlayer.duration}")
                     mTextViewDuration?.text = Utils.getDuration(
-                        (mediaPlayer.duration - progress).toLong(),
+                        (mediaPlayer.duration - ((mediaPlayer.duration * progress) / 100)).toLong(),
                         showHours = false
                     )
                 } catch (e: Exception) {
@@ -387,9 +399,19 @@ class MediaPlayerManager(private val context: Context) :
     }
 
     override fun setDuration(duration: Long) {
-        mSeekBar?.max = duration.toInt()
-        mSeekBar?.progress = mediaPlayer.currentPosition
+        Timber.d("Conver setDuration, $this, current: ${getCurrentPosition()}, max: ${getMax()}, audioId: ${getAudioId()}")
+        if (duration > 0) {
+            mSeekBar?.max = 100
+            mSeekBar?.progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
+            mediaPlayer.seekTo(mediaPlayer.currentPosition)
+        }
     }
+
+    override fun getCurrentPosition() = mediaPlayer.currentPosition
+
+    override fun getMax() = mSeekBar?.max ?: -1
+
+    override fun getAudioId() = this.currentAudioId
 
     override fun resetMediaPlayer() {
         deleteTempFile()

@@ -229,6 +229,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     openMenu()
                 }
                 R.id.conversationFragment -> {
+                    showToolbar()
+                    enableDrawer()
                     dontOpenMenu()
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f

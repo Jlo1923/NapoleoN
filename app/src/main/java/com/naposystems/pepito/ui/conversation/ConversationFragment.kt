@@ -187,10 +187,6 @@ class ConversationFragment : BaseFragment(),
         AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down)
     }
 
-    private val mediaPlayerManager: MediaPlayerManager by lazy {
-        MediaPlayerManager(requireContext())
-    }
-
     private var emojiKeyboard: NapoleonKeyboard? = null
 
     private val simpleCallback = object : ItemTouchHelper.SimpleCallback(0, RIGHT) {
@@ -397,6 +393,8 @@ class ConversationFragment : BaseFragment(),
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
         binding.textViewUserStatus.isSelected = true
+        MediaPlayerManager.setContext(requireContext())
+        MediaPlayerManager.initializeBluetoothManager()
 
         return binding.root
     }
@@ -1006,8 +1004,8 @@ class ConversationFragment : BaseFragment(),
         super.onDestroy()
         Timber.d("onDestroy")
         resetConversationBackground()
-        mediaPlayerManager.unregisterProximityListener()
-        mediaPlayerManager.resetMediaPlayer()
+        MediaPlayerManager.unregisterProximityListener()
+        MediaPlayerManager.resetMediaPlayer()
         emojiKeyboard?.dispose()
         disposable.dispose()
         if (mRecordingAudioRunnable != null) {
@@ -1288,7 +1286,7 @@ class ConversationFragment : BaseFragment(),
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(
             this,
-            mediaPlayerManager,
+            MediaPlayerManager,
             timeFormatShareViewModel.getValTimeFormat()
         )
 
@@ -1443,8 +1441,8 @@ class ConversationFragment : BaseFragment(),
         super.onPause()
         Timber.d("onPause")
         resetAudioRecording()
-        mediaPlayerManager.pauseAudio()
-        mediaPlayerManager.unregisterProximityListener()
+        MediaPlayerManager.pauseAudio()
+        MediaPlayerManager.unregisterProximityListener()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
