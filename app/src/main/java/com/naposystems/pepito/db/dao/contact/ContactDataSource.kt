@@ -37,6 +37,8 @@ interface ContactDataSource {
 
     suspend fun updateContactSilenced(contactId: Int, contactSilenced : Int)
 
+    suspend fun getContactSilenced(contactId: Int) : Boolean
+
     suspend fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int)
 
     suspend fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int>

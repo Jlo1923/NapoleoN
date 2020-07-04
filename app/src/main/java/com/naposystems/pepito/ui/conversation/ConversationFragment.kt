@@ -303,7 +303,6 @@ class ConversationFragment : BaseFragment(),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        subscribeRxEvents()
 
         inflateCustomActionBar(inflater)
 
@@ -397,18 +396,6 @@ class ConversationFragment : BaseFragment(),
         MediaPlayerManager.initializeBluetoothManager()
 
         return binding.root
-    }
-
-    private fun subscribeRxEvents() {
-        val disposableEmojiSelected = RxBus.listen(RxEvent.EmojiSelected::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                binding.inputPanel.getEditTex().text?.append(
-                    EmojiCompat.get().process(String(it.emoji.code, 0, it.emoji.code.size))
-                )
-            }
-
-        disposable.add(disposableEmojiSelected)
     }
 
     private fun inputPanelCameraButtonClickListener() {
@@ -604,6 +591,14 @@ class ConversationFragment : BaseFragment(),
                     1,
                     obtainTimeSelfDestruct(),
                     shareViewModel.getQuoteWebId() ?: ""
+                )
+            }
+        })
+
+        shareViewModel.emojiSelected.observe(requireActivity(), Observer { emoji ->
+            if (emoji != null) {
+                binding.inputPanel.getEditTex().text?.append(
+                    EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
                 )
             }
         })

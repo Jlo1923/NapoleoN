@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.NapoleonKeyboardEmojiPageFragmentBinding
 import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.model.emojiKeyboard.EmojiCategory
-import com.naposystems.pepito.reactive.RxBus
-import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
+import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 
 class NapoleonKeyboardEmojiPageFragment : Fragment() {
 
@@ -31,6 +31,7 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
 
     private lateinit var binding: NapoleonKeyboardEmojiPageFragmentBinding
     private var emojiCategory: EmojiCategory? = null
+    private val shareViewModel: ConversationShareViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,7 +59,10 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
             val adapter = NapoleonKeyboardEmojiPageAdapter(object :
                 NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener {
                 override fun onEmojiClick(emoji: Emoji) {
-                    RxBus.publish(RxEvent.EmojiSelected(emoji))
+                    shareViewModel.apply {
+                        setEmojiSelected(emoji)
+                        resetEmojiSelected()
+                    }
                 }
             })
             adapter.submitList(it.emojiList)

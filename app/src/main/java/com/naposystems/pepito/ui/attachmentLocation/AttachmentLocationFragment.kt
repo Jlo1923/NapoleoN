@@ -19,6 +19,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -49,8 +50,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
-    GoogleMap.SnapshotReadyCallback, AttachmentLocationAdapter.AttachmentLocationListener {
+class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, AttachmentLocationAdapter.AttachmentLocationListener {
 
     companion object {
         private const val URL = "https://maps.google.com/maps"
@@ -73,6 +73,9 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     private val overshootInterpolator = OvershootInterpolator()
     private lateinit var searchView: SearchView
     private lateinit var mainActivity: MainActivity
+    private lateinit var snapReadyCallback : GoogleMap.SnapshotReadyCallback
+    private lateinit var mapLoadedCallback : OnMapLoadedCallback
+
     private val adapter: AttachmentLocationAdapter by lazy {
         AttachmentLocationAdapter(this)
     }
@@ -234,7 +237,11 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
             googleMap?.addMarker(
                 MarkerOptions().position(currentLocation)
             )
-            googleMap?.snapshot(this)
+            snapReadyCallback = GoogleMap.SnapshotReadyCallback { bitmap ->
+                onSnapshotReady(bitmap)
+            }
+            mapLoadedCallback = OnMapLoadedCallback { googleMap?.snapshot(snapReadyCallback) }
+            googleMap?.setOnMapLoadedCallback(mapLoadedCallback)
         }
     }
 
@@ -291,7 +298,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     }
 
     //region Implementation GoogleMap.SnapshotReadyCallback
-    override fun onSnapshotReady(nullableBitmap: Bitmap?) {
+    private fun onSnapshotReady(nullableBitmap: Bitmap?) {
         nullableBitmap?.let { bitmap ->
             context?.let { context ->
 

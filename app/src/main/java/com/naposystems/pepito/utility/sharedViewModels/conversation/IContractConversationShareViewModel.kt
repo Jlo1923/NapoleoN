@@ -2,6 +2,7 @@ package com.naposystems.pepito.utility.sharedViewModels.conversation
 
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
+import com.naposystems.pepito.model.emojiKeyboard.Emoji
 
 interface IContractConversationShareViewModel {
 
@@ -17,6 +18,8 @@ interface IContractConversationShareViewModel {
     fun getQuoteWebId(): String?
     fun setQuoteWebId(webId: String)
     fun resetQuoteWebId()
+    fun setEmojiSelected(emoji : Emoji)
+    fun resetEmojiSelected()
 
     interface AudioAttachment {
         fun setAudiosSelected(listMediaStoreAudio: List<MediaStoreAudio>)

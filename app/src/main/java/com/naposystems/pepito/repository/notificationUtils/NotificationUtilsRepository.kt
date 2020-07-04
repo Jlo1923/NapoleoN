@@ -1,5 +1,6 @@
 package com.naposystems.pepito.repository.notificationUtils
 
+import com.naposystems.pepito.db.dao.contact.ContactLocalDataSource
 import com.naposystems.pepito.dto.conversation.message.MessageReceivedReqDTO
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 class NotificationUtilsRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
+    private val contactLocalDataSource: ContactLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractNotificationUtils.Repository {
@@ -33,4 +35,12 @@ class NotificationUtilsRepository @Inject constructor(
 
     override fun getIsOnCallPref() =
         sharedPreferencesManager.getBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+
+    override fun getContactSilenced(contactId: Int, silenced : (Boolean) -> Unit) {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                silenced(contactLocalDataSource.getContactSilenced(contactId))
+            }
+        }
+    }
 }
