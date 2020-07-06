@@ -74,7 +74,7 @@
                 app:layout_constraintEnd_toStartOf="@id/textView_document_name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/quote"
-                app:tint="@color/colorTextMyMessage"
+                app:tint="?attr/attrTextColorColorTextMyMessage"
                 tools:src="@drawable/ic_attachment_doc" />
 
             <TextView
