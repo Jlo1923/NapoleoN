@@ -67,7 +67,7 @@
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="attrTextColorNicknameConversation">@color/white</item>
         <item name="attrTextColorNameConversation">@color/white</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
@@ -152,7 +152,7 @@
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="attrTextColorNicknameConversation">@color/color_F2F2F2</item>
         <item name="attrTextColorNameConversation">@color/color_F2F2F2</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/color_F2F2F2</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/color_F2F2F2</item>
         <item name="attrSeekbarProgressTint">@color/color_000015</item>
         <item name="attrSeekbarThumbTint">@color/color_8F8F8F</item>
@@ -236,7 +236,7 @@
         <item name="attrBackgroundTintIconToolbar">@color/white</item>
         <item name="attrTextColorNicknameConversation">@color/white</item>
         <item name="attrTextColorNameConversation">@color/white</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
@@ -321,7 +321,7 @@
         <item name="attrBackgroundTintIconToolbar">@color/white</item>
         <item name="attrTextColorNicknameConversation">@color/white</item>
         <item name="attrTextColorNameConversation">@color/white</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
@@ -404,7 +404,7 @@
         <item name="attrBackgroundTintIconToolbar">@color/white</item>
         <item name="attrTextColorNicknameConversation">@color/white</item>
         <item name="attrTextColorNameConversation">@color/white</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
@@ -487,7 +487,7 @@
         <item name="attrBackgroundTintIconToolbar">@color/white</item>
         <item name="attrTextColorNicknameConversation">@color/color_3CB043</item>
         <item name="attrTextColorNameConversation">@color/color_59BC88</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/white</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
@@ -568,7 +568,7 @@
         <item name="attrBackgroundTintIconToolbar">@color/color_D8A605</item>
         <item name="attrTextColorNicknameConversation">@color/color_D8A605</item>
         <item name="attrTextColorNameConversation">@color/white</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/white</item>
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
@@ -651,7 +651,7 @@
         <item name="attrBackgroundTintIconToolbar">@color/color_59BC88</item>
         <item name="attrTextColorNicknameConversation">@color/white</item>
         <item name="attrTextColorNameConversation">@color/color_59BC88</item>
-        <item name="attrTextColorHintConversationInputPanel">@color/secondaryTextColor</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
         <item name="attrTextColorConversationInputPanel">@color/white</item>
         <item name="attrSeekbarProgressTint">@color/color_B1B0CF</item>
         <item name="attrSeekbarThumbTint">@color/color_81819E</item>

@@ -169,7 +169,6 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         val context = binding.textViewMessageQuote.context
 
         val cryptoMessage = CryptoMessage(context)
-        val isMine = messageAndAttachment.message.isMine == Constants.IsMine.YES.value
         val body = if (isFromInputPanel) {
             val messageNull = messageAndAttachment.message
 
@@ -185,10 +184,8 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
             }
         }
 
-        binding.textViewMessageQuote.text = if (body.isNotEmpty()) {
-            body
-        } else {
-            if (isMine) context.getString(R.string.text_you_quote) else messageAndAttachment.contact.getNickName()
+        if (body.isNotEmpty()) {
+            binding.textViewMessageQuote.text = body
         }
     }
 
@@ -268,12 +265,30 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         messageAndAttachment: MessageAndAttachment
     ) {
         val resourceId: Int? = when (getAttachmentType(messageAndAttachment, isFromInputPanel)) {
-            Constants.AttachmentType.IMAGE.type -> R.drawable.ic_image
-            Constants.AttachmentType.AUDIO.type -> R.drawable.ic_headset
-            Constants.AttachmentType.VIDEO.type -> R.drawable.ic_video
-            Constants.AttachmentType.DOCUMENT.type -> R.drawable.ic_docs
-            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> R.drawable.ic_gif
-            Constants.AttachmentType.LOCATION.type -> R.drawable.ic_location
+            Constants.AttachmentType.IMAGE.type -> {
+                setText(resources.getString(R.string.text_photo_quote))
+                R.drawable.ic_image
+            }
+            Constants.AttachmentType.AUDIO.type -> {
+                setText(resources.getString(R.string.text_audio_quote))
+                R.drawable.ic_headset
+            }
+            Constants.AttachmentType.VIDEO.type -> {
+                setText(resources.getString(R.string.text_video_quote))
+                R.drawable.ic_video
+            }
+            Constants.AttachmentType.DOCUMENT.type -> {
+                setText(resources.getString(R.string.text_document_quote))
+                R.drawable.ic_docs
+            }
+            Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
+                setText(resources.getString(R.string.text_gif))
+                R.drawable.ic_gif
+            }
+            Constants.AttachmentType.LOCATION.type -> {
+                setText(resources.getString(R.string.text_location))
+                R.drawable.ic_location
+            }
             else -> null
         }
 
@@ -283,6 +298,10 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         } ?: run {
             binding.imageViewTypeQuote.visibility = View.GONE
         }
+    }
+
+    private fun setText(text: String) {
+        binding.textViewMessageQuote.text = text
     }
 
     private fun getAttachmentType(
