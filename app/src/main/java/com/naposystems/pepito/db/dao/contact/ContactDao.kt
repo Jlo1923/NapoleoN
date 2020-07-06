@@ -22,6 +22,9 @@ interface ContactDao {
     @Query("UPDATE contact SET silenced = :contactSilenced WHERE id = :contactId")
     fun updateContactSilenced(contactId: Int, contactSilenced: Int)
 
+    @Query("SELECT silenced FROM contact WHERE id = :contactId")
+    suspend fun getContactSilenced(contactId: Int): Boolean
+
     @Query("UPDATE contact SET display_name_fake = :nameFake WHERE id = :contactId ")
     suspend fun updateNameFakeContact(contactId: Int, nameFake: String)
 

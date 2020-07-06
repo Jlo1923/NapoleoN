@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
+import com.naposystems.pepito.model.emojiKeyboard.Emoji
 import com.naposystems.pepito.utility.sharedViewModels.conversation.IContractConversationShareViewModel.AudioAttachment
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,6 +23,10 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
     private val _attachmentTaken = MutableLiveData<Attachment>()
     val attachmentTaken: LiveData<Attachment>
         get() = _attachmentTaken
+
+    private val _emojiSelected = MutableLiveData<Emoji>()
+    val emojiSelected: LiveData<Emoji>
+        get() = _emojiSelected
 
     private val _hasAudioSendClicked = MutableLiveData<Boolean>()
     val hasAudioSendClicked: LiveData<Boolean>
@@ -86,6 +91,14 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     override fun resetQuoteWebId() {
         this._quoteWebId.value = null
+    }
+
+    override fun setEmojiSelected(emoji: Emoji) {
+        _emojiSelected.value = emoji
+    }
+
+    override fun resetEmojiSelected() {
+        _emojiSelected.value = null
     }
 
     //endregion

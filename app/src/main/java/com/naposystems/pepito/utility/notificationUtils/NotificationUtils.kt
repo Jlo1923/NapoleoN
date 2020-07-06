@@ -18,6 +18,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.app.NapoleonApplication
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
+import com.naposystems.pepito.repository.conversation.ConversationRepository
 import com.naposystems.pepito.repository.notificationUtils.NotificationUtilsRepository
 import com.naposystems.pepito.service.webRTCCall.WebRTCCallService
 import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
@@ -28,11 +29,15 @@ import com.naposystems.pepito.utility.Utils.Companion.setupNotificationSound
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.naposystems.pepito.webService.socket.SocketService
 import dagger.android.support.DaggerApplication
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class NotificationUtils @Inject constructor(applicationContext: Context) {
+class NotificationUtils @Inject constructor(
+    applicationContext: Context
+) {
 
     companion object {
         const val NOTIFICATION_RINGING = 950707
@@ -162,32 +167,40 @@ class NotificationUtils @Inject constructor(applicationContext: Context) {
                 contact=194097,
                 type_notification=1,
                 silence=false}*/
-                setupNotificationSound(context, R.raw.sound_message_received)
 
-                val titleKey =
-                    Constants.NotificationKeys.TITLE
-                val bodyKey =
-                    Constants.NotificationKeys.BODY
-                val messageId =
-                    Constants.NotificationKeys.MESSAGE_ID
+                val contact = Constants.NotificationKeys.CONTACT
+                repository.getContactSilenced(data.getValue(contact).toInt(), silenced = { silenced ->
+                    if (silenced) {
+                        Timber.d("--- Esta silenciada la mka esa xd")
+                    } else {
+                        setupNotificationSound(context, R.raw.sound_message_received)
 
-                if (data.containsKey(titleKey)) {
-                    builder.setContentTitle(data.getValue(titleKey))
-                }
+                        val titleKey =
+                            Constants.NotificationKeys.TITLE
+                        val bodyKey =
+                            Constants.NotificationKeys.BODY
+                        val messageId =
+                            Constants.NotificationKeys.MESSAGE_ID
 
-                if (data.containsKey(bodyKey)) {
-                    builder.setContentText(data.getValue(bodyKey))
-                }
+                        if (data.containsKey(titleKey)) {
+                            builder.setContentTitle(data.getValue(titleKey))
+                        }
 
-                if (data.containsKey(messageId) && app != null && !app.isAppVisible()) {
-                    repository.notifyMessageReceived(data.getValue(messageId))
-                }
+                        if (data.containsKey(bodyKey)) {
+                            builder.setContentText(data.getValue(bodyKey))
+                        }
 
-                if (!app!!.isAppVisible()) {
-                    with(NotificationManagerCompat.from(context)) {
-                        notify(Random().nextInt(), builder.build())
+                        if (data.containsKey(messageId) && app != null && !app.isAppVisible()) {
+                            repository.notifyMessageReceived(data.getValue(messageId))
+                        }
+
+                        if (!app!!.isAppVisible()) {
+                            with(NotificationManagerCompat.from(context)) {
+                                notify(Random().nextInt(), builder.build())
+                            }
+                        }
                     }
-                }
+                })
             }
 
             Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
