@@ -10,7 +10,7 @@ data class SubscriptionsResDTO(
     @Json(name = "description") val description: String,
     @Json(name = "type") val type: Int,
     @Json(name = "quantity") val quantity: Int,
-    @Json(name = "price") val price: Int
+    @Json(name = "price") val price: Double
 ) {
     companion object {
         fun toListSubscriptions(listTypeSubscription: List<SubscriptionsResDTO>): List<TypeSubscription> {

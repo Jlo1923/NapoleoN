@@ -14,7 +14,7 @@ interface IContractMediaPlayer {
     fun setAudioId(audioId: String)
     fun setAudioUri(uri: Uri?)
     fun setAudioFileName(fileName: String)
-    fun playAudio(progress: Double = 0.0, isEarpiece: Boolean = false)
+    fun playAudio(progress: Int = 0, isEarpiece: Boolean = false)
     fun pauseAudio()
     fun unregisterProximityListener()
     fun isEncryptedFile(isEncryptedFile: Boolean)
@@ -32,5 +32,6 @@ interface IContractMediaPlayer {
     fun getCurrentPosition(): Int
     fun getMax(): Int
     fun getAudioId(): String
+    fun refreshSeekbarProgress()
     fun isPlaying(): Boolean
 }

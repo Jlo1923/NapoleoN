@@ -18,6 +18,7 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.PowerManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
@@ -343,6 +344,7 @@ class ConversationFragment : BaseFragment(),
             this.verifyCameraAndMicPermission {
                 viewModel.setIsVideoCall(false)
                 viewModel.callContact()
+                binding.buttonCall.isEnabled = false
             }
         }
 
@@ -350,6 +352,7 @@ class ConversationFragment : BaseFragment(),
             this.verifyCameraAndMicPermission {
                 viewModel.setIsVideoCall(true)
                 viewModel.callContact()
+                binding.buttonCall.isEnabled = false
             }
         }
 
@@ -679,6 +682,11 @@ class ConversationFragment : BaseFragment(),
                 )
                 viewModel.resetContactCalledSuccessfully()
                 viewModel.resetIsVideoCall()
+                binding.buttonCall.isEnabled = true
+                binding.buttonVideoCall.isEnabled = true
+            } else {
+                binding.buttonCall.isEnabled = true
+                binding.buttonVideoCall.isEnabled = true
             }
         })
 
@@ -797,6 +805,7 @@ class ConversationFragment : BaseFragment(),
             )
 
             resetAudioRecording()
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 
@@ -1480,6 +1489,7 @@ class ConversationFragment : BaseFragment(),
         binding.containerLockAudio.container.visibility = View.GONE
         recordingTime = 0L
         stopRecording()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun startRecording() {
@@ -1633,6 +1643,7 @@ class ConversationFragment : BaseFragment(),
         isRecordingAudio = true
         val animTime = 200L
 
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding.inputPanel.changeViewSwitcherToCancel()
 
         binding.containerLockAudio.container.animate().scaleX(1.5f).scaleY(1.5f)

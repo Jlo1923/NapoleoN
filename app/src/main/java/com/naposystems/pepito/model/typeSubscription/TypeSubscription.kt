@@ -5,7 +5,7 @@ data class TypeSubscription (
     val description: String,
     val type: Int,
     val quantity: Int,
-    val price: Int
+    val price: Double
 ) {
     override fun toString(): String {
         return description

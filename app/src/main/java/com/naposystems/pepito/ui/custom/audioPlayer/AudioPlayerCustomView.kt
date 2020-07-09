@@ -150,8 +150,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     //region Implementation IContractAudioPlayer
 
     override fun enablePlayButton(isEnable: Boolean) {
-        Timber.d("Conver enablePlayButton: $isEnable, currentPosition: ${mediaPlayerManager?.getCurrentPosition()}, max: ${mediaPlayerManager?.getMax()}")
-        binding.imageButtonPlay.visibility = if (isEnable) View.VISIBLE else View.INVISIBLE
         binding.imageButtonPlay.isEnabled = isEnable
     }
 
@@ -191,10 +189,37 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun setDuration(duration: Long) {
-        Timber.d("setDuration: $duration")
-        binding.textViewDuration.text = Utils.getDuration(duration, false)
-        binding.textViewDuration.visibility = if (duration == 0L) View.GONE else View.VISIBLE
-        mediaPlayerManager?.setDuration(duration)
+        Timber.d("Conver setDuration: $duration, mAudioId: $mAudioId, mediaPlayerAudioId: ${mediaPlayerManager?.getAudioId()}")
+        binding.seekbar.max = 100
+        mediaPlayerManager?.let {
+            if (mAudioId.isNotEmpty() && it.getCurrentPosition() != 0 && duration > 0 && mAudioId == mediaPlayerManager?.getAudioId()) {
+                val progress = ((it.getCurrentPosition() * 100) / duration).toInt()
+                binding.textViewDuration.text = Utils.getDuration(
+                    (duration - ((duration * progress) / 100)),
+                    showHours = false
+                )
+                binding.seekbar.progress = progress
+
+                if (mediaPlayerManager?.isPlaying() == true) {
+                    it.setSeekbar(binding.seekbar)
+                    it.setTextViewDuration(binding.textViewDuration)
+                    it.setImageButtonPlay(binding.imageButtonPlay)
+                    binding.imageButtonPlay.playAnimation()
+                }
+//                mediaPlayerManager?.setDuration(duration)
+                /*if (mediaPlayerManager?.isPlaying() == true && !binding.imageButtonPlay.hasBeenInitialized) {
+                    binding.imageButtonPlay.playAnimation()
+                }*/
+            } else {
+                binding.textViewDuration.text = Utils.getDuration(duration, false)
+                binding.textViewDuration.visibility =
+                    if (duration == 0L) View.GONE else View.VISIBLE
+                binding.seekbar.progress = 0
+            }
+        } ?: run {
+            binding.textViewDuration.text = Utils.getDuration(duration, false)
+            binding.textViewDuration.visibility = if (duration == 0L) View.GONE else View.VISIBLE
+        }
     }
 
     //endregion
@@ -211,7 +236,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             Timber.d("Conver audioPlayerCustom pause")
             this.mListener?.onPause(audioId)
         }*/
-        //this.mListener?.onPause(messageWebId)
+        this.mListener?.onPause(messageWebId)
     }
 
     override fun onCompleteAudio(messageWebId: String) {

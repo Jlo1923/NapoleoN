@@ -5,9 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.AudioAttributes
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.os.PowerManager
@@ -15,6 +13,14 @@ import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
+import androidx.core.net.toUri
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 import com.naposystems.pepito.utility.BluetoothStateManager
@@ -33,16 +39,14 @@ object MediaPlayerManager :
     private const val NORMAL_SPEED = 1.0f
     private const val TWO_X_SPEED = 1.5f
 
-    private val mediaPlayer: MediaPlayer by lazy {
-        MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-        }
-    }
+    private val loadControl: LoadControl = DefaultLoadControl.Builder().setBufferDurationsMs(
+        Int.MAX_VALUE,
+        Int.MAX_VALUE,
+        Int.MAX_VALUE,
+        Int.MAX_VALUE
+    ).createDefaultLoadControl()
 
+    private var mediaPlayer: SimpleExoPlayer? = null
     private lateinit var context: Context
 
     private var mStartAudioTime: Long = 0L
@@ -62,6 +66,8 @@ object MediaPlayerManager :
     private var mTextViewDuration: TextView? = null
     private var mListener: Listener? = null
     private var tempFile: File? = null
+    private var mDuration: Long = 0L
+
     private val mHandler: Handler by lazy {
         Handler()
     }
@@ -102,17 +108,13 @@ object MediaPlayerManager :
     }
 
     private fun setSeekbarProgress() {
-        if (mediaPlayer.duration > 0) {
-            val progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
+        mediaPlayer?.let {
+            if (it.duration > 0) {
+                val progress = ((it.currentPosition * 100) / it.duration)
 
-            Timber.d("Conver setSeekbarProgress: $progress")
+                Timber.d("Conver setSeekbarProgress: $progress, position: ${it.currentPosition}, duration: ${it.duration}, seekbar: ${mSeekBar == null}")
 
-            mSeekBar?.progress = progress
-
-            if (progress >= 100) {
-                mImageButtonPlay?.reverseAnimation()
-                mHandler.removeCallbacks(mRunnable)
-                mListener?.onCompleteAudio(currentAudioId)
+                mSeekBar?.progress = progress.toInt()
             }
         }
     }
@@ -124,8 +126,8 @@ object MediaPlayerManager :
     }
 
     private fun stop() {
-        mediaPlayer.stop()
-        mediaPlayer.release()
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
     }
 
     private fun registerProximityListener() {
@@ -140,16 +142,26 @@ object MediaPlayerManager :
         mImageButtonSpeed?.isEnabled = isEnabled
     }
 
+    private fun buildMediaSource(uri: Uri): MediaSource {
+        Timber.d("Conver buildMediaSource:$uri")
+        val dataSourceFactory: DataSource.Factory =
+            DefaultDataSourceFactory(context, "exoplayer")
+        return ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(uri)
+    }
+
     //region Implementation SensorEventListener
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         //nothing
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        Timber.d("onSensorChanged")
         if (event.sensor.type != Sensor.TYPE_PROXIMITY) return
+        if (mediaPlayer == null || mediaPlayer?.playbackState != Player.STATE_READY) return
 
-        mediaPlayer.let { mediaPlayer ->
+        Timber.d("Conver onSensorChanged: ${event.sensor.type}")
+
+        mediaPlayer?.let { mediaPlayer ->
             val streamType: Int =
                 if (event.values[0] < 5f && event.values[0] != mProximitySensor.maximumRange) {
                     AudioManager.STREAM_VOICE_CALL
@@ -157,32 +169,34 @@ object MediaPlayerManager :
                     AudioManager.STREAM_MUSIC
                 }
 
-            if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn
-            ) {
-                val position = mediaPlayer.currentPosition.toDouble()
-                val duration = mediaPlayer.duration.toDouble()
-                val progress = position / duration
+            if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn) {
+                val progress =
+                    ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
+                Timber.d("Conver progress: $progress")
                 wakeLock.acquire()
                 try {
                     isProximitySensorActive = true
                     mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
                     mSpeed = NORMAL_SPEED
+                    mHandler.removeCallbacks(mRunnable)
                     mediaPlayer.stop()
-                    mediaPlayer.reset()
-                    playAudio(progress = progress, isEarpiece = true)
+                    mediaPlayer.release()
+                    this.mediaPlayer = null
+                    playAudio(progress = progress.toInt(), isEarpiece = true)
                 } catch (e: IOException) {
                     Timber.e(e)
                 }
-            } else if (streamType == AudioManager.STREAM_MUSIC && System.currentTimeMillis() - mStartAudioTime > 500) {
-                unregisterProximityListener()
+            } else if (streamType == AudioManager.STREAM_MUSIC && System.currentTimeMillis() - mStartAudioTime > 500 && !mAudioManager.isWiredHeadsetOn) {
+//                unregisterProximityListener()
                 isProximitySensorActive = false
                 if (wakeLock.isHeld) {
                     wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                 }
                 if (mediaPlayer.isPlaying) {
-                    mediaPlayer.pause()
+                    mediaPlayer.playWhenReady = false
                     mImageButtonPlay?.reverseAnimation()
                     mListener?.onPauseAudio(currentAudioId)
+                    mHandler.removeCallbacks(mRunnable)
                 }
             }
         }
@@ -200,6 +214,12 @@ object MediaPlayerManager :
     }
 
     override fun setAudioId(audioId: String) {
+        if (mPreviousAudioId != audioId) {
+            mSeekBar?.progress = 0
+            if (mediaPlayer?.isPlaying == true) {
+                mImageButtonPlay?.reverseAnimation()
+            }
+        }
         this.currentAudioId = audioId
     }
 
@@ -211,47 +231,192 @@ object MediaPlayerManager :
         this.currentAudioFileName = fileName
     }
 
-    override fun playAudio(progress: Double, isEarpiece: Boolean) {
+    override fun playAudio(progress: Int, isEarpiece: Boolean) {
+
         try {
-            mStartAudioTime = System.currentTimeMillis()
 
-            Timber.d("Conver currentPosition: ${mediaPlayer.currentPosition}, seekbar.max: ${mSeekBar?.max}")
+            mAudioManager.isSpeakerphoneOn = !isProximitySensorActive
 
-            mediaPlayer.apply {
+            if (mPreviousAudioId == currentAudioId && progress == 0) {
+                if (mediaPlayer != null) {
+                    if (mediaPlayer?.isPlaying == true) {
+                        mImageButtonPlay?.reverseAnimation()
+                        mHandler.removeCallbacks(mRunnable)
+                        mListener?.onPauseAudio(currentAudioId)
+                    } else {
+                        mImageButtonPlay?.playAnimation()
+                        mRunnable = Runnable {
+                            setSeekbarProgress()
 
-                if (!mIsBluetoothConnected)
-                    registerProximityListener()
+                            mHandler.postDelayed(
+                                mRunnable,
+                                50
+                            )
+                        }
+                        mHandler.postDelayed(mRunnable, 0)
+                    }
+                    mediaPlayer?.playWhenReady = !mediaPlayer!!.isPlaying
+                }
+            } else {
 
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setContentType(if (isEarpiece) AudioAttributes.CONTENT_TYPE_SPEECH else AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(if (isEarpiece) AudioAttributes.USAGE_VOICE_COMMUNICATION else AudioAttributes.USAGE_MEDIA)
-                        .build()
+                mPreviousAudioId = currentAudioId
+
+                mStartAudioTime = System.currentTimeMillis()
+
+                mediaPlayer?.stop()
+                mediaPlayer?.release()
+
+                Timber.d("Conver currentPosition: ${mediaPlayer?.currentPosition}, seekbar.max: ${mSeekBar?.max}, isProximitySensorActive: $isProximitySensorActive")
+
+                mediaPlayer = ExoPlayerFactory.newSimpleInstance(
+                    context,
+                    DefaultRenderersFactory(context),
+                    DefaultTrackSelector(),
+                    loadControl
                 )
 
+                with(mediaPlayer!!) {
+
+                    if (!mIsBluetoothConnected)
+                        registerProximityListener()
+
+                    /*if (mPreviousAudioId != currentAudioId || progress > 0) {
+
+                        *//*stop()
+                    mediaPlayer.release()*//*
+
+                        mPreviousAudioId = currentAudioId
+
+                        Timber.d("Conver mIsEncryptedFile: $mIsEncryptedFile")
+
+                    }*/
+
+                    prepare(
+                        buildMediaSource(
+                            if (mIsEncryptedFile) {
+                                tempFile = FileManager.createTempFileFromEncryptedFile(
+                                    context,
+                                    Constants.AttachmentType.AUDIO.type,
+                                    currentAudioFileName!!,
+                                    "mp3"
+                                )
+
+                                tempFile?.toUri()!!
+                            } else {
+                                currentAudioUri!!
+                            }
+                        )
+                    )
+
+                    audioAttributes = AudioAttributes.Builder()
+                        .setContentType(if (isProximitySensorActive) C.CONTENT_TYPE_SPEECH else C.CONTENT_TYPE_MUSIC)
+                        .setUsage(if (isProximitySensorActive) C.USAGE_VOICE_COMMUNICATION else C.USAGE_MEDIA)
+                        .build()
+
+                    audioManagerCompat.requestCallAudioFocus()
+                    mAudioManager.isSpeakerphoneOn = !isProximitySensorActive
+
+                    playWhenReady = true
+
+                    addListener(object : Player.EventListener {
+
+                        var started = false
+
+                        override fun onPlayerStateChanged(
+                            playWhenReady: Boolean,
+                            playbackState: Int
+                        ) {
+                            Timber.d("Conver onPlayerStateChanged: $playWhenReady, $playbackState")
+
+                            when (playbackState) {
+                                Player.STATE_READY -> {
+                                    Timber.d("Conver onPrepared ${mediaPlayer?.bufferedPercentage} buffered")
+                                    if (mediaPlayer == null) return
+
+                                    if (started) {
+                                        Timber.d("Conver Already started. Ignoring.")
+                                        return
+                                    }
+                                    started = true
+
+                                    mediaPlayer?.let {
+                                        if (progress > 0) {
+                                            Timber.d("Conver seekto: ${(it.duration * progress)}")
+                                            it.seekTo((it.duration * progress) / 100)
+                                        }
+
+                                        /*if (mDuration > 0 && it.duration > 0) {
+                                            val currentProgress =
+                                                ((it.currentPosition * 100) / it.duration)
+                                            mSeekBar?.max = 100
+                                            mSeekBar?.progress = currentProgress.toInt()
+                                            it.seekTo((duration * currentProgress) / 100)
+                                        }*/
+
+                                    }
+
+                                    mSensorManager.registerListener(
+                                        this@MediaPlayerManager,
+                                        mProximitySensor,
+                                        SensorManager.SENSOR_DELAY_NORMAL
+                                    )
+
+                                    Timber.d("Conver start audio")
+                                    enableSpeedControl(true)
+
+                                    mRunnable = Runnable {
+                                        setSeekbarProgress()
+
+                                        mHandler.postDelayed(
+                                            mRunnable,
+                                            50
+                                        )
+                                    }
+                                    mHandler.postDelayed(mRunnable, 0)
+                                    mImageButtonPlay?.playAnimation()
+                                }
+
+                                Player.STATE_ENDED -> {
+                                    Timber.i("Conver onComplete")
+                                    mSeekBar?.progress = 0
+                                    mSensorManager.unregisterListener(this@MediaPlayerManager)
+                                    if (wakeLock.isHeld) {
+                                        wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
+                                    }
+
+                                    mImageButtonPlay?.reverseAnimation()
+                                    mHandler.removeCallbacks(mRunnable)
+                                    mListener?.onCompleteAudio(currentAudioId)
+                                }
+                            }
+                        }
+
+                        override fun onPlayerError(error: ExoPlaybackException?) {
+                            Timber.w("Conver MediaPlayer Error: $error")
+
+                            mSensorManager.unregisterListener(this@MediaPlayerManager)
+                            if (wakeLock.isHeld) {
+                                wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
+                            }
+
+                            if (::mRunnable.isInitialized) {
+                                mHandler.removeCallbacks(mRunnable)
+                            }
+
+                            mListener?.onErrorPlayingAudio()
+                        }
+                    })
+
+                    /*
                 if (mPreviousAudioId != currentAudioId || progress > 0) {
 
                     mediaPlayer.stop()
-                    mediaPlayer.reset()
+                    mediaPlayer.release()
 
                     mPreviousAudioId = currentAudioId
 
-                    if (mIsEncryptedFile) {
-                        tempFile = FileManager.createTempFileFromEncryptedFile(
-                            context,
-                            Constants.AttachmentType.AUDIO.type,
-                            currentAudioFileName!!,
-                            "mp3"
-                        )
+                    Timber.d("Conver mIsEncryptedFile: $mIsEncryptedFile")
 
-                        setDataSource(tempFile?.absolutePath)
-                    } else {
-                        val stream =
-                            context.contentResolver.openFileDescriptor(currentAudioUri!!, "r")
-                        setDataSource(stream!!.fileDescriptor)
-                    }
-
-                    prepare()
                 }
 
                 mediaPlayer.setOnPreparedListener {
@@ -260,20 +425,20 @@ object MediaPlayerManager :
                     mSeekBar?.max = 100
 
                     if (progress > 0) {
-                        mediaPlayer.seekTo((it.duration * progress).toInt())
+                        mediaPlayer.seekTo((it.duration * progress))
                     }
                 }
 
-                /*mediaPlayer.setOnCompletionListener {
+                *//*mediaPlayer.setOnCompletionListener {
                     Timber.d("Conver setOnCompletionListener")
                     deleteTempFile()
 //                    resetMediaPlayer()
                     mListener?.onCompleteAudio(currentAudioId)
                     //unregisterProximityListener()
-                }*/
+                }*//*
 
                 if (isPlaying) {
-                    pause()
+                    playWhenReady = false
                     mImageButtonPlay?.reverseAnimation()
                     Timber.d("Conver mediaplayer pause: $currentAudioId")
                     mListener?.onPauseAudio(currentAudioId)
@@ -282,10 +447,11 @@ object MediaPlayerManager :
                     setSeekbarProgress()
 
                 } else {
+                    Timber.d("Conver start audio")
                     enableSpeedControl(true)
                     audioManagerCompat.requestCallAudioFocus()
                     mAudioManager.isSpeakerphoneOn = !(isProximitySensorActive || isEarpiece)
-                    start()
+                    playWhenReady = true
 
                     mRunnable = Runnable {
                         setSeekbarProgress()
@@ -297,26 +463,27 @@ object MediaPlayerManager :
                     }
                     mHandler.postDelayed(mRunnable, 0)
                     mImageButtonPlay?.playAnimation()
+                }*/
                 }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.e("Conver error: ${e.message}")
             mListener?.onErrorPlayingAudio()
         }
     }
 
     override fun unregisterProximityListener() {
         if (wakeLock.isHeld) {
-            wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
+            wakeLock.release()
         }
         mSensorManager.unregisterListener(this, mProximitySensor)
     }
 
     override fun pauseAudio() {
-        if (mediaPlayer.isPlaying) {
+        if (mediaPlayer?.isPlaying == true) {
             mImageButtonPlay?.reverseAnimation()
         }
-        mediaPlayer.pause()
+        mediaPlayer?.playWhenReady = false
     }
 
     override fun isEncryptedFile(isEncryptedFile: Boolean) {
@@ -328,9 +495,9 @@ object MediaPlayerManager :
     }
 
     override fun setImageButtonPlay(imageButtonPlay: AnimatedTwoVectorView) {
-        if (this.mImageButtonPlay != imageButtonPlay) {
+        /*if (this.mImageButtonPlay != imageButtonPlay) {
             this.mImageButtonPlay?.reverseAnimation()
-        }
+        }*/
         this.mImageButtonPlay = imageButtonPlay
     }
 
@@ -343,24 +510,26 @@ object MediaPlayerManager :
     }
 
     override fun setSeekbar(seekBar: AppCompatSeekBar) {
-        if (this.mSeekBar != null && this.mSeekBar != seekBar) {
+        /*if (this.mSeekBar != null && this.mSeekBar != seekBar) {
             this.mSeekBar?.progress = 0
-        }
+        }*/
         this.mSeekBar = seekBar
 
         this.mSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    mediaPlayer.seekTo(progress)
-                }
-                try {
-                    Timber.d("Conve onProgressChanged: $progress, duration: ${mediaPlayer.duration}")
-                    mTextViewDuration?.text = Utils.getDuration(
-                        (mediaPlayer.duration - ((mediaPlayer.duration * progress) / 100)).toLong(),
-                        showHours = false
-                    )
-                } catch (e: Exception) {
-                    Timber.e(e)
+                mediaPlayer?.let {
+                    if (fromUser) {
+                        it.seekTo(progress.toLong())
+                    }
+                    try {
+                        Timber.d("Conve onProgressChanged: $progress, duration: ${it.duration}")
+                        mTextViewDuration?.text = Utils.getDuration(
+                            (it.duration - ((it.duration * progress) / 100)),
+                            showHours = false
+                        )
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
                 }
             }
 
@@ -379,13 +548,16 @@ object MediaPlayerManager :
     }
 
     override fun rewindMilliseconds(audioId: String, millis: Long) {
-        if (mSeekBar != null && audioId == mPreviousAudioId) {
-            val minusValue = mediaPlayer.currentPosition - millis
+        mediaPlayer?.let {
+            if (mSeekBar != null && audioId == currentAudioId) {
+                val minusValue = it.currentPosition - millis
 
-            if (mediaPlayer.currentPosition >= millis) {
-                mediaPlayer.seekTo(minusValue.toInt())
-            } else {
-                mediaPlayer.seekTo(0)
+                if (it.currentPosition >= millis) {
+                    mSeekBar?.progress = ((minusValue * 100) / it.duration).toInt()
+                    it.seekTo(minusValue)
+                } else {
+                    it.seekTo(0)
+                }
             }
         }
     }
@@ -399,38 +571,50 @@ object MediaPlayerManager :
                 mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
                 NORMAL_SPEED
             }
-            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(mSpeed)
+            val playbackParameters = PlaybackParameters(mSpeed)
+            mediaPlayer?.playbackParameters = playbackParameters
         }
     }
 
     override fun forwardMilliseconds(audioId: String, millis: Long) {
-        if (mSeekBar != null && mPreviousAudioId == audioId) {
-            val minorValue = mediaPlayer.duration - (millis + TimeUnit.SECONDS.toMillis(1))
+        mediaPlayer?.let {
+            if (mSeekBar != null && currentAudioId == audioId) {
+                val minorValue = it.duration - (millis + TimeUnit.SECONDS.toMillis(1))
 
-            if (mSeekBar!!.progress <= minorValue) {
-                mediaPlayer.seekTo(mediaPlayer.currentPosition + 5000)
+                if (mSeekBar!!.progress <= minorValue) {
+                    mSeekBar?.progress = (((it.currentPosition + 5000) * 100) / it.duration).toInt()
+                    it.seekTo(it.currentPosition + 5000)
+                }
             }
         }
     }
 
     override fun setDuration(duration: Long) {
-        Timber.d("Conver setDuration, $this, current: ${getCurrentPosition()}, max: ${getMax()}, audioId: ${getAudioId()}")
-        if (duration > 0 && mediaPlayer.duration > 0) {
-            mSeekBar?.max = 100
-            mSeekBar?.progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
-            mediaPlayer.seekTo(mediaPlayer.currentPosition)
+        mediaPlayer?.let {
+            if (duration > 0 && it.duration > 0) {
+                val progress = ((it.currentPosition * 100) / it.duration)
+                Timber.d("Conver setDuration: $duration, current: ${getCurrentPosition()}, max: ${getMax()}, audioId: ${getAudioId()}, progress: $progress")
+                mSeekBar?.max = 100
+                mSeekBar?.progress = progress.toInt()
+                this.mDuration = duration
+            }
         }
     }
 
-    override fun getCurrentPosition() = mediaPlayer.currentPosition
+    override fun getCurrentPosition() = mediaPlayer?.currentPosition?.toInt() ?: 0
 
     override fun getMax() = mSeekBar?.max ?: -1
 
     override fun getAudioId() = this.currentAudioId
 
-    override fun isPlaying() = mediaPlayer.isPlaying
+    override fun isPlaying() = mediaPlayer?.isPlaying ?: false
+
+    override fun refreshSeekbarProgress() {
+        setSeekbarProgress()
+    }
 
     override fun resetMediaPlayer() {
+        Timber.d("Conver resetMediaPlayer")
         deleteTempFile()
 
         if (::mRunnable.isInitialized) {
@@ -444,13 +628,15 @@ object MediaPlayerManager :
         mPreviousAudioId = null
         mSeekBar?.progress = 0
         mSeekBar = null
-        mTextViewDuration?.text = ""
         mTextViewDuration = null
         mSpeed = NORMAL_SPEED
 
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+
         unregisterProximityListener()
-        mediaPlayer.pause()
-        mediaPlayer.reset()
+
     }
 
     override fun resetMediaPlayer(messageWebId: String) {
@@ -472,9 +658,12 @@ object MediaPlayerManager :
             mTextViewDuration = null
             mSpeed = NORMAL_SPEED
 
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+            mediaPlayer = null
+
             unregisterProximityListener()
-            mediaPlayer.pause()
-            mediaPlayer.reset()
+
         }
     }
     //endregion

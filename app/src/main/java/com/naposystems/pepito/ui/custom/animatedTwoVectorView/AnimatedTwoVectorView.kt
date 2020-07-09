@@ -64,5 +64,7 @@ class AnimatedTwoVectorView(context: Context, attrs: AttributeSet) :
         hasBeenInitialized = false
         morph()
     }
+
+    override fun hasBeenInitialized() = hasBeenInitialized
     //endregion
 }

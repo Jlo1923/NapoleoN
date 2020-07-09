@@ -21,15 +21,14 @@
             android:clickable="true"
             android:focusable="true"
             android:scaleType="fitCenter"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:firstAnimation="@drawable/anim_play_to_pause"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:secondAnimation="@drawable/anim_pause_to_play"
-            app:srcCompat="@drawable/ic_play_arrow_black"
-            tools:visibility="visible" />
+            app:srcCompat="@drawable/ic_play_arrow_black" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"
