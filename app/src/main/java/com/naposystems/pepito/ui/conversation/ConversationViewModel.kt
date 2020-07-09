@@ -437,9 +437,11 @@ class ConversationViewModel @Inject constructor(
                     }
                 } else {
                     repository.unSubscribeToChannel(contact, channel)
+                    _contactCalledSuccessfully.value = null
                 }
             } catch (e: Exception) {
                 repository.unSubscribeToChannel(contact, channel)
+                _contactCalledSuccessfully.value = null
                 Timber.e(e)
             }
         }

@@ -295,7 +295,6 @@ open class ConversationViewHolder constructor(
             quote?.visibility = View.GONE
         }
 
-        audioPlayer?.enablePlayButton(false)
         imageViewAttachment?.visibility = View.GONE
         imageButtonState?.visibility = View.GONE
         progressBar?.setProgress(0.0f)
@@ -308,8 +307,6 @@ open class ConversationViewHolder constructor(
         firstAttachment?.let { attachment ->
             Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
 //            Timber.d("hasUploadComplete: $hasUploadComplete")
-
-            audioPlayer?.setDuration(attachment.duration)
 
             if (item.message.status == Constants.MessageStatus.UNREAD.status &&
                 attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status
@@ -336,8 +333,6 @@ open class ConversationViewHolder constructor(
                     progressBarIndeterminate?.visibility = View.GONE
                     progressBar?.visibility = View.INVISIBLE
                     progressBar?.setProgress(0f)
-                    Timber.d("enablePlayButton SENT: true")
-                    audioPlayer?.enablePlayButton(true)
                 }
                 Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
                     progressBar?.setProgress(0f)
@@ -450,9 +445,10 @@ open class ConversationViewHolder constructor(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener
     ) {
-        Timber.d("loadMediaPlayer, $mediaPlayerManager, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
+        Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
 //        mediaPlayerManager.resetMediaPlayer()
         with(audioPlayer!!) {
+            setAudioId(item.message.webId)
             setMessageAndAttachment(item)
             setMediaPlayerManager(mediaPlayerManager)
             setDuration(attachment.duration)
@@ -495,7 +491,6 @@ open class ConversationViewHolder constructor(
                     )
                 }
             }
-            setAudioId(item.message.webId)
             setListener(object : AudioPlayerCustomView.Listener {
                 override fun onErrorPlayingAudio() {
                     clickListener.errorPlayingAudio()

@@ -98,7 +98,7 @@ class SubscriptionFragment : Fragment() {
                 val selectSubscription = getString(R.string.text_select_subscription)
                 val newListSubscription = listTypeSubscription.toMutableList()
 
-                newListSubscription.add(0, TypeSubscription(0, selectSubscription, 0, 0, 0))
+                newListSubscription.add(0, TypeSubscription(0, selectSubscription, 0, 0, 0.0))
 
                 val adapter = ArrayAdapter(
                     requireContext(),
