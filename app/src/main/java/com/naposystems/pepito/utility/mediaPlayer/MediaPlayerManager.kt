@@ -6,6 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.os.PowerManager
@@ -99,6 +100,17 @@ object MediaPlayerManager :
         AudioManagerCompat.create(context)
     }
 
+    private val soundMediaPlayer: MediaPlayer by lazy {
+        MediaPlayer().apply {
+            setAudioAttributes(
+                android.media.AudioAttributes.Builder()
+                    .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+        }
+    }
+
     private var isProximitySensorActive: Boolean = false
 
     interface Listener {
@@ -148,6 +160,27 @@ object MediaPlayerManager :
             DefaultDataSourceFactory(context, "exoplayer")
         return ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(uri)
+    }
+
+    private fun setupVoiceNoteSound(sound: Int) {
+        try {
+            soundMediaPlayer.apply {
+                reset()
+                setDataSource(
+                    context,
+                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
+                )
+                if (isPlaying) {
+                    stop()
+                    reset()
+                    release()
+                }
+                prepare()
+                start()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     //region Implementation SensorEventListener
@@ -244,6 +277,7 @@ object MediaPlayerManager :
                         mHandler.removeCallbacks(mRunnable)
                         mListener?.onPauseAudio(currentAudioId)
                     } else {
+                        setupVoiceNoteSound(R.raw.sound_voice_note_start)
                         mImageButtonPlay?.playAnimation()
                         mRunnable = Runnable {
                             setSeekbarProgress()
@@ -374,6 +408,7 @@ object MediaPlayerManager :
                                     }
                                     mHandler.postDelayed(mRunnable, 0)
                                     mImageButtonPlay?.playAnimation()
+                                    setupVoiceNoteSound(R.raw.sound_voice_note_start)
                                 }
 
                                 Player.STATE_ENDED -> {
@@ -387,6 +422,7 @@ object MediaPlayerManager :
                                     mImageButtonPlay?.reverseAnimation()
                                     mHandler.removeCallbacks(mRunnable)
                                     mListener?.onCompleteAudio(currentAudioId)
+                                    setupVoiceNoteSound(R.raw.sound_voice_note_end)
                                 }
                             }
                         }

@@ -18,7 +18,6 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.PowerManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
@@ -32,7 +31,6 @@ import androidx.appcompat.app.ActionBar
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
 import androidx.core.graphics.toRect
-import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.activityViewModels
@@ -53,8 +51,6 @@ import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
 import com.naposystems.pepito.entity.message.attachments.Attachment
-import com.naposystems.pepito.reactive.RxBus
-import com.naposystems.pepito.reactive.RxEvent
 import com.naposystems.pepito.ui.actionMode.ActionModeMenu
 import com.naposystems.pepito.ui.attachment.AttachmentDialogFragment
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
@@ -84,7 +80,6 @@ import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShar
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi

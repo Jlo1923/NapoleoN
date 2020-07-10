@@ -39,6 +39,7 @@
                 android:layout_marginTop="@dimen/normal_margin"
                 app:counterEnabled="true"
                 app:counterMaxLength="@dimen/max_length_status"
+                app:counterTextColor="?attr/attrTextColorConversationInputPanel"
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -53,8 +54,8 @@
                     android:lines="1"
                     android:maxLength="@dimen/max_length_status"
                     android:singleLine="true"
-                    android:textColor="?attr/attrTextColorConversationInputPanel"
-                    android:text="@{viewModel.user.status}" />
+                    android:text="@{viewModel.user.status}"
+                    android:textColor="?attr/attrTextColorConversationInputPanel" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView

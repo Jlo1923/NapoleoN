@@ -18,7 +18,6 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.app.NapoleonApplication
 import com.naposystems.pepito.reactive.RxBus
 import com.naposystems.pepito.reactive.RxEvent
-import com.naposystems.pepito.repository.conversation.ConversationRepository
 import com.naposystems.pepito.repository.notificationUtils.NotificationUtilsRepository
 import com.naposystems.pepito.service.webRTCCall.WebRTCCallService
 import com.naposystems.pepito.ui.conversationCall.ConversationCallActivity
@@ -27,10 +26,7 @@ import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils.Companion.setupNotificationSound
 import com.naposystems.pepito.webService.socket.IContractSocketService
-import com.naposystems.pepito.webService.socket.SocketService
 import dagger.android.support.DaggerApplication
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject

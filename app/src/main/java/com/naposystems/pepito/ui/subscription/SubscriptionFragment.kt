@@ -193,6 +193,6 @@ class SubscriptionFragment : Fragment() {
 
     private fun sendPayment() {
         val selectedItem = binding.spinnerPayment.selectedItem as TypeSubscription
-        viewModel.sendPayment(selectedItem.type)
+        viewModel.sendPayment(selectedItem.id)
     }
 }
