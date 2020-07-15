@@ -4,6 +4,7 @@
 
     <item
         android:id="@+id/menu_item_schedule"
+        app:actionLayout="@layout/menu_item_schedule"
         android:title=""
         app:iconTint="?attr/attrBackgroundTintIconToolbar"
         app:showAsAction="ifRoom" />

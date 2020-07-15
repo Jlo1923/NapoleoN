@@ -48,6 +48,7 @@ class ConversationAdapter constructor(
         const val TYPE_MY_MESSAGE_LOCATION = 15
         const val TYPE_INCOMING_MESSAGE_LOCATION = 16
         const val TYPE_MISSED_CALL = 17
+        const val TYPE_SYSTEM_MESSAGE = 18
     }
 
     private var isFirst = false
@@ -289,6 +290,7 @@ class ConversationAdapter constructor(
                 }
                 Constants.MessageType.MISSED_CALL.type,
                 Constants.MessageType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
+                Constants.MessageType.SYSTEM_MESSAGE.type -> TYPE_SYSTEM_MESSAGE
                 else -> {
                     if (conversation.message.isMine == Constants.IsMine.YES.value) {
                         TYPE_MY_MESSAGE
@@ -324,6 +326,7 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE_LOCATION -> MyMessageImageViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE_LOCATION -> IncomingMessageImageViewHolder.from(parent)
             TYPE_MISSED_CALL -> MessageMissedCallViewHolder.from(parent)
+            TYPE_SYSTEM_MESSAGE -> SystemMessageViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
     }
@@ -367,6 +370,8 @@ class ConversationAdapter constructor(
                 }
                 TYPE_MISSED_CALL -> (holder as MessageMissedCallViewHolder)
                     .bind(item, clickListener, timeFormat)
+                TYPE_SYSTEM_MESSAGE -> (holder as SystemMessageViewHolder)
+                    .bind(item, clickListener)
             }
         }
     }

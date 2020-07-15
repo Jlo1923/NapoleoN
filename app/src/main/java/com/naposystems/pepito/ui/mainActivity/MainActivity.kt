@@ -446,6 +446,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun getNavController() = this.navController
 
+    fun getNavView() = findViewById<NavigationView>(R.id.nav_view)
+
     fun changeLayoutHeight(height: Int) {
         val display: Display = windowManager.defaultDisplay
         val size = Point()

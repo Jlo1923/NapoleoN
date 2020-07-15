@@ -12,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.HelpFragmentBinding
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.SharedPreferencesManager
+import com.naposystems.pepito.utility.Utils
 
 class HelpFragment : Fragment() {
 
@@ -42,6 +44,11 @@ class HelpFragment : Fragment() {
         binding.optionAbout.setOnClickListener(aboutClickListener())
         binding.imageButtonAboutOptionEndIcon.setOnClickListener(aboutClickListener())
 
+        binding.optionRepeatShowCase.setOnClickListener(repeatShowCaseClickListener())
+        binding.imageButtonRepeatShowCaseOptionEndIcon.setOnClickListener(
+            repeatShowCaseClickListener()
+        )
+
         return binding.root
     }
 
@@ -71,6 +78,50 @@ class HelpFragment : Fragment() {
         findNavController().navigate(
             HelpFragmentDirections.actionHelpFragmentToContactUsFragment()
         )
+    }
+
+    private fun repeatShowCaseClickListener() = View.OnClickListener {
+        Utils.generalDialog(
+            "Titulo",
+            "Mensaje",
+            true,
+            childFragmentManager,
+            "Aceptar",
+            "Cancelar"
+        ) {
+            val sharedPreferencesManager = SharedPreferencesManager(requireContext())
+
+            sharedPreferencesManager.putBoolean(
+                Constants.SharedPreferences.PREF_SHOW_CASE_FIRST_STEP_HAS_BEEN_SHOW,
+                false
+            )
+            sharedPreferencesManager.putBoolean(
+                Constants.SharedPreferences.PREF_SHOW_CASE_SECOND_STEP_HAS_BEEN_SHOW,
+                false
+            )
+            sharedPreferencesManager.putBoolean(
+                Constants.SharedPreferences.PREF_SHOW_CASE_THIRD_STEP_HAS_BEEN_SHOW,
+                false
+            )
+            sharedPreferencesManager.putBoolean(
+                Constants.SharedPreferences.PREF_SHOW_CASE_FOURTH_STEP_HAS_BEEN_SHOW,
+                false
+            )
+            sharedPreferencesManager.putBoolean(
+                Constants.SharedPreferences.PREF_SHOW_CASE_FIFTH_STEP_HAS_BEEN_SHOW,
+                false
+            )
+            sharedPreferencesManager.putBoolean(
+                Constants.SharedPreferences.PREF_SHOW_CASE_SIXTH_STEP_HAS_BEEN_SHOW,
+                false
+            )
+            sharedPreferencesManager.putBoolean(
+                Constants.SharedPreferences.PREF_SHOW_CASE_SEVENTH_STEP_HAS_BEEN_SHOW,
+                false
+            )
+
+            findNavController().popBackStack()
+        }
     }
 
 }

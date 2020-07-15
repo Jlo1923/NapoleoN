@@ -381,7 +381,8 @@ object Constants {
     enum class MessageType(val type: Int) {
         MESSAGE(1),
         MISSED_CALL(2),
-        MISSED_VIDEO_CALL(3)
+        MISSED_VIDEO_CALL(3),
+        SYSTEM_MESSAGE(4)
     }
 
     object SharedPreferences {
@@ -432,6 +433,16 @@ object Constants {
         //endregion
 
         const val PREF_IS_ON_CALL = "is_on_call"
+
+        //region
+        const val PREF_SHOW_CASE_FIRST_STEP_HAS_BEEN_SHOW = "show_case_first_step_has_been_show"
+        const val PREF_SHOW_CASE_SECOND_STEP_HAS_BEEN_SHOW = "show_case_second_step_has_been_show"
+        const val PREF_SHOW_CASE_THIRD_STEP_HAS_BEEN_SHOW = "show_case_third_step_has_been_show"
+        const val PREF_SHOW_CASE_FOURTH_STEP_HAS_BEEN_SHOW = "show_case_fourth_step_has_been_show"
+        const val PREF_SHOW_CASE_FIFTH_STEP_HAS_BEEN_SHOW = "show_case_fifth_step_has_been_show"
+        const val PREF_SHOW_CASE_SIXTH_STEP_HAS_BEEN_SHOW = "show_case_sixth_step_has_been_show"
+        const val PREF_SHOW_CASE_SEVENTH_STEP_HAS_BEEN_SHOW = "show_case_seventh_step_has_been_show"
+        //endregion
     }
 
     object RegularExpressions {

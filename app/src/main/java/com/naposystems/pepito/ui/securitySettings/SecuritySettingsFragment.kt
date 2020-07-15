@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment
@@ -22,6 +24,7 @@ import com.naposystems.pepito.ui.selfDestructTimeMessageNotSentFragment.SelfDest
 import com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.pepito.utility.showCaseManager.ShowCaseManager
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -41,9 +44,7 @@ class SecuritySettingsFragment : Fragment() {
         viewModelFactory
     }
 
-    private val activateBiometricsViewModel: ActivateBiometricsViewModel by viewModels {
-        viewModelFactory
-    }
+    private val args: SecuritySettingsFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -97,6 +98,17 @@ class SecuritySettingsFragment : Fragment() {
         }
         binding.imageButtonAccountRecoveryOptionEndIcon.setSafeOnClickListener {
             optionRegisterRecoveryAccountClickListener()
+        }
+
+        if (args.showShowCase){
+            ShowCaseManager().apply {
+                setActivity(requireActivity())
+                setListener(object : ShowCaseManager.Listener {
+                    override fun openSecuritySettings() = Unit
+                })
+                setSixthView(binding.imageViewAccountRecoveryOptionStartIcon)
+                showSixth { findNavController().popBackStack() }
+            }
         }
 
         return binding.root
@@ -159,7 +171,8 @@ class SecuritySettingsFragment : Fragment() {
     private fun optionMessageSelfDestructTimeNotSentClickListener() {
         val dialog = SelfDestructTimeMessageNotSentDialogFragment()
         dialog.setListener(
-            object : SelfDestructTimeMessageNotSentDialogFragment.MessageSelfDestructTimeNotSentListener {
+            object :
+                SelfDestructTimeMessageNotSentDialogFragment.MessageSelfDestructTimeNotSentListener {
                 override fun onDestructMessageChange() {
                     selfDestructTimeViewModel.getMessageSelfDestructTimeNotSent()
                 }

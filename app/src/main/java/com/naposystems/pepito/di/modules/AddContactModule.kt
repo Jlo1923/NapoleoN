@@ -2,6 +2,7 @@ package com.naposystems.pepito.di.modules
 
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.contact.ContactLocalDataSource
+import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.repository.addContact.AddContactRepository
 import com.naposystems.pepito.ui.addContact.IContractAddContact
 import com.naposystems.pepito.webService.NapoleonApi
@@ -16,8 +17,9 @@ class AddContactModule {
     @Singleton
     fun provideRepository(
         napoleonApi: NapoleonApi,
-        contactLocalDataSource: ContactDataSource
+        contactLocalDataSource: ContactDataSource,
+        messageLocalDataSource: MessageDataSource
     ): IContractAddContact.Repository {
-        return AddContactRepository(napoleonApi, contactLocalDataSource)
+        return AddContactRepository(napoleonApi, contactLocalDataSource, messageLocalDataSource)
     }
 }

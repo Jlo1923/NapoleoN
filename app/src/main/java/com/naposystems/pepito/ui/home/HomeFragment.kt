@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -15,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
 import com.naposystems.pepito.BuildConfig
@@ -37,11 +40,13 @@ import com.naposystems.pepito.utility.sharedViewModels.contact.ShareContactViewM
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.pepito.utility.showCaseManager.ShowCaseManager
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
+import timber.log.Timber
 import javax.inject.Inject
 
 class HomeFragment : Fragment() {
@@ -79,6 +84,9 @@ class HomeFragment : Fragment() {
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var mFirebaseStorage: FirebaseStorage
     private var isShowingVersionDialog: Boolean = false
+
+    private var addContactsMenuItem: MenuItem? = null
+    private var homeMenuItem: View? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -156,7 +164,7 @@ class HomeFragment : Fragment() {
         timeFormatShareViewModel.getTimeFormat()
 
         viewModel.conversations?.observe(viewLifecycleOwner, Observer {
-            if(it != null) {
+            if (it != null) {
                 adapter.submitList(it)
                 if (it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
                     binding.viewSwitcherChats.showNext()
@@ -228,12 +236,42 @@ class HomeFragment : Fragment() {
         inflater.inflate(R.menu.menu_inbox, menu)
 
         val menuItem = menu.findItem(R.id.add_contact)
+        addContactsMenuItem = menuItem
 
         val actionView = menuItem.actionView
         textViewBadge = actionView.findViewById(R.id.textView_badge)
 
         actionView.setOnClickListener {
             onOptionsItemSelected(menuItem)
+        }
+
+        homeMenuItem =
+            ((activity as MainActivity).findViewById(R.id.toolbar) as MaterialToolbar).getChildAt(1)
+
+        val drawerMenu = (activity as MainActivity).getNavView().menu
+
+        val securitySettingMenuItem =
+            drawerMenu.findItem(R.id.security_settings).actionView as ConstraintLayout
+
+        ShowCaseManager().apply {
+            setListener(object : ShowCaseManager.Listener {
+                override fun openSecuritySettings() {
+                    findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
+                            showShowCase = true
+                        )
+                    )
+                }
+            })
+
+            setActivity(requireActivity())
+            setFirstView(addContactsMenuItem?.actionView!!)
+            setSecondView(binding.fabContacts)
+            setThirdView(binding.viewShowCaseStatus)
+            setFourthView(homeMenuItem!!)
+            setFifthView(securitySettingMenuItem.getChildAt(0))
+
+            showFromFirst()
         }
     }
 
