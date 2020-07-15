@@ -4,9 +4,12 @@ import com.naposystems.pepito.dto.addContact.FriendshipRequestPutResDTO
 import com.naposystems.pepito.dto.addContact.FriendshipRequestResDTO
 import com.naposystems.pepito.dto.addContact.FriendshipRequestsResDTO
 import com.naposystems.pepito.dto.contacts.ContactResDTO
+import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
+import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.addContact.FriendShipRequest
 import com.naposystems.pepito.entity.addContact.FriendShipRequestAdapterType
+import com.naposystems.pepito.entity.message.Message
 import retrofit2.Response
 
 interface IContractAddContact {
@@ -34,5 +37,7 @@ interface IContractAddContact {
         suspend fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
         fun getError(response: Response<FriendshipRequestPutResDTO>): String
         suspend fun addContact(friendShipRequest: FriendShipRequest)
+        suspend fun sendNewContactMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
+        fun insertMessage(message: Message): Long
     }
 }

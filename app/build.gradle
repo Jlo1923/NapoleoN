@@ -264,6 +264,9 @@ dependencies {
 
     //Pusher
     implementation 'com.pusher:pusher-java-client:2.2.1'
+
+    //Showcase
+    implementation 'com.github.wooplr:Spotlight:1.2.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

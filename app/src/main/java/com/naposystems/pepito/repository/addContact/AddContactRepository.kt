@@ -1,10 +1,14 @@
 package com.naposystems.pepito.repository.addContact
 
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
+import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.dto.addContact.*
 import com.naposystems.pepito.dto.contacts.ContactResDTO
+import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
+import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.addContact.FriendShipRequest
+import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.ui.addContact.IContractAddContact
 import com.naposystems.pepito.utility.Constants.FriendshipRequestPutAction
 import com.naposystems.pepito.webService.NapoleonApi
@@ -14,7 +18,8 @@ import javax.inject.Inject
 
 class AddContactRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
-    private val contactLocalDataSource: ContactDataSource
+    private val contactLocalDataSource: ContactDataSource,
+    private val messageLocalDataSource: MessageDataSource
 ) :
     IContractAddContact.Repository {
 
@@ -60,5 +65,13 @@ class AddContactRepository @Inject constructor(
 
     override suspend fun addContact(friendShipRequest: FriendShipRequest) {
         contactLocalDataSource.insertContact(friendShipRequest.contact)
+    }
+
+    override suspend fun sendNewContactMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
+        return napoleonApi.sendMessage(messageReqDTO)
+    }
+
+    override fun insertMessage(message: Message): Long {
+        return messageLocalDataSource.insertMessage(message)
     }
 }

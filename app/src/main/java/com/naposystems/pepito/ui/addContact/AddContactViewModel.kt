@@ -5,13 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
+import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.dto.addContact.FriendshipRequestsResDTO
 import com.naposystems.pepito.dto.contacts.ContactResDTO
+import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.addContact.FriendShipRequest
 import com.naposystems.pepito.entity.addContact.FriendShipRequestAdapterType
+import com.naposystems.pepito.entity.message.Message
+import com.naposystems.pepito.utility.Constants
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class AddContactViewModel @Inject constructor(
@@ -19,6 +25,8 @@ class AddContactViewModel @Inject constructor(
     private val context: Context
 ) :
     ViewModel(), IContractAddContact.ViewModel {
+
+    private val cryptoMessage = CryptoMessage(context)
 
     lateinit var lastFriendshipRequest: Contact
 
@@ -165,6 +173,44 @@ class AddContactViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     repository.addContact(friendShipRequest)
                     _friendshipRequestAcceptedSuccessfully.value = true
+
+                    val body = "@yo soy tu nuevo contacto 😎"
+
+                    val messageReqDTO = MessageReqDTO(
+                        userDestination = friendShipRequest.contact.id,
+                        quoted = "",
+                        body = body,
+                        numberAttachments = 0,
+                        destroy = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time,
+                        messageType = Constants.MessageType.SYSTEM_MESSAGE.type
+                    )
+
+                    val responseMessage = repository.sendNewContactMessage(messageReqDTO)
+
+                    if (responseMessage.isSuccessful) {
+                        val message = Message(
+                            id = 0,
+                            webId = "",
+                            body = body,
+                            quoted = "quote",
+                            contactId = friendShipRequest.contact.id,
+                            updatedAt = 0,
+                            createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+                                .toInt(),
+                            isMine = Constants.IsMine.YES.value,
+                            status = Constants.MessageStatus.SENT.status,
+                            numberAttachments = 0,
+                            messageType = Constants.MessageType.SYSTEM_MESSAGE.type,
+                            selfDestructionAt = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time
+                        )
+
+                        if (BuildConfig.ENCRYPT_API) {
+                            message.encryptBody(cryptoMessage)
+                        }
+
+                        repository.insertMessage(message).toInt()
+                    }
+
                 } else {
                     _friendshipRequestWsError.value = repository.getError(response)
                 }

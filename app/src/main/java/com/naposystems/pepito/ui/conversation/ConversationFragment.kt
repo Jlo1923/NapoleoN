@@ -78,6 +78,7 @@ import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactPro
 import com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.pepito.utility.showCaseManager.ShowCaseManager
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
@@ -938,6 +939,14 @@ class ConversationFragment : BaseFragment(),
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_conversation, menu)
         menuOptionsContact = menu
+
+        val scheduleMenuItem = menu.findItem(R.id.menu_item_schedule)
+
+        ShowCaseManager().apply {
+            setActivity(requireActivity())
+            setSeventhView(scheduleMenuItem.actionView)
+            showFromSeventh()
+        }
 
         contactProfileShareViewModel.contact.value?.let { contact ->
             setTextSilenceOfMenu(contact)
