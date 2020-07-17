@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.home.adapter
 
+import android.graphics.Typeface
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -94,6 +95,7 @@ fun bindIconByConversation(imageView: ImageView, messageAndAttachment: MessageAn
             }
             Constants.MessageType.MISSED_CALL.type -> R.drawable.ic_call_missed_red
             Constants.MessageType.MISSED_VIDEO_CALL.type -> R.drawable.ic_videocall_missed_red
+            Constants.MessageType.NEW_CONTACT.type -> R.drawable.ic_people_tint
             else -> null
         }
 
@@ -136,8 +138,18 @@ fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAtt
                     }
                 }
             }
-            Constants.MessageType.MISSED_CALL.type -> context.getString(R.string.text_missed_voice_call)
-            Constants.MessageType.MISSED_VIDEO_CALL.type -> context.getString(R.string.text_missed_video_call)
+            Constants.MessageType.MISSED_CALL.type -> {
+                textView.setTypeface(textView.typeface, Typeface.ITALIC)
+                context.getString(R.string.text_missed_voice_call)
+            }
+            Constants.MessageType.MISSED_VIDEO_CALL.type -> {
+                textView.setTypeface(textView.typeface, Typeface.ITALIC)
+                context.getString(R.string.text_missed_video_call)
+            }
+            Constants.MessageType.NEW_CONTACT.type -> {
+                textView.setTypeface(textView.typeface, Typeface.ITALIC)
+                messageAndAttach.message.body
+            }
             else -> ""
         }
 
@@ -161,9 +173,12 @@ fun bindStatusMessage(imageView: ImageView, message: Message) {
     val context = imageView.context
     when (message.isMine) {
         Constants.IsMine.YES.value -> {
-            imageView.visibility = View.VISIBLE
-            val drawable = context.resources.getDrawable(drawableId(message.status), context.theme)
-            imageView.setImageDrawable(drawable)
+            if (message.messageType != Constants.MessageType.NEW_CONTACT.type) {
+                imageView.visibility = View.VISIBLE
+                val drawable =
+                    context.resources.getDrawable(drawableId(message.status), context.theme)
+                imageView.setImageDrawable(drawable)
+            }
         }
         else -> {
             imageView.visibility = View.GONE

@@ -290,7 +290,7 @@ class ConversationAdapter constructor(
                 }
                 Constants.MessageType.MISSED_CALL.type,
                 Constants.MessageType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
-                Constants.MessageType.SYSTEM_MESSAGE.type -> TYPE_SYSTEM_MESSAGE
+                Constants.MessageType.NEW_CONTACT.type -> TYPE_SYSTEM_MESSAGE
                 else -> {
                     if (conversation.message.isMine == Constants.IsMine.YES.value) {
                         TYPE_MY_MESSAGE

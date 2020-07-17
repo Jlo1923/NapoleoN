@@ -82,12 +82,12 @@ class HelpFragment : Fragment() {
 
     private fun repeatShowCaseClickListener() = View.OnClickListener {
         Utils.generalDialog(
-            "Titulo",
-            "Mensaje",
+            requireContext().getString(R.string.text_repeat_tutorial),
+            requireContext().getString(R.string.text_message_dialog_repeat_tutorial),
             true,
             childFragmentManager,
-            "Aceptar",
-            "Cancelar"
+            getString(R.string.text_yes),
+            getString(R.string.text_no)
         ) {
             val sharedPreferencesManager = SharedPreferencesManager(requireContext())
 

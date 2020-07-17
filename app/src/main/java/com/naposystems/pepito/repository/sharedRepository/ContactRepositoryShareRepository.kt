@@ -1,6 +1,7 @@
 package com.naposystems.pepito.repository.sharedRepository
 
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
+import com.naposystems.pepito.db.dao.message.MessageDataSource
 import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.sharedViewModels.contactRepository.IContractContactRepositoryShare
@@ -10,7 +11,8 @@ import javax.inject.Inject
 
 class ContactRepositoryShareRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
-    private val contactLocalDataSource: ContactDataSource
+    private val contactLocalDataSource: ContactDataSource,
+    private val messageLocalDataSource: MessageDataSource
 ) : IContractContactRepositoryShare.Repository {
 
     override suspend fun getContacts() {
@@ -23,7 +25,18 @@ class ContactRepositoryShareRepository @Inject constructor(
 
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                contactLocalDataSource.insertOrUpdateContactList(contacts)
+                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
+
+                if (contactsToDelete.isNotEmpty()) {
+
+                    contactsToDelete.forEach { contact ->
+                        messageLocalDataSource.deleteMessageByType(
+                            contact.id,
+                            Constants.MessageType.NEW_CONTACT.type
+                        )
+                        contactLocalDataSource.deleteContact(contact)
+                    }
+                }
             } else {
                 Timber.e(response.errorBody()!!.string())
             }

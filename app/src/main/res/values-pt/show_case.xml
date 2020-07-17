@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="show_case_first_title">AÑADIR CONTACTOS</string>
-    <string name="show_case_first_subtitle">Aquí puedes invitar a personas, buscándolos por su apodo.</string>
-    <string name="show_case_second_title">AGENDA</string>
-    <string name="show_case_second_subtitle">Aquí encuentras los contactos que ya agregaste en NapoleoN Chat.</string>
-    <string name="show_case_third_title">ESTADOS</string>
-    <string name="show_case_third_subtitle">Diles a tus contactos como te encuentras con una frase.</string>
-    <string name="show_case_fourth_title">MENÚ PRINCIPAL</string>
-    <string name="show_case_fourth_subtitle">Sugerimos que primero configures la SEGURIDAD de tu cuenta.</string>
-    <string name="show_case_fifth_title">TU PRIVACIDAD ES NUESTRA PRIORIDAD</string>
-    <string name="show_case_fifth_subtitle">Mantén tus datos a salvo modificando la cuenta a tu gusto.</string>
-    <string name="show_case_sixth_title">NAPOLEON NO GUARDA TUS DATOS</string>
-    <string name="show_case_sixth_subtitle">Si quieres mantener siempre tu mismo usuario, completa las preguntas de seguridad.</string>
-    <string name="show_case_seventh_title">AUTODESTRUCCIÓN DE MENSAJES</string>
-    <string name="show_case_seventh_subtitle">"Personaliza el tiempo de duración de tus mensajes. "</string>
+    <string name="show_case_first_title">ADICIONAR CONTATOS</string>
+    <string name="show_case_first_subtitle">Aqui você pode convidar pessoas à procura de-los por seu apelido.</string>
+    <string name="show_case_second_title">CONTATOS</string>
+    <string name="show_case_second_subtitle">Aqui pode encontrar os contatos que você adicionou na Napoléon bate-papo.</string>
+    <string name="show_case_third_title">ESTADO</string>
+    <string name="show_case_third_subtitle">Diga a seus contatos como você se encontra com uma frase.</string>
+    <string name="show_case_fourth_title">MENU PRINCIPAL</string>
+    <string name="show_case_fourth_subtitle">Damos-lhe diferentes opções para modificar a conta ao seu gosto.</string>
+    <string name="show_case_fifth_title">CONFIGURAÇÕES DE SEGURANÇA</string>
+    <string name="show_case_fifth_subtitle">Mantenha seu cofre informações, definindo a segurança da sua conta.</string>
+    <string name="show_case_sixth_title">Recuperação de conta</string>
+    <string name="show_case_sixth_subtitle">Se você quiser manter o seu mesmo usuário, as questões de segurança completas.</string>
+    <string name="show_case_seventh_title">AUTO-DESTRUIÇÃO DE MENSAGENS</string>
+    <string name="show_case_seventh_subtitle">Personalize a duração de suas mensagens.</string>
+    <string name="text_repeat_tutorial">Tutorial repeat</string>
+    <string name="text_message_dialog_repeat_tutorial">Você quer dar uma visão geral das principais funções do aplicativo?</string>
 </resources>

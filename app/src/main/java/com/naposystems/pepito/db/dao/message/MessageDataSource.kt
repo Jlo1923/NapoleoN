@@ -21,7 +21,7 @@ interface MessageDataSource {
 
     fun updateMessage(message: Message)
 
-    suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected : Int)
+    suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
 
     suspend fun cleanSelectionMessages(contactId: Int)
 
@@ -41,7 +41,7 @@ interface MessageDataSource {
 
     suspend fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
 
-    fun getMessagesForHome() : LiveData<List<MessageAndAttachment>>
+    fun getMessagesForHome(): LiveData<List<MessageAndAttachment>>
 
     suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
 
@@ -52,4 +52,6 @@ interface MessageDataSource {
     suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
 
     fun verifyMessagesToDelete()
+
+    suspend fun deleteMessageByType(contactId: Int, type: Int)
 }

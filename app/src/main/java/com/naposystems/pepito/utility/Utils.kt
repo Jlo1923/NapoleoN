@@ -38,9 +38,6 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.pepito.utility.Constants.SelfDestructTime.*
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
-import com.wooplr.spotlight.SpotlightConfig
-import com.wooplr.spotlight.SpotlightView
-import com.wooplr.spotlight.utils.SpotlightSequence
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
