@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="show_case_first_title">AÑADIR CONTACTOS</string>
-    <string name="show_case_first_subtitle">Aquí puedes invitar a personas, buscándolos por su apodo.</string>
-    <string name="show_case_second_title">AGENDA</string>
-    <string name="show_case_second_subtitle">Aquí encuentras los contactos que ya agregaste en NapoleoN Chat.</string>
-    <string name="show_case_third_title">ESTADOS</string>
-    <string name="show_case_third_subtitle">Diles a tus contactos como te encuentras con una frase.</string>
-    <string name="show_case_fourth_title">MENÚ PRINCIPAL</string>
-    <string name="show_case_fourth_subtitle">Sugerimos que primero configures la SEGURIDAD de tu cuenta.</string>
-    <string name="show_case_fifth_title">TU PRIVACIDAD ES NUESTRA PRIORIDAD</string>
-    <string name="show_case_fifth_subtitle">Mantén tus datos a salvo modificando la cuenta a tu gusto.</string>
-    <string name="show_case_sixth_title">NAPOLEON NO GUARDA TUS DATOS</string>
-    <string name="show_case_sixth_subtitle">Si quieres mantener siempre tu mismo usuario, completa las preguntas de seguridad.</string>
-    <string name="show_case_seventh_title">AUTODESTRUCCIÓN DE MENSAJES</string>
-    <string name="show_case_seventh_subtitle">"Personaliza el tiempo de duración de tus mensajes. "</string>
+    <string name="show_case_first_title">KONTAKTE HINZUFÜGEN</string>
+    <string name="show_case_first_subtitle">Hier können Sie die Menschen für sie durch seinen Spitznamen suchen einladen.</string>
+    <string name="show_case_second_title">KONTAKTE</string>
+    <string name="show_case_second_subtitle">Hier können Sie die Kontakte finden Sie in NapoleoN Chat hinzugefügt haben.</string>
+    <string name="show_case_third_title">ZUSTAND</string>
+    <string name="show_case_third_subtitle">Lassen Sie Ihre Kontakte, wie Sie einen Satz treffen.</string>
+    <string name="show_case_fourth_title">HAUPTMENÜ</string>
+    <string name="show_case_fourth_subtitle">Wir geben Ihnen verschiedene Optionen, um das Konto nach Ihren Wünschen zu ändern.</string>
+    <string name="show_case_fifth_title">SICHERHEITSEINSTELLUNGEN</string>
+    <string name="show_case_fifth_subtitle">Halten Sie Ihre Daten sicher, indem Sie die Sicherheit Ihres Kontos.</string>
+    <string name="show_case_sixth_title">KONTO-WIEDERHERSTELLUNG</string>
+    <string name="show_case_sixth_subtitle">Wenn Sie möchten, dass Ihre gleichen Benutzer, komplette Sicherheitsfragen zu halten.</string>
+    <string name="show_case_seventh_title">SELBSTZERSTÖRUNG NACHRICHTEN</string>
+    <string name="show_case_seventh_subtitle">Passen Sie die Dauer Ihrer Nachrichten.</string>
+    <string name="text_repeat_tutorial">Wiederholung Tutorial</string>
+    <string name="text_message_dialog_repeat_tutorial">Sie wollen einen Überblick über die wichtigsten Funktionen der App geben?</string>
 </resources>

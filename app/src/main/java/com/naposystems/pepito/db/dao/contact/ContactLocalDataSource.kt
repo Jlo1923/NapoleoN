@@ -43,7 +43,7 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
         contactDao.insertContact(contact)
     }
 
-    override suspend fun insertOrUpdateContactList(contactList: List<Contact>) {
+    override suspend fun insertOrUpdateContactList(contactList: List<Contact>): List<Contact> {
         contactList.forEach { remoteContact ->
             val localContact = contactDao.getContactById(remoteContact.id)
             if (localContact != null) {
@@ -57,10 +57,7 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
             }
         }
         val localContacts = getLocaleContacts()
-        val contactsDeleted = localContacts.subtract(contactList)
-        if (contactsDeleted.isNotEmpty()) {
-            deleteContacts(contactsDeleted.toList())
-        }
+        return localContacts.subtract(contactList).toList()
     }
 
     override fun getBlockedContacts(): LiveData<List<Contact>> {

@@ -254,4 +254,8 @@ class MessageLocalDataSource @Inject constructor(
     override fun verifyMessagesToDelete() {
         messageDao.verifyMessagesToDelete()
     }
+
+    override suspend fun deleteMessageByType(contactId: Int, type: Int) {
+        return messageDao.deleteMessageByType(contactId, type)
+    }
 }

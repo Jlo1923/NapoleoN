@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="show_case_first_title">AÑADIR CONTACTOS</string>
-    <string name="show_case_first_subtitle">Aquí puedes invitar a personas, buscándolos por su apodo.</string>
-    <string name="show_case_second_title">AGENDA</string>
-    <string name="show_case_second_subtitle">Aquí encuentras los contactos que ya agregaste en NapoleoN Chat.</string>
-    <string name="show_case_third_title">ESTADOS</string>
-    <string name="show_case_third_subtitle">Diles a tus contactos como te encuentras con una frase.</string>
-    <string name="show_case_fourth_title">MENÚ PRINCIPAL</string>
-    <string name="show_case_fourth_subtitle">Sugerimos que primero configures la SEGURIDAD de tu cuenta.</string>
-    <string name="show_case_fifth_title">TU PRIVACIDAD ES NUESTRA PRIORIDAD</string>
-    <string name="show_case_fifth_subtitle">Mantén tus datos a salvo modificando la cuenta a tu gusto.</string>
-    <string name="show_case_sixth_title">NAPOLEON NO GUARDA TUS DATOS</string>
-    <string name="show_case_sixth_subtitle">Si quieres mantener siempre tu mismo usuario, completa las preguntas de seguridad.</string>
-    <string name="show_case_seventh_title">AUTODESTRUCCIÓN DE MENSAJES</string>
-    <string name="show_case_seventh_subtitle">"Personaliza el tiempo de duración de tus mensajes. "</string>
+    <string name="show_case_first_title">AGGIUNGI DES CONTATTI</string>
+    <string name="show_case_first_subtitle">Ici, vous pouvez che invita les gens à la recherche versare pair eux sono surnom.</string>
+    <string name="show_case_second_title">CONTATTI</string>
+    <string name="show_case_second_subtitle">Trouverez vous ici que vous les contatti Ajoutés Napoléon avez dans le chat.</string>
+    <string name="show_case_third_title">ETAT</string>
+    <string name="show_case_third_subtitle">Faites vos contatti à savoir que vous une frase rencontrez.</string>
+    <string name="show_case_fourth_title">MENU PRINCIPALE</string>
+    <string name="show_case_fourth_subtitle">Vous nous versare différentes donnons opzioni à votre compte modificatore Le Goût.</string>
+    <string name="show_case_fifth_title">LES PARAMÈTRES DE SECURITE</string>
+    <string name="show_case_fifth_subtitle">Gardez votre sécurité de l\'information nel définissant votre sécurité de compte.</string>
+    <string name="show_case_sixth_title">RÉCUPÉRATION DU COMPTE</string>
+    <string name="show_case_sixth_subtitle">Voulez vous garder votre se même utilisateur, veuillez répondre aux domande de sécurité.</string>
+    <string name="show_case_seventh_title">SUICIDIO DI MESSAGGI</string>
+    <string name="show_case_seventh_subtitle">Personnaliser durée de vos messaggi.</string>
+    <string name="text_repeat_tutorial">Ripetere esercitazione</string>
+    <string name="text_message_dialog_repeat_tutorial">Si vuole dare una panoramica delle principali funzioni della app?</string>
 </resources>

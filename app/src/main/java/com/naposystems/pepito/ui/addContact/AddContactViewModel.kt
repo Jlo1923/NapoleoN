@@ -16,7 +16,9 @@ import com.naposystems.pepito.entity.addContact.FriendShipRequest
 import com.naposystems.pepito.entity.addContact.FriendShipRequestAdapterType
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -174,7 +176,9 @@ class AddContactViewModel @Inject constructor(
                     repository.addContact(friendShipRequest)
                     _friendshipRequestAcceptedSuccessfully.value = true
 
-                    val body = "@yo soy tu nuevo contacto 😎"
+                    val user = repository.getUser()
+
+                    val body = context.getString(R.string.text_new_contact)
 
                     val messageReqDTO = MessageReqDTO(
                         userDestination = friendShipRequest.contact.id,
@@ -182,12 +186,16 @@ class AddContactViewModel @Inject constructor(
                         body = body,
                         numberAttachments = 0,
                         destroy = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time,
-                        messageType = Constants.MessageType.SYSTEM_MESSAGE.type
+                        messageType = Constants.MessageType.NEW_CONTACT.type
                     )
 
                     val responseMessage = repository.sendNewContactMessage(messageReqDTO)
 
                     if (responseMessage.isSuccessful) {
+
+                        val currentTime =
+                            TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+
                         val message = Message(
                             id = 0,
                             webId = "",
@@ -200,8 +208,11 @@ class AddContactViewModel @Inject constructor(
                             isMine = Constants.IsMine.YES.value,
                             status = Constants.MessageStatus.SENT.status,
                             numberAttachments = 0,
-                            messageType = Constants.MessageType.SYSTEM_MESSAGE.type,
-                            selfDestructionAt = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time
+                            messageType = Constants.MessageType.NEW_CONTACT.type,
+                            selfDestructionAt = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time,
+                            totalSelfDestructionAt = currentTime.plus(
+                                Utils.convertItemOfTimeInSeconds(Constants.SelfDestructTime.EVERY_SEVEN_DAY.time)
+                            )
                         )
 
                         if (BuildConfig.ENCRYPT_API) {
@@ -215,6 +226,7 @@ class AddContactViewModel @Inject constructor(
                     _friendshipRequestWsError.value = repository.getError(response)
                 }
             } catch (ex: Exception) {
+                Timber.e(ex)
                 _friendshipRequestWsError.value = context.getString(R.string.text_fail)
             }
         }

@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="show_case_first_title">AÑADIR CONTACTOS</string>
-    <string name="show_case_first_subtitle">Aquí puedes invitar a personas, buscándolos por su apodo.</string>
-    <string name="show_case_second_title">AGENDA</string>
-    <string name="show_case_second_subtitle">Aquí encuentras los contactos que ya agregaste en NapoleoN Chat.</string>
-    <string name="show_case_third_title">ESTADOS</string>
-    <string name="show_case_third_subtitle">Diles a tus contactos como te encuentras con una frase.</string>
-    <string name="show_case_fourth_title">MENÚ PRINCIPAL</string>
-    <string name="show_case_fourth_subtitle">Sugerimos que primero configures la SEGURIDAD de tu cuenta.</string>
-    <string name="show_case_fifth_title">TU PRIVACIDAD ES NUESTRA PRIORIDAD</string>
-    <string name="show_case_fifth_subtitle">Mantén tus datos a salvo modificando la cuenta a tu gusto.</string>
-    <string name="show_case_sixth_title">NAPOLEON NO GUARDA TUS DATOS</string>
-    <string name="show_case_sixth_subtitle">Si quieres mantener siempre tu mismo usuario, completa las preguntas de seguridad.</string>
-    <string name="show_case_seventh_title">AUTODESTRUCCIÓN DE MENSAJES</string>
-    <string name="show_case_seventh_subtitle">"Personaliza el tiempo de duración de tus mensajes. "</string>
+    <string name="show_case_first_title">ADD CONTACTS</string>
+    <string name="show_case_first_subtitle">Here you can invite people searching for them by his nickname.</string>
+    <string name="show_case_second_title">CONTACTS</string>
+    <string name="show_case_second_subtitle">Here you find the contacts you\'ve added in NapoleoN Chat.</string>
+    <string name="show_case_third_title">STATE</string>
+    <string name="show_case_third_subtitle">Tell your contacts as you meet a sentence.</string>
+    <string name="show_case_fourth_title">MAIN MENU</string>
+    <string name="show_case_fourth_subtitle">We give you different options to modify the account to your liking.</string>
+    <string name="show_case_fifth_title">SECURITY SETTINGS</string>
+    <string name="show_case_fifth_subtitle">Keep your information safe by setting the security of your account.</string>
+    <string name="show_case_sixth_title">Account Recovery</string>
+    <string name="show_case_sixth_subtitle">If you want to keep your same user, complete security questions.</string>
+    <string name="show_case_seventh_title">SELF-DESTRUCTION OF MESSAGES</string>
+    <string name="show_case_seventh_subtitle">Customize the duration of your messages.</string>
+    <string name="text_repeat_tutorial">Repeat tutorial</string>
+    <string name="text_message_dialog_repeat_tutorial">You want to give an overview of the main functions of the app?</string>
 </resources>

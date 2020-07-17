@@ -4,12 +4,10 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Handler
 import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
+import com.khryzyz.spotlight.SpotlightView
 import com.naposystems.pepito.R
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
-import com.wooplr.spotlight.SpotlightView
 import timber.log.Timber
 import java.util.*
 
@@ -45,16 +43,17 @@ class ShowCaseManager : IContractShowCaseManager {
         uniqueId: String,
         title: String,
         subtitle: String,
+        headingTextSize: Int = 28,
         callback: () -> Unit
     ) {
         if (view != null) {
             SpotlightView.Builder(activity)
                 .introAnimationDuration(200)
                 .enableRevealAnimation(true)
-                .performClick(true)
+                .performClick(false)
                 .fadeinTextDuration(200)
                 .headingTvColor(Color.parseColor("#d8a608"))
-                .headingTvSize(28)
+                .headingTvSize(headingTextSize)
                 .headingTvText(title)
                 .subHeadingTvColor(Color.parseColor("#f2f2f2"))
                 .subHeadingTvSize(16)
@@ -63,9 +62,13 @@ class ShowCaseManager : IContractShowCaseManager {
                 .target(view)
                 .lineAnimDuration(200)
                 .lineAndArcColor(Color.parseColor("#d8a608"))
-                .dismissOnTouch(true)
-                .dismissOnBackPress(true)
-                .enableDismissAfterShown(true)
+                .dismissOnTouch(false)
+                .dismissOnBackPress(false)
+                .enableDismissAfterShown(false)
+                .buttonText("Ok")
+                .showButton(true)
+                .buttonColorBackground(Color.parseColor("#dc000000"))
+                .buttonSize(16)
                 .usageId(uniqueId)
                 .setListener {
                     Timber.d("SpotlightView: $it")
@@ -166,7 +169,8 @@ class ShowCaseManager : IContractShowCaseManager {
             seventhView,
             seventhId,
             activity.getString(R.string.show_case_seventh_title),
-            activity.getString(R.string.show_case_seventh_subtitle)
+            activity.getString(R.string.show_case_seventh_subtitle),
+            24
         ) {
             sharedPreferencesManager.putBoolean(
                 Constants.SharedPreferences.PREF_SHOW_CASE_SEVENTH_STEP_HAS_BEEN_SHOW,

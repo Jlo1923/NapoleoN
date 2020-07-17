@@ -7,6 +7,7 @@ import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.entity.addContact.FriendShipRequest
 import com.naposystems.pepito.entity.addContact.FriendShipRequestAdapterType
 import com.naposystems.pepito.entity.message.Message
@@ -39,5 +40,6 @@ interface IContractAddContact {
         suspend fun addContact(friendShipRequest: FriendShipRequest)
         suspend fun sendNewContactMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
         fun insertMessage(message: Message): Long
+        suspend fun getUser(): User
     }
 }

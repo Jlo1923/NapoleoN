@@ -44,6 +44,7 @@
     <string name="text_incoming_secure_video_call">Videollamada segura entrante</string>
     <string name="text_encrypted_video_call">Videollamada cifrada</string>
     <string name="text_incoming_video_call_title">Videollamada entrante</string>
+    <string name="text_new_contact">Tienes un nuevo CONTACTO. Salúdalo!\u00A0</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>

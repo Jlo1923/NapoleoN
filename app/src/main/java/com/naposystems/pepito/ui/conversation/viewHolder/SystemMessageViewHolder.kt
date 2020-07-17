@@ -116,6 +116,21 @@ class SystemMessageViewHolder constructor(
             }
         )
 
+        binding.cardView.setCardBackgroundColor(
+            Utils.convertAttrToColorResource(
+                context,
+                R.attr.attrBackgroundColorPrimary
+            )
+        )
+
+        val textColor = Utils.convertAttrToColorResource(
+            context,
+            R.attr.attrTextColorWhite
+        )
+
+        binding.textViewBody.setTextColor(textColor)
+        binding.textViewCountDown.setTextColor(textColor)
+
         binding.textViewBody.text = item.message.body
 
         binding.executePendingBindings()

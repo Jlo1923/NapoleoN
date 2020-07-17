@@ -25,7 +25,7 @@
             <TextView
                 style="@style/OptionTitle"
                 android:layout_marginStart="0dp"
-                android:text="Repetir show case"
+                android:text="@string/text_repeat_tutorial"
                 app:layout_constraintEnd_toStartOf="@id/imageButton_repeat_show_case_option_end_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

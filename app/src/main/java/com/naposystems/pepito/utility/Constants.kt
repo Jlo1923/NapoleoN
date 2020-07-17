@@ -382,7 +382,7 @@ object Constants {
         MESSAGE(1),
         MISSED_CALL(2),
         MISSED_VIDEO_CALL(3),
-        SYSTEM_MESSAGE(4)
+        NEW_CONTACT(4)
     }
 
     object SharedPreferences {
