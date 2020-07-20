@@ -19,13 +19,13 @@ class NetworkConnectionInterceptor constructor(private val context: Context) : I
     }
 
     private fun isOnlineNet(): Boolean {
-        try {
+        return try {
             val comand = Runtime.getRuntime().exec(Constants.ValidConnection.REQUEST_PIN)
             val valid = comand.waitFor()
-            return valid == 0
+            valid == 0
         } catch (e: Exception) {
             e.printStackTrace()
+            false
         }
-        return false
     }
 }

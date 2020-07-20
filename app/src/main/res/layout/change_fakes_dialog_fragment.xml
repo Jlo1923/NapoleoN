@@ -58,8 +58,6 @@
                 android:id="@+id/editText_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="@string/only_letters"
-                android:inputType="text"
                 android:lines="1"
                 android:maxLength="@dimen/max_length_display_name"
                 android:maxLines="1"

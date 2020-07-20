@@ -152,7 +152,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
         val selectedIdQuestion = binding.spinnerQuestions.selectedItemId
         val selectedQuestion = binding.spinnerQuestions.selectedItem
         val textInputAnswer =
-            binding.textInputEditTextAnswers.text.toString()
+            binding.textInputEditTextAnswers.text.toString().trim().replace("\\s+".toRegex(), " ")
 
         if (selectedIdQuestion.toInt() == 0 && textInputAnswer.isEmpty() && countAnswer > 3) {
             generalDialog(

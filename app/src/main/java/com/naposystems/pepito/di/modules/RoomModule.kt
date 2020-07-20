@@ -46,12 +46,12 @@ class RoomModule {
                         super.onCreate(db)
 
                         val prepopulateData = listOf(
-                            Status(0, context.getString(R.string.text_status_available)),
-                            Status(0, context.getString(R.string.text_status_busy)),
-                            Status(0, context.getString(R.string.text_status_in_meeting)),
-                            Status(0, context.getString(R.string.text_status_only_messages)),
-                            Status(0, context.getString(R.string.text_status_sleeping)),
-                            Status(0, context.getString(R.string.text_status_only_emergency))
+                            Status(1, context.getString(R.string.text_status_available)),
+                            Status(2, context.getString(R.string.text_status_busy)),
+                            Status(3, context.getString(R.string.text_status_in_meeting)),
+                            Status(4, context.getString(R.string.text_status_only_messages)),
+                            Status(5, context.getString(R.string.text_status_sleeping)),
+                            Status(6, context.getString(R.string.text_status_only_emergency))
                         )
 
                         Executors.newSingleThreadExecutor().execute {

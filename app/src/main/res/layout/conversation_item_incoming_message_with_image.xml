@@ -65,7 +65,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_min="wrap"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_attachment"
@@ -78,10 +78,18 @@
                 app:layout_constraintDimensionRatio="4:3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/quote"
-                app:layout_constraintWidth_max="wrap"
-                app:layout_constraintWidth_percent="1"
-                tools:src="@drawable/vertical_photo" />
+                app:layout_constraintTop_toBottomOf="@+id/quote"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:elevation="4dp"
+                android:tint="?attr/attrColorButtonTint"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
+                app:layout_constraintStart_toStartOf="@id/imageView_attachment"
+                app:layout_constraintTop_toTopOf="@id/imageView_attachment"
+                app:srcCompat="@drawable/ic_eye_black" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="52dp"

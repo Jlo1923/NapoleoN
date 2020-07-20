@@ -60,6 +60,7 @@ interface IContractConversation {
         fun getMessagePosition(messageAndAttachment: MessageAndAttachment): Int
         fun callContact()
         fun resetContactCalledSuccessfully()
+        fun resetNoInternetConnection()
         fun setIsVideoCall(isVideoCall: Boolean)
         fun isVideoCall(): Boolean
         fun resetIsVideoCall()

@@ -67,11 +67,18 @@ class ContactUsFragment : Fragment() {
         binding.textInputEditTextMessage.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    binding.buttonSendPqrs.isEnabled = it.length >= 20
+                    binding.textInputLayoutMessage.error = null
+                    if (it.length >= 20) {
+                        binding.buttonSendPqrs.isEnabled = true
+                    } else {
+                        binding.textInputLayoutMessage.error = getString(R.string.text_min_twenty_char)
+                        binding.buttonSendPqrs.isEnabled = false
+                    }
                 }
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
         })

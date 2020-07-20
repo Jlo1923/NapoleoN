@@ -9,6 +9,7 @@
     <string name="only_letters_upper_case_and_numbers" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="nickname_configuration" translatable="false">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._</string>
     <string name="location_configuration" translatable="false">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._#</string>
+    <string name="recovery_answer" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789áéíóúÁÉÍÓÚäëïöüÄËÏÖÜâêîôûÂÊÎÔÛàèìòùÀÈÌÒÙãõñÃÕÑåÅÿýÝßæÆœŒçÇðÐ\' </string>
     <string name="only_numbers" translatable="false">0123456789</string>
     <string name="only_letters" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz</string>
     <string name="text_napoleon_secret_chat" translatable="false">NapoleoN Chat</string>
@@ -94,4 +95,5 @@
     <string name="text_empty_state_search_contacts">Your search yielded no results</string>
     <string name="text_contact">CONTACT</string>
     <string name="text_error_updating_language">An error occurred changing language, please try again</string>
+    <string name="text_emptystate_search_friends_title">Search for your friends by nickname and communicate</string>
 </resources>

@@ -55,11 +55,11 @@ fun Fragment.verifyPermission(
 
                 if (report.isAnyPermissionPermanentlyDenied) {
                     Utils.showDialogToInformPermission(
-                        requireContext(),
+                        requireActivity(),
                         childFragmentManager,
                         drawableIconId,
                         message,
-                        { Utils.openSetting(requireContext()) },
+                        { Utils.openSetting(requireActivity()) },
                         {}
                     )
                 }
@@ -70,7 +70,7 @@ fun Fragment.verifyPermission(
                 token: PermissionToken?
             ) {
                 Utils.showDialogToInformPermission(
-                    requireContext(),
+                    requireActivity(),
                     childFragmentManager,
                     drawableIconId,
                     message,
