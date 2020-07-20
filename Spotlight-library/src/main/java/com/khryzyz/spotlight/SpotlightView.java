@@ -14,6 +14,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -660,11 +661,18 @@ public class SpotlightView extends FrameLayout {
             buttonGotIt.setBackgroundResource(outValue.resourceId);
         }
 
-
         buttonGotIt.setLayoutParams(buttonGotItParams);
 
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setColor(buttonColorBackground);
+        shape.setCornerRadii(new float[]{10, 10, 10, 10, 10, 10, 10, 10});
+        shape.setStroke(3, Color.BLACK);
+
+        buttonGotIt.setBackground(shape);
+
         buttonGotIt.setTextColor(buttonColorText);
-        buttonGotIt.setBackgroundColor(buttonColorBackground);
+//        buttonGotIt.setBackgroundColor(buttonColorBackground);
         buttonGotIt.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
