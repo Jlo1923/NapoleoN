@@ -23,11 +23,11 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.naposystems.pepito"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 29
-        versionCode 113
+        versionCode 114
 
-        versionName "2.0.0-alpha01"
+        versionName "2.0.0-interna02"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -81,6 +81,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
         }
         pruebaInterna {
             debuggable false
@@ -96,6 +97,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
         }
     }
 
