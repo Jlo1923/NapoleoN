@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.*
 import android.text.method.DigitsKeyListener
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,14 +104,19 @@ class ChangeParamsDialogFragment : DialogFragment() {
 
         binding.editTextDisplay.addTextChangedListener(listenerEditText())
 
+        val displayLengthFilter = InputFilter.LengthFilter(
+            resources.getInteger(R.integer.max_length_display_name)
+        )
+        val nicknameLengthFilter = InputFilter.LengthFilter(
+            resources.getInteger(R.integer.max_length_nickname)
+        )
+
         when (arguments?.getInt(OPTION)) {
             Constants.ChangeParams.NAME_USER.option,
             Constants.ChangeParams.NAME_FAKE.option -> {
                 binding.editTextDisplay.apply {
-                    this.keyListener =
-                        DigitsKeyListener.getInstance(requireContext().getString(R.string.only_letters))
                     this.inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
-                    this.filters = arrayOf(object : InputFilter {
+                    this.filters = arrayOf(displayLengthFilter, object : InputFilter {
                         override fun filter(
                             source: CharSequence,
                             start: Int,
@@ -123,21 +129,19 @@ class ChangeParamsDialogFragment : DialogFragment() {
                                 return source
                             }
 
-                            if (source.toString().matches("[a-zA-Z ]+".toRegex())) {
-                                return source
+                            return if (source.toString().matches("[a-zA-Z ]+".toRegex())) {
+                                source
+                            } else {
+                                ""
                             }
-
-                            return ""
                         }
                     })
                 }
             }
             Constants.ChangeParams.NICKNAME_FAKE.option -> {
                 binding.editTextDisplay.apply {
-                    this.keyListener =
-                        DigitsKeyListener.getInstance(requireContext().getString(R.string.nickname_configuration))
                     this.inputType = InputType.TYPE_CLASS_TEXT
-                    this.filters = arrayOf(object : InputFilter {
+                    this.filters = arrayOf(nicknameLengthFilter, object : InputFilter {
                         override fun filter(
                             source: CharSequence,
                             start: Int,
@@ -150,11 +154,11 @@ class ChangeParamsDialogFragment : DialogFragment() {
                                 return source
                             }
 
-                            if (source.toString().matches("[a-zA-Z._0-9]+".toRegex())) {
-                                return source
+                            return if (source.toString().matches("[a-zA-Z._0-9]+".toRegex())) {
+                                source
+                            } else {
+                                ""
                             }
-
-                            return ""
                         }
                     })
                 }

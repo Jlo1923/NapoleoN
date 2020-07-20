@@ -35,8 +35,8 @@
     <dimen name="text_size_self_destruct_time">12sp</dimen>
     <item name="width_app_button" format="float" type="dimen">0.8</item>
     <item name="alpha_drawer_header" format="float" type="dimen">0.25</item>
-    <item name="max_length_nickname" format="integer" type="dimen">16</item>
-    <item name="max_length_display_name" format="integer" type="dimen">24</item>
+    <integer name="max_length_nickname">20</integer>
+    <integer name="max_length_display_name">24</integer>
     <item name="max_length_status" format="integer" type="dimen">80</item>
     <dimen name="width_self_destruct_time">80dp</dimen>
     <dimen name="height_self_destruct_time">16dp</dimen>

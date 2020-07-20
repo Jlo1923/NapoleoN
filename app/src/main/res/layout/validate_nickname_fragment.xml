@@ -73,7 +73,7 @@
                             android:hint="@string/text_nickname_with_asterisk"
                             android:textColor="?attr/attrTextColorConversationInputPanel"
                             android:lines="1"
-                            android:maxLength="@dimen/max_length_nickname"
+                            android:maxLength="@integer/max_length_nickname"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:text="@={viewModel.nickName}" />
@@ -101,7 +101,7 @@
                             android:hint="@string/text_display_name"
                             android:lines="1"
                             android:textColor="?attr/attrTextColorConversationInputPanel"
-                            android:maxLength="@dimen/max_length_display_name"
+                            android:maxLength="@integer/max_length_display_name"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:text="@={viewModel.displayName}" />
