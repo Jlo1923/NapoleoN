@@ -82,7 +82,7 @@ class ValidateNicknameFragment : Fragment() {
                         ValidateNicknameFragmentDirections
                             .actionRegisterFragmentToAccessPinFragment(
                                 viewModel.nickName.value!!.toLowerCase(Locale.getDefault()),
-                                viewModel.displayName.value!!,
+                                viewModel.displayName.value!!.trim().replace("\\s+".toRegex(), " "),
                                 false
                             )
                     )
@@ -158,7 +158,9 @@ class ValidateNicknameFragment : Fragment() {
             s?.let {
                 if (FieldsValidator.isNicknameValid(binding.textInputLayoutNickname)) {
                     val validateNicknameReqDTO =
-                        ValidateNicknameReqDTO(binding.textInputEditTextNickname.text.toString().toLowerCase())
+                        ValidateNicknameReqDTO(
+                            binding.textInputEditTextNickname.text.toString().toLowerCase()
+                        )
                     viewModel.validateNickname(validateNicknameReqDTO)
                 } else {
                     binding.buttonNext.isEnabled = false

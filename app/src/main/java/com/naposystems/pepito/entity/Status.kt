@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "status")
 data class Status(
     @PrimaryKey(autoGenerate = true) val id: Int,
-    @ColumnInfo(name = "status") val status: String = "",
+    @ColumnInfo(name = "status") var status: String = "",
     @ColumnInfo(name = "custom_status") val customStatus: String = ""
 )

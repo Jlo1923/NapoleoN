@@ -38,6 +38,8 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.pepito.utility.Constants.SelfDestructTime.*
 import com.naposystems.pepito.utility.dialog.PermissionDialogFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -540,6 +542,22 @@ class Utils {
             } catch (e: Exception) {
                 Timber.e(e)
             }
+        }
+
+        suspend fun isOnlineNet(): Boolean {
+            var isOnline = false
+            withContext(Dispatchers.IO) {
+                isOnline = try {
+                    val command = Runtime.getRuntime().exec(Constants.ValidConnection.REQUEST_PIN)
+                    val valid = command.waitFor()
+                    valid == 0
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    false
+                }
+            }
+
+            return isOnline
         }
     }
 }

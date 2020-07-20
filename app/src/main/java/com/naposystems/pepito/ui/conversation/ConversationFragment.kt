@@ -341,6 +341,7 @@ class ConversationFragment : BaseFragment(),
                 viewModel.setIsVideoCall(false)
                 viewModel.callContact()
                 binding.buttonCall.isEnabled = false
+                binding.buttonVideoCall.isEnabled = false
             }
         }
 
@@ -349,6 +350,7 @@ class ConversationFragment : BaseFragment(),
                 viewModel.setIsVideoCall(true)
                 viewModel.callContact()
                 binding.buttonCall.isEnabled = false
+                binding.buttonVideoCall.isEnabled = false
             }
         }
 
@@ -759,6 +761,20 @@ class ConversationFragment : BaseFragment(),
                 )
                 viewModel.resetDocumentCopied()
             }
+        })
+
+        viewModel.noInternetConnection.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                Utils.alertDialogInformative(
+                    getString(R.string.text_alert_failure),
+                    getString(if (viewModel.isVideoCall()) R.string.text_video_call_not_internet_connection else R.string.text_call_not_internet_connection),
+                    true,
+                    requireContext(),
+                    R.string.text_close
+                ) {}
+            }
+            binding.buttonCall.isEnabled = true
+            binding.buttonVideoCall.isEnabled = true
         })
 
         shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {

@@ -55,6 +55,7 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
     private lateinit var binding: AttachmentGalleryFragmentBinding
     private lateinit var adapter: AttachmentGalleryAdapter
     private lateinit var attachmentSelected: File
+    private var attachmentGallerySelected = false
     private val args: AttachmentGalleryFragmentArgs by navArgs()
 
     override fun onAttach(context: Context) {
@@ -95,85 +96,93 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
 
     //region Implementation AttachmentGalleryAdapter.ClickListener
     override fun onClick(galleryItem: GalleryItem, imageView: ImageView) {
-        args.location.let { location ->
-            when (location) {
-                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
-                    lifecycleScope.launch {
-                        context?.let { context ->
+        if (!attachmentGallerySelected) {
+            attachmentGallerySelected = true
+            args.location.let { location ->
+                when (location) {
+                    Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
+                        lifecycleScope.launch {
+                            context?.let { context ->
 
-                            var extension = ""
+                                var extension = ""
 
-                            val extras = FragmentNavigatorExtras(
-                                imageView to imageView.transitionName
-                            )
-
-                            val parcelFileDescriptor =
-                                context.contentResolver.openFileDescriptor(
-                                    galleryItem.contentUri!!,
-                                    "r"
+                                val extras = FragmentNavigatorExtras(
+                                    imageView to imageView.transitionName
                                 )
 
-                            val fileInputStream =
-                                FileInputStream(parcelFileDescriptor!!.fileDescriptor)
+                                val parcelFileDescriptor =
+                                    context.contentResolver.openFileDescriptor(
+                                        galleryItem.contentUri!!,
+                                        "r"
+                                    )
 
-                            if (galleryItem.attachmentType == Constants.AttachmentType.IMAGE.type) {
-                                extension = "jpg"
-                                attachmentSelected = FileManager.compressImageFromFileInputStream(
-                                    context, fileInputStream
+                                val fileInputStream =
+                                    FileInputStream(parcelFileDescriptor!!.fileDescriptor)
+
+                                if (galleryItem.attachmentType == Constants.AttachmentType.IMAGE.type) {
+                                    extension = "jpg"
+                                    attachmentSelected =
+                                        FileManager.compressImageFromFileInputStream(
+                                            context, fileInputStream
+                                        )
+                                } else if (galleryItem.attachmentType == Constants.AttachmentType.VIDEO.type) {
+                                    extension = "mp4"
+                                    attachmentSelected = FileManager.copyFile(
+                                        context,
+                                        fileInputStream,
+                                        Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                        "${System.currentTimeMillis()}.mp4"
+                                    )
+                                }
+
+                                val attachment = Attachment(
+                                    id = 0,
+                                    messageId = 0,
+                                    webId = "",
+                                    messageWebId = "",
+                                    type = galleryItem.attachmentType,
+                                    body = "",
+                                    uri = attachmentSelected.name,
+                                    origin = Constants.AttachmentOrigin.GALLERY.origin,
+                                    thumbnailUri = "",
+                                    status = Constants.AttachmentStatus.SENDING.status,
+                                    duration = 0L,
+                                    extension = extension
                                 )
-                            } else if (galleryItem.attachmentType == Constants.AttachmentType.VIDEO.type) {
-                                extension = "mp4"
-                                attachmentSelected = FileManager.copyFile(
-                                    context,
-                                    fileInputStream,
-                                    Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                                    "${System.currentTimeMillis()}.mp4"
+
+                                this@AttachmentGalleryFragment.findNavController().navigate(
+                                    AttachmentGalleryFragmentDirections.actionAttachmentGalleryFragmentToAttachmentPreviewFragment(
+                                        attachment = attachment,
+                                        galleryItemId = galleryItem.id,
+                                        quote = args.quoteWebId
+                                    ),
+                                    extras
+                                )
+                                attachmentGallerySelected = false
+                            }
+                        }.let {}
+                    }
+                    else -> {
+                        with(galleryShareViewModel) {
+                            galleryItem.contentUri?.let { uri ->
+                                setImageUriSelected(uri)
+                                resetUriImageSelected()
+                            }
+                        }
+                        when (location) {
+                            Constants.LocationImageSelectorBottomSheet.PROFILE.location,
+                            Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
+                                findNavController().popBackStack(R.id.profileFragment, false)
+                            }
+                            Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location -> {
+                                findNavController().popBackStack(R.id.contactProfileFragment, false)
+                            }
+                            else -> {
+                                findNavController().popBackStack(
+                                    R.id.appearanceSettingsFragment,
+                                    false
                                 )
                             }
-
-                            val attachment = Attachment(
-                                id = 0,
-                                messageId = 0,
-                                webId = "",
-                                messageWebId = "",
-                                type = galleryItem.attachmentType,
-                                body = "",
-                                uri = attachmentSelected.name,
-                                origin = Constants.AttachmentOrigin.GALLERY.origin,
-                                thumbnailUri = "",
-                                status = Constants.AttachmentStatus.SENDING.status,
-                                duration = 0L,
-                                extension = extension
-                            )
-
-                            this@AttachmentGalleryFragment.findNavController().navigate(
-                                AttachmentGalleryFragmentDirections.actionAttachmentGalleryFragmentToAttachmentPreviewFragment(
-                                    attachment = attachment,
-                                    galleryItemId = galleryItem.id,
-                                    quote = args.quoteWebId
-                                ),
-                                extras
-                            )
-                        }
-                    }.let {}
-                }
-                else -> {
-                    with(galleryShareViewModel) {
-                        galleryItem.contentUri?.let { uri ->
-                            setImageUriSelected(uri)
-                            resetUriImageSelected()
-                        }
-                    }
-                    when (location) {
-                        Constants.LocationImageSelectorBottomSheet.PROFILE.location,
-                        Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
-                            findNavController().popBackStack(R.id.profileFragment, false)
-                        }
-                        Constants.LocationImageSelectorBottomSheet.CONTACT_PROFILE.location -> {
-                            findNavController().popBackStack(R.id.contactProfileFragment, false)
-                        }
-                        else -> {
-                            findNavController().popBackStack(R.id.appearanceSettingsFragment, false)
                         }
                     }
                 }

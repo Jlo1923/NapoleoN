@@ -222,7 +222,7 @@
                         android:enabled="false"
                         android:hint="@string/text_display_name"
                         android:inputType="textCapWords|textNoSuggestions"
-                        android:maxLength="@dimen/max_length_display_name"
+                        android:maxLength="@integer/max_length_display_name"
                         android:padding="0dp"
                         android:singleLine="true"
                         android:textColorHint="?attr/attrTextColorHint"

@@ -113,7 +113,7 @@
         <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
         <item name="attrTextColorEnterCode">@color/textColorEnterCode</item>
         <item name="attrTextColorButtonTint">@color/color_F2F2F2</item>
-        <item name="attrColorTextButtonTintCamera">@color/color_F2F2F2</item>
+        <item name="attrColorTextButtonTintCamera">@color/secondaryTextColorForAll</item>
         <item name="attrStrokeColorButtonTint">@color/color_F2F2F2</item>
         <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
         <item name="attrTextColorRed">@color/color_DA5E58</item>

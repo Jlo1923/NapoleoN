@@ -2,8 +2,9 @@ package com.naposystems.pepito.ui.changeParams
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.text.*
+import android.text.method.DigitsKeyListener
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ChangeFakesDialogFragmentBinding
 import com.naposystems.pepito.dto.user.DisplayNameReqDTO
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FieldsValidator
 import com.naposystems.pepito.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -72,7 +74,9 @@ class ChangeParamsDialogFragment : DialogFragment() {
                 when (args.getInt(OPTION)) {
                     Constants.ChangeParams.NAME_FAKE.option -> {
                         viewModel.updateNameFakeContact(
-                            args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
+                            args.getInt(CONTACT_ID),
+                            binding.editTextDisplay.text.toString().trim()
+                                .replace("\\s+".toRegex(), " ")
                         )
                     }
                     Constants.ChangeParams.NICKNAME_FAKE.option -> {
@@ -99,6 +103,67 @@ class ChangeParamsDialogFragment : DialogFragment() {
         }
 
         binding.editTextDisplay.addTextChangedListener(listenerEditText())
+
+        val displayLengthFilter = InputFilter.LengthFilter(
+            resources.getInteger(R.integer.max_length_display_name)
+        )
+        val nicknameLengthFilter = InputFilter.LengthFilter(
+            resources.getInteger(R.integer.max_length_nickname)
+        )
+
+        when (arguments?.getInt(OPTION)) {
+            Constants.ChangeParams.NAME_USER.option,
+            Constants.ChangeParams.NAME_FAKE.option -> {
+                binding.editTextDisplay.apply {
+                    this.inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
+                    this.filters = arrayOf(displayLengthFilter, object : InputFilter {
+                        override fun filter(
+                            source: CharSequence,
+                            start: Int,
+                            end: Int,
+                            dest: Spanned,
+                            dstart: Int,
+                            dend: Int
+                        ): CharSequence? {
+                            if (source == "") {
+                                return source
+                            }
+
+                            return if (source.toString().matches("[a-zA-Z ]+".toRegex())) {
+                                source
+                            } else {
+                                ""
+                            }
+                        }
+                    })
+                }
+            }
+            Constants.ChangeParams.NICKNAME_FAKE.option -> {
+                binding.editTextDisplay.apply {
+                    this.inputType = InputType.TYPE_CLASS_TEXT
+                    this.filters = arrayOf(nicknameLengthFilter, object : InputFilter {
+                        override fun filter(
+                            source: CharSequence,
+                            start: Int,
+                            end: Int,
+                            dest: Spanned,
+                            dstart: Int,
+                            dend: Int
+                        ): CharSequence? {
+                            if (source == "") {
+                                return source
+                            }
+
+                            return if (source.toString().matches("[a-zA-Z._0-9]+".toRegex())) {
+                                source
+                            } else {
+                                ""
+                            }
+                        }
+                    })
+                }
+            }
+        }
 
         return binding.root
     }
@@ -171,36 +236,15 @@ class ChangeParamsDialogFragment : DialogFragment() {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            when  {
-                binding.editTextDisplay.text?.count() in 1..4 &&
-                        arguments?.getInt(OPTION) == Constants.ChangeParams.NICKNAME_FAKE.option ->
-                    enabledButtonAccept(false)
-                binding.editTextDisplay.text?.count() in 1..1 && (
-                        arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_FAKE.option ||
-                                arguments?.getInt(OPTION) == Constants.ChangeParams.NAME_USER.option) ->
-                    enabledButtonAccept(false)
-                binding.editTextDisplay.text?.count() == 0 -> enabledButtonAccept(true)
-                else -> enabledButtonAccept(true)
-            }
-        }
-    }
-
-    private fun enabledButtonAccept(boolean: Boolean) {
-        if (isResumed) {
-            binding.buttonAccept.isEnabled = boolean
-            if (boolean) {
-                binding.textInputLayoutDisplay.error = null
-            } else {
-                when (arguments?.getInt(OPTION)) {
-                    Constants.ChangeParams.NAME_FAKE.option,
-                    Constants.ChangeParams.NAME_USER.option -> {
-                        binding.textInputLayoutDisplay.error =
-                            getString(R.string.text_name_not_contain_enough_char)
-                    }
-                    else -> {
-                        binding.textInputLayoutDisplay.error =
-                            getString(R.string.text_nickname_not_contain_enough_char)
-                    }
+            when (arguments?.getInt(OPTION)) {
+                Constants.ChangeParams.NAME_USER.option,
+                Constants.ChangeParams.NAME_FAKE.option -> {
+                    binding.buttonAccept.isEnabled =
+                        FieldsValidator.isDisplayNameValid(binding.textInputLayoutDisplay)
+                }
+                Constants.ChangeParams.NICKNAME_FAKE.option -> {
+                    binding.buttonAccept.isEnabled =
+                        FieldsValidator.isNicknameValid(binding.textInputLayoutDisplay)
                 }
             }
         }

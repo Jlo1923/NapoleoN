@@ -62,7 +62,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayout_answer_one"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/TextInputLayoutOutlined"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/normal_margin"
@@ -79,7 +79,8 @@
                         android:lines="1"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -99,7 +100,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayout_answer_two"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/TextInputLayoutOutlined"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/normal_margin"
@@ -116,7 +117,8 @@
                         android:lines="1"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

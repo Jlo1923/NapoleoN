@@ -78,6 +78,10 @@ class ConversationViewModel @Inject constructor(
     val documentCopied: LiveData<File>
         get() = _documentCopied
 
+    private val _noInternetConnection = MutableLiveData<Boolean>()
+    val noInternetConnection: LiveData<Boolean>
+        get() = _noInternetConnection
+
     private var countOldMessages: Int = 0
 
     init {
@@ -428,16 +432,21 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             val channel = "private-private.${contact.id}.${user.id}"
             try {
-                repository.subscribeToCallChannel(channel)
-                val response = repository.callContact(contact, isVideoCall)
+                if (Utils.isOnlineNet()) {
+                    repository.subscribeToCallChannel(channel)
+                    val response = repository.callContact(contact, isVideoCall)
 
-                if (response.isSuccessful) {
-                    response.body()?.let { _ ->
-                        _contactCalledSuccessfully.value = channel
+                    if (response.isSuccessful) {
+                        response.body()?.let { _ ->
+                            _contactCalledSuccessfully.value = channel
+                        }
+                    } else {
+                        Timber.e(response.errorBody()?.string())
+                        repository.unSubscribeToChannel(contact, channel)
+                        _contactCalledSuccessfully.value = null
                     }
                 } else {
-                    repository.unSubscribeToChannel(contact, channel)
-                    _contactCalledSuccessfully.value = null
+                    _noInternetConnection.value = true
                 }
             } catch (e: Exception) {
                 repository.unSubscribeToChannel(contact, channel)
@@ -449,6 +458,10 @@ class ConversationViewModel @Inject constructor(
 
     override fun resetContactCalledSuccessfully() {
         _contactCalledSuccessfully.value = null
+    }
+
+    override fun resetNoInternetConnection() {
+        _noInternetConnection.value = null
     }
 
     override fun setIsVideoCall(isVideoCall: Boolean) {

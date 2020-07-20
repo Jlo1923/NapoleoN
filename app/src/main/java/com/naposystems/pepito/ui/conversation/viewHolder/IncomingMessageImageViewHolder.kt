@@ -46,6 +46,7 @@ class IncomingMessageImageViewHolder constructor(
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
+        binding.imageViewAttachment.visibility = View.VISIBLE
 
         bindImageAttachment(item)
 

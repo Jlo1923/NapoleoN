@@ -100,7 +100,33 @@ class StatusFragment : Fragment() {
     private fun observeStatus() {
         viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
             if (statusList != null) {
+
+                statusList.forEach { status ->
+                    when (status.id) {
+                        1 -> {
+                            status.status = getString(R.string.text_status_available)
+                        }
+                        2 -> {
+                            status.status = getString(R.string.text_status_busy)
+                        }
+                        3 -> {
+                            status.status = getString(R.string.text_status_in_meeting)
+                        }
+                        4 -> {
+                            status.status = getString(R.string.text_status_only_messages)
+                        }
+                        5 -> {
+                            status.status = getString(R.string.text_status_sleeping)
+                        }
+                        6 -> {
+                            status.status = getString(R.string.text_status_only_emergency)
+                        }
+                        else -> Unit
+                    }
+                }
+
                 selectStatus(statusList)
+
                 adapter = StatusAdapter(
                     statusList,
                     StatusAdapter.StatusSelectionListener(clickListener = { status ->

@@ -192,6 +192,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                     binding.viewSwitcherSearch.showNext()
                 }
                 binding.emptyStateSearch.imageViewSetVisibility(false)
+                binding.emptyStateSearch.setTitleEmptyState(R.string.text_empty_state_search_contacts)
                 binding.emptyStateSearch.textViewTitleSetVisibility(true)
             }
         })
@@ -233,7 +234,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         if (binding.viewSwitcher.currentView.id == binding.swipeRefresh.id) {
             binding.viewSwitcher.showNext()
             binding.emptyStateSearch.imageViewSetVisibility(true)
-            binding.emptyStateSearch.textViewTitleSetVisibility(false)
+            binding.emptyStateSearch.setTitleEmptyState(R.string.text_emptystate_search_friends_title)
+            binding.emptyStateSearch.textViewTitleSetVisibility(true)
         }
     }
 
@@ -242,7 +244,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             viewModel.searchContact(text.toLowerCase(Locale.getDefault()))
         } else {
             binding.emptyStateSearch.imageViewSetVisibility(true)
-            binding.emptyStateSearch.textViewTitleSetVisibility(false)
+            binding.emptyStateSearch.setTitleEmptyState(R.string.text_emptystate_search_friends_title)
+            binding.emptyStateSearch.textViewTitleSetVisibility(true)
         }
     }
 
@@ -252,6 +255,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         if (binding.viewSwitcher.currentView.id == binding.viewSwitcherSearch.id) {
             binding.viewSwitcher.showNext()
         }
+        binding.emptyStateSearch.setTitleEmptyState(R.string.text_empty_state_friendship_description)
     }
 
     override fun onClosedCompleted() {}

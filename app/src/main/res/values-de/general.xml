@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_accept">Akzeptieren</string>
-    <string name="text_cancel">Abbrechen</string>
+    <string name="text_cancel">Stornieren</string>
     <string name="text_continue">Weiter</string>Información
     <string name="text_welcome">Herzlich willkommen</string>
     <string name="text_next">Weiter</string>
@@ -76,4 +76,5 @@
     <string name="text_empty_state_search_contacts">Ihre Suche ergab keine Ergebnisse</string>
     <string name="text_contact">KONTAKT</string>
     <string name="text_error_updating_language">Ein Fehler ist aufgetreten Sprache zu ändern, versuchen Sie es erneut</string>
+    <string name="text_emptystate_search_friends_title">Suchen Sie Ihren Freunden von Nickname und kommunizieren</string>
 </resources>

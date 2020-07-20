@@ -7,4 +7,5 @@
     <string name="text_message">Nachricht</string>
     <string name="text_pqrs_create">Ihre Anfrage wurde erfolgreich versendet</string>
     <string name="text_send">Senden</string>
+    <string name="text_min_twenty_char">Mindestens 20 Zeichen</string>
 </resources>

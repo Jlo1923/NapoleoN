@@ -53,6 +53,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/normal_margin"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="500"
+                    app:errorEnabled="true"
+                    app:counterTextColor="?attr/attrTextColorConversationInputPanel"
                     app:layout_constraintEnd_toStartOf="@+id/guideline_end"
                     app:layout_constraintStart_toStartOf="@+id/guideline_start"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_category">
@@ -67,7 +71,7 @@
                         android:maxLines="5"
                         android:singleLine="false"
                         android:textColor="?attr/attrTextColorConversationInputPanel"
-                        tools:text="@tools:sample/lorem/random" />
+                        tools:text="@tools:sample/lorem[50]" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
