@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.pepito"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 114
+        versionCode 115
 
-        versionName "2.0.0-interna02"
+        versionName "2.0.0-alpha02"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
