@@ -111,7 +111,8 @@ class AttachmentGalleryFoldersFragment : Fragment() {
                             args.contact,
                             galleryFolder,
                             args.quoteWebId,
-                            args.location
+                            args.location,
+                            args.message
                         )
                     )
                 }

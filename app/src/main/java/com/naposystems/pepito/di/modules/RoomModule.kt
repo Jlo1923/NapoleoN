@@ -73,8 +73,11 @@ class RoomModule {
 
     @Provides
     @Singleton
-    fun provideUserLocalDataSource(userDao: UserDao): UserLocalDataSource {
-        return UserLocalDataSource(userDao)
+    fun provideUserLocalDataSource(
+        userDao: UserDao,
+        napoleonRoomDatabase: NapoleonRoomDatabase
+    ): UserLocalDataSource {
+        return UserLocalDataSource(napoleonRoomDatabase, userDao)
     }
 
     @Provides

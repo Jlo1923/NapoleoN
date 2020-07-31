@@ -100,7 +100,10 @@ class SecuritySettingsFragment : Fragment() {
             optionRegisterRecoveryAccountClickListener()
         }
 
-        if (args.showShowCase){
+        if (args.showShowCase) {
+            binding.scrollView.post {
+                binding.scrollView.fullScroll(View.FOCUS_DOWN)
+            }
             ShowCaseManager().apply {
                 setActivity(requireActivity())
                 setListener(object : ShowCaseManager.Listener {

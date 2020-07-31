@@ -24,4 +24,5 @@ interface IContractInputPanel {
     fun changeViewSwitcherToSlideToCancel()
     fun changeViewSwitcherToInputPanel()
     fun setRecordingTime(time: Long)
+    fun clearTextEditText()
 }

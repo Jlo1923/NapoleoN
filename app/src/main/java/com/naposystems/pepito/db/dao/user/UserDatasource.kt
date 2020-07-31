@@ -18,4 +18,6 @@ interface UserDataSource {
     suspend fun updateChatBackground(newBackground: String, firebaseId: String)
 
     suspend fun updateStatus(newStatus: String, firebaseId: String)
+
+    suspend fun clearAllData()
 }

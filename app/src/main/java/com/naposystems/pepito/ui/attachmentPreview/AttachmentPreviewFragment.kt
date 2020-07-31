@@ -186,6 +186,10 @@ class AttachmentPreviewFragment : Fragment() {
 
         binding.executePendingBindings()
 
+        if (args.message.isNotEmpty()) {
+            binding.inputPanel.getEditTex().setText(args.message)
+        }
+
         return binding.root
     }
 

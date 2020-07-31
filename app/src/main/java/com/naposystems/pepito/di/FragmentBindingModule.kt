@@ -10,6 +10,7 @@ import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFolder
 import com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationFragment
 import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment
+import com.naposystems.pepito.ui.cancelSubscription.CancelSubscriptionDialogFragment
 import com.naposystems.pepito.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment
 import com.naposystems.pepito.ui.contactProfile.ContactProfileFragment
@@ -22,6 +23,7 @@ import com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.pepito.ui.enterPin.EnterPinFragment
 import com.naposystems.pepito.ui.home.HomeFragment
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.pepito.ui.logout.LogoutDialogFragment
 import com.naposystems.pepito.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatFragment
@@ -197,4 +199,10 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindPreviewMediaFragment(): PreviewMediaFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindLogoutDialogFragment(): LogoutDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindCancelSubscriptionDialogFragment(): CancelSubscriptionDialogFragment
 }

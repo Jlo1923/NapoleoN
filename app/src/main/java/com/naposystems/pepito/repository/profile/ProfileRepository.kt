@@ -1,5 +1,6 @@
 package com.naposystems.pepito.repository.profile
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.profile.UpdateUserInfo422DTO
@@ -9,10 +10,13 @@ import com.naposystems.pepito.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.pepito.entity.User
 import com.naposystems.pepito.ui.profile.IContractProfile
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.WebServiceUtils
 import com.naposystems.pepito.webService.NapoleonApi
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import timber.log.Timber
 import java.lang.reflect.Field
@@ -22,6 +26,7 @@ import kotlin.reflect.full.memberProperties
 
 
 class ProfileRepository @Inject constructor(
+    private val context: Context,
     private val localDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :

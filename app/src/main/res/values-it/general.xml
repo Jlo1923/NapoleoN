@@ -58,7 +58,6 @@
     <string name="text_empty_state_friendship_title">Richieste di amicizia</string>
     <string name="text_empty_state_friendship_description">Non si dispone di richieste di amicizia in sospeso.</string>
     <string name="text_empty_state_search_title">Trova i tuoi amici</string>
-    <string name="text_empty_state_search_description">Cerca i tuoi amici nickname e comunicare</string>
     <string name="text_now">Ora </string>
     <string name="text_yesterday">Ieri</string>
     <string name="text_close">Vicino</string>
@@ -76,5 +75,5 @@
     <string name="text_empty_state_search_contacts">La tua ricerca non ha prodotto risultati</string>
     <string name="text_contact">CONTATTO</string>
     <string name="text_error_updating_language">Verificato un errore durante la modifica lingua, riprova</string>
-    <string name="text_emptystate_search_friends_title">Procurar seus amigos pelo apelido e comunicar</string>
+    <string name="text_emptystate_search_friends_title">Cerca i tuoi amici nickname e comunicare</string>
 </resources>

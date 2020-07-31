@@ -37,16 +37,16 @@ import com.naposystems.pepito.dto.registerRecoveryAccountQuestion.sendAnswers.Re
 import com.naposystems.pepito.dto.sendCode.SendCodeReqDTO
 import com.naposystems.pepito.dto.sendCode.SendCodeResDTO
 import com.naposystems.pepito.dto.status.UserStatusReqDTO
-import com.naposystems.pepito.dto.subscription.SubscriptionUrlResDTO
-import com.naposystems.pepito.dto.subscription.SubscriptionUserResDTO
-import com.naposystems.pepito.dto.subscription.SubscriptionsResDTO
-import com.naposystems.pepito.dto.subscription.TypeSubscriptionReqDTO
+import com.naposystems.pepito.dto.subscription.*
+import com.naposystems.pepito.dto.user.LogoutResDTO
 import com.naposystems.pepito.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.pepito.dto.validateNickname.ValidateNicknameResDTO
 import com.naposystems.pepito.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountReqDTO
 import com.naposystems.pepito.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountResDTO
 import com.naposystems.pepito.utility.Constants.NapoleonApi.BLOCK_ATTACKER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CALL_CONTACT
+import com.naposystems.pepito.utility.Constants.NapoleonApi.CANCEL_SUBSCRIPTION
+import com.naposystems.pepito.utility.Constants.NapoleonApi.CHECK_SUBSCRIPTION
 import com.naposystems.pepito.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.DELETE_MESSAGES_FOR_ALL
@@ -60,6 +60,7 @@ import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_QUESTIONS_OLD_USER
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
 import com.naposystems.pepito.utility.Constants.NapoleonApi.GET_SUBSCRIPTION_USER
+import com.naposystems.pepito.utility.Constants.NapoleonApi.LOG_OUT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.NOTIFY_MESSAGE_RECEIVED
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_BLOCK_CONTACT
 import com.naposystems.pepito.utility.Constants.NapoleonApi.PUT_FRIENDSHIP_REQUEST
@@ -244,4 +245,13 @@ interface NapoleonApi {
 
     @POST(REJECT_CALL)
     suspend fun rejectCall(@Body rejectCallReqDTO: RejectCallReqDTO): Response<Any>
+
+    @POST(LOG_OUT)
+    suspend fun logout(): Response<LogoutResDTO>
+
+    @POST(CANCEL_SUBSCRIPTION)
+    suspend fun cancelSubscription(): Response<CancelSubscriptionResDTO>
+
+    @GET(CHECK_SUBSCRIPTION)
+    suspend fun checkSubscription(): Response<StateSubscriptionResDTO>
 }

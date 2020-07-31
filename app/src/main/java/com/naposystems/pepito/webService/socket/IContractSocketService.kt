@@ -25,6 +25,8 @@ interface IContractSocketService {
 
     interface Repository {
 
+        suspend fun getContacts()
+
         fun getMyMessages()
 
         fun verifyMessagesReceived()

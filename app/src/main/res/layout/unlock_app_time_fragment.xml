@@ -41,7 +41,7 @@
             style="@style/TextViewSecondaryTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/x_large_margin"
             android:text="@string/text_pin_unlock_time"
             app:layout_constraintBottom_toTopOf="@id/textView_description"
             app:layout_constraintEnd_toStartOf="@+id/guideline_end"

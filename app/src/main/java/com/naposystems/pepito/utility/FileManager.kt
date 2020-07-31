@@ -423,7 +423,7 @@ class FileManager {
         fun deleteTempsFiles(context: Context) {
             val path = File(context.cacheDir, "")
 
-            if (path.isDirectory){
+            if (path.isDirectory) {
                 val tempsFiles: Array<File> = path.listFiles { _, name ->
                     name.startsWith("NNS")
                 }
@@ -431,6 +431,14 @@ class FileManager {
                     if (tempFile.exists())
                         tempFile.delete()
                 }
+            }
+        }
+
+        fun deleteAllFiles(context: Context) {
+            val path = File(context.cacheDir, "")
+
+            if (path.isDirectory) {
+                path.delete()
             }
         }
     }

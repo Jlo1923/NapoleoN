@@ -1,10 +1,13 @@
 package com.naposystems.pepito.db.dao.user
 
 import androidx.lifecycle.LiveData
+import com.naposystems.pepito.db.NapoleonRoomDatabase
 import com.naposystems.pepito.entity.User
 import javax.inject.Inject
 
-class UserLocalDataSource @Inject constructor(private val userDao: UserDao) : UserDataSource {
+class UserLocalDataSource @Inject constructor(
+    private val napoleonDatabase: NapoleonRoomDatabase,
+    private val userDao: UserDao) : UserDataSource {
 
     override suspend fun insertUser(user: User) {
         userDao.insertUser(user)
@@ -32,5 +35,9 @@ class UserLocalDataSource @Inject constructor(private val userDao: UserDao) : Us
 
     override suspend fun updateStatus(newStatus: String, firebaseId: String) {
         userDao.updateStatus(newStatus, firebaseId)
+    }
+
+    override suspend fun clearAllData() {
+        napoleonDatabase.clearAllTables()
     }
 }

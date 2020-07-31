@@ -4,8 +4,11 @@ import android.content.Context
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
+import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
+import com.naposystems.pepito.db.dao.message.MessageLocalDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
+import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
@@ -26,14 +29,46 @@ class SocketRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val messageLocalDataSource: MessageDataSource,
     private val attachmentLocalDataSource: AttachmentDataSource,
-    private val quoteDataSource: QuoteDataSource
+    private val quoteDataSource: QuoteDataSource,
+    private val contactLocalDataSource: ContactDataSource
 ) : IContractSocketService.Repository {
 
     val cryptoMessage = CryptoMessage(context)
 
+    override suspend fun getContacts() {
+        try {
+            val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
+
+            if (response.isSuccessful) {
+
+                val contactResDTO = response.body()!!
+
+                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
+
+                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
+
+                if (contactsToDelete.isNotEmpty()) {
+
+                    contactsToDelete.forEach { contact ->
+                        messageLocalDataSource.deleteMessageByType(
+                            contact.id,
+                            Constants.MessageType.NEW_CONTACT.type
+                        )
+                        contactLocalDataSource.deleteContact(contact)
+                    }
+                }
+            } else {
+                Timber.e(response.errorBody()!!.string())
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
     override fun getMyMessages() {
         GlobalScope.launch {
             try {
+                getContacts()
                 val response = napoleonApi.getMyMessages()
 
                 if (response.isSuccessful) {

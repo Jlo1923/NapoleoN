@@ -20,7 +20,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import com.naposystems.pepito.utility.Constants
 import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -34,9 +33,8 @@ import com.naposystems.pepito.ui.baseFragment.BaseFragment
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment
-import com.naposystems.pepito.utility.FileManager
-import com.naposystems.pepito.utility.SnackbarUtils
-import com.naposystems.pepito.utility.Utils
+import com.naposystems.pepito.ui.logout.LogoutDialogFragment
+import com.naposystems.pepito.utility.*
 import com.naposystems.pepito.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.pepito.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
@@ -130,13 +128,15 @@ class ProfileFragment : BaseFragment() {
             dialog.show(childFragmentManager, "ChangeFakesDialog")
         }
 
-        binding.optionStatus.setSafeOnClickListener {statusClickListener()}
-        binding.imageButtonStatusOptionEndIcon.setSafeOnClickListener {statusClickListener()}
+        binding.optionStatus.setSafeOnClickListener { statusClickListener() }
+        binding.imageButtonStatusOptionEndIcon.setSafeOnClickListener { statusClickListener() }
 
-        binding.optionBlockedContacts.setSafeOnClickListener {blockedContactClickListener()}
+        binding.optionBlockedContacts.setSafeOnClickListener { blockedContactClickListener() }
         binding.imageButtonBlockedContactsOptionEndIcon.setSafeOnClickListener {
             blockedContactClickListener()
         }
+
+        binding.optionLogout.setSafeOnClickListener { logOutClickListener() }
 
         return binding.root
     }
@@ -159,7 +159,7 @@ class ProfileFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.viewModel = viewModel
 
-        viewModel.user.value?.let { user->
+        viewModel.user.value?.let { user ->
             if (user.imageUrl.isNotEmpty()) {
                 binding.imageViewProfileImage.background = null
             }
@@ -246,6 +246,16 @@ class ProfileFragment : BaseFragment() {
             .navigate(
                 ProfileFragmentDirections.actionProfileFragmentToBlockedContactsFragment()
             )
+    }
+
+    private fun logOutClickListener() {
+        val logoutDialogFragment = LogoutDialogFragment.newInstance()
+        logoutDialogFragment.setListener(object : LogoutDialogFragment.Listener {
+            override fun logOutSuccessfully() {
+                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToLandingFragment())
+            }
+        })
+        logoutDialogFragment.show(childFragmentManager, "logout")
     }
 
     private fun viewModelObservers() {

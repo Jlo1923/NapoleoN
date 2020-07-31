@@ -98,7 +98,7 @@ class Utils {
             maxLines: Int
         ) {
             val snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.okay) {
+                .setAction(R.string.text_okay) {
                 }
             val snackbarView = snackbar.view
 

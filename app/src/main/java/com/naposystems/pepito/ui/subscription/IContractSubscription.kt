@@ -1,5 +1,6 @@
 package com.naposystems.pepito.ui.subscription
 
+import com.naposystems.pepito.dto.subscription.StateSubscriptionResDTO
 import com.naposystems.pepito.dto.subscription.SubscriptionUrlResDTO
 import com.naposystems.pepito.dto.subscription.SubscriptionsResDTO
 import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
@@ -13,6 +14,7 @@ interface IContractSubscription {
         fun getRemoteSubscription()
         fun getSubscription()
         fun sendPayment(typePayment: Int)
+        fun checkSubscription()
         fun resetViewModel()
     }
 
@@ -25,5 +27,6 @@ interface IContractSubscription {
         fun getSubscriptionUserError(response: ResponseBody): ArrayList<String>
         fun getError(response: ResponseBody): ArrayList<String>
         fun getSubscriptionUrlError(response: ResponseBody): ArrayList<String>
+        suspend fun checkSubscription(): Response<StateSubscriptionResDTO>
     }
 }

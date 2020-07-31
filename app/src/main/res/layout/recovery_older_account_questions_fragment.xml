@@ -52,7 +52,7 @@
                     style="@style/BodyTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/large_margin"
+                    android:layout_marginTop="@dimen/x_large_margin"
                     android:textAlignment="center"
                     app:layout_constraintBottom_toTopOf="@id/textInputLayout_answer_one"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"

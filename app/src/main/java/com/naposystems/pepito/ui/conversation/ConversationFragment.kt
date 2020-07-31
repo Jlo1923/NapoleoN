@@ -25,6 +25,9 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.webkit.MimeTypeMap
+import android.widget.ActionMenuView
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
@@ -172,6 +175,7 @@ class ConversationFragment : BaseFragment(),
     private var isRecordingAudio: Boolean = false
     private var minTimeRecording = TimeUnit.SECONDS.toMillis(1)
     private var messagedLoadedFirstTime: Boolean = false
+    private var actionViewSchedule: View? = null
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -430,7 +434,8 @@ class ConversationFragment : BaseFragment(),
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
                                 args.contact,
                                 binding.inputPanel.getWebIdQuote(),
-                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
+                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
+                                binding.inputPanel.getEditTex().text.toString()
                             )
                         )
                     }
@@ -538,7 +543,7 @@ class ConversationFragment : BaseFragment(),
                     val quote = binding.inputPanel.getQuote()
 
                     viewModel.saveMessageLocally(
-                        binding.inputPanel.getEditTex().text.toString(),
+                        binding.inputPanel.getEditTex().text.toString().trim(),
                         obtainTimeSelfDestruct(),
                         quote?.message?.webId ?: ""
                     )
@@ -777,6 +782,13 @@ class ConversationFragment : BaseFragment(),
             binding.buttonVideoCall.isEnabled = true
         })
 
+        viewModel.newMessageSend.observe(viewLifecycleOwner, Observer { newMessage ->
+            if (newMessage == true) {
+                binding.inputPanel.clearTextEditText()
+                viewModel.resetNewMessage()
+            }
+        })
+
         shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 findNavController().popBackStack(R.id.homeFragment, false)
@@ -957,6 +969,10 @@ class ConversationFragment : BaseFragment(),
         menuOptionsContact = menu
 
         val scheduleMenuItem = menu.findItem(R.id.menu_item_schedule)
+        actionViewSchedule = scheduleMenuItem.actionView
+        actionViewSchedule?.setOnClickListener {
+            onOptionsItemSelected(scheduleMenuItem)
+        }
 
         ShowCaseManager().apply {
             setActivity(requireActivity())
@@ -973,38 +989,43 @@ class ConversationFragment : BaseFragment(),
 
     private fun setIconTimeDestruction() {
         menuOptionsContact?.let {
-            it.getItem(0).icon = when (obtainTimeSelfDestruct()) {
-                Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time ->
-                    requireContext().getDrawable(R.drawable.ic_five_seconds)
+            actionViewSchedule?.let { actionView ->
 
-                Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time ->
-                    requireContext().getDrawable(R.drawable.ic_fifteen_seconds)
+                ((actionView as FrameLayout).getChildAt(0) as ImageView).setImageDrawable(
+                    when (obtainTimeSelfDestruct()) {
+                        Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time ->
+                            requireContext().getDrawable(R.drawable.ic_five_seconds)
 
-                Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time ->
-                    requireContext().getDrawable(R.drawable.ic_thirty_seconds)
+                        Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time ->
+                            requireContext().getDrawable(R.drawable.ic_fifteen_seconds)
 
-                Constants.SelfDestructTime.EVERY_ONE_MINUTE.time ->
-                    requireContext().getDrawable(R.drawable.ic_one_minute)
+                        Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time ->
+                            requireContext().getDrawable(R.drawable.ic_thirty_seconds)
 
-                Constants.SelfDestructTime.EVERY_TEN_MINUTES.time ->
-                    requireContext().getDrawable(R.drawable.ic_ten_minutes)
+                        Constants.SelfDestructTime.EVERY_ONE_MINUTE.time ->
+                            requireContext().getDrawable(R.drawable.ic_one_minute)
 
-                Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time ->
-                    requireContext().getDrawable(R.drawable.ic_thirty_minutes)
+                        Constants.SelfDestructTime.EVERY_TEN_MINUTES.time ->
+                            requireContext().getDrawable(R.drawable.ic_ten_minutes)
 
-                Constants.SelfDestructTime.EVERY_ONE_HOUR.time ->
-                    requireContext().getDrawable(R.drawable.ic_one_hour)
+                        Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time ->
+                            requireContext().getDrawable(R.drawable.ic_thirty_minutes)
 
-                Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time ->
-                    requireContext().getDrawable(R.drawable.ic_twelve_hours)
+                        Constants.SelfDestructTime.EVERY_ONE_HOUR.time ->
+                            requireContext().getDrawable(R.drawable.ic_one_hour)
 
-                Constants.SelfDestructTime.EVERY_ONE_DAY.time ->
-                    requireContext().getDrawable(R.drawable.ic_one_day)
+                        Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time ->
+                            requireContext().getDrawable(R.drawable.ic_twelve_hours)
 
-                Constants.SelfDestructTime.EVERY_SEVEN_DAY.time ->
-                    requireContext().getDrawable(R.drawable.ic_seven_days)
+                        Constants.SelfDestructTime.EVERY_ONE_DAY.time ->
+                            requireContext().getDrawable(R.drawable.ic_one_day)
 
-                else -> null
+                        Constants.SelfDestructTime.EVERY_SEVEN_DAY.time ->
+                            requireContext().getDrawable(R.drawable.ic_seven_days)
+
+                        else -> null
+                    }
+                )
             }
         }
     }
@@ -1027,8 +1048,12 @@ class ConversationFragment : BaseFragment(),
         Timber.d("onResume")
 //        mediaPlayerManager.registerProximityListener()
         setConversationBackground()
-        binding.floatingActionButtonSend.morphToMic()
         messagedLoadedFirstTime = false
+        if (isEditTextFilled) {
+            binding.floatingActionButtonSend.morphToSend()
+        } else {
+            binding.floatingActionButtonSend.morphToMic()
+        }
     }
 
     override fun onDestroy() {
@@ -1103,6 +1128,7 @@ class ConversationFragment : BaseFragment(),
     private fun blockContact(contact: Contact) {
         generalDialog(
             getString(R.string.text_block_contact),
+
             getString(
                 R.string.text_wish_block_contact,
                 if (contact.displayNameFake.isEmpty()) {

@@ -9,7 +9,7 @@ import com.naposystems.pepito.BuildConfig
 class SharedPreferencesManager(private val context: Context) {
 
     private val sharedPreferences by lazy {
-        if (BuildConfig.ENCRYPT_SHARED_PREFERENCES){
+        if (BuildConfig.ENCRYPT_SHARED_PREFERENCES) {
             val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
             EncryptedSharedPreferences
                 .create(
@@ -19,7 +19,7 @@ class SharedPreferencesManager(private val context: Context) {
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                 )
-        }else {
+        } else {
             context.getSharedPreferences(
                 Constants.SharedPreferences.PREF_NAME,
                 Context.MODE_PRIVATE
@@ -93,6 +93,12 @@ class SharedPreferencesManager(private val context: Context) {
             preferenceName,
             0L
         )
+    }
+
+    fun reset() {
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
     }
 
 }

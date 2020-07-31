@@ -127,7 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/normal_margin"
                     android:layout_marginEnd="@dimen/small_margin"
-                    android:layout_marginBottom="@dimen/large_margin"
+                    android:layout_marginBottom="@dimen/x_large_margin"
                     android:layout_weight="1"
                     android:max="100"
                     app:layout_constraintBottom_toBottomOf="parent"

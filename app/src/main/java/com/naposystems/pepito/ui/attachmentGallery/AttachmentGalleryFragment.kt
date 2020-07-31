@@ -154,7 +154,8 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                                     AttachmentGalleryFragmentDirections.actionAttachmentGalleryFragmentToAttachmentPreviewFragment(
                                         attachment = attachment,
                                         galleryItemId = galleryItem.id,
-                                        quote = args.quoteWebId
+                                        quote = args.quoteWebId,
+                                        message = args.message
                                     ),
                                     extras
                                 )

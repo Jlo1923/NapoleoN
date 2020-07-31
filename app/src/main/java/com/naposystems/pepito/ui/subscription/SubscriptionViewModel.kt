@@ -44,12 +44,17 @@ class SubscriptionViewModel @Inject constructor(
     val sendPaymentError: LiveData<List<String>>
         get() = _sendPaymentError
 
+    private val _subscriptionState = MutableLiveData<String>()
+    val subscriptionState: LiveData<String>
+        get() = _subscriptionState
+
     override fun getTypeSubscription() {
         viewModelScope.launch {
             try {
                 val response = repository.getTypeSubscription()
-                if (response.isSuccessful){
-                    _typeSubscription.value = SubscriptionsResDTO.toListSubscriptions(response.body()!!)
+                if (response.isSuccessful) {
+                    _typeSubscription.value =
+                        SubscriptionsResDTO.toListSubscriptions(response.body()!!)
                 } else {
                     _getTypeSubscriptionError.value = repository.getError(response.errorBody()!!)
                 }
@@ -82,7 +87,24 @@ class SubscriptionViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _subscriptionUrl.value = SubscriptionUrlResDTO.toModel(response.body()!!)
                 } else {
-                    _sendPaymentError.value = repository.getSubscriptionUrlError(response.errorBody()!!)
+                    _sendPaymentError.value =
+                        repository.getSubscriptionUrlError(response.errorBody()!!)
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+    }
+
+    override fun checkSubscription() {
+        viewModelScope.launch {
+            try {
+                val response = repository.checkSubscription()
+
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _subscriptionState.value = it.state
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e)

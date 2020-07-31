@@ -36,7 +36,7 @@ class NotificationUtilsRepository @Inject constructor(
     override fun getIsOnCallPref() =
         sharedPreferencesManager.getBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
 
-    override fun getContactSilenced(contactId: Int, silenced : (Boolean) -> Unit) {
+    override fun getContactSilenced(contactId: Int, silenced : (Boolean?) -> Unit) {
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
                 silenced(contactLocalDataSource.getContactSilenced(contactId))

@@ -12,7 +12,7 @@ data class SubscriptionUserResDTO (
     @Json(name = "state") val state: Int = 0,
     @Json(name = "date_approved") val dateApproved: Long = 0L,
     @Json(name = "date_expires") val dateExpires: Long = 0L,
-    @Json(name = "paypal_id") val paypalId: String = "",
+    @Json(name = "paypal_id") val paypalId: String? = "",
     @Json(name = "token_paypal") val tokenPaypal: String = "",
     @Json(name = "payment_method") val paymentMethod: String = ""
 ) {

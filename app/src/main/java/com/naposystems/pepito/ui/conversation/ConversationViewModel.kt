@@ -82,6 +82,10 @@ class ConversationViewModel @Inject constructor(
     val noInternetConnection: LiveData<Boolean>
         get() = _noInternetConnection
 
+    private val _newMessageSend = MutableLiveData<Boolean>()
+    val newMessageSend: LiveData<Boolean>
+        get() = _newMessageSend
+
     private var countOldMessages: Int = 0
 
     init {
@@ -164,6 +168,7 @@ class ConversationViewModel @Inject constructor(
 
             val messageId = repository.insertMessage(message).toInt()
             Timber.d("insertMessage")
+            _newMessageSend.value = true
 
             message.id = messageId
 
@@ -432,24 +437,21 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             val channel = "private-private.${contact.id}.${user.id}"
             try {
-                if (Utils.isOnlineNet()) {
-                    repository.subscribeToCallChannel(channel)
-                    val response = repository.callContact(contact, isVideoCall)
+                repository.subscribeToCallChannel(channel)
+                val response = repository.callContact(contact, isVideoCall)
 
-                    if (response.isSuccessful) {
-                        response.body()?.let { _ ->
-                            _contactCalledSuccessfully.value = channel
-                        }
-                    } else {
-                        Timber.e(response.errorBody()?.string())
-                        repository.unSubscribeToChannel(contact, channel)
-                        _contactCalledSuccessfully.value = null
+                if (response.isSuccessful) {
+                    response.body()?.let { _ ->
+                        _contactCalledSuccessfully.value = channel
                     }
                 } else {
-                    _noInternetConnection.value = true
+                    Timber.e(response.errorBody()?.string())
+                    repository.unSubscribeToChannel(contact, channel)
+                    _contactCalledSuccessfully.value = null
                 }
             } catch (e: Exception) {
                 repository.unSubscribeToChannel(contact, channel)
+                _noInternetConnection.value = true
                 _contactCalledSuccessfully.value = null
                 Timber.e(e)
             }
@@ -647,6 +649,10 @@ class ConversationViewModel @Inject constructor(
                 Timber.e(e)
             }
         }
+    }
+
+    override fun resetNewMessage() {
+        _newMessageSend.value = null
     }
 
     //endregion

@@ -3,6 +3,7 @@ package com.naposystems.pepito.webService
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.UploadResult
 import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.isActive
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
@@ -38,13 +39,15 @@ class ProgressRequestBody(
                     sink.write(buffer, 0, read)
                     uploaded += read
 
-                    channel.offer(
-                        UploadResult.Progress(
-                            attachment,
-                            (100f * uploaded / mLength).toLong(),
-                            channel
+                    if (channel.isActive) {
+                        channel.offer(
+                            UploadResult.Progress(
+                                attachment,
+                                (100f * uploaded / mLength).toLong(),
+                                channel
+                            )
                         )
-                    )
+                    }
                 }
             }
         } catch (e: Exception) {

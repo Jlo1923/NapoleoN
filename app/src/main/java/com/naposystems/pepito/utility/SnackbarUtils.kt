@@ -23,7 +23,7 @@ class SnackbarUtils(
                             snackbarErrorHandler()
                         }
                     })
-                    .setAction(R.string.okay) {
+                    .setAction(R.string.text_okay) {
                         // Intentionally empty
                     }
             val snackbarView = snackbar.view

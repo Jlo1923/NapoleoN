@@ -102,4 +102,8 @@ class SubscriptionRepository @Inject constructor(
         errorList.add(error!!.error)
         return errorList
     }
+
+    override suspend fun checkSubscription(): Response<StateSubscriptionResDTO> {
+        return napoleonApi.checkSubscription()
+    }
 }

@@ -67,12 +67,15 @@ class ContactUsFragment : Fragment() {
         binding.textInputEditTextMessage.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    binding.textInputLayoutMessage.error = null
-                    if (it.length >= 20) {
-                        binding.buttonSendPqrs.isEnabled = true
-                    } else {
-                        binding.textInputLayoutMessage.error = getString(R.string.text_min_twenty_char)
-                        binding.buttonSendPqrs.isEnabled = false
+                    if (it.isNotEmpty()) {
+                        binding.textInputLayoutMessage.error = null
+                        if (it.length >= 20) {
+                            binding.buttonSendPqrs.isEnabled = true
+                        } else {
+                            binding.textInputLayoutMessage.error =
+                                getString(R.string.text_min_twenty_char)
+                            binding.buttonSendPqrs.isEnabled = false
+                        }
                     }
                 }
             }
