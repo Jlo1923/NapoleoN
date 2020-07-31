@@ -2,7 +2,7 @@
 <resources>
     <string name="text_color_scheme">Sélection du thème</string>
     <string name="text_user_display_format">Format du nom d\'utilisateur</string>
-    <string name="text_language">langage</string>
+    <string name="text_language">Langage</string>
     <string name="text_light_theme">Thème lumière</string>
     <string name="text_dark_theme">Thème sombre</string>
     <string name="text_name_and_nickname">Nom et pseudo</string>
