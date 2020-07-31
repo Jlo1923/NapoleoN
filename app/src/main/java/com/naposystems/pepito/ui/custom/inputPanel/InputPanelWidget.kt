@@ -135,7 +135,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
             objectAnimatorMic.cancel()
         }
 
-        if (binding.viewSwitcherText.nextView.id == binding.containerTextSlide.id){
+        if (binding.viewSwitcherText.nextView.id == binding.containerTextSlide.id) {
             binding.viewSwitcherText.showNext()
         }
     }
@@ -144,6 +144,10 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.textViewTime.apply {
             text = Utils.getDuration(time, time >= TimeUnit.HOURS.toMillis(1))
         }
+    }
+
+    override fun clearTextEditText() {
+        binding.textInputEditTextInput.setText("")
     }
 
     //endregion

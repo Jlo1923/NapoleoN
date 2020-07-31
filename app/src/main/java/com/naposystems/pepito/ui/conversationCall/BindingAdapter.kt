@@ -2,6 +2,7 @@ package com.naposystems.pepito.ui.conversationCall
 
 import android.graphics.Bitmap
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatImageView
@@ -13,30 +14,49 @@ import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.naposystems.pepito.R
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.utility.BlurTransformation
+import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Utils
 
 @BindingAdapter("callBackground")
 fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact?) {
 
     val context = imageView.context
 
-    val defaultAvatar = context.resources.getDrawable(
-        R.drawable.logo_napoleon_app_blur,
-        context.theme
-    )
+    if (contact != null) {
+        val defaultAvatar = context.resources.getDrawable(
+            R.drawable.logo_napoleon_app_blur,
+            context.theme
+        )
 
-    val contactHasFoto = contact?.getImage()?.isNotEmpty() ?: false
-    val bitmapTransformation = mutableListOf<Transformation<Bitmap>>()
-    if (contactHasFoto) {
-        bitmapTransformation.add(CenterCrop())
-        bitmapTransformation.add(BlurTransformation(context))
+        val loadImage = when {
+            contact.imageUrlFake.isNotEmpty() -> {
+                Utils.getFileUri(
+                    context = context,
+                    fileName = contact.imageUrlFake,
+                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                )
+            }
+            contact.imageUrl.isNotEmpty() -> {
+                contact.imageUrl
+            }
+            else -> {
+                null
+            }
+        }
 
-    } else
-        bitmapTransformation.add(CenterInside())
+        val bitmapTransformation = mutableListOf<Transformation<Bitmap>>()
+        if (loadImage != null) {
+            bitmapTransformation.add(CenterCrop())
+            bitmapTransformation.add(BlurTransformation(context))
 
-    Glide.with(context)
-        .load(if (contactHasFoto) contact?.getImage() else defaultAvatar)
-        .transform(*bitmapTransformation.toTypedArray())
-        .into(imageView)
+        } else
+            bitmapTransformation.add(CenterInside())
+
+        Glide.with(context)
+            .load(loadImage ?: defaultAvatar)
+            .transform(*bitmapTransformation.toTypedArray())
+            .into(imageView)
+    }
 
 }
 

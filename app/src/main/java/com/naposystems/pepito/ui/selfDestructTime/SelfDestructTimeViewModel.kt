@@ -30,7 +30,7 @@ class SelfDestructTimeViewModel @Inject constructor(private val repository: ICon
         repository.setSelfDestructTime(selfDestructTime)
     }
 
-    override fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId : Int) {
+    override fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int) {
         viewModelScope.launch {
             repository.setSelfDestructTimeByContact(selfDestructTime, contactId)
         }
@@ -38,7 +38,7 @@ class SelfDestructTimeViewModel @Inject constructor(private val repository: ICon
 
     override fun getSelfDestructTimeByContact(contactId: Int) {
         viewModelScope.launch {
-            val selfDestructTime= repository.getSelfDestructTimeByContact(contactId)
+            val selfDestructTime = repository.getSelfDestructTimeByContact(contactId)
             getDestructTimeByContact = selfDestructTime
         }
     }

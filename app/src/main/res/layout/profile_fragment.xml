@@ -225,8 +225,8 @@
                         android:maxLength="@integer/max_length_display_name"
                         android:padding="0dp"
                         android:singleLine="true"
-                        android:textColorHint="?attr/attrTextColorHint"
                         android:textColor="?attr/attrColorButtonTint"
+                        android:textColorHint="?attr/attrTextColorHint"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/textView_label_name"
                         app:layout_constraintStart_toStartOf="@id/textView_label_name"
@@ -365,6 +365,49 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/imageButton_blocked_contacts_option_end_icon"
                         app:layout_constraintStart_toEndOf="@id/imageView_blocked_contacts_option_start_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- OPTION BLOCKED USERS -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/option_logout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_with_separator"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="@dimen/normal_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/option_blocked_contacts">
+
+                    <!-- START ICON -->
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_logout_option_start_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_baseline_exit_to_app" />
+
+                    <!-- LABEL BLOCKED CONTACTS -->
+                    <TextView
+                        android:id="@+id/textView_label_logout"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="Cerrar sesión"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imageView_logout_option_start_icon"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

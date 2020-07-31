@@ -74,6 +74,7 @@ interface IContractConversation {
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
         fun sendMessageRead(messageWebId: String)
         fun reSendMessage(message: Message, selfDestructTime: Int)
+        fun resetNewMessage()
     }
 
     interface Repository {

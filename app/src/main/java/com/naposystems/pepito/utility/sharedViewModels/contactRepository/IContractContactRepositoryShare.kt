@@ -7,7 +7,7 @@ interface IContractContactRepositoryShare {
     }
 
     interface Repository {
-        suspend fun getContacts()
+        suspend fun getContacts(): Boolean
     }
 
 }

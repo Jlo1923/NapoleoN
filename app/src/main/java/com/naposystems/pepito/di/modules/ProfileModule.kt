@@ -1,5 +1,6 @@
 package com.naposystems.pepito.di.modules
 
+import android.content.Context
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.repository.profile.ProfileRepository
 import com.naposystems.pepito.utility.SharedPreferencesManager
@@ -13,9 +14,10 @@ class ProfileModule {
     @Provides
     @Singleton
     fun provideRepository(
+        context: Context,
         userLocalDataSource: UserLocalDataSource,
         sharedPreferencesManager: SharedPreferencesManager
     ): ProfileRepository {
-        return ProfileRepository(userLocalDataSource, sharedPreferencesManager)
+        return ProfileRepository(context, userLocalDataSource, sharedPreferencesManager)
     }
 }

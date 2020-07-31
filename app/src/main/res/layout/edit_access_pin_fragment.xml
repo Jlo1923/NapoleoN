@@ -119,7 +119,7 @@
                     android:id="@+id/viewSwitcher"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/large_margin"
+                    android:layout_marginBottom="@dimen/x_large_margin"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_start"

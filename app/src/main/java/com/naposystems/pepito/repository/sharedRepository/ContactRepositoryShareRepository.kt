@@ -15,8 +15,8 @@ class ContactRepositoryShareRepository @Inject constructor(
     private val messageLocalDataSource: MessageDataSource
 ) : IContractContactRepositoryShare.Repository {
 
-    override suspend fun getContacts() {
-        try {
+    override suspend fun getContacts(): Boolean {
+        return try {
             val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
 
             if (response.isSuccessful) {
@@ -37,11 +37,15 @@ class ContactRepositoryShareRepository @Inject constructor(
                         contactLocalDataSource.deleteContact(contact)
                     }
                 }
+
+                true
             } else {
                 Timber.e(response.errorBody()!!.string())
+                false
             }
         } catch (e: Exception) {
             Timber.e(e)
+            true
         }
     }
 }

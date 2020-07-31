@@ -58,7 +58,6 @@
     <string name="text_empty_state_friendship_title">Demandes d\'amis</string>
     <string name="text_empty_state_friendship_description">Vous n\'avez pas en attente des demandes d\'amis.</string>
     <string name="text_empty_state_search_title">Trouvez vos amis</string>
-    <string name="text_empty_state_search_description">Recherchez vos amis par pseudonyme et communiquer</string>
     <string name="text_now">Maintenant </string>
     <string name="text_yesterday">Hier</string>
     <string name="text_close">Fermer</string>

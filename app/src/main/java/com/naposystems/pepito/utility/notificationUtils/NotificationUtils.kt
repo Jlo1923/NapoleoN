@@ -165,38 +165,40 @@ class NotificationUtils @Inject constructor(
                 silence=false}*/
 
                 val contact = Constants.NotificationKeys.CONTACT
-                repository.getContactSilenced(data.getValue(contact).toInt(), silenced = { silenced ->
-                    if (silenced) {
-                        Timber.d("--- Esta silenciada la mka esa xd")
-                    } else {
-                        setupNotificationSound(context, R.raw.sound_message_received)
+                repository.getContactSilenced(
+                    data.getValue(contact).toInt(),
+                    silenced = { silenced ->
+                        if (silenced != null && silenced == true) {
+                            Timber.d("--- Esta silenciada la mka esa xd")
+                        } else {
+                            setupNotificationSound(context, R.raw.sound_message_received)
 
-                        val titleKey =
-                            Constants.NotificationKeys.TITLE
-                        val bodyKey =
-                            Constants.NotificationKeys.BODY
-                        val messageId =
-                            Constants.NotificationKeys.MESSAGE_ID
+                            val titleKey =
+                                Constants.NotificationKeys.TITLE
+                            val bodyKey =
+                                Constants.NotificationKeys.BODY
+                            val messageId =
+                                Constants.NotificationKeys.MESSAGE_ID
 
-                        if (data.containsKey(titleKey)) {
-                            builder.setContentTitle(data.getValue(titleKey))
-                        }
+                            if (data.containsKey(titleKey)) {
+                                builder.setContentTitle(data.getValue(titleKey))
+                            }
 
-                        if (data.containsKey(bodyKey)) {
-                            builder.setContentText(data.getValue(bodyKey))
-                        }
+                            if (data.containsKey(bodyKey)) {
+                                builder.setContentText(data.getValue(bodyKey))
+                            }
 
-                        if (data.containsKey(messageId) && app != null && !app.isAppVisible()) {
-                            repository.notifyMessageReceived(data.getValue(messageId))
-                        }
+                            if (data.containsKey(messageId) && app != null && !app.isAppVisible()) {
+                                repository.notifyMessageReceived(data.getValue(messageId))
+                            }
 
-                        if (!app!!.isAppVisible()) {
-                            with(NotificationManagerCompat.from(context)) {
-                                notify(Random().nextInt(), builder.build())
+                            if (!app!!.isAppVisible()) {
+                                with(NotificationManagerCompat.from(context)) {
+                                    notify(Random().nextInt(), builder.build())
+                                }
                             }
                         }
-                    }
-                })
+                    })
             }
 
             Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {

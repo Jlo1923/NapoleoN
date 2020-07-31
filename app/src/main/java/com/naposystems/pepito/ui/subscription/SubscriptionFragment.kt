@@ -2,21 +2,21 @@ package com.naposystems.pepito.ui.subscription
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
+import com.naposystems.pepito.databinding.CancelSubscriptionDialogFragmentBinding
 import com.naposystems.pepito.databinding.SubscriptionFragmentBinding
 import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 import com.naposystems.pepito.model.typeSubscription.TypeSubscription
+import com.naposystems.pepito.ui.cancelSubscription.CancelSubscriptionDialogFragment
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SnackbarUtils
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -38,8 +38,9 @@ class SubscriptionFragment : Fragment() {
     }
     private lateinit var binding: SubscriptionFragmentBinding
     private lateinit var snackbarUtils: SnackbarUtils
-    private var subscriptionUser: SubscriptionUser? = null
     private var listTypeSubscription: List<TypeSubscription>? = null
+    private var menuItem: MenuItem? = null
+    private var subscriptionState: String = ""
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -50,6 +51,9 @@ class SubscriptionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        setHasOptionsMenu(true)
+
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.subscription_fragment,
@@ -87,10 +91,37 @@ class SubscriptionFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_subscription, menu)
+
+        menuItem = menu.findItem(R.id.menu_item_cancel_subscription)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item_cancel_subscription -> {
+                val cancelSubscriptionDialogFragment =
+                    CancelSubscriptionDialogFragment.newInstance()
+                cancelSubscriptionDialogFragment.setListener(object :
+                    CancelSubscriptionDialogFragment.Listener {
+                    override fun subscriptionCancelledSuccessfully() {
+
+                    }
+                })
+                cancelSubscriptionDialogFragment.show(childFragmentManager, "cancelSubscription")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        viewModel.checkSubscription()
         viewModel.getTypeSubscription()
+
         viewModel.typeSubscription.observe(viewLifecycleOwner, Observer { listTypeSubscription ->
             binding.checkBoxPaymentDescription.isChecked = false
             if (listTypeSubscription.isNotEmpty()) {
@@ -112,8 +143,9 @@ class SubscriptionFragment : Fragment() {
         })
 
         viewModel.subscriptionUser.observe(viewLifecycleOwner, Observer {
-            subscriptionUser = it
-            setSubscriptionUser()
+            if (it != null) {
+                setSubscriptionUser(it)
+            }
         })
 
         viewModel.getTypeSubscriptionError.observe(viewLifecycleOwner, Observer {
@@ -139,6 +171,18 @@ class SubscriptionFragment : Fragment() {
             snackbarUtils.showSnackbar()
             binding.viewSwitcher.showPrevious()
         })
+
+        viewModel.subscriptionState.observe(viewLifecycleOwner, Observer {
+            if (it != null){
+                subscriptionState = it
+                when (it) {
+                    Constants.SubscriptionStatus.ACTIVE.state -> {
+                        menuItem?.isVisible = true
+                    }
+                    else -> menuItem?.isVisible = false
+                }
+            }
+        })
     }
 
     private fun enableButtonPaypal() {
@@ -153,42 +197,41 @@ class SubscriptionFragment : Fragment() {
         }
     }
 
-    private fun setSubscriptionUser() {
+    private fun setSubscriptionUser(subscriptionUser: SubscriptionUser) {
         binding.imageButtonPaypal.isEnabled = false
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val netDate: Date
-        subscriptionUser?.let { subscriptionUser ->
-            if (System.currentTimeMillis() > viewModel.getFreeTrial()) {
-                if (subscriptionUser.dateExpires != 0L) {
-                    if (System.currentTimeMillis() > subscriptionUser.dateExpires) {
-                        binding.textViewSubscriptionActual.text =
-                            getString(R.string.text_expired_subscription)
-                    } else {
-                        val daysMillis = subscriptionUser.dateExpires - System.currentTimeMillis()
-                        val currentSubscription =
-                            listTypeSubscription?.find { typeSubscription ->
-                                typeSubscription.id == subscriptionUser.subscriptionId
-                            }?.description
-                        binding.textViewSubscriptionActual.text = getString(
-                            R.string.text_subscription_and_time,
-                            currentSubscription,
-                            TimeUnit.MILLISECONDS.toDays(daysMillis)
-                        )
-                    }
-                } else {
-                    binding.textViewSubscriptionActual.text =
-                        getString(R.string.text_free_trial_expired)
-                }
-                netDate = Date(subscriptionUser.dateExpires)
-            } else {
-                netDate = Date(viewModel.getFreeTrial())
-                val daysMillis = viewModel.getFreeTrial() - System.currentTimeMillis()
 
+        if (System.currentTimeMillis() > viewModel.getFreeTrial()) {
+            if (subscriptionUser.dateExpires != 0L) {
+                if (System.currentTimeMillis() > subscriptionUser.dateExpires) {
+                    binding.textViewSubscriptionActual.text =
+                        getString(R.string.text_expired_subscription)
+                } else {
+                    val daysMillis = subscriptionUser.dateExpires - System.currentTimeMillis()
+                    val currentSubscription =
+                        listTypeSubscription?.find { typeSubscription ->
+                            typeSubscription.id == subscriptionUser.subscriptionId
+                        }?.description
+                    binding.textViewSubscriptionActual.text = getString(
+                        R.string.text_subscription_and_time,
+                        currentSubscription,
+                        TimeUnit.MILLISECONDS.toDays(daysMillis)
+                    )
+                }
+            } else {
                 binding.textViewSubscriptionActual.text =
-                    getString(R.string.text_trial_period, TimeUnit.MILLISECONDS.toDays(daysMillis))
+                    getString(R.string.text_free_trial_expired)
             }
-            binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+            netDate = Date(subscriptionUser.dateExpires)
+        } else {
+            netDate = Date(viewModel.getFreeTrial())
+            val daysMillis = viewModel.getFreeTrial() - System.currentTimeMillis()
+
+            binding.textViewSubscriptionActual.text =
+                getString(R.string.text_trial_period, TimeUnit.MILLISECONDS.toDays(daysMillis))
         }
+        binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
     }
 
     private fun sendPayment() {

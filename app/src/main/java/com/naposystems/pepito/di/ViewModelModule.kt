@@ -12,6 +12,7 @@ import com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFolder
 import com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationViewModel
 import com.naposystems.pepito.ui.baseFragment.BaseViewModel
 import com.naposystems.pepito.ui.blockedContacts.BlockedContactsViewModel
+import com.naposystems.pepito.ui.cancelSubscription.CancelSubscriptionDialogViewModel
 import com.naposystems.pepito.ui.changeParams.ChangeParamsDialogViewModel
 import com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel
 import com.naposystems.pepito.ui.contactProfile.ContactProfileViewModel
@@ -23,6 +24,7 @@ import com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.pepito.ui.enterPin.EnterPinViewModel
 import com.naposystems.pepito.ui.home.HomeViewModel
 import com.naposystems.pepito.ui.languageSelection.LanguageSelectionViewModel
+import com.naposystems.pepito.ui.logout.LogoutDialogViewModel
 import com.naposystems.pepito.ui.mainActivity.MainActivityViewModel
 import com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.pepito.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
@@ -343,4 +345,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PreviewMediaViewModel::class)
     internal abstract fun bindPreviewMediaViewModel(viewModel: PreviewMediaViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LogoutDialogViewModel::class)
+    internal abstract fun bindLogoutDialogViewModel(viewModel: LogoutDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CancelSubscriptionDialogViewModel::class)
+    internal abstract fun bindCancelSubscriptionDialogViewModel(viewModel: CancelSubscriptionDialogViewModel): ViewModel
 }

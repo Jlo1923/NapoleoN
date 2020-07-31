@@ -4,7 +4,7 @@
     <string name="label_nickname" translatable="false">\@%1$s</string>
     <string name="text_power_by" translatable="false">Powered by</string>
     <string name="middle_dash" translatable="false">-</string>
-    <string name="okay" translatable="false">OK</string>
+    <string name="text_okay" translatable="false">OK</string>
     <string name="only_letters_and_numbers" translatable="false">abcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="only_letters_upper_case_and_numbers" translatable="false">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</string>
     <string name="nickname_configuration" translatable="false">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._</string>
@@ -76,7 +76,6 @@
     <string name="text_empty_state_friendship_title">Friend requests</string>
     <string name="text_empty_state_friendship_description">You do not have pending friend requests.</string>
     <string name="text_empty_state_search_title">Find your friends</string>
-    <string name="text_empty_state_search_description">Search for your friends by nickname and communicate</string>
     <string name="text_now">Now </string>
     <string name="text_yesterday">Yesterday</string>
     <string name="text_close">Close</string>

@@ -60,6 +60,9 @@ object Constants {
         const val SEND_SELECTED_SUBSCRIPTION = "paypal/createpayment"
         const val CALL_CONTACT = "call/callfriend"
         const val REJECT_CALL = "call/rejectedcall"
+        const val LOG_OUT = "auth/logout"
+        const val CANCEL_SUBSCRIPTION = "subscriptions/cancel"
+        const val CHECK_SUBSCRIPTION = "subscriptions/state"
     }
 
     object CallKeys {
@@ -383,6 +386,14 @@ object Constants {
         MISSED_CALL(2),
         MISSED_VIDEO_CALL(3),
         NEW_CONTACT(4)
+    }
+
+    enum class SubscriptionStatus(val state: String) {
+        PENDING("Pending"),
+        ACTIVE("Active"),
+        SUSPENDED("Suspended"),
+        CANCELLED("Cancelled"),
+        EXPIRED("Expired")
     }
 
     object SharedPreferences {

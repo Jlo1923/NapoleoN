@@ -57,7 +57,6 @@
     <string name="text_empty_state_friendship_title">Solicitudes de amistad</string>
     <string name="text_empty_state_friendship_description">No tienes solicitudes de amistad pendientes</string>
     <string name="text_empty_state_search_title">Busca a tus amigos</string>
-    <string name="text_empty_state_search_description">Busca a tus amigos por apodo y comunícate</string>
     <string name="text_now">Ahora </string>
     <string name="text_yesterday">Ayer</string>
     <string name="text_close">Cerrar</string>
