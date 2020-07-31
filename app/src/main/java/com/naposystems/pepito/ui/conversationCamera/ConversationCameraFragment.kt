@@ -253,7 +253,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
                                     ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
                                         attachment,
                                         0,
-                                        args.quote
+                                        args.quote,
+                                        args.message
                                     )
                                 )
 
@@ -379,7 +380,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
                             ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
                                 attachment,
                                 0,
-                                args.quote
+                                args.quote,
+                                args.message
                             )
                         )
                     } else {

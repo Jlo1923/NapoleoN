@@ -27,6 +27,7 @@
     <color name="colorBackgroundDialog">#f2f2f2</color>
     <color name="colorSecondaryBackground">#d8a608</color>
     <color name="buttonTint">#d8a608</color>
+    <color name="colorBackgroundMyMessage">#DFBD4C</color>
     <color name="buttonTintCamera">#d8a608</color>
     <color name="trackColor">#4Dd8a608</color>
     <color name="disabledTrackColor">@color/colorSecondaryDark</color>

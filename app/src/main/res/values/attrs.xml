@@ -65,6 +65,7 @@
     <attr name="attrColorTextButtonTintCamera" format="reference" />
     <attr name="attrBackgroundColorActionMode" format="reference" />
     <attr name="attrBackgroundBatchMessage" format="reference" />
+    <attr name="attrBackgroundMyMessage" format="reference" />
 
     <!--//Tint-->
     <attr name="attrTintColorSecondaryDark" format="reference" />

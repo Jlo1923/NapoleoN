@@ -132,7 +132,7 @@ class AttachmentPreviewFragment : Fragment() {
         binding.floatingActionButtonSend.setOnClickListener {
             with(conversationShareViewModel) {
                 setQuoteWebId(args.quote)
-                setMessage(binding.inputPanel.getEditTex().text.toString())
+                setMessage(binding.inputPanel.getEditTex().text.toString().trim())
                 setAttachmentSelected(args.attachment)
                 resetAttachmentSelected()
                 resetMessage()

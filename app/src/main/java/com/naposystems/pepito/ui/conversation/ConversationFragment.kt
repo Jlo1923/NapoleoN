@@ -411,7 +411,8 @@ class ConversationFragment : BaseFragment(),
                         viewModel.getUser().id,
                         args.contact.id,
                         binding.inputPanel.getWebIdQuote(),
-                        Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
+                        Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
+                        binding.inputPanel.getEditTex().text.toString().trim()
                     )
                 )
             }
@@ -435,7 +436,7 @@ class ConversationFragment : BaseFragment(),
                                 args.contact,
                                 binding.inputPanel.getWebIdQuote(),
                                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditTex().text.toString()
+                                binding.inputPanel.getEditTex().text.toString().trim()
                             )
                         )
                     }
@@ -448,7 +449,8 @@ class ConversationFragment : BaseFragment(),
                                 viewModel.getUser().id,
                                 args.contact.id,
                                 binding.inputPanel.getWebIdQuote(),
-                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location
+                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
+                                binding.inputPanel.getEditTex().text.toString().trim()
                             )
                         )
                     }

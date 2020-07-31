@@ -52,6 +52,7 @@
         <item name="attrErrorTextColorColorError">@color/colorError</item>
         <item name="attrErrorIconTintColorError">@color/colorError</item>
         <item name="attrColorButtonTint">@color/buttonTint</item>
+        <item name="attrBackgroundMyMessage">@color/colorBackgroundMyMessage</item>
         <item name="attrBackgroundBatchMessage">@color/buttonTint</item>
         <item name="attrColorTrackColor">@color/trackColor</item>
         <item name="attrSeparatorColor">@color/separator</item>
@@ -137,6 +138,7 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundMyMessage">@color/color_F2F2F2</item>
         <item name="attrBackgroundBatchMessage">@color/color_F2F2F2</item>
         <item name="attrColorTrackColor">@color/color_4Df2f2f2</item>
         <item name="attrSeparatorColor">@color/color_8F8F8F</item>
@@ -221,6 +223,7 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_903B6E</item>
+        <item name="attrBackgroundMyMessage">@color/color_903B6E</item>
         <item name="attrBackgroundBatchMessage">@color/color_903B6E</item>
         <item name="attrColorTrackColor">@color/color_F38DC7</item>
         <item name="android:itemBackground">@color/color_FFEFFF</item>
@@ -306,6 +309,7 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_0074A7</item>
+        <item name="attrBackgroundMyMessage">@color/color_0074A7</item>
         <item name="attrBackgroundBatchMessage">@color/color_0074A7</item>
         <item name="attrColorTrackColor">@color/color_4AA3D9</item>
         <item name="android:itemBackground">@color/color_E6F2FF</item>
@@ -390,6 +394,7 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_7D5B76</item>
+        <item name="attrBackgroundMyMessage">@color/color_7D5B76</item>
         <item name="attrBackgroundBatchMessage">@color/color_7D5B76</item>
         <item name="attrColorTrackColor">@color/color_7D366F</item>
         <item name="android:itemBackground">@color/color_F2F2F2</item>
@@ -476,6 +481,7 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_3CB043</item>
+        <item name="attrBackgroundMyMessage">@color/color_3CB043</item>
         <item name="attrBackgroundBatchMessage">@color/color_002100</item>
         <item name="attrBackgroundColorActionMode">@color/color_002100</item>
         <item name="attrFabIconColor">@color/color_002100</item>
@@ -557,6 +563,7 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_D8A605</item>
+        <item name="attrBackgroundMyMessage">@color/color_D8A605</item>
         <item name="attrBackgroundBatchMessage">@color/color_000000</item>
         <item name="attrBackgroundColorActionMode">@color/color_000000</item>
         <item name="attrFabIconColor">@color/color_000000</item>
@@ -640,6 +647,7 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundMyMessage">@color/color_F2F2F2</item>
         <item name="attrBackgroundBatchMessage">@color/color_2A2C45</item>
         <item name="attrBackgroundColorActionMode">@color/color_01001E</item>
         <item name="attrFabIconColor">@color/color_2A2C45</item>
