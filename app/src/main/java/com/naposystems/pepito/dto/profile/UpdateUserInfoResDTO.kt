@@ -14,5 +14,5 @@ data class UpdateUserInfoResDTO(
     @Json(name = "language_iso") val languageIso: String,
     @Json(name = "type") val type: Int,
     @Json(name = "membership") val membership: Boolean,
-    @Json(name = "data_update") val dataUpdate: String
+    @Json(name = "data_update") val dataUpdate: String?
 )
