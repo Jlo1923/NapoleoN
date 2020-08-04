@@ -76,4 +76,5 @@
     <string name="text_contact">CONTATO</string>
     <string name="text_error_updating_language">Ocorreu um erro ao mudar de idioma, por favor tente novamente</string>
     <string name="text_emptystate_search_friends_title">Procurar seus amigos pelo apelido e comunicar</string>
+    <string name="text_date_today">Hoje</string>
 </resources>

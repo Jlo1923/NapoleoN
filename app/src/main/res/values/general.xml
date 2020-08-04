@@ -95,4 +95,5 @@
     <string name="text_contact">CONTACT</string>
     <string name="text_error_updating_language">An error occurred changing language, please try again</string>
     <string name="text_emptystate_search_friends_title">Search for your friends by nickname and communicate</string>
+    <string name="text_date_today">Today</string>
 </resources>

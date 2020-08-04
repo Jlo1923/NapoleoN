@@ -76,4 +76,5 @@
     <string name="text_contact">KONTAKT</string>
     <string name="text_error_updating_language">Ein Fehler ist aufgetreten Sprache zu ändern, versuchen Sie es erneut</string>
     <string name="text_emptystate_search_friends_title">Suchen Sie Ihren Freunden von Nickname und kommunizieren</string>
+    <string name="text_date_today">Heute</string>
 </resources>

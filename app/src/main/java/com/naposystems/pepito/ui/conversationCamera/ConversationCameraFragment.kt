@@ -58,7 +58,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
     private lateinit var path: File
     private lateinit var videoFile: File
     private lateinit var fileName: String
-    private var recordingTime: Long = 0
+    private var recordingTime: Long = TimeUnit.MINUTES.toMillis(1)
     private var mStartToRecordRunnable: Runnable = Runnable { startRecording() }
     private lateinit var mRecordingTimeRunnable: Runnable
 
@@ -411,9 +411,9 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
             }
 
             val oneSecond = TimeUnit.SECONDS.toMillis(1)
-            recordingTime += oneSecond
+            recordingTime -= oneSecond
             Timber.d("recordingTime: $recordingTime")
-            if (recordingTime == Constants.MAX_VIDEO_RECORD_TIME) {
+            if (recordingTime == 1000L) {
                 stopRecording()
             } else {
                 mHandler.postDelayed(mRecordingTimeRunnable, oneSecond)
