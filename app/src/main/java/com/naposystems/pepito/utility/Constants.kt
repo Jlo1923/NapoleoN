@@ -13,7 +13,7 @@ object Constants {
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
     const val QUANTITY_ATTACHMENTS = 0
-    const val MAX_VIDEO_RECORD_TIME = 30000L
+    const val MAX_AUDIO_RECORD_TIME = 1800000L
 
     object NapoleonApi {
         /*const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
@@ -385,7 +385,8 @@ object Constants {
         MESSAGE(1),
         MISSED_CALL(2),
         MISSED_VIDEO_CALL(3),
-        NEW_CONTACT(4)
+        NEW_CONTACT(4),
+        MESSAGES_GROUP_DATE(5)
     }
 
     enum class SubscriptionStatus(val state: String) {

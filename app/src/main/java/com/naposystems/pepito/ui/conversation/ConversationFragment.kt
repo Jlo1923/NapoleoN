@@ -25,7 +25,6 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.webkit.MimeTypeMap
-import android.widget.ActionMenuView
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
@@ -1540,6 +1539,8 @@ class ConversationFragment : BaseFragment(),
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     private fun startRecording() {
 
         try {
@@ -1566,7 +1567,11 @@ class ConversationFragment : BaseFragment(),
                             recordingTime += oneSecond
                             binding.inputPanel.setRecordingTime(recordingTime)
 
-                            mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
+                            if (recordingTime == Constants.MAX_AUDIO_RECORD_TIME) {
+                                saveAndSendRecordAudio()
+                            } else {
+                                mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
+                            }
                         }
                     }
 
@@ -1661,6 +1666,8 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     override fun onMicActionDown() {
         startRecording()
 

@@ -2,9 +2,11 @@ package com.naposystems.pepito.db.dao.message
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.naposystems.pepito.BuildConfig
+import com.naposystems.pepito.R
 import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.entity.message.Message
 import com.naposystems.pepito.entity.message.MessageAndAttachment
@@ -15,8 +17,15 @@ import com.naposystems.pepito.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.temporal.WeekFields
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.Comparator
 
 class MessageLocalDataSource @Inject constructor(
     private val context: Context,
@@ -41,6 +50,9 @@ class MessageLocalDataSource @Inject constructor(
     override fun getMessages(contactId: Int) =
         messageDao.getMessagesAndAttachmentsDistinctUntilChanged(contactId)
             .map { listMessages: List<MessageAndAttachment> ->
+
+                val mutableListMessages: MutableList<MessageAndAttachment> = arrayListOf()
+
                 if (BuildConfig.ENCRYPT_API) {
                     listMessages.forEach { messageAndAttachment: MessageAndAttachment ->
                         with(messageAndAttachment.message) {
@@ -50,9 +62,79 @@ class MessageLocalDataSource @Inject constructor(
                         }
                     }
                 }
-                listMessages
+
+                var dayOfYear = -1
+
+                listMessages.forEachIndexed { i, messageAndAttachment ->
+                    val timeStamp =
+                        TimeUnit.SECONDS.toMillis(messageAndAttachment.message.createdAt.toLong())
+
+                    val messageDate =
+                        Date(timeStamp)
+
+                    val timeActual = System.currentTimeMillis()
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val dayNext = sdf.format(Date((timeStamp + TimeUnit.DAYS.toMillis(1))))
+                    val dayMessage = sdf.format(messageDate)
+                    val dayActual = sdf.format(Date(timeActual))
+
+
+                    if (dayOfYear != getDayOfYear(messageDate)) {
+                        dayOfYear = getDayOfYear(messageDate)
+
+                        val messageBody = when {
+                            dayMessage == dayActual -> {
+                                context.getString(R.string.text_date_today)
+                            }
+                            dayNext == dayActual -> {
+                                context.getString(R.string.text_yesterday)
+                            }
+                            else -> {
+                                sdf.format(messageDate)
+                            }
+                        }
+
+                        val message = MessageAndAttachment(
+                            Message(
+                                id = -1,
+                                webId = "",
+                                body = messageBody + "\u00A0",
+                                quoted = "",
+                                contactId = messageAndAttachment.message.contactId,
+                                updatedAt = messageAndAttachment.message.updatedAt,
+                                createdAt = messageAndAttachment.message.createdAt,
+                                isMine = Constants.IsMine.YES.value,
+                                status = Constants.MessageStatus.SENT.status,
+                                numberAttachments = 0,
+                                selfDestructionAt = messageAndAttachment.message.selfDestructionAt,
+                                totalSelfDestructionAt = messageAndAttachment.message.totalSelfDestructionAt,
+                                messageType = Constants.MessageType.MESSAGES_GROUP_DATE.type
+                            ),
+                            attachmentList = arrayListOf(),
+                            quote = null,
+                            contact = messageAndAttachment.contact
+                        )
+
+                        mutableListMessages.add(message)
+                    }
+
+                    mutableListMessages.add(messageAndAttachment)
+                }
+
+                mutableListMessages.toList()
             }
             .asLiveData()
+
+    private fun getDayOfYear(date: Date): Int {
+        val calendar = dateToCalendar(date)
+        return calendar.get(Calendar.DAY_OF_YEAR)
+    }
+
+    private fun dateToCalendar(date: Date): Calendar {
+        val calendar = Calendar.getInstance(TimeZone.getDefault())
+        calendar.timeInMillis = date.time
+        return calendar
+    }
 
     override fun getQuoteId(quoteWebId: String): Int {
         return messageDao.getQuoteId(quoteWebId)
