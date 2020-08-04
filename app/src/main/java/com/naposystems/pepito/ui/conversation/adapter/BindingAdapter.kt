@@ -43,13 +43,13 @@ fun bindMessageDateSend(textView: TextView, timestamp: Int, format: Int) {
             }
             else -> {
                 if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-                    SimpleDateFormat("dd/MM/yy   HH:mm ", Locale.getDefault())
+                    SimpleDateFormat("dd/MM/yy   HH:mm", Locale.getDefault())
                 } else {
-                    SimpleDateFormat("dd/MM/yy   hh:mm aa ", Locale.getDefault())
+                    SimpleDateFormat("dd/MM/yy   hh:mm aa", Locale.getDefault())
                 }
             }
         }
-        textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+        textView.text = "${sdf.format(Date(timestamp.toLong() * 1000))}\u00A0"
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.e("Error parsing date")
