@@ -204,7 +204,11 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     it.setSeekbar(binding.seekbar)
                     it.setTextViewDuration(binding.textViewDuration)
                     it.setImageButtonPlay(binding.imageButtonPlay)
-                    binding.imageButtonPlay.playAnimation()
+                    binding.imageButtonPlay.setImageDrawable(
+                        context.resources.getDrawable(
+                            R.drawable.ic_baseline_play_circle, context.theme
+                        )
+                    )
                 }
 //                mediaPlayerManager?.setDuration(duration)
                 /*if (mediaPlayerManager?.isPlaying() == true && !binding.imageButtonPlay.hasBeenInitialized) {

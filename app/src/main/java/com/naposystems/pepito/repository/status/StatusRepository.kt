@@ -27,7 +27,7 @@ class StatusRepository @Inject constructor(
         Moshi.Builder().build()
     }
 
-    override suspend fun getStatus(): LiveData<List<Status>> {
+    override suspend fun getStatus(): LiveData<MutableList<Status>> {
         return statusLocalDataSource.getStatus()
     }
 

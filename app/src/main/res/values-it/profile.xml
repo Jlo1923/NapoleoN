@@ -5,4 +5,14 @@
     <string name="text_cover_photo">Foto di copertina</string>
     <string name="text_message_restore_cover_photo">Sei sicuro di voler ripristinare l\'immagine di copertina predefinita?</string>
     <string name="text_message_restore_profile_photo">Sei sicuro di voler ripristinare l\'immagine del profilo di default?</string>
+    <string name="text_logout_title">Cancella la sottoscrizione</string>
+    <string name="text_logout_desc">Sei sicuro? Se si chiude questa sessione senza prima aver completato il modulo per il recupero, si perde il tuo nickname e contatti in corso.</string>
+    <string name="text_yes_im_sure">Sì sono sicuro</string>
+    <string name="text_no_logout">Non uscire</string>
+    <string name="text_closed_session">Sessione a porte chiuse</string>
+    <string name="text_closed_session_desc">La sessione è stata chiusa con successo. Ci auguriamo che torni presto.</string>
+    <string name="text_error_logout">Un errore si è verificato in occasione della sessione di chiusura, si prega di riprovare più tardi.</string>
 </resources>
+
+
+

@@ -7,7 +7,7 @@ interface StatusDataSource {
 
     suspend fun insertNewStatus(listStatus: List<Status>)
 
-    suspend fun getStatus(): LiveData<List<Status>>
+    suspend fun getStatus(): LiveData<MutableList<Status>>
 
     suspend fun deleteStatus(status: Status)
 }

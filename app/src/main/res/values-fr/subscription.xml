@@ -13,4 +13,12 @@
     <string name="text_message_selection_type_subscription">Vous devez sélectionner un type d\'abonnement</string>
     <string name="text_warning">Vous serez ensuite redirigé vers un portail de paiement, ce portail est externe à NapoleoN Chat, il n\'a donc pas les mêmes caractéristiques que notre application et vous devez accepter les termes et conditions stipulés pour son utilisation. Nous ne sommes pas responsables du traitement des données fournies dans le module de paiement.</string>
     <string name="text_subscription_and_time">%1$s - %2$d jours restants</string>
+    <string name="text_you_want_to_unsubscribe_title">Vous souhaitez vous désabonner?</string>
+    <string name="text_you_want_to_unsubscribe_desc">Si vous annulez cet abonnement, vous ne pouvez utiliser le chat NN JJ-MM-AA (la fin de souscription lieu de date)</string>
+    <string name="text_not_for_now">Pas pour l\'instant</string>
+    <string name="text_yes_cancel">OUI, Annuler</string>
+    <string name="text_unsubscribed_title">Désabonné</string>
+    <string name="text_unsubscribed_desc">Rappelez-vous que vous pouvez vous abonner à un autre forfait qui convient à vos besoins à tout moment.</string>
+    <string name="text_finalize">Finaliser</string>
+    <string name="text_error_unsubscribe">une erreur annulation de votre abonnement, s\'il vous plaît essayer plus tard a eu lieu.</string>
 </resources>

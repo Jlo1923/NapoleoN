@@ -102,8 +102,8 @@ class CancelSubscriptionDialogFragment : DialogFragment() {
                     SERVICE_ANSWER_OK -> {
                         binding.buttonCancel.visibility = View.GONE
                         binding.buttonAccept.text = getString(R.string.text_okay)
-                        binding.textViewMessage.text =
-                            "Tu suscripción ha sido cancelada correctamente"
+                        binding.textViewTitle.text = getString(R.string.text_unsubscribed_title)
+                        binding.textViewMessage.text = getString(R.string.text_unsubscribed_desc)
                         binding.buttonAccept.visibility = View.VISIBLE
                         binding.progressBar.visibility = View.GONE
                         binding.textViewMessage.visibility = View.VISIBLE
@@ -111,8 +111,7 @@ class CancelSubscriptionDialogFragment : DialogFragment() {
                     SERVICE_ANSWER_ERROR -> {
                         binding.buttonAccept.text = getString(R.string.text_okay)
                         binding.buttonAccept.visibility = View.VISIBLE
-                        binding.textViewMessage.text =
-                            "Ha ocurrido un error al cancelar tu suscripción, por favor intenta más tarde."
+                        binding.textViewMessage.text = getString(R.string.text_error_unsubscribe)
                         binding.progressBar.visibility = View.GONE
                         binding.textViewMessage.visibility = View.VISIBLE
                     }

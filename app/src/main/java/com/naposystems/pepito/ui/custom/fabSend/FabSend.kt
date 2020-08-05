@@ -131,7 +131,7 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
                             actionCancel()
                         }
                         ACTION_DOWN -> {
-                            setupNotificationSound(context, R.raw.sound_voice_note_action_down)
+                            setupNotificationSound(context, R.raw.tone_start_recording_audio)
                             Timber.d("ACTION_DOWN")
                             actionDown(ev)
                         }
