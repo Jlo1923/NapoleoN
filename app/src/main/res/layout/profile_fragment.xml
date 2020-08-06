@@ -404,7 +404,7 @@
                         android:layout_marginEnd="@dimen/normal_margin"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="Cerrar sesión"
+                        android:text="@string/text_logout_title"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/imageView_logout_option_start_icon"

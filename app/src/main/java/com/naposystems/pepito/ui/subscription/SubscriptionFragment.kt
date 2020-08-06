@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.pepito.R
-import com.naposystems.pepito.databinding.CancelSubscriptionDialogFragmentBinding
 import com.naposystems.pepito.databinding.SubscriptionFragmentBinding
 import com.naposystems.pepito.model.typeSubscription.SubscriptionUser
 import com.naposystems.pepito.model.typeSubscription.TypeSubscription

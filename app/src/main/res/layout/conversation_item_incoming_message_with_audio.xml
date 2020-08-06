@@ -80,12 +80,23 @@
                 custom:seekbarProgressTint="?attr/attrTextColorColorTextIncomingMessage"
                 custom:seekbarThumbTint="?attr/attrTintColorSecondaryDark" />
 
+            <ImageView
+                android:id="@+id/imageView_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:showCheck="@{conversation.message.status}"
+                android:src="@drawable/ic_baseline_check_circle"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/audio_player" />
+
             <TextView
                 style="@style/IncomingMessageDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:formatTime="@{timeFormat}"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView_check"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/audio_player"
                 app:messageDateIncoming="@{conversation.message.createdAt}"

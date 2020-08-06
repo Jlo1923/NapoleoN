@@ -11,7 +11,7 @@ class StatusLocalDataSource @Inject constructor(private val statusDao: StatusDao
         statusDao.insertStatus(listStatus)
     }
 
-    override suspend fun getStatus(): LiveData<List<Status>> {
+    override suspend fun getStatus(): LiveData<MutableList<Status>> {
         return statusDao.getStatus()
     }
 

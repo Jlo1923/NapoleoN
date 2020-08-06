@@ -400,3 +400,12 @@ fun bindIconForState(
         imageButton.setImageResource(drawableId)
     }
 }
+
+@BindingAdapter("showCheck")
+fun bindShowCheck(imageView: ImageView, status : Int) {
+    if (status == Constants.MessageStatus.READED.status) {
+        imageView.visibility = View.VISIBLE
+    } else {
+        imageView.visibility = View.GONE
+    }
+}

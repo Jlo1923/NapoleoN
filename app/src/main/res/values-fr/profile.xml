@@ -5,4 +5,11 @@
     <string name="text_cover_photo">Photo de profil</string>
     <string name="text_message_restore_cover_photo">Voulez-vous vraiment restaurer l\'image de couverture par défaut?</string>
     <string name="text_message_restore_profile_photo">Etes-vous sûr de vouloir réinitialiser l\'image de profil par défaut?</string>
+    <string name="text_logout_title">Fermer la session</string>
+    <string name="text_logout_desc">Tu es sûr? Si vous fermez cette session sans avoir rempli le formulaire de récupération de compte, vous perdez votre pseudo et contacts actuels.</string>
+    <string name="text_yes_im_sure">Oui, je suis sûr</string>
+    <string name="text_no_logout">Ne pas fermer la session</string>
+    <string name="text_closed_session">Audience à huis clos</string>
+    <string name="text_closed_session_desc">Votre session a été fermé avec succès. Nous espérons que vous reviendrez bientôt.</string>
+    <string name="text_error_logout">Une erreur est survenue lors de la séance de clôture, s\'il vous plaît réessayer plus tard.</string>
 </resources>

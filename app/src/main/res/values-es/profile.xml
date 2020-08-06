@@ -5,4 +5,14 @@
     <string name="text_cover_photo">Foto de portada</string>
     <string name="text_message_restore_cover_photo">¿Está seguro que desea restablecer la imagen de portada por defecto?</string>
     <string name="text_message_restore_profile_photo">¿Está seguro que desea restablecer la foto de perfil por defecto?</string>
+    <string name="text_logout_title">Cerrar sesión</string>
+    <string name="text_logout_desc">¿Estas seguro? Si cierras esta sesión sin antes haber completado el formulario de recuperación de cuenta, perderás tu apodo y contactos actuales.</string>
+    <string name="text_yes_im_sure">Sí, Estoy Seguro</string>
+    <string name="text_no_logout">No Cerrar Sesión</string>
+    <string name="text_closed_session">Sesión Cerrada</string>
+    <string name="text_closed_session_desc">Tu sesión se ha cerrado con éxito. Esperamos que vuelvas pronto.</string>
+    <string name="text_error_logout">Ha ocurrido un error al cerrar sesión, por favor intenta más tarde.</string>
 </resources>
+
+
+

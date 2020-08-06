@@ -34,43 +34,25 @@ class MessageMissedCallViewHolder constructor(
         countDownTimer?.cancel()
         val endTime = item.message.totalSelfDestructionAt.toLong()
         if (endTime > 0) {
-            val remainingTime =
-                (endTime - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
-            remainingTime.let { time ->
-                val timeInDays = TimeUnit.SECONDS.toDays(time).toInt()
-                when {
-                    TimeUnit.SECONDS.toDays(time) > 1 -> {
-                        textView?.text = textView?.resources?.getQuantityString(
-                            R.plurals.text_self_destruct_time_days, timeInDays, timeInDays
-                        )
-                    }
-                    TimeUnit.SECONDS.toDays(time) == 1L -> {
-                        textView?.text =
-                            textView?.resources?.getString(R.string.text_every_twenty_four_hours_min)
-                    }
-                    else -> {
-                        countDownTimer = object : CountDownTimer(
-                            TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
-                            1
-                        ) {
-                            override fun onFinish() {
-                                itemToEliminate(item)
-                            }
+            countDownTimer = object : CountDownTimer(
+                TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
+                1
+            ) {
+                override fun onFinish() {
+                    itemToEliminate(item)
+                }
 
-                            override fun onTick(millisUntilFinished: Long) {
-                                if (textView?.isVisible == false) {
-                                    textView.visibility = View.VISIBLE
-                                }
-                                textView?.text = Utils.getDuration(
-                                    millisUntilFinished,
-                                    showHours = false
-                                )
-                            }
-                        }
-                        countDownTimer?.start()
+                override fun onTick(millisUntilFinished: Long) {
+                    if (textView?.isVisible == false) {
+                        textView.visibility = View.VISIBLE
                     }
+                    textView?.text = Utils.getDuration(
+                        millisUntilFinished,
+                        showHours = false
+                    )
                 }
             }
+            countDownTimer?.start()
         } else {
             showDestructionTime(item)
         }

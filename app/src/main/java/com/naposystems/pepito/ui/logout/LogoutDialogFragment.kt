@@ -99,7 +99,8 @@ class LogoutDialogFragment : DialogFragment() {
                     SERVICE_ANSWER_OK -> {
                         binding.buttonCancel.visibility = View.GONE
                         binding.buttonAccept.text = getString(R.string.text_okay)
-                        binding.textViewMessage.text = "Tu sesión ha sido cerrada correctamente"
+                        binding.textViewTitle.text = getString(R.string.text_closed_session)
+                        binding.textViewMessage.text = getString(R.string.text_closed_session_desc)
                         binding.buttonAccept.visibility = View.VISIBLE
                         binding.progressBar.visibility = View.GONE
                         binding.textViewMessage.visibility = View.VISIBLE
@@ -107,8 +108,7 @@ class LogoutDialogFragment : DialogFragment() {
                     SERVICE_ANSWER_ERROR -> {
                         binding.buttonAccept.text = getString(R.string.text_okay)
                         binding.buttonAccept.visibility = View.VISIBLE
-                        binding.textViewMessage.text =
-                            "Ha ocurrido un error la cerrar la sesión, por favor intenta más tarde."
+                        binding.textViewMessage.text = getString(R.string.text_error_logout)
                         binding.progressBar.visibility = View.GONE
                         binding.textViewMessage.visibility = View.VISIBLE
                     }

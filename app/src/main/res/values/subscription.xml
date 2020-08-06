@@ -13,4 +13,18 @@
     <string name="text_message_selection_type_subscription">You must select a subscription type</string>
     <string name="text_warning">Next, you will be redirected to a payment portal, this portal is external to NapoleoN Chat, therefore, it does not have the same characteristics as our application and you must accept the terms and conditions stipulated for its use. We are not responsible for the treatment of the data provided in the payment module.</string>
     <string name="text_subscription_and_time">%1$s - %2$d days remaining</string>
+    <string name="text_you_want_to_unsubscribe_title">You want to unsubscribe?</string>
+    <string name="text_you_want_to_unsubscribe_desc">If you cancel this subscription, you can only use chat to NN DD-MM-AA (ending date place subscription)</string>
+    <string name="text_not_for_now">Not for now</string>
+    <string name="text_yes_cancel">YES, Cancel</string>
+    <string name="text_unsubscribed_title">Unsubscribed</string>
+    <string name="text_unsubscribed_desc">Remember that you can subscribe to another package that suits your needs at any time.</string>
+    <string name="text_finalize">Finalize</string>
+    <string name="text_error_unsubscribe">An error canceling your subscription, please try later occurred.</string>
 </resources>
+
+
+
+
+
+

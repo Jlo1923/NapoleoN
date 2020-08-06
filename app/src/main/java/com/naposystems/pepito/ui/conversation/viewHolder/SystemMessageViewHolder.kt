@@ -38,39 +38,27 @@ class SystemMessageViewHolder constructor(
             val remainingTime =
                 (endTime - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
             remainingTime.let { time ->
-                val timeInDays = TimeUnit.SECONDS.toDays(time).toInt()
-                when {
-                    TimeUnit.SECONDS.toDays(time) > 1 -> {
-                        textView?.text = textView?.resources?.getQuantityString(
-                            R.plurals.text_self_destruct_time_days, timeInDays, timeInDays
-                        )
+                countDownTimer = object : CountDownTimer(
+                    TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
+                    1
+                ) {
+                    override fun onFinish() {
+                        itemToEliminate(item)
                     }
-                    TimeUnit.SECONDS.toDays(time) == 1L -> {
-                        textView?.text =
-                            textView?.resources?.getString(R.string.text_every_twenty_four_hours_min)
-                    }
-                    else -> {
-                        countDownTimer = object : CountDownTimer(
-                            TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
-                            1
-                        ) {
-                            override fun onFinish() {
-                                itemToEliminate(item)
-                            }
 
-                            override fun onTick(millisUntilFinished: Long) {
-                                if (textView?.isVisible == false) {
-                                    textView.visibility = View.VISIBLE
-                                }
-                                textView?.text = Utils.getDuration(
-                                    millisUntilFinished,
-                                    showHours = false
-                                )
-                            }
+                    override fun onTick(millisUntilFinished: Long) {
+                        if (textView?.isVisible == false) {
+                            textView.visibility = View.VISIBLE
                         }
-                        countDownTimer?.start()
+
+                        val text = Utils.getTimeWithDays(
+                            millisUntilFinished,
+                            showHours = true
+                        )
+                        textView?.text = text
                     }
                 }
+                countDownTimer?.start()
             }
         } else {
             showDestructionTime(item)
@@ -104,10 +92,8 @@ class SystemMessageViewHolder constructor(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener
     ) {
-        val context = binding.container.context
         binding.clickListener = clickListener
         binding.conversation = item
-
         countDown(
             item,
             binding.textViewCountDown,
@@ -115,24 +101,7 @@ class SystemMessageViewHolder constructor(
                 clickListener.messageToEliminate(messageAndAttachment)
             }
         )
-
-        binding.cardView.setCardBackgroundColor(
-            Utils.convertAttrToColorResource(
-                context,
-                R.attr.attrBackgroundColorPrimary
-            )
-        )
-
-        val textColor = Utils.convertAttrToColorResource(
-            context,
-            R.attr.attrTextColorWhite
-        )
-
-        binding.textViewBody.setTextColor(textColor)
-        binding.textViewCountDown.setTextColor(textColor)
-
         binding.textViewBody.text = item.message.body
-
         binding.executePendingBindings()
     }
 

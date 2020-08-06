@@ -5,4 +5,11 @@
     <string name="text_cover_photo">Foto de capa</string>
     <string name="text_message_restore_cover_photo">Tem certeza de que deseja restaurar a imagem da capa padrão?</string>
     <string name="text_message_restore_profile_photo">Tem certeza de que deseja redefinir a imagem do perfil padrão?</string>
+    <string name="text_logout_title">Fechar sessão</string>
+    <string name="text_logout_desc">Tem certeza? Se você fechar esta sessão sem primeiro ter preenchido o formulário de recuperação de conta, você perde o seu apelido e contatos atuais.</string>
+    <string name="text_yes_im_sure">Are you sure? If you close this session without first having completed the account recovery form, you lose your nickname and current contacts.</string>
+    <string name="text_no_logout">Are you sure? If you close this session without first having completed the account recovery form, you lose your nickname and current contacts.</string>
+    <string name="text_closed_session">Are you sure? If you close this session without first having completed the account recovery form, you lose your nickname and current contacts.</string>
+    <string name="text_closed_session_desc">Are you sure? If you close this session without first having completed the account recovery form, you lose your nickname and current contacts.</string>
+    <string name="text_error_logout">Ocorreu um erro na sessão de encerramento, por favor tente novamente mais tarde.</string>
 </resources>

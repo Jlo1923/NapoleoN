@@ -14,7 +14,7 @@ interface StatusDao {
     fun insertStatus(status: List<Status>)
 
     @Query("SELECT * FROM status")
-    fun getStatus(): LiveData<List<Status>>
+    fun getStatus(): LiveData<MutableList<Status>>
 
     @Delete
     fun deleteStatus(status: Status)

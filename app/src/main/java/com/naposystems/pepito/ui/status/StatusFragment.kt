@@ -100,60 +100,59 @@ class StatusFragment : Fragment() {
     private fun observeStatus() {
         viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
             if (statusList != null) {
-
-                statusList.forEach { status ->
-                    when (status.id) {
-                        1 -> {
-                            status.status = getString(R.string.text_status_available)
-                        }
-                        2 -> {
-                            status.status = getString(R.string.text_status_busy)
-                        }
-                        3 -> {
-                            status.status = getString(R.string.text_status_in_meeting)
-                        }
-                        4 -> {
-                            status.status = getString(R.string.text_status_only_messages)
-                        }
-                        5 -> {
-                            status.status = getString(R.string.text_status_sleeping)
-                        }
-                        6 -> {
-                            status.status = getString(R.string.text_status_only_emergency)
-                        }
-                        else -> Unit
+                context?.let {
+                    if (statusList.count() <= 0) {
+                        statusList.add(Status(1, getString(R.string.text_status_available)))
+                        statusList.add(Status(2, getString(R.string.text_status_busy)))
+                        statusList.add(Status(3, getString(R.string.text_status_in_meeting)))
+                        statusList.add(Status(4, getString(R.string.text_status_only_messages)))
+                        statusList.add(Status(5, getString(R.string.text_status_sleeping)))
+                        statusList.add(Status(6, getString(R.string.text_status_only_emergency)))
+                        viewModel.insertStatus(statusList)
                     }
-                }
 
-                selectStatus(statusList)
-
-                adapter = StatusAdapter(
-                    statusList,
-                    StatusAdapter.StatusSelectionListener(clickListener = { status ->
-                        val textStatus = if (status.status.isNotEmpty()) {
-                            status.status
-                        } else {
-                            status.customStatus
+                    statusList.forEach { status ->
+                        when (status.id) {
+                            1 -> status.status = getString(R.string.text_status_available)
+                            2 -> status.status = getString(R.string.text_status_busy)
+                            3 -> status.status = getString(R.string.text_status_in_meeting)
+                            4 -> status.status = getString(R.string.text_status_only_messages)
+                            5 -> status.status = getString(R.string.text_status_sleeping)
+                            6 -> status.status = getString(R.string.text_status_only_emergency)
+                            else -> Unit
                         }
+                    }
 
-                        binding.textInputEditTextStatus.setText(textStatus)
-                        viewModel.updateStatus(textStatus)
-                    }, clickDelete = { status, view ->
-                        val popup = PopupMenu(requireContext(), view)
-                        popup.menuInflater.inflate(R.menu.menu_popup_status, popup.menu)
+                    selectStatus(statusList)
 
-                        popup.setOnMenuItemClickListener {
-                            when (it.itemId) {
-                                R.id.delete_status -> {
-                                    viewModel.deleteStatus(status)
-                                }
+                    adapter = StatusAdapter(
+                        statusList,
+                        StatusAdapter.StatusSelectionListener(clickListener = { status ->
+                            val textStatus = if (status.status.isNotEmpty()) {
+                                status.status
+                            } else {
+                                status.customStatus
                             }
-                            true
-                        }
-                        popup.show()
-                    })
-                )
-                binding.recyclerViewStatus.adapter = adapter
+
+                            binding.textInputEditTextStatus.setText(textStatus)
+                            viewModel.updateStatus(textStatus)
+                        }, clickDelete = { status, view ->
+                            val popup = PopupMenu(requireContext(), view)
+                            popup.menuInflater.inflate(R.menu.menu_popup_status, popup.menu)
+
+                            popup.setOnMenuItemClickListener {
+                                when (it.itemId) {
+                                    R.id.delete_status -> {
+                                        viewModel.deleteStatus(status)
+                                    }
+                                }
+                                true
+                            }
+                            popup.show()
+                        })
+                    )
+                    binding.recyclerViewStatus.adapter = adapter
+                }
             }
         })
     }

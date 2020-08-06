@@ -3,6 +3,7 @@ package com.naposystems.pepito.utility.mediaPlayer
 import android.content.Context
 import android.net.Uri
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
 import com.naposystems.pepito.ui.custom.AccessibleToggleButton
@@ -18,7 +19,7 @@ interface IContractMediaPlayer {
     fun pauseAudio()
     fun unregisterProximityListener()
     fun isEncryptedFile(isEncryptedFile: Boolean)
-    fun setImageButtonPlay(imageButtonPlay: AnimatedTwoVectorView)
+    fun setImageButtonPlay(imageButtonPlay: ImageView)
     fun setImageButtonSpeed(imageButtonSpeed: ImageButton)
     fun setSeekbar(seekBar: AppCompatSeekBar)
     fun setTextViewDuration(textView: TextView)
