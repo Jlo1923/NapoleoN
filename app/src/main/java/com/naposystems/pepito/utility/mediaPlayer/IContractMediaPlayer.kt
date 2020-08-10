@@ -17,6 +17,7 @@ interface IContractMediaPlayer {
     fun setAudioFileName(fileName: String)
     fun playAudio(progress: Int = 0, isEarpiece: Boolean = false)
     fun pauseAudio()
+    fun registerProximityListener()
     fun unregisterProximityListener()
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setImageButtonPlay(imageButtonPlay: ImageView)

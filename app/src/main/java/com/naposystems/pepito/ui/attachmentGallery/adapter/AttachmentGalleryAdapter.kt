@@ -12,6 +12,7 @@ import com.naposystems.pepito.databinding.AttachmentGalleryItemBinding
 import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 import com.naposystems.pepito.utility.BaseCursorAdapter
 import com.naposystems.pepito.utility.Constants
+import timber.log.Timber
 
 class AttachmentGalleryAdapter constructor(private val clickListener: ClickListener) :
     BaseCursorAdapter<AttachmentGalleryAdapter.AttachmentGalleryViewHolder>(null) {
@@ -29,15 +30,19 @@ class AttachmentGalleryAdapter constructor(private val clickListener: ClickListe
                 newCursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
             val mediaTypeColumnIndex =
                 newCursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+            val sizeColumnIndex = newCursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE)
 
             val fileId = newCursor.getInt(idColumnIndex)
             val mediaType = newCursor.getInt(mediaTypeColumnIndex)
+            val size = newCursor.getString(sizeColumnIndex)
 
             val attachmentType = when (mediaType) {
                 MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> Constants.AttachmentType.IMAGE.type
                 MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> Constants.AttachmentType.VIDEO.type
                 else -> ""
             }
+
+            Timber.d("Size gallery: $size, mediaType: $attachmentType")
 
             val galleryItem = GalleryItem(
                 id = fileId,
