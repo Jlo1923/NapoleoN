@@ -142,14 +142,6 @@ object MediaPlayerManager :
         mediaPlayer?.release()
     }
 
-    private fun registerProximityListener() {
-        mSensorManager.registerListener(
-            this,
-            mProximitySensor,
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
-    }
-
     private fun enableSpeedControl(isEnabled: Boolean) {
         mImageButtonSpeed?.isEnabled = isEnabled
     }
@@ -273,6 +265,8 @@ object MediaPlayerManager :
             if (mPreviousAudioId == currentAudioId && progress == 0) {
                 if (mediaPlayer != null) {
                     if (mediaPlayer?.isPlaying == true) {
+                        isProximitySensorActive = false
+                        mAudioManager.isSpeakerphoneOn = false
                         mImageButtonPlay?.reverseAnimation()
                         mHandler.removeCallbacks(mRunnable)
                         mListener?.onPauseAudio(currentAudioId)
@@ -389,11 +383,7 @@ object MediaPlayerManager :
 
                                     }
 
-                                    mSensorManager.registerListener(
-                                        this@MediaPlayerManager,
-                                        mProximitySensor,
-                                        SensorManager.SENSOR_DELAY_NORMAL
-                                    )
+                                    registerProximityListener()
 
                                     Timber.d("Conver start audio")
                                     enableSpeedControl(true)
@@ -508,11 +498,20 @@ object MediaPlayerManager :
         }
     }
 
+    override fun registerProximityListener() {
+        mSensorManager.registerListener(
+            this,
+            mProximitySensor,
+            1 * 1000 * 1000
+        )
+    }
+
     override fun unregisterProximityListener() {
         if (wakeLock.isHeld) {
             wakeLock.release()
         }
         mSensorManager.unregisterListener(this, mProximitySensor)
+        isProximitySensorActive = false
     }
 
     override fun pauseAudio() {

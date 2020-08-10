@@ -1,7 +1,5 @@
 package com.naposystems.pepito.utility
 
-import java.util.concurrent.TimeUnit
-
 object Constants {
     const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
     const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
@@ -14,6 +12,8 @@ object Constants {
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
     const val QUANTITY_ATTACHMENTS = 0
     const val MAX_AUDIO_RECORD_TIME = 1800000L
+    const val MAX_IMAGE_VIDEO_FILE_SIZE = 20 * 1048576
+    const val MAX_DOCUMENT_FILE_SIZE = 100 * 1048576
 
     object NapoleonApi {
         /*const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
@@ -395,6 +395,16 @@ object Constants {
         SUSPENDED("Suspended"),
         CANCELLED("Cancelled"),
         EXPIRED("Expired")
+    }
+
+    enum class MimeType(val type: String) {
+        DOC("application/msword"),
+        DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+        XLS("application/vnd.ms-excel"),
+        XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+        PPT("application/vnd.ms-powerpoint"),
+        PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation"),
+        PDF("application/pdf")
     }
 
     object SharedPreferences {

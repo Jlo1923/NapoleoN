@@ -9,6 +9,7 @@ import android.util.Size
 import com.naposystems.pepito.model.attachment.gallery.GalleryFolder
 import com.naposystems.pepito.model.attachment.gallery.GalleryResult
 import com.naposystems.pepito.ui.attachmentGalleryFolder.IContractAttachmentGalleryFolders
+import com.naposystems.pepito.utility.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
@@ -33,17 +34,20 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                     MediaStore.Files.FileColumns._ID,
                     MediaStore.Files.FileColumns.HEIGHT,
                     MediaStore.Files.FileColumns.WIDTH,
-                    MediaStore.Files.FileColumns.MIME_TYPE
+                    MediaStore.Files.FileColumns.MIME_TYPE,
+                    MediaStore.Files.FileColumns.SIZE
                 )
 
                 //WHERE
                 val selection = if (isConversation) {
                     "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
                             "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.SIZE} > 0 " +
-                            "AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
+                            "AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml' " +
+                            "AND ${MediaStore.Files.FileColumns.SIZE} <= ${Constants.MAX_IMAGE_VIDEO_FILE_SIZE}"
                 } else {
                     "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? " +
-                            "AND ${MediaStore.Files.FileColumns.SIZE} > 0 AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
+                            "AND ${MediaStore.Files.FileColumns.SIZE} > 0 AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml' " +
+                            "AND ${MediaStore.Files.FileColumns.SIZE} <= ${Constants.MAX_IMAGE_VIDEO_FILE_SIZE}"
                 }
 
                 //WHERE ARGS
