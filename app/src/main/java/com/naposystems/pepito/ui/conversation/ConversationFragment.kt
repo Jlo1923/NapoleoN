@@ -1198,7 +1198,7 @@ class ConversationFragment : BaseFragment(),
                 binding.imageViewBackground.setBackgroundColor(
                     Utils.convertAttrToColorResource(
                         requireContext(),
-                        R.attr.attrBackgroundColorBackground
+                        R.attr.attrBackgroundConversation
                     )
                 )
             }

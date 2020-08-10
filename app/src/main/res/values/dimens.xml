@@ -25,6 +25,7 @@
     <dimen name="normal_radius">16dp</dimen>
     <dimen name="small_radius">8dp</dimen>
     <dimen name="minor_radius">4dp</dimen>
+    <dimen name="large_radius">24dp</dimen>
     <dimen name="x_x_small_padding">2dp</dimen>
     <dimen name="x_x_small_margin">2dp</dimen>
     <dimen name="text_size_audio_duration">12sp</dimen>

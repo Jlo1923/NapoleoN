@@ -38,6 +38,7 @@ class MyMessageImageViewHolder constructor(
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
+        binding.imageViewAttachment.clipToOutline = true
 
         binding.executePendingBindings()
     }

@@ -37,6 +37,8 @@
         <item name="attrTextColorWhite">@color/white</item>
         <item name="attrTextBadge">@color/textColorBadge</item>
         <item name="attrBackgroundSectionColor">@color/sectionColor</item>
+        <item name="attrTextColorTimeMyMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorTimeIncomingMessage">@color/color_F2F2F2</item>
         <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessage</item>
         <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessage</item>
         <item name="attrTextColorLinkTextColor">@color/linkTextColor</item>
@@ -44,6 +46,7 @@
         <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColor</item>
         <item name="attrBackgroundTintButtonTint">@color/buttonTint</item>
         <item name="attrBackgroundColorBackground">@color/colorBackground</item>
+        <item name="attrBackgroundConversation">@color/color_FFFFFF</item>
         <item name="attrTintColorSecondaryDark">@color/colorSecondaryDark</item>
         <item name="attrTextColorColorPrimary">@color/colorPrimary</item>
         <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
@@ -52,7 +55,8 @@
         <item name="attrErrorTextColorColorError">@color/colorError</item>
         <item name="attrErrorIconTintColorError">@color/colorError</item>
         <item name="attrColorButtonTint">@color/buttonTint</item>
-        <item name="attrBackgroundMyMessage">@color/colorBackgroundMyMessage</item>
+        <item name="attrBackgroundMyMessage">@color/color_EFEFEF</item>
+        <item name="attrBorderIncomingMessage">@color/color_C0C0C0</item>
         <item name="attrBackgroundBatchMessage">@color/buttonTint</item>
         <item name="attrColorTrackColor">@color/trackColor</item>
         <item name="attrSeparatorColor">@color/separator</item>
@@ -73,7 +77,7 @@
         <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
         <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="attrBackgroundColorQuoteMyMessage">@color/color_E8D8AB</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_FFFFFF</item>
         <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_F2F2F2</item>
         <item name="attrIdentifierColorMyQuote">@color/color_A27800</item>
         <item name="attrIdentifierColorYourQuote">@color/color_8F8F8F</item>

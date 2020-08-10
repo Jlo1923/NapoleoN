@@ -402,10 +402,15 @@ fun bindIconForState(
 }
 
 @BindingAdapter("showCheck")
-fun bindShowCheck(imageView: ImageView, status : Int) {
-    if (status == Constants.MessageStatus.READED.status) {
-        imageView.visibility = View.VISIBLE
-    } else {
-        imageView.visibility = View.GONE
+fun bindShowCheck(imageView: ImageView, messageAndAttachment : MessageAndAttachment) {
+    if (messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type ||
+        messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.IMAGE.type ||
+        messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.VIDEO.type) {
+        if (messageAndAttachment.message.status == Constants.MessageStatus.READED.status) {
+            imageView.visibility = View.VISIBLE
+        } else {
+            imageView.visibility = View.INVISIBLE
+        }
     }
+
 }

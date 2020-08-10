@@ -47,6 +47,7 @@ class IncomingMessageImageViewHolder constructor(
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
         binding.imageViewAttachment.visibility = View.VISIBLE
+        binding.imageViewAttachment.clipToOutline = true
 
         bindImageAttachment(item)
 

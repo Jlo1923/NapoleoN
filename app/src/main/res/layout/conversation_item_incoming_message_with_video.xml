@@ -87,7 +87,6 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@drawable/bg_black_40"
-                android:foreground="?attr/actionBarItemBackground"
                 android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:padding="@dimen/x_small_padding"
                 android:scaleType="fitCenter"
@@ -171,14 +170,25 @@
                 app:layout_constraintWidth_percent="1"
                 tools:text="@tools:sample/lorem" />
 
+            <ImageView
+                android:id="@+id/imageView_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_check_circle"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_message"
+                app:showCheck="@{conversation}"/>
+
             <TextView
                 style="@style/IncomingMessageDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:formatTime="@{timeFormat}"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView_check"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView_message"
+                app:layout_constraintTop_toTopOf="@+id/imageView_check"
                 app:messageDateIncoming="@{conversation.message.createdAt}"
                 tools:text="10:34"
                 tools:visibility="visible" />
@@ -192,7 +202,7 @@
             android:background="@drawable/bg_self_destruct_time_incoming_message"
             android:elevation="1dp"
             android:gravity="center"
-            android:textColor="?attr/attrTextColorColorTextMyMessage"
+            android:textColor="?attr/attrTextColorTimeMyMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/container_message"

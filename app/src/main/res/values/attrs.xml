@@ -66,6 +66,8 @@
     <attr name="attrBackgroundColorActionMode" format="reference" />
     <attr name="attrBackgroundBatchMessage" format="reference" />
     <attr name="attrBackgroundMyMessage" format="reference" />
+    <attr name="attrBorderIncomingMessage" format="reference" />
+    <attr name="attrBackgroundConversation" format="reference" />
 
     <!--//Tint-->
     <attr name="attrTintColorSecondaryDark" format="reference" />
@@ -79,6 +81,8 @@
     <attr name="attrTextBadge" format="reference" />
     <attr name="attrTextColorDrawerAndStatus" format="reference" />
     <attr name="attrTextColorMessageAndTimeHome" format="reference" />
+    <attr name="attrTextColorTimeMyMessage" format="reference" />
+    <attr name="attrTextColorTimeIncomingMessage" format="reference" />
     <attr name="attrTextColorColorTextMyMessage" format="reference" />
     <attr name="attrTextColorColorTextIncomingMessage" format="reference" />
     <attr name="attrTextColorLinkTextColor" format="reference" />
