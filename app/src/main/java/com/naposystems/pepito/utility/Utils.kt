@@ -409,6 +409,29 @@ class Utils {
                 formatter.parse("$day.$month.$year")?.time ?: 0
             }
 
+        fun getTimeWithDays(millisUntilFinished: Long, showHours: Boolean = true): String {
+            var duration = ""
+            val seconds = (millisUntilFinished / 1000) % 60
+            val minutes = (millisUntilFinished / (1000 * 60) % 60)
+            val hour = (millisUntilFinished / (1000 * 60 * 60) % 24)
+            val days = (millisUntilFinished / (1000 * 60 * 60 * 24))
+
+            if(days > 0) {
+                duration += "${days}d "
+            }
+
+            if (showHours) {
+                duration += if (hour < 10) "0${hour}:" else "$hour:"
+            } else if (hour > 0) {
+                duration += if (hour < 10) "0${hour}:" else "$hour:"
+            }
+
+            duration += if (minutes < 10) "0${minutes}:" else "$minutes:"
+            duration += if (seconds < 10) "0${seconds}" else "$seconds"
+
+            return duration
+        }
+
         fun getDuration(millisUntilFinished: Long, showHours: Boolean = true): String {
             var duration = ""
             val hour = ((millisUntilFinished / 1000) / 60) / 60

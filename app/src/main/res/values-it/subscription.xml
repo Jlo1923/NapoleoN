@@ -13,4 +13,18 @@
     <string name="text_message_selection_type_subscription">Devi selezionare un tipo di abbonamento</string>
     <string name="text_warning">Successivamente, verrai reindirizzato a un portale di pagamento, questo portale è esterno alla Chat segreta di Napoleone, pertanto non ha le stesse caratteristiche della nostra applicazione e devi accettare i termini e le condizioni previsti per il suo utilizzo. Non siamo responsabili del trattamento dei dati forniti nel modulo di pagamento.</string>
     <string name="text_subscription_and_time">%1$s - %2$d giorni rimanenti</string>
+    <string name="text_you_want_to_unsubscribe_title">Si vuole cancellare l\'iscrizione?</string>
+    <string name="text_you_want_to_unsubscribe_desc">Se si annulla questo abbonamento, è possibile utilizzare solo chat per NN DD-MM-AA (chiusura il luogo di sottoscrizione)</string>
+    <string name="text_not_for_now">Non per ora</string>
+    <string name="text_yes_cancel">YES, Annulla</string>
+    <string name="text_unsubscribed_title">Unsubscribed</string>
+    <string name="text_unsubscribed_desc">Ricordate che è possibile iscriversi a un altro pacchetto che si adatta alle vostre esigenze in qualsiasi momento.</string>
+    <string name="text_finalize">Finalizza</string>
+    <string name="text_error_unsubscribe">Un errore annullando l\'abbonamento, riprovare più tardi si è verificato per favore.</string>
 </resources>
+
+
+
+
+
+

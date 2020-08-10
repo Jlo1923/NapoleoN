@@ -18,25 +18,8 @@ class GroupDateMessageViewHolder constructor(
     fun bind(
         item: MessageAndAttachment
     ) {
-        val context = binding.container.context
         binding.conversation = item
-
-        binding.cardView.setCardBackgroundColor(
-            Utils.convertAttrToColorResource(
-                context,
-                R.attr.attrBackgroundColorPrimary
-            )
-        )
-
-        val textColor = Utils.convertAttrToColorResource(
-            context,
-            R.attr.attrTextColorWhite
-        )
-
-        binding.textViewBody.setTextColor(textColor)
-
         binding.textViewBody.text = item.message.body
-
         binding.executePendingBindings()
     }
 

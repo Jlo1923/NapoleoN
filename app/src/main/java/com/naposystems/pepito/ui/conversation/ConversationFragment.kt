@@ -347,7 +347,7 @@ class ConversationFragment : BaseFragment(),
         inputPanelCameraButtonClickListener()
 
         binding.inputPanel.getTextCancelAudio().setOnClickListener {
-            setupVoiceNoteSound(requireContext(), R.raw.sound_voice_note_cancel)
+            setupVoiceNoteSound(requireContext(), R.raw.tone_cancel_audio)
             isRecordingAudio = false
             resetAudioRecording()
         }
@@ -1745,7 +1745,7 @@ class ConversationFragment : BaseFragment(),
             }
             binding.containerLockAudio.container.visibility = View.GONE
             stopRecording()
-            setupVoiceNoteSound(requireContext(), R.raw.sound_voice_note_action_up)
+            setupVoiceNoteSound(requireContext(), R.raw.tone_send_message)
         }
     }
 

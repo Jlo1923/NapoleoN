@@ -62,35 +62,27 @@ open class ConversationViewHolder constructor(
             val remainingTime =
                 (endTime - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
             remainingTime.let { time ->
-                val timeInDays = TimeUnit.SECONDS.toDays(time).toInt()
-                when {
-                    TimeUnit.SECONDS.toDays(time) >= 1 -> {
-                        textView?.text = textView?.resources?.getQuantityString(
-                            R.plurals.text_self_destruct_time_days, timeInDays, timeInDays
-                        )
+                countDownTimer = object : CountDownTimer(
+                    TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
+                    1
+                ) {
+                    override fun onFinish() {
+                        itemToEliminate(item)
                     }
-                    else -> {
-                        countDownTimer = object : CountDownTimer(
-                            TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
-                            1
-                        ) {
-                            override fun onFinish() {
-                                itemToEliminate(item)
-                            }
 
-                            override fun onTick(millisUntilFinished: Long) {
-                                if (textView?.isVisible == false) {
-                                    textView.visibility = View.VISIBLE
-                                }
-                                textView?.text = Utils.getDuration(
-                                    millisUntilFinished,
-                                    showHours = false
-                                )
-                            }
+                    override fun onTick(millisUntilFinished: Long) {
+                        if (textView?.isVisible == false) {
+                            textView.visibility = View.VISIBLE
                         }
-                        countDownTimer?.start()
+
+                        val text = Utils.getTimeWithDays(
+                            millisUntilFinished,
+                            showHours = true
+                        )
+                        textView?.text = text
                     }
                 }
+                countDownTimer?.start()
             }
         } else {
             showDestructionTime(item)

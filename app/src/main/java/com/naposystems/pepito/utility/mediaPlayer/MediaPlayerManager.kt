@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.PowerManager
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
@@ -58,7 +59,7 @@ object MediaPlayerManager :
     private var currentAudioUri: Uri? = null
     private var currentAudioFileName: String? = null
     private var mSpeed: Float = 1.0f
-    private var mImageButtonPlay: AnimatedTwoVectorView? = null
+    private var mImageButtonPlay: ImageView? = null
     private var mImageButtonSpeed: ImageButton? = null
     private var mPreviousAudioId: String? = null
     private var mPreviousUri: Uri? = null
@@ -201,7 +202,7 @@ object MediaPlayerManager :
                 wakeLock.acquire()
                 try {
                     isProximitySensorActive = true
-                    mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
+                    mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
                     mSpeed = NORMAL_SPEED
                     mHandler.removeCallbacks(mRunnable)
                     mediaPlayer.stop()
@@ -219,7 +220,7 @@ object MediaPlayerManager :
                 }
                 if (mediaPlayer.isPlaying) {
                     mediaPlayer.playWhenReady = false
-                    mImageButtonPlay?.reverseAnimation()
+                    changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                     mListener?.onPauseAudio(currentAudioId)
                     mHandler.removeCallbacks(mRunnable)
                 }
@@ -242,7 +243,7 @@ object MediaPlayerManager :
         if (mPreviousAudioId != audioId) {
             mSeekBar?.progress = 0
             if (mediaPlayer?.isPlaying == true) {
-                mImageButtonPlay?.reverseAnimation()
+                changeIconPlayPause(R.drawable.ic_baseline_play_circle)
             }
         }
         this.currentAudioId = audioId
@@ -265,14 +266,14 @@ object MediaPlayerManager :
             if (mPreviousAudioId == currentAudioId && progress == 0) {
                 if (mediaPlayer != null) {
                     if (mediaPlayer?.isPlaying == true) {
+                        changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                         isProximitySensorActive = false
                         mAudioManager.isSpeakerphoneOn = false
-                        mImageButtonPlay?.reverseAnimation()
                         mHandler.removeCallbacks(mRunnable)
                         mListener?.onPauseAudio(currentAudioId)
                     } else {
-                        setupVoiceNoteSound(R.raw.sound_voice_note_start)
-                        mImageButtonPlay?.playAnimation()
+                        setupVoiceNoteSound(R.raw.tone_audio_message_start)
+                        changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
                         mRunnable = Runnable {
                             setSeekbarProgress()
 
@@ -397,8 +398,8 @@ object MediaPlayerManager :
                                         )
                                     }
                                     mHandler.postDelayed(mRunnable, 0)
-                                    mImageButtonPlay?.playAnimation()
-                                    setupVoiceNoteSound(R.raw.sound_voice_note_start)
+                                    changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
+                                    setupVoiceNoteSound(R.raw.tone_audio_message_start)
                                 }
 
                                 Player.STATE_ENDED -> {
@@ -408,11 +409,10 @@ object MediaPlayerManager :
                                     if (wakeLock.isHeld) {
                                         wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                                     }
-
-                                    mImageButtonPlay?.reverseAnimation()
+                                    changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                                     mHandler.removeCallbacks(mRunnable)
                                     mListener?.onCompleteAudio(currentAudioId)
-                                    setupVoiceNoteSound(R.raw.sound_voice_note_end)
+                                    setupVoiceNoteSound(R.raw.tone_audio_message_end)
                                 }
                             }
                         }
@@ -516,7 +516,7 @@ object MediaPlayerManager :
 
     override fun pauseAudio() {
         if (mediaPlayer?.isPlaying == true) {
-            mImageButtonPlay?.reverseAnimation()
+            changeIconPlayPause(R.drawable.ic_baseline_play_circle)
         }
         mediaPlayer?.playWhenReady = false
     }
@@ -529,7 +529,7 @@ object MediaPlayerManager :
         this.mListener = listener
     }
 
-    override fun setImageButtonPlay(imageButtonPlay: AnimatedTwoVectorView) {
+    override fun setImageButtonPlay(imageButtonPlay: ImageView) {
         /*if (this.mImageButtonPlay != imageButtonPlay) {
             this.mImageButtonPlay?.reverseAnimation()
         }*/
@@ -538,7 +538,7 @@ object MediaPlayerManager :
 
     override fun setImageButtonSpeed(imageButtonSpeed: ImageButton) {
         if (this.mImageButtonSpeed != imageButtonSpeed) {
-            this.mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
+            this.mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
             mSpeed = NORMAL_SPEED
         }
         this.mImageButtonSpeed = imageButtonSpeed
@@ -600,10 +600,10 @@ object MediaPlayerManager :
     override fun changeSpeed(audioId: String) {
         if (mPreviousAudioId == audioId) {
             mSpeed = if (mSpeed == NORMAL_SPEED) {
-                mImageButtonSpeed?.setImageResource(R.drawable.ic_1x_speed_black)
+                mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_1x_circle_outline)
                 TWO_X_SPEED
             } else {
-                mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
+                mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
                 NORMAL_SPEED
             }
             val playbackParameters = PlaybackParameters(mSpeed)
@@ -656,8 +656,8 @@ object MediaPlayerManager :
             mHandler.removeCallbacks(mRunnable)
         }
 
-        mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
-        mImageButtonPlay?.reverseAnimation()
+        mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
+        changeIconPlayPause(R.drawable.ic_baseline_play_circle)
         mImageButtonPlay = null
         mImageButtonSpeed = null
         mPreviousAudioId = null
@@ -681,9 +681,8 @@ object MediaPlayerManager :
             if (::mRunnable.isInitialized) {
                 mHandler.removeCallbacks(mRunnable)
             }
-
-            mImageButtonSpeed?.setImageResource(R.drawable.ic_2x_speed_black)
-            mImageButtonPlay?.reverseAnimation()
+            mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
+            changeIconPlayPause(R.drawable.ic_baseline_play_circle)
             mImageButtonPlay = null
             mImageButtonSpeed = null
             mPreviousAudioId = null
@@ -714,4 +713,12 @@ object MediaPlayerManager :
         }
     }
     //endregion
+
+    private fun changeIconPlayPause(drawable : Int) {
+        mImageButtonPlay?.setImageDrawable(
+            context.resources.getDrawable(
+                drawable, context.theme
+            )
+        )
+    }
 }

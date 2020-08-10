@@ -11,11 +11,12 @@ interface IContractStatus {
     interface ViewModel {
         fun getStatus()
         fun updateStatus(textStatus: String)
+        fun insertStatus(listStatus: List<Status>)
         fun deleteStatus(status : Status)
     }
 
     interface Repository {
-        suspend fun getStatus(): LiveData<List<Status>>
+        suspend fun getStatus(): LiveData<MutableList<Status>>
         suspend fun updateRemoteStatus(userStatus: UserStatusReqDTO): Response<UpdateUserInfoResDTO>
         suspend fun updateLocalStatus(newStatus: String, firebaseId: String)
         suspend fun insertNewStatus(listStatus: List<Status>)

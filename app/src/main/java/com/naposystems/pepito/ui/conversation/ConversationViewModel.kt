@@ -274,7 +274,7 @@ class ConversationViewModel @Inject constructor(
                     Timber.d("updateMessage")
                 }
 
-                setupNotificationSound(context, R.raw.sound_message_sent)
+                setupNotificationSound(context, R.raw.tone_send_message)
 
             } else {
                 setStatusErrorMessageAndAttachment(message, attachment)

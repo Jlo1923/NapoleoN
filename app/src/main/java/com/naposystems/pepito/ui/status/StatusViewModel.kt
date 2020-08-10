@@ -18,8 +18,8 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
 
     val user = MutableLiveData<User>()
 
-    private lateinit var _status: LiveData<List<Status>>
-    val status: LiveData<List<Status>>
+    private lateinit var _status: LiveData<MutableList<Status>>
+    val status: LiveData<MutableList<Status>>
         get() = _status
 
     private val _statusUpdatedSuccessfully = MutableLiveData<Boolean>()
@@ -76,6 +76,12 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
                 Timber.d(ex)
                 _errorUpdatingStatus.value = emptyList()
             }
+        }
+    }
+
+    override fun insertStatus(listStatus: List<Status>) {
+        viewModelScope.launch {
+            repository.insertNewStatus(listStatus)
         }
     }
 
