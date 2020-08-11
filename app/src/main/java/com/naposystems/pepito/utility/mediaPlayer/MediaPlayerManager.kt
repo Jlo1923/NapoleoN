@@ -616,9 +616,12 @@ object MediaPlayerManager :
             if (mSeekBar != null && currentAudioId == audioId) {
                 val minorValue = it.duration - (millis + TimeUnit.SECONDS.toMillis(1))
 
-                if (mSeekBar!!.progress <= minorValue) {
-                    mSeekBar?.progress = (((it.currentPosition + 5000) * 100) / it.duration).toInt()
-                    it.seekTo(it.currentPosition + 5000)
+                Timber.d("minorValue: $minorValue, seekBarProgress: ${mSeekBar!!.progress}, duration: ${it.duration}, current: ${it.currentPosition}")
+
+                if (it.currentPosition <= minorValue) {
+                    mSeekBar?.progress = (((it.currentPosition + millis) * 100) / it.duration).toInt()
+                    Timber.d("minorValue ${(((it.currentPosition + millis) * 100) / it.duration).toInt()}")
+                    it.seekTo(it.currentPosition + millis)
                 }
             }
         }
@@ -714,7 +717,7 @@ object MediaPlayerManager :
     }
     //endregion
 
-    private fun changeIconPlayPause(drawable : Int) {
+    private fun changeIconPlayPause(drawable: Int) {
         mImageButtonPlay?.setImageDrawable(
             context.resources.getDrawable(
                 drawable, context.theme

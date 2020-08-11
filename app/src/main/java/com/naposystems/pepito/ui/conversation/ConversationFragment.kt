@@ -1601,13 +1601,13 @@ class ConversationFragment : BaseFragment(),
         try {
             recordFile = FileManager.createFile(
                 requireContext(),
-                "${System.currentTimeMillis()}.aac",
+                "${System.currentTimeMillis()}.mp3",
                 Constants.NapoleonCacheDirectories.AUDIOS.folder
             )
 
             recorder = MediaRecorder().apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 val fileOutputStream = FileOutputStream(recordFile!!)
                 setOutputFile(fileOutputStream.fd)
                 setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
