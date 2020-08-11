@@ -27,6 +27,7 @@ import com.naposystems.pepito.model.attachment.gallery.GalleryItem
 import com.naposystems.pepito.ui.attachmentGallery.adapter.AttachmentGalleryAdapter
 import com.naposystems.pepito.ui.mainActivity.MainActivity
 import com.naposystems.pepito.utility.Constants
+import com.naposystems.pepito.utility.Constants.MAX_IMAGE_VIDEO_FILE_SIZE
 import com.naposystems.pepito.utility.FileManager
 import com.naposystems.pepito.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
@@ -199,7 +200,8 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
             MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
             MediaStore.Files.FileColumns.DATE_MODIFIED,
-            MediaStore.Files.FileColumns.MIME_TYPE
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Files.FileColumns.SIZE
         )
 
         val isConversation =
@@ -213,7 +215,8 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
             "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
         }
 
-        selection = "$selection AND ${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=?"
+        selection =
+            "$selection AND ${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=? AND ${MediaStore.Files.FileColumns.SIZE} <= $MAX_IMAGE_VIDEO_FILE_SIZE"
 
         //WHERE ARGS
         val selectionArgs: Array<String> = if (isConversation) {

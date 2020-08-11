@@ -8,6 +8,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -18,6 +19,7 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
@@ -32,6 +34,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
+import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
@@ -132,6 +135,16 @@ class ConversationFragment : BaseFragment(),
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
+
+    private val documentsMimeTypeAllowed = arrayOf(
+        Constants.MimeType.PDF.type,
+        Constants.MimeType.DOC.type,
+        Constants.MimeType.DOCX.type,
+        Constants.MimeType.XLS.type,
+        Constants.MimeType.XLSX.type,
+        Constants.MimeType.PPT.type,
+        Constants.MimeType.PPTX.type
+    )
 
     private lateinit var actionBarCustomView: ConversationActionBarBinding
     private lateinit var binding: ConversationFragmentBinding
@@ -490,17 +503,6 @@ class ConversationFragment : BaseFragment(),
                     ) {
                         val intent = Intent(Intent.ACTION_GET_CONTENT)
                         intent.type = "*/*"
-                        intent.putExtra(
-                            Intent.EXTRA_MIME_TYPES, arrayOf(
-                                "application/pdf",
-                                "application/msword",
-                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                "application/vnd.ms-excel",
-                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                "application/vnd.ms-powerpoint",
-                                "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                            )
-                        )
                         startActivityForResult(intent, RC_DOCUMENT)
                     }
                 }
@@ -1121,8 +1123,61 @@ class ConversationFragment : BaseFragment(),
             return
 
         Timber.d("URI FILE: ${data?.data.toString()}")
+
         data?.data?.let { uri ->
-            viewModel.sendDocumentAttachment(uri)
+
+            try {
+                val contentResolver = requireContext().contentResolver
+
+                val cursor = contentResolver.query(
+                    uri,
+                    arrayOf(
+                        MediaStore.Files.FileColumns.MIME_TYPE,
+                        MediaStore.Files.FileColumns.SIZE
+                    ),
+                    null,
+                    null,
+                    null
+                )
+
+                if (cursor != null && cursor.moveToFirst()) {
+                    cursor.use {
+                        val mimeTypeIndex =
+                            cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+                        val mimeType = cursor.getStringOrNull(mimeTypeIndex)
+
+                        val sizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
+                        val size = cursor.getInt(sizeIndex)
+
+                        if (!documentsMimeTypeAllowed.contains(mimeType)) {
+                            Utils.generalDialog(
+                                "Adjunto documento",
+                                "El archivo seleccionado no es permitido",
+                                false,
+                                childFragmentManager,
+                                getString(R.string.text_okay)
+                            ) {
+
+                            }
+                        } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
+                            Utils.generalDialog(
+                                "Adjunto documento",
+                                "El archivo seleccionado excede el tamaño permitido (100MB)",
+                                false,
+                                childFragmentManager,
+                                getString(R.string.text_okay)
+                            ) {
+
+                            }
+                        } else {
+                            Timber.d("DocumentAttachment $mimeType, $size")
+                            viewModel.sendDocumentAttachment(uri)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
     }
 

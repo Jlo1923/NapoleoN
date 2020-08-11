@@ -122,13 +122,14 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
         )
 
         val selectionDocuments =
-                "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
-                "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
-                "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
-                "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
-                "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
-                "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
-                "${MediaStore.Files.FileColumns.DATA} LIKE ? "
+            "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
+                    "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
+                    "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
+                    "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
+                    "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
+                    "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
+                    "${MediaStore.Files.FileColumns.DATA} LIKE ? " +
+                    "${MediaStore.Files.FileColumns.SIZE} <= ${Constants.MAX_DOCUMENT_FILE_SIZE}"
 
         val selectionArgsDocuments = arrayOf(
             "%pdf",
