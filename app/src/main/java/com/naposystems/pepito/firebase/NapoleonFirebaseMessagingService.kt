@@ -10,7 +10,6 @@ import timber.log.Timber
 class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(newToken: String) {
-        Timber.d("Firebase token: $newToken")
         val sharedPreferencesManager = SharedPreferencesManager(applicationContext)
         sharedPreferencesManager.putString(PREF_FIREBASE_ID, newToken)
     }

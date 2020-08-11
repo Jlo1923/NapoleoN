@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.pepito"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 116
+        versionCode 119
 
-        versionName "2.0.0-interna03"
+        versionName "2.0.0-interna06"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -76,7 +76,7 @@ android {
             buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "true")
-            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
             buildConfigField("String", "PUSHER_KEY", "\"6a11211af223541f2069\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

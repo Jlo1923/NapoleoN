@@ -554,7 +554,7 @@ object MediaPlayerManager :
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 mediaPlayer?.let {
                     if (fromUser) {
-                        it.seekTo(progress.toLong())
+                        it.seekTo((it.duration * progress) / 100)
                     }
                     try {
                         Timber.d("Conve onProgressChanged: $progress, duration: ${it.duration}")
@@ -619,7 +619,8 @@ object MediaPlayerManager :
                 Timber.d("minorValue: $minorValue, seekBarProgress: ${mSeekBar!!.progress}, duration: ${it.duration}, current: ${it.currentPosition}")
 
                 if (it.currentPosition <= minorValue) {
-                    mSeekBar?.progress = (((it.currentPosition + millis) * 100) / it.duration).toInt()
+                    mSeekBar?.progress =
+                        (((it.currentPosition + millis) * 100) / it.duration).toInt()
                     Timber.d("minorValue ${(((it.currentPosition + millis) * 100) / it.duration).toInt()}")
                     it.seekTo(it.currentPosition + millis)
                 }

@@ -21,13 +21,13 @@
             android:clickable="true"
             android:focusable="true"
             android:scaleType="fitCenter"
+            android:src="@drawable/ic_baseline_play_circle"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_baseline_play_circle"
-            tools:src="@drawable/ic_baseline_play_circle"/>
+            tools:src="@drawable/ic_baseline_play_circle" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"

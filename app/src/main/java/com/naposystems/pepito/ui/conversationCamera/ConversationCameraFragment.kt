@@ -14,10 +14,8 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.VideoCapture
+import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -87,7 +85,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if(binding.viewFinder.isRecording){
+            if (binding.viewFinder.isRecording) {
                 binding.viewFinder.stopRecording()
                 isBackPressed = true
             } else {
@@ -214,7 +212,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
         if (binding.viewFinder.isRecording) {
             binding.viewFinder.stopRecording()
         }
-//        CameraX.unbindAll()
+        ProcessCameraProvider.getInstance(requireContext()).get().unbindAll()
     }
 
     private fun takePhoto() {
@@ -357,7 +355,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
             object : VideoCapture.OnVideoSavedCallback {
                 override fun onVideoSaved(file: File) {
 
-                    if (!isBackPressed){
+                    if (!isBackPressed) {
                         val attachment = Attachment(
                             id = 0,
                             messageId = 0,

@@ -228,7 +228,6 @@ class ApplicationModule {
         val response: Response = chain.proceed(request.build())
 
         val rawResponse = response.body()!!.string()
-        Timber.e("Respuesta de mierda: ${rawResponse.trimIndent()}")
 
         val jsonObject = JSONObject(rawResponse)
 

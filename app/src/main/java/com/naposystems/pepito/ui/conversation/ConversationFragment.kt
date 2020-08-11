@@ -386,7 +386,6 @@ class ConversationFragment : BaseFragment(),
                     linearLayoutManager.findLastVisibleItemPosition()
 
                 val invisibleItems = friendlyMessageCount - lastVisiblePosition
-//                Timber.d("invisibleItems: $invisibleItems")
 
                 if (invisibleItems >= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION) {
                     showFabScroll(View.VISIBLE, animationScaleUp)

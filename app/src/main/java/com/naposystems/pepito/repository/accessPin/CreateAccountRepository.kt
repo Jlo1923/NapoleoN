@@ -71,14 +71,7 @@ class CreateAccountRepository @Inject constructor(
 
         calendar.time = Date(createAtMiliseconds)
 
-        when (user.type) {
-            Constants.UserType.NEW_USER.type -> {
-                calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.FORTY_FIVE_DAYS.time)
-            }
-            Constants.UserType.OLD_USER.type -> {
-                calendar.add(Calendar.MONTH, Constants.FreeTrialUsers.THREE_MONTHS.time)
-            }
-        }
+        calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.FORTY_FIVE_DAYS.time)
         sharedPreferencesManager.putLong(
             Constants.SharedPreferences.PREF_FREE_TRIAL, calendar.timeInMillis
         )
