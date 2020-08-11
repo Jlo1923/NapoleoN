@@ -82,6 +82,7 @@
                             android:background="?attr/attrBackgroundSectionColor"
                             android:inputType="textCapCharacters"
                             android:padding="@dimen/small_padding"
+                            android:visibility="gone"
                             android:text="@string/text_section_dark_themes"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -91,16 +92,19 @@
                         <RadioButton
                             android:id="@+id/radioButton_black_gold_alloy"
                             style="@style/RadioButtonTheme"
+                            android:visibility="gone"
                             android:text="@string/text_theme_black_gold_alloy" />
 
                         <RadioButton
                             android:id="@+id/radioButton_cold_ocean"
                             style="@style/RadioButtonTheme"
+                            android:visibility="gone"
                             android:text="@string/text_theme_cold_ocean" />
 
                         <RadioButton
                             android:id="@+id/radioButton_camouflage"
                             style="@style/RadioButtonTheme"
+                            android:visibility="gone"
                             android:text="@string/text_theme_camouflage" />
 
                         <TextView
@@ -110,6 +114,7 @@
                             android:layout_height="wrap_content"
                             android:background="?attr/attrBackgroundSectionColor"
                             android:inputType="textCapCharacters"
+                            android:visibility="gone"
                             android:padding="@dimen/small_padding"
                             android:text="@string/text_section_light_themes"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -120,16 +125,19 @@
                         <RadioButton
                             android:id="@+id/radioButton_purple_bluebonnets"
                             style="@style/RadioButtonTheme"
+                            android:visibility="gone"
                             android:text="@string/text_theme_purple_bluebonnets" />
 
                         <RadioButton
                             android:id="@+id/radioButton_pink_dream"
                             style="@style/RadioButtonTheme"
+                            android:visibility="gone"
                             android:text="@string/text_theme_pink_dream" />
 
                         <RadioButton
                             android:id="@+id/radioButton_clear_sky"
                             style="@style/RadioButtonTheme"
+                            android:visibility="gone"
                             android:text="@string/text_theme_clear_sky" />
 
                     </RadioGroup>

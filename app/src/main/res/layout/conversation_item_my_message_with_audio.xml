@@ -78,9 +78,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 custom:audioId="@{conversation.message.webId}"
-                custom:controlColors="?attr/attrTextColorColorTextMyMessage"
-                custom:seekbarProgressBackgroundTint="@color/black"
-                custom:seekbarProgressTint="?attr/attrTextColorColorTextIncomingMessage"
+                custom:controlColors="?attr/attrTintColorControlMyMessage"
+                custom:seekbarProgressBackgroundTint="@color/color_C0C0C0"
+                custom:seekbarProgressTint="?attr/attrTintColorControlMyMessage"
                 custom:seekbarThumbTint="?attr/attrSeekbarThumbTint" />
 
             <TextView

@@ -133,7 +133,7 @@
                 app:layout_constraintTop_toTopOf="@id/imageButton_state"
                 custom:progress="0"
                 custom:progressBarThickness="3dp"
-                custom:progressbarColor="@color/colorPrimary"
+                custom:progressbarColor="?attr/attrTintProgressBar"
                 tools:progress="70"
                 tools:visibility="gone" />
 

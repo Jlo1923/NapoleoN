@@ -85,7 +85,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:elevation="12dp"
-                android:tint="?attr/attrBorderIncomingMessage"
+                android:tint="?attr/attrTintColorIconMedia"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
                 app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
                 app:layout_constraintStart_toStartOf="@id/imageView_attachment"
@@ -130,7 +130,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     custom:progress="0"
                     custom:progressBarThickness="3dp"
-                    custom:progressbarColor="@color/colorPrimary"
+                    custom:progressbarColor="?attr/attrTintProgressBar"
                     tools:progress="70"
                     tools:visibility="gone" />
 

@@ -26,6 +26,8 @@
         <item name="attrIconTintWhite">@color/textColorBadge</item>
         <item name="attrBackgroundTintColorSecondary">@color/colorSecondary</item>
         <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColor</item>
+        <item name="attrTextColorBodyYourQuote">@color/secondaryTextColor</item>
+        <item name="attrTextColorBodyMyQuote">@color/secondaryTextColor</item>
         <item name="attrTextColorEnterCode">@color/textColorEnterCode</item>
         <item name="attrTextColorButtonTint">@color/buttonTint</item>
         <item name="attrColorTextButtonTintCamera">@color/buttonTintCamera</item>
@@ -57,6 +59,8 @@
         <item name="attrColorButtonTint">@color/buttonTint</item>
         <item name="attrBackgroundMyMessage">@color/color_EFEFEF</item>
         <item name="attrBorderIncomingMessage">@color/color_C0C0C0</item>
+        <item name="attrBubbleIncomingMessage">@color/buttonTint</item>
+        <item name="attrBubbleMyMessage">@color/buttonTint</item>
         <item name="attrBackgroundBatchMessage">@color/buttonTint</item>
         <item name="attrColorTrackColor">@color/trackColor</item>
         <item name="attrSeparatorColor">@color/separator</item>
@@ -96,6 +100,12 @@
             @drawable/image_empty_state_recovery_account
         </item>
         <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
+        <item name="attrTextColorSystem">@color/white</item>
+        <item name="attrBackgroundColorSystem">@color/color_B1B0B0</item>
+        <item name="attrTintColorControlMyMessage">@color/color_4D4D4D</item>
+        <item name="attrTintColorControlIncomingMessage">@color/color_4D4D4D</item>
+        <item name="attrTintProgressBar">@color/colorPrimary</item>
+        <item name="attrTintColorIconMedia">@color/color_C0C0C0</item>
     </style>
 
     <style name="AppThemeDarkNapoleon" parent="AppTheme">
@@ -116,6 +126,8 @@
         <item name="attrIconTintWhite">@color/color_000000</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_101010</item>
         <item name="attrTextColorEnterCode">@color/textColorEnterCode</item>
         <item name="attrTextColorButtonTint">@color/color_F2F2F2</item>
         <item name="attrColorTextButtonTintCamera">@color/secondaryTextColorForAll</item>
@@ -142,7 +154,6 @@
         <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
         <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
         <item name="attrColorButtonTint">@color/color_F2F2F2</item>
-        <item name="attrBackgroundMyMessage">@color/color_F2F2F2</item>
         <item name="attrBackgroundBatchMessage">@color/color_F2F2F2</item>
         <item name="attrColorTrackColor">@color/color_4Df2f2f2</item>
         <item name="attrSeparatorColor">@color/color_8F8F8F</item>
@@ -163,10 +174,8 @@
         <item name="attrSeekbarProgressTint">@color/color_000015</item>
         <item name="attrSeekbarThumbTint">@color/color_8F8F8F</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="attrBackgroundColorQuoteMyMessage">@color/color_4D4D4D</item>
-        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_CCCACA</item>
         <item name="attrIdentifierColorMyQuote">@color/color_101010</item>
-        <item name="attrIdentifierColorYourQuote">@color/color_8F8F8F</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_4D4D4D</item>
         <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home</item>
         <item name="attrImageEmptyStateFriendshipRequest">
             @drawable/image_empty_state_friendship_request
@@ -182,6 +191,20 @@
             @drawable/image_empty_state_recovery_account
         </item>
         <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
+        <item name="attrBackgroundConversation">@color/color_121212</item>
+        <item name="attrTextColorTimeMyMessage">@color/color_121212</item>
+        <item name="attrTextColorTimeIncomingMessage">@color/color_121212</item>
+        <item name="attrBackgroundMyMessage">@color/color_F2F2F2</item>
+        <item name="attrBubbleIncomingMessage">@color/color_C0C0C0</item>
+        <item name="attrBubbleMyMessage">@color/color_C0C0C0</item>
+        <item name="attrTextColorSystem">@color/color_121212</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_CCCACA</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_CCCACA</item>
+        <item name="attrBackgroundColorSystem">@color/color_F2F2F2</item>
+        <item name="attrTintColorControlMyMessage">@color/color_121212</item>
+        <item name="attrTintColorControlIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrTintProgressBar">@color/color_121212</item>
+        <item name="attrTintColorIconMedia">@color/color_C0C0C0</item>
     </style>
 
     <style name="AppThemePinkDream" parent="AppTheme">
@@ -200,6 +223,8 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_D19DBB</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_903B6E</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_903B6E</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_903B6E</item>
         <item name="attrTextColorEnterCode">@color/color_903B6E</item>
         <item name="attrTextColorButtonTint">@color/color_903B6E</item>
         <item name="attrColorTextButtonTintCamera">@color/color_903B6E</item>
@@ -286,6 +311,8 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_4D4D4D</item>
         <item name="attrTextColorEnterCode">@color/color_4D4D4D</item>
         <item name="attrTextColorButtonTint">@color/color_0074A7</item>
         <item name="attrColorTextButtonTintCamera">@color/color_0074A7</item>
@@ -372,6 +399,8 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_4D4D4D</item>
         <item name="attrTextColorEnterCode">@color/color_4D4D4D</item>
         <item name="attrTextColorButtonTint">@color/color_7D366F</item>
         <item name="attrColorTextButtonTintCamera">@color/color_7D366F</item>
@@ -458,6 +487,8 @@
         <item name="attrTextColorMessageAndTimeHome">@color/white</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_38732C</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_59BC88</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_59BC88</item>
         <item name="attrTextColorEnterCode">@color/color_59BC88</item>
         <item name="attrTextColorButtonTint">@color/color_3CB043</item>
         <item name="attrColorTextButtonTintCamera">@color/color_3CB043</item>
@@ -540,6 +571,8 @@
         <item name="attrIconTintWhite">@color/color_F2F2F2</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_F2F2F2</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_F2F2F2</item>
         <item name="attrTextColorEnterCode">@color/color_F2F2F2</item>
         <item name="attrTextColorButtonTint">@color/color_D8A605</item>
         <item name="attrColorTextButtonTintCamera">@color/color_D8A605</item>
@@ -623,6 +656,8 @@
         <item name="attrBackgroundSectionOtherColor">@color/color_2A2C45</item>
         <item name="attrBackgroundTintColorSecondary">@color/color_81819E</item>
         <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_59BC88</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_59BC88</item>
         <item name="attrTextColorEnterCode">@color/color_59BC88</item>
         <item name="attrTextColorButtonTint">@color/color_59BC88</item>
         <item name="attrColorTextButtonTintCamera">@color/color_2A2C45</item>
