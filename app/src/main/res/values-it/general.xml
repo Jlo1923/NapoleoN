@@ -77,4 +77,7 @@
     <string name="text_error_updating_language">Verificato un errore durante la modifica lingua, riprova</string>
     <string name="text_emptystate_search_friends_title">Cerca i tuoi amici nickname e comunicare</string>
     <string name="text_date_today">Oggi</string>
+    <string name="text_title_attach_doc">Documento allegato</string>
+    <string name="text_attch_doc_not_allowed">Il file selezionato non è consentito</string>
+    <string name="text_attch_doc_size_exceed">Il file selezionato supera la dimensione consentita (100MB)</string>
 </resources>

@@ -76,4 +76,7 @@
     <string name="text_error_updating_language">Ha ocurrido un error al cambiar idioma, por favor inténtelo nuevamente</string>
     <string name="text_emptystate_search_friends_title">Busca a tus amigos por apodo y comunícate</string>
     <string name="text_date_today">Hoy</string>
+    <string name="text_title_attach_doc">Documento adjunto</string>
+    <string name="text_attch_doc_not_allowed">El archivo seleccionado no es permitido</string>
+    <string name="text_attch_doc_size_exceed">El archivo seleccionado excede el tamaño permitido (100MB)</string>
 </resources>

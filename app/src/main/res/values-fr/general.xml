@@ -77,4 +77,7 @@
     <string name="text_error_updating_language">Une erreur est survenue changer la langue, s\'il vous plaît essayer à nouveau</string>
     <string name="text_emptystate_search_friends_title">Recherchez vos amis par pseudonyme et communiquer</string>
     <string name="text_date_today">Aujourd\'hui</string>
+    <string name="text_title_attach_doc">Pièce jointe</string>
+    <string name="text_attch_doc_not_allowed">Le fichier sélectionné est pas autorisé</string>
+    <string name="text_attch_doc_size_exceed">Le fichier sélectionné dépasse la taille maximale autorisée (100MB)</string>
 </resources>

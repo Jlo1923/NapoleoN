@@ -1151,8 +1151,8 @@ class ConversationFragment : BaseFragment(),
 
                         if (!documentsMimeTypeAllowed.contains(mimeType)) {
                             Utils.generalDialog(
-                                "Adjunto documento",
-                                "El archivo seleccionado no es permitido",
+                                getString(R.string.text_title_attach_doc),
+                                getString(R.string.text_attch_doc_not_allowed),
                                 false,
                                 childFragmentManager,
                                 getString(R.string.text_okay)
@@ -1161,8 +1161,8 @@ class ConversationFragment : BaseFragment(),
                             }
                         } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
                             Utils.generalDialog(
-                                "Adjunto documento",
-                                "El archivo seleccionado excede el tamaño permitido (100MB)",
+                                getString(R.string.text_title_attach_doc),
+                                getString(R.string.text_attch_doc_size_exceed),
                                 false,
                                 childFragmentManager,
                                 getString(R.string.text_okay)

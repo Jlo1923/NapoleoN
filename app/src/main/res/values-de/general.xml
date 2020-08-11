@@ -77,4 +77,7 @@
     <string name="text_error_updating_language">Ein Fehler ist aufgetreten Sprache zu ändern, versuchen Sie es erneut</string>
     <string name="text_emptystate_search_friends_title">Suchen Sie Ihren Freunden von Nickname und kommunizieren</string>
     <string name="text_date_today">Heute</string>
+    <string name="text_title_attach_doc">Anhang</string>
+    <string name="text_attch_doc_not_allowed">Die ausgewählte Datei nicht erlaubt ist</string>
+    <string name="text_attch_doc_size_exceed">Die ausgewählte Datei überschreitet die zulässige Größe (100MB)</string>
 </resources>
