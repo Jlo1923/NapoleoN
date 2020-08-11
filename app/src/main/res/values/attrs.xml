@@ -66,9 +66,18 @@
     <attr name="attrBackgroundColorActionMode" format="reference" />
     <attr name="attrBackgroundBatchMessage" format="reference" />
     <attr name="attrBackgroundMyMessage" format="reference" />
+    <attr name="attrBorderIncomingMessage" format="reference" />
+    <attr name="attrBackgroundConversation" format="reference" />
+    <attr name="attrBubbleIncomingMessage" format="reference" />
+    <attr name="attrBubbleMyMessage" format="reference" />
+    <attr name="attrBackgroundColorSystem" format="reference" />
 
     <!--//Tint-->
     <attr name="attrTintColorSecondaryDark" format="reference" />
+    <attr name="attrTintColorControlMyMessage" format="reference" />
+    <attr name="attrTintColorControlIncomingMessage" format="reference" />
+    <attr name="attrTintProgressBar" format="reference" />
+    <attr name="attrTintColorIconMedia" format="reference" />
 
     <!--TextColor-->
     <attr name="attrTextColorPrimaryTextColor" format="reference" />
@@ -79,6 +88,9 @@
     <attr name="attrTextBadge" format="reference" />
     <attr name="attrTextColorDrawerAndStatus" format="reference" />
     <attr name="attrTextColorMessageAndTimeHome" format="reference" />
+    <attr name="attrTextColorTimeMyMessage" format="reference" />
+    <attr name="attrTextColorTimeIncomingMessage" format="reference" />
+    <attr name="attrTextColorSystem" format="reference" />
     <attr name="attrTextColorColorTextMyMessage" format="reference" />
     <attr name="attrTextColorColorTextIncomingMessage" format="reference" />
     <attr name="attrTextColorLinkTextColor" format="reference" />
@@ -169,6 +181,8 @@
     <attr name="attrBackgroundColorQuoteIncomingMessage" format="reference" />
     <attr name="attrIdentifierColorMyQuote" format="reference" />
     <attr name="attrIdentifierColorYourQuote" format="reference" />
+    <attr name="attrTextColorBodyYourQuote" format="reference" />
+    <attr name="attrTextColorBodyMyQuote" format="reference" />
 
     <!-- Empty State -->
     <attr name="attrImageEmptyStateHome" format="reference" />

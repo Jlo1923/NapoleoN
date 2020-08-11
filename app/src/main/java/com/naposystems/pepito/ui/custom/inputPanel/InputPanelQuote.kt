@@ -99,6 +99,15 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                 } else {
                     context.getDrawable(R.drawable.bg_your_quote_my_message)
                 }
+
+                binding.textViewMessageQuote.setTextColor(
+                    if (message.isMine == Constants.IsMine.YES.value) {
+                        Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                    } else {
+                        Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyYourQuote)
+
+                    }
+                )
             }
         } else {
             quoteNull?.let { quote ->
@@ -123,6 +132,30 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                         context.getDrawable(R.drawable.bg_my_quote_my_message)
                     }
                 }
+
+                binding.textViewMessageQuote.setTextColor(
+                    when {
+                        quote.isMine == Constants.IsMine.YES.value
+                                && messageAndAttachment.message.isMine == 1 -> {
+                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                        }
+                        quote.isMine == Constants.IsMine.YES.value
+                                && messageAndAttachment.message.isMine == 0 -> {
+                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                        }
+                        quote.isMine == Constants.IsMine.NO.value
+                                && messageAndAttachment.message.isMine == 1 -> {
+                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyYourQuote)
+                        }
+                        quote.isMine == Constants.IsMine.NO.value
+                                && messageAndAttachment.message.isMine == 0 -> {
+                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyYourQuote)
+                        }
+                        else -> {
+                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                        }
+                    }
+                )
             }
         }
     }

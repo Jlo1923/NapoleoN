@@ -74,19 +74,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 custom:audioId="@{conversation.message.webId}"
-                custom:controlColors="?attr/attrTextColorColorTextIncomingMessage"
+                custom:controlColors="?attr/attrTintColorControlIncomingMessage"
                 custom:isEncryptedFile="@{BuildConfig.ENCRYPT_API ? true : false}"
-                custom:seekbarProgressBackgroundTint="@color/black"
-                custom:seekbarProgressTint="?attr/attrTextColorColorTextIncomingMessage"
+                custom:seekbarProgressBackgroundTint="@color/color_C0C0C0"
+                custom:seekbarProgressTint="?attr/attrTintColorControlIncomingMessage"
                 custom:seekbarThumbTint="?attr/attrTintColorSecondaryDark" />
 
             <ImageView
                 android:id="@+id/imageView_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:showCheck="@{conversation.message.status}"
+                app:showCheck="@{conversation}"
                 android:src="@drawable/ic_baseline_check_circle"
-                android:visibility="gone"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/audio_player" />
 
@@ -168,7 +168,7 @@
             android:background="@drawable/bg_self_destruct_time_incoming_message"
             android:elevation="1dp"
             android:gravity="center"
-            android:textColor="?attr/attrTextColorColorTextMyMessage"
+            android:textColor="?attr/attrTextColorTimeMyMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/container_message"

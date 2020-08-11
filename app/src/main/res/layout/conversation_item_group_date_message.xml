@@ -29,7 +29,7 @@
             android:layout_marginTop="@dimen/normal_margin"
             android:layout_marginBottom="@dimen/x_small_margin"
             app:cardElevation="2dp"
-            android:backgroundTint="@color/color_B1B0B0"
+            android:backgroundTint="?attr/attrBackgroundColorSystem"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
@@ -49,7 +49,7 @@
 
                 <TextView
                     android:id="@+id/textView_body"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/attrTextColorSystem"
                     android:textSize="@dimen/minor_text_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

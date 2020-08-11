@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_margin"
             android:background="@drawable/bg_my_message"
-            android:paddingStart="@dimen/x_small_padding"
+            android:paddingStart="@dimen/small_padding"
             android:paddingTop="@dimen/x_small_padding"
             android:paddingEnd="20dp"
             android:paddingBottom="@dimen/x_small_padding"
@@ -78,9 +78,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 custom:audioId="@{conversation.message.webId}"
-                custom:controlColors="?attr/attrTextColorColorTextMyMessage"
-                custom:seekbarProgressBackgroundTint="@color/black"
-                custom:seekbarProgressTint="?attr/attrSeekbarProgressTint"
+                custom:controlColors="?attr/attrTintColorControlMyMessage"
+                custom:seekbarProgressBackgroundTint="@color/color_C0C0C0"
+                custom:seekbarProgressTint="?attr/attrTintColorControlMyMessage"
                 custom:seekbarThumbTint="?attr/attrSeekbarThumbTint" />
 
             <TextView
@@ -159,17 +159,17 @@
             android:layout_width="@dimen/width_self_destruct_time"
             android:layout_height="@dimen/height_self_destruct_time"
             android:layout_marginEnd="@dimen/normal_margin"
-            android:background="@drawable/bg_self_destruct_time_my_message"
             android:elevation="1dp"
             android:gravity="center"
-            android:textColor="?attr/attrTextColorColorTextIncomingMessage"
+            android:textColor="?attr/attrTextColorTimeMyMessage"
             android:textSize="@dimen/text_size_self_destruct_time"
             android:visibility="visible"
+            android:background="@drawable/bg_self_destruct_time_incoming_message"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"
             tools:text="10:34:20"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

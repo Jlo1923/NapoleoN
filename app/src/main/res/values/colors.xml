@@ -36,7 +36,7 @@
     <color name="backgroundSpinnerColor">#f2f2f2</color>
     <color name="fabIconColor">#f2f2f2</color>
     <color name="flatActionBarColor">#d8a608</color>
-    <color name="colorTextMyMessage">#f2f2f2</color>
+    <color name="colorTextMyMessage">#4d4d4d</color>
     <color name="colorTextIncomingMessage">#4d4d4d</color>
     <color name="red">#DA5E58</color>
     <color name="redIntense">#ff5131</color>
@@ -47,6 +47,7 @@
     <color name="color_E8D8AB">#E8D8AB</color>
     <color name="color_808080">#808080</color>
     <color name="color_B1B0B0">#B1B0B0</color>
+    <color name="color_EFEFEF">#EFEFEF</color>
 
     <!--   Dark NapoleoN-->
     <color name="color_383838">#383838</color>
@@ -56,6 +57,7 @@
     <color name="color_000015">#000015</color>
     <color name="color_CCCACA">#CCCACA</color>
     <color name="color_101010">#101010</color>
+    <color name="color_C0C0C0">#C0C0C0</color>
 
     <!--   Cold Ocean-->
     <color name="color_20202E">#20202e</color>

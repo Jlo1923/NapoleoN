@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="?attr/attrBackgroundSectionColor" />
+    <solid android:color="?attr/attrBubbleMyMessage" />
     <corners android:radius="@dimen/minor_radius" />
 </shape>

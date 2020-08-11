@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/imageButton_play"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="@dimen/small_margin"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -26,7 +26,8 @@
             app:layout_constraintEnd_toStartOf="@id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_baseline_play_circle" />
+            android:src="@drawable/ic_baseline_play_circle"
+            tools:src="@drawable/ic_baseline_play_circle"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"
