@@ -143,7 +143,7 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                                     messageWebId = "",
                                     type = galleryItem.attachmentType,
                                     body = "",
-                                    uri = attachmentSelected.name,
+                                    fileName = attachmentSelected.name,
                                     origin = Constants.AttachmentOrigin.GALLERY.origin,
                                     thumbnailUri = "",
                                     status = Constants.AttachmentStatus.SENDING.status,

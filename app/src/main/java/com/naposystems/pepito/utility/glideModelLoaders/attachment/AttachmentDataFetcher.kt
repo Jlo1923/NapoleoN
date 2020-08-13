@@ -37,7 +37,7 @@ class AttachmentDataFetcher constructor(
 
             val fileUri = Utils.getFileUri(
                 context = context,
-                fileName = attachment.uri,
+                fileName = attachment.fileName,
                 subFolder = subFolder
             )
 

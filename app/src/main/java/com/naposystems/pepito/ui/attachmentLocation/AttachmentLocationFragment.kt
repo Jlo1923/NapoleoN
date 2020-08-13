@@ -318,7 +318,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
                         messageWebId = "",
                         type = Constants.AttachmentType.LOCATION.type,
                         body = "",
-                        uri = file.name,
+                        fileName = file.name,
                         origin = Constants.AttachmentOrigin.LOCATION.origin,
                         thumbnailUri = "",
                         status = Constants.AttachmentStatus.SENDING.status,

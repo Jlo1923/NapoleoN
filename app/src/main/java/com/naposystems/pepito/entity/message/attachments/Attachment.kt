@@ -32,12 +32,13 @@ data class Attachment(
     @ColumnInfo(name = "message_web_id") var messageWebId: String,
     @ColumnInfo(name = "type") val type: String,
     @ColumnInfo(name = "body") var body: String,
-    @ColumnInfo(name = "uri") var uri: String,
+    @ColumnInfo(name = "filename") var fileName: String,
     @ColumnInfo(name = "origin") var origin: Int,
     @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = "",
     @ColumnInfo(name = "status") var status: Int,
     @ColumnInfo(name = "extension") var extension: String = "",
-    @ColumnInfo(name = "duration") var duration: Long = 0
+    @ColumnInfo(name = "duration") var duration: Long = 0,
+    @ColumnInfo(name = "is_compressed") var isCompressed: Boolean = false
 ) : Parcelable {
 
     fun deleteFile(context: Context) {

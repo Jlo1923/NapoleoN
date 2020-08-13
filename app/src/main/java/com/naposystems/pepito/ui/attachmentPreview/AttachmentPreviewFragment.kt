@@ -93,7 +93,7 @@ class AttachmentPreviewFragment : Fragment() {
                     val fileUri = Utils.getFileUri(
                         context = requireContext(),
                         subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                        fileName = attachment.uri
+                        fileName = attachment.fileName
                     )
 
                     setVideoURI(fileUri)

@@ -75,7 +75,7 @@ class NapoleonKeyboardStickerPageFragment : Fragment() {
                                 messageWebId = "",
                                 type = Constants.AttachmentType.GIF_NN.type,
                                 body = "",
-                                uri = file.name,
+                                fileName = file.name,
                                 origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
                                 thumbnailUri = "",
                                 status = Constants.AttachmentStatus.SENDING.status,

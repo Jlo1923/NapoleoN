@@ -24,6 +24,7 @@ class ConversationAdapter constructor(
     ListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
+        const val COMPRESS_PROGRESS = "compress_progress"
         const val PROGRESS = "progress"
         const val DOWNLOAD_START = "download_start"
         const val DOWNLOAD_COMPLETE = "download_complete"
@@ -126,6 +127,21 @@ class ConversationAdapter constructor(
     fun setUploadStart(attachment: Attachment, job: ProducerScope<UploadResult>) {
         try {
             notifyItemChanged(getPositionByItem(attachment), job)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    fun setCompressProgress(
+        attachment: Attachment,
+        progress: Long,
+        job: ProducerScope<UploadResult>
+    ) {
+        try {
+            notifyItemChanged(
+                getPositionByItem(attachment),
+                listOf(Bundle().apply { putLong(COMPRESS_PROGRESS, progress) }, job)
+            )
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -504,7 +520,8 @@ class ConversationAdapter constructor(
         position: Int,
         holder: RecyclerView.ViewHolder
     ) {
-        val progress = bundle.getLong(PROGRESS)
+        val progress = bundle.getLong(PROGRESS, -1)
+        val compressProgress = bundle.getLong(COMPRESS_PROGRESS, -1)
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,
@@ -515,7 +532,12 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE_DOCUMENT,
             TYPE_MY_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
-                    setUploadProgressAndJob(progress, job)
+                    if (progress > -1) {
+                        setUploadProgressAndJob(progress, job)
+                    }
+                    if (compressProgress > -1) {
+                        setCompressProgressAndJob(progress, job)
+                    }
                     setUploadComplete(uploadComplete)
                 }
             }
@@ -565,5 +587,6 @@ class ConversationAdapter constructor(
         fun sendMessageRead(messageWebId: String, isComplete: Boolean, position: Int = -1)
         fun reSendMessage(message: Message)
         fun scrollToNextAudio(nextPosition: Int)
+        fun updateMessageState(message: Message)
     }
 }

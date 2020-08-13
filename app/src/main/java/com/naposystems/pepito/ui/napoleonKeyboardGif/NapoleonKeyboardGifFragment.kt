@@ -97,7 +97,7 @@ class NapoleonKeyboardGifFragment : Fragment() {
                         messageWebId = "",
                         type = Constants.AttachmentType.GIF.type,
                         body = "",
-                        uri = it.fileName,
+                        fileName = it.fileName,
                         origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
                         thumbnailUri = "",
                         status = Constants.AttachmentStatus.SENDING.status,

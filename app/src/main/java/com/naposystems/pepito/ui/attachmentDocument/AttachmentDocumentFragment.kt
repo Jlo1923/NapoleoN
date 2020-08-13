@@ -88,7 +88,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                         messageWebId = "",
                         type = Constants.AttachmentType.DOCUMENT.type,
                         body = "",
-                        uri = fileSelected.name,
+                        fileName = fileSelected.name,
                         origin = Constants.AttachmentOrigin.GALLERY.origin,
                         thumbnailUri = "",
                         status = Constants.AttachmentStatus.SENDING.status,

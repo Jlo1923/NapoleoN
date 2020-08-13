@@ -16,7 +16,9 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.entity.message.attachments.MediaStoreAudio
 import com.naposystems.pepito.utility.DownloadAttachmentResult
 import com.naposystems.pepito.utility.UploadResult
+import com.vincent.videocompressor.VideoCompressResult
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -119,5 +121,11 @@ interface IContractConversation {
         suspend fun setMessageRead(messageAndAttachment: MessageAndAttachment)
         suspend fun setMessageRead(messageWebId: String)
         suspend fun reSendMessage(messageAndAttachment: MessageAndAttachment)
+        suspend fun compressVideo(
+            attachment: Attachment,
+            srcFile: File,
+            destFile: File,
+            job: ProducerScope<*>
+        ): Flow<VideoCompressResult>
     }
 }

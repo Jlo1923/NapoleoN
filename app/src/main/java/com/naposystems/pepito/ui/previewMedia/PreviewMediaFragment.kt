@@ -121,13 +121,13 @@ class PreviewMediaFragment : Fragment() {
                         binding.containerSeekbar.visibility = View.VISIBLE
                         binding.containerVideoView.visibility = View.VISIBLE
 
-                        if (BuildConfig.ENCRYPT_API) {
+                        if (attachment.status == Constants.AttachmentStatus.SENT.status) {
                             viewModel.createTempFile(attachment)
                         } else {
                             contentUri = Utils.getFileUri(
                                 context = requireContext(),
                                 subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                                fileName = attachment.uri
+                                fileName = attachment.fileName
                             )
                             initializePlayer()
                         }

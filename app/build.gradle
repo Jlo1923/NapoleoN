@@ -271,7 +271,7 @@ dependencies {
     implementation project(':Spotlight-library')
 
     //Video Compressor
-    implementation 'com.github.AbedElazizShe:LightCompressor:0.6.1'
+    implementation project(':videocompressor')
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -98,7 +98,7 @@ class AttachmentGalleryFolderRepository @Inject constructor(private val context:
                                 val quantity = getCount(folderId, selection, selectionArgs)
                                 val galleryFolder = GalleryFolder(
                                     id = fileId,
-                                    folderName = folderName,
+                                    folderName = folderName ?: "",
                                     quantity = quantity
                                 )
 

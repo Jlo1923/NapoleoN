@@ -13,6 +13,7 @@ import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.giphy.sdk.ui.Giphy
 import com.google.android.libraries.places.api.Places
+import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.R
 import com.naposystems.pepito.di.DaggerApplicationComponent
 import com.naposystems.pepito.utility.Constants
@@ -45,8 +46,10 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onCreate() {
         super<DaggerApplication>.onCreate()
-        Stetho.initializeWithDefaults(this)
-        Timber.plant(Timber.DebugTree())
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this)
+            Timber.plant(Timber.DebugTree())
+        }
         Fabric.with(this, Crashlytics())
         EmojiManager.instance.install()
         configEmojiCompat()

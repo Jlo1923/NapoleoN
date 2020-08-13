@@ -25,7 +25,7 @@ class PreviewMediaRepository @Inject constructor(
         return FileManager.createTempFileFromEncryptedFile(
             context,
             attachment.type,
-            "${attachment.webId}.${attachment.extension}",
+            if (attachment.status == Constants.AttachmentStatus.SENT.status) "${attachment.webId}.${attachment.extension}" else attachment.fileName,
             attachment.extension
         )
     }
