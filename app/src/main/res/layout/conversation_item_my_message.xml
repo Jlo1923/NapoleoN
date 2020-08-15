@@ -8,7 +8,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.naposystems.pepito.utility.Constants.MessageStatus" />
+        <import type="com.naposystems.napoleonchat.utility.Constants.MessageStatus" />
 
         <variable
             name="itemPosition"
@@ -16,7 +16,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
 
         <variable
             name="timeFormat"
@@ -24,7 +24,7 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
         <variable
             name="isFirst"
@@ -61,7 +61,7 @@
             app:layout_constraintWidth_percent="0.7"
             custom:isFirstMyMessage="@{isFirst}">
 
-            <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+            <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
                 style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation, itemPosition)}"

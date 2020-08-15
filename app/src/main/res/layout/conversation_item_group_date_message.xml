@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.naposystems.pepito.utility.Constants" />
+        <import type="com.naposystems.napoleonchat.utility.Constants" />
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

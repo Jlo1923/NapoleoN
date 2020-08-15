@@ -48,7 +48,7 @@
                         app:title="@string/app_name"
                         app:titleTextColor="@color/white" />
 
-                    <com.naposystems.pepito.ui.custom.SearchView
+                    <com.naposystems.napoleonchat.ui.custom.SearchView
                         android:id="@+id/searchView"
                         android:layout_width="match_parent"
                         android:layout_height="?android:attr/actionBarSize"

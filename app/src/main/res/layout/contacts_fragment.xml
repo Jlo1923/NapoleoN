@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.contacts.ContactsViewModel" />
+            type="com.naposystems.napoleonchat.ui.contacts.ContactsViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -48,7 +48,7 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/contacts_item" />
 
-                        <com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
+                        <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
                             android:id="@+id/empty_state_search"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -58,7 +58,7 @@
 
                     </ViewSwitcher>
 
-                    <com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
+                    <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
                         android:id="@+id/empty_state"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

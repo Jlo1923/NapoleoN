@@ -7,11 +7,11 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.addContact.adapter.FriendshipRequestAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.addContact.adapter.FriendshipRequestAdapter.ClickListener" />
 
         <variable
             name="friendshipRequest"
-            type="com.naposystems.pepito.entity.addContact.FriendShipRequest" />
+            type="com.naposystems.napoleonchat.entity.addContact.FriendShipRequest" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

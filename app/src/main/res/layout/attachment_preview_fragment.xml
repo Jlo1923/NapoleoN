@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.utility.sharedViewModels.conversation.ConversationShareViewModel" />
+            type="com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel" />
 
         <variable
             name="galleryItemId"
@@ -29,7 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.naposystems.pepito.ui.custom.noScrollView.NoScrollView
+            <com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -46,7 +46,7 @@
                     android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
                     app:attachmentImage="@{viewModel.attachmentTaken}"
                     tools:src="@drawable/vertical_photo" />
-            </com.naposystems.pepito.ui.custom.noScrollView.NoScrollView>
+            </com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView>
 
             <FrameLayout
                 android:id="@+id/container_video_view"
@@ -128,7 +128,7 @@
         </LinearLayout>
 
 
-        <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget
+        <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
             android:id="@+id/inputPanel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
             app:showCameraIcon="false"
             app:showEmojiIcon="false" />
 
-        <com.naposystems.pepito.ui.custom.fabSend.FabSend
+        <com.naposystems.napoleonchat.ui.custom.fabSend.FabSend
             android:id="@+id/floatingActionButton_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

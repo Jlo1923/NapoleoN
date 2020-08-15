@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.naposystems.pepito.ui.splash.SplashFragment"
+        android:name="com.naposystems.napoleonchat.ui.splash.SplashFragment"
         android:label="splash_fragment"
         app:startDestination="@id/action_splashFragment_to_unlockAppTimeFragment"
         tools:layout="@layout/splash_fragment">
@@ -51,7 +51,7 @@
     </fragment>
     <fragment
         android:id="@+id/landingFragment"
-        android:name="com.naposystems.pepito.ui.landing.LandingFragment"
+        android:name="com.naposystems.napoleonchat.ui.landing.LandingFragment"
         android:label="landing_fragment"
         tools:layout="@layout/landing_fragment">
         <action
@@ -72,7 +72,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.naposystems.pepito.ui.register.validateNickname.ValidateNicknameFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.validateNickname.ValidateNicknameFragment"
         android:label="@string/text_create_account"
         tools:layout="@layout/validate_nickname_fragment">
         <action
@@ -85,7 +85,7 @@
     </fragment>
     <fragment
         android:id="@+id/sendCodeFragment"
-        android:name="com.naposystems.pepito.ui.register.sendCode.SendCodeFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.sendCode.SendCodeFragment"
         android:label="@string/text_send_register_code"
         tools:layout="@layout/send_code_fragment">
         <action
@@ -98,7 +98,7 @@
     </fragment>
     <fragment
         android:id="@+id/enterCodeFragment"
-        android:name="com.naposystems.pepito.ui.register.enterCode.EnterCodeFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.enterCode.EnterCodeFragment"
         android:label="@string/text_insert_code"
         tools:layout="@layout/enter_code_fragment">
         <action
@@ -111,7 +111,7 @@
     </fragment>
     <fragment
         android:id="@+id/accessPinFragment"
-        android:name="com.naposystems.pepito.ui.register.accessPin.AccessPinFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.accessPin.AccessPinFragment"
         android:label="@string/text_access_pin"
         tools:layout="@layout/access_pin_fragment">
         <argument
@@ -131,7 +131,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.naposystems.pepito.ui.home.HomeFragment"
+        android:name="com.naposystems.napoleonchat.ui.home.HomeFragment"
         android:label="@string/app_name"
         tools:layout="@layout/home_fragment">
         <action
@@ -190,7 +190,7 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.naposystems.pepito.ui.profile.ProfileFragment"
+        android:name="com.naposystems.napoleonchat.ui.profile.ProfileFragment"
         android:label="@string/text_profile_title"
         tools:layout="@layout/profile_fragment">
         <action
@@ -229,7 +229,7 @@
     </fragment>
     <fragment
         android:id="@+id/securitySettingsFragment"
-        android:name="com.naposystems.pepito.ui.securitySettings.SecuritySettingsFragment"
+        android:name="com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsFragment"
         android:label="@string/text_security_settings_title"
         tools:layout="@layout/security_settings_fragment">
         <action
@@ -260,7 +260,7 @@
     </fragment>
     <fragment
         android:id="@+id/appearanceSettingsFragment"
-        android:name="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsFragment"
+        android:name="com.naposystems.napoleonchat.ui.appearanceSettings.AppearanceSettingsFragment"
         android:label="@string/text_appearance_settings_title"
         tools:layout="@layout/appearance_settings_fragment">
         <action
@@ -281,7 +281,7 @@
     </fragment>
     <fragment
         android:id="@+id/previewBackgroundChatFragment"
-        android:name="com.naposystems.pepito.ui.previewBackgroundChat.PreviewBackgroundChatFragment"
+        android:name="com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatFragment"
         android:label="@string/text_preview_background_chat_title"
         tools:layout="@layout/preview_background_chat_fragment">
         <argument
@@ -290,12 +290,12 @@
     </fragment>
     <fragment
         android:id="@+id/inviteSomeoneFragment"
-        android:name="com.naposystems.pepito.ui.inviteSomeone.InviteSomeoneFragment"
+        android:name="com.naposystems.napoleonchat.ui.inviteSomeone.InviteSomeoneFragment"
         android:label="@string/text_invite_someone_title"
         tools:layout="@layout/invite_someone_fragment" />
     <fragment
         android:id="@+id/helpFragment"
-        android:name="com.naposystems.pepito.ui.help.HelpFragment"
+        android:name="com.naposystems.napoleonchat.ui.help.HelpFragment"
         android:label="@string/text_help_title"
         tools:layout="@layout/help_fragment">
         <action
@@ -315,21 +315,21 @@
     </fragment>
     <dialog
         android:id="@+id/imageSelectorBottomSheetFragment"
-        android:name="com.naposystems.pepito.ui.imagePicker.ImageSelectorBottomSheetFragment"
+        android:name="com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment"
         android:label="image_selector_bottom_sheet_fragment"
         tools:layout="@layout/image_selector_bottom_sheet_fragment" />
     <fragment
         android:id="@+id/statusFragment"
-        android:name="com.naposystems.pepito.ui.status.StatusFragment"
+        android:name="com.naposystems.napoleonchat.ui.status.StatusFragment"
         android:label="@string/text_status"
         tools:layout="@layout/status_fragment">
         <argument
             android:name="user"
-            app:argType="com.naposystems.pepito.entity.User" />
+            app:argType="com.naposystems.napoleonchat.entity.User" />
     </fragment>
     <fragment
         android:id="@+id/blockedContactsFragment"
-        android:name="com.naposystems.pepito.ui.blockedContacts.BlockedContactsFragment"
+        android:name="com.naposystems.napoleonchat.ui.blockedContacts.BlockedContactsFragment"
         android:label="@string/text_blocked_contacts"
         tools:layout="@layout/blocked_contacts_fragment">
         <action
@@ -342,26 +342,26 @@
     </fragment>
     <fragment
         android:id="@+id/colorSchemeFragment"
-        android:name="com.naposystems.pepito.ui.colorScheme.ColorSchemeFragment"
+        android:name="com.naposystems.napoleonchat.ui.colorScheme.ColorSchemeFragment"
         android:label="@string/text_color_scheme" />
     <dialog
         android:id="@+id/userDisplayFormatDialogFragment"
-        android:name="com.naposystems.pepito.ui.userDisplayFormat.UserDisplayFormatDialogFragment"
+        android:name="com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment"
         android:label="user_display_format_dialog_fragment"
         tools:layout="@layout/user_display_format_dialog_fragment" />
     <fragment
         android:id="@+id/editAccessPinFragment"
-        android:name="com.naposystems.pepito.ui.editAccessPin.EditAccessPinFragment"
+        android:name="com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinFragment"
         android:label="@string/text_access_pin"
         tools:layout="@layout/edit_access_pin_fragment" />
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.naposystems.pepito.ui.about.AboutFragment"
+        android:name="com.naposystems.napoleonchat.ui.about.AboutFragment"
         android:label="@string/text_about"
         tools:layout="@layout/about_fragment" />
     <fragment
         android:id="@+id/contactsFragment"
-        android:name="com.naposystems.pepito.ui.contacts.ContactsFragment"
+        android:name="com.naposystems.napoleonchat.ui.contacts.ContactsFragment"
         android:label="@string/text_my_contacts"
         tools:layout="@layout/contacts_fragment">
         <action
@@ -389,12 +389,12 @@
     </fragment>
     <fragment
         android:id="@+id/contactUsFragment"
-        android:name="com.naposystems.pepito.ui.contactUs.ContactUsFragment"
+        android:name="com.naposystems.napoleonchat.ui.contactUs.ContactUsFragment"
         android:label="@string/text_contact_us"
         tools:layout="@layout/contact_us_fragment" />
     <fragment
         android:id="@+id/registerRecoveryAccountFragment"
-        android:name="com.naposystems.pepito.ui.registerRecoveryAccount.RegisterRecoveryAccountFragment"
+        android:name="com.naposystems.napoleonchat.ui.registerRecoveryAccount.RegisterRecoveryAccountFragment"
         android:label="@string/text_account_recovery_information"
         tools:layout="@layout/register_recovery_account">
         <action
@@ -407,17 +407,17 @@
     </fragment>
     <fragment
         android:id="@+id/registerRecoveryAccountQuestionFragment"
-        android:name="com.naposystems.pepito.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment"
+        android:name="com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment"
         android:label="@string/text_account_recovery_information"
         tools:layout="@layout/register_recovery_account_question_fragment" />
     <fragment
         android:id="@+id/conversationFragment"
-        android:name="com.naposystems.pepito.ui.conversation.ConversationFragment"
+        android:name="com.naposystems.napoleonchat.ui.conversation.ConversationFragment"
         android:label=""
         tools:layout="@layout/conversation_fragment">
         <argument
             android:name="contact"
-            app:argType="com.naposystems.pepito.entity.Contact" />
+            app:argType="com.naposystems.napoleonchat.entity.Contact" />
         <action
             android:id="@+id/action_conversationFragment_to_conversationCameraFragment"
             app:destination="@id/conversationCameraFragment"
@@ -457,7 +457,7 @@
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountFragment"
-        android:name="com.naposystems.pepito.ui.recoveryAccount.RecoveryAccountFragment"
+        android:name="com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountFragment"
         android:label="@string/text_recovery_account"
         tools:layout="@layout/recovery_account_fragment">
         <action
@@ -478,12 +478,12 @@
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountQuestionsFragment"
-        android:name="com.naposystems.pepito.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment"
+        android:name="com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment"
         android:label="@string/text_recovery_account"
         tools:layout="@layout/recovery_account_questions_fragment">
         <argument
             android:name="userType"
-            app:argType="com.naposystems.pepito.model.recoveryAccount.RecoveryAccountUserType" />
+            app:argType="com.naposystems.napoleonchat.model.recoveryAccount.RecoveryAccountUserType" />
         <argument
             android:name="nickname"
             app:argType="string" />
@@ -497,7 +497,7 @@
     </fragment>
     <fragment
         android:id="@+id/enterPinFragment"
-        android:name="com.naposystems.pepito.ui.enterPin.EnterPinFragment"
+        android:name="com.naposystems.napoleonchat.ui.enterPin.EnterPinFragment"
         android:label="EnterPinFragment"
         app:startDestination="@id/action_enterPinFragment_to_unlockAppTimeFragment"
         tools:layout="@layout/enter_pin_fragment">
@@ -520,12 +520,12 @@
     </fragment>
     <fragment
         android:id="@+id/activateBiometricsFragment"
-        android:name="com.naposystems.pepito.ui.activateBiometrics.ActivateBiometricsDialogFragment"
+        android:name="com.naposystems.napoleonchat.ui.activateBiometrics.ActivateBiometricsDialogFragment"
         android:label="@string/text_unlock_options"
         tools:layout="@layout/activate_biometrics_dialog_fragment" />
     <fragment
         android:id="@+id/unlockAppTimeFragment"
-        android:name="com.naposystems.pepito.ui.unlockAppTime.UnlockAppTimeFragment"
+        android:name="com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeFragment"
         android:label="UnlockAppTimeFragment"
         tools:layout="@layout/unlock_app_time_fragment">
         <action
@@ -538,7 +538,7 @@
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"
-        android:name="com.naposystems.pepito.ui.addContact.AddContactFragment"
+        android:name="com.naposystems.napoleonchat.ui.addContact.AddContactFragment"
         android:label="@string/text_friend_requests"
         tools:layout="@layout/add_contact_fragment">
         <argument
@@ -552,7 +552,7 @@
     </fragment>
     <fragment
         android:id="@+id/conversationCameraFragment"
-        android:name="com.naposystems.pepito.ui.conversationCamera.ConversationCameraFragment"
+        android:name="com.naposystems.napoleonchat.ui.conversationCamera.ConversationCameraFragment"
         android:label="ConversationCameraFragment"
         tools:layout="@layout/conversation_camera_fragment">
         <argument
@@ -582,7 +582,7 @@
     </fragment>
     <fragment
         android:id="@+id/contactProfileFragment"
-        android:name="com.naposystems.pepito.ui.contactProfile.ContactProfileFragment"
+        android:name="com.naposystems.napoleonchat.ui.contactProfile.ContactProfileFragment"
         tools:layout="@layout/contact_profile_fragment">
         <argument
             android:name="contactId"
@@ -599,21 +599,21 @@
     </fragment>
     <fragment
         android:id="@+id/attachmentAudioFragment"
-        android:name="com.naposystems.pepito.ui.attachmentAudio.AttachmentAudioFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentAudio.AttachmentAudioFragment"
         tools:layout="@layout/attachment_audio_fragment">
         <argument
             android:name="contact"
-            app:argType="com.naposystems.pepito.entity.Contact" />
+            app:argType="com.naposystems.napoleonchat.entity.Contact" />
     </fragment>
     <fragment
         android:id="@+id/attachmentGalleryFoldersFragment"
-        android:name="com.naposystems.pepito.ui.attachmentGalleryFolder.AttachmentGalleryFoldersFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentGalleryFolder.AttachmentGalleryFoldersFragment"
         android:label=""
         tools:layout="@layout/attachment_gallery_folders_fragment">
         <argument
             android:name="contact"
             android:defaultValue="@null"
-            app:argType="com.naposystems.pepito.entity.Contact"
+            app:argType="com.naposystems.napoleonchat.entity.Contact"
             app:nullable="true" />
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentGalleryFragment"
@@ -633,17 +633,17 @@
     </fragment>
     <fragment
         android:id="@+id/attachmentGalleryFragment"
-        android:name="com.naposystems.pepito.ui.attachmentGallery.AttachmentGalleryFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentGallery.AttachmentGalleryFragment"
         android:label=""
         tools:layout="@layout/attachment_gallery_fragment">
         <argument
             android:name="contact"
             android:defaultValue="@null"
-            app:argType="com.naposystems.pepito.entity.Contact"
+            app:argType="com.naposystems.napoleonchat.entity.Contact"
             app:nullable="true" />
         <argument
             android:name="galleryFolder"
-            app:argType="com.naposystems.pepito.model.attachment.gallery.GalleryFolder" />
+            app:argType="com.naposystems.napoleonchat.model.attachment.gallery.GalleryFolder" />
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentPreviewFragment"
             app:destination="@id/attachmentPreviewFragment"
@@ -663,12 +663,12 @@
     </fragment>
     <fragment
         android:id="@+id/attachmentPreviewFragment"
-        android:name="com.naposystems.pepito.ui.attachmentPreview.AttachmentPreviewFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentPreview.AttachmentPreviewFragment"
         android:label="AttachmentPreviewFragment"
         tools:layout="@layout/attachment_preview_fragment">
         <argument
             android:name="attachment"
-            app:argType="com.naposystems.pepito.entity.message.attachments.Attachment" />
+            app:argType="com.naposystems.napoleonchat.entity.message.attachments.Attachment" />
         <action
             android:id="@+id/action_attachmentPreviewFragment_to_conversationFragment"
             app:destination="@id/conversationFragment" />
@@ -686,7 +686,7 @@
     </fragment>
     <fragment
         android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"
-        android:name="com.naposystems.pepito.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment"
+        android:name="com.naposystems.napoleonchat.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment"
         android:label="@string/text_recovery_account"
         tools:layout="@layout/validate_password_previous_recovery_account_fragment">
         <action
@@ -702,7 +702,7 @@
     </fragment>
     <fragment
         android:id="@+id/recoveryOlderAccountQuestionsFragment"
-        android:name="com.naposystems.pepito.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment"
+        android:name="com.naposystems.napoleonchat.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment"
         android:label="@string/text_recovery_account"
         tools:layout="@layout/recovery_older_account_questions_fragment">
         <action
@@ -718,7 +718,7 @@
     </fragment>
     <fragment
         android:id="@+id/subscriptionFragment"
-        android:name="com.naposystems.pepito.ui.subscription.SubscriptionFragment"
+        android:name="com.naposystems.napoleonchat.ui.subscription.SubscriptionFragment"
         android:label="@string/text_subscription_title"
         tools:layout="@layout/subscription_fragment">
         <action
@@ -731,7 +731,7 @@
     </fragment>
     <fragment
         android:id="@+id/subscriptionPaymentFragment"
-        android:name="com.naposystems.pepito.ui.subscriptionPayment.SubscriptionPaymentFragment"
+        android:name="com.naposystems.napoleonchat.ui.subscriptionPayment.SubscriptionPaymentFragment"
         android:label="@string/text_subscription_title"
         tools:layout="@layout/subscription_payment_fragment">
         <argument
@@ -740,32 +740,32 @@
     </fragment>
     <fragment
         android:id="@+id/previewMediaFragment"
-        android:name="com.naposystems.pepito.ui.previewMedia.PreviewMediaFragment"
+        android:name="com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaFragment"
         android:label="PreviewMediaFragment"
         tools:layout="@layout/preview_media_fragment">
         <argument
             android:name="messageAndAttachment"
-            app:argType="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            app:argType="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
     </fragment>
     <fragment
         android:id="@+id/attachmentDocumentFragment"
-        android:name="com.naposystems.pepito.ui.attachmentDocument.AttachmentDocumentFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentDocument.AttachmentDocumentFragment"
         android:label="@string/text_document"
         tools:layout="@layout/attachment_document_fragment" />
     <fragment
         android:id="@+id/attachmentLocationFragment"
-        android:name="com.naposystems.pepito.ui.attachmentLocation.AttachmentLocationFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentLocation.AttachmentLocationFragment"
         android:label="@string/text_location"
         tools:layout="@layout/attachment_location_fragment" />
     <fragment
         android:id="@+id/previewImageFragment"
-        android:name="com.naposystems.pepito.ui.previewImage.PreviewImageFragment"
+        android:name="com.naposystems.napoleonchat.ui.previewImage.PreviewImageFragment"
         android:label="@string/text_profile_title"
         tools:layout="@layout/preview_image_fragment">
         <argument
             android:name="contact"
             android:defaultValue="@null"
-            app:argType="com.naposystems.pepito.entity.Contact"
+            app:argType="com.naposystems.napoleonchat.entity.Contact"
             app:nullable="true" />
         <argument
             android:name="titleToolbar"
@@ -774,7 +774,7 @@
         <argument
             android:name="user"
             android:defaultValue="@null"
-            app:argType="com.naposystems.pepito.entity.User"
+            app:argType="com.naposystems.napoleonchat.entity.User"
             app:nullable="true" />
     </fragment>
 </navigation>

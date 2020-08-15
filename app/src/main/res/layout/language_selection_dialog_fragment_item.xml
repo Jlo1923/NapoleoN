@@ -7,11 +7,11 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.languageSelection.adapter.LanguageSelectionAdapter.LanguageSelectionListener" />
+            type="com.naposystems.napoleonchat.ui.languageSelection.adapter.LanguageSelectionAdapter.LanguageSelectionListener" />
 
         <variable
             name="language"
-            type="com.naposystems.pepito.model.languageSelection.Language" />
+            type="com.naposystems.napoleonchat.model.languageSelection.Language" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

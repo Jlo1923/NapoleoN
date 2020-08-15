@@ -40,7 +40,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+                    <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                         android:id="@+id/layout_quote"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.status.StatusViewModel" />
+            type="com.naposystems.napoleonchat.ui.status.StatusViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

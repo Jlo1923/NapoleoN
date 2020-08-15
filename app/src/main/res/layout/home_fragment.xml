@@ -126,7 +126,7 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/home_fragment_item" />
 
-                <com.naposystems.pepito.ui.custom.emptyState.EmptyStateCustomView
+                <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
                     android:id="@+id/empty_state"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

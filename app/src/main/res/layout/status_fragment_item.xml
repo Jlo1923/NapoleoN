@@ -7,11 +7,11 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.status.adapter.StatusAdapter.StatusSelectionListener" />
+            type="com.naposystems.napoleonchat.ui.status.adapter.StatusAdapter.StatusSelectionListener" />
 
         <variable
             name="status"
-            type="com.naposystems.pepito.entity.Status" />
+            type="com.naposystems.napoleonchat.entity.Status" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

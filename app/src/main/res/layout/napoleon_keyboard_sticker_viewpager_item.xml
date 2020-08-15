@@ -10,7 +10,7 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.napoleonKeyboardStickerPage.adapter.NapoleonKeyboardStickerPageAdapter.NapoleonKeyboardStickerPageListener" />
+            type="com.naposystems.napoleonchat.ui.napoleonKeyboardStickerPage.adapter.NapoleonKeyboardStickerPageAdapter.NapoleonKeyboardStickerPageListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,7 +20,7 @@
         android:layout_marginEnd="@dimen/x_small_margin"
         android:onClick="@{() -> clickListener.onGifSelected(file)}">
 
-        <com.naposystems.pepito.ui.custom.imageViewProgress.ImageViewProgress
+        <com.naposystems.napoleonchat.ui.custom.imageViewProgress.ImageViewProgress
             android:id="@+id/imageView_progress"
             android:layout_width="0dp"
             android:layout_height="0dp"

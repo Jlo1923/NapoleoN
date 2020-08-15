@@ -15,11 +15,11 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.home.adapter.ConversationAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter.ClickListener" />
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
 
     </data>
 

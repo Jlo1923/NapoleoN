@@ -7,11 +7,11 @@
 
         <variable
             name="contact"
-            type="com.naposystems.pepito.entity.Contact" />
+            type="com.naposystems.napoleonchat.entity.Contact" />
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.conversation.ConversationViewModel" />
+            type="com.naposystems.napoleonchat.ui.conversation.ConversationViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -27,7 +27,7 @@
             tools:layout_height="match_parent"
             tools:showIn="@layout/conversation_fragment">
 
-            <com.naposystems.pepito.ui.custom.noScrollView.NoScrollView
+            <com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -48,7 +48,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/container_status"
                     tools:src="@drawable/vertical_photo" />
-            </com.naposystems.pepito.ui.custom.noScrollView.NoScrollView>
+            </com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView>
 
             <!-- HEADER STATUS -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -116,7 +116,7 @@
                 tools:listitem="@layout/conversation_item_incoming_message" />
 
             <!-- INPUT PANEL -->
-            <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget
+            <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
                 android:id="@+id/inputPanel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
                 app:layout_constraintEnd_toStartOf="@id/floatingActionButton_send"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <com.naposystems.pepito.ui.custom.fabSend.FabSend
+            <com.naposystems.napoleonchat.ui.custom.fabSend.FabSend
                 android:id="@+id/floatingActionButton_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

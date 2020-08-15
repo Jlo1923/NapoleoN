@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.naposystems.pepito">
+    package="com.naposystems.napoleonchat">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -87,7 +87,7 @@
             android:resource="@array/preloaded_fonts" /> <!-- CACHE DIRECTORY FILE PROVIDER PATHS -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.naposystems.pepito.provider"
+            android:authorities="com.naposystems.napoleonchat.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

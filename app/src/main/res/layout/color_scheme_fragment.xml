@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.colorScheme.ColorSchemeViewModel" />
+            type="com.naposystems.napoleonchat.ui.colorScheme.ColorSchemeViewModel" />
 
     </data>
 

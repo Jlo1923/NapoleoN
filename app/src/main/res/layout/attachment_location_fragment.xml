@@ -50,7 +50,7 @@
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/ic_map_marker" />
 
-            <com.naposystems.pepito.ui.custom.attachmentLocationBottomSheet.AttachmentLocationBottomSheet
+            <com.naposystems.napoleonchat.ui.custom.attachmentLocationBottomSheet.AttachmentLocationBottomSheet
                 android:id="@+id/bottom_sheet"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
