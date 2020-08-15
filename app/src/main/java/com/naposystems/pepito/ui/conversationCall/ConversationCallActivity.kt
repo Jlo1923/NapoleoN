@@ -10,7 +10,6 @@ import android.view.WindowManager
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -19,11 +18,11 @@ import androidx.transition.TransitionManager
 import com.naposystems.pepito.R
 import com.naposystems.pepito.databinding.ActivityConversationCallBinding
 import com.naposystems.pepito.entity.Contact
+import com.naposystems.pepito.service.webRTCCall.WebRTCCallService
+import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.SharedPreferencesManager
 import com.naposystems.pepito.utility.Utils
 import com.naposystems.pepito.utility.notificationUtils.NotificationUtils
-import com.naposystems.pepito.service.webRTCCall.WebRTCCallService
-import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.utility.viewModel.ViewModelFactory
 import com.naposystems.pepito.webRTC.IContractWebRTCClient
 import com.naposystems.pepito.webRTC.WebRTCClient
@@ -32,6 +31,7 @@ import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.system.exitProcess
+
 
 class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientListener {
 
@@ -68,12 +68,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
-        super.onCreate(savedInstanceState)
         Timber.d("onCreate")
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
             Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
@@ -85,6 +84,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
             Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
         }
+
+        super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
@@ -138,6 +139,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.fabHangup.setOnClickListener {
+            viewModel.resetIsOnCallPref()
             if (!isIncomingCall && !webRTCClient.isActiveCall()) {
                 viewModel.sendMissedCall(contactId, isVideoCall)
             }
@@ -250,21 +252,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         Timber.d("onDestroy")
         webRTCClient.unSubscribeCallChannel()
         super.onDestroy()
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Timber.d("onNewIntent")
-        /*if (intent != null && intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
-            NotificationUtils.cancelWebRTCCallNotification(this)
-            if (isIncomingCall) {
-                Timber.d("ACTION_ANSWER_CALL")
-                NotificationUtils.cancelWebRTCCallNotification(this)
-                webRTCClient.emitJoinToCall()
-                webRTCClient.stopRingAndVibrate()
-                binding.fabAnswer.visibility = View.GONE
-            }
-        }*/
     }
 
     private fun getExtras() {

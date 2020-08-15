@@ -234,6 +234,7 @@ class WebRTCClient constructor(
             .subscribe {
                 if (it.channel == this.channel) {
                     stopMediaPlayer()
+                    unSubscribeCallChannel()
                     localPeer?.dispose()
                 }
             }
@@ -441,6 +442,7 @@ class WebRTCClient constructor(
                     if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED ||
                         iceConnectionState == PeerConnection.IceConnectionState.CLOSED
                     ) {
+                        unSubscribeCallChannel()
                         mListener?.resetIsOnCallPref()
 
                         playSound(
