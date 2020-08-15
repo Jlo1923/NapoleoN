@@ -115,7 +115,8 @@ class ConversationRepository @Inject constructor(
             updateMessage(message)
             offer(UploadResult.Start(attachment, this))
 
-            val path = File(context.cacheDir!!, Constants.NapoleonCacheDirectories.VIDEOS.folder)
+            val path =
+                File(context.cacheDir!!, FileManager.getSubfolderByAttachmentType(attachment.type))
             if (!path.exists())
                 path.mkdirs()
             val sourceFile = File(path, attachment.fileName)
