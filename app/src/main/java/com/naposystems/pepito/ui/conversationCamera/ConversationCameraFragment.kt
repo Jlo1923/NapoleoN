@@ -1,10 +1,8 @@
 package com.naposystems.pepito.ui.conversationCamera
 
-import android.Manifest
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -16,7 +14,6 @@ import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -238,7 +235,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
                                     messageWebId = "",
                                     type = Constants.AttachmentType.IMAGE.type,
                                     body = "",
-                                    uri = photoFile.name,
+                                    fileName = photoFile.name,
                                     origin = Constants.AttachmentOrigin.CAMERA.origin,
                                     thumbnailUri = "",
                                     status = Constants.AttachmentStatus.SENDING.status,
@@ -363,7 +360,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
                             messageWebId = "",
                             type = Constants.AttachmentType.VIDEO.type,
                             body = "",
-                            uri = videoFile.name,
+                            fileName = videoFile.name,
                             origin = Constants.AttachmentOrigin.CAMERA.origin,
                             thumbnailUri = "",
                             status = Constants.AttachmentStatus.SENDING.status,

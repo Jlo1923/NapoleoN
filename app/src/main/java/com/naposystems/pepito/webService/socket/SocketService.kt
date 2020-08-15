@@ -91,7 +91,7 @@ class SocketService @Inject constructor(
     }
 
     override fun subscribeToCallChannelFromBackground(channel: String) {
-        Timber.d("subscribeToCallChannel: $channel")
+        Timber.d("subscribeToCallChannelFromBackground: $channel")
         callChannel = pusher.subscribePrivate(channel, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent) {
                 Timber.d("event: ${event.data}")

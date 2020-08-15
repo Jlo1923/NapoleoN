@@ -21,7 +21,7 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
         Attachment::class, Contact::class,
         Quote::class
     ],
-    version = 12
+    version = 13
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 

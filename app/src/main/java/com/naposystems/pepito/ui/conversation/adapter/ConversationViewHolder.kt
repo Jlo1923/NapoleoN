@@ -141,6 +141,15 @@ open class ConversationViewHolder constructor(
         }
     }
 
+    fun setCompressProgressAndJob(
+        progress: Long,
+        job: ProducerScope<*>
+    ) {
+        Timber.d("compress progress: $progress, job: $job")
+
+        this.uploadJob = job
+    }
+
     fun setDownloadProgressAndJob(
         progress: Long,
         job: ProducerScope<*>
@@ -287,13 +296,6 @@ open class ConversationViewHolder constructor(
             quote?.visibility = View.GONE
         }
 
-        imageViewAttachment?.visibility = View.GONE
-        imageButtonState?.visibility = View.GONE
-        progressBar?.setProgress(0.0f)
-        progressBar?.visibility = View.GONE
-        progressBarIndeterminate?.visibility = View.GONE
-        imageButtonPlay?.visibility = View.GONE
-
         val firstAttachment: Attachment? = item.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
@@ -303,7 +305,7 @@ open class ConversationViewHolder constructor(
             if (item.message.status == Constants.MessageStatus.UNREAD.status &&
                 attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status
             ) {
-                Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.uri}")
+                Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.fileName}")
                 clickListener.downloadAttachment(item, adapterPosition)
             }
 
@@ -319,6 +321,7 @@ open class ConversationViewHolder constructor(
                 Constants.AttachmentStatus.SENDING.status -> {
 //                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
 //                    imageButtonState?.visibility = View.VISIBLE
+                    progressBarIndeterminate?.isVisible = true
                 }
                 Constants.AttachmentStatus.SENT.status -> {
 //                    imageButtonState?.visibility = View.INVISIBLE
@@ -380,6 +383,14 @@ open class ConversationViewHolder constructor(
 
 //                    imageButtonState?.visibility = View.VISIBLE
                 }
+                else -> {
+                    imageViewAttachment?.visibility = View.GONE
+                    imageButtonState?.visibility = View.GONE
+                    progressBar?.setProgress(0.0f)
+                    progressBar?.visibility = View.GONE
+                    progressBarIndeterminate?.visibility = View.GONE
+                    imageButtonPlay?.visibility = View.GONE
+                }
             }
 
             imageButtonState?.setOnClickListener(
@@ -401,6 +412,13 @@ open class ConversationViewHolder constructor(
             if (item.message.isMine == Constants.IsMine.YES.value && audioPlayer != null && mediaPlayerManager != null) {
                 loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
             }
+        } ?: run {
+            imageViewAttachment?.visibility = View.GONE
+            imageButtonState?.visibility = View.GONE
+            progressBar?.setProgress(0.0f)
+            progressBar?.visibility = View.GONE
+            progressBarIndeterminate?.visibility = View.GONE
+            imageButtonPlay?.visibility = View.GONE
         }
 
         imageButtonSend?.setOnClickListener {
@@ -454,7 +472,7 @@ open class ConversationViewHolder constructor(
                         setAudioFileUri(
                             Utils.getFileUri(
                                 context = context,
-                                fileName = attachment.uri,
+                                fileName = attachment.fileName,
                                 subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
                             )
                         )
@@ -464,7 +482,7 @@ open class ConversationViewHolder constructor(
                     setAudioFileUri(
                         Utils.getFileUri(
                             context = context,
-                            fileName = attachment.uri,
+                            fileName = attachment.fileName,
                             subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
                         )
                     )
@@ -477,7 +495,7 @@ open class ConversationViewHolder constructor(
                     setAudioFileUri(
                         Utils.getFileUri(
                             context = context,
-                            fileName = attachment.uri,
+                            fileName = attachment.fileName,
                             subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
                         )
                     )
@@ -514,9 +532,15 @@ open class ConversationViewHolder constructor(
                 } else {
                     attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
                     clickListener.updateAttachmentState(attachment)
+                    val message = item.message
+                    message.status = Constants.MessageStatus.ERROR.status
+                    clickListener.updateMessageState(message)
                 }
                 progressBar?.setProgress(0.0f)
                 progressBar?.visibility = View.INVISIBLE
+                progressBarIndeterminate?.isVisible = false
+                imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
+                imageButtonState?.visibility = View.VISIBLE
             }
             Constants.AttachmentStatus.UPLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {

@@ -8,7 +8,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
-import android.database.Cursor
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -733,6 +732,11 @@ class ConversationFragment : BaseFragment(),
                         it.job
                     )
                     is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
+                    is UploadResult.CompressProgress -> conversationAdapter.setCompressProgress(
+                        it.attachment,
+                        it.progress,
+                        it.job
+                    )
                     is UploadResult.Progress -> conversationAdapter.setUploadProgress(
                         it.attachment,
                         it.progress,
@@ -752,7 +756,7 @@ class ConversationFragment : BaseFragment(),
                     messageWebId = "",
                     type = Constants.AttachmentType.DOCUMENT.type,
                     body = "",
-                    uri = it.name,
+                    fileName = it.name,
                     origin = Constants.AttachmentOrigin.GALLERY.origin,
                     thumbnailUri = "",
                     status = Constants.AttachmentStatus.SENDING.status,
@@ -778,7 +782,10 @@ class ConversationFragment : BaseFragment(),
                     true,
                     requireContext(),
                     R.string.text_close
-                ) {}
+                ) {
+                    binding.buttonCall.isEnabled = true
+                    binding.buttonVideoCall.isEnabled = true
+                }
             }
             binding.buttonCall.isEnabled = true
             binding.buttonVideoCall.isEnabled = true
@@ -810,7 +817,7 @@ class ConversationFragment : BaseFragment(),
                 messageWebId = "",
                 type = Constants.AttachmentType.AUDIO.type,
                 body = "",
-                uri = file.name,
+                fileName = file.name,
                 origin = Constants.AttachmentOrigin.RECORD_AUDIO.origin,
                 thumbnailUri = "",
                 status = Constants.AttachmentStatus.SENDING.status,
@@ -1471,7 +1478,7 @@ class ConversationFragment : BaseFragment(),
             } else {
                 Utils.getFileUri(
                     requireContext(),
-                    attachment.uri,
+                    attachment.fileName,
                     Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
                 )
             }
@@ -1923,6 +1930,10 @@ class ConversationFragment : BaseFragment(),
                 conversationAdapter.notifyPlayAudio(position)
             }
         }
+    }
+
+    override fun updateMessageState(message: Message) {
+        viewModel.updateMessage(message)
     }
 
     //endregion

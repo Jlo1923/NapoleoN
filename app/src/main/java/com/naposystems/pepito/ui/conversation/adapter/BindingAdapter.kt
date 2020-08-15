@@ -284,7 +284,7 @@ private fun loadAttachment(
             val uri = if (isMine) {
                 Utils.getFileUri(
                     imageView.context,
-                    firstAttachment.uri,
+                    firstAttachment.fileName,
                     Constants.NapoleonCacheDirectories.VIDEOS.folder
                 )
             } else {

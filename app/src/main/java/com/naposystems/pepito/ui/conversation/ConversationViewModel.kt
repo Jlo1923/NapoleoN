@@ -215,7 +215,7 @@ class ConversationViewModel @Inject constructor(
                     messageWebId = "",
                     type = Constants.AttachmentType.AUDIO.type,
                     body = "",
-                    uri = audioFile.name,
+                    fileName = audioFile.name,
                     origin = Constants.AttachmentOrigin.AUDIO_SELECTION.origin,
                     thumbnailUri = "",
                     status = Constants.AttachmentStatus.SENDING.status,
@@ -447,6 +447,7 @@ class ConversationViewModel @Inject constructor(
                 } else {
                     Timber.e(response.errorBody()?.string())
                     repository.unSubscribeToChannel(contact, channel)
+                    _noInternetConnection.value = true
                     _contactCalledSuccessfully.value = null
                 }
             } catch (e: Exception) {
@@ -539,8 +540,8 @@ class ConversationViewModel @Inject constructor(
 
                         val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
                         attachment.status = Constants.AttachmentStatus.DOWNLOADING.status
-                        attachment.uri = fileName
-                        Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.uri}")
+                        attachment.fileName = fileName
+                        Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.fileName}")
                         updateAttachment(attachment)
                         _downloadProgress.value =
                             DownloadAttachmentResult.Start(itemPosition, this@launch as Job)

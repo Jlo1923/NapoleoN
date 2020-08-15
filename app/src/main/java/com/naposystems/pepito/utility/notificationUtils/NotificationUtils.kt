@@ -234,7 +234,7 @@ class NotificationUtils @Inject constructor(
             }
 
             Constants.NotificationType.INCOMING_CALL.type -> {
-                Timber.d("Incoming call")
+                Timber.d("Incoming call, ${repository.getIsOnCallPref()}")
                 if (app != null && !app.isAppVisible() && !repository.getIsOnCallPref()) {
                     socketService.initSocket()
                     Timber.d("Incoming call 2")

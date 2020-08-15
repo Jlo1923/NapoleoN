@@ -238,7 +238,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                 } else if (attachment.type == Constants.AttachmentType.VIDEO.type) {
                     val uri = Utils.getFileUri(
                         binding.imageViewQuote.context,
-                        attachment.uri,
+                        attachment.fileName,
                         Constants.NapoleonCacheDirectories.VIDEOS.folder
                     )
                     Glide.with(binding.imageViewQuote)

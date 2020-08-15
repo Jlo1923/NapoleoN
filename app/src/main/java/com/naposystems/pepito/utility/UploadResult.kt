@@ -16,6 +16,8 @@ sealed class UploadResult {
         val cause: Exception? = null
     ) : UploadResult()
 
+    data class CompressProgress(val attachment: Attachment, val progress: Long, val job: ProducerScope<UploadResult>) : UploadResult()
+
     data class Progress(val attachment: Attachment, val progress: Long, val job: ProducerScope<UploadResult>) : UploadResult()
 
     data class Complete(val attachment: Attachment) : UploadResult()

@@ -3,14 +3,11 @@ package com.naposystems.pepito.utility
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.ThumbnailUtils
-import android.net.Uri
 import android.provider.MediaStore
-import android.util.Size
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.MutableLiveData
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
-import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants.AttachmentType.*
 import com.naposystems.pepito.utility.Constants.NapoleonCacheDirectories.*
@@ -373,7 +370,7 @@ class FileManager {
             val path = File(context.cacheDir!!, folder)
             if (!path.exists())
                 path.mkdirs()
-            val file = File(path, attachment.uri)
+            val file = File(path, attachment.fileName)
             return FileInputStream(file)
         }
 
@@ -403,7 +400,7 @@ class FileManager {
         fun deleteAttachmentFile(context: Context, attachment: Attachment) {
             val folder = getSubfolderByAttachmentType(attachment.type)
             val path = File(context.cacheDir!!, folder)
-            val file = File(path, attachment.uri)
+            val file = File(path, attachment.fileName)
 
             if (file.exists()) {
                 file.delete()

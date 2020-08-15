@@ -32,7 +32,7 @@ data class AttachmentResDTO(
                     messageWebId = attachmentDTO.messageId,
                     type = attachmentDTO.type,
                     body = attachmentDTO.body,
-                    uri = "",
+                    fileName = "",
                     origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
                     thumbnailUri = "",
                     status = Constants.AttachmentStatus.NOT_DOWNLOADED.status,

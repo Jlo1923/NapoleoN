@@ -6,7 +6,6 @@ import com.naposystems.pepito.crypto.message.CryptoMessage
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.contact.ContactDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
-import com.naposystems.pepito.db.dao.message.MessageLocalDataSource
 import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.dto.contacts.ContactResDTO
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
@@ -17,8 +16,6 @@ import com.naposystems.pepito.entity.message.attachments.Attachment
 import com.naposystems.pepito.utility.Constants
 import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.socket.IContractSocketService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -132,7 +129,7 @@ class SocketRepository @Inject constructor(
                 contactId = originalMessage.message.contactId,
                 body = originalMessage.message.body,
                 attachmentType = firstAttachment?.type ?: "",
-                thumbnailUri = firstAttachment?.uri ?: "",
+                thumbnailUri = firstAttachment?.fileName ?: "",
                 messageParentId = originalMessage.message.id,
                 isMine = originalMessage.message.isMine
             )

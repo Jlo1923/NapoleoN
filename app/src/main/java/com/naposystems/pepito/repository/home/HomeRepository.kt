@@ -11,9 +11,6 @@ import com.naposystems.pepito.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.pepito.db.dao.user.UserLocalDataSource
 import com.naposystems.pepito.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.pepito.dto.conversation.message.MessageResDTO
-import com.naposystems.pepito.dto.conversation.socket.AuthReqDTO
-import com.naposystems.pepito.dto.conversation.socket.HeadersReqDTO
-import com.naposystems.pepito.dto.conversation.socket.SocketReqDTO
 import com.naposystems.pepito.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.pepito.entity.Contact
 import com.naposystems.pepito.entity.User
@@ -131,7 +128,7 @@ class HomeRepository @Inject constructor(
                 contactId = originalMessage.message.contactId,
                 body = originalMessage.message.body,
                 attachmentType = firstAttachment?.type ?: "",
-                thumbnailUri = firstAttachment?.uri ?: "",
+                thumbnailUri = firstAttachment?.fileName ?: "",
                 messageParentId = originalMessage.message.id,
                 isMine = originalMessage.message.isMine
             )

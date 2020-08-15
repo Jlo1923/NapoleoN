@@ -6,7 +6,6 @@ import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.naposystems.pepito.BuildConfig
 import com.naposystems.pepito.db.dao.attachment.AttachmentDataSource
 import com.naposystems.pepito.db.dao.message.MessageDataSource
@@ -34,12 +33,14 @@ import com.naposystems.pepito.webService.NapoleonApi
 import com.naposystems.pepito.webService.ProgressRequestBody
 import com.naposystems.pepito.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
+import com.vincent.videocompressor.VideoCompressK
+import com.vincent.videocompressor.VideoCompressResult
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -114,52 +115,94 @@ class ConversationRepository @Inject constructor(
             updateMessage(message)
             offer(UploadResult.Start(attachment, this))
 
-            val requestBodyMessageId = createPartFromString(attachment.messageWebId)
-            val requestBodyType = createPartFromString(attachment.type)
-            val requestBodyDuration = createPartFromString(attachment.duration.toString())
-
-            val requestBodyFilePart =
-                createPartFromFile(
-                    this@channelFlow,
-                    attachment,
-                    this as Job
+            val path = File(context.cacheDir!!, Constants.NapoleonCacheDirectories.VIDEOS.folder)
+            if (!path.exists())
+                path.mkdirs()
+            val sourceFile = File(path, attachment.fileName)
+            val destFile =
+                File(
+                    path, "${attachment.fileName
+                        .replace("_compress", "")
+                        .split('.')[0]}_compress.${attachment.extension}"
                 )
 
-            val response = napoleonApi.sendMessageAttachment(
-                messageId = requestBodyMessageId,
-                attachmentType = requestBodyType,
-                duration = requestBodyDuration,
-                file = requestBodyFilePart
-            )
+            compressVideo(attachment, sourceFile, destFile, this)
+                .collect {
+                    when (it) {
+                        is VideoCompressResult.Start -> {
+                            Timber.d("tmessages VideoCompressResult.Start")
+                        }
+                        is VideoCompressResult.Success -> {
+                            Timber.d("tmessages VideoCompressResult.Success")
+                            if (it.srcFile.isFile && it.srcFile.exists() && !attachment.isCompressed)
+                                it.srcFile.delete()
+                            attachment.fileName = it.destFile.name
+                            attachment.isCompressed = true
+                            updateAttachment(attachment)
 
-            if (response.isSuccessful) {
-                Timber.d("Envió el puto archivo")
+                            val requestBodyMessageId = createPartFromString(attachment.messageWebId)
+                            val requestBodyType = createPartFromString(attachment.type)
+                            val requestBodyDuration =
+                                createPartFromString(attachment.duration.toString())
 
-                message.status =
-                    if (message.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
-                    else Constants.MessageStatus.SENT.status
-                updateMessage(message)
+                            val requestBodyFilePart =
+                                createPartFromFile(
+                                    this@channelFlow,
+                                    attachment,
+                                    this as Job
+                                )
 
-                response.body()?.let { attachmentResDTO ->
-                    attachment.apply {
-                        webId = attachmentResDTO.id
-                        messageWebId = attachmentResDTO.messageId
-                        body = attachmentResDTO.body
-                        status = Constants.AttachmentStatus.SENT.status
+                            val response = napoleonApi.sendMessageAttachment(
+                                messageId = requestBodyMessageId,
+                                attachmentType = requestBodyType,
+                                duration = requestBodyDuration,
+                                file = requestBodyFilePart
+                            )
+
+                            if (response.isSuccessful) {
+
+                                message.status =
+                                    if (message.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
+                                    else Constants.MessageStatus.SENT.status
+                                updateMessage(message)
+
+                                response.body()?.let { attachmentResDTO ->
+                                    attachment.apply {
+                                        webId = attachmentResDTO.id
+                                        messageWebId = attachmentResDTO.messageId
+                                        body = attachmentResDTO.body
+                                        status = Constants.AttachmentStatus.SENT.status
+                                    }
+                                }
+
+                                updateAttachment(attachment)
+                                if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
+                                    saveEncryptedFile(attachment)
+                                }
+                                offer(UploadResult.Success(attachment))
+                            } else {
+                                setStatusErrorMessageAndAttachment(message, attachment)
+                                offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
+                            }
+                        }
+                        is VideoCompressResult.Progress -> {
+                            Timber.d("tmessages VideoCompressResult.Progress ${it.progress}")
+                            offer(
+                                UploadResult.CompressProgress(
+                                    attachment,
+                                    it.progress.toLong(),
+                                    this
+                                )
+                            )
+                        }
+                        is VideoCompressResult.Fail -> {
+                            setStatusErrorMessageAndAttachment(message, attachment)
+                            offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
+                        }
                     }
                 }
-
-                updateAttachment(attachment)
-                if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
-                    saveEncryptedFile(attachment)
-                }
-                offer(UploadResult.Success(attachment))
-            } else {
-                setStatusErrorMessageAndAttachment(message, attachment)
-                offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
-            }
         } catch (e: Exception) {
-            Timber.e("ClosedSendChannelException")
+            Timber.e("ClosedSendChannelException, $e")
             attachment.status =
                 Constants.AttachmentStatus.UPLOAD_CANCEL.status
             updateAttachment(attachment)
@@ -196,7 +239,7 @@ class ConversationRepository @Inject constructor(
             FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
 
         val fileUri = Utils.getFileUri(
-            context = context, fileName = attachment.uri, subFolder = subfolder
+            context = context, fileName = attachment.fileName, subFolder = subfolder
         )
 
         val file = File(fileUri.path!!)
@@ -370,7 +413,7 @@ class ConversationRepository @Inject constructor(
                 contactId = originalMessage.message.contactId,
                 body = originalMessage.message.body,
                 attachmentType = firstAttachment?.type ?: "",
-                thumbnailUri = firstAttachment?.uri ?: "",
+                thumbnailUri = firstAttachment?.fileName ?: "",
                 messageParentId = originalMessage.message.id,
                 isMine = originalMessage.message.isMine
             )
@@ -541,7 +584,7 @@ class ConversationRepository @Inject constructor(
                             fileName
                         )
 
-                        attachment.uri = fileName
+                        attachment.fileName = fileName
                         updateAttachment(attachment)
 
                         var inputStream: InputStream? = null
@@ -741,5 +784,26 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun reSendMessage(messageAndAttachment: MessageAndAttachment) {
 
+    }
+
+    override suspend fun compressVideo(
+        attachment: Attachment,
+        srcFile: File,
+        destFile: File,
+        job: ProducerScope<*>
+    ) = flow<VideoCompressResult> {
+
+        if (attachment.type == Constants.AttachmentType.VIDEO.type && !attachment.isCompressed) {
+            if (destFile.exists())
+                destFile.delete()
+
+            VideoCompressK.compressVideoLow(
+                srcFile, destFile, job
+            ).collect {
+                emit(it)
+            }
+        } else {
+            emit(VideoCompressResult.Success(srcFile, destFile))
+        }
     }
 }

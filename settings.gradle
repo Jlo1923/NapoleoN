@@ -1,2 +1,3 @@
 include ':app', ':Spotlight-library'
+include ':app', ':videocompressor'
 rootProject.name='NapoleoN'
