@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.PreviewMediaFragmentBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -120,15 +121,28 @@ class PreviewMediaFragment : Fragment() {
                         binding.containerSeekbar.visibility = View.VISIBLE
                         binding.containerVideoView.visibility = View.VISIBLE
 
-                        if (attachment.status == Constants.AttachmentStatus.SENT.status) {
-                            viewModel.createTempFile(attachment)
-                        } else {
-                            contentUri = Utils.getFileUri(
-                                context = requireContext(),
-                                subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                                fileName = attachment.fileName
-                            )
-                            initializePlayer()
+                        when (attachment.status) {
+                            Constants.AttachmentStatus.SENT.status,
+                            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
+                                if (BuildConfig.ENCRYPT_API) {
+                                    viewModel.createTempFile(attachment)
+                                } else {
+                                    contentUri = Utils.getFileUri(
+                                        context = requireContext(),
+                                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                        fileName = attachment.fileName
+                                    )
+                                    initializePlayer()
+                                }
+                            }
+                            else -> {
+                                contentUri = Utils.getFileUri(
+                                    context = requireContext(),
+                                    subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                    fileName = attachment.fileName
+                                )
+                                initializePlayer()
+                            }
                         }
                     } catch (e: Exception) {
                         Timber.e(e)

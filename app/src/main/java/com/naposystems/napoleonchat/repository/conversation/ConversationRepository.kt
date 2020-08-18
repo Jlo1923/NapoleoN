@@ -135,9 +135,10 @@ class ConversationRepository @Inject constructor(
                         }
                         is VideoCompressResult.Success -> {
                             Timber.d("tmessages VideoCompressResult.Success")
-                            if (it.srcFile.isFile && it.srcFile.exists() && !attachment.isCompressed)
+                            if (it.srcFile.isFile && it.srcFile.exists() && !attachment.isCompressed && attachment.type == Constants.AttachmentType.VIDEO.type)
                                 it.srcFile.delete()
-                            attachment.fileName = it.destFile.name
+                            attachment.fileName =
+                                if (attachment.type == Constants.AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
                             attachment.isCompressed = true
                             updateAttachment(attachment)
 

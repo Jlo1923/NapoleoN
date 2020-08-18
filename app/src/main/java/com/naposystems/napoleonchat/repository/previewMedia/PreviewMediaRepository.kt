@@ -21,10 +21,18 @@ class PreviewMediaRepository @Inject constructor(
     IContractPreviewMedia.Repository {
 
     override suspend fun createTempFile(attachment: Attachment): File? {
+        val fileName = when (attachment.status) {
+            Constants.AttachmentStatus.SENT.status,
+            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
+                "${attachment.webId}.${attachment.extension}"
+            }
+            else -> attachment.fileName
+        }
+
         return FileManager.createTempFileFromEncryptedFile(
             context,
             attachment.type,
-            if (attachment.status == Constants.AttachmentStatus.SENT.status) "${attachment.webId}.${attachment.extension}" else attachment.fileName,
+            fileName,
             attachment.extension
         )
     }

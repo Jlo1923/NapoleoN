@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.ui.subscription
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -9,7 +10,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.android.billingclient.api.*
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SubscriptionFragmentBinding
 import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
@@ -19,6 +22,10 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -40,6 +47,13 @@ class SubscriptionFragment : Fragment() {
     private var listTypeSubscription: List<TypeSubscription>? = null
     private var menuItem: MenuItem? = null
     private var subscriptionState: String = ""
+
+    private val purchaseUpdateListener =
+        PurchasesUpdatedListener { billingResult, purchases ->
+            // To be implemented in a later section.
+        }
+
+    private lateinit var billingClient: BillingClient
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -87,7 +101,72 @@ class SubscriptionFragment : Fragment() {
             sendPayment()
         }
 
+        startBillingClient()
+
         return binding.root
+    }
+
+    private fun startBillingClient() {
+
+        billingClient = BillingClient.newBuilder(requireContext())
+            .setListener(purchaseUpdateListener)
+            .enablePendingPurchases()
+            .build()
+
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    // The BillingClient is ready. You can query purchases here. 00sub
+                    val skuList = ArrayList<String>()
+                    skuList.add("00sub")
+                    val params = SkuDetailsParams.newBuilder()
+                    params.setSkusList(skuList).setType(BillingClient.SkuType.SUBS)
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        billingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList ->
+                            val responseCode = billingResult.responseCode
+                            val debugMessage = billingResult.debugMessage
+                            when (responseCode) {
+                                BillingClient.BillingResponseCode.OK -> {
+                                    Timber.i("onSkuDetailsResponse: $responseCode $debugMessage")
+                                    if (skuDetailsList == null) {
+                                        Timber.w("onSkuDetailsResponse: null SkuDetails list")
+//                                        skusWithSkuDetails.postValue(emptyMap())
+                                    } else
+                                        Timber.i("onSkuDetailsResponse: count ${skuDetailsList.size}")
+                                    /*skusWithSkuDetails.postValue(HashMap<String, SkuDetails>().apply {
+                                        for (details in skuDetailsList) {
+                                            put(details.sku, details)
+                                        }
+                                    }.also { postedValue ->
+                                        Timber.i("onSkuDetailsResponse: count ${postedValue.size}")
+                                    })*/
+                                }
+                                BillingClient.BillingResponseCode.SERVICE_DISCONNECTED,
+                                BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE,
+                                BillingClient.BillingResponseCode.BILLING_UNAVAILABLE,
+                                BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
+                                BillingClient.BillingResponseCode.DEVELOPER_ERROR,
+                                BillingClient.BillingResponseCode.ERROR -> {
+                                    Timber.e("onSkuDetailsResponse: $responseCode $debugMessage")
+                                }
+                                BillingClient.BillingResponseCode.USER_CANCELED,
+                                BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED,
+                                BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED,
+                                BillingClient.BillingResponseCode.ITEM_NOT_OWNED -> {
+                                    // These response codes are not expected.
+                                    Timber.wtf("onSkuDetailsResponse: $responseCode $debugMessage")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onBillingServiceDisconnected() {
+                startBillingClient()
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -172,7 +251,7 @@ class SubscriptionFragment : Fragment() {
         })
 
         viewModel.subscriptionState.observe(viewLifecycleOwner, Observer {
-            if (it != null){
+            if (it != null) {
                 subscriptionState = it
                 when (it) {
                     Constants.SubscriptionStatus.ACTIVE.state -> {

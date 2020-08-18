@@ -231,13 +231,17 @@ class ApplicationModule {
 
         val jsonObject = JSONObject(rawResponse)
 
-        val decryptedData = crypto.decryptCipherTextWithRandomIV(
-            jsonObject.getString("datacrypt"),
-            secretKey
-        )
+        val responseBody = if (jsonObject.has("datacrypt")) {
+            val decryptedData = crypto.decryptCipherTextWithRandomIV(
+                jsonObject.getString("datacrypt"),
+                secretKey
+            )
 
-        val responseBody =
             ResponseBody.create(MediaType.parse("application/json"), decryptedData)
+        } else {
+            response.body()
+        }
+
 
         return Response.Builder()
             .code(response.code())

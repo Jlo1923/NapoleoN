@@ -873,19 +873,16 @@ class ConversationFragment : BaseFragment(),
     private fun observeMessageMessages() {
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
             Timber.d("observeMessageMessages")
-
-            conversationAdapter.submitList(conversationList)
-
-            if (!messagedLoadedFirstTime) {
-                val friendlyMessageCount: Int = conversationAdapter.itemCount
-                binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
-                messagedLoadedFirstTime = true
+            conversationAdapter.submitList(conversationList) {
+                if (!messagedLoadedFirstTime) {
+                    val friendlyMessageCount: Int = conversationAdapter.itemCount
+                    binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                    messagedLoadedFirstTime = true
+                }
+                if (conversationList.isNotEmpty()) {
+                    viewModel.sendTextMessagesRead()
+                }
             }
-
-            if (conversationList.isNotEmpty()) {
-                viewModel.sendTextMessagesRead()
-            }
-
         })
     }
 
