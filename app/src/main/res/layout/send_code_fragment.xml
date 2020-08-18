@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.register.sendCode.SendCodeViewModel" />
+            type="com.naposystems.napoleonchat.ui.register.sendCode.SendCodeViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

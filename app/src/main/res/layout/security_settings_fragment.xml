@@ -7,11 +7,11 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.securitySettings.SecuritySettingsViewModel" />
+            type="com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsViewModel" />
 
         <variable
             name="selfDestructViewModel"
-            type="com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel" />
+            type="com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel" />
     </data>
 
     <ScrollView

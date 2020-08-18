@@ -8,11 +8,11 @@
 
         <variable
             name="contact"
-            type="com.naposystems.pepito.entity.Contact" />
+            type="com.naposystems.napoleonchat.entity.Contact" />
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel" />
+            type="com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel" />
 
     </data>
 

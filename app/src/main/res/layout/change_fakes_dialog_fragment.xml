@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="com.naposystems.pepito.ui.muteConversation.MuteConversationViewModel" />
+            type="com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel" />
 
     </data>
 

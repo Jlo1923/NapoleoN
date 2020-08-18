@@ -7,11 +7,11 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.colorScheme.adapter.ColorSchemeAdapter.ColorSchemeListener" />
+            type="com.naposystems.napoleonchat.ui.colorScheme.adapter.ColorSchemeAdapter.ColorSchemeListener" />
 
         <variable
             name="theme"
-            type="com.naposystems.pepito.entity.Theme" />
+            type="com.naposystems.napoleonchat.entity.Theme" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

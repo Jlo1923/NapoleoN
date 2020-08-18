@@ -84,7 +84,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.naposystems.pepito.ui.custom.inputPanel.InputPanelWidget
+        <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
             android:id="@+id/inputPanel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

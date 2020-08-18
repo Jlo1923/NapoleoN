@@ -12,11 +12,11 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
         <variable
             name="timeFormat"
@@ -81,7 +81,7 @@
                 custom:iconForState="@{conversation}"
                 tools:visibility="visible" />
 
-            <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+            <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="@dimen/width_attachment_circle_progress"
                 android:layout_height="@dimen/height_attachment_circle_progress"

@@ -7,11 +7,11 @@
 
         <variable
             name="galleryFolder"
-            type="com.naposystems.pepito.model.attachment.gallery.GalleryFolder" />
+            type="com.naposystems.napoleonchat.model.attachment.gallery.GalleryFolder" />
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter.ClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

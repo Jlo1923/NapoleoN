@@ -14,7 +14,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
 
         <variable
             name="timeFormat"
@@ -22,7 +22,7 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
         <variable
             name="isFirst"
@@ -57,7 +57,7 @@
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintWidth_percent="0.7">
 
-            <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+            <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
                 style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation, itemPosition)}"

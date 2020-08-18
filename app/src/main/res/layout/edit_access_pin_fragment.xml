@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.editAccessPin.EditAccessPinViewModel" />
+            type="com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

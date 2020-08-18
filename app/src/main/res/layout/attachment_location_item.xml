@@ -8,11 +8,11 @@
 
         <variable
             name="place"
-            type="com.naposystems.pepito.model.attachment.location.Place" />
+            type="com.naposystems.napoleonchat.model.attachment.location.Place" />
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.attachmentLocation.adapter.AttachmentLocationAdapter.AttachmentLocationListener" />
+            type="com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter.AttachmentLocationListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

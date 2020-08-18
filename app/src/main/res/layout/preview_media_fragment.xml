@@ -7,7 +7,7 @@
 
         <variable
             name="message"
-            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,7 +43,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+            <com.naposystems.napoleonchat.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
                 android:id="@+id/imageButton_play"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
