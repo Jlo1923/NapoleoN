@@ -11,7 +11,7 @@
 
         <variable
             name="contact"
-            type="com.naposystems.pepito.entity.Contact" />
+            type="com.naposystems.napoleonchat.entity.Contact" />
 
         <variable
             name="isIncomingCall"
@@ -227,7 +227,7 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible">
 
-            <com.naposystems.pepito.ui.custom.AccessibleToggleButton
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_switch_camera"
                 style="@style/ConversationCallButton"
                 android:layout_width="31dp"
@@ -239,7 +239,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.naposystems.pepito.ui.custom.AccessibleToggleButton
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_speaker"
                 style="@style/ConversationCallButton"
                 android:background="@drawable/conversation_call_button_speaker"
@@ -250,7 +250,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:checked="false" />
 
-            <com.naposystems.pepito.ui.custom.AccessibleToggleButton
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_bluetooth"
                 style="@style/ConversationCallButton"
                 android:background="@drawable/conversation_call_button_bluetooth"
@@ -275,7 +275,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_video_cam_white" />
 
-            <com.naposystems.pepito.ui.custom.AccessibleToggleButton
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_mute_video"
                 style="@style/ConversationCallButton"
                 android:background="@drawable/conversation_call_button_mute_video"
@@ -288,7 +288,7 @@
                 tools:checked="false"
                 tools:visibility="visible" />
 
-            <com.naposystems.pepito.ui.custom.AccessibleToggleButton
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
                 android:id="@+id/imageButton_mic_off"
                 style="@style/ConversationCallButton"
                 android:background="@drawable/conversation_call_button_mic_off"

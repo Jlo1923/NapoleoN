@@ -6,7 +6,7 @@
 
     <data>
 
-        <import type="com.naposystems.pepito.BuildConfig" />
+        <import type="com.naposystems.napoleonchat.BuildConfig" />
 
         <variable
             name="itemPosition"
@@ -14,7 +14,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.pepito.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
 
         <variable
             name="timeFormat"
@@ -22,7 +22,7 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter.ClickListener" />
 
         <variable
             name="isFirst"
@@ -55,7 +55,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.7">
 
-            <com.naposystems.pepito.ui.custom.inputPanel.InputPanelQuote
+            <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
                 style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation, itemPosition)}"
@@ -66,7 +66,7 @@
                 app:layout_constraintWidth_min="wrap"
                 tools:visibility="visible" />
 
-            <com.naposystems.pepito.ui.custom.audioPlayer.AudioPlayerCustomView
+            <com.naposystems.napoleonchat.ui.custom.audioPlayer.AudioPlayerCustomView
                 android:id="@+id/audio_player"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                 custom:iconForState="@{conversation}"
                 tools:visibility="visible" />
 
-            <com.naposystems.pepito.ui.custom.circleProgressBar.CircleProgressBar
+            <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="36dp"
                 android:layout_height="36dp"

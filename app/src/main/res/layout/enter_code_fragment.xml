@@ -57,7 +57,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/textView_attempts_for_enter_code" />
 
-                    <com.naposystems.pepito.ui.custom.EnterCodeWidget
+                    <com.naposystems.napoleonchat.ui.custom.EnterCodeWidget
                         android:id="@+id/enter_code_widget"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
                             android:layout_gravity="center" />
                     </ViewSwitcher>
 
-                    <com.naposystems.pepito.ui.custom.numericKeyboard.NumericKeyboardCustomView
+                    <com.naposystems.napoleonchat.ui.custom.numericKeyboard.NumericKeyboardCustomView
                         android:id="@+id/numeric_keyboard"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

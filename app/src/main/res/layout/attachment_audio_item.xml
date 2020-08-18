@@ -7,11 +7,11 @@
 
         <variable
             name="mediaStoreAudio"
-            type="com.naposystems.pepito.entity.message.attachments.MediaStoreAudio" />
+            type="com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio" />
 
         <variable
             name="clickListener"
-            type="com.naposystems.pepito.ui.attachmentAudio.adapter.AttachmentAudioAdapter.ClickListener" />
+            type="com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter.ClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -73,7 +73,7 @@
             app:layout_constraintTop_toBottomOf="@id/textView_document_name"
             tools:text="00:40 - 7.1 MB" />
 
-        <com.naposystems.pepito.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+        <com.naposystems.napoleonchat.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
             android:id="@+id/imageButton_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

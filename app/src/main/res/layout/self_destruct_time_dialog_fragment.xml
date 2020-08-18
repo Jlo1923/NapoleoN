@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.selfDestructTime.SelfDestructTimeViewModel" />
+            type="com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

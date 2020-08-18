@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.timeAccessPin.TimeAccessPinDialogViewModel" />
+            type="com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

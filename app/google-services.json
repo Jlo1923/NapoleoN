@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:614707134174:android:4033c33b9e27f2ddfd8c4f",
+        "android_client_info": {
+          "package_name": "com.naposystems.napoleonchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "614707134174-tpobv4vjm6jjuhc474vn7tt52qblpfhn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcAkhqRS4BO-BoKM89HiXuR4ruLr8fj1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "614707134174-tpobv4vjm6jjuhc474vn7tt52qblpfhn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "614707134174-spcolgks2tppagmqinphpuiviui5kfbg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.naposystems.napoleonchat",
+                "app_store_id": "1527883056"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:614707134174:android:d1854ef375569e09fd8c4f",
         "android_client_info": {
           "package_name": "com.naposystems.pepito"
@@ -38,6 +75,14 @@
             {
               "client_id": "614707134174-tpobv4vjm6jjuhc474vn7tt52qblpfhn.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "614707134174-spcolgks2tppagmqinphpuiviui5kfbg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.naposystems.napoleonchat",
+                "app_store_id": "1527883056"
+              }
             }
           ]
         }

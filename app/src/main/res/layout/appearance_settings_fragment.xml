@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.pepito.ui.appearanceSettings.AppearanceSettingsViewModel" />
+            type="com.naposystems.napoleonchat.ui.appearanceSettings.AppearanceSettingsViewModel" />
 
     </data>
 
