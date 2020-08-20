@@ -112,6 +112,7 @@ class RecoveryAccountFragment : Fragment() {
                             .actionRecoveryAccountFragmentToRecoveryAccountQuestionsFragment(
                                 it,
                                 binding.textInputEditTextNickname.text.toString()
+                                    .toLowerCase(Locale.ROOT)
                             )
                     )
 
