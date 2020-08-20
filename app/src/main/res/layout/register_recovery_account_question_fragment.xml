@@ -138,7 +138,7 @@
                     android:visibility="gone"
                     tools:visibility="visible"
                     app:icon="@drawable/ic_arrow_right_primary"
-                    app:iconTint="@color/buttonTint"
+                    app:iconTint="?attr/attrIconTintArrow"
                     app:layout_constraintBottom_toTopOf="@id/button_cancel"
                     app:layout_constraintEnd_toEndOf="@id/guideline_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_start" />

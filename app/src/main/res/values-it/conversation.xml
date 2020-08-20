@@ -21,7 +21,7 @@
     <string name="text_explanation_to_send_location_attachment">Per inviare una posizione, permettere l\'accesso NAPOLEON vostra posizione.</string>
     <string name="text_incoming_call_title">Chiamata in arrivo</string>
     <string name="text_calling_call_title">Chiamata…</string>
-    <string name="text_contact_want_change_to_video_call">Contatto vuole passare alla videochiamata</string>
+    <string name="text_contact_want_change_to_video_call">Sollecitare interruttore per videochiamata</string>
     <string name="text_would_you_like_switch_to_video_call">Ti piacerebbe passare alla videochiamata?</string>
     <string name="text_contact_turn_off_camera">%1$s ha trasformato il fuori campo</string>
     <string name="text_contact_is_busy">%1$s è occupato</string>
@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Sicuro videochiamata in arrivo</string>
     <string name="text_encrypted_video_call">Videochiamata crittografata</string>
     <string name="text_incoming_video_call_title">Videochiamata in arrivo</string>
-    <string name="text_new_contact">Hai un nuovo contatto. Io dico ciao!\u00A0</string>
+    <string name="text_new_contact">Hai un nuovo contatto. Io dico ciao!</string>
     <string name="text_video_call_not_internet_connection">È stato raggiunto non effettuare la chiamata video. Controlla la tua connessione a Internet e riprova</string>
     <string name="text_call_not_internet_connection">È stato raggiunto non effettuare la chiamata. Controlla la tua connessione a Internet e riprova.</string>
     <plurals name="text_self_destruct_time_days">
@@ -55,5 +55,5 @@
         <item quantity="one">%d ora</item>
         <item quantity="other">%d ore</item>
     </plurals>
-
+    <string name="text_video_call_rejected">Essa ha respinto la richiesta per la videochiamata</string>
 </resources>

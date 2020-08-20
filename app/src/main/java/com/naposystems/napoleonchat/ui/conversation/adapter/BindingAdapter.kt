@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter
 
 import android.content.Context
+import android.graphics.Typeface
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -49,7 +50,9 @@ fun bindMessageDateSend(textView: TextView, timestamp: Int, format: Int) {
                 }
             }
         }
-        textView.text = "${sdf.format(Date(timestamp.toLong() * 1000))}\u00A0"
+        textView.setTypeface(textView.typeface, Typeface.ITALIC)
+        val text = "${sdf.format(Date(timestamp.toLong() * 1000))} "
+        textView.text = text
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.e("Error parsing date")
@@ -80,7 +83,8 @@ fun bindMessageDateIncoming(textView: TextView, timestamp: Int, format: Int) {
                 }
             }
         }
-        textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+        val text = "${sdf.format(Date(timestamp.toLong() * 1000))} "
+        textView.text = text
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.e("Error parsing date")

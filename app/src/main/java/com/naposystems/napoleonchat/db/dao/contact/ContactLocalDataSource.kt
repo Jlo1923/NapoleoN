@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.db.dao.contact
 
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.utility.Constants
 import javax.inject.Inject
 
 class ContactLocalDataSource @Inject constructor(private val contactDao: ContactDao) :
@@ -43,15 +44,17 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
         contactDao.insertContact(contact)
     }
 
-    override suspend fun insertOrUpdateContactList(contactList: List<Contact>): List<Contact> {
+    override suspend fun insertOrUpdateContactList(contactList: List<Contact>, location : Int): List<Contact> {
         contactList.forEach { remoteContact ->
             val localContact = contactDao.getContactById(remoteContact.id)
             if (localContact != null) {
-                localContact.imageUrl = remoteContact.imageUrl
-                localContact.displayName = remoteContact.displayName
-                localContact.status = remoteContact.status
-                localContact.lastSeen = remoteContact.lastSeen
-                contactDao.updateContact(localContact)
+                if (location == Constants.LocationGetContact.OTHER.location) {
+                    localContact.imageUrl = remoteContact.imageUrl
+                    localContact.displayName = remoteContact.displayName
+                    localContact.status = remoteContact.status
+                    localContact.lastSeen = remoteContact.lastSeen
+                    contactDao.updateContact(localContact)
+                }
             } else {
                 contactDao.insertContact(remoteContact)
             }

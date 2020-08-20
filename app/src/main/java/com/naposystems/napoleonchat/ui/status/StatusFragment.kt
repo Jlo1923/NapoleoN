@@ -107,6 +107,14 @@ class StatusFragment : Fragment() {
                         statusList.add(Status(4, getString(R.string.text_status_only_messages)))
                         statusList.add(Status(5, getString(R.string.text_status_sleeping)))
                         statusList.add(Status(6, getString(R.string.text_status_only_emergency)))
+                        if (args.user.status != getString(R.string.text_status_available) ||
+                            args.user.status != getString(R.string.text_status_busy) ||
+                            args.user.status != getString(R.string.text_status_in_meeting) ||
+                            args.user.status != getString(R.string.text_status_only_messages) ||
+                            args.user.status != getString(R.string.text_status_sleeping) ||
+                            args.user.status != getString(R.string.text_status_only_emergency)) {
+                            statusList.add(Status(7, customStatus = args.user.status))
+                        }
                         viewModel.insertStatus(statusList)
                     }
 

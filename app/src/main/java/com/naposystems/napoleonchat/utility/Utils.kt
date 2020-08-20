@@ -291,9 +291,11 @@ class Utils {
             message: Int,
             isCancelable: Boolean,
             childFragmentManager: Context,
+            location : Int,
             titlePositiveButton: Int,
             titleNegativeButton: Int,
-            clickPositiveButton: (Boolean) -> Unit
+            clickPositiveButton: (Boolean) -> Unit,
+            clickNegativeButton: (Boolean) -> Unit
         ) {
             val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
@@ -302,7 +304,12 @@ class Utils {
                     clickPositiveButton(true)
                 }
                 .setNegativeButton(titleNegativeButton) { dialog, _ ->
-                    dialog.dismiss()
+                    if (location == Constants.LocationAlertDialog.CONVERSATION.location)
+                        dialog.dismiss()
+                    else {
+                        clickNegativeButton(true)
+                        dialog.dismiss()
+                    }
                 }
                 .create()
             dialog.show()
@@ -330,13 +337,16 @@ class Utils {
             clickTopButton: (Boolean) -> Unit
         ) {
             val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
-                .setTitle(title)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titleButton) { _, _ ->
                     clickTopButton(true)
                 }
                 .create()
+
+            if (title.isNotEmpty()) {
+                dialog.setTitle(title)
+            }
 
             dialog.show()
 

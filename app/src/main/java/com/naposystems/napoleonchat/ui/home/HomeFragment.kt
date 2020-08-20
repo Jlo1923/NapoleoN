@@ -143,7 +143,9 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        contactRepositoryShareViewModel.getContacts()
+        contactRepositoryShareViewModel.getContacts(
+            Constants.FriendShipState.ACTIVE.state
+        )
 
         viewModel.getConversation()
 
@@ -186,8 +188,6 @@ class HomeFragment : Fragment() {
         viewModel.user.observe(viewLifecycleOwner, Observer {
             binding.textViewStatus.text = it.status
         })
-
-        viewModel.getJsonNotification()
 
         viewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
             if (!json.isNullOrEmpty()) {
@@ -275,6 +275,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        viewModel.getJsonNotification()
         /*if (!isShowingVersionDialog && !BuildConfig.DEBUG)
             getRemoteConfig()*/
     }

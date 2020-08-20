@@ -91,7 +91,7 @@ class MessageLocalDataSource @Inject constructor(
                             Message(
                                 id = -1,
                                 webId = "",
-                                body = messageBody + "\u00A0",
+                                body = "$messageBody ",
                                 quoted = "",
                                 contactId = messageAndAttachment.message.contactId,
                                 updatedAt = messageAndAttachment.message.updatedAt,

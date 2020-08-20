@@ -15,20 +15,24 @@ class ContactRepositoryShareRepository @Inject constructor(
     private val messageLocalDataSource: MessageDataSource
 ) : IContractContactRepositoryShare.Repository {
 
-    override suspend fun getContacts(): Boolean {
+    override suspend fun getContacts(state : String, location : Int): Boolean {
         return try {
-            val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
+            val response = napoleonApi.getContactsByState(state)
 
             if (response.isSuccessful) {
 
                 val contactResDTO = response.body()!!
 
-                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
+                val contacts = if (state == Constants.FriendShipState.BLOCKED.state)
+                    ContactResDTO.toEntityList(contactResDTO.contacts, true)
+                else
+                    ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
+                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(
+                    contacts, location
+                )
 
-                if (contactsToDelete.isNotEmpty()) {
-
+                if (contactsToDelete.isNotEmpty() && location == Constants.LocationGetContact.OTHER.location) {
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
@@ -37,7 +41,6 @@ class ContactRepositoryShareRepository @Inject constructor(
                         contactLocalDataSource.deleteContact(contact)
                     }
                 }
-
                 true
             } else {
                 Timber.e(response.errorBody()!!.string())

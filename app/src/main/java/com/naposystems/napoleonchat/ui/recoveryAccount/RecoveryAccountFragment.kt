@@ -23,6 +23,7 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import java.util.*
 import javax.inject.Inject
 
 class RecoveryAccountFragment : Fragment() {
@@ -70,7 +71,8 @@ class RecoveryAccountFragment : Fragment() {
 
         binding.buttonRecoveryAccount.setOnClickListener {
             Utils.hideKeyboard(binding.textInputEditTextNickname)
-            viewModel.sendNickname(binding.textInputEditTextNickname.text.toString().toLowerCase())
+            viewModel.sendNickname(binding.textInputEditTextNickname.text.toString()
+                .toLowerCase(Locale.ROOT))
             binding.viewSwitcherRecoveryAccount.showNext()
         }
 
@@ -91,6 +93,11 @@ class RecoveryAccountFragment : Fragment() {
                     viewModel.setFirebaseId(token)
                 }
             })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.textInputEditTextNickname.setText("")
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

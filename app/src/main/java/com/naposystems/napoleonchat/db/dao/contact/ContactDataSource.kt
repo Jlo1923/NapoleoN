@@ -23,7 +23,7 @@ interface ContactDataSource {
 
     suspend fun insertContact(contact: Contact)
 
-    suspend fun insertOrUpdateContactList(contactList: List<Contact>): List<Contact>
+    suspend fun insertOrUpdateContactList(contactList: List<Contact>, location : Int = 0): List<Contact>
 
     fun getBlockedContacts() : LiveData<List<Contact>>
 

@@ -16,12 +16,12 @@ data class ContactResDTO(
 ) {
     companion object {
 
-        fun toEntityList(contactResDTO: List<ContactResDTO>): List<Contact> {
+        fun toEntityList(contactResDTO: List<ContactResDTO>, statusBlocked: Boolean = false): List<Contact> {
             val listContacts: MutableList<Contact> = arrayListOf()
 
             for (resContact in contactResDTO) {
 
-                val contact = toEntity(resContact)
+                val contact = toEntity(resContact, statusBlocked)
 
                 listContacts.add(contact)
             }
@@ -29,14 +29,15 @@ data class ContactResDTO(
             return listContacts
         }
 
-        fun toEntity(response: ContactResDTO): Contact {
+        fun toEntity(response: ContactResDTO, statusBlocked: Boolean = false): Contact {
             return Contact(
                 response.id,
                 imageUrl = response.avatar,
                 nickname = response.nickname,
                 displayName = response.displayName,
                 status = response.status,
-                lastSeen = response.lastSeen
+                lastSeen = response.lastSeen,
+                statusBlocked = statusBlocked
             )
         }
     }

@@ -538,7 +538,7 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     private fun inputPanelFabClickListener() {
         with(binding.floatingActionButtonSend) {
-            this.setOnClickListener {
+            this.setSafeOnClickListener {
                 Timber.d("setOnClickListener")
                 if (!this.isShowingMic() && !isRecordingAudio) {
                     val quote = binding.inputPanel.getQuote()
@@ -1103,7 +1103,7 @@ class ConversationFragment : BaseFragment(),
                 dialog.show(childFragmentManager, "SelfDestructTime")
             }
             R.id.menu_item_block_contact -> {
-                blockContact(args.contact)
+                blockContact()
             }
             R.id.menu_item_mute_conversation -> {
                 contactProfileShareViewModel.contact.value?.let { contact ->
@@ -1184,18 +1184,10 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun blockContact(contact: Contact) {
+    private fun blockContact() {
         generalDialog(
             getString(R.string.text_block_contact),
-
-            getString(
-                R.string.text_wish_block_contact,
-                if (contact.displayNameFake.isEmpty()) {
-                    contact.displayName
-                } else {
-                    contact.displayNameFake
-                }
-            ),
+            getString(R.string.text_wish_block_contact),
             true,
             childFragmentManager
         ) {
@@ -1377,7 +1369,9 @@ class ConversationFragment : BaseFragment(),
         viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
             Utils.alertDialogWithoutNeutralButton(
                 R.string.text_delete_messages,
-                false, requireContext(),
+                false,
+                requireContext(),
+                Constants.LocationAlertDialog.CONVERSATION.location,
                 R.string.text_accept,
                 R.string.text_cancel,
                 clickPositiveButton = { _ ->
@@ -1392,7 +1386,7 @@ class ConversationFragment : BaseFragment(),
                             viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
                         }
                     }
-                }
+                }, clickNegativeButton = {}
             )
         }
     }
