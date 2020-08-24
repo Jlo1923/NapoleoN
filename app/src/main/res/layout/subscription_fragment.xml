@@ -196,12 +196,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_percent="@dimen/width_app_button">
 
-                <ImageButton
-                    android:id="@+id/imageButton_paypal"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_buy_subscription"
+                    style="@style/AppPrimaryButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/normal_padding"
-                    android:src="@drawable/paypal_button" />
+                    tools:text="Comprar subscripcion" />
 
                 <ProgressBar
                     android:layout_width="match_parent"

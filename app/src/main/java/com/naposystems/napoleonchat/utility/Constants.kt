@@ -407,6 +407,12 @@ object Constants {
         PDF("application/pdf")
     }
 
+    enum class SkuSubscriptions(val sku: String) {
+        MONTHLY("com.naposystems.napoleonchat.monthly"),
+        SEMIANNUAL("com.naposystems.napoleonchat.semiannual"),
+        YEARLY("com.naposystems.napoleonchat.yearly")
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
