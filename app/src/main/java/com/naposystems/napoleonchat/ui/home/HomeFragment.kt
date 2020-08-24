@@ -144,7 +144,8 @@ class HomeFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         contactRepositoryShareViewModel.getContacts(
-            Constants.FriendShipState.ACTIVE.state
+            Constants.FriendShipState.ACTIVE.state,
+            Constants.LocationGetContact.OTHER.location
         )
 
         viewModel.getConversation()
@@ -191,17 +192,21 @@ class HomeFragment : Fragment() {
 
         viewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
             if (!json.isNullOrEmpty()) {
+                viewModel.cleanJsonNotification(json)
+            }
+        })
+
+        viewModel.jsonCleaned.observe(viewLifecycleOwner, Observer { json ->
+            if (!json.isNullOrEmpty()) {
                 val jsonNotification = JSONObject(json)
                 when (jsonNotification.getInt(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                     Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
                         viewModel.getContact(jsonNotification.getInt(Constants.NotificationKeys.CONTACT))
                     }
                     Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
-                        viewModel.cleanJsonNotification()
                         goToAddContactFragment()
                     }
                     Constants.NotificationType.FRIEND_REQUEST_ACCEPTED.type -> {
-                        viewModel.cleanJsonNotification()
                         findNavController().navigate(
                             HomeFragmentDirections.actionHomeFragmentToContactsFragment()
                         )
@@ -212,7 +217,6 @@ class HomeFragment : Fragment() {
 
         viewModel.contact.observe(viewLifecycleOwner, Observer {
             it?.let { contact ->
-                viewModel.cleanJsonNotification()
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
                 )
@@ -220,6 +224,16 @@ class HomeFragment : Fragment() {
         })
 
         (activity as MainActivity).getUser()
+    }
+
+    override fun onDetach() {
+        viewModel.cleanVariables()
+        super.onDetach()
+    }
+
+    override fun onPause() {
+        viewModel.cleanVariables()
+        super.onPause()
     }
 
     private fun goToAddContactFragment() {

@@ -26,6 +26,10 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val quantityFriendshipRequest: LiveData<Int>
         get() = _quantityFriendshipRequest
 
+    private val _jsonCleaned = MutableLiveData<String>()
+    val jsonCleaned: LiveData<String>
+        get() = _jsonCleaned
+
     private val _jsonNotification = MutableLiveData<String>()
     val jsonNotification: LiveData<String>
         get() = _jsonNotification
@@ -38,6 +42,7 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
         _conversations = null
         _contact.value = null
         _jsonNotification.value = null
+        _jsonCleaned.value = null
         _quantityFriendshipRequest.value = -1
     }
 
@@ -121,16 +126,21 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
         }
     }
 
-    override fun cleanJsonNotification() {
+    override fun cleanJsonNotification(json : String) {
         viewModelScope.launch {
-            _contact.value = null
-            _jsonNotification.value = null
             repository.cleanJsonNotification()
+            _jsonCleaned.value = json
         }
     }
 
     override fun resetConversations() {
         _conversations = null
+    }
+
+    override fun cleanVariables() {
+        _contact.value = null
+        _jsonNotification.value = null
+        _jsonCleaned.value = null
     }
 
     override fun verifyMessagesToDelete() {

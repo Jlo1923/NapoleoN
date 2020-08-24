@@ -19,7 +19,7 @@ class ContactRepositoryShareViewModel @Inject constructor(
     override fun getContacts(state : String, location : Int) {
         viewModelScope.launch {
             try {
-                _contactsWasLoaded.value = repository.getContacts(state)
+                _contactsWasLoaded.value = repository.getContacts(state, location)
             } catch (ex : Exception) {
                 Timber.e(ex)
             }
