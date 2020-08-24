@@ -9,7 +9,7 @@
     <string name="text_view_profile">Ver perfil</string>
     <string name="text_delete_contact">Eliminar contacto</string>
     <string name="text_explanation_camera_to_attachment_picture">Para enviar una foto, permita que NapoleoN acceda a su cámara.</string>
-    <string name="text_explanation_to_send_audio_attacment">Para enviar una audio, permita que NapoleoN acceda a su contenido multimedia.</string>
+    <string name="text_explanation_to_send_audio_attachment">Para enviar una audio, permita que NapoleoN acceda a su contenido multimedia.</string>
     <string name="text_delete_messages">¿Eliminar mensajes?</string>
     <string name="text_delete_message_for_me">Eliminar para mí</string>
     <string name="text_delete_message_for_all">Eliminar para todos</string>

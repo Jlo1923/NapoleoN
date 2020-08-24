@@ -79,7 +79,7 @@
                     app:layout_constraintEnd_toStartOf="@id/button_video_call"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Este es un estado casuistico" />
+                    tools:text="@tools:sample/lorem[2]" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/button_call"

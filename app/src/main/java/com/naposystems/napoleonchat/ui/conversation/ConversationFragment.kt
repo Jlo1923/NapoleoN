@@ -439,7 +439,7 @@ class ConversationFragment : BaseFragment(),
                     this@ConversationFragment.verifyPermission(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.text_explanation_to_send_audio_attacment
+                        message = R.string.text_explanation_to_send_audio_attachment
                     ) {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
@@ -483,7 +483,7 @@ class ConversationFragment : BaseFragment(),
                     this@ConversationFragment.verifyPermission(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.text_explanation_to_send_audio_attacment
+                        message = R.string.text_explanation_to_send_audio_attachment
                     ) {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentAudioFragment(
@@ -497,7 +497,7 @@ class ConversationFragment : BaseFragment(),
                     this@ConversationFragment.verifyPermission(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.text_explanation_to_send_audio_attacment
+                        message = R.string.text_explanation_to_send_audio_attachment
                     ) {
                         val intent = Intent(Intent.ACTION_GET_CONTENT)
                         intent.type = "*/*"

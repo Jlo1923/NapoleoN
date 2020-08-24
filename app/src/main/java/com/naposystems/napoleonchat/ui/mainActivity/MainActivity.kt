@@ -69,10 +69,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
+
     private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
         viewModelFactory
     }
+
     private var accountStatus: Int = 0
+
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
     }
@@ -170,6 +173,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val dialog = AccountAttackDialogFragment()
 
                 dialog.show(supportFragmentManager, "AttackDialog")
+
             }
 
         disposable.add(disposableAccountAttack)
@@ -318,7 +322,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupNotifications(intent)
     }
 
-    private fun setupNotifications(intent : Intent?) {
+    private fun setupNotifications(intent: Intent?) {
         intent?.extras?.let { args ->
             if (args.containsKey(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                 val jsonNotification = JSONObject()
