@@ -116,7 +116,8 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
 
     private fun getContacts() {
         contactRepositoryShareViewModel.getContacts(
-            Constants.FriendShipState.ACTIVE.state
+            Constants.FriendShipState.ACTIVE.state,
+            Constants.LocationGetContact.OTHER.location
         )
         viewModel.getLocalContacts()
     }

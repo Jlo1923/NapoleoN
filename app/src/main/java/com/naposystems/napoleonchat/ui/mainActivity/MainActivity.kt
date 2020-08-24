@@ -197,7 +197,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     contactRepositoryShareViewModel.getContacts(
-                        Constants.FriendShipState.ACTIVE.state
+                        Constants.FriendShipState.ACTIVE.state,
+                        Constants.LocationGetContact.OTHER.location
                     )
                 }
         disposable.add(disposableFriendRequestAccepted)
