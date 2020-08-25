@@ -19,7 +19,10 @@ import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onStart
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -317,7 +320,6 @@ class ConversationViewModel @Inject constructor(
     override fun deleteMessagesForAll(contactId: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
             try {
-
                 val response =
                     repository.deleteMessagesForAll(
                         buildObjectDeleteMessages(

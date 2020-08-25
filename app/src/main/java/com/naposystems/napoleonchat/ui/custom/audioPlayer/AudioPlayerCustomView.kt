@@ -206,7 +206,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     it.setImageButtonPlay(binding.imageButtonPlay)
                     binding.imageButtonPlay.setImageDrawable(
                         context.resources.getDrawable(
-                            R.drawable.ic_baseline_play_circle, context.theme
+                            R.drawable.ic_baseline_pause_circle, context.theme
                         )
                     )
                 }
@@ -219,6 +219,11 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                 binding.textViewDuration.visibility =
                     if (duration == 0L) View.GONE else View.VISIBLE
                 binding.seekbar.progress = 0
+                binding.imageButtonPlay.setImageDrawable(
+                    context.resources.getDrawable(
+                        R.drawable.ic_baseline_play_circle, context.theme
+                    )
+                )
             }
         } ?: run {
             binding.textViewDuration.text = Utils.getDuration(duration, false)
