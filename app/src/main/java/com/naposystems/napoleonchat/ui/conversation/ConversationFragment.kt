@@ -634,6 +634,8 @@ class ConversationFragment : BaseFragment(),
 
         binding.viewModel = viewModel
 
+        cleanSelectionMessages()
+
         contactProfileShareViewModel.getLocalContact(args.contact.id)
 
         viewModel.setContact(args.contact)

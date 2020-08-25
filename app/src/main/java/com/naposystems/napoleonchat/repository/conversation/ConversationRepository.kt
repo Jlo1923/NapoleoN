@@ -792,6 +792,16 @@ class ConversationRepository @Inject constructor(
                         Constants.MessageStatus.READED.status
                     )
                 }
+            } else if(messageAndAttachment == null) {
+                val response = napoleonApi.sendMessagesRead(
+                    MessagesReadReqDTO(
+                        arrayListOf(messageWebId)
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    Timber.d("Success: ${response.body()}")
+                }
             }
         } catch (ex: Exception) {
             Timber.e(ex)
