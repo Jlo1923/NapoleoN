@@ -137,6 +137,7 @@ object MediaPlayerManager :
             .subscribe { params ->
                 params.id.forEach { webId ->
                     if(currentAudioId == webId) {
+                        mListener?.onPauseAudio(webId)
                         resetMediaPlayer()
                     }
                 }
