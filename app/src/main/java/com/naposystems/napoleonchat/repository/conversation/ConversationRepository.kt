@@ -443,6 +443,7 @@ class ConversationRepository @Inject constructor(
         listMessages: List<MessageAndAttachment>
     ) {
         listMessages.filter { messageAndAttachment ->
+            messageAndAttachment.attachmentList.count() > 0 &&
             messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
         }.let { listMessagesFiltered ->
             val listIds = arrayListOf<String>()
