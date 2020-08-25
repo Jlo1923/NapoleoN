@@ -27,6 +27,8 @@ import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -440,6 +442,17 @@ class ConversationRepository @Inject constructor(
         contactId: Int,
         listMessages: List<MessageAndAttachment>
     ) {
+        listMessages.filter { messageAndAttachment ->
+            messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
+        }.let { listMessagesFiltered ->
+            val listIds = arrayListOf<String>()
+            listMessagesFiltered.forEach { message ->
+                listIds.add(message.message.webId)
+            }
+            if (listIds.count() > 0) {
+                RxBus.publish(RxEvent.MessagesToEliminate(listIds))
+            }
+        }
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
     }
 

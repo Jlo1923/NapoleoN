@@ -24,11 +24,15 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.BluetoothStateManager
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -100,6 +104,10 @@ object MediaPlayerManager :
         AudioManagerCompat.create(context)
     }
 
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
+
     private val soundMediaPlayer: MediaPlayer by lazy {
         MediaPlayer().apply {
             setAudioAttributes(
@@ -117,6 +125,24 @@ object MediaPlayerManager :
         fun onErrorPlayingAudio()
         fun onPauseAudio(messageWebId: String)
         fun onCompleteAudio(messageWebId: String)
+    }
+
+    init {
+        subscribeToRXEvents()
+    }
+
+    private fun subscribeToRXEvents() {
+        val disposableMessagesToEliminate = RxBus.listen(RxEvent.MessagesToEliminate::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { params ->
+                params.id.forEach { webId ->
+                    if(currentAudioId == webId) {
+                        resetMediaPlayer()
+                    }
+                }
+            }
+
+        disposable.add(disposableMessagesToEliminate)
     }
 
     private fun setSeekbarProgress() {
