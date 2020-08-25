@@ -88,7 +88,7 @@
                             android:singleLine="false"
                             android:textColor="?attr/attrTextColorSecondaryTextColor"
                             android:textColorHint="?attr/attrTextColorHintConversationInputPanel"
-                            android:textSize="17sp"
+                            android:textSize="@dimen/text_size_message"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/container_action_input"
                             app:layout_constraintStart_toEndOf="@id/imageButton_emoji"
