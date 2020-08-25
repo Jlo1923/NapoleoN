@@ -17,10 +17,12 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.ui.blockedContacts.adapter.BlockedContactsAdapter
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
@@ -40,6 +42,9 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     private val viewModel: BlockedContactsViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by activityViewModels { viewModelFactory }
+    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
+        viewModelFactory
+    }
     private lateinit var binding: BlockedContactsFragmentBinding
     private lateinit var adapter: BlockedContactsAdapter
     private lateinit var mainActivity: MainActivity
@@ -81,6 +86,11 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        contactRepositoryShareViewModel.getContacts(
+            Constants.FriendShipState.BLOCKED.state,
+            Constants.LocationGetContact.BLOCKED.location
+        )
 
         viewModel.getBlockedContacts()
 
@@ -142,9 +152,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     private fun setAdapter() {
         adapter =
             BlockedContactsAdapter(object : BlockedContactsAdapter.BlockedContactsClickListener {
-                override fun onClick(item: Contact) {
-                    seeProfile(item)
-                }
+                override fun onClick(item: Contact) {}
 
                 override fun onMoreClick(item: Contact, view: View) {
                     showPopupMenu(view, item)

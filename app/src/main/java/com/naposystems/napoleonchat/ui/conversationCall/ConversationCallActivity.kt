@@ -173,6 +173,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.imageButtonChangeToVideo.setOnClickListener {
+            binding.imageButtonChangeToVideo.isEnabled = false
             webRTCClient.changeToVideoCall()
         }
 
@@ -313,16 +314,33 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
     //region Implementation WebRTCClient.WebRTCClientListener
     override fun contactWantChangeToVideoCall() {
-        Utils.generalDialog(
-            title = getString(R.string.text_contact_want_change_to_video_call),
-            message = getString(R.string.text_would_you_like_switch_to_video_call),
-            isCancelable = true,
-            childFragmentManager = supportFragmentManager
-        ) {
-            webRTCClient.acceptChangeToVideoCall()
-            binding.textViewTitle.text =
-                getString(R.string.text_encrypted_video_call)
-        }
+        binding.imageButtonChangeToVideo.isEnabled = true
+        Utils.alertDialogWithoutNeutralButton(
+            R.string.text_contact_want_change_to_video_call,
+            false,
+            this,
+            Constants.LocationAlertDialog.CALL_ACTIVITY.location,
+            R.string.text_accept,
+            R.string.text_cancel,
+            clickPositiveButton = {
+                webRTCClient.acceptChangeToVideoCall()
+                binding.textViewTitle.text =
+                    getString(R.string.text_encrypted_video_call)
+            }, clickNegativeButton = {
+                webRTCClient.cancelChangeToVideoCall()
+            }
+        )
+    }
+
+    override fun contactCancelledVideoCall() {
+        Utils.alertDialogInformative(
+            "",
+            getString(R.string.text_video_call_rejected),
+            true,
+            this,
+            R.string.text_okay
+        ) {}
+        binding.imageButtonChangeToVideo.isEnabled = true
     }
 
     override fun contactTurnOffCamera() {

@@ -143,7 +143,10 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        contactRepositoryShareViewModel.getContacts()
+        contactRepositoryShareViewModel.getContacts(
+            Constants.FriendShipState.ACTIVE.state,
+            Constants.LocationGetContact.OTHER.location
+        )
 
         viewModel.getConversation()
 
@@ -187,9 +190,13 @@ class HomeFragment : Fragment() {
             binding.textViewStatus.text = it.status
         })
 
-        viewModel.getJsonNotification()
-
         viewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
+            if (!json.isNullOrEmpty()) {
+                viewModel.cleanJsonNotification(json)
+            }
+        })
+
+        viewModel.jsonCleaned.observe(viewLifecycleOwner, Observer { json ->
             if (!json.isNullOrEmpty()) {
                 val jsonNotification = JSONObject(json)
                 when (jsonNotification.getInt(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
@@ -197,11 +204,9 @@ class HomeFragment : Fragment() {
                         viewModel.getContact(jsonNotification.getInt(Constants.NotificationKeys.CONTACT))
                     }
                     Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
-                        viewModel.cleanJsonNotification()
                         goToAddContactFragment()
                     }
                     Constants.NotificationType.FRIEND_REQUEST_ACCEPTED.type -> {
-                        viewModel.cleanJsonNotification()
                         findNavController().navigate(
                             HomeFragmentDirections.actionHomeFragmentToContactsFragment()
                         )
@@ -212,7 +217,6 @@ class HomeFragment : Fragment() {
 
         viewModel.contact.observe(viewLifecycleOwner, Observer {
             it?.let { contact ->
-                viewModel.cleanJsonNotification()
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
                 )
@@ -220,6 +224,16 @@ class HomeFragment : Fragment() {
         })
 
         (activity as MainActivity).getUser()
+    }
+
+    override fun onDetach() {
+        viewModel.cleanVariables()
+        super.onDetach()
+    }
+
+    override fun onPause() {
+        viewModel.cleanVariables()
+        super.onPause()
     }
 
     private fun goToAddContactFragment() {
@@ -275,6 +289,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        viewModel.getJsonNotification()
         /*if (!isShowingVersionDialog && !BuildConfig.DEBUG)
             getRemoteConfig()*/
     }

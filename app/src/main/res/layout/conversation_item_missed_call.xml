@@ -26,6 +26,49 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_counter_new_contact_message"
+            android:elevation="3dp"
+            android:padding="@dimen/x_x_small_padding"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/x_small_padding"
+            app:layout_constraintBottom_toTopOf="@+id/container_missed_call"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_missed_call">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_icon_timer"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:tint="?attr/attrTextColorTimeMyMessage"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_access_time_black" />
+
+            <TextView
+                android:id="@+id/textView_count_down"
+                style="@style/MinorBodyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_self_destruct_time"
+                android:layout_marginStart="@dimen/x_x_small_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:elevation="1dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="?attr/attrTextColorTimeMyMessage"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_icon_timer"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="30 segundos" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_missed_call"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,30 +83,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/textView_count_down"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_self_destruct_time"
-                android:layout_marginEnd="@dimen/normal_margin"
-                android:elevation="1dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLines="1"
-                android:textColor="?attr/attrTextColorSystem"
-                android:textSize="@dimen/minor_text_size"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="30 segundos" />
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginTop="@dimen/x_small_margin"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/textView_count_down"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@drawable/ic_call_missed_red" />
 
@@ -72,9 +98,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/small_margin"
+                android:textStyle="italic"
                 android:textColor="?attr/attrTextColorSystem"
                 android:textSize="@dimen/minor_text_size"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_icon"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_icon"
                 app:layout_constraintTop_toTopOf="@id/imageView_icon"
                 tools:text="Llamada perdida a las 5:40p.m" />

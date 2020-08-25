@@ -112,6 +112,7 @@
 
     <!--IconTint-->
     <attr name="attrIconTintWhite" format="reference" />
+    <attr name="attrIconTintArrow" format="reference" />
 
     <!--BackgroundTint-->
     <attr name="attrBackgroundTintColorSecondary" format="reference" />

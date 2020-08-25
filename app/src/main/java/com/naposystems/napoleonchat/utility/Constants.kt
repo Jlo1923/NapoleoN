@@ -236,6 +236,11 @@ object Constants {
         BLOCKED("block")
     }
 
+    enum class LocationGetContact constructor(val location: Int) {
+        OTHER(0),
+        BLOCKED(1)
+    }
+
     enum class IsMine constructor(val value: Int) {
         YES(1),
         NO(0)
@@ -387,6 +392,11 @@ object Constants {
         MISSED_VIDEO_CALL(3),
         NEW_CONTACT(4),
         MESSAGES_GROUP_DATE(5)
+    }
+
+    enum class LocationAlertDialog(val location: Int) {
+        CONVERSATION(1),
+        CALL_ACTIVITY(2)
     }
 
     enum class SubscriptionStatus(val state: String) {

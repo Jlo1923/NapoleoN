@@ -20,8 +20,8 @@ class RxEvent {
     data class ContactHasHangup(val channel: String)
     data class ContactWantChangeToVideoCall(val channel: String)
     data class ContactAcceptChangeToVideoCall(val channel: String)
+    data class ContactCancelChangeToVideoCall(val channel: String)
     data class ContactTurnOffCamera(val channel: String)
     data class ContactTurnOnCamera(val channel: String)
     data class ContactRejectCall(val channel: String)
-    data class EmojiSelected(val emoji: Emoji)
 }

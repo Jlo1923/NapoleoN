@@ -21,7 +21,7 @@
     <string name="text_explanation_to_send_location_attachment">Pour envoyer un emplacement, autoriser l\'accès NAPOLEON votre emplacement.</string>
     <string name="text_incoming_call_title">Appel entrant</string>
     <string name="text_calling_call_title">Appel…</string>
-    <string name="text_contact_want_change_to_video_call">Contactez veut passer à l\'appel vidéo</string>
+    <string name="text_contact_want_change_to_video_call">Commutateur démarcheur appel vidéo</string>
     <string name="text_would_you_like_switch_to_video_call">Voulez-vous passer à l\'appel vidéo?</string>
     <string name="text_contact_turn_off_camera">%1$s a tourné hors de la caméra</string>
     <string name="text_contact_is_busy">%1$s est occupé</string>
@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Appel sécurisé vidéo entrant</string>
     <string name="text_encrypted_video_call">Appel vidéo cryptée</string>
     <string name="text_incoming_video_call_title">Appel vidéo entrant</string>
-    <string name="text_new_contact">Vous avez un nouveau contact. Je dis bonjour!\u00A0</string>
+    <string name="text_new_contact">Vous avez un nouveau contact. Je dis bonjour!</string>
     <string name="text_video_call_not_internet_connection">A été réalisé commettez pas l\'appel vidéo. Vérifiez votre connexion Internet et essayez à nouveau</string>
     <string name="text_call_not_internet_connection">A été atteint pas fait l\'appel. Vérifiez votre connexion Internet et essayez à nouveau.</string>
     <plurals name="text_self_destruct_time_days">
@@ -55,5 +55,5 @@
         <item quantity="one">%d heure</item>
         <item quantity="other">%d heures</item>
     </plurals>
-
+    <string name="text_video_call_rejected">Il a rejeté la demande de l\'appel vidéo</string>
 </resources>

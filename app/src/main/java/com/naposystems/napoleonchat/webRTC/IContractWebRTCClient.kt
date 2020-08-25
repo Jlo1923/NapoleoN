@@ -19,6 +19,7 @@ interface IContractWebRTCClient {
     fun stopRingAndVibrate()
     fun emitHangUp()
     fun changeToVideoCall()
+    fun cancelChangeToVideoCall()
     fun muteVideo(checked: Boolean)
     fun switchCamera()
     fun handleBluetooth(isEnabled: Boolean)

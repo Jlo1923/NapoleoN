@@ -178,7 +178,7 @@ class AddContactViewModel @Inject constructor(
 
                     val user = repository.getUser()
 
-                    val body = context.getString(R.string.text_new_contact)
+                    val body = "${context.getString(R.string.text_new_contact)}\u00A0 "
 
                     val messageReqDTO = MessageReqDTO(
                         userDestination = friendShipRequest.contact.id,

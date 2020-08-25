@@ -21,8 +21,9 @@ interface IContractHome {
         fun getSubscriptionTime(): Long
         fun getJsonNotification()
         fun getContact(contactId : Int)
-        fun cleanJsonNotification()
+        fun cleanJsonNotification(json : String)
         fun resetConversations()
+        fun cleanVariables()
         fun verifyMessagesToDelete()
     }
 
@@ -37,7 +38,7 @@ interface IContractHome {
         fun getSubscriptionTime(): Long
         fun getJsonNotification() : String
         fun getContact(contactId : Int) : Contact?
-        fun cleanJsonNotification()
+        suspend fun cleanJsonNotification()
         fun getMessagesForHome(): LiveData<List<MessageAndAttachment>>
         fun verifyMessagesToDelete()
     }

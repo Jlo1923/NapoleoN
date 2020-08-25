@@ -30,7 +30,6 @@ class BlockedContactsViewModel @Inject constructor(private val repository: Block
         viewModelScope.launch {
             try {
                 _blockedContacts =  repository.getBlockedContactsLocal()
-                repository.getRemoteBlockedContacts()
             } catch (e: Exception) {
                 Timber.e(e)
             }

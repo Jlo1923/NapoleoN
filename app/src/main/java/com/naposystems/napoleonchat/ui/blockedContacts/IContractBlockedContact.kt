@@ -11,7 +11,6 @@ interface IContractBlockedContact {
     }
 
     interface Repository {
-        suspend fun getRemoteBlockedContacts()
         suspend fun getBlockedContactsLocal(): LiveData<List<Contact>>
     }
 }

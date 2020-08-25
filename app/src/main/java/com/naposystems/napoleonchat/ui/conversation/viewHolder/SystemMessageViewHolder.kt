@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.databinding.ConversationItemMissedCallBinding
 import com.naposystems.napoleonchat.databinding.ConversationItemSystemMessageBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
@@ -89,6 +88,7 @@ class SystemMessageViewHolder constructor(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener
     ) {
+        val context = binding.textViewBody.context
         binding.clickListener = clickListener
         binding.conversation = item
         countDown(
@@ -98,7 +98,8 @@ class SystemMessageViewHolder constructor(
                 clickListener.messageToEliminate(messageAndAttachment)
             }
         )
-        binding.textViewBody.text = item.message.body
+        val textSystem = "${context.getString(R.string.text_new_contact)} "
+        binding.textViewBody.text = textSystem
         binding.executePendingBindings()
     }
 

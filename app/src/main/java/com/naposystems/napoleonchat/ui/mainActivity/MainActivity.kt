@@ -196,7 +196,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             RxBus.listen(RxEvent.FriendshipRequestAccepted::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    contactRepositoryShareViewModel.getContacts()
+                    contactRepositoryShareViewModel.getContacts(
+                        Constants.FriendShipState.ACTIVE.state,
+                        Constants.LocationGetContact.OTHER.location
+                    )
                 }
         disposable.add(disposableFriendRequestAccepted)
 
@@ -234,7 +237,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.conversationFragment -> {
                     showToolbar()
-                    enableDrawer()
+                    disableDrawer()
                     dontOpenMenu()
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
@@ -298,7 +301,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        intent.extras?.let { args ->
+        setupNotifications(intent)
+
+        binding.navView.setNavigationItemSelectedListener(this)
+
+        setMarginToNavigationView()
+    }
+
+    private fun openMenu() {
+        binding.toolbar.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setupNotifications(intent)
+    }
+
+    private fun setupNotifications(intent : Intent?) {
+        intent?.extras?.let { args ->
             if (args.containsKey(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                 val jsonNotification = JSONObject()
                 jsonNotification.put(
@@ -315,16 +337,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-        }
-
-        binding.navView.setNavigationItemSelectedListener(this)
-
-        setMarginToNavigationView()
-    }
-
-    private fun openMenu() {
-        binding.toolbar.setOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
 

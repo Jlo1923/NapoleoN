@@ -205,7 +205,7 @@ class HomeRepository @Inject constructor(
         return contactLocalDataSource.getContactById(contactId)
     }
 
-    override fun cleanJsonNotification() {
+    override suspend fun cleanJsonNotification() {
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_JSON_NOTIFICATION, ""
         )

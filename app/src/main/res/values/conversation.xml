@@ -21,7 +21,7 @@
     <string name="text_explanation_to_send_location_attachment">To send a location, allow NAPOLEON access your location.</string>
     <string name="text_incoming_call_title">Incoming call</string>
     <string name="text_calling_call_title">Calling…</string>
-    <string name="text_contact_want_change_to_video_call">Contact want switch to video call</string>
+    <string name="text_contact_want_change_to_video_call">Soliciting switch to video call</string>
     <string name="text_would_you_like_switch_to_video_call">Would you like to switch to video call?</string>
     <string name="text_contact_turn_off_camera">%1$s has turned the camera off</string>
     <string name="text_contact_is_busy">%1$s is busy</string>
@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Secure incoming video call</string>
     <string name="text_encrypted_video_call">Encrypted video call</string>
     <string name="text_incoming_video_call_title">Incoming video call</string>
-    <string name="text_new_contact">You have a new contact. I say hello!\u00A0</string>
+    <string name="text_new_contact">You have a new contact. Say hello!</string>
     <string name="text_video_call_not_internet_connection">Was achieved not make the video call. Check your internet connection and try again</string>
     <string name="text_call_not_internet_connection">Was achieved not make the call. Check your internet connection and try again.</string>
     <plurals name="text_self_destruct_time_days">
@@ -55,5 +55,5 @@
         <item quantity="one">%d hour</item>
         <item quantity="other">%d hours</item>
     </plurals>
-
+    <string name="text_video_call_rejected">It has rejected the request for the video call</string>
 </resources>
