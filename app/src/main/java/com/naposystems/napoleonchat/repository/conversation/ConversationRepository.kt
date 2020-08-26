@@ -446,12 +446,8 @@ class ConversationRepository @Inject constructor(
             messageAndAttachment.attachmentList.count() > 0 &&
             messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
         }.let { listMessagesFiltered ->
-            val listIds = arrayListOf<String>()
-            listMessagesFiltered.forEach { message ->
-                listIds.add(message.message.webId)
-            }
-            if (listIds.count() > 0) {
-                RxBus.publish(RxEvent.MessagesToEliminate(listIds))
+            if (listMessagesFiltered.count() > 0) {
+                RxBus.publish(RxEvent.MessagesToEliminate(listMessagesFiltered))
             }
         }
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)

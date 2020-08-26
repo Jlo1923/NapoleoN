@@ -313,7 +313,7 @@ class MessageLocalDataSource @Inject constructor(
                     messageAndAttachment.attachmentList.forEach { attachment: Attachment ->
                         attachment.deleteFile(context)
                         withContext(Dispatchers.Main) {
-                            MediaPlayerManager.resetMediaPlayer(messageAndAttachment.message.webId)
+                            MediaPlayerManager.resetMediaPlayer(messageAndAttachment.message.id.toString())
                         }
                     }
                 }

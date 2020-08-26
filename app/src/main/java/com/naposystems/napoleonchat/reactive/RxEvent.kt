@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.reactive
 
+import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 import org.json.JSONObject
 import org.webrtc.IceCandidate
@@ -24,5 +25,5 @@ class RxEvent {
     data class ContactTurnOnCamera(val channel: String)
     data class ContactRejectCall(val channel: String)
     data class EmojiSelected(val emoji: Emoji)
-    data class MessagesToEliminate(val id: List<String>)
+    data class MessagesToEliminate(val id: List<MessageAndAttachment>)
 }

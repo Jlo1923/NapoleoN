@@ -8,9 +8,9 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomViewAudioPlayerBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
@@ -19,13 +19,12 @@ import java.util.concurrent.TimeUnit
 class AudioPlayerCustomView constructor(context: Context, attributeSet: AttributeSet) :
     ConstraintLayout(context, attributeSet), IContractAudioPlayer, MediaPlayerManager.Listener {
 
-    private var messageAndAttachment: MessageAndAttachment? = null
-
     private var mTintColor: Int = 0
     private var mIsEncryptedFile: Boolean = false
     private var mAudioFileUri: Uri? = null
     private var mEncryptedFileName: String = ""
     private var mAudioId: String = ""
+    private var mWebId: String? = null
     private var mSeekbarProgressBackgroundTint: Int = 0
     private var mSeekbarProgressTint: Int = 0
     private var mSeekbarThumbTint: Int = 0
@@ -37,8 +36,8 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPause(audioId: String)
-        fun onComplete(audioId: String)
+        fun onPause(audioId: String?)
+        fun onComplete(messageId : String, audioId: String?)
     }
 
     init {
@@ -69,7 +68,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     false
                 )
 
-                mAudioId = getString(R.styleable.AudioPlayerCustomView_audioId) ?: ""
                 mSeekbarProgressBackgroundTint = getResourceId(
                     R.styleable.AudioPlayerCustomView_seekbarProgressBackgroundTint,
                     R.color.white
@@ -118,15 +116,19 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         binding.imageButtonPlay.setOnClickListener {
 
             mediaPlayerManager?.apply {
+                Timber.d("-- OLA $mAudioId")
                 setAudioId(mAudioId)
+                setWebId(mWebId)
                 setImageButtonPlay(binding.imageButtonPlay)
                 setSeekbar(binding.seekbar)
                 setImageButtonSpeed(binding.imageButtonSpeed)
                 setTextViewDuration(binding.textViewDuration)
 
                 if (mIsEncryptedFile) {
+                    isEncryptedFile(BuildConfig.ENCRYPT_API)
                     setAudioFileName(mEncryptedFileName)
                 } else {
+                    isEncryptedFile(false)
                     setAudioUri(mAudioFileUri)
                 }
 
@@ -163,10 +165,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this.mediaPlayerManager?.isEncryptedFile(isEncryptedFile)
     }
 
-    override fun setMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
-        this.messageAndAttachment = messageAndAttachment
-    }
-
     override fun setMediaPlayerManager(mediaPlayerManager: MediaPlayerManager) {
         this.mediaPlayerManager = mediaPlayerManager
         setListeners()
@@ -182,6 +180,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     override fun setAudioId(id: String) {
         this.mAudioId = id
+    }
+
+    override fun setWebId(webId: String?) {
+        this.mWebId = webId
     }
 
     override fun setListener(listener: Listener) {
@@ -238,7 +240,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this@AudioPlayerCustomView.mListener?.onErrorPlayingAudio()
     }
 
-    override fun onPauseAudio(messageWebId: String) {
+    override fun onPauseAudio(messageWebId: String?) {
         Timber.d("Conver onPauseAudio: $messageWebId")
         /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
             messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
@@ -248,13 +250,13 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this.mListener?.onPause(messageWebId)
     }
 
-    override fun onCompleteAudio(messageWebId: String) {
+    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
         Timber.d("Conver onCompleteAudio: $messageWebId")
         /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
             messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
             this.mListener?.onComplete(audioId)
         }*/
-        this.mListener?.onComplete(messageWebId)
+        this.mListener?.onComplete(messageId, messageWebId)
     }
     //endregion
 }

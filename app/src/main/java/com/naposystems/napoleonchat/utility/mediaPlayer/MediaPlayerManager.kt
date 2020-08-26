@@ -72,6 +72,7 @@ object MediaPlayerManager :
     private var mListener: Listener? = null
     private var tempFile: File? = null
     private var mDuration: Long = 0L
+    private var mWebId: String? = null
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -123,8 +124,8 @@ object MediaPlayerManager :
 
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPauseAudio(messageWebId: String)
-        fun onCompleteAudio(messageWebId: String)
+        fun onPauseAudio(messageWebId: String?)
+        fun onCompleteAudio(messageId: String, messageWebId: String?)
     }
 
     init {
@@ -135,9 +136,9 @@ object MediaPlayerManager :
         val disposableMessagesToEliminate = RxBus.listen(RxEvent.MessagesToEliminate::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { params ->
-                params.id.forEach { webId ->
-                    if(currentAudioId == webId) {
-                        mListener?.onPauseAudio(webId)
+                params.id.forEach { message ->
+                    if(currentAudioId == message.message.id.toString()) {
+                        mListener?.onPauseAudio(message.message.webId)
                         resetMediaPlayer()
                     }
                 }
@@ -247,7 +248,7 @@ object MediaPlayerManager :
                 if (mediaPlayer.isPlaying) {
                     mediaPlayer.playWhenReady = false
                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
-                    mListener?.onPauseAudio(currentAudioId)
+                    mListener?.onPauseAudio(mWebId)
                     mHandler.removeCallbacks(mRunnable)
                 }
             }
@@ -283,6 +284,10 @@ object MediaPlayerManager :
         this.currentAudioFileName = fileName
     }
 
+    override fun setWebId(webId: String?) {
+        this.mWebId = webId
+    }
+
     override fun playAudio(progress: Int, isEarpiece: Boolean) {
 
         try {
@@ -296,7 +301,7 @@ object MediaPlayerManager :
                         isProximitySensorActive = false
                         mAudioManager.isSpeakerphoneOn = false
                         mHandler.removeCallbacks(mRunnable)
-                        mListener?.onPauseAudio(currentAudioId)
+                        mListener?.onPauseAudio(mWebId)
                     } else {
                         setupVoiceNoteSound(R.raw.tone_audio_message_start)
                         changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
@@ -437,7 +442,7 @@ object MediaPlayerManager :
                                     }
                                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                                     mHandler.removeCallbacks(mRunnable)
-                                    mListener?.onCompleteAudio(currentAudioId)
+                                    mListener?.onCompleteAudio(currentAudioId, mWebId)
                                     setupVoiceNoteSound(R.raw.tone_audio_message_end)
                                 }
                             }
@@ -519,7 +524,7 @@ object MediaPlayerManager :
                 }
             }
         } catch (e: Exception) {
-            Timber.e("Conver error: ${e.message}")
+            Timber.e("Conver error: $e")
             mListener?.onErrorPlayingAudio()
         }
     }
@@ -704,8 +709,8 @@ object MediaPlayerManager :
 
     }
 
-    override fun resetMediaPlayer(messageWebId: String) {
-        if (currentAudioId == messageWebId) {
+    override fun resetMediaPlayer(id: String) {
+        if (currentAudioId == id) {
             deleteTempFile()
 
             if (::mRunnable.isInitialized) {
