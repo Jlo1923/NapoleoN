@@ -458,13 +458,14 @@ open class ConversationViewHolder constructor(
         Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
 //        mediaPlayerManager.resetMediaPlayer()
         with(audioPlayer!!) {
-            setAudioId(item.message.webId)
-            setMessageAndAttachment(item)
+            setAudioId(item.message.id.toString())
+            setWebId(item.message.webId)
             setMediaPlayerManager(mediaPlayerManager)
             setDuration(attachment.duration)
 
             if (item.message.isMine == Constants.IsMine.YES.value) {
                 if (attachment.status == Constants.AttachmentStatus.SENT.status) {
+                    Timber.d("---OLA ${item.message.id} enviado")
                     isEncryptedFile(BuildConfig.ENCRYPT_API)
                     if (BuildConfig.ENCRYPT_API) {
                         setEncryptedFileName("${attachment.webId}.${attachment.extension}")
@@ -478,6 +479,7 @@ open class ConversationViewHolder constructor(
                         )
                     }
                 } else {
+                    Timber.d("---OLA ${item.message.id} no enviado")
                     isEncryptedFile(false)
                     setAudioFileUri(
                         Utils.getFileUri(
@@ -506,14 +508,18 @@ open class ConversationViewHolder constructor(
                     clickListener.errorPlayingAudio()
                 }
 
-                override fun onPause(audioId: String) {
-                    Timber.d("onPause")
-                    clickListener.sendMessageRead(audioId, false, adapterPosition)
+                override fun onPause(audioId: String?) {
+                    Timber.d("--onPause $audioId")
+                    audioId?.let {
+                        clickListener.sendMessageRead("", audioId, false, adapterPosition)
+                    }
                 }
 
-                override fun onComplete(audioId: String) {
-                    Timber.d("onComplete")
-                    clickListener.sendMessageRead(audioId, true, adapterPosition)
+                override fun onComplete(messageId : String, audioId: String?) {
+                    Timber.d("--onComplete $audioId")
+                    audioId?.let {
+                        clickListener.sendMessageRead(messageId, audioId, true, adapterPosition)
+                    }
                 }
             })
         }

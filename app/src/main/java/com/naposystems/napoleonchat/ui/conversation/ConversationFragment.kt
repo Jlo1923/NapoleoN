@@ -1698,11 +1698,11 @@ class ConversationFragment : BaseFragment(),
         )
     }
 
-    override fun onPauseAudio(messageWebId: String) {
+    override fun onPauseAudio(messageWebId: String?) {
         // Intentionally empty
     }
 
-    override fun onCompleteAudio(messageWebId: String) {
+    override fun onCompleteAudio(messageId: String,messageWebId: String?) {
         // Intentionally empty
     }
 
@@ -1891,12 +1891,12 @@ class ConversationFragment : BaseFragment(),
         viewModel.sendMessageRead(messageAndAttachment)
     }
 
-    override fun sendMessageRead(messageWebId: String, isComplete: Boolean, position: Int) {
+    override fun sendMessageRead(messageId : String, messageWebId: String, isComplete: Boolean, position: Int) {
         Timber.d("sendMessageRead: $messageWebId")
         viewModel.sendMessageRead(messageWebId)
 
         if (isComplete) {
-            conversationAdapter.checkIfNextIsAudio(messageWebId)
+            conversationAdapter.checkIfNextIsAudio(messageId)
         }
     }
 
