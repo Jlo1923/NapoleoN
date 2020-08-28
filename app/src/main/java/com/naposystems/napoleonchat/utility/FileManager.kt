@@ -324,7 +324,7 @@ class FileManager {
             }
 
             fileInputStream.close()
-//            deleteAttachmentFile(context, attachment)
+            deleteAttachmentFile(context, attachment)
             return file
         }
 
