@@ -108,7 +108,7 @@ class BluetoothStateManager(
 
     private fun requestHeadsetProxyProfile() {
         try {
-            bluetoothAdapter!!.getProfileProxy(context, object : ServiceListener {
+            bluetoothAdapter?.getProfileProxy(context, object : ServiceListener {
                 @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
                 override fun onServiceConnected(
                     profile: Int,
@@ -122,7 +122,9 @@ class BluetoothStateManager(
                         synchronized(LOCK) { bluetoothHeadset = proxy as BluetoothHeadset }
                         val sticky =
                             context.registerReceiver(null, IntentFilter(scoChangeIntent))
-                        bluetoothScoReceiver!!.onReceive(context, sticky!!)
+                        sticky?.let {
+                            bluetoothScoReceiver?.onReceive(context, sticky)
+                        }
                         synchronized(LOCK) {
                             if (wantsConnection && isBluetoothAvailable && scoConnection == ScoConnection.DISCONNECTED) {
                                 val audioManager: AudioManager = Utils.getAudioManager(context)

@@ -34,8 +34,8 @@
 
         <ImageView
             android:id="@+id/imageView_user_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginStart="5dp"
             android:foreground="@drawable/border_avatar_contact"
             android:onClick="@{() -> clickListener.onClickAvatar(conversation)}"

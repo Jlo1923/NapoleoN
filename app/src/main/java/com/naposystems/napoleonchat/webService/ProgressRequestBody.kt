@@ -1,6 +1,8 @@
 package com.naposystems.napoleonchat.webService
 
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.UploadResult
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.isActive
@@ -43,11 +45,13 @@ class ProgressRequestBody(
                         channel.offer(
                             UploadResult.Progress(
                                 attachment,
-                                (100f * uploaded / mLength).toLong(),
+                                (100f * uploaded / mLength),
                                 channel
                             )
                         )
                     }
+
+                    Timber.d("*Test1: ${uploaded * 100} / $mLength = ${uploaded * 100f / mLength}")
                 }
             }
         } catch (e: Exception) {

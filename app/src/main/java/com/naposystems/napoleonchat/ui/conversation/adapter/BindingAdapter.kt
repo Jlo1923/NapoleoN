@@ -160,7 +160,7 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
     }
 }
 
-@BindingAdapter("isFirstMyMessage")
+/*@BindingAdapter("isFirstMyMessage")
 fun bindIsFirstMyMessage(constraintLayout: ConstraintLayout, isFirst: Boolean) {
     val context = constraintLayout.context
     constraintLayout.background = if (isFirst) {
@@ -178,7 +178,7 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
     } else {
         context.getDrawable(R.drawable.bg_incoming_message_rounded)
     }
-}
+}*/
 
 @BindingAdapter("countDown")
 fun bindCountDown(
@@ -251,7 +251,6 @@ private fun loadBlurAttachment(
                 .load(firstAttachment.body)
                 .transform(
                     CenterCrop(),
-                    RoundedCorners(8),
                     BlurTransformation(context)
                 )
                 .into(imageView)
@@ -264,7 +263,6 @@ private fun loadBlurAttachment(
                 .thumbnail(0.1f)
                 .transform(
                     CenterCrop(),
-                    RoundedCorners(8),
                     BlurTransformation(context)
                 )
                 .into(imageView)

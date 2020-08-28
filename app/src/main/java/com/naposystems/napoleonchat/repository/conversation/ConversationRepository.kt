@@ -108,7 +108,7 @@ class ConversationRepository @Inject constructor(
     override suspend fun uploadAttachment(
         attachment: Attachment,
         message: Message
-    ) = channelFlow<UploadResult> {
+    ) = channelFlow {
         try {
             updateAttachment(attachment)
             message.status = Constants.MessageStatus.SENDING.status
@@ -131,10 +131,10 @@ class ConversationRepository @Inject constructor(
                 .collect {
                     when (it) {
                         is VideoCompressResult.Start -> {
-                            Timber.d("tmessages VideoCompressResult.Start")
+                            Timber.d("*Test: tmessages VideoCompressResult.Start")
                         }
                         is VideoCompressResult.Success -> {
-                            Timber.d("tmessages VideoCompressResult.Success")
+                            Timber.d("*Test: tmessages VideoCompressResult.Success")
                             if (it.srcFile.isFile && it.srcFile.exists() && !attachment.isCompressed && attachment.type == Constants.AttachmentType.VIDEO.type)
                                 it.srcFile.delete()
                             attachment.fileName =
@@ -192,7 +192,7 @@ class ConversationRepository @Inject constructor(
                             offer(
                                 UploadResult.CompressProgress(
                                     attachment,
-                                    it.progress.toLong(),
+                                    it.progress,
                                     this
                                 )
                             )
@@ -793,13 +793,13 @@ class ConversationRepository @Inject constructor(
         srcFile: File,
         destFile: File,
         job: ProducerScope<*>
-    ) = flow<VideoCompressResult> {
+    ) = flow {
 
         if (attachment.type == Constants.AttachmentType.VIDEO.type && !attachment.isCompressed) {
             if (destFile.exists())
                 destFile.delete()
 
-            VideoCompressK.compressVideoLow(
+            VideoCompressK.compressVideoCustom(
                 srcFile, destFile, job
             ).collect {
                 emit(it)

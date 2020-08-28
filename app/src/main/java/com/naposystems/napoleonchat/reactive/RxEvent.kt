@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.reactive
 
-import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 import org.json.JSONObject
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription

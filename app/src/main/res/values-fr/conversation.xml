@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Appel sécurisé vidéo entrant</string>
     <string name="text_encrypted_video_call">Appel vidéo cryptée</string>
     <string name="text_incoming_video_call_title">Appel vidéo entrant</string>
-    <string name="text_new_contact">Vous avez un nouveau contact. Je dis bonjour!</string>
+    <string name="text_new_contact">Vous avez un nouveau contact. Je dis bonjour!\'</string>
     <string name="text_video_call_not_internet_connection">A été réalisé commettez pas l\'appel vidéo. Vérifiez votre connexion Internet et essayez à nouveau</string>
     <string name="text_call_not_internet_connection">A été atteint pas fait l\'appel. Vérifiez votre connexion Internet et essayez à nouveau.</string>
     <plurals name="text_self_destruct_time_days">

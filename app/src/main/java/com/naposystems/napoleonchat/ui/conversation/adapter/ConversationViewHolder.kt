@@ -50,6 +50,8 @@ open class ConversationViewHolder constructor(
     var textViewMessage: TextView? = null
     var imageButtonPlay: AppCompatImageButton? = null
 
+    var progressVisibility = false
+
     fun countDown(
         item: MessageAndAttachment,
         textView: TextView?,
@@ -97,6 +99,7 @@ open class ConversationViewHolder constructor(
                 Timber.d(" setProgress this.uploadjob: ${this.uploadJob}, this.downloadJob: ${this.downloadJob}")
 
                 if (progress > 0) {
+                    Timber.d("*Test: Download Progress: $progress")
                     progressBar?.visibility = View.VISIBLE
                     progressBar?.setProgress(progress.toFloat())
                     imageButtonState?.visibility = View.VISIBLE
@@ -104,6 +107,7 @@ open class ConversationViewHolder constructor(
                 }
 
                 if (progress == 100L) {
+                    Timber.d("*Test: Download Success: $progress")
                     progressBar?.visibility = View.GONE
                     imageButtonState?.visibility = View.GONE
                     imageButtonPlay?.visibility = View.VISIBLE
@@ -118,21 +122,28 @@ open class ConversationViewHolder constructor(
     }
 
     fun setUploadProgressAndJob(
-        progress: Long,
+        progress: Float,
         job: ProducerScope<*>
     ) {
-        Timber.d("progress: $progress, job: $job")
-        progressBar?.visibility = View.VISIBLE
-        progressBar?.setProgress(progress.toFloat())
-
-        if (progress > 0) {
-            progressBarIndeterminate?.visibility = View.GONE
+        progressBar?.let { circleProgressBar ->
+            when {
+                progress < 80f -> {
+                    progressBar?.visibility = View.VISIBLE
+                    Timber.d("*Test: Upload Progress: $progress, job: $job")
+                    progressBar?.setProgress(progress)
+                    progressVisibility = true
+                    progressBarIndeterminate?.visibility = View.GONE
+                }
+                progress >= 80f && progressVisibility -> {
+                    circleProgressBar.setProgress(100f)
+                    circleProgressBar.visibility = View.GONE
+                    progressVisibility = false
+                    Timber.d("*Test: Full Progress")
+                    progressBarIndeterminate?.visibility = View.VISIBLE
+                }
+            }
         }
 
-        if (progress == 100L) {
-            progressBar?.visibility = View.GONE
-//            imageButtonState?.visibility = View.GONE
-        }
         this.uploadJob = job
 
         if (job.isClosedForSend) {
@@ -142,19 +153,19 @@ open class ConversationViewHolder constructor(
     }
 
     fun setCompressProgressAndJob(
-        progress: Long,
+        progress: Float,
         job: ProducerScope<*>
     ) {
-        Timber.d("compress progress: $progress, job: $job")
+        Timber.d("*Test: Compress Progress: $progress, job: $job")
 
         this.uploadJob = job
     }
 
     fun setDownloadProgressAndJob(
-        progress: Long,
+        progress: Float,
         job: ProducerScope<*>
     ) {
-        Timber.d("progress: $progress, job: $job")
+        Timber.d("*Test: Download Progress: $progress, job: $job")
         progressBar?.visibility = View.VISIBLE
         progressBar?.setProgress(progress.toFloat())
 
@@ -162,7 +173,8 @@ open class ConversationViewHolder constructor(
             progressBarIndeterminate?.visibility = View.GONE
         }
 
-        if (progress == 100L) {
+        if (progress == 100f) {
+            Timber.d("*Test: Full Download")
             progressBar?.visibility = View.GONE
 //            imageButtonState?.visibility = View.GONE
         }

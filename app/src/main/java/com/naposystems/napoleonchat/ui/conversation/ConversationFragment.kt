@@ -187,6 +187,7 @@ class ConversationFragment : BaseFragment(),
     private var minTimeRecording = TimeUnit.SECONDS.toMillis(1)
     private var messagedLoadedFirstTime: Boolean = false
     private var actionViewSchedule: View? = null
+    private var uploadProgress = 0f
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -737,11 +738,13 @@ class ConversationFragment : BaseFragment(),
                         it.progress,
                         it.job
                     )
-                    is UploadResult.Progress -> conversationAdapter.setUploadProgress(
-                        it.attachment,
-                        it.progress,
-                        it.job
-                    )
+                    is UploadResult.Progress -> {
+                        conversationAdapter.setUploadProgress(
+                            it.attachment,
+                            it.progress,
+                            it.job
+                        )
+                    }
                     is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
                 }
             }
@@ -873,15 +876,14 @@ class ConversationFragment : BaseFragment(),
     private fun observeMessageMessages() {
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
             Timber.d("observeMessageMessages")
-            conversationAdapter.submitList(conversationList) {
-                if (!messagedLoadedFirstTime) {
-                    val friendlyMessageCount: Int = conversationAdapter.itemCount
-                    binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
-                    messagedLoadedFirstTime = true
-                }
-                if (conversationList.isNotEmpty()) {
-                    viewModel.sendTextMessagesRead()
-                }
+            conversationAdapter.submitList(conversationList)
+            if (!messagedLoadedFirstTime) {
+                val friendlyMessageCount: Int = conversationAdapter.itemCount
+                binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                messagedLoadedFirstTime = true
+            }
+            if (conversationList.isNotEmpty()) {
+                viewModel.sendTextMessagesRead()
             }
         })
     }

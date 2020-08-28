@@ -136,10 +136,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        window.setFlags(
+        /*window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
-        )
+        )*/
 
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
