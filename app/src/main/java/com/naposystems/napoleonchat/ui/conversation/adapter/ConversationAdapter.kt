@@ -190,8 +190,8 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun checkIfNextIsAudio(messageWebId: String) {
-        val positionActualAudio = getPositionByMessageWebId(messageWebId)
+    fun checkIfNextIsAudio(messageId: String) {
+        val positionActualAudio = getPositionByMessageId(messageId)
         if (positionActualAudio >= 0) {
             val actualMessageAndAttachment = getItem(positionActualAudio)
             val nextPosition = positionActualAudio + 1
@@ -229,9 +229,9 @@ class ConversationAdapter constructor(
         )
     }
 
-    private fun getPositionByMessageWebId(messageWebId: String) =
+    private fun getPositionByMessageId(id: String) =
         currentList.indexOfFirst { messageAndAttachment ->
-            messageAndAttachment.message.webId == messageWebId
+            messageAndAttachment.message.id.toString() == id
         }
 
     private fun getPositionByItem(attachment: Attachment) =
@@ -411,7 +411,6 @@ class ConversationAdapter constructor(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        super.onBindViewHolder(holder, position, payloads)
         if (payloads.firstOrNull() != null) {
             val item = getItem(position)
 
@@ -439,6 +438,7 @@ class ConversationAdapter constructor(
                 }
             }
         }
+        super.onBindViewHolder(holder, position, payloads)
     }
 
     private fun handleProducerScopePayload(
@@ -593,7 +593,7 @@ class ConversationAdapter constructor(
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
-        fun sendMessageRead(messageWebId: String, isComplete: Boolean, position: Int = -1)
+        fun sendMessageRead(messageId : String, messageWebId: String, isComplete: Boolean, position: Int = -1)
         fun reSendMessage(message: Message)
         fun scrollToNextAudio(nextPosition: Int)
         fun updateMessageState(message: Message)

@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.db.dao.contact.ContactDao
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
@@ -22,6 +23,7 @@ import javax.inject.Inject
 
 class MessageLocalDataSource @Inject constructor(
     private val context: Context,
+    private val contactDao: ContactDao,
     private val messageDao: MessageDao
 ) : MessageDataSource {
 
@@ -239,19 +241,32 @@ class MessageLocalDataSource @Inject constructor(
 
             message?.let { messageAndAttachment ->
                 if (messageAndAttachment.message.status != Constants.MessageStatus.READED.status) {
+                    val timeByMessage = messageDao.getSelfDestructTimeByMessage(messageWebId)
+                    val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
                     when (status) {
                         Constants.MessageStatus.READED.status -> {
-                            val timeByMessage =
-                                messageDao.getSelfDestructTimeByMessage(messageWebId)
-                            val currentTime =
-                                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
-                            val time =
-                                currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
-
+                            val time = currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
                             messageDao.updateMessageStatus(messageWebId, currentTime, time, status)
                         }
                         else -> {
-                            messageDao.updateMessageStatus(messageWebId, 0, 0, status)
+                            when(timeByMessage) {
+                                Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time,
+                                Constants.SelfDestructTime.EVERY_SEVEN_DAYS_ERROR.time -> {
+                                    val contactId = messageDao.getContactByMessage(messageWebId)
+                                    val messageAndAttachment = messageDao.getMessageByWebId(messageWebId)
+                                    val timeContact = contactDao.getSelfDestructTimeByContactWithOutLiveData(contactId)
+                                    val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(messageAndAttachment?.getFirstAttachment()?.duration ?: 0).toInt()
+                                    val selfAutoDestruction =
+                                        Utils.compareDurationAttachmentWithSelfAutoDestructionInSeconds(
+                                            durationAttachment, timeContact
+                                        )
+
+                                    messageDao.updateSelfDestructTimeByMessages(selfAutoDestruction, messageWebId, status)
+                                }
+                                else -> {
+                                    messageDao.updateMessageStatus(messageWebId, 0, 0, status)
+                                }
+                            }
                         }
                     }
                 }
@@ -313,7 +328,7 @@ class MessageLocalDataSource @Inject constructor(
                     messageAndAttachment.attachmentList.forEach { attachment: Attachment ->
                         attachment.deleteFile(context)
                         withContext(Dispatchers.Main) {
-                            MediaPlayerManager.resetMediaPlayer(messageAndAttachment.message.webId)
+                            MediaPlayerManager.resetMediaPlayer(messageAndAttachment.message.id.toString())
                         }
                     }
                 }

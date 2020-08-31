@@ -184,11 +184,11 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         )
     }
 
-    override fun onPauseAudio(messageWebId: String) {
+    override fun onPauseAudio(messageWebId: String?) {
         // Intentionally empty
     }
 
-    override fun onCompleteAudio(messageWebId: String) {
+    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
         // Intentionally empty
     }
 

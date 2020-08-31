@@ -359,7 +359,13 @@ fun bindIconForState(
 
         val drawableId = when (attachment.status) {
             Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
-                imageButton.visibility = View.VISIBLE
+                if(messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
+                   messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
+                   messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+                    imageButton.visibility = View.GONE
+                } else {
+                    imageButton.visibility = View.VISIBLE
+                }
                 R.drawable.ic_file_upload_black
             }
             Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
@@ -401,6 +407,7 @@ fun bindIconForState(
 
         imageButton.setImageResource(drawableId)
     }
+
 }
 
 @BindingAdapter("showCheck")

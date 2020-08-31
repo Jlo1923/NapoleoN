@@ -24,11 +24,15 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.BluetoothStateManager
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -68,6 +72,7 @@ object MediaPlayerManager :
     private var mListener: Listener? = null
     private var tempFile: File? = null
     private var mDuration: Long = 0L
+    private var mWebId: String? = null
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -100,6 +105,10 @@ object MediaPlayerManager :
         AudioManagerCompat.create(context)
     }
 
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
+
     private val soundMediaPlayer: MediaPlayer by lazy {
         MediaPlayer().apply {
             setAudioAttributes(
@@ -115,8 +124,27 @@ object MediaPlayerManager :
 
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPauseAudio(messageWebId: String)
-        fun onCompleteAudio(messageWebId: String)
+        fun onPauseAudio(messageWebId: String?)
+        fun onCompleteAudio(messageId: String, messageWebId: String?)
+    }
+
+    init {
+        subscribeToRXEvents()
+    }
+
+    private fun subscribeToRXEvents() {
+        val disposableMessagesToEliminate = RxBus.listen(RxEvent.MessagesToEliminate::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { params ->
+                params.id.forEach { message ->
+                    if(currentAudioId == message.message.id.toString()) {
+                        mListener?.onPauseAudio(message.message.webId)
+                        resetMediaPlayer()
+                    }
+                }
+            }
+
+        disposable.add(disposableMessagesToEliminate)
     }
 
     private fun setSeekbarProgress() {
@@ -220,7 +248,7 @@ object MediaPlayerManager :
                 if (mediaPlayer.isPlaying) {
                     mediaPlayer.playWhenReady = false
                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
-                    mListener?.onPauseAudio(currentAudioId)
+                    mListener?.onPauseAudio(mWebId)
                     mHandler.removeCallbacks(mRunnable)
                 }
             }
@@ -256,6 +284,10 @@ object MediaPlayerManager :
         this.currentAudioFileName = fileName
     }
 
+    override fun setWebId(webId: String?) {
+        this.mWebId = webId
+    }
+
     override fun playAudio(progress: Int, isEarpiece: Boolean) {
 
         try {
@@ -269,7 +301,7 @@ object MediaPlayerManager :
                         isProximitySensorActive = false
                         mAudioManager.isSpeakerphoneOn = false
                         mHandler.removeCallbacks(mRunnable)
-                        mListener?.onPauseAudio(currentAudioId)
+                        mListener?.onPauseAudio(mWebId)
                     } else {
                         setupVoiceNoteSound(R.raw.tone_audio_message_start)
                         changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
@@ -410,7 +442,7 @@ object MediaPlayerManager :
                                     }
                                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                                     mHandler.removeCallbacks(mRunnable)
-                                    mListener?.onCompleteAudio(currentAudioId)
+                                    mListener?.onCompleteAudio(currentAudioId, mWebId)
                                     setupVoiceNoteSound(R.raw.tone_audio_message_end)
                                 }
                             }
@@ -492,7 +524,7 @@ object MediaPlayerManager :
                 }
             }
         } catch (e: Exception) {
-            Timber.e("Conver error: ${e.message}")
+            Timber.e("Conver error: $e")
             mListener?.onErrorPlayingAudio()
         }
     }
@@ -677,8 +709,8 @@ object MediaPlayerManager :
 
     }
 
-    override fun resetMediaPlayer(messageWebId: String) {
-        if (currentAudioId == messageWebId) {
+    override fun resetMediaPlayer(id: String) {
+        if (currentAudioId == id) {
             deleteTempFile()
 
             if (::mRunnable.isInitialized) {

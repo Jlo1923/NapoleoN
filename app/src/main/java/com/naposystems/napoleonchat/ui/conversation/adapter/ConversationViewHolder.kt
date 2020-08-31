@@ -22,6 +22,7 @@ import com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBa
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
@@ -127,12 +128,20 @@ open class ConversationViewHolder constructor(
     ) {
         progressBar?.let { circleProgressBar ->
             when {
-                progress < 80f -> {
+                progress < 10f -> {
+                    progressBarIndeterminate?.visibility = View.GONE
+                    imageButtonState?.visibility = View.VISIBLE
+                    imageButtonState?.isEnabled = false
+                }
+                progress in 10f..80f -> {
                     progressBar?.visibility = View.VISIBLE
                     Timber.d("*Test: Upload Progress: $progress, job: $job")
                     progressBar?.setProgress(progress)
                     progressVisibility = true
                     progressBarIndeterminate?.visibility = View.GONE
+
+                    imageButtonState?.visibility = View.VISIBLE
+                    imageButtonState?.isEnabled = true
                 }
                 progress >= 80f && progressVisibility -> {
                     circleProgressBar.setProgress(100f)
@@ -140,6 +149,9 @@ open class ConversationViewHolder constructor(
                     progressVisibility = false
                     Timber.d("*Test: Full Progress")
                     progressBarIndeterminate?.visibility = View.VISIBLE
+
+                    imageButtonState?.isEnabled = false
+                    imageButtonState?.visibility = View.GONE
                 }
             }
         }
@@ -405,13 +417,13 @@ open class ConversationViewHolder constructor(
                 }
             }
 
-            imageButtonState?.setOnClickListener(
+            imageButtonState?.setSafeOnClickListener{
                 imageButtonStateClickListener(
                     attachment,
                     clickListener,
                     item
                 )
-            )
+            }
 
             imageViewAttachment?.setOnClickListener {
                 if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
@@ -470,8 +482,8 @@ open class ConversationViewHolder constructor(
         Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
 //        mediaPlayerManager.resetMediaPlayer()
         with(audioPlayer!!) {
-            setAudioId(item.message.webId)
-            setMessageAndAttachment(item)
+            setAudioId(item.message.id.toString())
+            setWebId(item.message.webId)
             setMediaPlayerManager(mediaPlayerManager)
             setDuration(attachment.duration)
 
@@ -518,14 +530,18 @@ open class ConversationViewHolder constructor(
                     clickListener.errorPlayingAudio()
                 }
 
-                override fun onPause(audioId: String) {
-                    Timber.d("onPause")
-                    clickListener.sendMessageRead(audioId, false, adapterPosition)
+                override fun onPause(audioId: String?) {
+                    Timber.d("--onPause $audioId")
+                    audioId?.let {
+                        clickListener.sendMessageRead("", audioId, false, adapterPosition)
+                    }
                 }
 
-                override fun onComplete(audioId: String) {
-                    Timber.d("onComplete")
-                    clickListener.sendMessageRead(audioId, true, adapterPosition)
+                override fun onComplete(messageId : String, audioId: String?) {
+                    Timber.d("--onComplete $audioId")
+                    audioId?.let {
+                        clickListener.sendMessageRead(messageId, audioId, true, adapterPosition)
+                    }
                 }
             })
         }
@@ -535,7 +551,7 @@ open class ConversationViewHolder constructor(
         attachment: Attachment,
         clickListener: ConversationAdapter.ClickListener,
         item: MessageAndAttachment
-    ) = View.OnClickListener {
+    ) {
         when (attachment.status) {
             Constants.AttachmentStatus.SENDING.status -> {
                 Timber.d("this.uploadJob: ${this.uploadJob}")
