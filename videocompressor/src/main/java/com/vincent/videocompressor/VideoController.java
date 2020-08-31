@@ -17,15 +17,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 @SuppressLint("NewApi")
 public class VideoController {
     static final int COMPRESS_QUALITY_HIGH = 1;
     static final int COMPRESS_QUALITY_MEDIUM = 2;
     static final int COMPRESS_QUALITY_LOW = 3;
+    static final int COMPRESS_QUALITY_CUSTOM = 4;
 
     public static File cachedFile;
     public String path;
@@ -285,6 +283,11 @@ public class VideoController {
                 resultWidth = originalWidth / 2;
                 resultHeight = originalHeight / 2;
                 bitrate = (resultWidth / 2) * (resultHeight / 2) * 10;
+                break;
+            case COMPRESS_QUALITY_CUSTOM:
+                resultWidth = originalWidth / 2;
+                resultHeight = originalHeight / 2;
+                bitrate = (resultWidth / 2) * (resultHeight / 2) * 15;
                 break;
         }
 

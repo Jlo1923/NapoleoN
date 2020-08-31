@@ -5,14 +5,14 @@ import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.VideoCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -20,11 +20,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.common.util.concurrent.ListenableFuture
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationCameraFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.ui.custom.cameraButton.CameraButton
-import com.naposystems.napoleonchat.ui.custom.verticalSlider.VerticalSlider
+import com.naposystems.napoleonchat.ui.custom.customVerticalSeekbar.CustomVerticalSeekBar
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
@@ -35,10 +36,11 @@ import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 @SuppressLint("RestrictedApi")
-class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
+class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
     CameraButton.CameraButtonListener {
 
     private lateinit var binding: ConversationCameraFragmentBinding
@@ -53,7 +55,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
     private lateinit var path: File
     private lateinit var videoFile: File
     private lateinit var fileName: String
-    private var recordingTime: Long = TimeUnit.MINUTES.toMillis(1)
+    private var recordingTime: Long = 0L
     private var mStartToRecordRunnable: Runnable = Runnable { startRecording() }
     private lateinit var mRecordingTimeRunnable: Runnable
 
@@ -105,11 +107,14 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
             false
         )
 
-        binding.viewFinder.bindToLifecycle(viewLifecycleOwner)
+        binding.viewFinder.bindToLifecycle(this)
 
-        flashMode = ImageCapture.FLASH_MODE_OFF
 
-        binding.verticalSlider.setListener(this)
+//        flashMode = ImageCapture.FLASH_MODE_OFF
+
+//        binding.verticalSlider.setListener(this)
+
+        binding.customVerticalSeekBar.setListener(this)
 
         binding.imageButtonLock.post {
             with(binding.imageButtonCamera) {
@@ -201,6 +206,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
         if (binding.viewFinder.isRecording) {
             binding.viewFinder.stopRecording()
         }
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onDestroyView() {
@@ -398,6 +404,8 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
     }
 
     private fun startRunnableTimer() {
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        recordingTime = TimeUnit.MINUTES.toMillis(1)
         mRecordingTimeRunnable = Runnable {
             binding.lottieRecording.visibility = View.VISIBLE
             binding.textViewRecordingTime.apply {
@@ -423,6 +431,7 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
     }
 
     private fun stopRecording() {
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         try {
             binding.imageButtonCamera.isEnabled = false
             binding.imageButtonCamera.background =
@@ -448,9 +457,9 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
         return FileManager.createFile(requireContext(), fileName, subFolder)
     }
 
-    //region Implementation VerticalSlider.Listener
-    override fun onSlide(value: Float) {
-        try {
+//region Implementation VerticalSlider.Listener
+/*override fun onSlide(value: Float) {
+    *//*try {
             val minZoomRatio = binding.viewFinder.minZoomRatio
             val maxZoomRatio = binding.viewFinder.maxZoomRatio
 
@@ -463,9 +472,26 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
             }
         } catch (e: Exception) {
             Timber.e(e, "Error al hacer zoom")
+        }*/
+
+    override fun onSlide(zoomValue: Float) {
+        val minZoomRatio = binding.viewFinder.minZoomRatio
+        val maxZoomRatio = binding.viewFinder.maxZoomRatio
+
+        val result = ((maxZoomRatio - minZoomRatio) * zoomValue + minZoomRatio)
+        val finalZoomRatio = (result * 100.0).roundToInt() / 100.0f
+
+        try {
+            if (binding.viewFinder.isZoomSupported) {
+                binding.viewFinder.zoomRatio = finalZoomRatio
+                Timber.d("*Zoom: min=$minZoomRatio max=$maxZoomRatio $finalZoomRatio")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error with zoom")
         }
     }
-    //endregion
+
+//endregion
 
     //region Implementation CameraButton.CameraButtonListener
     override fun startToRecord() {
@@ -484,5 +510,6 @@ class ConversationCameraFragment : Fragment(), VerticalSlider.Listener,
         }
     }
 
-    //endregion
+
+//endregion
 }

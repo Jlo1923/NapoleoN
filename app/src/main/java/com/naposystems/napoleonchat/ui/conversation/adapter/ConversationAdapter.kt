@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -8,10 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.UploadResult
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import timber.log.Timber
@@ -54,6 +59,9 @@ class ConversationAdapter constructor(
     }
 
     private var isFirst = false
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     object DiffCallback : DiffUtil.ItemCallback<MessageAndAttachment>() {
         override fun areItemsTheSame(
@@ -134,13 +142,13 @@ class ConversationAdapter constructor(
 
     fun setCompressProgress(
         attachment: Attachment,
-        progress: Long,
+        progress: Float,
         job: ProducerScope<UploadResult>
     ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
-                listOf(Bundle().apply { putLong(COMPRESS_PROGRESS, progress) }, job)
+                listOf(Bundle().apply { putFloat(COMPRESS_PROGRESS, progress) }, job)
             )
         } catch (e: Exception) {
             Timber.e(e)
@@ -149,13 +157,13 @@ class ConversationAdapter constructor(
 
     fun setUploadProgress(
         attachment: Attachment,
-        progress: Long,
+        progress: Float,
         job: ProducerScope<UploadResult>
     ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
-                listOf(Bundle().apply { putLong(PROGRESS, progress) }, job)
+                listOf(Bundle().apply { putFloat(PROGRESS, progress) }, job)
             )
         } catch (e: Exception) {
             Timber.e(e)
@@ -326,6 +334,7 @@ class ConversationAdapter constructor(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
+
         return when (viewType) {
             TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent)
@@ -520,8 +529,8 @@ class ConversationAdapter constructor(
         position: Int,
         holder: RecyclerView.ViewHolder
     ) {
-        val progress = bundle.getLong(PROGRESS, -1)
-        val compressProgress = bundle.getLong(COMPRESS_PROGRESS, -1)
+        val progress = bundle.getFloat(PROGRESS, -1f)
+        val compressProgress = bundle.getFloat(COMPRESS_PROGRESS, -1f)
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,

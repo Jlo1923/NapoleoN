@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream
 class ProgressRequestBody(
     private val bytes: ByteArray,
     private val mediaType: MediaType,
-    private val progress : (Long) -> Unit
+    private val progress : (Float) -> Unit
 ) : RequestBody() {
 
     private val mLength = bytes.size.toLong()
@@ -33,7 +33,7 @@ class ProgressRequestBody(
                 while (inputStream.read(buffer).also { read = it } != -1) {
                     sink.write(buffer, 0, read)
                     uploaded += read
-                    progress((100f * uploaded / mLength).toLong())
+                    progress(100f * uploaded / mLength)
                 }
             }
         } catch (e: Exception) {

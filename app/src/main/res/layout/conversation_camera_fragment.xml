@@ -58,20 +58,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_margin"
-            android:text="1:00"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/lottie_recording"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/lottie_recording"
-            app:layout_constraintTop_toTopOf="@id/lottie_recording" />
+            app:layout_constraintTop_toTopOf="@id/lottie_recording"
+            tools:visibility="visible"
+            tools:text="01:00"/>
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <ImageButton
             android:id="@+id/imageButton_flash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_margin"
-            android:background="@android:color/transparent"
-            android:foreground="?attr/actionBarItemBackground"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="@dimen/small_padding"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/imageButton_camera"
@@ -126,14 +126,52 @@
             app:layout_constraintTop_toTopOf="@id/imageButton_camera"
             app:srcCompat="@drawable/ic_switch_camera_black" />
 
-        <com.naposystems.napoleonchat.ui.custom.verticalSlider.VerticalSlider
+        <!--<com.naposystems.napoleonchat.ui.custom.verticalSlider.VerticalSlider
             android:id="@+id/verticalSlider"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
+
+        <ImageView
+            android:id="@+id/imageView_add"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:elevation="2dp"
+            android:src="@drawable/ic_add_primary"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/customVerticalSeekBar"
+            app:layout_constraintEnd_toEndOf="@+id/customVerticalSeekBar"
+            app:layout_constraintStart_toStartOf="@+id/customVerticalSeekBar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.naposystems.napoleonchat.ui.custom.customVerticalSeekbar.CustomVerticalSeekBar
+            android:id="@+id/customVerticalSeekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:elevation="2dp"
+            android:paddingTop="@dimen/normal_padding"
+            android:paddingBottom="@dimen/normal_padding"
+            android:progressDrawable="@drawable/custom_seek_bar_ruler"
+            app:layout_constraintBottom_toTopOf="@id/imageView_remove"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent=".5"
+            app:layout_constraintTop_toBottomOf="@id/imageView_add" />
+
+        <ImageView
+            android:id="@+id/imageView_remove"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:elevation="2dp"
+            android:src="@drawable/ic_remove_black"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/customVerticalSeekBar"
+            app:layout_constraintStart_toStartOf="@+id/customVerticalSeekBar"
+            app:layout_constraintTop_toBottomOf="@id/customVerticalSeekBar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
