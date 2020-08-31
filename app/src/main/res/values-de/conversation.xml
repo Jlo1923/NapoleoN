@@ -9,7 +9,7 @@
     <string name="text_view_profile">Profil ansehen</string>
     <string name="text_delete_contact">Blockkontakt</string>
     <string name="text_explanation_camera_to_attachment_picture">Um ein Foto zu senden, erlauben NAPOLEON Zugriff auf Ihre Kamera.</string>
-    <string name="text_explanation_to_send_audio_attacment">Um ein Audio zu senden, napoleon erlaubt den Zugriff von Multimedia-Inhalte.</string>
+    <string name="text_explanation_to_send_audio_attachment">Um ein Audio zu senden, napoleon erlaubt den Zugriff von Multimedia-Inhalte.</string>
     <string name="text_delete_messages">Nachrichten löschen?</string>
     <string name="text_delete_message_for_me">Für mich löschen</string>
     <string name="text_delete_message_for_all">Für alle löschen</string>
@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Sichere eingehender Videoanruf</string>
     <string name="text_encrypted_video_call">Verschlüsselter Videoanruf</string>
     <string name="text_incoming_video_call_title">Eingehender Videoanruf</string>
-    <string name="text_new_contact">Sie haben einen neuen Kontakt. Ich sage Hallo!\'</string>
+    <string name="text_new_contact">Sie haben einen neuen KONTAKT. Sag hallo!\'</string>
     <string name="text_video_call_not_internet_connection">Nicht den Videoanruf tätigen erreicht. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut</string>
     <string name="text_call_not_internet_connection">Den Anruf nicht erreicht wurde machen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
     <plurals name="text_self_destruct_time_days">

@@ -29,7 +29,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Name" />
+            tools:text="@tools:sample/lorem[0]" />
 
         <View
             android:id="@+id/view_title_separator"

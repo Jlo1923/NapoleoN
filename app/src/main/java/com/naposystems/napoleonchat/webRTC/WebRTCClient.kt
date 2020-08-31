@@ -843,6 +843,7 @@ class WebRTCClient constructor(
         bluetoothStateManager?.onDestroy()
 
         mListener?.callEnded()
+        localPeer?.close()
     }
 
     override fun unSubscribeCallChannel() {

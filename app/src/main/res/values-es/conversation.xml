@@ -9,7 +9,7 @@
     <string name="text_view_profile">Ver perfil</string>
     <string name="text_delete_contact">Eliminar contacto</string>
     <string name="text_explanation_camera_to_attachment_picture">Para enviar una foto, permita que NapoleoN acceda a su cámara.</string>
-    <string name="text_explanation_to_send_audio_attacment">Para enviar una audio, permita que NapoleoN acceda a su contenido multimedia.</string>
+    <string name="text_explanation_to_send_audio_attachment">Para enviar una audio, permita que NapoleoN acceda a su contenido multimedia.</string>
     <string name="text_delete_messages">¿Eliminar mensajes?</string>
     <string name="text_delete_message_for_me">Eliminar para mí</string>
     <string name="text_delete_message_for_all">Eliminar para todos</string>
@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Videollamada segura entrante</string>
     <string name="text_encrypted_video_call">Videollamada cifrada</string>
     <string name="text_incoming_video_call_title">Videollamada entrante</string>
-    <string name="text_new_contact">Tienes un nuevo CONTACTO. Salúdalo!\'</string>
+    <string name="text_new_contact">Tienes un nuevo CONTACTO. Salúdalo!\ </string>
     <string name="text_video_call_not_internet_connection">No se logro realizar la videollamada. Comprueba tu conexión a internet e intenta nuevamente</string>
     <string name="text_call_not_internet_connection">No se logro realizar la llamada. Comprueba tu conexión a internet e intenta nuevamente.</string>
     <plurals name="text_self_destruct_time_days">

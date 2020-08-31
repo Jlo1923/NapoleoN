@@ -434,7 +434,7 @@ class ConversationAdapter constructor(
                         }
                     }
                 } catch (e: Exception) {
-                    Timber.e(e, "Que mierda pasa")
+                    Timber.e(e)
                 }
             }
         }

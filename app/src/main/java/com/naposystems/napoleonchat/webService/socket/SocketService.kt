@@ -179,7 +179,7 @@ class SocketService @Inject constructor(
                     ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
                     ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
                     ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
-                    else -> Timber.d("Alguna mierda pasó")
+                    else -> Timber.d("Socket Error")
                 }
             }
 
