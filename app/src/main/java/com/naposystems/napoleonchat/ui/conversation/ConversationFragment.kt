@@ -1746,7 +1746,6 @@ class ConversationFragment : BaseFragment(),
             }
             binding.containerLockAudio.container.visibility = View.GONE
             stopRecording()
-            setupVoiceNoteSound(requireContext(), R.raw.tone_send_message)
         }
     }
 
@@ -1796,6 +1795,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun onMicCancel() {
+        setupVoiceNoteSound(requireContext(), R.raw.tone_cancel_audio)
         isRecordingAudio = false
         resetAudioRecording()
     }
