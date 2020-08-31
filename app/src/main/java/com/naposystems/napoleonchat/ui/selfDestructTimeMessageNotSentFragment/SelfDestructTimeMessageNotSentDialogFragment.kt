@@ -51,8 +51,8 @@ class SelfDestructTimeMessageNotSentDialogFragment : DialogFragment() {
         binding.radioGroupOptions.setOnCheckedChangeListener { _, checkedId ->
             messageTimeNotSent = when(checkedId) {
                 R.id.radioButton_seven_days_destruct_message ->
-                    Constants.MessageSelfDestructTimeNotSent.SEVEN_DAYS.time
-                else -> Constants.MessageSelfDestructTimeNotSent.TWENTY_FOUR.time
+                    Constants.SelfDestructTime.EVERY_SEVEN_DAYS_ERROR.time
+                else -> Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time
             }
         }
 
@@ -85,9 +85,9 @@ class SelfDestructTimeMessageNotSentDialogFragment : DialogFragment() {
             this.messageTimeNotSent = it
 
             when(it) {
-                Constants.MessageSelfDestructTimeNotSent.TWENTY_FOUR.time ->
+                Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time ->
                     binding.radioButtonTwentyFourHoursDestructMessage.isChecked = true
-                Constants.MessageSelfDestructTimeNotSent.SEVEN_DAYS.time ->
+                Constants.SelfDestructTime.EVERY_SEVEN_DAYS_ERROR.time ->
                     binding.radioButtonSevenDaysDestructMessage.isChecked = true
             }
         })

@@ -27,6 +27,8 @@ import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -149,9 +151,11 @@ class ConversationRepository @Inject constructor(
 
                             val requestBodyFilePart =
                                 createPartFromFile(
-                                    this@channelFlow,
                                     attachment,
-                                    this as Job
+                                    this as Job,
+                                    progress = { progress ->
+                                        offer(UploadResult.Progress(attachment, progress,this))
+                                    }
                                 )
 
                             val response = napoleonApi.sendMessageAttachment(
@@ -232,11 +236,10 @@ class ConversationRepository @Inject constructor(
     }
 
     private fun createPartFromFile(
-        channel: ProducerScope<UploadResult>,
         attachment: Attachment,
-        job: Job
+        job: Job,
+        progress : (Long) -> Unit
     ): MultipartBody.Part {
-
         val subfolder =
             FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
 
@@ -266,10 +269,11 @@ class ConversationRepository @Inject constructor(
 
         val progressRequestBody =
             ProgressRequestBody(
-                attachment,
-                channel,
                 byteArray,
-                mediaType!!
+                mediaType!!,
+                progress = { progress ->
+                    progress(progress)
+                }
             )
 
         Timber.d("before return MultiparBody, $job")
@@ -440,6 +444,14 @@ class ConversationRepository @Inject constructor(
         contactId: Int,
         listMessages: List<MessageAndAttachment>
     ) {
+        listMessages.filter { messageAndAttachment ->
+            messageAndAttachment.attachmentList.count() > 0 &&
+            messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
+        }.let { listMessagesFiltered ->
+            if (listMessagesFiltered.count() > 0) {
+                RxBus.publish(RxEvent.MessagesToEliminate(listMessagesFiltered))
+            }
+        }
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
     }
 
@@ -777,6 +789,16 @@ class ConversationRepository @Inject constructor(
                         response.body()!!,
                         Constants.MessageStatus.READED.status
                     )
+                }
+            } else if(messageAndAttachment == null) {
+                val response = napoleonApi.sendMessagesRead(
+                    MessagesReadReqDTO(
+                        arrayListOf(messageWebId)
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    Timber.d("Success: ${response.body()}")
                 }
             }
         } catch (ex: Exception) {

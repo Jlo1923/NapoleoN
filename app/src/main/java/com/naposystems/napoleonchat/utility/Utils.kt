@@ -398,15 +398,42 @@ class Utils {
                 EVERY_TEN_MINUTES.time -> TimeUnit.MINUTES.toSeconds(10).toInt()
                 EVERY_THIRTY_MINUTES.time -> TimeUnit.MINUTES.toSeconds(30).toInt()
                 EVERY_ONE_HOUR.time -> TimeUnit.HOURS.toSeconds(1).toInt()
-                EVERY_TWELVE_HOURS.time -> TimeUnit.HOURS.toSeconds(12).toInt()
+                EVERY_TWELVE_HOURS.time, EVERY_TWENTY_FOUR_HOURS_ERROR.time ->
+                    TimeUnit.HOURS.toSeconds(12).toInt()
                 EVERY_ONE_DAY.time -> TimeUnit.DAYS.toSeconds(1).toInt()
+                EVERY_TWENTY_FOUR_HOURS_ERROR.time -> TimeUnit.DAYS.toSeconds(1).toInt()
                 else -> TimeUnit.DAYS.toSeconds(7).toInt()
+            }
+        }
+
+        fun compareDurationAttachmentWithSelfAutoDestructionInSeconds(duration: Int, timeActual : Int): Int {
+            val timeSelfAutoDestruction = convertItemOfTimeInSeconds(timeActual)
+            return when {
+                timeSelfAutoDestruction == TimeUnit.DAYS.toSeconds(1).toInt() &&
+                        duration > TimeUnit.DAYS.toSeconds(1).toInt() -> EVERY_SEVEN_DAY.time
+                timeSelfAutoDestruction == TimeUnit.HOURS.toSeconds(12).toInt() &&
+                        duration > TimeUnit.HOURS.toSeconds(12).toInt() -> EVERY_ONE_DAY.time
+                timeSelfAutoDestruction == TimeUnit.HOURS.toSeconds(1).toInt() &&
+                        duration > TimeUnit.HOURS.toSeconds(1).toInt() ->  EVERY_TWELVE_HOURS.time
+                timeSelfAutoDestruction == TimeUnit.MINUTES.toSeconds(30).toInt() &&
+                        duration > TimeUnit.MINUTES.toSeconds(30).toInt()-> EVERY_ONE_HOUR.time
+                timeSelfAutoDestruction == TimeUnit.MINUTES.toSeconds(10).toInt() &&
+                        duration > TimeUnit.MINUTES.toSeconds(10).toInt()-> EVERY_THIRTY_MINUTES.time
+                timeSelfAutoDestruction == TimeUnit.MINUTES.toSeconds(1).toInt() &&
+                        duration > TimeUnit.MINUTES.toSeconds(1).toInt()->  EVERY_TEN_MINUTES.time
+                timeSelfAutoDestruction == TimeUnit.SECONDS.toSeconds(30).toInt() &&
+                        duration > TimeUnit.SECONDS.toSeconds(30).toInt() -> EVERY_ONE_MINUTE.time
+                timeSelfAutoDestruction == TimeUnit.SECONDS.toSeconds(15).toInt() &&
+                        duration > TimeUnit.SECONDS.toSeconds(15).toInt()-> EVERY_THIRTY_SECONDS.time
+                timeSelfAutoDestruction == TimeUnit.SECONDS.toSeconds(5).toInt() &&
+                        duration > TimeUnit.SECONDS.toSeconds(5).toInt()-> EVERY_FIFTEEN_SECONDS.time
+                else -> timeActual
             }
         }
 
         fun convertItemOfTimeInSecondsByError(item: Int): Int {
             return when (item) {
-                Constants.SelfDestructTimeByError.EVERY_TWENTY_FOUR_HOURS.time -> TimeUnit.HOURS.toSeconds(
+                EVERY_TWENTY_FOUR_HOURS_ERROR.time -> TimeUnit.HOURS.toSeconds(
                     24
                 ).toInt()
                 else -> TimeUnit.DAYS.toSeconds(7).toInt()
