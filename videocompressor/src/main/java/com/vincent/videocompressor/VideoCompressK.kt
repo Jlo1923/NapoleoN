@@ -44,4 +44,17 @@ object VideoCompressK {
             job
         )
     }
+
+    fun compressVideoCustom(
+        srcFile: File,
+        destFile: File,
+        job: ProducerScope<*>
+    ): Flow<VideoCompressResult> {
+        return VideoControllerK.instance!!.convertVideo(
+            srcFile,
+            destFile,
+            VideoController.COMPRESS_QUALITY_CUSTOM,
+            job
+        )
+    }
 }

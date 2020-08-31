@@ -18,18 +18,26 @@
             android:layout_height="match_parent"
             android:background="?attr/attrBackgroundColorBackground">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_audios"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:clipToPadding="false"
-                tools:listitem="@layout/attachment_audio_item"
-                android:paddingBottom="56dp" />
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:layout_gravity="center"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_audios"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="56dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/attachment_audio_item"/>
+
+            </ViewSwitcher>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -38,10 +46,10 @@
             style="@style/FabPrimary"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
+            android:visibility="invisible"
             app:borderWidth="0dp"
             app:srcCompat="@drawable/ic_send_black"
-            app:tint="?attr/attrFabIconColor"
-            android:visibility="invisible"/>
+            app:tint="?attr/attrFabIconColor" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

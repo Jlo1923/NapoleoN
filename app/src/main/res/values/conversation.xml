@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Secure incoming video call</string>
     <string name="text_encrypted_video_call">Encrypted video call</string>
     <string name="text_incoming_video_call_title">Incoming video call</string>
-    <string name="text_new_contact">You have a new CONTACT. Say hello!</string>
+    <string name="text_new_contact">You have a new CONTACT. Say hello!\ </string>
     <string name="text_video_call_not_internet_connection">Was achieved not make the video call. Check your internet connection and try again</string>
     <string name="text_call_not_internet_connection">Was achieved not make the call. Check your internet connection and try again.</string>
     <plurals name="text_self_destruct_time_days">

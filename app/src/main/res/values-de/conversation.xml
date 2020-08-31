@@ -44,7 +44,7 @@
     <string name="text_incoming_secure_video_call">Sichere eingehender Videoanruf</string>
     <string name="text_encrypted_video_call">Verschlüsselter Videoanruf</string>
     <string name="text_incoming_video_call_title">Eingehender Videoanruf</string>
-    <string name="text_new_contact">Sie haben einen neuen KONTAKT. Sag hallo!</string>
+    <string name="text_new_contact">Sie haben einen neuen KONTAKT. Sag hallo!\'</string>
     <string name="text_video_call_not_internet_connection">Nicht den Videoanruf tätigen erreicht. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut</string>
     <string name="text_call_not_internet_connection">Den Anruf nicht erreicht wurde machen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
     <plurals name="text_self_destruct_time_days">

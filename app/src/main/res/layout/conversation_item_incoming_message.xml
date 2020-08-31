@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -31,10 +30,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_incoming_message"
+        style="@style/ContainerMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(conversation)}"
-        android:paddingStart="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,16 +41,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_message"
+            style="@style/ContainerIncomingMessageBubble"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
-            android:background="@drawable/bg_incoming_message"
-            android:minWidth="110dp"
-            android:paddingStart="20dp"
-            android:paddingTop="@dimen/x_small_padding"
-            android:paddingEnd="@dimen/small_padding"
-            android:paddingBottom="@dimen/x_small_padding"
-            app:isFirstIncomingMessage="@{isFirst}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
@@ -62,6 +54,7 @@
                 style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation, itemPosition)}"
                 app:isGoTo="true"
+                app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -73,41 +66,34 @@
                 style="@style/IncomingMessageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x_small_margin"
                 android:text="@{conversation.message.body}"
                 android:visibility="@{conversation.message.body.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toTopOf="@id/textView_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/quote"
-                app:layout_goneMarginTop="@dimen/x_small_margin"
                 tools:text="@tools:sample/lorem[2]" />
 
             <TextView
+                android:id="@+id/textView_date"
                 style="@style/IncomingMessageDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:formatTime="@{timeFormat}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
                 app:messageDateIncoming="@{conversation.message.createdAt}"
-                tools:text="10:34"
+                tools:text="10:34 "
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/textView_count_down"
-            android:layout_width="@dimen/width_self_destruct_time"
-            android:layout_height="@dimen/height_self_destruct_time"
-            android:layout_marginStart="@dimen/normal_margin"
-            android:background="@drawable/bg_self_destruct_time_incoming_message"
-            android:elevation="1dp"
-            android:gravity="center"
-            android:textColor="?attr/attrTextColorTimeMyMessage"
-            android:textSize="@dimen/text_size_self_destruct_time"
-            android:visibility="visible"
+            style="@style/TextCountDownSelfDestruct"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"

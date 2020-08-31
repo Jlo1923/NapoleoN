@@ -887,13 +887,29 @@
     </style>
 
     <style name="MyMessageTextView">
+        <item name="android:layout_marginBottom">@dimen/x_small_margin</item>
         <item name="android:textSize">@dimen/text_size_message</item>
         <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
         <item name="android:autoLink">web</item>
         <item name="android:textColorLink">?attr/attrTextColorColorTextMyMessage</item>
     </style>
 
+    <style name="TextCountDownSelfDestruct">
+        <item name="android:layout_width">@dimen/width_self_destruct_time</item>
+        <item name="android:layout_height">@dimen/height_self_destruct_time</item>
+        <item name="android:layout_marginStart">@dimen/small_padding</item>
+        <item name="android:layout_marginEnd">@dimen/small_padding</item>
+        <item name="android:background">@drawable/bg_self_destruct_time_my_message</item>
+        <item name="android:elevation">1dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">?attr/attrTextColorTimeMyMessage</item>
+        <item name="android:textSize">@dimen/text_size_self_destruct_time</item>
+    </style>
+
     <style name="IncomingMessageTextView">
+        <item name="android:layout_marginBottom">@dimen/x_small_margin</item>
         <item name="android:textSize">@dimen/text_size_message</item>
         <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
         <item name="android:autoLink">web</item>
@@ -924,15 +940,23 @@
     </style>
 
     <style name="MyMessageDateTextView">
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_marginEnd">@dimen/x_x_small_margin</item>
+        <item name="android:paddingStart">@dimen/x_x_small_margin</item>
+        <item name="android:paddingEnd">@dimen/x_x_small_margin</item>
         <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
         <item name="android:textSize">@dimen/text_size_message_date</item>
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="IncomingMessageDateTextView">
+    <style name="IncomingMessageDateTextView" parent="MyMessageDateTextView">
         <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
-        <item name="android:textSize">@dimen/text_size_message_date</item>
-        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="MyMessageStatus">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">1dp</item>
     </style>
 
     <style name="SmallBodyTextView.WhiteBold" parent="SmallBodyTextView">
@@ -1186,10 +1210,29 @@
         <item name="android:paddingBottom">@dimen/x_small_padding</item>
     </style>
 
+    <style name="ContainerMessage">
+        <item name="android:paddingStart">@dimen/normal_padding</item>
+        <item name="android:paddingEnd">@dimen/normal_padding</item>
+        <item name="android:paddingBottom">@dimen/small_padding</item>
+    </style>
+
+    <style name="ContainerMyMessageBubble">
+        <item name="android:layout_marginTop">@dimen/normal_margin</item>
+        <item name="android:background">@drawable/bg_my_message</item>
+        <item name="android:minWidth">110dp</item>
+        <item name="android:paddingStart">@dimen/small_padding</item>
+        <item name="android:paddingEnd">@dimen/small_padding</item>
+        <item name="android:paddingTop">@dimen/small_padding</item>
+        <item name="android:paddingBottom">@dimen/x_small_padding</item>
+    </style>
+
+    <style name="ContainerIncomingMessageBubble" parent="ContainerMyMessageBubble">
+        <item name="android:background">@drawable/bg_incoming_message</item>
+    </style>
+
     <style name="QuoteConversation">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">@dimen/small_margin</item>
         <item name="android:layout_marginBottom">4dp</item>
         <item name="android:minWidth">250dp</item>
         <item name="android:visibility">gone</item>
