@@ -129,7 +129,7 @@ class SplashRepository @Inject constructor(
     override suspend fun setDefaultSelfDestructTimeMessageNotSent() {
         defaultPreferencesPutInt(
             Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT,
-            Constants.MessageSelfDestructTimeNotSent.SEVEN_DAYS.time
+            Constants.SelfDestructTime.EVERY_SEVEN_DAYS_ERROR.time
         )
     }
 

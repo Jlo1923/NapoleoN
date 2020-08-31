@@ -94,7 +94,7 @@ fun bindMessageSelfDestructTimeNotSent(textView: TextView, selfDestructTimeMessa
     val context = textView.context
 
     val selfDestructTimeMessageNotSent = when (selfDestructTimeMessageNotSent) {
-        Constants.MessageSelfDestructTimeNotSent.TWENTY_FOUR.time ->
+        Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time ->
             context.getString(R.string.text_every_twenty_four_hours)
         else ->
             context.getString(R.string.text_every_seven_days)

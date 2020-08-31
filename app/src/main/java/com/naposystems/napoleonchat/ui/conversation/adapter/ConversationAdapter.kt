@@ -402,7 +402,6 @@ class ConversationAdapter constructor(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        super.onBindViewHolder(holder, position, payloads)
         if (payloads.firstOrNull() != null) {
             val item = getItem(position)
 
@@ -430,6 +429,7 @@ class ConversationAdapter constructor(
                 }
             }
         }
+        super.onBindViewHolder(holder, position, payloads)
     }
 
     private fun handleProducerScopePayload(
