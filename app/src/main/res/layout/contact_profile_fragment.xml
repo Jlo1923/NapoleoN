@@ -140,7 +140,7 @@
                         app:layout_constraintEnd_toEndOf="@+id/textView_name"
                         app:layout_constraintStart_toStartOf="@+id/textView_name"
                         app:nameContact="@{viewModel.contact}"
-                        tools:text="Cecilia Maidana" />
+                        tools:text="@tools:sample/full_names" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -196,7 +196,7 @@
                         app:layout_constraintEnd_toEndOf="@+id/textView_nickname"
                         app:layout_constraintStart_toStartOf="@+id/textView_nickname"
                         app:nicknameContact="@{viewModel.contact}"
-                        tools:text="Ceci Maidana" />
+                        tools:text="@tools:sample/first_names" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

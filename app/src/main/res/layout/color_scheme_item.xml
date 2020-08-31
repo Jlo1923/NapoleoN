@@ -38,7 +38,7 @@
             app:layout_constraintEnd_toStartOf="@id/imageView_selected"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Hola mundo" />
+            tools:text="@tools:sample/full_names" />
 
         <ImageView
             android:id="@+id/imageView_selected"

@@ -1896,7 +1896,7 @@ class ConversationFragment : BaseFragment(),
         viewModel.sendMessageRead(messageWebId)
 
         if (isComplete) {
-            conversationAdapter.checkIfNextIsAudio(messageId)
+          conversationAdapter.checkIfNextIsAudio(messageId)
         }
     }
 
