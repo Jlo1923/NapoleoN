@@ -151,9 +151,11 @@ class ConversationRepository @Inject constructor(
 
                             val requestBodyFilePart =
                                 createPartFromFile(
-                                    this@channelFlow,
                                     attachment,
-                                    this as Job
+                                    this as Job,
+                                    progress = { progress ->
+                                        offer(UploadResult.Progress(attachment, progress,this))
+                                    }
                                 )
 
                             val response = napoleonApi.sendMessageAttachment(
@@ -234,11 +236,10 @@ class ConversationRepository @Inject constructor(
     }
 
     private fun createPartFromFile(
-        channel: ProducerScope<UploadResult>,
         attachment: Attachment,
-        job: Job
+        job: Job,
+        progress : (Long) -> Unit
     ): MultipartBody.Part {
-
         val subfolder =
             FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
 
@@ -268,10 +269,11 @@ class ConversationRepository @Inject constructor(
 
         val progressRequestBody =
             ProgressRequestBody(
-                attachment,
-                channel,
                 byteArray,
-                mediaType!!
+                mediaType!!,
+                progress = { progress ->
+                    progress(progress)
+                }
             )
 
         Timber.d("before return MultiparBody, $job")

@@ -69,4 +69,7 @@ interface ContactDao {
 
     @Query("SELECT self_destruct_time FROM contact WHERE id=:contactId ")
     fun getSelfDestructTimeByContact(contactId: Int): LiveData<Int>
+
+    @Query("SELECT self_destruct_time FROM contact WHERE id=:contactId ")
+    fun getSelfDestructTimeByContactWithOutLiveData(contactId: Int): Int
 }

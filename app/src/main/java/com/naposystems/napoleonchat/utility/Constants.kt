@@ -154,22 +154,14 @@ object Constants {
         EVERY_ONE_HOUR(6),
         EVERY_TWELVE_HOURS(7),
         EVERY_ONE_DAY(8),
-        EVERY_SEVEN_DAY(9)
+        EVERY_SEVEN_DAY(9),
+        EVERY_TWENTY_FOUR_HOURS_ERROR(10),
+        EVERY_SEVEN_DAYS_ERROR(11)
     }
 
     enum class TimeFormat constructor(val time: Int) {
         EVERY_TWENTY_FOUR_HOURS(1),
         EVERY_TWELVE_HOURS(2)
-    }
-
-    enum class SelfDestructTimeByError constructor(val time: Int) {
-        EVERY_TWENTY_FOUR_HOURS(1),
-        EVERY_SEVEN_DAYS(2)
-    }
-
-    enum class MessageSelfDestructTimeNotSent constructor(val time: Int) {
-        TWENTY_FOUR(1),
-        SEVEN_DAYS(2)
     }
 
     enum class TimeRequestAccessPin constructor(val time: Int) {

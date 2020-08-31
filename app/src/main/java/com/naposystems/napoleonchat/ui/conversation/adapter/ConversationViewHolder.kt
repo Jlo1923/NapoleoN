@@ -22,6 +22,7 @@ import com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBa
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
@@ -125,13 +126,23 @@ open class ConversationViewHolder constructor(
         progressBar?.visibility = View.VISIBLE
         progressBar?.setProgress(progress.toFloat())
 
-        if (progress > 0) {
-            progressBarIndeterminate?.visibility = View.GONE
-        }
-
-        if (progress == 100L) {
-            progressBar?.visibility = View.GONE
-//            imageButtonState?.visibility = View.GONE
+        when {
+            progress < 10L -> {
+                progressBarIndeterminate?.visibility = View.GONE
+                imageButtonState?.visibility = View.VISIBLE
+                imageButtonState?.isEnabled = false
+            }
+            progress in 11..89 -> {
+                progressBarIndeterminate?.visibility = View.GONE
+                imageButtonState?.visibility = View.VISIBLE
+                imageButtonState?.isEnabled = true
+            }
+            progress >= 90  -> {
+                progressBarIndeterminate?.visibility = View.GONE
+                imageButtonState?.isEnabled = false
+                imageButtonState?.visibility = View.GONE
+                progressBar?.visibility = View.GONE
+            }
         }
         this.uploadJob = job
 
@@ -393,13 +404,13 @@ open class ConversationViewHolder constructor(
                 }
             }
 
-            imageButtonState?.setOnClickListener(
+            imageButtonState?.setSafeOnClickListener{
                 imageButtonStateClickListener(
                     attachment,
                     clickListener,
                     item
                 )
-            )
+            }
 
             imageViewAttachment?.setOnClickListener {
                 if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
@@ -465,7 +476,6 @@ open class ConversationViewHolder constructor(
 
             if (item.message.isMine == Constants.IsMine.YES.value) {
                 if (attachment.status == Constants.AttachmentStatus.SENT.status) {
-                    Timber.d("---OLA ${item.message.id} enviado")
                     isEncryptedFile(BuildConfig.ENCRYPT_API)
                     if (BuildConfig.ENCRYPT_API) {
                         setEncryptedFileName("${attachment.webId}.${attachment.extension}")
@@ -479,7 +489,6 @@ open class ConversationViewHolder constructor(
                         )
                     }
                 } else {
-                    Timber.d("---OLA ${item.message.id} no enviado")
                     isEncryptedFile(false)
                     setAudioFileUri(
                         Utils.getFileUri(
@@ -529,7 +538,7 @@ open class ConversationViewHolder constructor(
         attachment: Attachment,
         clickListener: ConversationAdapter.ClickListener,
         item: MessageAndAttachment
-    ) = View.OnClickListener {
+    ) {
         when (attachment.status) {
             Constants.AttachmentStatus.SENDING.status -> {
                 Timber.d("this.uploadJob: ${this.uploadJob}")

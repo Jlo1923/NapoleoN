@@ -112,8 +112,8 @@ class RoomModule {
 
     @Provides
     @Singleton
-    fun provideMessageLocalDataSource(context: Context, messageDao: MessageDao): MessageDataSource {
-        return MessageLocalDataSource(context, messageDao)
+    fun provideMessageLocalDataSource(context: Context, contactDao: ContactDao, messageDao: MessageDao): MessageDataSource {
+        return MessageLocalDataSource(context, contactDao, messageDao)
     }
 
     @Provides
