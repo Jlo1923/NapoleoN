@@ -13,9 +13,7 @@ apply plugin: 'io.fabric'
 android {
     signingConfigs {
         config {
-//            storeFile file('C:\\Users\\android 2\\Documents\\pepito.jks')
-//            storeFile file('C:\\Users\\android 2\\Documents\\pepito.jks')
-            storeFile file('D:\\Proyectos_NN\\Desarrollo\\Llaves JKS Android\\pepito.jks')
+            storeFile file('C:\\Users\\Android1\\Documents\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'

@@ -126,18 +126,20 @@ open class ConversationViewHolder constructor(
         progress: Float,
         job: ProducerScope<*>
     ) {
+        Timber.d("*Test: Upload Progress: $progress, job: $job")
         progressBar?.let { circleProgressBar ->
             when {
                 progress < 10f -> {
+                    circleProgressBar.visibility = View.VISIBLE
+                    circleProgressBar.setProgress(progress)
+                    progressVisibility = true
                     progressBarIndeterminate?.visibility = View.GONE
+
                     imageButtonState?.visibility = View.VISIBLE
                     imageButtonState?.isEnabled = false
                 }
                 progress in 10f..80f -> {
-                    progressBar?.visibility = View.VISIBLE
-                    Timber.d("*Test: Upload Progress: $progress, job: $job")
-                    progressBar?.setProgress(progress)
-                    progressVisibility = true
+                    circleProgressBar.setProgress(progress)
                     progressBarIndeterminate?.visibility = View.GONE
 
                     imageButtonState?.visibility = View.VISIBLE

@@ -161,20 +161,11 @@
 
         <TextView
             android:id="@+id/textView_count_down"
-            android:layout_width="@dimen/width_self_destruct_time"
-            android:layout_height="@dimen/height_self_destruct_time"
-            android:layout_marginEnd="@dimen/normal_margin"
-            android:background="@drawable/bg_self_destruct_time_incoming_message"
-            android:elevation="1dp"
-            android:gravity="center"
-            android:textColor="?attr/attrTextColorTimeMyMessage"
-            android:textSize="@dimen/text_size_self_destruct_time"
-            android:visibility="visible"
+            style="@style/TextCountDownSelfDestruct"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"
-            tools:text="10:34:20" />
-
+            tools:text="30 segundos" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
