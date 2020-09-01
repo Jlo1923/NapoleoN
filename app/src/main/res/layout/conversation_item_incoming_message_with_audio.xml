@@ -71,7 +71,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:layout_constraintBottom_toTopOf="@id/textView_date"
-                custom:audioId="@{conversation.message.webId}"
                 custom:controlColors="?attr/attrTintColorControlIncomingMessage"
                 custom:isEncryptedFile="@{BuildConfig.ENCRYPT_API ? true : false}"
                 custom:seekbarProgressBackgroundTint="@color/color_C0C0C0"

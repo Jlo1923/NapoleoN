@@ -74,7 +74,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:layout_constraintBottom_toTopOf="@id/textView_date"
-                custom:audioId="@{conversation.message.webId}"
                 custom:controlColors="?attr/attrTintColorControlMyMessage"
                 custom:seekbarProgressBackgroundTint="@color/color_C0C0C0"
                 custom:seekbarProgressTint="?attr/attrTintColorControlMyMessage"
