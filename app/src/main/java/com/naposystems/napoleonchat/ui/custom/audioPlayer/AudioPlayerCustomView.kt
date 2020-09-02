@@ -11,8 +11,12 @@ import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomViewAudioPlayerBinding
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -25,6 +29,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     private var mEncryptedFileName: String = ""
     private var mAudioId: String = ""
     private var mWebId: String? = null
+    private var mEnable : Boolean = true
     private var mSeekbarProgressBackgroundTint: Int = 0
     private var mSeekbarProgressTint: Int = 0
     private var mSeekbarThumbTint: Int = 0
@@ -33,6 +38,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     private var mediaPlayerManager: MediaPlayerManager? = null
     private var mListener: Listener? = null
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     interface Listener {
         fun onErrorPlayingAudio()
@@ -91,6 +100,18 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                 recycle()
             }
         }
+
+        subscribeToRXEvents()
+    }
+
+    private fun subscribeToRXEvents() {
+        val disposableEnableButtonPlayAudio = RxBus.listen(RxEvent.EnableButtonPlayAudio::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { event ->
+                binding.imageButtonPlay.isEnabled = event.state
+                mEnable = event.state
+            }
+        disposable.add(disposableEnableButtonPlayAudio)
     }
 
     private fun setTintColor() {
@@ -114,25 +135,26 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         mediaPlayerManager?.setListener(this)
 
         binding.imageButtonPlay.setOnClickListener {
+            if (mEnable) {
+                mediaPlayerManager?.apply {
+                    Timber.d("-- OLA $mAudioId")
+                    setAudioId(mAudioId)
+                    setWebId(mWebId)
+                    setImageButtonPlay(binding.imageButtonPlay)
+                    setSeekbar(binding.seekbar)
+                    setImageButtonSpeed(binding.imageButtonSpeed)
+                    setTextViewDuration(binding.textViewDuration)
 
-            mediaPlayerManager?.apply {
-                Timber.d("-- OLA $mAudioId")
-                setAudioId(mAudioId)
-                setWebId(mWebId)
-                setImageButtonPlay(binding.imageButtonPlay)
-                setSeekbar(binding.seekbar)
-                setImageButtonSpeed(binding.imageButtonSpeed)
-                setTextViewDuration(binding.textViewDuration)
+                    if (mIsEncryptedFile) {
+                        isEncryptedFile(BuildConfig.ENCRYPT_API)
+                        setAudioFileName(mEncryptedFileName)
+                    } else {
+                        isEncryptedFile(false)
+                        setAudioUri(mAudioFileUri)
+                    }
 
-                if (mIsEncryptedFile) {
-                    isEncryptedFile(BuildConfig.ENCRYPT_API)
-                    setAudioFileName(mEncryptedFileName)
-                } else {
-                    isEncryptedFile(false)
-                    setAudioUri(mAudioFileUri)
+                    playAudio()
                 }
-
-                playAudio()
             }
         }
 
@@ -206,6 +228,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     it.setSeekbar(binding.seekbar)
                     it.setTextViewDuration(binding.textViewDuration)
                     it.setImageButtonPlay(binding.imageButtonPlay)
+                    it.setStateImageButtonSpeed(binding.imageButtonSpeed, mWebId ?: "")
                     binding.imageButtonPlay.setImageDrawable(
                         context.resources.getDrawable(
                             R.drawable.ic_baseline_pause_circle, context.theme
@@ -219,8 +242,9 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             } else {
                 binding.textViewDuration.text = Utils.getDuration(duration, false)
                 binding.textViewDuration.visibility =
-                    if (duration == 0L) View.GONE else View.VISIBLE
+                if (duration == 0L) View.GONE else View.VISIBLE
                 binding.seekbar.progress = 0
+                binding.imageButtonSpeed.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
                 binding.imageButtonPlay.setImageDrawable(
                     context.resources.getDrawable(
                         R.drawable.ic_baseline_play_circle, context.theme

@@ -491,7 +491,7 @@ class ConversationViewModel @Inject constructor(
         selfDestructTime: Int
     ) {
         viewModelScope.launch {
-            val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(attachment?.duration ?: 0).toInt()
+            val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(attachment.duration).toInt()
             val selfAutoDestruction = compareDurationAttachmentWithSelfAutoDestructionInSeconds(
                 durationAttachment, selfDestructTime
             )
@@ -503,7 +503,7 @@ class ConversationViewModel @Inject constructor(
                         quoted = message.quoted,
                         body = message.getBody(cryptoMessage),
                         numberAttachments = 1,
-                        destroy = message.selfDestructionAt,
+                        destroy = selfAutoDestruction,
                         messageType = Constants.MessageType.MESSAGE.type
                     )
 
