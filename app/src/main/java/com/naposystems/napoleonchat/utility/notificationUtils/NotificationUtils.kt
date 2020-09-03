@@ -248,6 +248,7 @@ class NotificationUtils @Inject constructor(
 
                     if (data.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
                         isVideoCall = data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
+                        Timber.d("Call: ${data[Constants.CallKeys.IS_VIDEO_CALL] == "true"}")
                     }
 
                     if (data.containsKey(Constants.CallKeys.CONTACT_ID)) {
@@ -310,6 +311,8 @@ class NotificationUtils @Inject constructor(
         context: Context
     ): Notification {
 
+        Timber.d("createCallNotification: $isVideoCall")
+
         val fullScreenIntent =
             Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
@@ -326,7 +329,7 @@ class NotificationUtils @Inject constructor(
             fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val notificationTitle = if (isVideoCall) {
+        val notificationTitle = if (!isVideoCall) {
             context.getString(R.string.text_incoming_secure_call)
         } else {
             context.getString(R.string.text_incoming_secure_video_call)

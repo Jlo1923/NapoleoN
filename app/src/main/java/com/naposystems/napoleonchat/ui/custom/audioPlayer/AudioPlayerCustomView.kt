@@ -69,7 +69,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     false
                 )
 
-                mAudioId = getString(R.styleable.AudioPlayerCustomView_audioId) ?: ""
                 mSeekbarProgressBackgroundTint = getResourceId(
                     R.styleable.AudioPlayerCustomView_seekbarProgressBackgroundTint,
                     R.color.white

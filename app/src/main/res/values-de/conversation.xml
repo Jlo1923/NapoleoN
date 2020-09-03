@@ -47,6 +47,8 @@
     <string name="text_new_contact">Sie haben einen neuen Kontakt. Ich sage Hallo!\u00A0</string>
     <string name="text_video_call_not_internet_connection">Nicht den Videoanruf tätigen erreicht. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut</string>
     <string name="text_call_not_internet_connection">Den Anruf nicht erreicht wurde machen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
+    <string name="text_encrypting_videocall">Verschlüsseln von Videoanruf</string>
+    <string name="text_encrypting_call">Verschlüsseln Anruf</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>

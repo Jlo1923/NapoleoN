@@ -48,7 +48,6 @@
         <attr name="controlColors" format="reference" />
         <attr name="isEncryptedFile" format="boolean" />
         <attr name="absolutePath" format="string" />
-        <attr name="audioId" format="string" />
         <attr name="seekbarProgressBackgroundTint" format="reference" />
         <attr name="seekbarProgressTint" format="reference" />
         <attr name="seekbarThumbTint" format="reference" />

@@ -2,20 +2,16 @@ package com.naposystems.napoleonchat.ui.subscription
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.*
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SubscriptionFragmentBinding
-import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.cancelSubscription.CancelSubscriptionDialogFragment
@@ -25,9 +21,6 @@ import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -63,6 +56,11 @@ class SubscriptionFragment : Fragment() {
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(billingClientLifecycle)
     }
 
     override fun onCreateView(
@@ -140,65 +138,119 @@ class SubscriptionFragment : Fragment() {
         viewModel.checkSubscription()
         viewModel.getTypeSubscription()
 
-        lifecycle.addObserver(billingClientLifecycle)
-
         billingClientLifecycle.skusWithSkuDetails.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                binding.checkBoxPaymentDescription.isChecked = false
 
-            binding.checkBoxPaymentDescription.isChecked = false
+                val skuDetailsList = it.map { map -> map.value }
 
-            val skuDetailsList = it.map { map -> map.value }
+                skuDetailsList.sortedBy { skuDetails -> skuDetails.priceAmountMicros }
 
-            skuDetailsList.sortedBy { skuDetails -> skuDetails.priceAmountMicros }
-
-            val adapter =
-                SkuDetailsAdapter(requireContext(), R.layout.subscription_item, skuDetailsList)
-            binding.spinnerPayment.adapter = adapter
-
-            viewModel.getRemoteSubscription()
+                val adapter =
+                    SkuDetailsAdapter(requireContext(), R.layout.subscription_item, skuDetailsList)
+                binding.spinnerPayment.adapter = adapter
+            }
         })
+
+        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+            purchasesList?.let {
+                if (purchasesList.isEmpty()) {
+                    billingClientLifecycle.queryPurchasesHistory()
+                } else {
+                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    val netDate: Date
+
+                    val lastPurchase = purchasesList[0]
+                    binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
+                        Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
+                        Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
+                        else -> getString(R.string.text_subscription_yearly)
+                    }
+                    netDate = Date(lastPurchase.purchaseTime)
+                    binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+                }
+            }
+        })
+
+        billingClientLifecycle.purchasesHistory.observe(
+            viewLifecycleOwner,
+            Observer { purchasesHistory ->
+                purchasesHistory?.let {
+                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    val netDate: Date
+                    val freeTrialTimeStamp = viewModel.getFreeTrial()
+                    if (purchasesHistory.isEmpty()) {
+                        if (System.currentTimeMillis() > freeTrialTimeStamp) {
+                            binding.textViewSubscriptionActual.text =
+                                getString(R.string.text_free_trial_expired)
+                            netDate = Date(freeTrialTimeStamp)
+                        } else {
+                            netDate = Date(freeTrialTimeStamp)
+                            val daysMillis = viewModel.getFreeTrial() - System.currentTimeMillis()
+
+                            binding.textViewSubscriptionActual.text =
+                                getString(
+                                    R.string.text_trial_period,
+                                    TimeUnit.MILLISECONDS.toDays(daysMillis)
+                                )
+                        }
+                    } else {
+                        // Get last purchase
+                        val lastPurchase = purchasesHistory[0]
+                        binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
+                            Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
+                            Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
+                            else -> getString(R.string.text_subscription_yearly)
+                        }
+                        netDate = Date(lastPurchase.purchaseTime)
+                        purchasesHistory.forEach {
+                            Timber.d("purchasesHistory ${it.sku}, ${it.purchaseTime}")
+                        }
+                    }
+                    binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+                }
+            })
 
         billingClientLifecycle.purchaseUpdateListener.observe(
             viewLifecycleOwner,
-            Observer { purchaseList -> registerPurchase(purchaseList) })
+            Observer { purchaseList ->
+                purchaseList?.let {
+                    registerPurchase(purchaseList)
+                }
+            })
 
         billingClientLifecycle.purchaseError.observe(viewLifecycleOwner, Observer { responseCode ->
-            when (responseCode) {
-                BillingClient.BillingResponseCode.USER_CANCELED -> {
-                    if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
-                        binding.viewSwitcher.showNext()
+            responseCode?.let {
+                when (responseCode) {
+                    BillingClient.BillingResponseCode.USER_CANCELED -> {
+                        if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                            binding.viewSwitcher.showNext()
+                        }
+                        Utils.showSimpleSnackbar(
+                            binding.coordinator,
+                            "onPurchasesUpdated: User canceled the purchase",
+                            5
+                        )
                     }
-                    Utils.showSimpleSnackbar(
-                        binding.coordinator,
-                        "onPurchasesUpdated: User canceled the purchase",
-                        5
-                    )
-                }
-                BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
-                    if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
-                        binding.viewSwitcher.showNext()
+                    BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
+                        if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                            binding.viewSwitcher.showNext()
+                        }
+                        Utils.showSimpleSnackbar(
+                            binding.coordinator,
+                            getString(R.string.text_subscription_already_owned),
+                            5
+                        )
                     }
-                    Utils.showSimpleSnackbar(
-                        binding.coordinator,
-                        "onPurchasesUpdated: The user already owns this item",
-                        5
-                    )
-                }
-                BillingClient.BillingResponseCode.DEVELOPER_ERROR -> {
-                    if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
-                        binding.viewSwitcher.showNext()
-                    }
-                    Utils.showSimpleSnackbar(
-                        binding.coordinator,
-                        "onPurchasesUpdated: Developer error means that Google Play " +
-                                "does not recognize the configuration. If you are just getting started, " +
-                                "make sure you have configured the application correctly in the " +
-                                "Google Play Console. The SKU product ID must match and the APK you " +
-                                "are using must be signed with release keys.", 10
-                    )
-                }
-                else -> {
-                    if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
-                        binding.viewSwitcher.showNext()
+                    else -> {
+                        if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                            binding.viewSwitcher.showNext()
+                        }
+                        Utils.showSimpleSnackbar(
+                            binding.coordinator,
+                            getString(R.string.text_subscription_error),
+                            3
+                        )
                     }
                 }
             }
@@ -223,12 +275,6 @@ class SubscriptionFragment : Fragment() {
                 viewModel.getRemoteSubscription()
             }
         })*/
-
-        viewModel.subscriptionUser.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                setSubscriptionUser(it)
-            }
-        })
 
         viewModel.getTypeSubscriptionError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -269,8 +315,11 @@ class SubscriptionFragment : Fragment() {
 
     private fun setPriceTextButton() {
         val skuDetailsSelected = binding.spinnerPayment.selectedItem as SkuDetails
-        binding.buttonBuySubscription.text =
-            "Comprar ${skuDetailsSelected.price} (${skuDetailsSelected.priceCurrencyCode})"
+        binding.buttonBuySubscription.text = getString(
+            R.string.text_purchase,
+            skuDetailsSelected.price,
+            skuDetailsSelected.priceCurrencyCode
+        )
     }
 
     private fun enableButtonPaypal() {
@@ -285,7 +334,8 @@ class SubscriptionFragment : Fragment() {
         }
     }
 
-    private fun setSubscriptionUser(subscriptionUser: SubscriptionUser) {
+    /*
+    private fun setSubscriptionUser(purchasesList: List<Purchase>) {
         binding.buttonBuySubscription.isEnabled = false
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val netDate: Date
@@ -320,7 +370,7 @@ class SubscriptionFragment : Fragment() {
                 getString(R.string.text_trial_period, TimeUnit.MILLISECONDS.toDays(daysMillis))
         }
         binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
-    }
+    }*/
 
     private fun sendPayment() {
         /*val selectedItem = binding.spinnerPayment.selectedItem as TypeSubscription
@@ -338,6 +388,12 @@ class SubscriptionFragment : Fragment() {
             val sku = purchase.sku
             val purchaseToken = purchase.purchaseToken
             Timber.d("Register purchase with sku: $sku, token: $purchaseToken")
+            Utils.showSimpleSnackbar(binding.coordinator, getString(R.string.text_subscription_successfully), 3)
+            if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                binding.viewSwitcher.showNext()
+            }
+            binding.checkBoxPaymentDescription.isChecked = false
+            billingClientLifecycle.queryPurchases()
             /*subscriptionViewModel.registerSubscription(
                 sku = sku,
                 purchaseToken = purchaseToken

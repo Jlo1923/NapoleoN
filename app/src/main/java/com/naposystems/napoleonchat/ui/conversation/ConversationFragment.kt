@@ -35,6 +35,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
 import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.activityViewModels
@@ -47,6 +48,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
+import com.android.billingclient.api.Purchase
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
@@ -55,6 +57,7 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
@@ -109,6 +112,9 @@ class ConversationFragment : BaseFragment(),
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
+
+    @Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -632,6 +638,8 @@ class ConversationFragment : BaseFragment(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        lifecycle.addObserver(billingClientLifecycle)
+
         binding.viewModel = viewModel
 
         contactProfileShareViewModel.getLocalContact(args.contact.id)
@@ -801,6 +809,27 @@ class ConversationFragment : BaseFragment(),
         shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 findNavController().popBackStack(R.id.homeFragment, false)
+            }
+        })
+
+        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchaseList ->
+            purchaseList?.let {
+                var allIsPurchased = false
+
+                val freeTrial = viewModel.getFreeTrial()
+
+                if (System.currentTimeMillis() > freeTrial) {
+                    purchaseList.forEach {
+                        allIsPurchased = it.purchaseState == Purchase.PurchaseState.PURCHASED
+                    }
+
+                    if (!allIsPurchased) {
+                        binding.inputPanel.isVisible = false
+                        binding.floatingActionButtonSend.isVisible = false
+                        binding.buttonCall.isVisible = false
+                        binding.buttonVideoCall.isVisible = false
+                    }
+                }
             }
         })
     }

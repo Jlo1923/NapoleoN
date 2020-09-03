@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.subscription
 
 import android.app.Activity
-import android.util.Log
 import androidx.lifecycle.*
 import com.android.billingclient.api.*
 import com.naposystems.napoleonchat.app.NapoleonApplication
@@ -19,6 +18,10 @@ class BillingClientLifecycle @Inject constructor(private val app: NapoleonApplic
     val skusWithSkuDetails: LiveData<Map<String, SkuDetails>>
         get() = _skusWithSkuDetails
 
+    private val _purchases = MutableLiveData<List<Purchase>>()
+    val purchases: LiveData<List<Purchase>>
+        get() = _purchases
+
     private val _purchaseUpdateListener = MutableLiveData<List<Purchase>>()
     val purchaseUpdateListener: LiveData<List<Purchase>>
         get() = _purchaseUpdateListener
@@ -26,6 +29,10 @@ class BillingClientLifecycle @Inject constructor(private val app: NapoleonApplic
     private val _purchaseError = MutableLiveData<Int>()
     val purchaseError: LiveData<Int>
         get() = _purchaseError
+
+    private val _purchasesHistory = MutableLiveData<List<PurchaseHistoryRecord>>()
+    val purchasesHistory: LiveData<List<PurchaseHistoryRecord>>
+        get() = _purchasesHistory
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun create() {
@@ -43,6 +50,11 @@ class BillingClientLifecycle @Inject constructor(private val app: NapoleonApplic
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun destroy() {
         Timber.d("ON_DESTROY")
+        _purchaseUpdateListener.postValue(null)
+        _purchases.postValue(null)
+        _purchaseError.postValue(null)
+        _purchasesHistory.postValue(null)
+        _skusWithSkuDetails.postValue(null)
         if (billingClient.isReady) {
             Timber.d("BillingClient can only be used once -- closing connection")
             // BillingClient can only be used once.
@@ -137,6 +149,66 @@ class BillingClientLifecycle @Inject constructor(private val app: NapoleonApplic
         }
     }
 
+    /**
+     * Query Google Play Billing for existing purchases.
+     *
+     * New purchases will be provided to the PurchasesUpdatedListener.
+     * You still need to check the Google Play Billing API to know when purchase tokens are removed.
+     */
+    fun queryPurchases() {
+        if (!billingClient.isReady) {
+            Timber.e("queryPurchases: BillingClient is not ready")
+        }
+        Timber.d("queryPurchases: SUBS")
+        val result = billingClient.queryPurchases(BillingClient.SkuType.SUBS)
+        if (result == null) {
+            Timber.i("queryPurchases: null purchase result")
+            processPurchases(null)
+        } else {
+            if (result.purchasesList == null) {
+                Timber.i("queryPurchases: null purchase list")
+                processPurchases(null)
+            } else {
+                Timber.d("queryPurchases: ${result.responseCode}, ${result.purchasesList?.size}")
+                result.purchasesList?.forEach {
+                    Timber.d("queryPurchases: ${it.sku}, ${it.purchaseTime}, ${it.purchaseState}")
+                }
+                processPurchases(result.purchasesList)
+            }
+        }
+    }
+
+    private fun processPurchases(purchasesList: List<Purchase>?) {
+        Timber.d("processPurchases: ${purchasesList?.size} purchase(s)")
+        if (isUnchangedPurchaseList(purchasesList)) {
+            Timber.d("processPurchases: Purchase list has not changed")
+            return
+        }
+        _purchases.postValue(purchasesList)
+    }
+
+    /**
+     * Check whether the purchases have changed before posting changes.
+     */
+    private fun isUnchangedPurchaseList(purchasesList: List<Purchase>?): Boolean {
+        // TODO: Optimize to avoid updates with identical data.
+        return false
+    }
+
+    fun queryPurchasesHistory() {
+        if (!billingClient.isReady) {
+            Timber.e("queryPurchases: BillingClient is not ready")
+        }
+        Timber.d("queryPurchasesHistory: SUBS")
+        billingClient.queryPurchaseHistoryAsync(
+            BillingClient.SkuType.SUBS
+        ) { _, purchasesHistoryList ->
+            _purchasesHistory.postValue(
+                purchasesHistoryList
+            )
+        }
+    }
+
     //region Implementation PurchasesUpdatedListener
     override fun onPurchasesUpdated(
         billingResult: BillingResult,
@@ -167,7 +239,7 @@ class BillingClientLifecycle @Inject constructor(private val app: NapoleonApplic
         if (responseCode == BillingClient.BillingResponseCode.OK) {
             // The billing client is ready. You can query purchases here.
             querySkuDetails()
-//            queryPurchases()
+            queryPurchases()
         }
     }
 

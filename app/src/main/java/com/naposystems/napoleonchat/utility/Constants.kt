@@ -413,6 +413,11 @@ object Constants {
         YEARLY("com.naposystems.napoleonchat.yearly")
     }
 
+    enum class HeadsetState(val state: Int) {
+        PLUGGED(1),
+        UNPLUGGED(0)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"

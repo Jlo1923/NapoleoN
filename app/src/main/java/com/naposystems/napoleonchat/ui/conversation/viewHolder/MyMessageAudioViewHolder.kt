@@ -36,7 +36,7 @@ class MyMessageAudioViewHolder constructor(
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
-        binding.audioPlayer?.enablePlayButton(true)
+        binding.audioPlayer.enablePlayButton(true)
 
         binding.executePendingBindings()
     }

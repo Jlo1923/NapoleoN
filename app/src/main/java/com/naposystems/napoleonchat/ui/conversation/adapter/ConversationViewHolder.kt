@@ -1,6 +1,9 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter
 
-import android.animation.*
+import android.animation.Animator
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer
@@ -458,7 +461,7 @@ open class ConversationViewHolder constructor(
         Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
 //        mediaPlayerManager.resetMediaPlayer()
         with(audioPlayer!!) {
-            setAudioId(item.message.webId)
+            setAudioId(item.message.id.toString())
             setMessageAndAttachment(item)
             setMediaPlayerManager(mediaPlayerManager)
             setDuration(attachment.duration)

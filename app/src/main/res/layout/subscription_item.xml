@@ -18,6 +18,5 @@
         android:orientation="vertical"
         android:paddingStart="@dimen/normal_padding"
         android:paddingEnd="@dimen/small_padding"
-        android:text="@{skuDetail.description + ` ` + skuDetail.price + `(` + skuDetail.priceCurrencyCode + `)`}"
         tools:text="@tools:sample/first_names" />
 </layout>

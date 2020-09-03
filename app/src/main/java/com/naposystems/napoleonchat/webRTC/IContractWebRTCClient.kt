@@ -6,6 +6,7 @@ import org.webrtc.SurfaceViewRenderer
 interface IContractWebRTCClient {
     fun setListener(webRTCClientListener: WebRTCClient.WebRTCClientListener)
     fun setIsVideoCall(isVideoCall: Boolean)
+    fun setIncomingCall(incomingCall: Boolean)
     fun setChannel(channel: String)
     fun subscribeToChannel()
     fun setTextViewCallDuration(textView: TextView)
