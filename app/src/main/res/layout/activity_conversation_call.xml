@@ -20,6 +20,7 @@
         <variable
             name="isVideoCall"
             type="Boolean" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -144,7 +145,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_title"
                 custom:callTitle="@{contact}"
-                tools:text="\@giussepr" />
+                tools:text="@tools:sample/first_names" />
 
             <TextView
                 android:id="@+id/textView_name"
@@ -163,7 +164,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_nickname"
-                tools:text="Giussep Ricardo" />
+                tools:text="@tools:sample/full_names" />
 
             <TextView
                 android:id="@+id/textView_call_duration"
@@ -331,4 +332,5 @@
             app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

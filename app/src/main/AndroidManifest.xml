@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.naposystems.napoleonchat">
 
-    <uses-feature
+    <!--<uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="true" />-->
+    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
 
     <uses-permission android:name="android.hardware.sensor.proximity" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />

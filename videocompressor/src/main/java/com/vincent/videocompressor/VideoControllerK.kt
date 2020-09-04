@@ -1,19 +1,20 @@
 package com.vincent.videocompressor
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.media.*
+import android.media.MediaCodec
 import android.media.MediaCodecInfo.CodecCapabilities
+import android.media.MediaExtractor
+import android.media.MediaFormat
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.Log
+import com.vincent.videocompressor.VideoController.COMPRESS_QUALITY_CUSTOM
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.isActive
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.ByteBuffer
+import java.util.*
 
 class VideoControllerK {
     var path: String? = null
@@ -126,7 +127,7 @@ class VideoControllerK {
         destinationFile: File,
         quality: Int,
         job: ProducerScope<*>
-    ) = channelFlow<VideoCompressResult> {
+    ) = channelFlow {
         offer(VideoCompressResult.Start)
         path = sourceFile.absolutePath
         val retriever = MediaMetadataRetriever()
@@ -135,6 +136,7 @@ class VideoControllerK {
             retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
         val height =
             retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+        val bitrate = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
         val rotation =
             retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         val duration =
@@ -144,31 +146,47 @@ class VideoControllerK {
         var rotationValue = Integer.valueOf(rotation)
         val originalWidth = Integer.valueOf(width)
         val originalHeight = Integer.valueOf(height)
+        val originalBitrate = Integer.valueOf(bitrate)
         var resultWidth: Int
         var resultHeight: Int
-        val bitrate: Int
+        var resultBitrate: Int = originalBitrate
         when (quality) {
             COMPRESS_QUALITY_HIGH -> {
                 resultWidth = originalWidth * 2 / 3
                 resultHeight = originalHeight * 2 / 3
-                bitrate = resultWidth * resultHeight * 30
+                resultBitrate = resultWidth * resultHeight * 30
             }
             COMPRESS_QUALITY_MEDIUM -> {
                 resultWidth = originalWidth / 2
                 resultHeight = originalHeight / 2
-                bitrate = resultWidth * resultHeight * 10
+                resultBitrate = resultWidth * resultHeight * 10
             }
             COMPRESS_QUALITY_LOW -> {
                 resultWidth = originalWidth / 2
                 resultHeight = originalHeight / 2
-                bitrate = resultWidth / 2 * (resultHeight / 2) * 10
+                resultBitrate = resultWidth / 2 * (resultHeight / 2) * 10
+            }
+            COMPRESS_QUALITY_CUSTOM -> {
+                println("*VideoController: Original(width: $originalWidth * height: $originalHeight bitrate: $originalBitrate)")
+                if (originalWidth <= 1280 && originalHeight <= 720) {
+                    resultWidth = originalWidth
+                    resultHeight = originalHeight
+                } else {
+                    resultWidth = originalWidth * 2 / 3
+                    resultHeight = originalHeight * 2 / 3
+                }
+                if (originalBitrate >= 3500) resultBitrate = resultWidth * resultHeight * 3
+
+                println("*VideoController: Result(width: $resultWidth * height: $resultHeight bitrate: $resultBitrate)")
             }
             else -> {
-                resultWidth = originalWidth * 2 / 3
-                resultHeight = originalHeight * 2 / 3
-                bitrate = resultWidth * resultHeight * 30
+                resultWidth = originalWidth / 2
+                resultHeight = originalHeight / 2
+                resultBitrate = resultWidth / 2 * (resultHeight / 2) * 7
             }
         }
+
+        //TODO: quitar esta rotación
         var rotateRender = 0
         val cacheFile = destinationFile
         if (Build.VERSION.SDK_INT < 18 && resultHeight > resultWidth && resultWidth != originalWidth && resultHeight != originalHeight) {
@@ -195,9 +213,10 @@ class VideoControllerK {
                 rotateRender = 90
             }
         }
-        val inputFile = File(path)
+
+        val inputFile = File(path ?: "default")
         if (!inputFile.canRead()) {
-            didWriteData(true, true)
+            didWriteData(true, error = true)
             offer(VideoCompressResult.Fail)
         }
         videoConvertFirstWrite = true
@@ -205,7 +224,7 @@ class VideoControllerK {
         var videoStartTime = startTime
         val time = System.currentTimeMillis()
         if (resultWidth != 0 && resultHeight != 0) {
-            var mediaMuxer: MP4Builder? = null
+            var mediaMixer: MP4Builder? = null
             var extractor: MediaExtractor? = null
             try {
                 val info = MediaCodec.BufferInfo()
@@ -213,12 +232,11 @@ class VideoControllerK {
                 movie.cacheFile = cacheFile
                 movie.setRotation(rotationValue)
                 movie.setSize(resultWidth, resultHeight)
-                mediaMuxer = MP4Builder().createMovie(movie)
+                mediaMixer = MP4Builder().createMovie(movie)
                 extractor = MediaExtractor()
                 extractor.setDataSource(inputFile.toString())
                 if (resultWidth != originalWidth || resultHeight != originalHeight) {
-                    val videoIndex: Int
-                    videoIndex = selectTrack(extractor, false)
+                    val videoIndex: Int = selectTrack(extractor, false)
                     if (videoIndex >= 0) {
                         var decoder: MediaCodec? = null
                         var encoder: MediaCodec? = null
@@ -229,12 +247,11 @@ class VideoControllerK {
                             var outputDone = false
                             var inputDone = false
                             var decoderDone = false
-                            var swapUV = 0
+//                            val swapUV = 0
                             var videoTrackIndex = -5
-                            val colorFormat: Int
-                            var processorType = PROCESSOR_TYPE_OTHER
-                            val manufacturer = Build.MANUFACTURER.toLowerCase()
-                            if (Build.VERSION.SDK_INT < 18) {
+                            val processorType = PROCESSOR_TYPE_OTHER
+                            val manufacturer = Build.MANUFACTURER.toLowerCase(Locale.ROOT)
+                            /*if (Build.VERSION.SDK_INT < 18) {
                                 val codecInfo =
                                     selectCodec(MIME_TYPE)
                                 colorFormat = selectColorFormat(
@@ -269,10 +286,13 @@ class VideoControllerK {
                             } else {
                                 colorFormat =
                                     CodecCapabilities.COLOR_FormatSurface
-                            }
+                            }*/
+
+                            val colorFormat: Int = CodecCapabilities.COLOR_FormatSurface
+
                             Log.e("tmessages", "colorFormat = $colorFormat")
                             var resultHeightAligned = resultHeight
-                            var padding = 0
+                            var padding: Int
                             var bufferSize = resultWidth * resultHeight * 3 / 2
                             if (processorType == PROCESSOR_TYPE_OTHER) {
                                 if (resultHeight % 16 != 0) {
@@ -301,14 +321,7 @@ class VideoControllerK {
                                 }
                             }
                             extractor.selectTrack(videoIndex)
-                            if (startTime > 0) {
-                                extractor.seekTo(
-                                    startTime,
-                                    MediaExtractor.SEEK_TO_PREVIOUS_SYNC
-                                )
-                            } else {
-                                extractor.seekTo(0, MediaExtractor.SEEK_TO_PREVIOUS_SYNC)
-                            }
+                            extractor.seekTo(0, MediaExtractor.SEEK_TO_PREVIOUS_SYNC)
                             val inputFormat = extractor.getTrackFormat(videoIndex)
                             val outputFormat = MediaFormat.createVideoFormat(
                                 MIME_TYPE,
@@ -316,13 +329,13 @@ class VideoControllerK {
                                 resultHeight
                             )
                             outputFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, colorFormat)
-                            outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate)
+                            outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, resultBitrate)
                             outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 25)
                             outputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10)
-                            if (Build.VERSION.SDK_INT < 18) {
+                            /*if (Build.VERSION.SDK_INT < 18) {
                                 outputFormat.setInteger("stride", resultWidth + 32)
                                 outputFormat.setInteger("slice-height", resultHeight)
-                            }
+                            }*/
                             encoder =
                                 MediaCodec.createEncoderByType(MIME_TYPE)
                             encoder.configure(
@@ -331,31 +344,27 @@ class VideoControllerK {
                                 null,
                                 MediaCodec.CONFIGURE_FLAG_ENCODE
                             )
-                            if (Build.VERSION.SDK_INT >= 18) {
-                                inputSurface = InputSurface(encoder.createInputSurface())
-                                inputSurface.makeCurrent()
-                            }
+                            inputSurface = InputSurface(encoder.createInputSurface())
+                            inputSurface.makeCurrent()
                             encoder.start()
                             decoder =
                                 MediaCodec.createDecoderByType(inputFormat.getString(MediaFormat.KEY_MIME))
-                            outputSurface = if (Build.VERSION.SDK_INT >= 18) {
-                                OutputSurface()
-                            } else {
-                                OutputSurface(resultWidth, resultHeight, rotateRender)
-                            }
+                            outputSurface = OutputSurface()
                             decoder.configure(inputFormat, outputSurface.surface, null, 0)
                             decoder.start()
-                            val TIMEOUT_USEC = 2500
-                            var decoderInputBuffers: Array<ByteBuffer?>? = null
+                            val TIME_OUT_USEC = 2500
+
+                            /*val decoderInputBuffers: Array<ByteBuffer?>? = null
                             var encoderOutputBuffers: Array<ByteBuffer?>? = null
-                            var encoderInputBuffers: Array<ByteBuffer>? = null
+                            val encoderInputBuffers: Array<ByteBuffer>? = null
                             if (Build.VERSION.SDK_INT < 21) {
                                 decoderInputBuffers = decoder.inputBuffers
                                 encoderOutputBuffers = encoder.outputBuffers
                                 if (Build.VERSION.SDK_INT < 18) {
                                     encoderInputBuffers = encoder.inputBuffers
                                 }
-                            }
+                            }*/
+
                             while (!outputDone) {
                                 if (job.isActive) {
                                     if (!inputDone) {
@@ -363,14 +372,10 @@ class VideoControllerK {
                                         val index = extractor.sampleTrackIndex
                                         if (index == videoIndex) {
                                             val inputBufIndex =
-                                                decoder.dequeueInputBuffer(TIMEOUT_USEC.toLong())
+                                                decoder.dequeueInputBuffer(TIME_OUT_USEC.toLong())
                                             if (inputBufIndex >= 0) {
-                                                var inputBuf: ByteBuffer?
-                                                inputBuf = if (Build.VERSION.SDK_INT < 21) {
-                                                    decoderInputBuffers!![inputBufIndex]
-                                                } else {
+                                                val inputBuf: ByteBuffer? =
                                                     decoder.getInputBuffer(inputBufIndex)
-                                                }
                                                 val chunkSize =
                                                     extractor.readSampleData(inputBuf!!, 0)
                                                 if (chunkSize < 0) {
@@ -398,7 +403,7 @@ class VideoControllerK {
                                         }
                                         if (eof) {
                                             val inputBufIndex =
-                                                decoder.dequeueInputBuffer(TIMEOUT_USEC.toLong())
+                                                decoder.dequeueInputBuffer(TIME_OUT_USEC.toLong())
                                             if (inputBufIndex >= 0) {
                                                 decoder.queueInputBuffer(
                                                     inputBufIndex,
@@ -418,42 +423,38 @@ class VideoControllerK {
                                             val encoderStatus =
                                                 encoder.dequeueOutputBuffer(
                                                     info,
-                                                    TIMEOUT_USEC.toLong()
+                                                    TIME_OUT_USEC.toLong()
                                                 )
                                             if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                                                 encoderOutputAvailable = false
-                                            } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+                                            } /*else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                                                 if (Build.VERSION.SDK_INT < 21) {
                                                     encoderOutputBuffers = encoder.outputBuffers
                                                 }
-                                            } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                                            }*/ else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                                                 val newFormat = encoder.outputFormat
                                                 if (videoTrackIndex == -5) {
                                                     videoTrackIndex =
-                                                        mediaMuxer.addTrack(newFormat, false)
+                                                        mediaMixer.addTrack(newFormat, false)
                                                 }
                                             } else if (encoderStatus < 0) {
                                                 throw RuntimeException("unexpected result from encoder.dequeueOutputBuffer: $encoderStatus")
                                             } else {
-                                                var encodedData: ByteBuffer?
-                                                encodedData = if (Build.VERSION.SDK_INT < 21) {
-                                                    encoderOutputBuffers!![encoderStatus]
-                                                } else {
+                                                val encodedData: ByteBuffer? =
                                                     encoder.getOutputBuffer(encoderStatus)
-                                                }
                                                 if (encodedData == null) {
                                                     throw RuntimeException("encoderOutputBuffer $encoderStatus was null")
                                                 }
                                                 if (info.size > 1) {
                                                     if (info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG == 0) {
-                                                        if (mediaMuxer.writeSampleData(
+                                                        if (mediaMixer.writeSampleData(
                                                                 videoTrackIndex,
                                                                 encodedData,
                                                                 info,
                                                                 false
                                                             )
                                                         ) {
-                                                            didWriteData(false, false)
+                                                            didWriteData(false, error = false)
                                                         }
                                                     } else if (videoTrackIndex == -5) {
                                                         val csd =
@@ -501,7 +502,7 @@ class VideoControllerK {
                                                             )
                                                         }
                                                         videoTrackIndex =
-                                                            mediaMuxer.addTrack(
+                                                            mediaMixer.addTrack(
                                                                 newFormat,
                                                                 false
                                                             )
@@ -521,7 +522,7 @@ class VideoControllerK {
                                                 val decoderStatus =
                                                     decoder.dequeueOutputBuffer(
                                                         info,
-                                                        TIMEOUT_USEC.toLong()
+                                                        TIME_OUT_USEC.toLong()
                                                     )
                                                 if (decoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                                                     decoderOutputAvailable = false
@@ -536,12 +537,7 @@ class VideoControllerK {
                                                     throw RuntimeException("unexpected result from decoder.dequeueOutputBuffer: $decoderStatus")
                                                 } else {
                                                     var doRender: Boolean
-                                                    doRender =
-                                                        if (Build.VERSION.SDK_INT >= 18) {
-                                                            info.size != 0
-                                                        } else {
-                                                            info.size != 0 || info.presentationTimeUs != 0L
-                                                        }
+                                                    doRender = info.size != 0
                                                     if (endTime > 0 && info.presentationTimeUs >= endTime) {
                                                         inputDone = true
                                                         decoderDone = true
@@ -573,53 +569,17 @@ class VideoControllerK {
                                                             Log.e("tmessages", e.message)
                                                         }
                                                         if (!errorWait) {
-                                                            if (Build.VERSION.SDK_INT >= 18) {
-                                                                outputSurface.drawImage(false)
-                                                                inputSurface!!.setPresentationTime(
-                                                                    info.presentationTimeUs * 1000
+                                                            outputSurface.drawImage(false)
+                                                            inputSurface!!.setPresentationTime(
+                                                                info.presentationTimeUs * 1000
+                                                            )
+                                                            Log.d("tmessages", "$job")
+                                                            offer(
+                                                                VideoCompressResult.Progress(
+                                                                    info.presentationTimeUs.toFloat() / duration.toFloat() * 100
                                                                 )
-                                                                Log.d("tmessages", "$job")
-                                                                offer(
-                                                                    VideoCompressResult.Progress(
-                                                                        info.presentationTimeUs.toFloat() / duration.toFloat() * 100
-                                                                    )
-                                                                )
-                                                                inputSurface.swapBuffers()
-                                                            } else {
-                                                                val inputBufIndex =
-                                                                    encoder.dequeueInputBuffer(
-                                                                        TIMEOUT_USEC.toLong()
-                                                                    )
-                                                                if (inputBufIndex >= 0) {
-                                                                    outputSurface.drawImage(true)
-                                                                    val rgbBuf =
-                                                                        outputSurface.frame
-                                                                    val yuvBuf =
-                                                                        encoderInputBuffers!![inputBufIndex]
-                                                                    yuvBuf.clear()
-                                                                    convertVideoFrame(
-                                                                        rgbBuf,
-                                                                        yuvBuf,
-                                                                        colorFormat,
-                                                                        resultWidth,
-                                                                        resultHeight,
-                                                                        padding,
-                                                                        swapUV
-                                                                    )
-                                                                    encoder.queueInputBuffer(
-                                                                        inputBufIndex,
-                                                                        0,
-                                                                        bufferSize,
-                                                                        info.presentationTimeUs,
-                                                                        0
-                                                                    )
-                                                                } else {
-                                                                    Log.e(
-                                                                        "tmessages",
-                                                                        "input buffer not available"
-                                                                    )
-                                                                }
-                                                            }
+                                                            )
+                                                            inputSurface.swapBuffers()
                                                         }
                                                     }
                                                     if (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
@@ -628,23 +588,7 @@ class VideoControllerK {
                                                             "tmessages",
                                                             "decoder stream end"
                                                         )
-                                                        if (Build.VERSION.SDK_INT >= 18) {
-                                                            encoder.signalEndOfInputStream()
-                                                        } else {
-                                                            val inputBufIndex =
-                                                                encoder.dequeueInputBuffer(
-                                                                    TIMEOUT_USEC.toLong()
-                                                                )
-                                                            if (inputBufIndex >= 0) {
-                                                                encoder.queueInputBuffer(
-                                                                    inputBufIndex,
-                                                                    0,
-                                                                    1,
-                                                                    info.presentationTimeUs,
-                                                                    MediaCodec.BUFFER_FLAG_END_OF_STREAM
-                                                                )
-                                                            }
-                                                        }
+                                                        encoder.signalEndOfInputStream()
                                                     }
                                                 }
                                             }
@@ -674,7 +618,7 @@ class VideoControllerK {
                 } else {
                     val videoTime = readAndWriteTrack(
                         extractor,
-                        mediaMuxer,
+                        mediaMixer,
                         info,
                         startTime,
                         endTime,
@@ -688,7 +632,7 @@ class VideoControllerK {
                 if (!error) {
                     readAndWriteTrack(
                         extractor,
-                        mediaMuxer,
+                        mediaMixer,
                         info,
                         videoStartTime,
                         endTime,
@@ -702,9 +646,9 @@ class VideoControllerK {
                 offer(VideoCompressResult.Fail)
             } finally {
                 extractor?.release()
-                if (mediaMuxer != null) {
+                if (mediaMixer != null) {
                     try {
-                        mediaMuxer.finishMovie(false)
+                        mediaMixer.finishMovie(false)
                     } catch (e: Exception) {
                         Log.e("tmessages", e.message)
                     }
@@ -731,9 +675,9 @@ class VideoControllerK {
         }*/
 
         //inputFile.delete();
-        Log.e("ViratPath", path + "")
+        /*Log.e("ViratPath", path + "")
         Log.e("ViratPath", cacheFile.path + "")
-        Log.e("ViratPath", inputFile.path + "")
+        Log.e("ViratPath", inputFile.path + "")*/
 
 
         /* Log.e("ViratPath",path+"");
@@ -803,7 +747,7 @@ class VideoControllerK {
             }
             private set
 
-        @SuppressLint("NewApi")
+        /*@SuppressLint("NewApi")
         fun selectColorFormat(
             codecInfo: MediaCodecInfo?,
             mimeType: String?
@@ -820,16 +764,16 @@ class VideoControllerK {
                 }
             }
             return lastColorFormat
-        }
+        }*/
 
-        private fun isRecognizedFormat(colorFormat: Int): Boolean {
+        /*private fun isRecognizedFormat(colorFormat: Int): Boolean {
             return when (colorFormat) {
                 CodecCapabilities.COLOR_FormatYUV420Planar, CodecCapabilities.COLOR_FormatYUV420PackedPlanar, CodecCapabilities.COLOR_FormatYUV420SemiPlanar, CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar, CodecCapabilities.COLOR_TI_FormatYUV420PackedSemiPlanar -> true
                 else -> false
             }
-        }
+        }*/
 
-        external fun convertVideoFrame(
+        /*external fun convertVideoFrame(
             src: ByteBuffer?,
             dest: ByteBuffer?,
             destFormat: Int,
@@ -837,9 +781,9 @@ class VideoControllerK {
             height: Int,
             padding: Int,
             swap: Int
-        ): Int
+        ): Int*/
 
-        fun selectCodec(mimeType: String?): MediaCodecInfo? {
+        /*fun selectCodec(mimeType: String?): MediaCodecInfo? {
             val numCodecs = MediaCodecList.getCodecCount()
             var lastCodecInfo: MediaCodecInfo? = null
             for (i in 0 until numCodecs) {
@@ -860,9 +804,9 @@ class VideoControllerK {
                 }
             }
             return lastCodecInfo
-        }
+        }*/
 
-        @Throws(IOException::class)
+        /*@Throws(IOException::class)
         fun copyFile(src: File?, dst: File?) {
             val inChannel =
                 FileInputStream(src).channel
@@ -874,6 +818,6 @@ class VideoControllerK {
                 inChannel?.close()
                 outChannel?.close()
             }
-        }
+        }*/
     }
 }

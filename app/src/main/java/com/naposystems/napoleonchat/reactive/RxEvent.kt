@@ -1,12 +1,12 @@
 package com.naposystems.napoleonchat.reactive
 
+import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 import org.json.JSONObject
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
 
 class RxEvent {
-
     data class NewMessageReceivedEvent(val channelName: String, val jsonObject: JSONObject)
     class NewFriendshipRequest
     class FriendshipRequestAccepted
@@ -20,9 +20,12 @@ class RxEvent {
     data class ContactHasHangup(val channel: String)
     data class ContactWantChangeToVideoCall(val channel: String)
     data class ContactAcceptChangeToVideoCall(val channel: String)
+    data class ContactCancelChangeToVideoCall(val channel: String)
     data class ContactTurnOffCamera(val channel: String)
     data class ContactTurnOnCamera(val channel: String)
     data class ContactRejectCall(val channel: String)
     data class EmojiSelected(val emoji: Emoji)
     data class HeadsetState(val state: Int)
+    data class MessagesToEliminate(val id: List<MessageAndAttachment>)
+    data class EnableButtonPlayAudio(val state: Boolean)
 }

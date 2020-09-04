@@ -46,6 +46,9 @@ interface MessageDao {
     @Query("SELECT * FROM message WHERE contact_id=:contactId ORDER BY id DESC LIMIT 1")
     suspend fun getLastMessageByContact(contactId: Int): MessageAndAttachment
 
+    @Query("SELECT contact_id FROM message WHERE web_id=:messageWebId LIMIT 1")
+    suspend fun getContactByMessage(messageWebId: String): Int
+
     @Query("SELECT * FROM message WHERE contact_id=:contactId AND is_selected = 1 ORDER BY id DESC")
     fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
 
@@ -83,6 +86,9 @@ interface MessageDao {
 
     @Query("UPDATE message SET self_destruction_at=:selfDestructTime WHERE contact_id=:contactId AND self_destruction_at = 0 AND is_mine = 1")
     suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
+
+    @Query("UPDATE message SET self_destruction_at=:selfDestructTime, total_self_destruction_at = 0, status=:status WHERE web_id =:webId")
+    suspend fun updateSelfDestructTimeByMessages(selfDestructTime: Int, webId: String, status : Int)
 
     @Query("SELECT self_destruction_at FROM message WHERE web_id =:webId")
     fun getSelfDestructTimeByMessage(webId: String): Int

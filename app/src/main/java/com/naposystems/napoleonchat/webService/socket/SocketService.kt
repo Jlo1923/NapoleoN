@@ -48,6 +48,7 @@ class SocketService @Inject constructor(
         const val CONTACT_ACCEPT_CHANGE_TO_VIDEO = 4
         const val CONTACT_TURN_OFF_CAMERA = 5
         const val CONTACT_TURN_ON_CAMERA = 6
+        const val CONTACT_CANCEL_CHANGE_TO_VIDEO = 7
         const val TYPE = "type"
         const val ICE_CANDIDATE = "candidate"
         const val OFFER = "offer"
@@ -182,7 +183,7 @@ class SocketService @Inject constructor(
                     ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
                     ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
                     ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
-                    else -> Timber.d("Alguna mierda pasó")
+                    else -> Timber.d("Socket Error")
                 }
             }
 
@@ -350,6 +351,11 @@ class SocketService @Inject constructor(
                             )
                             CONTACT_TURN_ON_CAMERA -> RxBus.publish(
                                 RxEvent.ContactTurnOnCamera(
+                                    event.channelName
+                                )
+                            )
+                            CONTACT_CANCEL_CHANGE_TO_VIDEO -> RxBus.publish(
+                                RxEvent.ContactCancelChangeToVideoCall(
                                     event.channelName
                                 )
                             )

@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.home.adapter
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,6 +69,8 @@ class ConversationAdapter(
             binding.imageViewUserImage.setOnClickListener {
                 clickListener.onClickAvatar(conversation)
             }
+
+            binding.textViewMessage.setTypeface(binding.textViewMessage.typeface, Typeface.NORMAL)
 
             binding.executePendingBindings()
 

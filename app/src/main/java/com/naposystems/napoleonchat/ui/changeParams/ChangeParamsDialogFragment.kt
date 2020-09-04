@@ -130,7 +130,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
                             return if (source.toString().matches("[a-zA-Z ]+".toRegex())) {
                                 source
                             } else {
-                                ""
+                                null
                             }
                         }
                     })
@@ -155,7 +155,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
                             return if (source.toString().matches("[a-zA-Z._0-9]+".toRegex())) {
                                 source
                             } else {
-                                ""
+                                null
                             }
                         }
                     })

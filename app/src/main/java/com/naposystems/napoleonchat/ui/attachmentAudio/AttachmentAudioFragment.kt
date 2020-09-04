@@ -42,6 +42,8 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
     private lateinit var adapter: AttachmentAudioAdapter
     private val args: AttachmentAudioFragmentArgs by navArgs()
 
+    private var chargeContent = false
+
 
     private val animationScaleUp: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -100,6 +102,10 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         viewModel.audios.observe(viewLifecycleOwner, Observer {
             setToolbarTitle(it)
             adapter.submitList(it.toList())
+            if (!chargeContent) {
+                binding.viewSwitcher.showNext()
+                chargeContent = true
+            }
         })
         //endregion
 
@@ -178,11 +184,11 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         )
     }
 
-    override fun onPauseAudio(messageWebId: String) {
+    override fun onPauseAudio(messageWebId: String?) {
         // Intentionally empty
     }
 
-    override fun onCompleteAudio(messageWebId: String) {
+    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
         // Intentionally empty
     }
 

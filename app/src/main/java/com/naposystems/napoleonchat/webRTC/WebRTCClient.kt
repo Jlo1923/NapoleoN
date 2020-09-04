@@ -171,6 +171,7 @@ class WebRTCClient constructor(
 
     interface WebRTCClientListener {
         fun contactWantChangeToVideoCall()
+        fun contactCancelledVideoCall()
         fun contactTurnOffCamera()
         fun contactTurnOnCamera()
         fun showRemoteVideo()
@@ -270,6 +271,15 @@ class WebRTCClient constructor(
                     }
                 }
 
+        val disposableContactCancelChangeToVideoCall =
+            RxBus.listen(RxEvent.ContactCancelChangeToVideoCall::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (it.channel == this.channel) {
+                        mListener?.contactCancelledVideoCall()
+                    }
+                }
+
         val disposableContactTurnOffCamera = RxBus.listen(RxEvent.ContactTurnOffCamera::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -337,6 +347,7 @@ class WebRTCClient constructor(
         disposable.add(disposableContactHasHangup)
         disposable.add(disposableContactWantChangeToVideoCall)
         disposable.add(disposableContactAcceptChangeToVideoCall)
+        disposable.add(disposableContactCancelChangeToVideoCall)
         disposable.add(disposableContactTurnOffCamera)
         disposable.add(disposableContactTurnOnCamera)
         disposable.add(disposableContactRejectCall)
@@ -781,6 +792,10 @@ class WebRTCClient constructor(
         }
     }
 
+    override fun cancelChangeToVideoCall() {
+        socketService.emitToCall(channel, SocketService.CONTACT_CANCEL_CHANGE_TO_VIDEO)
+    }
+
     override fun muteVideo(checked: Boolean) {
         if (isVideoCall && localMediaStream.videoTracks.isNotEmpty()) {
             val videoTrack = localMediaStream.videoTracks.first()
@@ -915,6 +930,7 @@ class WebRTCClient constructor(
         bluetoothStateManager?.onDestroy()
 
         mListener?.callEnded()
+        localPeer?.close()
     }
 
     override fun unSubscribeCallChannel() {

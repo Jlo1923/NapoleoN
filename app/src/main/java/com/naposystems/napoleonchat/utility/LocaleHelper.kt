@@ -26,7 +26,7 @@ class LocaleHelper(base: Context) : ContextWrapper(base) {
         }
 
         fun updateResources(context: Context?, iso: String): ContextWrapper {
-            Timber.d("el puto iso de mierda: $iso")
+            Timber.d("ISO: $iso")
             val newContext: Context?
 
             val res = context!!.resources

@@ -31,12 +31,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_my_message"
+        style="@style/ContainerMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(conversation)}"
-        android:paddingStart="0dp"
-        android:paddingTop="@dimen/x_small_padding"
-        android:paddingEnd="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,19 +42,13 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_message"
+            style="@style/ContainerMyMessageBubble"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
-            android:background="@drawable/bg_my_message"
-            android:paddingStart="@dimen/small_padding"
-            android:paddingTop="@dimen/x_small_padding"
-            android:paddingEnd="20dp"
-            android:paddingBottom="@dimen/x_small_padding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
-            app:layout_constraintWidth_percent="0.7"
-            custom:isFirstMyMessage="@{isFirst}">
+            app:layout_constraintWidth_percent="0.7">
 
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
@@ -66,18 +58,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/imageView_attachment"
                 app:layout_constraintWidth_min="wrap"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <ImageView
                 android:id="@+id/imageView_attachment"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
-                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginBottom="@dimen/x_small_margin"
+                android:background="@drawable/round_image"
                 android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:scaleType="centerCrop"
-                android:visibility="visible"
-                android:background="@drawable/round_image"
                 app:imageAttachment="@{conversation}"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintDimensionRatio="4:3"
@@ -86,7 +78,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:layout_constraintWidth_max="wrap"
                 app:layout_constraintWidth_percent="1"
-                tools:src="@drawable/vertical_photo" />
+                tools:src="@drawable/vertical_photo"/>
 
             <!-- BUTTON ATTACHMENT STATE -->
             <androidx.appcompat.widget.AppCompatImageButton
@@ -125,11 +117,9 @@
 
             <ProgressBar
                 android:id="@+id/progressBar_indeterminate"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_margin="0dp"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
                 android:indeterminate="true"
-                android:padding="0dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
                 app:layout_constraintEnd_toEndOf="@id/imageButton_state"
@@ -142,9 +132,9 @@
                 style="@style/MyMessageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/x_small_margin"
                 android:text="@{conversation.message.body}"
                 android:visibility="@{conversation.message.body.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toTopOf="@id/textView_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -152,25 +142,27 @@
                 tools:text="@tools:sample/lorem[3]" />
 
             <TextView
+                android:id="@+id/textView_date"
                 style="@style/MyMessageDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/small_margin"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
-                app:layout_constraintTop_toTopOf="@id/imageView_message_status"
+                app:layout_constraintTop_toBottomOf="@id/textView_message"
                 custom:formatTime="@{timeFormat}"
                 custom:messageDateSend="@{conversation.message.createdAt}"
-                tools:text="10:34"
+                tools:text="10:34 "
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_message_status"
+                style="@style/MyMessageStatus"
                 android:layout_width="24dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView_message"
+                app:layout_constraintTop_toTopOf="@id/textView_date"
+                app:layout_constraintBottom_toBottomOf="@id/textView_date"
                 custom:messageStatus="@{conversation.message.status}"
                 tools:srcCompat="@drawable/ic_message_sent" />
 
@@ -185,17 +177,7 @@
 
         <TextView
             android:id="@+id/textView_count_down"
-            android:layout_width="@dimen/width_self_destruct_time"
-            android:layout_height="@dimen/height_self_destruct_time"
-            android:layout_marginEnd="@dimen/normal_margin"
-            android:background="@drawable/bg_self_destruct_time_incoming_message"
-            android:elevation="1dp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textColor="?attr/attrTextColorTimeMyMessage"
-            android:textSize="@dimen/text_size_self_destruct_time"
-            android:visibility="visible"
+            style="@style/TextCountDownSelfDestruct"
             app:layout_constraintBottom_toTopOf="@+id/container_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/container_message"

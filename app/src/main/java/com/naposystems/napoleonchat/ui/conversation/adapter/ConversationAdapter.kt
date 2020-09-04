@@ -12,6 +12,7 @@ import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.UploadResult
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import timber.log.Timber
@@ -54,6 +55,9 @@ class ConversationAdapter constructor(
     }
 
     private var isFirst = false
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     object DiffCallback : DiffUtil.ItemCallback<MessageAndAttachment>() {
         override fun areItemsTheSame(
@@ -134,13 +138,13 @@ class ConversationAdapter constructor(
 
     fun setCompressProgress(
         attachment: Attachment,
-        progress: Long,
+        progress: Float,
         job: ProducerScope<UploadResult>
     ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
-                listOf(Bundle().apply { putLong(COMPRESS_PROGRESS, progress) }, job)
+                listOf(Bundle().apply { putFloat(COMPRESS_PROGRESS, progress) }, job)
             )
         } catch (e: Exception) {
             Timber.e(e)
@@ -149,13 +153,13 @@ class ConversationAdapter constructor(
 
     fun setUploadProgress(
         attachment: Attachment,
-        progress: Long,
+        progress: Float,
         job: ProducerScope<UploadResult>
     ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
-                listOf(Bundle().apply { putLong(PROGRESS, progress) }, job)
+                listOf(Bundle().apply { putFloat(PROGRESS, progress) }, job)
             )
         } catch (e: Exception) {
             Timber.e(e)
@@ -182,8 +186,8 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun checkIfNextIsAudio(messageWebId: String) {
-        val positionActualAudio = getPositionByMessageWebId(messageWebId)
+    fun checkIfNextIsAudio(messageId: String) {
+        val positionActualAudio = getPositionByMessageId(messageId)
         if (positionActualAudio >= 0) {
             val actualMessageAndAttachment = getItem(positionActualAudio)
             val nextPosition = positionActualAudio + 1
@@ -207,6 +211,8 @@ class ConversationAdapter constructor(
                     } else {
                         mediaPlayerManager.resetMediaPlayer()
                     }
+                } ?: run {
+                    mediaPlayerManager.resetMediaPlayer()
                 }
             } else {
                 mediaPlayerManager.resetMediaPlayer()
@@ -221,9 +227,9 @@ class ConversationAdapter constructor(
         )
     }
 
-    private fun getPositionByMessageWebId(messageWebId: String) =
+    private fun getPositionByMessageId(id: String) =
         currentList.indexOfFirst { messageAndAttachment ->
-            messageAndAttachment.message.webId == messageWebId
+            messageAndAttachment.message.id.toString() == id
         }
 
     private fun getPositionByItem(attachment: Attachment) =
@@ -326,6 +332,7 @@ class ConversationAdapter constructor(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
+
         return when (viewType) {
             TYPE_MY_MESSAGE -> MyMessageViewHolder.from(parent)
             TYPE_INCOMING_MESSAGE -> IncomingMessageViewHolder.from(parent)
@@ -402,7 +409,6 @@ class ConversationAdapter constructor(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        super.onBindViewHolder(holder, position, payloads)
         if (payloads.firstOrNull() != null) {
             val item = getItem(position)
 
@@ -426,10 +432,11 @@ class ConversationAdapter constructor(
                         }
                     }
                 } catch (e: Exception) {
-                    Timber.e(e, "Que mierda pasa")
+                    Timber.e(e)
                 }
             }
         }
+        super.onBindViewHolder(holder, position, payloads)
     }
 
     private fun handleProducerScopePayload(
@@ -520,8 +527,8 @@ class ConversationAdapter constructor(
         position: Int,
         holder: RecyclerView.ViewHolder
     ) {
-        val progress = bundle.getLong(PROGRESS, -1)
-        val compressProgress = bundle.getLong(COMPRESS_PROGRESS, -1)
+        val progress = bundle.getFloat(PROGRESS, -1f)
+        val compressProgress = bundle.getFloat(COMPRESS_PROGRESS, -1f)
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,
@@ -584,7 +591,7 @@ class ConversationAdapter constructor(
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
-        fun sendMessageRead(messageWebId: String, isComplete: Boolean, position: Int = -1)
+        fun sendMessageRead(messageId : String, messageWebId: String, isComplete: Boolean, position: Int = -1)
         fun reSendMessage(message: Message)
         fun scrollToNextAudio(nextPosition: Int)
         fun updateMessageState(message: Message)

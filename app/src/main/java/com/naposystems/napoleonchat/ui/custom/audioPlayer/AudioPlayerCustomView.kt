@@ -8,24 +8,28 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomViewAudioPlayerBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class AudioPlayerCustomView constructor(context: Context, attributeSet: AttributeSet) :
     ConstraintLayout(context, attributeSet), IContractAudioPlayer, MediaPlayerManager.Listener {
 
-    private var messageAndAttachment: MessageAndAttachment? = null
-
     private var mTintColor: Int = 0
     private var mIsEncryptedFile: Boolean = false
     private var mAudioFileUri: Uri? = null
     private var mEncryptedFileName: String = ""
     private var mAudioId: String = ""
+    private var mWebId: String? = null
+    private var mEnable : Boolean = true
     private var mSeekbarProgressBackgroundTint: Int = 0
     private var mSeekbarProgressTint: Int = 0
     private var mSeekbarThumbTint: Int = 0
@@ -35,10 +39,14 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     private var mediaPlayerManager: MediaPlayerManager? = null
     private var mListener: Listener? = null
 
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
+
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPause(audioId: String)
-        fun onComplete(audioId: String)
+        fun onPause(audioId: String?)
+        fun onComplete(messageId : String, audioId: String?)
     }
 
     init {
@@ -92,6 +100,18 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                 recycle()
             }
         }
+
+        subscribeToRXEvents()
+    }
+
+    private fun subscribeToRXEvents() {
+        val disposableEnableButtonPlayAudio = RxBus.listen(RxEvent.EnableButtonPlayAudio::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { event ->
+                binding.imageButtonPlay.isEnabled = event.state
+                mEnable = event.state
+            }
+        disposable.add(disposableEnableButtonPlayAudio)
     }
 
     private fun setTintColor() {
@@ -115,21 +135,26 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         mediaPlayerManager?.setListener(this)
 
         binding.imageButtonPlay.setOnClickListener {
+            if (mEnable) {
+                mediaPlayerManager?.apply {
+                    Timber.d("-- OLA $mAudioId")
+                    setAudioId(mAudioId)
+                    setWebId(mWebId)
+                    setImageButtonPlay(binding.imageButtonPlay)
+                    setSeekbar(binding.seekbar)
+                    setImageButtonSpeed(binding.imageButtonSpeed)
+                    setTextViewDuration(binding.textViewDuration)
 
-            mediaPlayerManager?.apply {
-                setAudioId(mAudioId)
-                setImageButtonPlay(binding.imageButtonPlay)
-                setSeekbar(binding.seekbar)
-                setImageButtonSpeed(binding.imageButtonSpeed)
-                setTextViewDuration(binding.textViewDuration)
+                    if (mIsEncryptedFile) {
+                        isEncryptedFile(BuildConfig.ENCRYPT_API)
+                        setAudioFileName(mEncryptedFileName)
+                    } else {
+                        isEncryptedFile(false)
+                        setAudioUri(mAudioFileUri)
+                    }
 
-                if (mIsEncryptedFile) {
-                    setAudioFileName(mEncryptedFileName)
-                } else {
-                    setAudioUri(mAudioFileUri)
+                    playAudio()
                 }
-
-                playAudio()
             }
         }
 
@@ -162,10 +187,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this.mediaPlayerManager?.isEncryptedFile(isEncryptedFile)
     }
 
-    override fun setMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
-        this.messageAndAttachment = messageAndAttachment
-    }
-
     override fun setMediaPlayerManager(mediaPlayerManager: MediaPlayerManager) {
         this.mediaPlayerManager = mediaPlayerManager
         setListeners()
@@ -181,6 +202,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     override fun setAudioId(id: String) {
         this.mAudioId = id
+    }
+
+    override fun setWebId(webId: String?) {
+        this.mWebId = webId
     }
 
     override fun setListener(listener: Listener) {
@@ -203,9 +228,10 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     it.setSeekbar(binding.seekbar)
                     it.setTextViewDuration(binding.textViewDuration)
                     it.setImageButtonPlay(binding.imageButtonPlay)
+                    it.setStateImageButtonSpeed(binding.imageButtonSpeed, mWebId ?: "")
                     binding.imageButtonPlay.setImageDrawable(
                         context.resources.getDrawable(
-                            R.drawable.ic_baseline_play_circle, context.theme
+                            R.drawable.ic_baseline_pause_circle, context.theme
                         )
                     )
                 }
@@ -216,8 +242,14 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
             } else {
                 binding.textViewDuration.text = Utils.getDuration(duration, false)
                 binding.textViewDuration.visibility =
-                    if (duration == 0L) View.GONE else View.VISIBLE
+                if (duration == 0L) View.GONE else View.VISIBLE
                 binding.seekbar.progress = 0
+                binding.imageButtonSpeed.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
+                binding.imageButtonPlay.setImageDrawable(
+                    context.resources.getDrawable(
+                        R.drawable.ic_baseline_play_circle, context.theme
+                    )
+                )
             }
         } ?: run {
             binding.textViewDuration.text = Utils.getDuration(duration, false)
@@ -232,7 +264,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this@AudioPlayerCustomView.mListener?.onErrorPlayingAudio()
     }
 
-    override fun onPauseAudio(messageWebId: String) {
+    override fun onPauseAudio(messageWebId: String?) {
         Timber.d("Conver onPauseAudio: $messageWebId")
         /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
             messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
@@ -242,13 +274,13 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this.mListener?.onPause(messageWebId)
     }
 
-    override fun onCompleteAudio(messageWebId: String) {
+    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
         Timber.d("Conver onCompleteAudio: $messageWebId")
         /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
             messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
             this.mListener?.onComplete(audioId)
         }*/
-        this.mListener?.onComplete(messageWebId)
+        this.mListener?.onComplete(messageId, messageWebId)
     }
     //endregion
 }

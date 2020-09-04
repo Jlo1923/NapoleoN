@@ -57,6 +57,8 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
@@ -193,6 +195,7 @@ class ConversationFragment : BaseFragment(),
     private var minTimeRecording = TimeUnit.SECONDS.toMillis(1)
     private var messagedLoadedFirstTime: Boolean = false
     private var actionViewSchedule: View? = null
+    private var uploadProgress = 0f
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -445,7 +448,7 @@ class ConversationFragment : BaseFragment(),
                     this@ConversationFragment.verifyPermission(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.text_explanation_to_send_audio_attacment
+                        message = R.string.text_explanation_to_send_audio_attachment
                     ) {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
@@ -489,7 +492,7 @@ class ConversationFragment : BaseFragment(),
                     this@ConversationFragment.verifyPermission(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.text_explanation_to_send_audio_attacment
+                        message = R.string.text_explanation_to_send_audio_attachment
                     ) {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToAttachmentAudioFragment(
@@ -503,7 +506,7 @@ class ConversationFragment : BaseFragment(),
                     this@ConversationFragment.verifyPermission(
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         drawableIconId = R.drawable.ic_folder_primary,
-                        message = R.string.text_explanation_to_send_audio_attacment
+                        message = R.string.text_explanation_to_send_audio_attachment
                     ) {
                         val intent = Intent(Intent.ACTION_GET_CONTENT)
                         intent.type = "*/*"
@@ -544,7 +547,7 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     private fun inputPanelFabClickListener() {
         with(binding.floatingActionButtonSend) {
-            this.setOnClickListener {
+            this.setSafeOnClickListener {
                 Timber.d("setOnClickListener")
                 if (!this.isShowingMic() && !isRecordingAudio) {
                     val quote = binding.inputPanel.getQuote()
@@ -641,6 +644,8 @@ class ConversationFragment : BaseFragment(),
         lifecycle.addObserver(billingClientLifecycle)
 
         binding.viewModel = viewModel
+
+        cleanSelectionMessages()
 
         contactProfileShareViewModel.getLocalContact(args.contact.id)
 
@@ -745,11 +750,13 @@ class ConversationFragment : BaseFragment(),
                         it.progress,
                         it.job
                     )
-                    is UploadResult.Progress -> conversationAdapter.setUploadProgress(
-                        it.attachment,
-                        it.progress,
-                        it.job
-                    )
+                    is UploadResult.Progress -> {
+                        conversationAdapter.setUploadProgress(
+                            it.attachment,
+                            it.progress,
+                            it.job
+                        )
+                    }
                     is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
                 }
             }
@@ -902,15 +909,14 @@ class ConversationFragment : BaseFragment(),
     private fun observeMessageMessages() {
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
             Timber.d("observeMessageMessages")
-            conversationAdapter.submitList(conversationList) {
-                if (!messagedLoadedFirstTime) {
-                    val friendlyMessageCount: Int = conversationAdapter.itemCount
-                    binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
-                    messagedLoadedFirstTime = true
-                }
-                if (conversationList.isNotEmpty()) {
-                    viewModel.sendTextMessagesRead()
-                }
+            conversationAdapter.submitList(conversationList)
+            if (!messagedLoadedFirstTime) {
+                val friendlyMessageCount: Int = conversationAdapter.itemCount
+                binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                messagedLoadedFirstTime = true
+            }
+            if (conversationList.isNotEmpty()) {
+                viewModel.sendTextMessagesRead()
             }
         })
     }
@@ -1132,7 +1138,7 @@ class ConversationFragment : BaseFragment(),
                 dialog.show(childFragmentManager, "SelfDestructTime")
             }
             R.id.menu_item_block_contact -> {
-                blockContact(args.contact)
+                blockContact()
             }
             R.id.menu_item_mute_conversation -> {
                 contactProfileShareViewModel.contact.value?.let { contact ->
@@ -1213,18 +1219,10 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun blockContact(contact: Contact) {
+    private fun blockContact() {
         generalDialog(
             getString(R.string.text_block_contact),
-
-            getString(
-                R.string.text_wish_block_contact,
-                if (contact.displayNameFake.isEmpty()) {
-                    contact.displayName
-                } else {
-                    contact.displayNameFake
-                }
-            ),
+            getString(R.string.text_wish_block_contact),
             true,
             childFragmentManager
         ) {
@@ -1406,7 +1404,9 @@ class ConversationFragment : BaseFragment(),
         viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
             Utils.alertDialogWithoutNeutralButton(
                 R.string.text_delete_messages,
-                false, requireContext(),
+                false,
+                requireContext(),
+                Constants.LocationAlertDialog.CONVERSATION.location,
                 R.string.text_accept,
                 R.string.text_cancel,
                 clickPositiveButton = { _ ->
@@ -1421,7 +1421,7 @@ class ConversationFragment : BaseFragment(),
                             viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
                         }
                     }
-                }
+                }, clickNegativeButton = {}
             )
         }
     }
@@ -1586,7 +1586,6 @@ class ConversationFragment : BaseFragment(),
         Timber.d("onPause")
         resetAudioRecording()
         MediaPlayerManager.pauseAudio()
-        MediaPlayerManager.unregisterProximityListener()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
@@ -1629,7 +1628,6 @@ class ConversationFragment : BaseFragment(),
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     private fun startRecording() {
-
         try {
             recordFile = FileManager.createFile(
                 requireContext(),
@@ -1638,7 +1636,7 @@ class ConversationFragment : BaseFragment(),
             )
 
             recorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 val fileOutputStream = FileOutputStream(recordFile!!)
                 setOutputFile(fileOutputStream.fd)
@@ -1660,22 +1658,26 @@ class ConversationFragment : BaseFragment(),
                                 mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
                             }
                         }
+                        RxBus.publish(RxEvent.EnableButtonPlayAudio(false))
                     }
 
                     mHandler.postDelayed(mRecordingAudioRunnable!!, 1000)
 
                 } catch (e: IOException) {
+                    RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
                     Timber.e("prepare() failed")
                 }
 
                 start()
             }
         } catch (e: Exception) {
+            RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
             resetAudioRecording()
         }
     }
 
     private fun stopRecording() {
+        RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
         try {
             recorder?.apply {
                 stop()
@@ -1731,11 +1733,11 @@ class ConversationFragment : BaseFragment(),
         )
     }
 
-    override fun onPauseAudio(messageWebId: String) {
+    override fun onPauseAudio(messageWebId: String?) {
         // Intentionally empty
     }
 
-    override fun onCompleteAudio(messageWebId: String) {
+    override fun onCompleteAudio(messageId: String,messageWebId: String?) {
         // Intentionally empty
     }
 
@@ -1756,14 +1758,11 @@ class ConversationFragment : BaseFragment(),
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun onMicActionDown() {
+        MediaPlayerManager.resetMediaPlayer()
         startRecording()
-
         binding.inputPanel.changeViewSwitcherToSlideToCancel()
-
         binding.containerLockAudio.container.slideUp(200)
-
         binding.containerLockAudio.container.post {
-
             binding.floatingActionButtonSend.setContainerLock(binding.containerLockAudio)
         }
     }
@@ -1777,7 +1776,6 @@ class ConversationFragment : BaseFragment(),
             }
             binding.containerLockAudio.container.visibility = View.GONE
             stopRecording()
-            setupVoiceNoteSound(requireContext(), R.raw.tone_send_message)
         }
     }
 
@@ -1827,6 +1825,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun onMicCancel() {
+        setupVoiceNoteSound(requireContext(), R.raw.tone_cancel_audio)
         isRecordingAudio = false
         resetAudioRecording()
     }
@@ -1924,12 +1923,12 @@ class ConversationFragment : BaseFragment(),
         viewModel.sendMessageRead(messageAndAttachment)
     }
 
-    override fun sendMessageRead(messageWebId: String, isComplete: Boolean, position: Int) {
+    override fun sendMessageRead(messageId : String, messageWebId: String, isComplete: Boolean, position: Int) {
         Timber.d("sendMessageRead: $messageWebId")
         viewModel.sendMessageRead(messageWebId)
 
         if (isComplete) {
-            conversationAdapter.checkIfNextIsAudio(messageWebId)
+          conversationAdapter.checkIfNextIsAudio(messageId)
         }
     }
 

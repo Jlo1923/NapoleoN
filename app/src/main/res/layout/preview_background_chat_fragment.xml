@@ -14,12 +14,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/imageView_background"
@@ -30,124 +25,124 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/bg_default_conversation" />
+                tools:src="@drawable/vertical_photo"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_message"
-                android:layout_width="0dp"
+                android:id="@+id/container_incoming_message"
+                style="@style/ContainerMessage"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/normal_margin"
-                android:background="@drawable/bg_incoming_message"
-                android:paddingStart="20dp"
-                android:paddingTop="@dimen/x_small_padding"
-                android:paddingEnd="@dimen/small_padding"
-                android:paddingBottom="@dimen/x_small_padding"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_max="wrap"
-                app:layout_constraintWidth_min="wrap"
-                app:layout_constraintWidth_percent="0.7">
+                app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/textView_message"
-                    style="@style/IncomingMessageTextView"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_incoming_message_bubble"
+                    style="@style/ContainerIncomingMessageBubble"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/x_small_margin"
-                    android:text="@string/text_preview_my_message"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_max="wrap"
-                    app:layout_constraintWidth_percent="1" />
+                    app:layout_constraintWidth_percent="0.7">
+
+                    <TextView
+                        android:id="@+id/textView_incoming_message"
+                        style="@style/IncomingMessageTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_preview_my_message"
+                        app:layout_constraintBottom_toTopOf="@id/textView_incoming_date"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView_incoming_date"
+                        style="@style/IncomingMessageDateTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_preview_date_message"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_incoming_message" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
-                    style="@style/IncomingMessageDateTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_preview_date_message"
+                    android:id="@+id/textView_count_down_incoming_message"
+                    style="@style/TextCountDownSelfDestruct"
+                    app:layout_constraintBottom_toTopOf="@+id/container_incoming_message_bubble"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView_message"
-                    tools:visibility="visible" />
+                    app:layout_constraintTop_toTopOf="@+id/container_incoming_message_bubble"
+                    tools:text="10:34:20" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView_count_down"
-                android:layout_width="@dimen/width_self_destruct_time"
-                android:layout_height="@dimen/height_self_destruct_time"
-                android:layout_marginStart="@dimen/normal_margin"
-                android:background="@drawable/bg_self_destruct_time_incoming_message"
-                android:elevation="1dp"
-                android:gravity="center"
-                android:text="@string/text_preview_self_destruct_time_incoming_message"
-                android:textColor="?attr/attrTextColorColorTextMyMessage"
-                android:textSize="@dimen/text_size_self_destruct_time"
-                app:layout_constraintBottom_toTopOf="@+id/container_message"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/container_message" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_message_my_message"
-                android:layout_width="0dp"
+                android:id="@+id/container_my_message"
+                style="@style/ContainerMessage"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_my_message"
-                android:paddingTop="@dimen/x_small_padding"
-                android:paddingEnd="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_message"
-                app:layout_constraintWidth_max="wrap"
-                app:layout_constraintWidth_min="wrap"
-                app:layout_constraintWidth_percent="0.7">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_incoming_message">
 
-                <androidx.emoji.widget.EmojiAppCompatTextView
-                    android:id="@+id/textView_my_message"
-                    style="@style/MyMessageTextView"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_my_message_bubble"
+                    style="@style/ContainerMyMessageBubble"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/x_small_margin"
-                    android:text="@string/text_preview_incoming_message"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_max="wrap"
-                    app:layout_constraintWidth_percent="1" />
+                    app:layout_constraintWidth_percent="0.7">
+
+                    <androidx.emoji.widget.EmojiAppCompatTextView
+                        android:id="@+id/textView_my_message"
+                        style="@style/MyMessageTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_preview_incoming_message"
+                        app:layout_constraintBottom_toTopOf="@id/textView_my_date"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView_my_date"
+                        style="@style/MyMessageDateTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_preview_date_message"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
+                        app:layout_constraintTop_toBottomOf="@+id/textView_my_message" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_message_status"
+                        style="@style/MyMessageStatus"
+                        app:layout_constraintBottom_toBottomOf="@id/textView_my_date"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/textView_my_date"
+                        app:srcCompat="@drawable/ic_message_unread" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
-                    style="@style/MyMessageDateTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/small_margin"
-                    android:text="@string/text_preview_date_message"
-                    app:layout_constraintBottom_toBottomOf="@id/imageView_message_status"
-                    app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
-                    app:layout_constraintTop_toTopOf="@id/imageView_message_status"
-                    tools:visibility="visible" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imageView_message_status"
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_count_down_my_message"
+                    style="@style/TextCountDownSelfDestruct"
+                    app:layout_constraintBottom_toTopOf="@+id/container_my_message_bubble"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView_my_message"
-                    app:srcCompat="@drawable/ic_message_readed" />
+                    app:layout_constraintTop_toTopOf="@+id/container_my_message_bubble"
+                    tools:text="30 segundos" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView_count_down_my_message"
-                android:layout_width="@dimen/width_self_destruct_time"
-                android:layout_height="@dimen/height_self_destruct_time"
-                android:layout_marginEnd="@dimen/normal_margin"
-                android:background="@drawable/bg_self_destruct_time_my_message"
-                android:elevation="1dp"
-                android:gravity="center"
-                android:text="@string/text_preview_self_destruct_time_my_message"
-                android:textColor="?attr/attrTextColorColorTextIncomingMessage"
-                android:textSize="@dimen/text_size_self_destruct_time"
-                app:layout_constraintBottom_toTopOf="@+id/container_message_my_message"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/container_message_my_message"
-                tools:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_cancel"

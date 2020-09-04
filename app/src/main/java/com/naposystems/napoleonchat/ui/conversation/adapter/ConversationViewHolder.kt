@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBa
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
@@ -52,6 +53,8 @@ open class ConversationViewHolder constructor(
     var imageButtonSend: AppCompatImageButton? = null
     var textViewMessage: TextView? = null
     var imageButtonPlay: AppCompatImageButton? = null
+
+    var progressVisibility = false
 
     fun countDown(
         item: MessageAndAttachment,
@@ -100,6 +103,7 @@ open class ConversationViewHolder constructor(
                 Timber.d(" setProgress this.uploadjob: ${this.uploadJob}, this.downloadJob: ${this.downloadJob}")
 
                 if (progress > 0) {
+                    Timber.d("*Test: Download Progress: $progress")
                     progressBar?.visibility = View.VISIBLE
                     progressBar?.setProgress(progress.toFloat())
                     imageButtonState?.visibility = View.VISIBLE
@@ -107,6 +111,7 @@ open class ConversationViewHolder constructor(
                 }
 
                 if (progress == 100L) {
+                    Timber.d("*Test: Download Success: $progress")
                     progressBar?.visibility = View.GONE
                     imageButtonState?.visibility = View.GONE
                     imageButtonPlay?.visibility = View.VISIBLE
@@ -121,21 +126,41 @@ open class ConversationViewHolder constructor(
     }
 
     fun setUploadProgressAndJob(
-        progress: Long,
+        progress: Float,
         job: ProducerScope<*>
     ) {
-        Timber.d("progress: $progress, job: $job")
-        progressBar?.visibility = View.VISIBLE
-        progressBar?.setProgress(progress.toFloat())
+        Timber.d("*Test: Upload Progress: $progress, job: $job")
+        progressBar?.let { circleProgressBar ->
+            when {
+                progress < 10f -> {
+                    circleProgressBar.visibility = View.VISIBLE
+                    circleProgressBar.setProgress(progress)
+                    progressVisibility = true
+                    progressBarIndeterminate?.visibility = View.GONE
 
-        if (progress > 0) {
-            progressBarIndeterminate?.visibility = View.GONE
+                    imageButtonState?.visibility = View.VISIBLE
+                    imageButtonState?.isEnabled = false
+                }
+                progress in 10f..80f -> {
+                    circleProgressBar.setProgress(progress)
+                    progressBarIndeterminate?.visibility = View.GONE
+
+                    imageButtonState?.visibility = View.VISIBLE
+                    imageButtonState?.isEnabled = true
+                }
+                progress >= 80f && progressVisibility -> {
+                    circleProgressBar.setProgress(100f)
+                    circleProgressBar.visibility = View.GONE
+                    progressVisibility = false
+                    Timber.d("*Test: Full Progress")
+                    progressBarIndeterminate?.visibility = View.VISIBLE
+
+                    imageButtonState?.isEnabled = false
+                    imageButtonState?.visibility = View.GONE
+                }
+            }
         }
 
-        if (progress == 100L) {
-            progressBar?.visibility = View.GONE
-//            imageButtonState?.visibility = View.GONE
-        }
         this.uploadJob = job
 
         if (job.isClosedForSend) {
@@ -145,19 +170,19 @@ open class ConversationViewHolder constructor(
     }
 
     fun setCompressProgressAndJob(
-        progress: Long,
+        progress: Float,
         job: ProducerScope<*>
     ) {
-        Timber.d("compress progress: $progress, job: $job")
+        Timber.d("*Test: Compress Progress: $progress, job: $job")
 
         this.uploadJob = job
     }
 
     fun setDownloadProgressAndJob(
-        progress: Long,
+        progress: Float,
         job: ProducerScope<*>
     ) {
-        Timber.d("progress: $progress, job: $job")
+        Timber.d("*Test: Download Progress: $progress, job: $job")
         progressBar?.visibility = View.VISIBLE
         progressBar?.setProgress(progress.toFloat())
 
@@ -165,7 +190,8 @@ open class ConversationViewHolder constructor(
             progressBarIndeterminate?.visibility = View.GONE
         }
 
-        if (progress == 100L) {
+        if (progress == 100f) {
+            Timber.d("*Test: Full Download")
             progressBar?.visibility = View.GONE
 //            imageButtonState?.visibility = View.GONE
         }
@@ -396,13 +422,13 @@ open class ConversationViewHolder constructor(
                 }
             }
 
-            imageButtonState?.setOnClickListener(
+            imageButtonState?.setSafeOnClickListener{
                 imageButtonStateClickListener(
                     attachment,
                     clickListener,
                     item
                 )
-            )
+            }
 
             imageViewAttachment?.setOnClickListener {
                 if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
@@ -462,7 +488,7 @@ open class ConversationViewHolder constructor(
 //        mediaPlayerManager.resetMediaPlayer()
         with(audioPlayer!!) {
             setAudioId(item.message.id.toString())
-            setMessageAndAttachment(item)
+            setWebId(item.message.webId)
             setMediaPlayerManager(mediaPlayerManager)
             setDuration(attachment.duration)
 
@@ -509,14 +535,18 @@ open class ConversationViewHolder constructor(
                     clickListener.errorPlayingAudio()
                 }
 
-                override fun onPause(audioId: String) {
-                    Timber.d("onPause")
-                    clickListener.sendMessageRead(audioId, false, adapterPosition)
+                override fun onPause(audioId: String?) {
+                    Timber.d("--onPause $audioId")
+                    audioId?.let {
+                        clickListener.sendMessageRead("", audioId, false, adapterPosition)
+                    }
                 }
 
-                override fun onComplete(audioId: String) {
-                    Timber.d("onComplete")
-                    clickListener.sendMessageRead(audioId, true, adapterPosition)
+                override fun onComplete(messageId : String, audioId: String?) {
+                    Timber.d("--onComplete $audioId")
+                    audioId?.let {
+                        clickListener.sendMessageRead(messageId, audioId, true, adapterPosition)
+                    }
                 }
             })
         }
@@ -526,7 +556,7 @@ open class ConversationViewHolder constructor(
         attachment: Attachment,
         clickListener: ConversationAdapter.ClickListener,
         item: MessageAndAttachment
-    ) = View.OnClickListener {
+    ) {
         when (attachment.status) {
             Constants.AttachmentStatus.SENDING.status -> {
                 Timber.d("this.uploadJob: ${this.uploadJob}")

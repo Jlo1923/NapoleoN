@@ -21,11 +21,11 @@ import com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
@@ -115,7 +115,10 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     }
 
     private fun getContacts() {
-        contactRepositoryShareViewModel.getContacts()
+        contactRepositoryShareViewModel.getContacts(
+            Constants.FriendShipState.ACTIVE.state,
+            Constants.LocationGetContact.OTHER.location
+        )
         viewModel.getLocalContacts()
     }
 

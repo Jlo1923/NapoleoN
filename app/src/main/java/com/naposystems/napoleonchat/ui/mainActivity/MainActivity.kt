@@ -14,7 +14,6 @@ import android.view.Display
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -69,10 +68,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var viewModel: MainActivityViewModel
+
     private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
         viewModelFactory
     }
+
     private var accountStatus: Int = 0
+
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
     }
@@ -136,10 +138,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        window.setFlags(
+        /*window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
-        )
+        )*/
 
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
@@ -170,6 +172,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val dialog = AccountAttackDialogFragment()
 
                 dialog.show(supportFragmentManager, "AttackDialog")
+
             }
 
         disposable.add(disposableAccountAttack)
@@ -196,7 +199,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             RxBus.listen(RxEvent.FriendshipRequestAccepted::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    contactRepositoryShareViewModel.getContacts()
+                    contactRepositoryShareViewModel.getContacts(
+                        Constants.FriendShipState.ACTIVE.state,
+                        Constants.LocationGetContact.OTHER.location
+                    )
                 }
         disposable.add(disposableFriendRequestAccepted)
 
@@ -234,7 +240,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.conversationFragment -> {
                     showToolbar()
-                    enableDrawer()
+                    disableDrawer()
                     dontOpenMenu()
                     binding.toolbar.setContentInsetsAbsolute(0, 0)
                     binding.toolbar.elevation = 0f
@@ -298,7 +304,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        intent.extras?.let { args ->
+        setupNotifications(intent)
+
+        binding.navView.setNavigationItemSelectedListener(this)
+
+        setMarginToNavigationView()
+    }
+
+    private fun openMenu() {
+        binding.toolbar.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setupNotifications(intent)
+    }
+
+    private fun setupNotifications(intent: Intent?) {
+        intent?.extras?.let { args ->
             if (args.containsKey(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                 val jsonNotification = JSONObject()
                 jsonNotification.put(
@@ -315,16 +340,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-        }
-
-        binding.navView.setNavigationItemSelectedListener(this)
-
-        setMarginToNavigationView()
-    }
-
-    private fun openMenu() {
-        binding.toolbar.setOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
 

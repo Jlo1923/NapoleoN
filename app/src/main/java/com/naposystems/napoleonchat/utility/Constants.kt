@@ -155,22 +155,14 @@ object Constants {
         EVERY_ONE_HOUR(6),
         EVERY_TWELVE_HOURS(7),
         EVERY_ONE_DAY(8),
-        EVERY_SEVEN_DAY(9)
+        EVERY_SEVEN_DAY(9),
+        EVERY_TWENTY_FOUR_HOURS_ERROR(10),
+        EVERY_SEVEN_DAYS_ERROR(11)
     }
 
     enum class TimeFormat constructor(val time: Int) {
         EVERY_TWENTY_FOUR_HOURS(1),
         EVERY_TWELVE_HOURS(2)
-    }
-
-    enum class SelfDestructTimeByError constructor(val time: Int) {
-        EVERY_TWENTY_FOUR_HOURS(1),
-        EVERY_SEVEN_DAYS(2)
-    }
-
-    enum class MessageSelfDestructTimeNotSent constructor(val time: Int) {
-        TWENTY_FOUR(1),
-        SEVEN_DAYS(2)
     }
 
     enum class TimeRequestAccessPin constructor(val time: Int) {
@@ -235,6 +227,11 @@ object Constants {
     enum class FriendShipState constructor(val state: String) {
         ACTIVE("active"),
         BLOCKED("block")
+    }
+
+    enum class LocationGetContact constructor(val location: Int) {
+        OTHER(0),
+        BLOCKED(1)
     }
 
     enum class IsMine constructor(val value: Int) {
@@ -390,6 +387,11 @@ object Constants {
         MISSED_VIDEO_CALL(3),
         NEW_CONTACT(4),
         MESSAGES_GROUP_DATE(5)
+    }
+
+    enum class LocationAlertDialog(val location: Int) {
+        CONVERSATION(1),
+        CALL_ACTIVITY(2)
     }
 
     enum class SubscriptionStatus(val state: String) {

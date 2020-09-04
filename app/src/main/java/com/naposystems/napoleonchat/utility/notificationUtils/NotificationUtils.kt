@@ -38,6 +38,7 @@ class NotificationUtils @Inject constructor(
     companion object {
         const val NOTIFICATION_RINGING = 950707
         const val NOTIFICATION = 162511
+        const val NOTIFICATION_NUMBER = 1
 
         fun cancelWebRTCCallNotification(context: Context) {
             val notificationManager =
@@ -72,6 +73,8 @@ class NotificationUtils @Inject constructor(
         val iconBitmap = BitmapFactory.decodeResource(
             context.resources, R.drawable.ic_notification_icon
         )
+        //val notificationCount = if(data.containsKey("badge")) data.getValue("badge").toInt() else 0
+        //Timber.d("--OLA $notificationCount")
 
         val pair =
             createPendingIntent(
@@ -94,6 +97,8 @@ class NotificationUtils @Inject constructor(
             .setDefaults(DEFAULT_ALL)
             .setPriority(PRIORITY_MAX)
             .setVisibility(VISIBILITY_PUBLIC)
+            .setNumber(NOTIFICATION_NUMBER)
+            .setBadgeIconType(BADGE_ICON_SMALL)
             .setAutoCancel(true)
 
         handleNotificationType(

@@ -13,6 +13,7 @@ interface IContractMediaPlayer {
     fun setAudioId(audioId: String)
     fun setAudioUri(uri: Uri?)
     fun setAudioFileName(fileName: String)
+    fun setWebId(webId : String?)
     fun playAudio(progress: Int = 0, isEarpiece: Boolean = false)
     fun pauseAudio()
     fun registerProximityListener()
@@ -20,6 +21,7 @@ interface IContractMediaPlayer {
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setImageButtonPlay(imageButtonPlay: ImageView)
     fun setImageButtonSpeed(imageButtonSpeed: ImageButton)
+    fun setStateImageButtonSpeed(imageButtonSpeed: ImageButton, webId : String)
     fun setSeekbar(seekBar: AppCompatSeekBar)
     fun setTextViewDuration(textView: TextView)
     fun setListener(listener: MediaPlayerManager.Listener)
@@ -27,7 +29,7 @@ interface IContractMediaPlayer {
     fun forwardMilliseconds(audioId: String, millis: Long)
     fun changeSpeed(audioId: String)
     fun resetMediaPlayer()
-    fun resetMediaPlayer(attachmentWebId: String)
+    fun resetMediaPlayer(id: String)
     fun setDuration(duration: Long)
     fun getCurrentPosition(): Int
     fun getMax(): Int

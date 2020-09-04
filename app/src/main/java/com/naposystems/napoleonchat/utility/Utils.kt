@@ -291,9 +291,11 @@ class Utils {
             message: Int,
             isCancelable: Boolean,
             childFragmentManager: Context,
+            location : Int,
             titlePositiveButton: Int,
             titleNegativeButton: Int,
-            clickPositiveButton: (Boolean) -> Unit
+            clickPositiveButton: (Boolean) -> Unit,
+            clickNegativeButton: (Boolean) -> Unit
         ) {
             val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
                 .setMessage(message)
@@ -302,7 +304,12 @@ class Utils {
                     clickPositiveButton(true)
                 }
                 .setNegativeButton(titleNegativeButton) { dialog, _ ->
-                    dialog.dismiss()
+                    if (location == Constants.LocationAlertDialog.CONVERSATION.location)
+                        dialog.dismiss()
+                    else {
+                        clickNegativeButton(true)
+                        dialog.dismiss()
+                    }
                 }
                 .create()
             dialog.show()
@@ -330,13 +337,16 @@ class Utils {
             clickTopButton: (Boolean) -> Unit
         ) {
             val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
-                .setTitle(title)
                 .setMessage(message)
                 .setCancelable(isCancelable)
                 .setPositiveButton(titleButton) { _, _ ->
                     clickTopButton(true)
                 }
                 .create()
+
+            if (title.isNotEmpty()) {
+                dialog.setTitle(title)
+            }
 
             dialog.show()
 
@@ -388,15 +398,35 @@ class Utils {
                 EVERY_TEN_MINUTES.time -> TimeUnit.MINUTES.toSeconds(10).toInt()
                 EVERY_THIRTY_MINUTES.time -> TimeUnit.MINUTES.toSeconds(30).toInt()
                 EVERY_ONE_HOUR.time -> TimeUnit.HOURS.toSeconds(1).toInt()
-                EVERY_TWELVE_HOURS.time -> TimeUnit.HOURS.toSeconds(12).toInt()
+                EVERY_TWELVE_HOURS.time, EVERY_TWENTY_FOUR_HOURS_ERROR.time ->
+                    TimeUnit.HOURS.toSeconds(12).toInt()
                 EVERY_ONE_DAY.time -> TimeUnit.DAYS.toSeconds(1).toInt()
+                EVERY_TWENTY_FOUR_HOURS_ERROR.time -> TimeUnit.DAYS.toSeconds(1).toInt()
                 else -> TimeUnit.DAYS.toSeconds(7).toInt()
+            }
+        }
+
+        fun compareDurationAttachmentWithSelfAutoDestructionInSeconds(duration: Int, timeActual : Int): Int {
+            return if(duration >= convertItemOfTimeInSeconds(timeActual)) {
+                when {
+                    duration >= TimeUnit.DAYS.toSeconds(1).toInt() -> EVERY_SEVEN_DAY.time
+                    duration >= TimeUnit.HOURS.toSeconds(12).toInt() -> EVERY_ONE_DAY.time
+                    duration >= TimeUnit.HOURS.toSeconds(1).toInt() ->  EVERY_TWELVE_HOURS.time
+                    duration >= TimeUnit.MINUTES.toSeconds(30).toInt()-> EVERY_ONE_HOUR.time
+                    duration >= TimeUnit.MINUTES.toSeconds(10).toInt()-> EVERY_THIRTY_MINUTES.time
+                    duration >= TimeUnit.MINUTES.toSeconds(1).toInt()->  EVERY_TEN_MINUTES.time
+                    duration >= TimeUnit.SECONDS.toSeconds(30).toInt() -> EVERY_ONE_MINUTE.time
+                    duration >= TimeUnit.SECONDS.toSeconds(15).toInt()-> EVERY_THIRTY_SECONDS.time
+                    else -> EVERY_FIFTEEN_SECONDS.time
+                }
+            } else {
+                timeActual
             }
         }
 
         fun convertItemOfTimeInSecondsByError(item: Int): Int {
             return when (item) {
-                Constants.SelfDestructTimeByError.EVERY_TWENTY_FOUR_HOURS.time -> TimeUnit.HOURS.toSeconds(
+                EVERY_TWENTY_FOUR_HOURS_ERROR.time -> TimeUnit.HOURS.toSeconds(
                     24
                 ).toInt()
                 else -> TimeUnit.DAYS.toSeconds(7).toInt()

@@ -34,8 +34,8 @@
 
         <ImageView
             android:id="@+id/imageView_user_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginStart="5dp"
             android:foreground="@drawable/border_avatar_contact"
             android:onClick="@{() -> clickListener.onClickAvatar(conversation)}"
@@ -61,16 +61,17 @@
         <TextView
             android:id="@+id/textView_unread_messages"
             style="@style/MinorBodyTextViewBadge"
-            android:layout_width="17dp"
-            android:layout_height="17dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:background="@drawable/bg_unread_messages"
             android:gravity="center"
+            android:textSize="@dimen/badge_text_size"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/linear_container"
             app:layout_constraintEnd_toEndOf="@id/textView_hora"
             app:layout_constraintTop_toTopOf="@+id/linear_container"
             app:unreadMessages="@{conversation.messagesUnReads}"
-            tools:text="99"
+            tools:text="100"
             tools:visibility="visible" />
 
         <ImageView
@@ -82,7 +83,7 @@
             app:layout_constraintTop_toTopOf="@+id/linear_container"
             app:statusMessage="@{conversation.message}"
             tools:src="@drawable/ic_message_readed"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/textView_user_name"
@@ -145,7 +146,6 @@
 
             <TextView
                 android:id="@+id/textView_message"
-                style="@style/BodyTextView.message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

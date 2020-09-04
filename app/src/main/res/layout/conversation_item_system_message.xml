@@ -107,9 +107,11 @@
 
                 <TextView
                     android:id="@+id/textView_body"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/x_small_margin"
+                    android:padding="2dp"
+                    tools:text="@string/text_new_contact"
                     android:textColor="?attr/attrTextColorSystem"
                     android:textSize="@dimen/minor_text_size"
                     android:textStyle="italic"
@@ -117,8 +119,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/imageView_icon"
                     app:layout_constraintTop_toTopOf="@id/imageView_icon"
-                    app:layout_constraintWidth_default="wrap"
-                    tools:text="@tools:sample/lorem[1]" />
+                    app:layout_constraintWidth_default="wrap" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

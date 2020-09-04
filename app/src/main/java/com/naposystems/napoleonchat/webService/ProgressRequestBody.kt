@@ -1,9 +1,5 @@
 package com.naposystems.napoleonchat.webService
 
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
-import com.naposystems.napoleonchat.utility.UploadResult
-import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.isActive
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
@@ -11,10 +7,9 @@ import timber.log.Timber
 import java.io.ByteArrayInputStream
 
 class ProgressRequestBody(
-    private val attachment: Attachment,
-    private val channel: ProducerScope<UploadResult>,
     private val bytes: ByteArray,
-    private val mediaType: MediaType
+    private val mediaType: MediaType,
+    private val progress : (Float) -> Unit
 ) : RequestBody() {
 
     private val mLength = bytes.size.toLong()
@@ -38,20 +33,10 @@ class ProgressRequestBody(
                 while (inputStream.read(buffer).also { read = it } != -1) {
                     sink.write(buffer, 0, read)
                     uploaded += read
-
-                    if (channel.isActive) {
-                        channel.offer(
-                            UploadResult.Progress(
-                                attachment,
-                                (100f * uploaded / mLength).toLong(),
-                                channel
-                            )
-                        )
-                    }
+                    progress(100f * uploaded / mLength)
                 }
             }
         } catch (e: Exception) {
-            channel.close()
             Timber.e(e)
         }
     }

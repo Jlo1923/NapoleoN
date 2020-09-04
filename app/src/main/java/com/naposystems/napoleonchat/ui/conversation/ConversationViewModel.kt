@@ -20,6 +20,7 @@ import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
 import com.naposystems.napoleonchat.utility.*
+import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
 import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
@@ -153,6 +154,10 @@ class ConversationViewModel @Inject constructor(
         quote: String
     ) {
         viewModelScope.launch {
+            val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(attachment?.duration ?: 0).toInt()
+            val selfAutoDestruction = compareDurationAttachmentWithSelfAutoDestructionInSeconds(
+                durationAttachment, selfDestructTime
+            )
             val message = Message(
                 id = 0,
                 webId = "",
@@ -165,7 +170,7 @@ class ConversationViewModel @Inject constructor(
                 status = Constants.MessageStatus.SENDING.status,
                 numberAttachments = numberAttachments,
                 messageType = Constants.MessageType.MESSAGE.type,
-                selfDestructionAt = selfDestructTime
+                selfDestructionAt = selfAutoDestruction
             )
 
             if (BuildConfig.ENCRYPT_API) {
@@ -193,7 +198,7 @@ class ConversationViewModel @Inject constructor(
                 attachment = attachment,
                 message = message,
                 numberAttachments = numberAttachments,
-                selfDestructTime = selfDestructTime,
+                selfDestructTime = selfAutoDestruction,
                 quote = quote
             )
         }
@@ -250,7 +255,6 @@ class ConversationViewModel @Inject constructor(
         quote: String = ""
     ) {
         try {
-
             val messageReqDTO = MessageReqDTO(
                 userDestination = contact.id,
                 quoted = quote,
@@ -323,12 +327,13 @@ class ConversationViewModel @Inject constructor(
     override fun deleteMessagesForAll(contactId: Int, listMessages: List<MessageAndAttachment>) {
         viewModelScope.launch {
             try {
-
                 val response =
                     repository.deleteMessagesForAll(
                         buildObjectDeleteMessages(
                             contactId,
-                            listMessages
+                            listMessages.filter { messageAndAttachment ->
+                                messageAndAttachment.message.webId.isNotEmpty()
+                            }
                         )
                     )
 
@@ -489,7 +494,11 @@ class ConversationViewModel @Inject constructor(
         selfDestructTime: Int
     ) {
         viewModelScope.launch {
-            message.selfDestructionAt = selfDestructTime
+            val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(attachment.duration).toInt()
+            val selfAutoDestruction = compareDurationAttachmentWithSelfAutoDestructionInSeconds(
+                durationAttachment, selfDestructTime
+            )
+            message.selfDestructionAt = selfAutoDestruction
             try {
                 if (message.status == Constants.MessageStatus.ERROR.status && message.webId.isEmpty()) {
                     val messageReqDTO = MessageReqDTO(
@@ -497,7 +506,7 @@ class ConversationViewModel @Inject constructor(
                         quoted = message.quoted,
                         body = message.getBody(cryptoMessage),
                         numberAttachments = 1,
-                        destroy = message.selfDestructionAt,
+                        destroy = selfAutoDestruction,
                         messageType = Constants.MessageType.MESSAGE.type
                     )
 

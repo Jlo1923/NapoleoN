@@ -1,9 +1,9 @@
 package com.naposystems.napoleonchat.ui.home.adapter
 
-import android.graphics.Typeface
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.BindingAdapter
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.entity.message.Message
@@ -113,7 +113,6 @@ fun bindIconByConversation(imageView: ImageView, messageAndAttachment: MessageAn
 fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAttachment?) {
     val context = textView.context
     var text = ""
-
     messageAndAttachment?.let { messageAndAttach ->
         text = when (messageAndAttach.message.messageType) {
             Constants.MessageType.MESSAGE.type -> {
@@ -139,32 +138,45 @@ fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAtt
                 }
             }
             Constants.MessageType.MISSED_CALL.type -> {
-                textView.setTypeface(textView.typeface, Typeface.ITALIC)
                 context.getString(R.string.text_missed_voice_call)
             }
             Constants.MessageType.MISSED_VIDEO_CALL.type -> {
-                textView.setTypeface(textView.typeface, Typeface.ITALIC)
                 context.getString(R.string.text_missed_video_call)
             }
             Constants.MessageType.NEW_CONTACT.type -> {
-                textView.setTypeface(textView.typeface, Typeface.ITALIC)
-                messageAndAttach.message.body
+                context.getString(R.string.text_new_contact)
             }
             else -> ""
         }
 
         textView.text = text
-
+        when (messageAndAttach.message.messageType) {
+            Constants.MessageType.MISSED_CALL.type,
+            Constants.MessageType.MISSED_VIDEO_CALL.type,
+            Constants.MessageType.NEW_CONTACT.type -> {
+                TextViewCompat.setTextAppearance(textView, R.style.italicText)
+            }
+            else -> {
+                TextViewCompat.setTextAppearance(textView, R.style.normalText)
+            }
+        }
     }
 }
 
 @BindingAdapter("unreadMessages")
 fun bindUnreadMessages(textView: TextView, unreadMessages: Int) {
-    if (unreadMessages == 0) {
-        textView.visibility = View.GONE
-    } else {
-        textView.visibility = View.VISIBLE
-        textView.text = unreadMessages.toString()
+    textView.visibility = View.VISIBLE
+    when (unreadMessages) {
+        0 -> {
+            textView.visibility = View.GONE
+        }
+        in 1..99 -> {
+            textView.text = unreadMessages.toString()
+        }
+        else -> {
+            val max = "+99"
+            textView.text = max
+        }
     }
 }
 

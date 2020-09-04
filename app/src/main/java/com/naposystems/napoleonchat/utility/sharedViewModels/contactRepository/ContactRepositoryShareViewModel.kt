@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactRepositoryShareViewModel @Inject constructor(
@@ -15,9 +16,13 @@ class ContactRepositoryShareViewModel @Inject constructor(
     val contactsWasLoaded: LiveData<Boolean>
         get() = _contactsWasLoaded
 
-    override fun getContacts() {
+    override fun getContacts(state : String, location : Int) {
         viewModelScope.launch {
-            _contactsWasLoaded.value = repository.getContacts()
+            try {
+                _contactsWasLoaded.value = repository.getContacts(state, location)
+            } catch (ex : Exception) {
+                Timber.e(ex)
+            }
         }
     }
 

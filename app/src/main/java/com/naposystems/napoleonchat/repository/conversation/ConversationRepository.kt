@@ -27,6 +27,8 @@ import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -110,7 +112,7 @@ class ConversationRepository @Inject constructor(
     override suspend fun uploadAttachment(
         attachment: Attachment,
         message: Message
-    ) = channelFlow<UploadResult> {
+    ) = channelFlow {
         try {
             updateAttachment(attachment)
             message.status = Constants.MessageStatus.SENDING.status
@@ -133,10 +135,10 @@ class ConversationRepository @Inject constructor(
                 .collect {
                     when (it) {
                         is VideoCompressResult.Start -> {
-                            Timber.d("tmessages VideoCompressResult.Start")
+                            Timber.d("*Test: tmessages VideoCompressResult.Start")
                         }
                         is VideoCompressResult.Success -> {
-                            Timber.d("tmessages VideoCompressResult.Success")
+                            Timber.d("*Test: tmessages VideoCompressResult.Success")
                             if (it.srcFile.isFile && it.srcFile.exists() && !attachment.isCompressed && attachment.type == Constants.AttachmentType.VIDEO.type)
                                 it.srcFile.delete()
                             attachment.fileName =
@@ -151,9 +153,11 @@ class ConversationRepository @Inject constructor(
 
                             val requestBodyFilePart =
                                 createPartFromFile(
-                                    this@channelFlow,
                                     attachment,
-                                    this as Job
+                                    this as Job,
+                                    progress = { progress ->
+                                        offer(UploadResult.Progress(attachment, progress,this))
+                                    }
                                 )
 
                             val response = napoleonApi.sendMessageAttachment(
@@ -194,7 +198,7 @@ class ConversationRepository @Inject constructor(
                             offer(
                                 UploadResult.CompressProgress(
                                     attachment,
-                                    it.progress.toLong(),
+                                    it.progress,
                                     this
                                 )
                             )
@@ -234,11 +238,10 @@ class ConversationRepository @Inject constructor(
     }
 
     private fun createPartFromFile(
-        channel: ProducerScope<UploadResult>,
         attachment: Attachment,
-        job: Job
+        job: Job,
+        progress : (Float) -> Unit
     ): MultipartBody.Part {
-
         val subfolder =
             FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
 
@@ -268,10 +271,11 @@ class ConversationRepository @Inject constructor(
 
         val progressRequestBody =
             ProgressRequestBody(
-                attachment,
-                channel,
                 byteArray,
-                mediaType!!
+                mediaType!!,
+                progress = { progress ->
+                    progress(progress)
+                }
             )
 
         Timber.d("before return MultiparBody, $job")
@@ -442,6 +446,14 @@ class ConversationRepository @Inject constructor(
         contactId: Int,
         listMessages: List<MessageAndAttachment>
     ) {
+        listMessages.filter { messageAndAttachment ->
+            messageAndAttachment.attachmentList.count() > 0 &&
+            messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
+        }.let { listMessagesFiltered ->
+            if (listMessagesFiltered.count() > 0) {
+                RxBus.publish(RxEvent.MessagesToEliminate(listMessagesFiltered))
+            }
+        }
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
     }
 
@@ -780,6 +792,16 @@ class ConversationRepository @Inject constructor(
                         Constants.MessageStatus.READED.status
                     )
                 }
+            } else if(messageAndAttachment == null) {
+                val response = napoleonApi.sendMessagesRead(
+                    MessagesReadReqDTO(
+                        arrayListOf(messageWebId)
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    Timber.d("Success: ${response.body()}")
+                }
             }
         } catch (ex: Exception) {
             Timber.e(ex)
@@ -795,13 +817,13 @@ class ConversationRepository @Inject constructor(
         srcFile: File,
         destFile: File,
         job: ProducerScope<*>
-    ) = flow<VideoCompressResult> {
+    ) = flow {
 
         if (attachment.type == Constants.AttachmentType.VIDEO.type && !attachment.isCompressed) {
             if (destFile.exists())
                 destFile.delete()
 
-            VideoCompressK.compressVideoLow(
+            VideoCompressK.compressVideoCustom(
                 srcFile, destFile, job
             ).collect {
                 emit(it)

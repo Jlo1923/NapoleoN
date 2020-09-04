@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter
 
 import android.content.Context
+import android.graphics.Typeface
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -8,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -49,7 +49,9 @@ fun bindMessageDateSend(textView: TextView, timestamp: Int, format: Int) {
                 }
             }
         }
-        textView.text = "${sdf.format(Date(timestamp.toLong() * 1000))}\u00A0"
+        textView.setTypeface(textView.typeface, Typeface.ITALIC)
+        val text = "${sdf.format(Date(timestamp.toLong() * 1000))} "
+        textView.text = text
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.e("Error parsing date")
@@ -80,7 +82,8 @@ fun bindMessageDateIncoming(textView: TextView, timestamp: Int, format: Int) {
                 }
             }
         }
-        textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+        val text = "${sdf.format(Date(timestamp.toLong() * 1000))} "
+        textView.text = text
         textView.visibility = View.VISIBLE
     } catch (e: Exception) {
         Timber.e("Error parsing date")
@@ -156,7 +159,7 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
     }
 }
 
-@BindingAdapter("isFirstMyMessage")
+/*@BindingAdapter("isFirstMyMessage")
 fun bindIsFirstMyMessage(constraintLayout: ConstraintLayout, isFirst: Boolean) {
     val context = constraintLayout.context
     constraintLayout.background = if (isFirst) {
@@ -174,7 +177,7 @@ fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Bool
     } else {
         context.getDrawable(R.drawable.bg_incoming_message_rounded)
     }
-}
+}*/
 
 @BindingAdapter("countDown")
 fun bindCountDown(
@@ -247,7 +250,6 @@ private fun loadBlurAttachment(
                 .load(firstAttachment.body)
                 .transform(
                     CenterCrop(),
-                    RoundedCorners(8),
                     BlurTransformation(context)
                 )
                 .into(imageView)
@@ -260,7 +262,6 @@ private fun loadBlurAttachment(
                 .thumbnail(0.1f)
                 .transform(
                     CenterCrop(),
-                    RoundedCorners(8),
                     BlurTransformation(context)
                 )
                 .into(imageView)
@@ -357,7 +358,13 @@ fun bindIconForState(
 
         val drawableId = when (attachment.status) {
             Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
-                imageButton.visibility = View.VISIBLE
+                if(messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
+                   messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
+                   messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+                    imageButton.visibility = View.GONE
+                } else {
+                    imageButton.visibility = View.VISIBLE
+                }
                 R.drawable.ic_file_upload_black
             }
             Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
@@ -399,6 +406,7 @@ fun bindIconForState(
 
         imageButton.setImageResource(drawableId)
     }
+
 }
 
 @BindingAdapter("showCheck")
