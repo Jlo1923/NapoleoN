@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
-import timber.log.Timber
 
 class CustomVerticalSeekBar constructor(context: Context, attributeSet: AttributeSet) :
     androidx.appcompat.widget.AppCompatSeekBar(context, attributeSet) {

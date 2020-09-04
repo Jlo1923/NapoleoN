@@ -16,6 +16,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchaseHistoryRecord
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
@@ -26,6 +28,7 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
@@ -45,6 +48,7 @@ import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
+import timber.log.Timber
 import javax.inject.Inject
 
 class HomeFragment : Fragment() {
@@ -55,6 +59,9 @@ class HomeFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle
 
     private val viewModel: HomeViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
@@ -86,6 +93,11 @@ class HomeFragment : Fragment() {
     private var addContactsMenuItem: MenuItem? = null
     private var homeMenuItem: View? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(billingClientLifecycle)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,6 +106,8 @@ class HomeFragment : Fragment() {
         setHasOptionsMenu(true)
 
         viewModel.verifyMessagesToDelete()
+
+        billingClientLifecycle.queryPurchases()
 
         binding = DataBindingUtil.inflate(
             layoutInflater,
@@ -182,9 +196,34 @@ class HomeFragment : Fragment() {
             }
         })
 
-        viewModel.insertSubscription()
+        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+            purchasesList?.let {
+                Timber.d("Billing purchases")
+                if (purchasesList.isEmpty()) {
+                    billingClientLifecycle.queryPurchasesHistory()
+                } else {
+                    binding.containerSubscription.isVisible = false
+                    purchasesList[0].let {
+                        if (it.purchaseState == Purchase.PurchaseState.PURCHASED) {
+                            // Melito
+                        } else {
+                            // TODO: Que se va a hacer en caso de que la suscripcion este en los otros estado
+                        }
+                    }
+                }
+                purchasesList.forEach {
+                    Timber.d("${it.sku}, ${it.purchaseTime}, ${it.purchaseState}")
+                }
+            }
+        })
 
-        validateSubscriptionTime()
+        billingClientLifecycle.purchasesHistory.observe(
+            viewLifecycleOwner,
+            Observer { purchasesHistory ->
+                purchasesHistory?.let {
+                    validateSubscriptionTime(purchasesHistory)
+                }
+            })
 
         viewModel.user.observe(viewLifecycleOwner, Observer {
             binding.textViewStatus.text = it.status
@@ -333,23 +372,19 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun validateSubscriptionTime() {
+    private fun validateSubscriptionTime(purchaseHistoryList: List<PurchaseHistoryRecord>) {
         val freeTrial = viewModel.getFreeTrial()
-        val subscriptionTime = viewModel.getSubscriptionTime()
+        Timber.d("freeTrial: $freeTrial")
 
         if (System.currentTimeMillis() > freeTrial) {
-            if (System.currentTimeMillis() > subscriptionTime && subscriptionTime == 0L) {
+            if (purchaseHistoryList.isEmpty()) {
                 binding.textViewMessageSubscription.text =
                     getString(R.string.text_free_trial_expired)
                 binding.containerSubscription.isVisible = true
             } else {
-                if (subscriptionTime > System.currentTimeMillis()) {
-                    binding.containerSubscription.isVisible = false
-                } else {
-                    binding.textViewMessageSubscription.text =
-                        getString(R.string.text_expired_subscription)
-                    binding.containerSubscription.isVisible = true
-                }
+                binding.textViewMessageSubscription.text =
+                    getString(R.string.text_subscription_expired)
+                binding.containerSubscription.isVisible = true
             }
         } else {
             binding.containerSubscription.isVisible = false

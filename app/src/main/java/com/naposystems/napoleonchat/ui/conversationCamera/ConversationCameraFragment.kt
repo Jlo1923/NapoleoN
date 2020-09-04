@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.common.util.concurrent.ListenableFuture
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationCameraFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment

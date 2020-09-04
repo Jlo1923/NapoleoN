@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CREATE_ACCOUNT
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GENERATE_CODE
@@ -14,6 +15,7 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_MESSAGE_A
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.napoleonchat.crypto.Crypto
+import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_ANSWERS_OLD_USER
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_PASSWORD_OLD_ACCOUNT
 import com.naposystems.napoleonchat.utility.LocaleHelper
@@ -317,5 +319,11 @@ class ApplicationModule {
             sharedPreferencesManager,
             socketRepository
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideBillingClient(context: Context): BillingClientLifecycle {
+        return BillingClientLifecycle(context as NapoleonApplication)
     }
 }

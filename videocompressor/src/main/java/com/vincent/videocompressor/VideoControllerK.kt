@@ -1,9 +1,11 @@
 package com.vincent.videocompressor
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.media.*
+import android.media.MediaCodec
 import android.media.MediaCodecInfo.CodecCapabilities
+import android.media.MediaExtractor
+import android.media.MediaFormat
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.Log
 import com.vincent.videocompressor.VideoController.COMPRESS_QUALITY_CUSTOM
@@ -11,9 +13,6 @@ import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.isActive
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.*
 

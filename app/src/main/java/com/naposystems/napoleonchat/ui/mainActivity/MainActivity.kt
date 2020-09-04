@@ -14,7 +14,6 @@ import android.view.Display
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView

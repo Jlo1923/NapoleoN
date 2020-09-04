@@ -21,4 +21,12 @@
     <string name="text_unsubscribed_desc">Rappelez-vous que vous pouvez vous abonner à un autre forfait qui convient à vos besoins à tout moment.</string>
     <string name="text_finalize">Finaliser</string>
     <string name="text_error_unsubscribe">une erreur annulation de votre abonnement, s\'il vous plaît essayer plus tard a eu lieu.</string>
+    <string name="text_subscription_monthly">Mensuel</string>
+    <string name="text_subscription_semiannual">Semestriel</string>
+    <string name="text_subscription_yearly">Annuel</string>
+    <string name="text_purchase">Acheter %1$s (%2$s)</string>
+    <string name="text_subscription_successfully">Abonnement réussi.</string>
+    <string name="text_subscription_already_owned">Vous disposez déjà de ce plan actuellement actif.</string>
+    <string name="text_subscription_error">Une erreur est survenue! Réessayez plus tard.</string>
+    <string name="text_subscription_expired">Votre expirés d\'abonnement, vous ne recevrez des messages.</string>
 </resources>

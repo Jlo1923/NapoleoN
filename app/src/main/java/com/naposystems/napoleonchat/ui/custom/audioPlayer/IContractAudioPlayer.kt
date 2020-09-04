@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.ui.custom.audioPlayer
 
 import android.net.Uri
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
 interface IContractAudioPlayer {

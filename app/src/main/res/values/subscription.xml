@@ -21,6 +21,14 @@
     <string name="text_unsubscribed_desc">Remember that you can subscribe to another package that suits your needs at any time.</string>
     <string name="text_finalize">Finalize</string>
     <string name="text_error_unsubscribe">An error canceling your subscription, please try later occurred.</string>
+    <string name="text_subscription_monthly">Monthly</string>
+    <string name="text_subscription_semiannual">Semiannual</string>
+    <string name="text_subscription_yearly">Annual</string>
+    <string name="text_purchase">Purchase %1$s (%2$s)</string>
+    <string name="text_subscription_successfully">Subscription successful.</string>
+    <string name="text_subscription_already_owned">You already have this plan currently active.</string>
+    <string name="text_subscription_error">An error ocurred. Please try again later.</string>
+    <string name="text_subscription_expired">Your subscription expired, you will only receive messages.</string>
 </resources>
 
 

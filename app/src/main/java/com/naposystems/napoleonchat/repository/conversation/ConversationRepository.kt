@@ -37,12 +37,14 @@ import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import com.vincent.videocompressor.VideoCompressK
 import com.vincent.videocompressor.VideoCompressResult
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.yield
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -829,5 +831,11 @@ class ConversationRepository @Inject constructor(
         } else {
             emit(VideoCompressResult.Success(srcFile, destFile))
         }
+    }
+
+    override fun getFreeTrial(): Long {
+        return sharedPreferencesManager.getLong(
+            Constants.SharedPreferences.PREF_FREE_TRIAL
+        )
     }
 }

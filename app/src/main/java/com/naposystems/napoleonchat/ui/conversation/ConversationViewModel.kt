@@ -3,7 +3,10 @@ package com.naposystems.napoleonchat.ui.conversation
 import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
@@ -667,6 +670,8 @@ class ConversationViewModel @Inject constructor(
     override fun resetNewMessage() {
         _newMessageSend.value = null
     }
+
+    override fun getFreeTrial() = repository.getFreeTrial()
 
     //endregion
 }

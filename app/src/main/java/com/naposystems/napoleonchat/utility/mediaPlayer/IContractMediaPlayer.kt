@@ -6,7 +6,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 
 interface IContractMediaPlayer {
     fun setContext(context: Context)
