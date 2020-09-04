@@ -127,12 +127,7 @@ class WebRTCCallService : Service() {
             )
             Timber.d("notificationId: $notificationId")
 
-            startForeground(
-                notificationUtils.getNotificationId(
-                    applicationContext,
-                    Constants.NotificationType.INCOMING_CALL.type
-                ), notification
-            )
+            startForeground(notificationId, notification)
         }
     }
 

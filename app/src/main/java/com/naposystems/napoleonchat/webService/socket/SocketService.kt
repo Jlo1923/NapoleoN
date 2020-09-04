@@ -2,13 +2,16 @@ package com.naposystems.napoleonchat.webService.socket
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
+import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.pusher.client.Pusher
 import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
@@ -471,10 +474,12 @@ class SocketService @Inject constructor(
     private fun listenCancelCall(privateChannel: PrivateChannel) {
         privateChannel.bind("App\\Events\\CancelCallEvent", object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent) {
-                Timber.d("CancelCallEvent: ${event.data}")
+                Timber.d("CancelCallEvent: ${event.data}, notificationId: ${NotificationUtils.NOTIFICATION_RINGING}")
                 val notificationManager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.cancelAll()
+                notificationManager.cancel(NotificationUtils.NOTIFICATION_RINGING)
+                val intent = Intent(context, WebRTCCallService::class.java)
+                context.stopService(intent)
             }
 
             override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
