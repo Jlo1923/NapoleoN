@@ -63,6 +63,7 @@ object Constants {
         const val LOG_OUT = "auth/logout"
         const val CANCEL_SUBSCRIPTION = "subscriptions/cancel"
         const val CHECK_SUBSCRIPTION = "subscriptions/state"
+        const val CANCEL_CALL = "call/cancelcall"
     }
 
     object CallKeys {
@@ -271,7 +272,9 @@ object Constants {
         VERIFICATION_CODE(4),
         SUBSCRIPTION(5),
         ACCOUNT_ATTACK(6),
-        INCOMING_CALL(7)
+        INCOMING_CALL(7),
+        REJECT_CALL(8),
+        CANCEL_CALL(9)
     }
 
     enum class MessageStatus(val status: Int) {

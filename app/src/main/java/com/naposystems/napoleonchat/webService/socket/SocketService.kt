@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.webService.socket
 
+import android.app.NotificationManager
 import android.content.Context
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -227,6 +228,8 @@ class SocketService @Inject constructor(
                             listenIncomingCall(generalChannel)
 
                             listenCallRejected(generalChannel)
+
+                            listenCancelCall(generalChannel)
 
                             repository.getMyMessages()
                         }
@@ -462,6 +465,21 @@ class SocketService @Inject constructor(
             override fun onSubscriptionSucceeded(channelName: String?) {
 
             }
+        })
+    }
+
+    private fun listenCancelCall(privateChannel: PrivateChannel) {
+        privateChannel.bind("App\\Events\\CancelCallEvent", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                Timber.d("CancelCallEvent: ${event.data}")
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.cancelAll()
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
         })
     }
 }

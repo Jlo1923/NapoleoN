@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.utility.Constants
@@ -59,6 +60,25 @@ class ConversationCallViewModel @Inject constructor(
                     // Intentionally empty
                 } else {
                     Timber.e(messageResponse.errorBody()?.toString())
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+    }
+
+    override fun cancelCall(contactId: Int) {
+        viewModelScope.launch {
+            try {
+                val cancelCallReqDTO = CancelCallReqDTO(
+                    contactId
+                )
+                val response = repository.cancelCall(cancelCallReqDTO)
+
+                if (response.isSuccessful) {
+                    Unit
+                } else {
+                    Timber.e(response.errorBody()?.toString())
                 }
             } catch (e: Exception) {
                 Timber.e(e)

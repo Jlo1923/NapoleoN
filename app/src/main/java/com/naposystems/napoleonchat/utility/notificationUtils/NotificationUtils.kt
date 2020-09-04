@@ -148,6 +148,7 @@ class NotificationUtils @Inject constructor(
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ) {
+        Timber.d("handleNotificationType: $notificationType, $data")
         var app: NapoleonApplication? = null
         if (context is NapoleonApplication) {
             app = context
@@ -300,6 +301,12 @@ class NotificationUtils @Inject constructor(
                         jsonObject.toString()
                     )
                 }*/
+            }
+            Constants.NotificationType.CANCEL_CALL.type -> {
+                Timber.d("CANCEL_CALL")
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.cancelAll()
             }
         }
     }

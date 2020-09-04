@@ -81,7 +81,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
+        /*when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
             Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
             Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
             Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
@@ -90,7 +90,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
             Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
             Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
-        }
+        }*/
 
         super.onCreate(savedInstanceState)
 
@@ -149,6 +149,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             viewModel.resetIsOnCallPref()
             if (!isIncomingCall && !webRTCClient.isActiveCall()) {
                 viewModel.sendMissedCall(contactId, isVideoCall)
+                viewModel.cancelCall(contactId)
             }
             if (!isFromClosedApp) {
                 val intent = Intent(this, WebRTCCallService::class.java)
@@ -172,7 +173,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.imageButtonSpeaker.setOnClickListener {
-            webRTCClient.setSpeakerOn()
+            webRTCClient.setSpeakerOn(binding.imageButtonSpeaker.isChecked)
         }
 
         binding.imageButtonMicOff.setOnCheckedChangeListener { _, _ ->

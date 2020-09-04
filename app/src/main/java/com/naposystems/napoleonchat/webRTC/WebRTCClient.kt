@@ -116,7 +116,6 @@ class WebRTCClient constructor(
     private var callTime: Long = 0
     private var isVideoCall: Boolean = false
     private var incomingCall: Boolean = false
-    private var isSpeakerOn: Boolean = false
     private var isMicOn: Boolean = true
     private var mediaPlayerHasStopped: Boolean = false
     private var renegotiateCall: Boolean = false
@@ -309,12 +308,10 @@ class WebRTCClient constructor(
                         isHeadsetConnected = true
                         if (isVideoCall && !isBluetoothAvailable) {
                             audioManager.isSpeakerphoneOn = false
-                            isSpeakerOn = false
                         }
 
                         if (!isVideoCall && audioManager.isSpeakerphoneOn) {
                             audioManager.isSpeakerphoneOn = false
-                            isSpeakerOn = false
                             mListener?.changeCheckedSpeaker(false)
                         }
                     }
@@ -324,12 +321,10 @@ class WebRTCClient constructor(
 
                         if (isVideoCall && !isBluetoothAvailable) {
                             audioManager.isSpeakerphoneOn = true
-                            isSpeakerOn = true
                         }
 
                         if (isVideoCall && isBluetoothAvailable) {
                             audioManager.isSpeakerphoneOn = false
-                            isSpeakerOn = false
                         }
                     }
                 }
@@ -349,7 +344,7 @@ class WebRTCClient constructor(
     }
 
     private fun initializeProximitySensor() {
-        if (!isVideoCall && !isSpeakerOn && !wakeLock.isHeld) {
+        if (!isVideoCall && !audioManager.isSpeakerphoneOn && !wakeLock.isHeld) {
             wakeLock.acquire(TimeUnit.HOURS.toMillis(99))
         }
     }
@@ -478,7 +473,6 @@ class WebRTCClient constructor(
 
                         if (!isVideoCall && incomingCall) {
                             audioManager.isSpeakerphoneOn = false
-                            isSpeakerOn = false
                             mListener?.changeCheckedSpeaker(false)
                         }
                     }
@@ -685,10 +679,8 @@ class WebRTCClient constructor(
 
                 if (isBluetoothAvailable) {
                     audioManager.isSpeakerphoneOn = false
-                    isSpeakerOn = false
                 } else {
                     audioManager.isSpeakerphoneOn = !this.isHeadsetConnected
-                    isSpeakerOn = !this.isHeadsetConnected
                 }
                 mListener?.showRemoteVideo()
 
@@ -734,11 +726,10 @@ class WebRTCClient constructor(
         this.remoteVideoView = surfaceViewRenderer
     }
 
-    override fun setSpeakerOn() {
-        isSpeakerOn = !isSpeakerOn
-        audioManager.isSpeakerphoneOn = isSpeakerOn
+    override fun setSpeakerOn(isChecked: Boolean) {
+        audioManager.isSpeakerphoneOn = isChecked
 
-        if (isSpeakerOn || audioManager.isBluetoothScoOn) {
+        if (isChecked || audioManager.isBluetoothScoOn) {
             audioManager.stopBluetoothSco()
             audioManager.isBluetoothScoOn = false
             unregisterProximityListener()
@@ -781,7 +772,6 @@ class WebRTCClient constructor(
         audioManager.stopBluetoothSco()
         audioManager.isBluetoothScoOn = false
         audioManager.isSpeakerphoneOn = false
-        isSpeakerOn = false
         socketService.emitToCall(channel, SocketService.HANGUP_CALL)
     }
 
@@ -818,7 +808,6 @@ class WebRTCClient constructor(
             audioManager.startBluetoothSco()
             audioManager.isBluetoothScoOn = true
             audioManager.isSpeakerphoneOn = false
-            isSpeakerOn = false
             isBluetoothStopped = false
         } else {
             isBluetoothStopped = true
@@ -828,16 +817,13 @@ class WebRTCClient constructor(
             when {
                 isHeadsetConnected -> {
                     audioManager.isSpeakerphoneOn = false
-                    isSpeakerOn = false
                 }
                 isBluetoothAvailable -> {
                     audioManager.isSpeakerphoneOn = true
-                    isSpeakerOn = true
                     audioManager.mode = MODE_IN_CALL
                 }
                 else -> {
                     audioManager.isSpeakerphoneOn = isVideoCall
-                    isSpeakerOn = isVideoCall
                 }
             }
         }
@@ -848,13 +834,7 @@ class WebRTCClient constructor(
         playSound(Settings.System.DEFAULT_RINGTONE_URI, true) {
             // Intentionally empty
         }
-        if (isBluetoothAvailable || isHeadsetConnected) {
-            audioManager.isSpeakerphoneOn = false
-            isSpeakerOn = false
-        } else {
-            isSpeakerOn = true
-            audioManager.isSpeakerphoneOn = true
-        }
+        audioManager.isSpeakerphoneOn = !(isBluetoothAvailable || isHeadsetConnected)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val effect = VibrationEffect.createWaveform(vibratePattern, 0)
             vibrator?.vibrate(effect)
@@ -866,9 +846,7 @@ class WebRTCClient constructor(
     override fun playCallingTone() {
         if (isBluetoothAvailable || isHeadsetConnected) {
             audioManager.isSpeakerphoneOn = false
-            isSpeakerOn = false
         } else {
-            isSpeakerOn = isVideoCall
             audioManager.isSpeakerphoneOn = isVideoCall
         }
         countDownEndCall.start()
@@ -914,7 +892,6 @@ class WebRTCClient constructor(
 
     override fun dispose() {
         Timber.d("Dispose")
-        localAudioTrack?.setEnabled(false)
         audioManager.mode = AudioManager.MODE_NORMAL
         audioManager.isBluetoothScoOn = false
 
@@ -963,17 +940,14 @@ class WebRTCClient constructor(
             audioManager.startBluetoothSco()
             audioManager.isBluetoothScoOn = true
             audioManager.isSpeakerphoneOn = false
-            isSpeakerOn = false
         }
 
         if (isAvailable && isVideoCall && isBluetoothStopped) {
             audioManager.isSpeakerphoneOn = true
-            isSpeakerOn = true
         }
 
         if (!isAvailable && isHeadsetConnected) {
             audioManager.isSpeakerphoneOn = false
-            isSpeakerOn = false
         }
 
         mListener?.changeBluetoothButtonVisibility(if (isAvailable) View.VISIBLE else View.GONE)

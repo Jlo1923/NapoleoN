@@ -5,6 +5,8 @@ import com.naposystems.napoleonchat.dto.accessPin.CreateAccountResDTO
 import com.naposystems.napoleonchat.dto.accountAttackDialog.AccountAttackDialogReqDTO
 import com.naposystems.napoleonchat.dto.accountAttackDialog.AccountAttackDialogResDTO
 import com.naposystems.napoleonchat.dto.addContact.*
+import com.naposystems.napoleonchat.dto.cancelCall.CancelCallReqDTO
+import com.naposystems.napoleonchat.dto.cancelCall.CancelCallResDTO
 import com.naposystems.napoleonchat.dto.contactUs.ContactUsReqDTO
 import com.naposystems.napoleonchat.dto.contactUs.ContactUsResDTO
 import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
@@ -45,6 +47,7 @@ import com.naposystems.napoleonchat.dto.validatePasswordPreviousRecoveryAccount.
 import com.naposystems.napoleonchat.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountResDTO
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.BLOCK_ATTACKER
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CALL_CONTACT
+import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CANCEL_CALL
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CANCEL_SUBSCRIPTION
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CHECK_SUBSCRIPTION
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CREATE_ACCOUNT
@@ -253,4 +256,7 @@ interface NapoleonApi {
 
     @GET(CHECK_SUBSCRIPTION)
     suspend fun checkSubscription(): Response<StateSubscriptionResDTO>
+
+    @POST(CANCEL_CALL)
+    suspend fun cancelCall(@Body cancelCallReqDTO: CancelCallReqDTO): Response<CancelCallResDTO>
 }

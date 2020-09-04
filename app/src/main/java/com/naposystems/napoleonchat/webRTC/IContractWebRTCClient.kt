@@ -12,7 +12,7 @@ interface IContractWebRTCClient {
     fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)
-    fun setSpeakerOn()
+    fun setSpeakerOn(isChecked: Boolean)
     fun setMicOff()
     fun initSurfaceRenders()
     fun startCaptureVideo()
