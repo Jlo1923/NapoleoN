@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,13 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
-import com.naposystems.napoleonchat.reactive.RxBus
-import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.UploadResult
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
@@ -215,6 +211,8 @@ class ConversationAdapter constructor(
                     } else {
                         mediaPlayerManager.resetMediaPlayer()
                     }
+                } ?: run {
+                    mediaPlayerManager.resetMediaPlayer()
                 }
             } else {
                 mediaPlayerManager.resetMediaPlayer()

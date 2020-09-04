@@ -462,6 +462,12 @@ object MediaPlayerManager :
 
                             mListener?.onErrorPlayingAudio()
                         }
+
+                        override fun onIsPlayingChanged(isPlaying: Boolean) {
+                            super.onIsPlayingChanged(isPlaying)
+                            Timber.d("-- OLA $isPlaying")
+                        }
+
                     })
 
                     /*
@@ -575,12 +581,24 @@ object MediaPlayerManager :
         this.mImageButtonSpeed = imageButtonSpeed
     }
 
+    override fun setStateImageButtonSpeed(imageButtonSpeed: ImageButton, webId : String) {
+        if (mWebId == webId) {
+            this.mImageButtonSpeed = imageButtonSpeed
+            if (mSpeed == NORMAL_SPEED) {
+                this.mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
+            } else {
+                this.mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_1x_circle_outline)
+            }
+        } else {
+            this.mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
+        }
+    }
+
     override fun setSeekbar(seekBar: AppCompatSeekBar) {
         /*if (this.mSeekBar != null && this.mSeekBar != seekBar) {
             this.mSeekBar?.progress = 0
         }*/
         this.mSeekBar = seekBar
-
         this.mSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 mediaPlayer?.let {

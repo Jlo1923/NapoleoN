@@ -22,6 +22,7 @@ interface IContractMediaPlayer {
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setImageButtonPlay(imageButtonPlay: ImageView)
     fun setImageButtonSpeed(imageButtonSpeed: ImageButton)
+    fun setStateImageButtonSpeed(imageButtonSpeed: ImageButton, webId : String)
     fun setSeekbar(seekBar: AppCompatSeekBar)
     fun setTextViewDuration(textView: TextView)
     fun setListener(listener: MediaPlayerManager.Listener)

@@ -256,10 +256,9 @@ class MessageLocalDataSource @Inject constructor(
                                     val messageAndAttachment = messageDao.getMessageByWebId(messageWebId)
                                     val timeContact = contactDao.getSelfDestructTimeByContactWithOutLiveData(contactId)
                                     val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(messageAndAttachment?.getFirstAttachment()?.duration ?: 0).toInt()
-                                    val selfAutoDestruction =
-                                        Utils.compareDurationAttachmentWithSelfAutoDestructionInSeconds(
-                                            durationAttachment, timeContact
-                                        )
+                                    val selfAutoDestruction = Utils.compareDurationAttachmentWithSelfAutoDestructionInSeconds(
+                                        durationAttachment, timeContact
+                                    )
 
                                     messageDao.updateSelfDestructTimeByMessages(selfAutoDestruction, messageWebId, status)
                                 }

@@ -26,4 +26,5 @@ class RxEvent {
     data class ContactRejectCall(val channel: String)
     data class EmojiSelected(val emoji: Emoji)
     data class MessagesToEliminate(val id: List<MessageAndAttachment>)
+    data class EnableButtonPlayAudio(val state: Boolean)
 }

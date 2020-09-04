@@ -55,6 +55,8 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
@@ -1555,7 +1557,6 @@ class ConversationFragment : BaseFragment(),
         Timber.d("onPause")
         resetAudioRecording()
         MediaPlayerManager.pauseAudio()
-        MediaPlayerManager.unregisterProximityListener()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
@@ -1598,7 +1599,6 @@ class ConversationFragment : BaseFragment(),
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     private fun startRecording() {
-
         try {
             recordFile = FileManager.createFile(
                 requireContext(),
@@ -1607,7 +1607,7 @@ class ConversationFragment : BaseFragment(),
             )
 
             recorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 val fileOutputStream = FileOutputStream(recordFile!!)
                 setOutputFile(fileOutputStream.fd)
@@ -1629,22 +1629,26 @@ class ConversationFragment : BaseFragment(),
                                 mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
                             }
                         }
+                        RxBus.publish(RxEvent.EnableButtonPlayAudio(false))
                     }
 
                     mHandler.postDelayed(mRecordingAudioRunnable!!, 1000)
 
                 } catch (e: IOException) {
+                    RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
                     Timber.e("prepare() failed")
                 }
 
                 start()
             }
         } catch (e: Exception) {
+            RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
             resetAudioRecording()
         }
     }
 
     private fun stopRecording() {
+        RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
         try {
             recorder?.apply {
                 stop()
@@ -1725,14 +1729,11 @@ class ConversationFragment : BaseFragment(),
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun onMicActionDown() {
+        MediaPlayerManager.resetMediaPlayer()
         startRecording()
-
         binding.inputPanel.changeViewSwitcherToSlideToCancel()
-
         binding.containerLockAudio.container.slideUp(200)
-
         binding.containerLockAudio.container.post {
-
             binding.floatingActionButtonSend.setContainerLock(binding.containerLockAudio)
         }
     }
