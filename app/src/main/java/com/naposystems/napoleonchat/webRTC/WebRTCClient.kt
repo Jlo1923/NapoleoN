@@ -340,6 +340,15 @@ class WebRTCClient constructor(
                 }
             }
 
+        val disposableContactCancelCall = RxBus.listen(RxEvent.ContactCancelCall::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                localAudioTrack?.setEnabled(false)
+                stopMediaPlayer()
+                unSubscribeCallChannel()
+                localPeer?.dispose()
+            }
+
         disposable.add(disposableContactJoinToCall)
         disposable.add(disposableIceCandidateReceived)
         disposable.add(disposableOfferReceived)
@@ -352,6 +361,7 @@ class WebRTCClient constructor(
         disposable.add(disposableContactTurnOnCamera)
         disposable.add(disposableContactRejectCall)
         disposable.add(disposableHeadsetState)
+        disposable.add(disposableContactCancelCall)
     }
 
     private fun initializeProximitySensor() {

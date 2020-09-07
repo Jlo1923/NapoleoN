@@ -486,6 +486,8 @@ class SocketService @Inject constructor(
                 notificationManager.cancel(NotificationUtils.NOTIFICATION_RINGING)
                 val intent = Intent(context, WebRTCCallService::class.java)
                 context.stopService(intent)
+
+                RxBus.publish(RxEvent.ContactCancelCall())
             }
 
             override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
