@@ -115,6 +115,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
 
     override fun changeViewSwitcherToSlideToCancel() {
         if (binding.viewSwitcher.nextView.id == binding.containerSlideToCancel.id) {
+            binding.layoutQuote.visibility = View.GONE
             binding.viewSwitcher.inAnimation =
                 AnimationUtils.loadAnimation(context, R.anim.slide_in_right)
             binding.viewSwitcher.outAnimation =

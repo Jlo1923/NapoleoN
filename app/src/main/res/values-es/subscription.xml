@@ -21,4 +21,13 @@
     <string name="text_unsubscribed_desc">Recuerda que puedes suscribirte a otro paquete que se ajuste a tus necesidades en cualquier momento.</string>
     <string name="text_finalize">Finalizar</string>
     <string name="text_error_unsubscribe">Ha ocurrido un error al cancelar tu suscripción, por favor intenta más tarde.</string>
+    <string name="text_subscription_monthly">Mensual</string>
+    <string name="text_subscription_semiannual">Semestral</string>
+    <string name="text_subscription_yearly">Anual</string>
+    <string name="text_purchase">Comprar %1$s (%2$s)</string>
+    <string name="text_subscription_successfully">¡Suscripción realizada con éxito!</string>
+    <string name="text_subscription_already_owned">Ya cuentas con este paquete activo actualmente.</string>
+    <string name="text_operation_cancelled">Operación cancelada.</string>
+    <string name="text_subscription_error">¡Se ha presentado un error! Inténtalo más tarde.</string>
+    <string name="text_subscription_expired">Tu suscripción expiro, solo podrás recibir mensajes.</string>
 </resources>

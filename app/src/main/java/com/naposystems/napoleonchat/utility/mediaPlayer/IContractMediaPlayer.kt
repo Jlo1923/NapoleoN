@@ -6,7 +6,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 
 interface IContractMediaPlayer {
     fun setContext(context: Context)
@@ -22,6 +21,7 @@ interface IContractMediaPlayer {
     fun isEncryptedFile(isEncryptedFile: Boolean)
     fun setImageButtonPlay(imageButtonPlay: ImageView)
     fun setImageButtonSpeed(imageButtonSpeed: ImageButton)
+    fun setStateImageButtonSpeed(imageButtonSpeed: ImageButton, webId : String)
     fun setSeekbar(seekBar: AppCompatSeekBar)
     fun setTextViewDuration(textView: TextView)
     fun setListener(listener: MediaPlayerManager.Listener)

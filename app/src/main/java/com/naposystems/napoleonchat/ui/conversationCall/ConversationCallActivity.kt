@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.conversationCall
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.animation.AnticipateOvershootInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.transition.ChangeBounds
@@ -18,6 +20,7 @@ import androidx.transition.TransitionManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityConversationCallBinding
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.service.HeadsetBroadcastReceiver
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -70,11 +73,15 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         AndroidInjection.inject(this)
         Timber.d("onCreate")
 
-        volumeControlStream = AudioManager.STREAM_MUSIC
+        val intentFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
+        val receiver = HeadsetBroadcastReceiver()
+        registerReceiver(receiver, intentFilter)
+
+        volumeControlStream = AudioManager.MODE_IN_COMMUNICATION
 
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
+        /*when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
             Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
             Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
             Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
@@ -83,7 +90,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
             Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
             Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
-        }
+        }*/
 
         super.onCreate(savedInstanceState)
 
@@ -142,6 +149,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             viewModel.resetIsOnCallPref()
             if (!isIncomingCall && !webRTCClient.isActiveCall()) {
                 viewModel.sendMissedCall(contactId, isVideoCall)
+                viewModel.cancelCall(contactId)
             }
             if (!isFromClosedApp) {
                 val intent = Intent(this, WebRTCCallService::class.java)
@@ -165,7 +173,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.imageButtonSpeaker.setOnClickListener {
-            webRTCClient.setSpeakerOn()
+            webRTCClient.setSpeakerOn(binding.imageButtonSpeaker.isChecked)
         }
 
         binding.imageButtonMicOff.setOnCheckedChangeListener { _, _ ->
@@ -261,9 +269,20 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             if (bundle.containsKey(IS_INCOMING_CALL)) {
                 isIncomingCall = bundle.getBoolean(IS_INCOMING_CALL)
                 binding.isIncomingCall = isIncomingCall
+                webRTCClient.setIncomingCall(isIncomingCall)
             }
 
-            if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
+            NotificationUtils.cancelWebRTCCallNotification(this)
+            channel = bundle.getString(CHANNEL, "")
+
+            webRTCClient.setChannel(channel)
+
+            if (isIncomingCall) {
+                webRTCClient.subscribeToChannel()
+            }
+
+            webRTCClient.stopRingAndVibrate()
+            /*if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
                 NotificationUtils.cancelWebRTCCallNotification(this)
                 if (isIncomingCall) {
                     Timber.d("ACTION_ANSWER_CALL")
@@ -287,7 +306,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                         webRTCClient.subscribeToChannel()
                     }
                 }
-            }
+            }*/
 
             if (bundle.containsKey(IS_VIDEO_CALL)) {
                 isVideoCall = bundle.getBoolean(IS_VIDEO_CALL, false)
@@ -414,6 +433,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     override fun changeBluetoothButtonVisibility(visibility: Int) {
         val audioManager: AudioManager = Utils.getAudioManager(this)
 
+        Timber.d("isBluetoothScoOn: ${audioManager.isBluetoothScoOn}")
+
         binding.imageButtonBluetooth.visibility = visibility
 
         when {
@@ -439,9 +460,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 binding.fabAnswer.visibility = View.GONE
             }
 
-            if (!isVideoCall) {
+            /*if (!isVideoCall) {
                 binding.imageButtonSpeaker.setChecked(false, notifyListener = false)
-            }
+            }*/
         }
     }
 
@@ -458,6 +479,20 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         runOnUiThread {
             binding.textViewCalling.visibility = View.GONE
             binding.textViewCallDuration.visibility = View.VISIBLE
+        }
+    }
+
+    override fun showConnectingTitle() {
+        runOnUiThread {
+            binding.textViewCalling.isVisible = true
+            binding.textViewCalling.text =
+                getString(if (isVideoCall) R.string.text_encrypting_videocall else R.string.text_encrypting_call)
+        }
+    }
+
+    override fun changeCheckedSpeaker(checked: Boolean) {
+        runOnUiThread {
+            binding.imageButtonSpeaker.setChecked(checked = false, notifyListener = false)
         }
     }
 

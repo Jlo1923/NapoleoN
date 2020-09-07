@@ -314,7 +314,7 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
         mIsOnlyHorizontal = true
         mIsOnlyVertical = false
 
-        val maxX = mInitialX * 0.5
+        val maxX = mInitialX * 0.7
 
         if (futureX > maxX) {
             this.x += mPosX

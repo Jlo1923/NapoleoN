@@ -35,6 +35,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
 import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.activityViewModels
@@ -47,6 +48,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
+import com.android.billingclient.api.Purchase
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
@@ -55,6 +57,9 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
@@ -109,6 +114,9 @@ class ConversationFragment : BaseFragment(),
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
+
+    @Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -633,6 +641,8 @@ class ConversationFragment : BaseFragment(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        lifecycle.addObserver(billingClientLifecycle)
+
         binding.viewModel = viewModel
 
         cleanSelectionMessages()
@@ -806,6 +816,27 @@ class ConversationFragment : BaseFragment(),
         shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 findNavController().popBackStack(R.id.homeFragment, false)
+            }
+        })
+
+        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchaseList ->
+            purchaseList?.let {
+                var allIsPurchased = false
+
+                val freeTrial = viewModel.getFreeTrial()
+
+                if (System.currentTimeMillis() > freeTrial) {
+                    purchaseList.forEach {
+                        allIsPurchased = it.purchaseState == Purchase.PurchaseState.PURCHASED
+                    }
+
+                    if (!allIsPurchased) {
+                        binding.inputPanel.isVisible = false
+                        binding.floatingActionButtonSend.isVisible = false
+                        binding.buttonCall.isVisible = false
+                        binding.buttonVideoCall.isVisible = false
+                    }
+                }
             }
         })
     }
@@ -1555,7 +1586,6 @@ class ConversationFragment : BaseFragment(),
         Timber.d("onPause")
         resetAudioRecording()
         MediaPlayerManager.pauseAudio()
-        MediaPlayerManager.unregisterProximityListener()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
@@ -1598,7 +1628,6 @@ class ConversationFragment : BaseFragment(),
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     private fun startRecording() {
-
         try {
             recordFile = FileManager.createFile(
                 requireContext(),
@@ -1607,7 +1636,7 @@ class ConversationFragment : BaseFragment(),
             )
 
             recorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 val fileOutputStream = FileOutputStream(recordFile!!)
                 setOutputFile(fileOutputStream.fd)
@@ -1629,22 +1658,26 @@ class ConversationFragment : BaseFragment(),
                                 mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
                             }
                         }
+                        RxBus.publish(RxEvent.EnableButtonPlayAudio(false))
                     }
 
                     mHandler.postDelayed(mRecordingAudioRunnable!!, 1000)
 
                 } catch (e: IOException) {
+                    RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
                     Timber.e("prepare() failed")
                 }
 
                 start()
             }
         } catch (e: Exception) {
+            RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
             resetAudioRecording()
         }
     }
 
     private fun stopRecording() {
+        RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
         try {
             recorder?.apply {
                 stop()
@@ -1725,14 +1758,11 @@ class ConversationFragment : BaseFragment(),
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun onMicActionDown() {
+        MediaPlayerManager.resetMediaPlayer()
         startRecording()
-
         binding.inputPanel.changeViewSwitcherToSlideToCancel()
-
         binding.containerLockAudio.container.slideUp(200)
-
         binding.containerLockAudio.container.post {
-
             binding.floatingActionButtonSend.setContainerLock(binding.containerLockAudio)
         }
     }

@@ -75,6 +75,7 @@ interface IContractConversation {
         fun sendMessageRead(messageWebId: String)
         fun reSendMessage(message: Message, selfDestructTime: Int)
         fun resetNewMessage()
+        fun getFreeTrial(): Long
     }
 
     interface Repository {
@@ -125,5 +126,6 @@ interface IContractConversation {
             destFile: File,
             job: ProducerScope<*>
         ): Flow<VideoCompressResult>
+        fun getFreeTrial(): Long
     }
 }

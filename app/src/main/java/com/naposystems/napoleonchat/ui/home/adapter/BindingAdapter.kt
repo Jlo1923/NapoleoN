@@ -165,11 +165,18 @@ fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAtt
 
 @BindingAdapter("unreadMessages")
 fun bindUnreadMessages(textView: TextView, unreadMessages: Int) {
-    if (unreadMessages == 0) {
-        textView.visibility = View.GONE
-    } else {
-        textView.visibility = View.VISIBLE
-        textView.text = unreadMessages.toString()
+    textView.visibility = View.VISIBLE
+    when (unreadMessages) {
+        0 -> {
+            textView.visibility = View.GONE
+        }
+        in 1..99 -> {
+            textView.text = unreadMessages.toString()
+        }
+        else -> {
+            val max = "+99"
+            textView.text = max
+        }
     }
 }
 

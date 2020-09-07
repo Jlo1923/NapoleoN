@@ -1,6 +1,9 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter
 
-import android.animation.*
+import android.animation.Animator
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer

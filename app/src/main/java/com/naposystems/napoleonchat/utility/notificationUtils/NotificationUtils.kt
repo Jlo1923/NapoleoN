@@ -125,6 +125,8 @@ class NotificationUtils @Inject constructor(
                     Constants.NotificationKeys.TYPE_NOTIFICATION
                 val contactKey =
                     Constants.NotificationKeys.CONTACT
+                val messageKey =
+                    Constants.NotificationKeys.MESSAGE_ID
 
                 if (this.containsKey(typeNotificationKey)) {
                     notificationType1 = this.getValue(typeNotificationKey).toInt()
@@ -133,6 +135,10 @@ class NotificationUtils @Inject constructor(
 
                 if (this.containsKey(contactKey)) {
                     notificationIntent.putExtra(contactKey, this.getValue(contactKey).toString())
+                }
+
+                if (this.containsKey(messageKey)) {
+                    notificationIntent.putExtra(messageKey, this.getValue(messageKey).toString())
                 }
             }
         }
@@ -153,6 +159,7 @@ class NotificationUtils @Inject constructor(
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ) {
+        Timber.d("handleNotificationType: $notificationType, $data")
         var app: NapoleonApplication? = null
         if (context is NapoleonApplication) {
             app = context
@@ -253,6 +260,7 @@ class NotificationUtils @Inject constructor(
 
                     if (data.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
                         isVideoCall = data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
+                        Timber.d("Call: ${data[Constants.CallKeys.IS_VIDEO_CALL] == "true"}")
                     }
 
                     if (data.containsKey(Constants.CallKeys.CONTACT_ID)) {
@@ -305,6 +313,12 @@ class NotificationUtils @Inject constructor(
                     )
                 }*/
             }
+            Constants.NotificationType.CANCEL_CALL.type -> {
+                Timber.d("CANCEL_CALL")
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.cancelAll()
+            }
         }
     }
 
@@ -314,6 +328,8 @@ class NotificationUtils @Inject constructor(
         isVideoCall: Boolean,
         context: Context
     ): Notification {
+
+        Timber.d("createCallNotification: $isVideoCall")
 
         val fullScreenIntent =
             Intent(context, ConversationCallActivity::class.java).apply {
@@ -331,7 +347,7 @@ class NotificationUtils @Inject constructor(
             fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val notificationTitle = if (isVideoCall) {
+        val notificationTitle = if (!isVideoCall) {
             context.getString(R.string.text_incoming_secure_call)
         } else {
             context.getString(R.string.text_incoming_secure_video_call)

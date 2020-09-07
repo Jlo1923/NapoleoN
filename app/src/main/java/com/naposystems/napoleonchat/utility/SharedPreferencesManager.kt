@@ -114,6 +114,7 @@ class SharedPreferencesManager(private val context: Context) {
         editor.remove(SharedPreferences.PREF_OUTPUT_CONTROL)
         editor.remove(SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT)
         editor.remove(SharedPreferences.PREF_JSON_NOTIFICATION)
+        editor.remove(SharedPreferences.PREF_LAST_JSON_NOTIFICATION)
         editor.remove(SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE)
         editor.remove(SharedPreferences.PREF_TIME_FOR_NEW_CODE)
         editor.remove(SharedPreferences.PREF_ATTEMPTS_FOR_RETRY_CODE)

@@ -2,29 +2,25 @@ package com.naposystems.napoleonchat.ui.subscription
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.*
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SubscriptionFragmentBinding
-import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
+import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.cancelSubscription.CancelSubscriptionDialogFragment
+import com.naposystems.napoleonchat.ui.subscription.adapter.SkuDetailsAdapter
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SnackbarUtils
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +35,10 @@ class SubscriptionFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle
+
     private val viewModel: SubscriptionViewModel by viewModels {
         viewModelFactory
     }
@@ -53,11 +53,14 @@ class SubscriptionFragment : Fragment() {
             // To be implemented in a later section.
         }
 
-    private lateinit var billingClient: BillingClient
-
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(billingClientLifecycle)
     }
 
     override fun onCreateView(
@@ -75,7 +78,7 @@ class SubscriptionFragment : Fragment() {
         )
 
         binding.checkBoxPaymentDescription.isChecked = false
-        binding.imageButtonPaypal.isEnabled = false
+        binding.buttonBuySubscription.isEnabled = false
         binding.checkBoxPaymentDescription.setOnCheckedChangeListener { _, _ ->
             enableButtonPaypal()
         }
@@ -83,7 +86,7 @@ class SubscriptionFragment : Fragment() {
         binding.spinnerPayment.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    enableButtonPaypal()
+                    setPriceTextButton()
                 }
 
                 override fun onItemSelected(
@@ -92,81 +95,16 @@ class SubscriptionFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    enableButtonPaypal()
+                    setPriceTextButton()
                 }
             }
 
-        binding.imageButtonPaypal.setOnClickListener {
+        binding.buttonBuySubscription.setOnClickListener {
             binding.viewSwitcher.showNext()
             sendPayment()
         }
 
-        startBillingClient()
-
         return binding.root
-    }
-
-    private fun startBillingClient() {
-
-        billingClient = BillingClient.newBuilder(requireContext())
-            .setListener(purchaseUpdateListener)
-            .enablePendingPurchases()
-            .build()
-
-        billingClient.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(billingResult: BillingResult) {
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here. 00sub
-                    val skuList = ArrayList<String>()
-                    skuList.add("00sub")
-                    val params = SkuDetailsParams.newBuilder()
-                    params.setSkusList(skuList).setType(BillingClient.SkuType.SUBS)
-
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        billingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList ->
-                            val responseCode = billingResult.responseCode
-                            val debugMessage = billingResult.debugMessage
-                            when (responseCode) {
-                                BillingClient.BillingResponseCode.OK -> {
-                                    Timber.i("onSkuDetailsResponse: $responseCode $debugMessage")
-                                    if (skuDetailsList == null) {
-                                        Timber.w("onSkuDetailsResponse: null SkuDetails list")
-//                                        skusWithSkuDetails.postValue(emptyMap())
-                                    } else
-                                        Timber.i("onSkuDetailsResponse: count ${skuDetailsList.size}")
-                                    /*skusWithSkuDetails.postValue(HashMap<String, SkuDetails>().apply {
-                                        for (details in skuDetailsList) {
-                                            put(details.sku, details)
-                                        }
-                                    }.also { postedValue ->
-                                        Timber.i("onSkuDetailsResponse: count ${postedValue.size}")
-                                    })*/
-                                }
-                                BillingClient.BillingResponseCode.SERVICE_DISCONNECTED,
-                                BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE,
-                                BillingClient.BillingResponseCode.BILLING_UNAVAILABLE,
-                                BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
-                                BillingClient.BillingResponseCode.DEVELOPER_ERROR,
-                                BillingClient.BillingResponseCode.ERROR -> {
-                                    Timber.e("onSkuDetailsResponse: $responseCode $debugMessage")
-                                }
-                                BillingClient.BillingResponseCode.USER_CANCELED,
-                                BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED,
-                                BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED,
-                                BillingClient.BillingResponseCode.ITEM_NOT_OWNED -> {
-                                    // These response codes are not expected.
-                                    Timber.wtf("onSkuDetailsResponse: $responseCode $debugMessage")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onBillingServiceDisconnected() {
-                startBillingClient()
-            }
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -200,7 +138,125 @@ class SubscriptionFragment : Fragment() {
         viewModel.checkSubscription()
         viewModel.getTypeSubscription()
 
-        viewModel.typeSubscription.observe(viewLifecycleOwner, Observer { listTypeSubscription ->
+        billingClientLifecycle.skusWithSkuDetails.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                binding.checkBoxPaymentDescription.isChecked = false
+
+                val skuDetailsList = it.map { map -> map.value }
+
+                skuDetailsList.sortedBy { skuDetails -> skuDetails.priceAmountMicros }
+
+                val adapter =
+                    SkuDetailsAdapter(requireContext(), R.layout.subscription_item, skuDetailsList)
+                binding.spinnerPayment.adapter = adapter
+            }
+        })
+
+        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+            purchasesList?.let {
+                if (purchasesList.isEmpty()) {
+                    billingClientLifecycle.queryPurchasesHistory()
+                } else {
+                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    val netDate: Date
+
+                    val lastPurchase = purchasesList[0]
+                    binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
+                        Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
+                        Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
+                        else -> getString(R.string.text_subscription_yearly)
+                    }
+                    netDate = Date(lastPurchase.purchaseTime)
+                    binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+                }
+            }
+        })
+
+        billingClientLifecycle.purchasesHistory.observe(
+            viewLifecycleOwner,
+            Observer { purchasesHistory ->
+                purchasesHistory?.let {
+                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    val netDate: Date
+                    val freeTrialTimeStamp = viewModel.getFreeTrial()
+                    if (purchasesHistory.isEmpty()) {
+                        if (System.currentTimeMillis() > freeTrialTimeStamp) {
+                            binding.textViewSubscriptionActual.text =
+                                getString(R.string.text_free_trial_expired)
+                            netDate = Date(freeTrialTimeStamp)
+                        } else {
+                            netDate = Date(freeTrialTimeStamp)
+                            val daysMillis = viewModel.getFreeTrial() - System.currentTimeMillis()
+
+                            binding.textViewSubscriptionActual.text =
+                                getString(
+                                    R.string.text_trial_period,
+                                    TimeUnit.MILLISECONDS.toDays(daysMillis)
+                                )
+                        }
+                    } else {
+                        // Get last purchase
+                        val lastPurchase = purchasesHistory[0]
+                        binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
+                            Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
+                            Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
+                            else -> getString(R.string.text_subscription_yearly)
+                        }
+                        netDate = Date(lastPurchase.purchaseTime)
+                        purchasesHistory.forEach {
+                            Timber.d("purchasesHistory ${it.sku}, ${it.purchaseTime}")
+                        }
+                    }
+                    binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+                }
+            })
+
+        billingClientLifecycle.purchaseUpdateListener.observe(
+            viewLifecycleOwner,
+            Observer { purchaseList ->
+                purchaseList?.let {
+                    registerPurchase(purchaseList)
+                }
+            })
+
+        billingClientLifecycle.purchaseError.observe(viewLifecycleOwner, Observer { responseCode ->
+            responseCode?.let {
+                when (responseCode) {
+                    BillingClient.BillingResponseCode.USER_CANCELED -> {
+                        if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                            binding.viewSwitcher.showNext()
+                        }
+                        Utils.showSimpleSnackbar(
+                            binding.coordinator,
+                            getString(R.string.text_operation_cancelled),
+                            5
+                        )
+                    }
+                    BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
+                        if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                            binding.viewSwitcher.showNext()
+                        }
+                        Utils.showSimpleSnackbar(
+                            binding.coordinator,
+                            getString(R.string.text_subscription_already_owned),
+                            5
+                        )
+                    }
+                    else -> {
+                        if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                            binding.viewSwitcher.showNext()
+                        }
+                        Utils.showSimpleSnackbar(
+                            binding.coordinator,
+                            getString(R.string.text_subscription_error),
+                            3
+                        )
+                    }
+                }
+            }
+        })
+
+        /*viewModel.typeSubscription.observe(viewLifecycleOwner, Observer { listTypeSubscription ->
             binding.checkBoxPaymentDescription.isChecked = false
             if (listTypeSubscription.isNotEmpty()) {
                 this.listTypeSubscription = listTypeSubscription
@@ -218,13 +274,7 @@ class SubscriptionFragment : Fragment() {
                 binding.spinnerPayment.adapter = adapter
                 viewModel.getRemoteSubscription()
             }
-        })
-
-        viewModel.subscriptionUser.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                setSubscriptionUser(it)
-            }
-        })
+        })*/
 
         viewModel.getTypeSubscriptionError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
@@ -263,20 +313,30 @@ class SubscriptionFragment : Fragment() {
         })
     }
 
+    private fun setPriceTextButton() {
+        val skuDetailsSelected = binding.spinnerPayment.selectedItem as SkuDetails
+        binding.buttonBuySubscription.text = getString(
+            R.string.text_purchase,
+            skuDetailsSelected.price,
+            skuDetailsSelected.priceCurrencyCode
+        )
+    }
+
     private fun enableButtonPaypal() {
         when (binding.spinnerPayment.selectedItemId) {
             null -> {
-                binding.imageButtonPaypal.isEnabled = false
+                binding.buttonBuySubscription.isEnabled = false
             }
             else -> {
-                binding.imageButtonPaypal.isEnabled =
-                    binding.spinnerPayment.selectedItemId.toInt() != 0 && binding.checkBoxPaymentDescription.isChecked
+                binding.buttonBuySubscription.isEnabled =
+                    binding.checkBoxPaymentDescription.isChecked
             }
         }
     }
 
-    private fun setSubscriptionUser(subscriptionUser: SubscriptionUser) {
-        binding.imageButtonPaypal.isEnabled = false
+    /*
+    private fun setSubscriptionUser(purchasesList: List<Purchase>) {
+        binding.buttonBuySubscription.isEnabled = false
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val netDate: Date
 
@@ -310,10 +370,34 @@ class SubscriptionFragment : Fragment() {
                 getString(R.string.text_trial_period, TimeUnit.MILLISECONDS.toDays(daysMillis))
         }
         binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
-    }
+    }*/
 
     private fun sendPayment() {
-        val selectedItem = binding.spinnerPayment.selectedItem as TypeSubscription
-        viewModel.sendPayment(selectedItem.id)
+        /*val selectedItem = binding.spinnerPayment.selectedItem as TypeSubscription
+        viewModel.sendPayment(selectedItem.id)*/
+        val skuDetailSelected = binding.spinnerPayment.selectedItem as SkuDetails
+
+        val flowParams = BillingFlowParams.newBuilder()
+            .setSkuDetails(skuDetailSelected)
+            .build()
+        billingClientLifecycle.launchBillingFlow(requireActivity(), flowParams)
+    }
+
+    private fun registerPurchase(purchaseList: List<Purchase>) {
+        for (purchase in purchaseList) {
+            val sku = purchase.sku
+            val purchaseToken = purchase.purchaseToken
+            Timber.d("Register purchase with sku: $sku, token: $purchaseToken")
+            Utils.showSimpleSnackbar(binding.coordinator, getString(R.string.text_subscription_successfully), 3)
+            if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
+                binding.viewSwitcher.showNext()
+            }
+            binding.checkBoxPaymentDescription.isChecked = false
+            billingClientLifecycle.queryPurchases()
+            /*subscriptionViewModel.registerSubscription(
+                sku = sku,
+                purchaseToken = purchaseToken
+            )*/
+        }
     }
 }

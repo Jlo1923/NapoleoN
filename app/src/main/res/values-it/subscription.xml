@@ -21,6 +21,15 @@
     <string name="text_unsubscribed_desc">Ricordate che è possibile iscriversi a un altro pacchetto che si adatta alle vostre esigenze in qualsiasi momento.</string>
     <string name="text_finalize">Finalizza</string>
     <string name="text_error_unsubscribe">Un errore annullando l\'abbonamento, riprovare più tardi si è verificato per favore.</string>
+    <string name="text_subscription_monthly">Mensile</string>
+    <string name="text_subscription_semiannual">Biennale</string>
+    <string name="text_subscription_yearly">Annuale</string>
+    <string name="text_purchase">Comprare %1$s (%2$s)</string>
+    <string name="text_subscription_successfully">Abbonamento riuscito.</string>
+    <string name="text_subscription_already_owned">Hai già questo piano attualmente attivo.</string>
+    <string name="text_operation_cancelled">Operazione anullata.</string>
+    <string name="text_subscription_error">C\'è stato un errore. Riprovare più tardi.</string>
+    <string name="text_subscription_expired">Il tuo abbonamento scaduto, si riceverà solo i messaggi.</string>
 </resources>
 
 

@@ -63,6 +63,7 @@ object Constants {
         const val LOG_OUT = "auth/logout"
         const val CANCEL_SUBSCRIPTION = "subscriptions/cancel"
         const val CHECK_SUBSCRIPTION = "subscriptions/state"
+        const val CANCEL_CALL = "call/cancelcall"
     }
 
     object CallKeys {
@@ -268,7 +269,9 @@ object Constants {
         VERIFICATION_CODE(4),
         SUBSCRIPTION(5),
         ACCOUNT_ATTACK(6),
-        INCOMING_CALL(7)
+        INCOMING_CALL(7),
+        REJECT_CALL(8),
+        CANCEL_CALL(9)
     }
 
     enum class MessageStatus(val status: Int) {
@@ -409,6 +412,17 @@ object Constants {
         PDF("application/pdf")
     }
 
+    enum class SkuSubscriptions(val sku: String) {
+        MONTHLY("com.naposystems.napoleonchat.monthly"),
+        SEMIANNUAL("com.naposystems.napoleonchat.semiannual"),
+        YEARLY("com.naposystems.napoleonchat.yearly")
+    }
+
+    enum class HeadsetState(val state: Int) {
+        PLUGGED(1),
+        UNPLUGGED(0)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
@@ -426,7 +440,7 @@ object Constants {
         const val PREF_OUTPUT_CONTROL = "output_control"
         const val PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT = "message_self_destruct_time_not_sent"
         const val PREF_JSON_NOTIFICATION = "json_notification"
-
+        const val PREF_LAST_JSON_NOTIFICATION = "last_json_notification"
         const val PREF_ATTEMPTS_FOR_NEW_CODE = "attempts_for_new_code"
         const val PREF_TIME_FOR_NEW_CODE = "time_for_new_code"
         const val PREF_ATTEMPTS_FOR_RETRY_CODE = "attempts_for_retry_code"

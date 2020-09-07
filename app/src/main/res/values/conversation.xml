@@ -47,6 +47,8 @@
     <string name="text_new_contact">You have a new CONTACT. Say hello!\ </string>
     <string name="text_video_call_not_internet_connection">Was achieved not make the video call. Check your internet connection and try again</string>
     <string name="text_call_not_internet_connection">Was achieved not make the call. Check your internet connection and try again.</string>
+    <string name="text_encrypting_videocall">Encrypting video call</string>
+    <string name="text_encrypting_call">Encrypting call</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
