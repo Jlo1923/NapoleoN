@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input_panel"
             android:minHeight="@dimen/conversation_fab_size"
-            android:padding="@dimen/small_margin"
+            android:paddingStart="@dimen/small_margin"
+            android:paddingEnd="@dimen/small_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,17 +47,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:visibility="gone"
+                        android:layout_marginTop="@dimen/x_small_margin"
                         app:isCancelable="true"
                         app:isFromInputPanel="true"
                         app:layout_constraintBottom_toTopOf="@+id/container_input_options"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        tools:layout_height="0dp" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="visible" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/container_input_options"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="@dimen/conversation_fab_size"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent">
@@ -155,41 +159,50 @@
                     <ViewSwitcher
                         android:id="@+id/viewSwitcher_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <LinearLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/container_text_slide"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:orientation="horizontal">
 
                             <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/appCompatImageView"
                                 style="@style/OptionEndIcon"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
                                 app:srcCompat="@drawable/ic_keyboard_arrow_left_black" />
 
                             <TextView
                                 android:id="@+id/textView_slide_to_cancel"
                                 style="@style/SmallBodyTextView"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
+                                android:layout_height="0dp"
                                 android:paddingStart="0dp"
+                                android:gravity="center"
                                 android:paddingEnd="30dp"
-                                android:text="@string/text_slide_to_cancel" />
-                        </LinearLayout>
+                                android:text="@string/text_slide_to_cancel"
+                                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+                                app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <TextView
                             android:id="@+id/textView_cancel"
                             style="@style/BodyTextView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_gravity="end"
-                            android:layout_marginStart="@dimen/small_margin"
-                            android:paddingStart="0dp"
-                            android:paddingEnd="30dp"
+                            android:paddingStart="@dimen/normal_padding"
+                            android:paddingEnd="@dimen/normal_padding"
+                            android:gravity="center"
+                            android:layout_marginEnd="@dimen/large_margin"
                             android:text="@string/text_cancel"
                             android:textColor="@color/redIntense" />
 

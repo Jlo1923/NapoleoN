@@ -234,6 +234,13 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                             R.drawable.ic_baseline_pause_circle, context.theme
                         )
                     )
+                } else {
+                    it.setStateImageButtonSpeed(binding.imageButtonSpeed, mWebId ?: "")
+                    binding.imageButtonPlay.setImageDrawable(
+                        context.resources.getDrawable(
+                            R.drawable.ic_baseline_play_circle, context.theme
+                        )
+                    )
                 }
 //                mediaPlayerManager?.setDuration(duration)
                 /*if (mediaPlayerManager?.isPlaying() == true && !binding.imageButtonPlay.hasBeenInitialized) {

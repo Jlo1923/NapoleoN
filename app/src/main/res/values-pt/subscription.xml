@@ -27,6 +27,7 @@
     <string name="text_purchase">Comprar %1$s (%2$s)</string>
     <string name="text_subscription_successfully">Assinatura com sucesso.</string>
     <string name="text_subscription_already_owned">Você já tem este plano ativo no momento.</string>
+    <string name="text_operation_cancelled">Operação cancelada.</string>
     <string name="text_subscription_error">Ocorreu um erro. Tente mais tarde.</string>
     <string name="text_subscription_expired">Sua Assinatura expirada, você só vai receber mensagens.</string>
 </resources>

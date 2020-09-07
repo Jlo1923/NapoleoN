@@ -125,6 +125,8 @@ class NotificationUtils @Inject constructor(
                     Constants.NotificationKeys.TYPE_NOTIFICATION
                 val contactKey =
                     Constants.NotificationKeys.CONTACT
+                val messageKey =
+                    Constants.NotificationKeys.MESSAGE_ID
 
                 if (this.containsKey(typeNotificationKey)) {
                     notificationType1 = this.getValue(typeNotificationKey).toInt()
@@ -133,6 +135,10 @@ class NotificationUtils @Inject constructor(
 
                 if (this.containsKey(contactKey)) {
                     notificationIntent.putExtra(contactKey, this.getValue(contactKey).toString())
+                }
+
+                if (this.containsKey(messageKey)) {
+                    notificationIntent.putExtra(messageKey, this.getValue(messageKey).toString())
                 }
             }
         }

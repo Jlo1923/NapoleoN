@@ -5,6 +5,8 @@ import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import javax.inject.Inject
 
@@ -48,9 +50,15 @@ class MainActivityRepository @Inject constructor(
     }
 
     override fun setJsonNotification(json: String) {
-        sharedPreferencesManager.putString(
-            Constants.SharedPreferences.PREF_JSON_NOTIFICATION, json
-        )
+        if (sharedPreferencesManager.getString(PREF_LAST_JSON_NOTIFICATION, "") != json
+            && sharedPreferencesManager.getString(PREF_JSON_NOTIFICATION, "") != json) {
+            sharedPreferencesManager.putString(
+                PREF_LAST_JSON_NOTIFICATION, json
+            )
+            sharedPreferencesManager.putString(
+                PREF_JSON_NOTIFICATION, json
+            )
+        }
     }
 
     override suspend fun setLockStatus(state: Int) {
