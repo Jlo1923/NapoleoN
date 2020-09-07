@@ -228,7 +228,7 @@ class SubscriptionFragment : Fragment() {
                         }
                         Utils.showSimpleSnackbar(
                             binding.coordinator,
-                            "onPurchasesUpdated: User canceled the purchase",
+                            getString(R.string.text_operation_cancelled),
                             5
                         )
                     }

@@ -440,7 +440,7 @@ object Constants {
         const val PREF_OUTPUT_CONTROL = "output_control"
         const val PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT = "message_self_destruct_time_not_sent"
         const val PREF_JSON_NOTIFICATION = "json_notification"
-
+        const val PREF_LAST_JSON_NOTIFICATION = "last_json_notification"
         const val PREF_ATTEMPTS_FOR_NEW_CODE = "attempts_for_new_code"
         const val PREF_TIME_FOR_NEW_CODE = "time_for_new_code"
         const val PREF_ATTEMPTS_FOR_RETRY_CODE = "attempts_for_retry_code"

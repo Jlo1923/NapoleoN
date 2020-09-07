@@ -229,8 +229,13 @@ object MediaPlayerManager :
                 wakeLock.acquire()
                 try {
                     isProximitySensorActive = true
-                    mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
-                    mSpeed = NORMAL_SPEED
+                    mSpeed = if (mSpeed == NORMAL_SPEED) {
+                        mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
+                        NORMAL_SPEED
+                    } else {
+                        mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_1x_circle_outline)
+                        TWO_X_SPEED
+                    }
                     mHandler.removeCallbacks(mRunnable)
                     mediaPlayer.stop()
                     mediaPlayer.release()
@@ -268,6 +273,7 @@ object MediaPlayerManager :
 
     override fun setAudioId(audioId: String) {
         if (mPreviousAudioId != audioId) {
+            mListener?.onPauseAudio(mWebId)
             mSeekBar?.progress = 0
             if (mediaPlayer?.isPlaying == true) {
                 changeIconPlayPause(R.drawable.ic_baseline_play_circle)
@@ -339,6 +345,9 @@ object MediaPlayerManager :
 
                     if (!mIsBluetoothConnected)
                         registerProximityListener()
+
+                    val playbackParameters = PlaybackParameters(mSpeed)
+                    mediaPlayer?.playbackParameters = playbackParameters
 
                     /*if (mPreviousAudioId != currentAudioId || progress > 0) {
 
