@@ -28,4 +28,5 @@ class RxEvent {
     data class HeadsetState(val state: Int)
     data class MessagesToEliminate(val id: List<MessageAndAttachment>)
     data class EnableButtonPlayAudio(val state: Boolean)
+    class ContactCancelCall()
 }
