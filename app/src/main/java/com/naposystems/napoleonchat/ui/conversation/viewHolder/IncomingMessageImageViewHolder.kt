@@ -4,10 +4,12 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemIncomingMessageWithImageBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
@@ -68,8 +70,17 @@ class IncomingMessageImageViewHolder constructor(
                 transformationList.add(CenterCrop())
                 transformationList.add(RoundedCorners(8))
 
-                if (attachment.type != Constants.AttachmentType.LOCATION.type) {
-                    transformationList.add(BlurTransformation(context))
+                when (attachment.type) {
+                    Constants.AttachmentType.IMAGE.type,
+                    Constants.AttachmentType.VIDEO.type -> {
+                        transformationList.add(BlurTransformation(context))
+                    }
+                    Constants.AttachmentType.GIF.type -> {
+                        binding.imageViewIconShow.apply {
+                            setImageDrawable(context.getDrawable(R.drawable.ic_gif_black))
+                            setColorFilter(ContextCompat.getColor(context, R.color.white))
+                        }
+                    }
                 }
 
                 Glide.with(binding.imageViewAttachment)

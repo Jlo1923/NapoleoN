@@ -25,7 +25,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/vertical_photo"/>
+                tools:src="@drawable/vertical_photo" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_incoming_message"
@@ -74,10 +74,10 @@
                 <TextView
                     android:id="@+id/textView_count_down_incoming_message"
                     style="@style/TextCountDownSelfDestruct"
+                    android:text="@string/text_preview_self_destruct_time_incoming_message"
                     app:layout_constraintBottom_toTopOf="@+id/container_incoming_message_bubble"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/container_incoming_message_bubble"
-                    tools:text="10:34:20" />
+                    app:layout_constraintTop_toTopOf="@+id/container_incoming_message_bubble" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -139,7 +139,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/container_my_message_bubble"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/container_my_message_bubble"
-                    tools:text="30 segundos" />
+                    android:text="@string/text_preview_self_destruct_time_my_message" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

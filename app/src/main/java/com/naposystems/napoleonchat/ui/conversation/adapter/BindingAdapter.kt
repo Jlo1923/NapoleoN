@@ -276,10 +276,19 @@ private fun loadAttachment(
     isMine: Boolean
 ) {
     when (firstAttachment.type) {
-        Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
+        Constants.AttachmentType.LOCATION.type -> {
             Glide.with(imageView)
                 .load(firstAttachment)
                 .transform(RoundedCorners(8))
+                .into(imageView)
+        }
+        Constants.AttachmentType.IMAGE.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment)
+                .transform(
+                    CenterCrop(),
+                    BlurTransformation(imageView.context)
+                )
                 .into(imageView)
         }
         Constants.AttachmentType.VIDEO.type -> {
@@ -299,7 +308,10 @@ private fun loadAttachment(
             Glide.with(imageView)
                 .load(uri)
                 .thumbnail(0.1f)
-                .transform(CenterCrop(), RoundedCorners(8))
+                .transform(
+                    CenterCrop(),
+                    BlurTransformation(imageView.context)
+                )
                 .into(imageView)
         }
         Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
@@ -359,9 +371,10 @@ fun bindIconForState(
 
         val drawableId = when (attachment.status) {
             Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
-                if(messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
-                   messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
-                   messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+                if (messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
+                    messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
+                    messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status
+                ) {
                     imageButton.visibility = View.GONE
                 } else {
                     imageButton.visibility = View.VISIBLE
@@ -411,10 +424,11 @@ fun bindIconForState(
 }
 
 @BindingAdapter("showCheck")
-fun bindShowCheck(imageView: ImageView, messageAndAttachment : MessageAndAttachment) {
+fun bindShowCheck(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
     if (messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type ||
         messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.IMAGE.type ||
-        messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.VIDEO.type) {
+        messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.VIDEO.type
+    ) {
         if (messageAndAttachment.message.status == Constants.MessageStatus.READED.status) {
             imageView.visibility = View.VISIBLE
         } else {

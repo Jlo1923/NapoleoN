@@ -16,6 +16,7 @@
     <dimen name="x_small_padding">4dp</dimen>
     <dimen name="x_small_margin">4dp</dimen>
     <dimen name="small_margin">8dp</dimen>
+    <dimen name="l_small_margin">12dp</dimen>
     <dimen name="normal_margin">16dp</dimen>
     <dimen name="large_margin">24dp</dimen>
     <dimen name="x_large_margin">32dp</dimen>

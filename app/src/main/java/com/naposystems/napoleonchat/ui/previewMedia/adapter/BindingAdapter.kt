@@ -1,7 +1,11 @@
 package com.naposystems.napoleonchat.ui.previewMedia.adapter
 
+import android.os.Handler
+import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -32,4 +36,26 @@ fun bindPreviewImage(imageView: ImageView, messageAndAttachment: MessageAndAttac
     } catch (e: Exception) {
         Timber.e(e)
     }
+}
+
+@BindingAdapter("setTextPreview")
+fun bindSetTextPreview(textView: TextView, text: String = "") {
+    textView.text = text
+
+    Handler().postDelayed({
+        val count = textView.lineCount
+        if (count > 1) {
+            textView.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+
+            textView.setOnClickListener {
+                if (textView.maxLines == 4) {
+                    textView.maxLines = 20
+                } else {
+                    textView.maxLines = 4
+                }
+            }
+        }
+    }, 200)
+
+
 }

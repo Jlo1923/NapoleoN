@@ -87,8 +87,9 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
             searchView = mainActivity.findViewById(R.id.searchView)
-            searchView.setHint(R.string.search_by_nickname)
             searchView.setMenuItem(menu.findItem(R.id.search))
+            searchView.setStyleable(Constants.LocationSearchView.OTHER.location)
+            searchView.setHint(R.string.search_by_nickname)
             searchView.setListener(this)
             if (args.location == Constants.LocationAddContact.CONTACTS.location) {
                 if (!searchView.isOpened()) {
@@ -240,6 +241,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     override fun onQuery(text: String) {
+//        val searchLength = if (text.contains("@")) 4 else 3
+
         if (text.length >= 3) {
             viewModel.searchContact(text.toLowerCase(Locale.getDefault()))
         } else {

@@ -379,7 +379,9 @@ open class ConversationViewHolder constructor(
                         imageButtonState?.visibility = View.GONE
                     }
 
-                    if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.message.status == Constants.MessageStatus.UNREAD.status) {
+                    if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.message.status == Constants.MessageStatus.UNREAD.status ||
+                        attachment.type == Constants.AttachmentType.GIF.type && item.message.status == Constants.MessageStatus.UNREAD.status
+                    ) {
                         clickListener.sendMessageRead(item)
                     }
 

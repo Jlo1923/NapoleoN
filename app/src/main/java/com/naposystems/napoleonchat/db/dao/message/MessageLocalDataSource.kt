@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.db.dao.contact.ContactDao
 import com.naposystems.napoleonchat.entity.message.Message
@@ -60,24 +59,20 @@ class MessageLocalDataSource @Inject constructor(
 
                 var dayOfYear = -1
 
-                listMessages.forEachIndexed { i, messageAndAttachment ->
+                listMessages.forEachIndexed { _, messageAndAttachment ->
                     val timeStamp =
                         TimeUnit.SECONDS.toMillis(messageAndAttachment.message.createdAt.toLong())
 
                     val messageDate =
                         Date(timeStamp)
 
-                    val timeActual = System.currentTimeMillis()
                     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    val dayNext = sdf.format(Date((timeStamp + TimeUnit.DAYS.toMillis(1))))
                     val dayMessage = sdf.format(messageDate)
-                    val dayActual = sdf.format(Date(timeActual))
-
 
                     if (dayOfYear != getDayOfYear(messageDate)) {
                         dayOfYear = getDayOfYear(messageDate)
 
-                        val messageBody = when {
+                        /*val messageBody = when {
                             dayMessage == dayActual -> {
                                 context.getString(R.string.text_date_today)
                             }
@@ -87,13 +82,13 @@ class MessageLocalDataSource @Inject constructor(
                             else -> {
                                 sdf.format(messageDate)
                             }
-                        }
+                        }*/
 
                         val message = MessageAndAttachment(
                             Message(
                                 id = -1,
                                 webId = "",
-                                body = "$messageBody ",
+                                body = dayMessage,
                                 quoted = "",
                                 contactId = messageAndAttachment.message.contactId,
                                 updatedAt = messageAndAttachment.message.updatedAt,

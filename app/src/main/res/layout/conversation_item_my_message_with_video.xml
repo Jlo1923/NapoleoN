@@ -55,10 +55,10 @@
                 style="@style/QuoteConversation"
                 android:onClick="@{() -> clickListener.goToQuote(conversation, itemPosition)}"
                 app:isGoTo="true"
+                app:layout_constraintBottom_toTopOf="@id/imageView_attachment"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/imageView_attachment"
                 app:layout_constraintWidth_min="wrap"
                 tools:visibility="visible" />
 
@@ -81,20 +81,18 @@
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_play"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_black_40"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_rounded_icon_show"
                 android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
-                android:padding="@dimen/x_small_padding"
+                android:padding="@dimen/small_padding"
                 android:scaleType="fitCenter"
                 android:tint="@color/white"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
                 app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
-                app:layout_constraintHeight_percent="0.25"
                 app:layout_constraintStart_toStartOf="@id/imageView_attachment"
                 app:layout_constraintTop_toTopOf="@id/imageView_attachment"
-                app:layout_constraintWidth_percent="0.25"
                 app:srcCompat="@drawable/ic_play_arrow_black" />
 
             <!-- BUTTON ATTACHMENT STATE -->
@@ -177,8 +175,8 @@
                 style="@style/MyMessageStatus"
                 android:layout_width="24dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/textView_date"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/textView_date"
                 app:messageStatus="@{conversation.message.status}"
                 tools:srcCompat="@drawable/ic_message_sent" />
