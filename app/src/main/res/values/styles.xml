@@ -1135,6 +1135,14 @@
         <item name="android:digits">@string/nickname_configuration</item>
     </style>
 
+    <style name="OnlyLettersUpperCaseAndNumbers">
+        <item name="android:digits">@string/only_letters_upper_case_and_numbers</item>
+    </style>
+
+    <style name="OnlyLetters">
+        <item name="android:digits">@string/only_letters</item>
+    </style>
+
     <style name="SearchStyleLocation">
         <item name="android:digits">@string/location_configuration</item>
     </style>

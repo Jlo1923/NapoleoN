@@ -22,12 +22,15 @@ import android.provider.Settings
 import android.util.Base64
 import android.util.Base64OutputStream
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
@@ -611,6 +614,22 @@ class Utils {
             }
 
             return isOnline
+        }
+
+        fun showToast(context: Context, string : String) {
+            val vwToast: Toast = Toast.makeText(
+                context,
+                string,
+                Toast.LENGTH_SHORT
+            )
+
+            val view = vwToast.view
+            view.setBackgroundResource(R.drawable.bd_rounded_toast)
+
+            val tv = vwToast.view.findViewById<View>(android.R.id.message) as TextView
+            tv.gravity = Gravity.CENTER
+            tv.textSize = 14F
+            vwToast.show()
         }
     }
 }

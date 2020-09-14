@@ -7,6 +7,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.google.android.material.textfield.TextInputEditText
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -350,3 +352,18 @@ fun bindNameFormatContact(textView: TextView, format: Int, contactId: Int) {
     }
 }
 
+@BindingAdapter("styleChangeName")
+fun bindStyleChangeName(textInputEditText: TextInputEditText, location : Int) {
+    textInputEditText.apply {
+        when (location) {
+            Constants.ChangeParams.NAME_USER.option,
+            Constants.ChangeParams.NAME_FAKE.option -> {
+
+                ContextThemeWrapper(context, R.style.OnlyLetters)
+            }
+            Constants.ChangeParams.NICKNAME_FAKE.option -> {
+                ContextThemeWrapper(context, R.style.OnlyLettersUpperCaseAndNumbers)
+            }
+        }
+    }
+}

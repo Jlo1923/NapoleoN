@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -82,11 +81,10 @@ class EditAccessPinFragment : Fragment() {
 
         viewModel.accessPinUpdatedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                Toast.makeText(
+                Utils.showToast(
                     requireContext(),
-                    R.string.text_access_pin_updated_successfully,
-                    Toast.LENGTH_LONG
-                ).show()
+                    getString(R.string.text_access_pin_updated_successfully)
+                )
                 this.findNavController().popBackStack()
             } else if (it == false) {
                 val message = requireContext().getString(R.string.text_error_updating_access_pin)
