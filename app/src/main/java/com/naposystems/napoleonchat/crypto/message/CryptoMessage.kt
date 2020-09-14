@@ -10,14 +10,11 @@ class CryptoMessage constructor(context: Context) : IContractCryptoMessage {
 
     val crypto = Crypto()
     val sharedPreferencesManager = SharedPreferencesManager(context)
-    val secretKey: String by lazy {
-        sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_SECRET_KEY, "")
-    }
 
     //region Implementation IContractCryptoMessage
     override fun decryptMessageBody(body: String): String {
         return try {
-            Timber.d("SecretKey decryptMessageBody: $secretKey")
+            val secretKey: String = sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_SECRET_KEY, "")
             if (body.isEmpty()) "" else crypto.decryptCipherTextWithRandomIV(body, secretKey)
         } catch (e: Exception) {
             Timber.e(e)
@@ -26,7 +23,7 @@ class CryptoMessage constructor(context: Context) : IContractCryptoMessage {
     }
 
     override fun encryptMessageBody(body: String): String {
-        Timber.d("SecretKey encryptMessageBody: $secretKey")
+        val secretKey: String = sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_SECRET_KEY, "")
         return crypto.encryptPlainTextWithRandomIV(body, secretKey)
     }
     //endregion
