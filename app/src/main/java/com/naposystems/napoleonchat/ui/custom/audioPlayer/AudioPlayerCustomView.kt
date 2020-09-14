@@ -216,6 +216,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         Timber.d("Conver setDuration: $duration, mAudioId: $mAudioId, mediaPlayerAudioId: ${mediaPlayerManager?.getAudioId()}")
         binding.seekbar.max = 100
         mediaPlayerManager?.let {
+            binding.seekbar.tag = mAudioId
             if (mAudioId.isNotEmpty() && it.getCurrentPosition() != 0 && duration > 0 && mAudioId == mediaPlayerManager?.getAudioId()) {
                 val progress = ((it.getCurrentPosition() * 100) / duration).toInt()
                 binding.textViewDuration.text = Utils.getDuration(
@@ -251,6 +252,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                 binding.textViewDuration.visibility =
                 if (duration == 0L) View.GONE else View.VISIBLE
                 binding.seekbar.progress = 0
+                it.refreshSeekbarProgress()
                 binding.imageButtonSpeed.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
                 binding.imageButtonPlay.setImageDrawable(
                     context.resources.getDrawable(

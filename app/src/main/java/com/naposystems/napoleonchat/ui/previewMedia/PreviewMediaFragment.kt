@@ -1,6 +1,8 @@
 package com.naposystems.napoleonchat.ui.previewMedia
 
 import android.content.Context
+import android.graphics.Paint
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +12,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -36,6 +39,7 @@ import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
+import kotlin.math.ceil
 
 class PreviewMediaFragment : Fragment() {
 

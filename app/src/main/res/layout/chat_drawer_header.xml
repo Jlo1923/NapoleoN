@@ -37,9 +37,9 @@
         <!-- IMAGEVIEW AVATAR -->
         <ImageView
             android:id="@+id/imageView_profile_image"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginBottom="@dimen/normal_margin"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="@dimen/small_margin"
             android:background="@drawable/bg_profile_avatar"
             android:elevation="8dp"
             app:layout_constraintBottom_toTopOf="@id/textView_user_name"
@@ -58,12 +58,14 @@
             android:layout_marginStart="@dimen/normal_margin"
             android:layout_marginEnd="@dimen/normal_margin"
             android:ellipsize="end"
+            android:visibility="gone"
             android:lines="1"
             android:textAlignment="center"
             app:layout_constraintBottom_toTopOf="@id/textView_user_nickname"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
             app:layout_constraintTop_toBottomOf="@id/imageView_profile_image"
+            tools:visibility="visible"
             tools:text="@tools:sample/full_names" />
 
         <!-- TEXTVIEW NICKNAME -->
@@ -75,8 +77,8 @@
             android:ellipsize="end"
             android:lines="1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/textView_user_name"
-            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_user_name"
             tools:text="@tools:sample/first_names" />
 

@@ -195,7 +195,9 @@ class ConversationFragment : BaseFragment(),
     private var minTimeRecording = TimeUnit.SECONDS.toMillis(1)
     private var messagedLoadedFirstTime: Boolean = false
     private var actionViewSchedule: View? = null
-    private var uploadProgress = 0f
+    private var isFabScroll = false
+    private var enterConversation = false
+    private var counterNotification = 0
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -389,26 +391,36 @@ class ConversationFragment : BaseFragment(),
         binding.recyclerViewConversation.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val friendlyMessageCount: Int = conversationAdapter.itemCount - 1
-                val lastVisiblePosition: Int =
-                    linearLayoutManager.findLastVisibleItemPosition()
+                Handler().postDelayed({
+                    val friendlyMessageCount: Int = conversationAdapter.itemCount - 1
+                    val lastVisiblePosition: Int =
+                        linearLayoutManager.findLastVisibleItemPosition()
 
-                val invisibleItems = friendlyMessageCount - lastVisiblePosition
+                    val invisibleItems = friendlyMessageCount - lastVisiblePosition
 
-                if (invisibleItems >= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION) {
-                    showFabScroll(View.VISIBLE, animationScaleUp)
-                } else {
-                    showFabScroll(View.GONE, animationScaleDown)
-                }
-                super.onScrolled(recyclerView, dx, dy)
+                    isFabScroll =
+                        if (invisibleItems >= Constants.QUANTITY_TO_SHOW_FAB_CONVERSATION) {
+                            showFabScroll(View.VISIBLE, animationScaleUp)
+                            true
+                        } else {
+                            showFabScroll(View.GONE, animationScaleDown)
+                            showCounterNotification()
+                            false
+                        }
+                    Timber.d("*TestScroll: isFabScroll on addOnScrollListener $isFabScroll")
+                    super.onScrolled(recyclerView, dx, dy)
+                }, 200)
             }
         })
 
         binding.recyclerViewConversation.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom < oldBottom) {
                 binding.recyclerViewConversation.post {
-                    val friendlyMessageCount: Int = conversationAdapter.itemCount
-                    binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                    Timber.d("*TestScroll: isFabScroll on addOnLayoutChangeListener $isFabScroll")
+                    if (!isFabScroll) {
+                        val friendlyMessageCount: Int = conversationAdapter.itemCount
+                        binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                    }
                 }
             }
         }
@@ -909,16 +921,62 @@ class ConversationFragment : BaseFragment(),
     private fun observeMessageMessages() {
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
             Timber.d("observeMessageMessages")
-            conversationAdapter.submitList(conversationList)
-            if (!messagedLoadedFirstTime) {
-                val friendlyMessageCount: Int = conversationAdapter.itemCount
-                binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
-                messagedLoadedFirstTime = true
+            conversationAdapter.submitList(conversationList) {
+                if (!messagedLoadedFirstTime) {
+                    val friendlyMessageCount: Int = conversationAdapter.itemCount
+                    if (enterConversation) {
+                        validScroll(conversationList, friendlyMessageCount)
+                    } else {
+                        binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                        enterConversation = true
+                    }
+                }
             }
             if (conversationList.isNotEmpty()) {
+                Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
             }
         })
+    }
+
+    private fun validScroll(
+        conversationList: List<MessageAndAttachment>,
+        friendlyMessageCount: Int
+    ) {
+        if (conversationList.last().message.isMine == Constants.IsMine.YES.value) {
+//            Timber.d("*TestScroll: setMessages with scroll")
+            counterNotification = 0
+            showCounterNotification()
+            binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+        } else {
+            if (!isFabScroll) {
+                binding.recyclerViewConversation.scrollToPosition(
+                    friendlyMessageCount - 1
+                )
+            } else {
+                if (conversationList.last().message.status == Constants.MessageStatus.UNREAD.status) {
+                    counterNotification++
+                    showCounterNotification()
+                }
+            }
+        }
+    }
+
+    private fun showCounterNotification() {
+        if (isFabScroll && counterNotification > 0) {
+            when {
+                (counterNotification in 0..99) -> {
+                    binding.textViewNotificationMessage.visibility = View.VISIBLE
+                    binding.textViewNotificationMessage.text = counterNotification.toString()
+                }
+                (counterNotification > 99) -> {
+                    binding.textViewNotificationMessage.text = "+99"
+                }
+            }
+        } else {
+            binding.textViewNotificationMessage.visibility = View.GONE
+            counterNotification = 0
+        }
     }
 
     private fun observeDeleteMessagesForAllWsError() {
@@ -992,6 +1050,8 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun handlerGoDown() {
+        counterNotification = 0
+        showCounterNotification()
         val friendlyMessageCount: Int = conversationAdapter.itemCount
         binding.recyclerViewConversation.smoothScrollToPosition(friendlyMessageCount - 1)
     }
@@ -1441,7 +1501,7 @@ class ConversationFragment : BaseFragment(),
         binding.recyclerViewConversation.layoutManager = linearLayoutManager
         binding.recyclerViewConversation.itemAnimator = ItemAnimator()
 
-        conversationAdapter.registerAdapterDataObserver(object :
+        /*conversationAdapter.registerAdapterDataObserver(object :
             RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
@@ -1458,7 +1518,7 @@ class ConversationFragment : BaseFragment(),
                     }
                 }
             }
-        })
+        })*/
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewConversation)
     }
@@ -1737,7 +1797,7 @@ class ConversationFragment : BaseFragment(),
         // Intentionally empty
     }
 
-    override fun onCompleteAudio(messageId: String,messageWebId: String?) {
+    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
         // Intentionally empty
     }
 
@@ -1923,12 +1983,17 @@ class ConversationFragment : BaseFragment(),
         viewModel.sendMessageRead(messageAndAttachment)
     }
 
-    override fun sendMessageRead(messageId : String, messageWebId: String, isComplete: Boolean, position: Int) {
+    override fun sendMessageRead(
+        messageId: String,
+        messageWebId: String,
+        isComplete: Boolean,
+        position: Int
+    ) {
         Timber.d("sendMessageRead: $messageWebId")
         viewModel.sendMessageRead(messageWebId)
 
         if (isComplete) {
-          conversationAdapter.checkIfNextIsAudio(messageId)
+            conversationAdapter.checkIfNextIsAudio(messageId)
         }
     }
 

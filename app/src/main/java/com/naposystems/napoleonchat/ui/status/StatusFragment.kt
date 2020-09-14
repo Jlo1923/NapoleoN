@@ -21,6 +21,7 @@ import com.naposystems.napoleonchat.entity.Status
 import com.naposystems.napoleonchat.ui.status.adapter.StatusAdapter
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -78,20 +79,20 @@ class StatusFragment : Fragment() {
 
         viewModel.errorGettingStatus.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                showToast(getString(R.string.text_error_getting_local_status))
+                showToast(requireContext(), getString(R.string.text_error_getting_local_status))
             }
         })
 
         viewModel.errorUpdatingStatus.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
-                showToast(it.toString())
+                showToast(requireContext(), it.toString())
             }
         })
 
         viewModel.statusUpdatedSuccessfully.observe(viewLifecycleOwner, Observer { isUpdated ->
             if (isUpdated == true) {
                 Utils.hideKeyboard(binding.coordinator)
-                showToast(getString(R.string.text_status_updated_successfully))
+                showToast(requireContext(), getString(R.string.text_status_updated_successfully))
             }
         })
     }
@@ -214,15 +215,4 @@ class StatusFragment : Fragment() {
         }
     }
 
-    private fun showToast(string : String) {
-        val vwToast: Toast = Toast.makeText(
-            requireContext(),
-            string,
-            Toast.LENGTH_SHORT
-        )
-        val tv = vwToast.view.findViewById<View>(android.R.id.message) as TextView
-        tv.gravity = Gravity.CENTER
-        tv.textSize = 14F
-        vwToast.show()
-    }
 }

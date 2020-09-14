@@ -149,12 +149,14 @@ object MediaPlayerManager :
 
     private fun setSeekbarProgress() {
         mediaPlayer?.let {
-            if (it.duration > 0) {
+            if (it.duration > 0 && currentAudioId == mSeekBar?.tag) {
                 val progress = ((it.currentPosition * 100) / it.duration)
 
                 Timber.d("Conver setSeekbarProgress: $progress, position: ${it.currentPosition}, duration: ${it.duration}, seekbar: ${mSeekBar == null}")
 
                 mSeekBar?.progress = progress.toInt()
+            } else {
+                mSeekBar?.progress = 0
             }
         }
     }
@@ -316,7 +318,7 @@ object MediaPlayerManager :
 
                             mHandler.postDelayed(
                                 mRunnable,
-                                50
+                                20
                             )
                         }
                         mHandler.postDelayed(mRunnable, 0)
@@ -434,7 +436,7 @@ object MediaPlayerManager :
 
                                         mHandler.postDelayed(
                                             mRunnable,
-                                            50
+                                            20
                                         )
                                     }
                                     mHandler.postDelayed(mRunnable, 0)

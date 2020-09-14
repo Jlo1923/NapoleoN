@@ -175,6 +175,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
         if (activity is MainActivity) {
             mainActivity = activity as MainActivity
             searchView = mainActivity.findViewById(R.id.searchView)
+            searchView.setStyleable(Constants.LocationSearchView.OTHER.location)
             searchView.setHint(R.string.text_search_contact)
             searchView.setMenuItem(menu.findItem(R.id.search_contacts))
             searchView.setListener(this)

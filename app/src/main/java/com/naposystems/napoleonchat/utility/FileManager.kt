@@ -38,13 +38,15 @@ class FileManager {
                 fileName
             )
 
+            return compressImageFromFile(context, file)
+        }
+
+        suspend fun compressImageFromFile(context: Context, file: File): File {
             val compressedImageFile = Compressor.compress(context, file) {
                 resolution(1280, 720)
                 quality(80)
             }
-
             compressedImageFile.renameTo(file)
-
             return file
         }
 
@@ -324,8 +326,7 @@ class FileManager {
             }
 
             fileInputStream.close()
-            deleteAttachmentFile(context, attachment)
-
+            //deleteAttachmentFile(context, attachment)
             return file
         }
 

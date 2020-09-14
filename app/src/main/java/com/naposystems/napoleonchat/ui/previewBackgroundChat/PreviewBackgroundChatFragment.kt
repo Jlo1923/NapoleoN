@@ -17,7 +17,6 @@ import com.naposystems.napoleonchat.databinding.PreviewBackgroundChatFragmentBin
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.GlobalScope
@@ -104,7 +103,10 @@ class PreviewBackgroundChatFragment : Fragment() {
 
         viewModel.chatBackgroundUpdated.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                this.showToast(getString(R.string.text_updated_successfully))
+                Utils.showToast(
+                    requireContext(),
+                    getString(R.string.text_updated_successfully)
+                )
                 viewModel.resetChatBackground()
                 viewModel.resetChatBackgroundUpdated()
                 findNavController().popBackStack()
