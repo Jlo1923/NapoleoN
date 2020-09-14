@@ -282,31 +282,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             }
 
             webRTCClient.stopRingAndVibrate()
-            /*if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL) {
-                NotificationUtils.cancelWebRTCCallNotification(this)
-                if (isIncomingCall) {
-                    Timber.d("ACTION_ANSWER_CALL")
-                    NotificationUtils.cancelWebRTCCallNotification(this)
-                    channel = bundle.getString(CHANNEL, "")
-
-                    webRTCClient.setChannel(channel)
-
-                    if (isIncomingCall) {
-                        webRTCClient.subscribeToChannelFromBackground()
-                    }
-
-                    webRTCClient.stopRingAndVibrate()
-                    binding.fabAnswer.visibility = View.GONE
-                }
-            } else {
-                if (bundle.containsKey(CHANNEL)) {
-                    channel = bundle.getString(CHANNEL, "")
-                    webRTCClient.setChannel(channel)
-                    if (isIncomingCall) {
-                        webRTCClient.subscribeToChannel()
-                    }
-                }
-            }*/
 
             if (bundle.containsKey(IS_VIDEO_CALL)) {
                 isVideoCall = bundle.getBoolean(IS_VIDEO_CALL, false)

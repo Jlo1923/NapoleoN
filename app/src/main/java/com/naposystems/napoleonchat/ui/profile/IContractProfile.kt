@@ -9,10 +9,12 @@ interface IContractProfile {
         fun getLocalUser()
         fun updateLocalUser(newUser: User)
         fun getUser(): User?
+        fun disconnectSocket()
     }
 
     interface Repository {
         suspend fun getUser(): LiveData<User>
         suspend fun updateLocalUser(user: User)
+        fun disconnectSocket()
     }
 }

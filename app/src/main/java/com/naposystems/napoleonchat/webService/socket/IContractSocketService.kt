@@ -8,6 +8,8 @@ interface IContractSocketService {
 
         fun initSocket()
 
+        fun disconnectSocket()
+
         fun subscribe(jsonObject: String)
 
         fun subscribeToCallChannel(channel: String)

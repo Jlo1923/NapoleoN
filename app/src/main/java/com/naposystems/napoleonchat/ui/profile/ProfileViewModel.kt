@@ -49,6 +49,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     override fun getUser() = this.user.value
+    override fun disconnectSocket() {
+        repository.disconnectSocket()
+    }
 
     //endregion
 }

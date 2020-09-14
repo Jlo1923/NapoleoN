@@ -52,6 +52,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     private lateinit var adapter: ContactsAdapter
     private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
+    private lateinit var popup: PopupMenu
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -180,6 +181,13 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
         }
     }
 
+    override fun onPause() {
+        if (::popup.isInitialized){
+            popup.dismiss()
+        }
+        super.onPause()
+    }
+
     private fun setAdapter() {
         adapter = ContactsAdapter(object : ContactsAdapter.ContactClickListener {
             override fun onClick(item: Contact) {
@@ -191,7 +199,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
             }
 
             override fun onMoreClick(item: Contact, view: View) {
-                val popup = PopupMenu(context!!, view)
+                popup = PopupMenu(context!!, view)
                 popup.menuInflater.inflate(R.menu.menu_popup_contact, popup.menu)
 
                 popup.setOnMenuItemClickListener {
