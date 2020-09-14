@@ -27,6 +27,7 @@
     <string name="text_purchase">Purchase %1$s (%2$s)</string>
     <string name="text_subscription_successfully">Subscription successful.</string>
     <string name="text_subscription_already_owned">You already have this plan currently active.</string>
+    <string name="text_operation_cancelled">Operation cancelled.</string>
     <string name="text_subscription_error">An error ocurred. Please try again later.</string>
     <string name="text_subscription_expired">Your subscription expired, you will only receive messages.</string>
 </resources>

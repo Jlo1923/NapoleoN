@@ -27,6 +27,7 @@
     <string name="text_purchase">Comprar %1$s (%2$s)</string>
     <string name="text_subscription_successfully">¡Suscripción realizada con éxito!</string>
     <string name="text_subscription_already_owned">Ya cuentas con este paquete activo actualmente.</string>
+    <string name="text_operation_cancelled">Operación cancelada.</string>
     <string name="text_subscription_error">¡Se ha presentado un error! Inténtalo más tarde.</string>
     <string name="text_subscription_expired">Tu suscripción expiro, solo podrás recibir mensajes.</string>
 </resources>

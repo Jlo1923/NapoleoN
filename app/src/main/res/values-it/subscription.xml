@@ -27,6 +27,7 @@
     <string name="text_purchase">Comprare %1$s (%2$s)</string>
     <string name="text_subscription_successfully">Abbonamento riuscito.</string>
     <string name="text_subscription_already_owned">Hai già questo piano attualmente attivo.</string>
+    <string name="text_operation_cancelled">Operazione anullata.</string>
     <string name="text_subscription_error">C\'è stato un errore. Riprovare più tardi.</string>
     <string name="text_subscription_expired">Il tuo abbonamento scaduto, si riceverà solo i messaggi.</string>
 </resources>

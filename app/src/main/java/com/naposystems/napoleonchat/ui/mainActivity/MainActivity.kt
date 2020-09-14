@@ -14,6 +14,7 @@ import android.view.Display
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -138,10 +139,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        /*window.setFlags(
+        window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
-        )*/
+        )
 
         viewModel.getAccountStatus()
         viewModel.accountStatus.observe(this, Observer {
@@ -336,6 +337,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     jsonNotification.put(
                         Constants.NotificationKeys.CONTACT,
                         args.getString(Constants.NotificationKeys.CONTACT)?.toInt()!!
+                    )
+                    jsonNotification.put(
+                        Constants.NotificationKeys.MESSAGE_ID,
+                        args.getString(Constants.NotificationKeys.MESSAGE_ID)
                     )
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())

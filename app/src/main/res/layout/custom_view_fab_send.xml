@@ -10,8 +10,7 @@
         android:id="@+id/container"
         android:layout_width="@dimen/conversation_fab_size"
         android:layout_height="200dp"
-        android:background="@drawable/bg_lock_audio_record"
-        android:elevation="2dp">
+        android:background="@drawable/bg_lock_audio_record">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView_lock"
