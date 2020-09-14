@@ -4,7 +4,7 @@
     <string name="text_status_hint">Digite um estado</string>
     <string name="text_select_a_status">Selecione um estado</string>
     <string name="text_status_available">Disponível</string>
-    <string name="text_status_busy">Disponible</string>
+    <string name="text_status_busy">Ocupado</string>
     <string name="text_status_in_meeting">Em reunião</string>
     <string name="text_status_only_messages">Apenas mensagens</string>
     <string name="text_status_sleeping">Adormecido</string>

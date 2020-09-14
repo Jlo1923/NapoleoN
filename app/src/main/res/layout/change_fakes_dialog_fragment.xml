@@ -6,8 +6,12 @@
     <data>
 
         <variable
-            name="viewmodel"
-            type="com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel" />
+            name="location"
+            type="String" />
+
+        <variable
+            name="test"
+            type="android.text.InputType" />
 
     </data>
 
@@ -59,6 +63,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lines="1"
+                android:digits="@{location}"
+                android:inputType='@{location != null ? test.TYPE_CLASS_TEXT : test.TYPE_CLASS_TEXT}'
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColor="?attr/attrTextColorConversationInputPanel"

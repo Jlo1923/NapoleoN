@@ -373,7 +373,7 @@ public class SpotlightView extends FrameLayout {
     /**
      * Dissmiss view with reverse animation
      */
-    private void dismiss() {
+    public void dismiss() {
         if (dismissCalled) {
             return;
         }
@@ -909,7 +909,7 @@ public class SpotlightView extends FrameLayout {
     /**
      * Remove the spotlight view
      */
-    private void removeSpotlightView() {
+    public void removeSpotlightView() {
 
         if (listener != null)
             listener.onUserClicked(usageId);
