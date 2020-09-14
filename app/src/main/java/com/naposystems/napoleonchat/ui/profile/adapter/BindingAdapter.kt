@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.profile.adapter
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
@@ -74,6 +75,19 @@ fun bindNickname(textView: TextView, @Nullable user: User?) {
 @BindingAdapter("nameUser")
 fun bindName(textView: TextView, @Nullable user: User?) {
     if (user != null) {
+        textView.text = user.displayName
+    }
+}
+
+@BindingAdapter("nameUserCover")
+fun bindNameUserCover(textView: TextView, @Nullable user: User?) {
+    if (user != null) {
+        if (user.displayName != ""){
+            textView.visibility = View.VISIBLE
+        } else {
+            textView.visibility = View.GONE
+        }
+
         textView.text = user.displayName
     }
 }

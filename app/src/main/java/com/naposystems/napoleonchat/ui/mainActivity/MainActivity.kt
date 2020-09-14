@@ -413,6 +413,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             )
             .into(imageViewBackground)
 
+        if (user.displayName != "") {
+            textViewDisplayName.visibility = View.VISIBLE
+        } else {
+            textViewDisplayName.visibility = View.GONE
+        }
+
         textViewDisplayName.text = user.displayName
 
         val nickname = getString(R.string.label_nickname, user.nickname)

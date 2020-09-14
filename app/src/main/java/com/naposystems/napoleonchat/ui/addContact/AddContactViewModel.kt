@@ -87,7 +87,8 @@ class AddContactViewModel @Inject constructor(
     override fun searchContact(query: String) {
         viewModelScope.launch {
             try {
-                val response = repository.searchContact(query)
+                val filterQuery = query.replace("@", "")
+                val response = repository.searchContact(filterQuery)
 
                 if (response.isSuccessful) {
                     _users.value = ContactResDTO.toEntityList(response.body()!!)

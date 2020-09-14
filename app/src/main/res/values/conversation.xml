@@ -35,8 +35,8 @@
     <string name="text_slide_to_cancel">Swipe to cancel</string>
     <string name="text_explanation_to_record_audio_attacment">To send a voice note, let NapoleoN can record audio.</string>
     <string name="text_error_sending_gif">An error has occurred sending the Gif, please try again</string>
-    <string name="text_missed_voice_call_at">Missed call today at %1$s</string>
-    <string name="text_missed_video_call_at">Video call at %1$s today lost</string>
+    <string name="text_missed_voice_call_at">Missed call %1$s \ </string>
+    <string name="text_missed_video_call_at">Video call lost %1$s \ </string>
     <string name="text_missed_voice_call">Lost call</string>
     <string name="text_missed_video_call">Missed video call</string>
     <string name="text_encrypted_call">Encrypted call</string>

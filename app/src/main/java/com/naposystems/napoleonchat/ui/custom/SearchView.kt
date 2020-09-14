@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.ui.custom
 
 import android.animation.Animator
 import android.content.Context
+import android.graphics.Typeface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -11,11 +12,15 @@ import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import kotlin.math.hypot
+
 
 class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
@@ -33,9 +38,11 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         AppCompatImageButton(context)
     }
 
-    private val textInput: TextView by lazy {
-        TextInputEditText(context)
+    private val textViewIndicator by lazy {
+        AppCompatTextView(context)
     }
+
+    private lateinit var textInput: TextView
 
     interface OnSearchView {
         fun onOpened()
@@ -59,10 +66,6 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
                 customHint = getString(R.styleable.SearchView_hint)
                 characterCount = getInt(R.styleable.SearchView_characterCount, 4)
 
-                createTextInput()
-
-                createImageButtonClose()
-
             } finally {
                 recycle()
             }
@@ -70,12 +73,12 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     }
 
     private fun createTextInput() {
+        textInput = if (location == 0) {
+            TextInputEditText(ContextThemeWrapper(context, R.style.SearchStyle))
+        } else {
+            TextInputEditText(ContextThemeWrapper(context, R.style.SearchStyleLocation))
+        }
         textInput.apply {
-            if (location != 0) {
-                ContextThemeWrapper(context, R.style.SearchStyle)
-            } else {
-                ContextThemeWrapper(context, R.style.SearchStyleLocation)
-            }
             setBackgroundColor(
                 resources.getColor(
                     android.R.color.transparent,
@@ -111,7 +114,8 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
             linearLayoutParams.apply {
                 width = 0
                 weight = 1f
-                setMargins(normalMargin, 0, normalMargin, 0)
+                if (location == 0) setMargins(4, 0, normalMargin, 0)
+                else setMargins(normalMargin, 0, normalMargin, 0)
             }
 
             layoutParams = linearLayoutParams
@@ -120,6 +124,35 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
 
     fun setTextSearch(text: String) {
         textInput.text = text
+    }
+
+    private fun createImageViewIndicator() {
+        val outValue = TypedValue()
+        context.theme.resolveAttribute(
+            android.R.attr.selectableItemBackgroundBorderless,
+            outValue,
+            true
+        )
+
+        textViewIndicator.apply {
+            text = "@"
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(ContextCompat.getColor(context, R.color.secondaryTextColor))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+            setBackgroundResource(outValue.resourceId)
+        }
+
+        addView(textViewIndicator)
+
+        with(textViewIndicator) {
+            val linearLayoutParams = LayoutParams(layoutParams)
+
+            linearLayoutParams.apply {
+                setMargins(normalMargin, 0, 0, 8)
+            }
+
+            layoutParams = linearLayoutParams
+        }
     }
 
     private fun createImageButtonClose() {
@@ -287,8 +320,13 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         invalidate()
     }
 
-    fun setStyleable(location : Int = 0) {
+    fun setStyleable(location: Int = 0) {
         this.location = location
+        removeAllViews()
+        if (location == 0) createImageViewIndicator()
+        createTextInput()
+        createImageButtonClose()
+
     }
 
     fun setMenuItem(menuItem: MenuItem) {

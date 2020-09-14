@@ -62,7 +62,7 @@
                         android:id="@+id/imageView_profile_image"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
-                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:layout_marginBottom="@dimen/small_margin"
                         android:background="@drawable/bg_profile_avatar"
                         android:scaleType="centerInside"
                         android:transitionName="transition_image_preview"
@@ -111,12 +111,14 @@
                         android:layout_marginEnd="@dimen/normal_margin"
                         android:singleLine="true"
                         android:textAlignment="center"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/imageView_profile_image"
-                        app:nameUser="@{viewModel.user}"
-                        tools:text="Giussep Ricardo" />
+                        app:nameUserCover="@{viewModel.user}"
+                        tools:text="Giussep Ricardo"
+                        tools:visibility="visible" />
 
                     <!-- USER NICKNAME -->
                     <TextView
@@ -136,15 +138,13 @@
                         android:id="@+id/imageButton_edit_header"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/normal_margin"
-                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:layout_margin="@dimen/small_margin"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="@dimen/x_small_padding"
                         android:scaleType="center"
-                        android:tint="@color/colorSecondaryDark"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:srcCompat="@drawable/ic_edit_black" />
+                        app:srcCompat="@drawable/ic_picture" />
 
                     <!-- SEPARATOR -->
                     <View

@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
@@ -29,6 +30,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.Executor
@@ -51,6 +53,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var photoFile: File
+    private lateinit var photoFileCompress: File
     private lateinit var path: File
     private lateinit var videoFile: File
     private lateinit var fileName: String
@@ -233,33 +236,34 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                     args.location.let { location ->
                         when (location) {
                             Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
-                                val attachment = Attachment(
-                                    id = 0,
-                                    messageId = 0,
-                                    webId = "",
-                                    messageWebId = "",
-                                    type = Constants.AttachmentType.IMAGE.type,
-                                    body = "",
-                                    fileName = photoFile.name,
-                                    origin = Constants.AttachmentOrigin.CAMERA.origin,
-                                    thumbnailUri = "",
-                                    status = Constants.AttachmentStatus.SENDING.status,
-                                    extension = PHOTO_EXTENSION,
-                                    duration = 0L
-                                )
-
-
-                                findNavController().navigate(
-                                    ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
-                                        attachment,
-                                        0,
-                                        args.quote,
-                                        args.message
+                                lifecycleScope.launch {
+                                    photoFileCompress = FileManager.compressImageFromFile(requireContext(), photoFile)
+                                    val attachment = Attachment(
+                                        id = 0,
+                                        messageId = 0,
+                                        webId = "",
+                                        messageWebId = "",
+                                        type = Constants.AttachmentType.IMAGE.type,
+                                        body = "",
+                                        fileName = photoFileCompress.name,
+                                        origin = Constants.AttachmentOrigin.CAMERA.origin,
+                                        thumbnailUri = "",
+                                        status = Constants.AttachmentStatus.SENDING.status,
+                                        extension = PHOTO_EXTENSION,
+                                        duration = 0L
                                     )
-                                )
 
-                                Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
+                                    findNavController().navigate(
+                                        ConversationCameraFragmentDirections.actionConversationCameraFragmentToAttachmentPreviewFragment(
+                                            attachment,
+                                            0,
+                                            args.quote,
+                                            args.message
+                                        )
+                                    )
 
+                                    Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
+                                }.let {}
                             }
                             else -> {
                                 context?.let { context ->
@@ -322,9 +326,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
             AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_up)
 
         animationSlideIn.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation?) {
-                // Intentionally empty
-            }
+            override fun onAnimationRepeat(animation: Animation?) = Unit
 
             override fun onAnimationEnd(animation: Animation?) {
                 with(binding.imageButtonCamera) {
@@ -342,9 +344,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                 }
             }
 
-            override fun onAnimationStart(animation: Animation?) {
-                // Intentionally empty
-            }
+            override fun onAnimationStart(animation: Animation?) = Unit
         })
 
         binding.imageButtonLock.visibility = View.VISIBLE
@@ -411,15 +411,14 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                 visibility = View.VISIBLE
                 text = Utils.getDuration(recordingTime, showHours = false)
             }
-
-            val oneSecond = TimeUnit.SECONDS.toMillis(1)
-            recordingTime -= oneSecond
             Timber.d("recordingTime: $recordingTime")
-            if (recordingTime == 1000L) {
+            val oneSecond = TimeUnit.SECONDS.toMillis(1)
+            if (recordingTime <= 0L) {
                 stopRecording()
             } else {
                 mHandler.postDelayed(mRecordingTimeRunnable, oneSecond)
             }
+            recordingTime -= oneSecond
         }
         mHandler.postDelayed(mRecordingTimeRunnable, 0)
     }

@@ -42,7 +42,7 @@
     <color name="redIntense">#ff5131</color>
     <color name="searchViewTextColor">#4d4d4d</color>
     <color name="searchViewHintColor">#808080</color>
-    <color name="fabNotificationMessage">#AF8B8989</color>
+    <color name="fabNotificationMessage">#72000000</color>
     <color name="colorButtonAlertDialog">#d8a608</color>
     <color name="color_E8D8AB">#E8D8AB</color>
     <color name="color_808080">#808080</color>
