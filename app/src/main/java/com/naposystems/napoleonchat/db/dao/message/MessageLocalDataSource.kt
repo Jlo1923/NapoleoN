@@ -26,12 +26,13 @@ class MessageLocalDataSource @Inject constructor(
     private val messageDao: MessageDao
 ) : MessageDataSource {
 
+    private val cryptoMessage = CryptoMessage(context)
+
     override suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment? {
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
         if (BuildConfig.ENCRYPT_API && decrypt) {
             with(messageAndAttachment?.message) {
                 this?.let {
-                    val cryptoMessage = CryptoMessage(context)
                     it.body = it.getBody(cryptoMessage)
                 }
             }
@@ -50,7 +51,6 @@ class MessageLocalDataSource @Inject constructor(
                     listMessages.forEach { messageAndAttachment: MessageAndAttachment ->
                         with(messageAndAttachment.message) {
                             this.let {
-                                val cryptoMessage = CryptoMessage(context)
                                 it.body = it.getBody(cryptoMessage)
                             }
                         }
@@ -132,7 +132,6 @@ class MessageLocalDataSource @Inject constructor(
     override fun insertListMessage(messageList: List<Message>) {
         if (BuildConfig.ENCRYPT_API) {
             messageList.forEach { message: Message ->
-                val cryptoMessage = CryptoMessage(context)
                 message.encryptBody(cryptoMessage)
             }
         }
@@ -189,7 +188,6 @@ class MessageLocalDataSource @Inject constructor(
 
         with(messageAndAttachment.message) {
             this.let {
-                val cryptoMessage = CryptoMessage(context)
                 it.body = it.getBody(cryptoMessage)
             }
         }
@@ -202,7 +200,6 @@ class MessageLocalDataSource @Inject constructor(
         val returnMessages = arrayListOf<String>()
 
         if (BuildConfig.ENCRYPT_API) {
-            val cryptoMessage = CryptoMessage(context)
             messages.forEach { returnMessages.add(cryptoMessage.decryptMessageBody(it)) }
         }
 
@@ -216,7 +213,6 @@ class MessageLocalDataSource @Inject constructor(
             listMessages.value?.forEach { messageAndAttachment: MessageAndAttachment ->
                 with(messageAndAttachment.message) {
                     this.let {
-                        val cryptoMessage = CryptoMessage(context)
                         it.body = it.getBody(cryptoMessage)
                     }
                 }
@@ -282,7 +278,6 @@ class MessageLocalDataSource @Inject constructor(
                     listMessages.forEach { messageAndAttachment: MessageAndAttachment ->
                         with(messageAndAttachment.message) {
                             this.let {
-                                val cryptoMessage = CryptoMessage(context)
                                 it.body = it.getBody(cryptoMessage)
                             }
                         }
