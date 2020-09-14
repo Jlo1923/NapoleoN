@@ -1,11 +1,11 @@
 package com.naposystems.napoleonchat.repository.recoveryAccountQuestions
 
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.dto.recoveryAccountQuestions.*
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -51,9 +51,11 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
     override fun saveSecretKey(secretKey: String) {
         val crypto = Crypto()
 
+        val secretKey = crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
+
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_SECRET_KEY,
-            crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
+            secretKey
         )
     }
 
