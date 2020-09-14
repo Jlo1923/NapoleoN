@@ -72,18 +72,6 @@ class MessageLocalDataSource @Inject constructor(
                     if (dayOfYear != getDayOfYear(messageDate)) {
                         dayOfYear = getDayOfYear(messageDate)
 
-                        /*val messageBody = when {
-                            dayMessage == dayActual -> {
-                                context.getString(R.string.text_date_today)
-                            }
-                            dayNext == dayActual -> {
-                                context.getString(R.string.text_yesterday)
-                            }
-                            else -> {
-                                sdf.format(messageDate)
-                            }
-                        }*/
-
                         val message = MessageAndAttachment(
                             Message(
                                 id = -1,
@@ -111,7 +99,10 @@ class MessageLocalDataSource @Inject constructor(
                     mutableListMessages.add(messageAndAttachment)
                 }
 
-                mutableListMessages.toList()
+                mutableListMessages.filter {
+                    it.message.numberAttachments == 0 || (it.message.numberAttachments > 0 && it.attachmentList.count() > 0)
+                }.toList()
+
             }
             .asLiveData()
 
@@ -240,22 +231,34 @@ class MessageLocalDataSource @Inject constructor(
                     val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
                     when (status) {
                         Constants.MessageStatus.READED.status -> {
-                            val time = currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
+                            val time =
+                                currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
                             messageDao.updateMessageStatus(messageWebId, currentTime, time, status)
                         }
                         else -> {
-                            when(timeByMessage) {
+                            when (timeByMessage) {
                                 Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time,
                                 Constants.SelfDestructTime.EVERY_SEVEN_DAYS_ERROR.time -> {
                                     val contactId = messageDao.getContactByMessage(messageWebId)
-                                    val messageAndAttachment = messageDao.getMessageByWebId(messageWebId)
-                                    val timeContact = contactDao.getSelfDestructTimeByContactWithOutLiveData(contactId)
-                                    val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(messageAndAttachment?.getFirstAttachment()?.duration ?: 0).toInt()
-                                    val selfAutoDestruction = Utils.compareDurationAttachmentWithSelfAutoDestructionInSeconds(
-                                        durationAttachment, timeContact
-                                    )
+                                    val messageAndAttachment =
+                                        messageDao.getMessageByWebId(messageWebId)
+                                    val timeContact =
+                                        contactDao.getSelfDestructTimeByContactWithOutLiveData(
+                                            contactId
+                                        )
+                                    val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(
+                                        messageAndAttachment?.getFirstAttachment()?.duration ?: 0
+                                    ).toInt()
+                                    val selfAutoDestruction =
+                                        Utils.compareDurationAttachmentWithSelfAutoDestructionInSeconds(
+                                            durationAttachment, timeContact
+                                        )
 
-                                    messageDao.updateSelfDestructTimeByMessages(selfAutoDestruction, messageWebId, status)
+                                    messageDao.updateSelfDestructTimeByMessages(
+                                        selfAutoDestruction,
+                                        messageWebId,
+                                        status
+                                    )
                                 }
                                 else -> {
                                     messageDao.updateMessageStatus(messageWebId, 0, 0, status)

@@ -35,8 +35,8 @@
     <string name="text_slide_to_cancel">Swipe abbrechen</string>
     <string name="text_explanation_to_record_audio_attacment">Um eine Sprachnotiz zu senden, lassen NapoleoN Ton aufnehmen können.</string>
     <string name="text_error_sending_gif">Ein Fehler ist aufgetreten der Gif senden, bitte versuchen Sie es erneut</string>
-    <string name="text_missed_voice_call_at">Verpasster Anruf heute um %1$s Uhr</string>
-    <string name="text_missed_video_call_at">Heute Videoanruf bei %1$s verloren</string>
+    <string name="text_missed_voice_call_at">Anruf verloren %1$s \ </string>
+    <string name="text_missed_video_call_at">Videoanruf verloren %1$s \ </string>
     <string name="text_missed_voice_call">Anruf in Abwesenheit</string>
     <string name="text_missed_video_call">Verpasster Videoanruf</string>
     <string name="text_encrypted_call">Verschlüsselter Anruf</string>

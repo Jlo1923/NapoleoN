@@ -72,6 +72,8 @@ class NapoleonKeyboardGifFragment : Fragment() {
             override fun didSelectMedia(media: Media) {
                 Timber.d("Url: ${media.images.original?.gifUrl}")
 
+
+
                 if (binding.viewSwitcher.nextView.id == binding.containerProgress.id) {
                     binding.viewSwitcher.showNext()
                     viewModel.downloadGif(media)

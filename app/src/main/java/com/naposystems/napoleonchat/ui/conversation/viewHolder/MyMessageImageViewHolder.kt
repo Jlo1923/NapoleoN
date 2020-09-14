@@ -50,7 +50,49 @@ class MyMessageImageViewHolder constructor(
         binding.itemPosition = adapterPosition
         binding.imageViewAttachment.clipToOutline = true
 
+        bindImageAttachment(item)
+
         binding.executePendingBindings()
+    }
+
+    private fun bindImageAttachment(
+        messageAndAttachment: MessageAndAttachment
+    ) {
+        try {
+            val context = binding.imageViewAttachment.context
+            messageAndAttachment.getFirstAttachment()?.let { attachment ->
+
+                binding.imageViewAttachment.visibility = View.VISIBLE
+
+                val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
+
+                transformationList.add(CenterCrop())
+                transformationList.add(RoundedCorners(8))
+
+                when (attachment.type) {
+                    Constants.AttachmentType.IMAGE.type,
+                    Constants.AttachmentType.VIDEO.type -> {
+                        transformationList.add(BlurTransformation(context))
+                    }
+                    Constants.AttachmentType.GIF.type -> {
+                        binding.imageViewIconShow.apply {
+                            setImageDrawable(context.getDrawable(R.drawable.ic_gif_black))
+                            setColorFilter(ContextCompat.getColor(context, R.color.white))
+                        }
+                        binding.containerBrandGiphy.visibility = View.VISIBLE
+                    }
+                }
+
+                Glide.with(binding.imageViewAttachment)
+                    .load(attachment.body)
+                    .transform(
+                        *transformationList.toTypedArray()
+                    )
+                    .into(binding.imageViewAttachment)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     companion object {

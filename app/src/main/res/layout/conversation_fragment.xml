@@ -179,18 +179,34 @@
                 android:elevation="17dp"
                 android:gravity="center"
                 android:minHeight="0dp"
-                android:textSize="14sp"
                 android:outlineProvider="none"
-                android:text="!"
                 android:textColor="@color/white"
-                android:visibility="invisible"
+                android:textSize="10sp"
+                android:visibility="gone"
                 app:borderWidth="0dp"
-                app:layout_constraintEnd_toEndOf="@+id/fab_go_down"
-                tools:ignore="MissingConstraints"
-                tools:text="!"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="+99"
                 tools:visibility="visible" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_go_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:outlineProvider="none"
+                android:src="@drawable/ic_go_down"
+                android:visibility="gone"
+                app:backgroundTint="@color/fabNotificationMessage"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/fabIconColor"
+                tools:visibility="visible" />
+
+            <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_go_down"
                 style="@style/FabGoDown"
                 android:outlineProvider="none"
@@ -206,7 +222,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/fabIconColor"
-                tools:visibility="visible" />
+                tools:visibility="visible" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -80,6 +80,7 @@ class IncomingMessageImageViewHolder constructor(
                             setImageDrawable(context.getDrawable(R.drawable.ic_gif_black))
                             setColorFilter(ContextCompat.getColor(context, R.color.white))
                         }
+                        binding.containerBrandGiphy.visibility = View.VISIBLE
                     }
                 }
 
