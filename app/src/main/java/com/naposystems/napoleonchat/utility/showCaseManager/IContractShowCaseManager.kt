@@ -2,10 +2,12 @@ package com.naposystems.napoleonchat.utility.showCaseManager
 
 import android.app.Activity
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 
 interface IContractShowCaseManager {
     fun setListener(listener: ShowCaseManager.Listener)
-    fun setActivity(activity: Activity)
+    fun setActivity(activity: FragmentActivity)
+    fun dismiss()
     fun setFirstView(view: View)
     fun setSecondView(view: View)
     fun setThirdView(view: View)

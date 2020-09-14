@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Handler
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import com.khryzyz.spotlight.SpotlightView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.utility.Constants
@@ -13,7 +14,7 @@ import java.util.*
 
 class ShowCaseManager : IContractShowCaseManager {
 
-    private lateinit var activity: Activity
+    private lateinit var activity: FragmentActivity
     private lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private var firstView: View? = null
@@ -30,6 +31,7 @@ class ShowCaseManager : IContractShowCaseManager {
     private var sixthId: String = UUID.randomUUID().toString()
     private var seventhView: View? = null
     private var seventhId: String = UUID.randomUUID().toString()
+    private var spot : SpotlightView ? = null
 
     private var mListener: Listener? = null
 
@@ -47,7 +49,7 @@ class ShowCaseManager : IContractShowCaseManager {
         callback: () -> Unit
     ) {
         if (view != null) {
-            SpotlightView.Builder(activity)
+            spot = SpotlightView.Builder(activity)
                 .introAnimationDuration(200)
                 .enableRevealAnimation(true)
                 .performClick(false)
@@ -184,9 +186,13 @@ class ShowCaseManager : IContractShowCaseManager {
         this.mListener = listener
     }
 
-    override fun setActivity(activity: Activity) {
+    override fun setActivity(activity: FragmentActivity) {
         this.activity = activity
         sharedPreferencesManager = SharedPreferencesManager(activity)
+    }
+
+    override fun dismiss() {
+        spot?.dismiss()
     }
 
     override fun setFirstView(view: View) {

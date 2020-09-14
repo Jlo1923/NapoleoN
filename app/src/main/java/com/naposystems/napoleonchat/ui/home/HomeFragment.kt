@@ -86,6 +86,7 @@ class HomeFragment : Fragment() {
         super.onAttach(context)
     }
 
+    private var showCase : ShowCaseManager? = null
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var mFirebaseStorage: FirebaseStorage
     private var isShowingVersionDialog: Boolean = false
@@ -272,6 +273,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onPause() {
+        showCase?.dismiss()
         viewModel.cleanVariables()
         if (::popup.isInitialized){
             popup.dismiss()
@@ -308,7 +310,7 @@ class HomeFragment : Fragment() {
         val securitySettingMenuItem =
             drawerMenu.findItem(R.id.security_settings).actionView as ConstraintLayout
 
-        ShowCaseManager().apply {
+        showCase = ShowCaseManager().apply {
             setListener(object : ShowCaseManager.Listener {
                 override fun openSecuritySettings() {
                     findNavController().navigate(
