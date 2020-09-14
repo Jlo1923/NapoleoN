@@ -26,7 +26,7 @@ class MessageLocalDataSource @Inject constructor(
     private val messageDao: MessageDao
 ) : MessageDataSource {
 
-    val cryptoMessage = CryptoMessage(context)
+    private val cryptoMessage = CryptoMessage(context)
 
     override suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment? {
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
