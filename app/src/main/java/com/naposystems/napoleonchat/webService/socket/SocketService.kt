@@ -66,6 +66,15 @@ class SocketService @Inject constructor(
         }
     }
 
+    override fun disconnectSocket() {
+        try {
+            pusher.disconnect()
+            Timber.d("Socket disconnected")
+        } catch (e: Exception){
+            Timber.e(e)
+        }
+    }
+
     override fun subscribe(jsonObject: String) {
         connectToSocket()
         Timber.d("Subscribe to $jsonObject")

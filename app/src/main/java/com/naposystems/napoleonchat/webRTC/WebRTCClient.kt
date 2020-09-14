@@ -343,10 +343,16 @@ class WebRTCClient constructor(
         val disposableContactCancelCall = RxBus.listen(RxEvent.ContactCancelCall::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                localAudioTrack?.setEnabled(false)
-                stopMediaPlayer()
-                unSubscribeCallChannel()
-                localPeer?.dispose()
+                Timber.d("ContactCancelCall")
+                try {
+                    stopMediaPlayer()
+                    unSubscribeCallChannel()
+                    localAudioTrack?.setEnabled(false)
+                } catch (e: Exception) {
+                    Timber.e("Error manejado, $e")
+                } finally {
+                    dispose()
+                }
             }
 
         disposable.add(disposableContactJoinToCall)
@@ -450,23 +456,6 @@ class WebRTCClient constructor(
                     }
                 }
 
-                override fun onSignalingChange(signalingState: PeerConnection.SignalingState) {
-                    super.onSignalingChange(signalingState)
-                    Timber.d("onSignalingChange: $signalingState")
-                    if (signalingState == PeerConnection.SignalingState.CLOSED) {
-                        val intent = Intent(context, WebRTCCallService::class.java)
-                        intent.action = WebRTCCallService.ACTION_CALL_END
-                        context.startService(intent)
-                        mListener?.resetIsOnCallPref()
-                        playSound(
-                            Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone),
-                            false
-                        ) {
-                            dispose()
-                        }
-                    }
-                }
-
                 override fun onIceConnectionChange(iceConnectionState: PeerConnection.IceConnectionState) {
                     super.onIceConnectionChange(iceConnectionState)
                     Timber.d("onIceConnectionChange $iceConnectionState")
@@ -509,6 +498,7 @@ class WebRTCClient constructor(
                     if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED ||
                         iceConnectionState == PeerConnection.IceConnectionState.CLOSED
                     ) {
+                        isActiveCall = false
                         unSubscribeCallChannel()
                         mListener?.resetIsOnCallPref()
 
@@ -920,7 +910,6 @@ class WebRTCClient constructor(
         audioManager.mode = AudioManager.MODE_NORMAL
         audioManager.isBluetoothScoOn = false
 
-        isActiveCall = false
         unregisterProximityListener()
 
         countDownEndCallBusy.cancel()
@@ -940,7 +929,8 @@ class WebRTCClient constructor(
         bluetoothStateManager?.onDestroy()
 
         mListener?.callEnded()
-        localPeer?.close()
+        if (isActiveCall)
+            localPeer?.close()
     }
 
     override fun unSubscribeCallChannel() {

@@ -49,6 +49,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     private lateinit var adapter: BlockedContactsAdapter
     private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
+    private lateinit var popup: PopupMenu
 
 
     override fun onAttach(context: Context) {
@@ -101,6 +102,13 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         })
 
         observeListBlockedContacts()
+    }
+
+    override fun onPause() {
+        if (::popup.isInitialized){
+            popup.dismiss()
+        }
+        super.onPause()
     }
 
     private fun observeListBlockedContacts() {
@@ -164,7 +172,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun showPopupMenu(view: View, item: Contact) {
-        val popup = PopupMenu(requireContext(), view)
+        popup = PopupMenu(requireContext(), view)
         popup.menuInflater.inflate(R.menu.menu_block_contact, popup.menu)
 
         popup.setOnMenuItemClickListener {

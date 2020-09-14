@@ -17,6 +17,7 @@ class CryptoMessage constructor(context: Context) : IContractCryptoMessage {
     //region Implementation IContractCryptoMessage
     override fun decryptMessageBody(body: String): String {
         return try {
+            Timber.d("SecretKey decryptMessageBody: $secretKey")
             if (body.isEmpty()) "" else crypto.decryptCipherTextWithRandomIV(body, secretKey)
         } catch (e: Exception) {
             Timber.e(e)
@@ -25,6 +26,7 @@ class CryptoMessage constructor(context: Context) : IContractCryptoMessage {
     }
 
     override fun encryptMessageBody(body: String): String {
+        Timber.d("SecretKey encryptMessageBody: $secretKey")
         return crypto.encryptPlainTextWithRandomIV(body, secretKey)
     }
     //endregion

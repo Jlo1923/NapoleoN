@@ -34,7 +34,10 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogFragment
-import com.naposystems.napoleonchat.utility.*
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.FileManager
+import com.naposystems.napoleonchat.utility.SnackbarUtils
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
@@ -252,6 +255,7 @@ class ProfileFragment : BaseFragment() {
         val logoutDialogFragment = LogoutDialogFragment.newInstance()
         logoutDialogFragment.setListener(object : LogoutDialogFragment.Listener {
             override fun logOutSuccessfully() {
+                viewModel.disconnectSocket()
                 findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToLandingFragment())
             }
         })

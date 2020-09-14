@@ -89,6 +89,7 @@ class HomeFragment : Fragment() {
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var mFirebaseStorage: FirebaseStorage
     private var isShowingVersionDialog: Boolean = false
+    private lateinit var popup: PopupMenu
 
     private var addContactsMenuItem: MenuItem? = null
     private var homeMenuItem: View? = null
@@ -272,6 +273,9 @@ class HomeFragment : Fragment() {
 
     override fun onPause() {
         viewModel.cleanVariables()
+        if (::popup.isInitialized){
+            popup.dismiss()
+        }
         super.onPause()
     }
 
@@ -434,7 +438,7 @@ class HomeFragment : Fragment() {
                 }
 
                 override fun onLongClick(item: MessageAndAttachment, view: View) {
-                    val popup = PopupMenu(context!!, view)
+                    popup = PopupMenu(context!!, view)
                     popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
 
                     popup.setOnMenuItemClickListener {
