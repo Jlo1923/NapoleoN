@@ -24,6 +24,7 @@
             android:id="@+id/container_conversation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipChildren="false"
             tools:layout_height="match_parent"
             tools:showIn="@layout/conversation_fragment">
 
@@ -118,8 +119,13 @@
             <!-- INPUT PANEL -->
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
                 android:id="@+id/inputPanel"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/x_small_margin"
+                android:layout_marginEnd="@dimen/x_small_margin"
+                android:layout_marginBottom="@dimen/x_small_margin"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 app:isCancelable="true"
                 app:isGoTo="false"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -138,7 +144,9 @@
                 app:fabCustomSize="@dimen/conversation_fab_size"
                 app:layout_constraintBottom_toBottomOf="@id/inputPanel"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:showOnlySendIcon="false" />
+                app:showOnlySendIcon="false"
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_lock_audio"
@@ -157,7 +165,7 @@
                 app:layout_constraintEnd_toEndOf="@id/floatingActionButton_send"
                 app:layout_constraintTop_toTopOf="@id/guideline_lock_audio"
                 app:layout_constraintVertical_bias="0"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -169,7 +177,8 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="60dp"
-            android:outlineProvider="none">
+            android:outlineProvider="none"
+            tools:visibility="gone">
 
             <TextView
                 android:id="@+id/textView_notification_message"

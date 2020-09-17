@@ -7,213 +7,199 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/x_small_padding"
-        tools:context=".ui.custom.inputPanel.InputPanelWidget">
+        android:background="@drawable/bg_input_panel"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container"
-            android:layout_width="0dp"
+        <!-- INPUT PANEL NORMAL -->
+        <LinearLayout
+            android:id="@+id/container_input_panel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_input_panel"
-            android:minHeight="@dimen/conversation_fab_size"
-            android:paddingStart="@dimen/small_margin"
-            android:paddingEnd="@dimen/small_margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/small_padding"
+            android:paddingEnd="@dimen/small_padding">
 
-            <ViewSwitcher
-                android:id="@+id/viewSwitcher"
-                android:layout_width="0dp"
+            <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
+                android:id="@+id/layout_quote"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_marginTop="@dimen/small_margin"
+                android:visibility="gone"
+                app:isCancelable="true"
+                app:isFromInputPanel="true"
+                tools:visibility="gone" />
 
-                <!-- INPUT PANEL NORMAL -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/container_input_panel"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <LinearLayout
+                    android:id="@+id/container_input_options"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/conversation_fab_size"
+                    android:orientation="horizontal">
 
-                    <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
-                        android:id="@+id/layout_quote"
+                    <ImageButton
+                        android:id="@+id/imageButton_emoji"
+                        style="@style/OptionEndIcon"
+                        android:src="@drawable/ic_insert_emoticon_black" />
+
+                    <androidx.emoji.widget.EmojiAppCompatEditText
+                        android:id="@+id/textInputEditText_input"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:visibility="gone"
-                        android:layout_marginTop="@dimen/x_small_margin"
-                        app:isCancelable="true"
-                        app:isFromInputPanel="true"
-                        app:layout_constraintBottom_toTopOf="@+id/container_input_options"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:visibility="visible" />
+                        android:layout_marginStart="@dimen/small_margin"
+                        android:layout_marginEnd="@dimen/small_padding"
+                        android:layout_weight="1"
+                        android:background="?attr/attrBackgroundSectionColor"
+                        android:hint="@string/text_write_message"
+                        android:imeOptions="actionGo"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:maxLength="1000"
+                        android:maxLines="6"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
+                        android:scrollbarThumbVertical="@color/colorSecondaryDark"
+                        android:scrollbars="vertical"
+                        android:singleLine="false"
+                        android:textColor="?attr/attrTextColorSecondaryTextColor"
+                        android:textColorHint="?attr/attrTextColorHintConversationInputPanel"
+                        android:textSize="18sp" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/container_input_options"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:minHeight="@dimen/conversation_fab_size"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent">
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
 
-                        <ImageButton
-                            android:id="@+id/imageButton_emoji"
-                            style="@style/OptionEndIcon"
-                            android:src="@drawable/ic_insert_emoticon_black"
-                            app:layout_constraintBottom_toBottomOf="@+id/textInputEditText_input"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/textInputEditText_input" />
-
-                        <androidx.emoji.widget.EmojiAppCompatEditText
-                            android:id="@+id/textInputEditText_input"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/small_margin"
-                            android:layout_marginEnd="@dimen/small_padding"
-                            android:background="?attr/attrBackgroundSectionColor"
-                            android:hint="@string/text_write_message"
-                            android:imeOptions="actionGo"
-                            android:inputType="textCapSentences|textMultiLine"
-                            android:maxLength="1000"
-                            android:maxLines="6"
-                            android:paddingTop="4dp"
-                            android:paddingBottom="4dp"
-                            android:scrollbarThumbVertical="@color/colorSecondaryDark"
-                            android:scrollbars="vertical"
-                            android:singleLine="false"
-                            android:textColor="?attr/attrTextColorSecondaryTextColor"
-                            android:textColorHint="?attr/attrTextColorHintConversationInputPanel"
-                            android:textSize="18sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/container_action_input"
-                            app:layout_constraintStart_toEndOf="@id/imageButton_emoji"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
+                        <LinearLayout
                             android:id="@+id/container_action_input"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="end"
                             android:animateLayoutChanges="true"
-                            app:layout_constraintBottom_toBottomOf="@+id/textInputEditText_input"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/textInputEditText_input">
+                            android:clipChildren="false"
+                            android:clipToPadding="false"
+                            android:orientation="horizontal">
 
                             <ImageButton
                                 android:id="@+id/imageButton_attachment"
                                 style="@style/OptionEndIcon"
+                                android:layout_gravity="center_vertical"
                                 android:layout_marginEnd="@dimen/normal_margin"
-                                android:src="@drawable/ic_attachment_black"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/imageButton_camera" />
+                                android:src="@drawable/ic_attachment_black" />
 
                             <ImageButton
                                 android:id="@+id/imageButton_camera"
                                 style="@style/OptionEndIcon"
-                                android:src="@drawable/ic_camera_primary"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent" />
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="@dimen/normal_margin"
+                                android:src="@drawable/ic_camera_primary" />
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                            <com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center_vertical"
+                                android:clipChildren="false"
+                                android:clipToPadding="false">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                <include layout="@layout/custom_view_microphone_recorder" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                            </com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView>
 
-                <!-- SLIDE TO CANCEL AUDIO -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/container_slide_to_cancel"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                        </LinearLayout>
+                    </FrameLayout>
+
+                </LinearLayout>
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- SLIDE TO CANCEL AUDIO -->
+        <LinearLayout
+            android:id="@+id/container_slide_to_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_mic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/red"
+                app:srcCompat="@drawable/ic_mic_black" />
+
+            <TextView
+                android:id="@+id/textView_time"
+                style="@style/BodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_weight="1"
+                android:text="00:00"
+                tools:text="99:99" />
+
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end">
+
+                <LinearLayout
+                    android:id="@+id/container_text_slide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/imageView_mic"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tint="@color/red"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_mic_black" />
+                        android:id="@+id/appCompatImageView"
+                        style="@style/OptionEndIcon"
+                        app:srcCompat="@drawable/ic_keyboard_arrow_left_black" />
 
                     <TextView
-                        android:id="@+id/textView_time"
-                        style="@style/BodyTextView"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/textView_slide_to_cancel"
+                        style="@style/SmallBodyTextView"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/small_margin"
-                        android:text="00:00"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/imageView_mic"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="99:99" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="30dp"
+                        android:text="@string/text_slide_to_cancel" />
+                </LinearLayout>
 
-                    <ViewSwitcher
-                        android:id="@+id/viewSwitcher_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/container_text_slide"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/appCompatImageView"
-                                style="@style/OptionEndIcon"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_keyboard_arrow_left_black" />
-
-                            <TextView
-                                android:id="@+id/textView_slide_to_cancel"
-                                style="@style/SmallBodyTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="0dp"
-                                android:paddingStart="0dp"
-                                android:gravity="center"
-                                android:paddingEnd="30dp"
-                                android:text="@string/text_slide_to_cancel"
-                                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
-                                app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/textView_cancel"
-                            style="@style/BodyTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="end"
-                            android:paddingStart="@dimen/normal_padding"
-                            android:paddingEnd="@dimen/normal_padding"
-                            android:gravity="center"
-                            android:layout_marginEnd="@dimen/large_margin"
-                            android:text="@string/text_cancel"
-                            android:textColor="@color/redIntense" />
-
-                    </ViewSwitcher>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/textView_cancel"
+                    style="@style/BodyTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/large_margin"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/normal_padding"
+                    android:paddingEnd="@dimen/normal_padding"
+                    android:text="@string/text_cancel"
+                    android:textColor="@color/redIntense" />
 
             </ViewSwitcher>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ViewSwitcher>
 
 </layout>
