@@ -938,20 +938,25 @@ class ConversationFragment : BaseFragment(),
         conversationList: List<MessageAndAttachment>,
         friendlyMessageCount: Int
     ) {
-        if (conversationList.last().message.isMine == Constants.IsMine.YES.value) {
+        if (!conversationList.isNullOrEmpty()) {
+            if (conversationList.last().message.isMine == Constants.IsMine.YES.value &&
+                conversationList.last().message.status == Constants.MessageStatus.SENDING.status
+            ) {
 //            Timber.d("*TestScroll: setMessages with scroll")
-            counterNotification = 0
-            showCounterNotification()
-            binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
-        } else {
-            if (!isFabScroll) {
-                binding.recyclerViewConversation.scrollToPosition(
-                    friendlyMessageCount - 1
-                )
+                counterNotification = 0
+                showCounterNotification()
+                binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
             } else {
-                if (conversationList.last().message.status == Constants.MessageStatus.UNREAD.status) {
-                    counterNotification++
-                    showCounterNotification()
+                if (!isFabScroll) {
+                    binding.recyclerViewConversation.scrollToPosition(
+                        friendlyMessageCount - 1
+                    )
+                } else {
+                    if (conversationList.last().message.isMine == Constants.IsMine.NO.value &&
+                        conversationList.last().message.status == Constants.MessageStatus.UNREAD.status) {
+                        counterNotification++
+                        showCounterNotification()
+                    }
                 }
             }
         }
@@ -1243,7 +1248,7 @@ class ConversationFragment : BaseFragment(),
                         val size = cursor.getInt(sizeIndex)
 
                         if (!documentsMimeTypeAllowed.contains(mimeType)) {
-                            Utils.generalDialog(
+                            generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_not_allowed),
                                 false,
@@ -1253,7 +1258,7 @@ class ConversationFragment : BaseFragment(),
 
                             }
                         } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
-                            Utils.generalDialog(
+                            generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_size_exceed),
                                 false,
