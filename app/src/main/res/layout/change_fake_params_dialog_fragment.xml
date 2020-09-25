@@ -18,8 +18,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/attrBackgroundColorBackgroundDialog"
-        tools:context=".ui.muteConversation.MuteConversationDialogFragment">
+        android:background="?attr/attrBackgroundColorBackgroundDialog">
 
         <TextView
             android:id="@+id/textView_title"
@@ -27,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:height="62dp"
-            android:text="@string/text_name"
+            android:text="@string/text_nickname"
             android:gravity="center_vertical"
             android:paddingStart="@dimen/large_padding"
             android:paddingEnd="0dp"
@@ -64,8 +63,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lines="1"
-                android:maxLength="@integer/max_length_display_name"
-                android:digits="@string/only_letters"
+                android:maxLength="@integer/max_length_nickname"
+                android:digits="@string/nickname_configuration"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColor="?attr/attrTextColorConversationInputPanel"
