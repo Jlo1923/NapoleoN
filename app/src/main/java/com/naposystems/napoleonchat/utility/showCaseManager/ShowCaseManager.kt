@@ -32,6 +32,7 @@ class ShowCaseManager : IContractShowCaseManager {
     private var seventhView: View? = null
     private var seventhId: String = UUID.randomUUID().toString()
     private var spot : SpotlightView ? = null
+    private var paused : Boolean = false
 
     private var mListener: Listener? = null
 
@@ -50,26 +51,27 @@ class ShowCaseManager : IContractShowCaseManager {
     ) {
         if (view != null) {
             spot = SpotlightView.Builder(activity)
-                .introAnimationDuration(200)
+                .introAnimationDuration(300)
                 .enableRevealAnimation(true)
                 .performClick(false)
-                .fadeinTextDuration(200)
+                .fadeinTextDuration(300)
                 .headingTvColor(Color.parseColor("#d8a608"))
                 .headingTvSize(headingTextSize)
                 .headingTvText(title)
                 .subHeadingTvColor(Color.parseColor("#f2f2f2"))
                 .subHeadingTvSize(16)
                 .subHeadingTvText(subtitle)
-                .maskColor(Color.parseColor("#dc000000"))
+                .maskColor(Color.parseColor("#d1000000"))
                 .target(view)
-                .lineAnimDuration(200)
+                .lineAnimDuration(300)
                 .lineAndArcColor(Color.parseColor("#d8a608"))
                 .dismissOnTouch(false)
                 .dismissOnBackPress(false)
                 .enableDismissAfterShown(false)
                 .buttonText("Ok")
                 .showButton(true)
-                .buttonColorBackground(Color.parseColor("#dc000000"))
+                .buttonColorBackground(Color.parseColor("#f2f2f2"))
+                .buttonColorText(Color.parseColor("#000000"))
                 .buttonSize(16)
                 .usageId(uniqueId)
                 .setListener {
@@ -90,11 +92,13 @@ class ShowCaseManager : IContractShowCaseManager {
             activity.getString(R.string.show_case_first_title),
             activity.getString(R.string.show_case_first_subtitle)
         ) {
-            sharedPreferencesManager.putBoolean(
-                Constants.SharedPreferences.PREF_SHOW_CASE_FIRST_STEP_HAS_BEEN_SHOW,
-                true
-            )
-            callback()
+            if (!paused) {
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_SHOW_CASE_FIRST_STEP_HAS_BEEN_SHOW,
+                    true
+                )
+                callback()
+            }
         }
     }
 
@@ -106,11 +110,13 @@ class ShowCaseManager : IContractShowCaseManager {
             activity.getString(R.string.show_case_second_title),
             activity.getString(R.string.show_case_second_subtitle)
         ) {
-            sharedPreferencesManager.putBoolean(
-                Constants.SharedPreferences.PREF_SHOW_CASE_SECOND_STEP_HAS_BEEN_SHOW,
-                true
-            )
-            callback()
+            if (!paused) {
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_SHOW_CASE_SECOND_STEP_HAS_BEEN_SHOW,
+                    true
+                )
+                callback()
+            }
         }
     }
 
@@ -122,11 +128,13 @@ class ShowCaseManager : IContractShowCaseManager {
             activity.getString(R.string.show_case_third_title),
             activity.getString(R.string.show_case_third_subtitle)
         ) {
-            sharedPreferencesManager.putBoolean(
-                Constants.SharedPreferences.PREF_SHOW_CASE_THIRD_STEP_HAS_BEEN_SHOW,
-                true
-            )
-            callback()
+            if (!paused) {
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_SHOW_CASE_THIRD_STEP_HAS_BEEN_SHOW,
+                    true
+                )
+                callback()
+            }
         }
     }
 
@@ -138,11 +146,13 @@ class ShowCaseManager : IContractShowCaseManager {
             activity.getString(R.string.show_case_fourth_title),
             activity.getString(R.string.show_case_fourth_subtitle)
         ) {
-            sharedPreferencesManager.putBoolean(
-                Constants.SharedPreferences.PREF_SHOW_CASE_FOURTH_STEP_HAS_BEEN_SHOW,
-                true
-            )
-            callback()
+            if (!paused) {
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_SHOW_CASE_FOURTH_STEP_HAS_BEEN_SHOW,
+                    true
+                )
+                callback()
+            }
         }
     }
 
@@ -156,11 +166,13 @@ class ShowCaseManager : IContractShowCaseManager {
                 activity.getString(R.string.show_case_fifth_title),
                 activity.getString(R.string.show_case_fifth_subtitle)
             ) {
-                sharedPreferencesManager.putBoolean(
-                    Constants.SharedPreferences.PREF_SHOW_CASE_FIFTH_STEP_HAS_BEEN_SHOW,
-                    true
-                )
-                callback()
+                if (!paused) {
+                    sharedPreferencesManager.putBoolean(
+                        Constants.SharedPreferences.PREF_SHOW_CASE_FIFTH_STEP_HAS_BEEN_SHOW,
+                        true
+                    )
+                    callback()
+                }
             }
         }, 500)
     }
@@ -174,11 +186,13 @@ class ShowCaseManager : IContractShowCaseManager {
             activity.getString(R.string.show_case_seventh_subtitle),
             24
         ) {
-            sharedPreferencesManager.putBoolean(
-                Constants.SharedPreferences.PREF_SHOW_CASE_SEVENTH_STEP_HAS_BEEN_SHOW,
-                true
-            )
-            callback()
+            if (!paused) {
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_SHOW_CASE_SEVENTH_STEP_HAS_BEEN_SHOW,
+                    true
+                )
+                callback()
+            }
         }
     }
 
@@ -223,6 +237,10 @@ class ShowCaseManager : IContractShowCaseManager {
         this.seventhView = view
     }
 
+    override fun setPaused(paused: Boolean) {
+        this.paused = paused
+    }
+
     override fun showFromFirst() {
         val firstHasBeenShow = sharedPreferencesManager.getBoolean(
             Constants.SharedPreferences.PREF_SHOW_CASE_FIRST_STEP_HAS_BEEN_SHOW,
@@ -231,7 +249,7 @@ class ShowCaseManager : IContractShowCaseManager {
 
         if (!firstHasBeenShow) {
             showFirst {
-                showSecond { showThird { showFourth { showFifth { mListener?.openSecuritySettings() } } } }
+                showSecond { showThird { showFourth { showFifth { if (!paused) mListener?.openSecuritySettings() } } } }
             }
         } else {
             showFromSecond()
@@ -245,7 +263,7 @@ class ShowCaseManager : IContractShowCaseManager {
         )
 
         if (!secondHasBeenShow) {
-            showSecond { showThird { showFourth { showFifth { mListener?.openSecuritySettings() } } } }
+            showSecond { showThird { showFourth { showFifth { if (!paused) mListener?.openSecuritySettings() } } } }
         } else {
             showFromThird()
         }
@@ -258,7 +276,7 @@ class ShowCaseManager : IContractShowCaseManager {
         )
 
         if (!thirdHasBeenShow) {
-            showThird { showFourth { showFifth { mListener?.openSecuritySettings() } } }
+            showThird { showFourth { showFifth { if (!paused) mListener?.openSecuritySettings() } } }
         } else {
             showFromFourth()
         }
@@ -271,7 +289,7 @@ class ShowCaseManager : IContractShowCaseManager {
         )
 
         if (!fourthHasBeenShow) {
-            showFourth { showFifth { mListener?.openSecuritySettings() } }
+            showFourth { showFifth { if (!paused) mListener?.openSecuritySettings() } }
         } else {
             showFromFifth()
         }
@@ -284,7 +302,7 @@ class ShowCaseManager : IContractShowCaseManager {
         )
 
         if (!fifthHasBeenShow) {
-            showFifth { mListener?.openSecuritySettings() }
+            showFifth { if (!paused) mListener?.openSecuritySettings() }
         } else {
             showFromSixth()
         }
@@ -320,11 +338,13 @@ class ShowCaseManager : IContractShowCaseManager {
             activity.getString(R.string.show_case_sixth_title),
             activity.getString(R.string.show_case_sixth_subtitle)
         ) {
-            sharedPreferencesManager.putBoolean(
-                Constants.SharedPreferences.PREF_SHOW_CASE_SIXTH_STEP_HAS_BEEN_SHOW,
-                true
-            )
-            callback()
+            if (!paused) {
+                sharedPreferencesManager.putBoolean(
+                    Constants.SharedPreferences.PREF_SHOW_CASE_SIXTH_STEP_HAS_BEEN_SHOW,
+                    true
+                )
+                callback()
+            }
         }
     }
 

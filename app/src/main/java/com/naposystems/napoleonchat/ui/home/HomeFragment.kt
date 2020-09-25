@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
@@ -12,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -94,6 +96,8 @@ class HomeFragment : Fragment() {
 
     private var addContactsMenuItem: MenuItem? = null
     private var homeMenuItem: View? = null
+    private var menuCreated : Boolean = false
+    private var showShowCase : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -273,7 +277,9 @@ class HomeFragment : Fragment() {
     }
 
     override fun onPause() {
+        showCase?.setPaused(true)
         showCase?.dismiss()
+        showShowCase = false
         viewModel.cleanVariables()
         if (::popup.isInitialized){
             popup.dismiss()
@@ -305,36 +311,17 @@ class HomeFragment : Fragment() {
         homeMenuItem =
             ((activity as MainActivity).findViewById(R.id.toolbar) as MaterialToolbar).getChildAt(1)
 
-        val drawerMenu = (activity as MainActivity).getNavView().menu
+        menuCreated = true
 
-        val securitySettingMenuItem =
-            drawerMenu.findItem(R.id.security_settings).actionView as ConstraintLayout
+        showCase()
 
-        showCase = ShowCaseManager().apply {
-            setListener(object : ShowCaseManager.Listener {
-                override fun openSecuritySettings() {
-                    findNavController().navigate(
-                        HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
-                            showShowCase = true
-                        )
-                    )
-                }
-            })
-
-            setActivity(requireActivity())
-            setFirstView(addContactsMenuItem?.actionView!!)
-            setSecondView(binding.fabContacts)
-            setThirdView(binding.viewShowCaseStatus)
-            setFourthView(homeMenuItem!!)
-            setFifthView(securitySettingMenuItem.getChildAt(0))
-
-            showFromFirst()
-        }
     }
 
     override fun onResume() {
         super.onResume()
+        showCase?.setPaused(false)
         viewModel.getJsonNotification()
+        showCase()
         /*if (!isShowingVersionDialog && !BuildConfig.DEBUG)
             getRemoteConfig()*/
     }
@@ -499,5 +486,41 @@ class HomeFragment : Fragment() {
         ) {
             shareContactViewModel.sendBlockedContact(contact)
         }
+    }
+
+    private fun showCase() {
+        Handler().postDelayed({
+            if (menuCreated && !showShowCase) {
+                val drawerMenu = (activity as MainActivity).getNavView().menu
+
+                val securitySettingMenuItem =
+                    drawerMenu.findItem(R.id.security_settings).actionView as ConstraintLayout
+
+                showCase = ShowCaseManager().apply {
+                    setListener(object : ShowCaseManager.Listener {
+                        override fun openSecuritySettings() {
+                            findNavController().navigate(
+                                HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
+                                    showShowCase = true
+                                )
+                            )
+                        }
+                    })
+
+                    setActivity(requireContext() as FragmentActivity)
+                    addContactsMenuItem?.actionView?.let { view ->
+                        setFirstView(view)
+                    }
+                    setSecondView(binding.fabContacts)
+                    setThirdView(binding.viewShowCaseStatus)
+                    setFourthView(homeMenuItem!!)
+                    setFifthView(securitySettingMenuItem.getChildAt(0))
+
+                    showFromFirst()
+                }
+
+                showShowCase = true
+            }
+        }, 500)
     }
 }

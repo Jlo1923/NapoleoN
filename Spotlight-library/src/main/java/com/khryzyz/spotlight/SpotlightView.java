@@ -443,7 +443,7 @@ public class SpotlightView extends FrameLayout {
      * Reverse reveal animation
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void exitRevealAnimation() {
+    public void exitRevealAnimation() {
         float finalRadius = (float) Math.hypot(getViewWidth(), getHeight());
         Animator anim = ViewAnimationUtils.createCircularReveal(this, targetView.getPoint().x, targetView.getPoint().y, finalRadius, 0);
         anim.setInterpolator(AnimationUtils.loadInterpolator(getContext(),

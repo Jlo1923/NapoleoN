@@ -150,10 +150,14 @@ object MediaPlayerManager :
     private fun setSeekbarProgress() {
         mediaPlayer?.let {
             if (it.duration > 0 && currentAudioId == mSeekBar?.tag) {
-                val progress = ((it.currentPosition * 100) / it.duration)
+                val progress = ((it.currentPosition.toFloat() * 100) / it.duration.toFloat())
 
                 Timber.d("Conver setSeekbarProgress: $progress, position: ${it.currentPosition}, duration: ${it.duration}, seekbar: ${mSeekBar == null}")
-
+                try {
+                    updateDuration((it.duration.toFloat() - ((it.duration.toFloat() * progress) / 100)).toLong())
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
                 mSeekBar?.progress = progress.toInt()
             } else {
                 mSeekBar?.progress = 0
@@ -618,10 +622,7 @@ object MediaPlayerManager :
                     }
                     try {
                         Timber.d("Conve onProgressChanged: $progress, duration: ${it.duration}")
-                        mTextViewDuration?.text = Utils.getDuration(
-                            (it.duration - ((it.duration * progress) / 100)),
-                            showHours = false
-                        )
+                        updateDuration((it.duration.toFloat() - ((it.duration.toFloat() * progress) / 100)).toLong())
                     } catch (e: Exception) {
                         Timber.e(e)
                     }
@@ -784,5 +785,18 @@ object MediaPlayerManager :
                 drawable, context.theme
             )
         )
+    }
+
+    private fun updateDuration(duration: Long) {
+        try {
+            val text = Utils.getDuration(
+                duration,
+                showHours = false
+            )
+            Timber.d("Duration Audio: $text")
+            mTextViewDuration?.text = text
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 }

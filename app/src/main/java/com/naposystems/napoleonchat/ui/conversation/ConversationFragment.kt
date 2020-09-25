@@ -161,6 +161,7 @@ class ConversationFragment : BaseFragment(),
     private lateinit var actionMode: ActionModeMenu
     private var menuOptionsContact: Menu? = null
     private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
+    private var showCase : ShowCaseManager? = null
 
     private val mediaPlayer: MediaPlayer by lazy {
         MediaPlayer().apply {
@@ -197,6 +198,8 @@ class ConversationFragment : BaseFragment(),
     private var isFabScroll = false
     private var enterConversation = false
     private var counterNotification = 0
+    private var menuCreated : Boolean = false
+    private var showShowCase : Boolean = false
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -1074,15 +1077,13 @@ class ConversationFragment : BaseFragment(),
             onOptionsItemSelected(scheduleMenuItem)
         }
 
-        ShowCaseManager().apply {
-            setActivity(requireActivity())
-            setSeventhView(scheduleMenuItem.actionView)
-            showFromSeventh()
-        }
-
         contactProfileShareViewModel.contact.value?.let { contact ->
             setTextSilenceOfMenu(contact)
         }
+
+        menuCreated = true
+
+        showCase()
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -1144,6 +1145,8 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
+        showCase?.setPaused(false)
+        showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
         setConversationBackground()
@@ -1638,6 +1641,10 @@ class ConversationFragment : BaseFragment(),
         super.onPause()
         Timber.d("onPause")
         stopRecording()
+        showCase?.setPaused(true)
+        showCase?.dismiss()
+        showShowCase = false
+        resetAudioRecording()
         MediaPlayerManager.pauseAudio()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
@@ -1966,6 +1973,18 @@ class ConversationFragment : BaseFragment(),
 
     override fun updateMessageState(message: Message) {
         viewModel.updateMessage(message)
+    }
+
+    private fun showCase() {
+        if (menuCreated && !showShowCase) {
+            showCase = ShowCaseManager().apply {
+                setActivity(requireActivity())
+                setSeventhView(actionViewSchedule!!)
+                showFromSeventh()
+            }
+
+            showShowCase = true
+        }
     }
 
     //endregion

@@ -210,4 +210,8 @@
         <attr name="description" format="string" />
         <attr name="location" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="TextInputParamsCustomView">
+        <attr name="locationTextInput" format="integer"/>
+    </declare-styleable>
 </resources>

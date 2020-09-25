@@ -11,6 +11,7 @@ import com.naposystems.napoleonchat.ui.attachmentLocation.AttachmentLocationFrag
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.blockedContacts.BlockedContactsFragment
 import com.naposystems.napoleonchat.ui.cancelSubscription.CancelSubscriptionDialogFragment
+import com.naposystems.napoleonchat.ui.changeParams.ChangeFakeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.colorScheme.ColorSchemeFragment
 import com.naposystems.napoleonchat.ui.contactProfile.ContactProfileFragment
@@ -163,6 +164,9 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindChangeFakesDialogFragment(): ChangeParamsDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindChangeFakeParamsDialogFragment(): ChangeFakeParamsDialogFragment
 
     @ContributesAndroidInjector
     abstract fun bindSelfDestructTimeMessageNotSentDialogFragment(): SelfDestructTimeMessageNotSentDialogFragment
