@@ -135,25 +135,13 @@
             android:layout_marginHorizontal="@dimen/x_small_margin"
             android:layout_marginBottom="@dimen/small_margin"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/floatingActionButton_send"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:showAttachmentIcon="false"
             app:showCameraIcon="false"
-            app:showEmojiIcon="false" />
-
-        <com.naposystems.napoleonchat.ui.custom.fabSend.FabSend
-            android:id="@+id/floatingActionButton_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/x_small_margin"
-            android:contentDescription="submit|!!"
-            android:src="@drawable/anim_mic_send"
-            app:elevation="1dp"
-            app:fabCustomSize="@dimen/conversation_fab_size"
-            app:layout_constraintBottom_toBottomOf="@id/inputPanel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/inputPanel"
-            custom:showOnlySendIcon="true" />
+            app:showEmojiIcon="false"
+            app:showFabSend="true"
+            app:showMicrophone="false" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

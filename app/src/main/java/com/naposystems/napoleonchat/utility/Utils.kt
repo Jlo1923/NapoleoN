@@ -144,7 +144,7 @@ class Utils {
         }
 
 
-        fun vibratePhone(context: Context?, effect: Int) {
+        fun vibratePhone(context: Context?, effect: Int, duration: Long) {
             val vibrator = context?.let {
                 it.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             }
@@ -161,14 +161,14 @@ class Utils {
                         else ->
                             vibrator.vibrate(
                                 VibrationEffect.createOneShot(
-                                    400,
+                                    duration,
                                     VibrationEffect.DEFAULT_AMPLITUDE
                                 )
                             )
                     }
                 } else {
                     if (effect == Constants.Vibrate.DEFAULT.type)
-                        vibrator.vibrate(400)
+                        vibrator.vibrate(duration)
                 }
             }
         }

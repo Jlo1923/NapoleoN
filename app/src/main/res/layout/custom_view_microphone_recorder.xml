@@ -25,6 +25,7 @@
             android:layout_height="60dp"
             android:layout_gravity="bottom|end"
             android:background="@drawable/bg_lock_audio_record"
+            android:elevation="4dp"
             android:translationX="8dp"
             android:translationY="@dimen/recording_voice_lock_target"
             android:visibility="gone"
@@ -71,7 +72,7 @@
             app:srcCompat="@drawable/ic_mic_black"
             app:tint="#FFFFFF"
             tools:ignore="ContentDescription"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
     </FrameLayout>
 </layout>
