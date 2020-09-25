@@ -35,7 +35,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
 
     private lateinit var mAdapter: AttachmentDocumentAdapter
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
-    private lateinit var binding: AttachmentDocumentFragmentBinding
+//    private lateinit var binding: AttachmentDocumentFragmentBinding
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

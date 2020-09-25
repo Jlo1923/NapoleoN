@@ -1,29 +1,32 @@
 package com.naposystems.napoleonchat.ui.conversation.viewHolder
 
-import android.annotation.SuppressLint
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemSystemMessageBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import java.util.concurrent.TimeUnit
 
 class SystemMessageViewHolder constructor(
     private val binding: ConversationItemSystemMessageBinding
-) :
-    RecyclerView.ViewHolder(binding.root) {
+) : ConversationViewHolder(binding.root, binding.root.context) {
+
+    init {
+        super.parentContainerMessage = binding.containerMessage
+    }
 
     private var countDownTimer: CountDownTimer? = null
 
-    private fun countDown(
+    override fun countDown(
         item: MessageAndAttachment,
         textView: TextView?,
         itemToEliminate: (MessageAndAttachment) -> Unit
@@ -83,11 +86,14 @@ class SystemMessageViewHolder constructor(
         }
     }
 
-    @SuppressLint("ResourceAsColor")
-    fun bind(
+    override fun bind(
         item: MessageAndAttachment,
-        clickListener: ConversationAdapter.ClickListener
+        clickListener: ConversationAdapter.ClickListener,
+        isFirst: Boolean,
+        timeFormat: Int?,
+        mediaPlayerManager: MediaPlayerManager?
     ) {
+        super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
         val context = binding.textViewBody.context
         binding.clickListener = clickListener
         binding.conversation = item

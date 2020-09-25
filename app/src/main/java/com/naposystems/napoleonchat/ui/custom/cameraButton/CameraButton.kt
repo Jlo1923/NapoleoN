@@ -51,7 +51,7 @@ class CameraButton(context: Context, attributeSet: AttributeSet) :
                 mAllowSlide = getBoolean(R.styleable.CameraButton_allowSlide, true)
 
                 setOnLongClickListener {
-                    if (!mIsLongPressed && mAllowSlide) {
+                    if (!mIsLongPressed && mAllowSlide && !mHasLocked) {
                         mIsLongPressed = true
                         Timber.d("longPressed")
                         val downTime: Long = SystemClock.uptimeMillis()

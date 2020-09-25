@@ -55,6 +55,8 @@
                 android:id="@+id/container_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="?attr/attrBackgroundColorPrimary"
                 android:elevation="1dp"
                 android:padding="@dimen/small_padding"
