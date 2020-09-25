@@ -15,6 +15,7 @@ interface IContractShowCaseManager {
     fun setFifthView(view: View)
     fun setSixthView(view: View)
     fun setSeventhView(view: View)
+    fun setPaused(paused : Boolean)
     fun showFromFirst()
     fun showFromSecond()
     fun showFromThird()

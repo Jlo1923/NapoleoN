@@ -37,6 +37,7 @@ class SecuritySettingsFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SecuritySettingsViewModel
     private lateinit var binding: SecuritySettingsFragmentBinding
+    private var showCase : ShowCaseManager? = null
 
     private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
         viewModelFactory
@@ -98,11 +99,22 @@ class SecuritySettingsFragment : Fragment() {
             optionRegisterRecoveryAccountClickListener()
         }
 
+        return binding.root
+    }
+
+    override fun onPause() {
+        showCase?.setPaused(true)
+        showCase?.dismiss()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        showCase?.setPaused(false)
         if (args.showShowCase) {
             binding.scrollView.post {
                 binding.scrollView.fullScroll(View.FOCUS_DOWN)
             }
-            ShowCaseManager().apply {
+            showCase = ShowCaseManager().apply {
                 setActivity(requireActivity())
                 setListener(object : ShowCaseManager.Listener {
                     override fun openSecuritySettings() = Unit
@@ -111,8 +123,7 @@ class SecuritySettingsFragment : Fragment() {
                 showSixth { findNavController().popBackStack() }
             }
         }
-
-        return binding.root
+        super.onResume()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

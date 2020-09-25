@@ -28,6 +28,7 @@ import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
+import com.naposystems.napoleonchat.ui.changeParams.ChangeFakeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -133,21 +134,20 @@ class ContactProfileFragment : BaseFragment() {
         }
 
         binding.imageButtonChangeNameEndIcon.setSafeOnClickListener {
-            setupChangeFakeDialog(Constants.ChangeParams.NAME_FAKE.option)
+            val dialog = ChangeParamsDialogFragment.newInstance(
+                args.contactId, Constants.ChangeParams.NAME_FAKE.option
+            )
+            dialog.show(childFragmentManager, "ChangeFakesDialog")
         }
 
         binding.imageButtonChangeNicknameEndIcon.setSafeOnClickListener {
-            setupChangeFakeDialog(Constants.ChangeParams.NICKNAME_FAKE.option)
+            val dialog = ChangeFakeParamsDialogFragment.newInstance(
+                args.contactId
+            )
+            dialog.show(childFragmentManager, "ChangeNickNameFakeDialog")
         }
 
         return binding.root
-    }
-
-    private fun setupChangeFakeDialog(option: Int) {
-        val dialog = ChangeParamsDialogFragment.newInstance(
-            args.contactId, option
-        )
-        dialog.show(childFragmentManager, "ChangeFakesDialog")
     }
 
     private fun showPreviewImage() {
