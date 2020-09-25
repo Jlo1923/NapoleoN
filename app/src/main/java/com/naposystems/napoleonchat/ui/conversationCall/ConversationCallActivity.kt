@@ -68,6 +68,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     private var isIncomingCall: Boolean = false
     private var channel: String = ""
     private var isFromClosedApp: Boolean = false
+    private var hangUpPressed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -146,30 +147,37 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }
 
         binding.fabHangup.setOnClickListener {
-            viewModel.resetIsOnCallPref()
-            if (!isIncomingCall && !webRTCClient.isActiveCall()) {
-                viewModel.sendMissedCall(contactId, isVideoCall)
-                viewModel.cancelCall(contactId)
-            }
-            if (!isFromClosedApp) {
-                val intent = Intent(this, WebRTCCallService::class.java)
-                intent.action = WebRTCCallService.ACTION_CALL_END
-                val bundle = Bundle()
+            if (!hangUpPressed) {
+                hangUpPressed = true
+                viewModel.resetIsOnCallPref()
+                when {
+                    !isIncomingCall && !webRTCClient.isActiveCall() -> {
+                        viewModel.sendMissedCall(contactId, isVideoCall)
+                        viewModel.cancelCall(contactId)
+                    }
+                    !isFromClosedApp -> {
+                        val intent = Intent(this, WebRTCCallService::class.java)
+                        intent.action = WebRTCCallService.ACTION_CALL_END
+                        val bundle = Bundle()
 
-                bundle.putString(
-                    Constants.CallKeys.CHANNEL,
-                    channel
-                )
+                        bundle.putString(
+                            Constants.CallKeys.CHANNEL,
+                            channel
+                        )
 
-                bundle.putInt(
-                    Constants.CallKeys.CONTACT_ID,
-                    contactId
-                )
-                intent.putExtras(bundle)
-                this.startService(intent)
+                        bundle.putInt(
+                            Constants.CallKeys.CONTACT_ID,
+                            contactId
+                        )
+                        intent.putExtras(bundle)
+                        this.startService(intent)
+                    }
+                    else -> {
+                        webRTCClient.emitHangUp()
+                    }
+                }
+                webRTCClient.dispose()
             }
-            webRTCClient.emitHangUp()
-            webRTCClient.dispose()
         }
 
         binding.imageButtonSpeaker.setOnClickListener {

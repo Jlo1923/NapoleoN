@@ -24,6 +24,7 @@
             android:id="@+id/container_conversation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipChildren="false"
             tools:layout_height="match_parent"
             tools:showIn="@layout/conversation_fragment">
 
@@ -120,46 +121,18 @@
             <!-- INPUT PANEL -->
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
                 android:id="@+id/inputPanel"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/x_small_margin"
+                android:layout_marginEnd="@dimen/x_small_margin"
+                android:layout_marginBottom="@dimen/x_small_margin"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 app:isCancelable="true"
                 app:isGoTo="false"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/floatingActionButton_send"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <com.naposystems.napoleonchat.ui.custom.fabSend.FabSend
-                android:id="@+id/floatingActionButton_send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/x_small_margin"
-                android:layout_marginBottom="@dimen/x_small_margin"
-                android:contentDescription="submit|!!"
-                android:src="@drawable/anim_mic_send"
-                app:elevation="2dp"
-                app:fabCustomSize="@dimen/conversation_fab_size"
-                app:layout_constraintBottom_toBottomOf="@id/inputPanel"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:showOnlySendIcon="false" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline_lock_audio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_end="180dp" />
-
-            <include
-                android:id="@+id/container_lock_audio"
-                layout="@layout/custom_view_fab_send"
-                android:layout_width="@dimen/conversation_fab_size"
-                android:layout_height="200dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/floatingActionButton_send"
-                app:layout_constraintEnd_toEndOf="@id/floatingActionButton_send"
-                app:layout_constraintTop_toTopOf="@id/guideline_lock_audio"
-                app:layout_constraintVertical_bias="0"
-                tools:visibility="visible" />
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -171,7 +144,8 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="60dp"
-            android:outlineProvider="none">
+            android:outlineProvider="none"
+            tools:visibility="gone">
 
             <TextView
                 android:id="@+id/textView_notification_message"

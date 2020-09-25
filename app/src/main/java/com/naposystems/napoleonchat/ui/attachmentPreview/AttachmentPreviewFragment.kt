@@ -17,12 +17,13 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 
-class AttachmentPreviewFragment : Fragment() {
+class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
     companion object {
         fun newInstance() = AttachmentPreviewFragment()
@@ -70,6 +71,7 @@ class AttachmentPreviewFragment : Fragment() {
 
         binding.viewModel = conversationShareViewModel
         binding.galleryItemId = args.galleryItemId
+        binding.inputPanel.setListener(this)
 
         conversationShareViewModel.setAttachmentTaken(attachment)
 
@@ -127,19 +129,6 @@ class AttachmentPreviewFragment : Fragment() {
                     }
                 }
             }
-        }
-
-        binding.floatingActionButtonSend.setOnClickListener {
-            with(conversationShareViewModel) {
-                setQuoteWebId(args.quote)
-                setMessage(binding.inputPanel.getEditTex().text.toString().trim())
-                setAttachmentSelected(args.attachment)
-                resetAttachmentSelected()
-                resetMessage()
-                resetQuoteWebId()
-                hasSentAttachment = true
-            }
-            this.findNavController().popBackStack(R.id.conversationFragment, false)
         }
 
         binding.imageButtonClose.setOnClickListener {
@@ -214,4 +203,34 @@ class AttachmentPreviewFragment : Fragment() {
             FileManager.deleteAttachmentFile(requireContext(), attachment)
         }
     }
+
+    //region Implementation InputPanelWidget.Listener
+    override fun checkRecordAudioPermission(successCallback: () -> Unit) {
+    }
+
+    override fun onRecorderStarted() {
+    }
+
+    override fun onRecorderReleased() {
+    }
+
+    override fun onRecorderLocked() {
+    }
+
+    override fun onRecorderCanceled() {
+    }
+
+    override fun onSendButtonClicked() {
+        with(conversationShareViewModel) {
+            setQuoteWebId(args.quote)
+            setMessage(binding.inputPanel.getEditTex().text.toString().trim())
+            setAttachmentSelected(args.attachment)
+            resetAttachmentSelected()
+            resetMessage()
+            resetQuoteWebId()
+            hasSentAttachment = true
+        }
+        this.findNavController().popBackStack(R.id.conversationFragment, false)
+    }
+    //endregion
 }

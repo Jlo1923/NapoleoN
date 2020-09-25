@@ -14,8 +14,10 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomViewFabSendBinding
-import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
 import timber.log.Timber
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToLong
 
 class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(context, attrs),
@@ -59,9 +61,6 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
         ).apply {
             try {
 
-                mInitialX = x
-                mInitialY = y
-
                 showOnlySendIcon = getBoolean(R.styleable.FabSend_showOnlySendIcon, false)
 
                 micToSend = AnimatedVectorDrawableCompat.create(context, R.drawable.anim_mic_send)
@@ -83,14 +82,14 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
 
                 backgroundTintList = ContextCompat.getColorStateList(context, value.resourceId)
 
-                setOnLongClickListener {
+                /*setOnLongClickListener {
                     if (!mIsLongPressed) {
                         mIsLongPressed = true
                         Timber.d("longPressed")
                         val downTime: Long = SystemClock.uptimeMillis()
                         val eventTime: Long = SystemClock.uptimeMillis() + 100
-                        val x = 0.0f
-                        val y = 0.0f
+                        val x = this@FabSend.x
+                        val y = this@FabSend.y
                         val metaState = 0
                         val motionEvent = obtain(
                             downTime,
@@ -104,8 +103,7 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
                         dispatchTouchEvent(motionEvent)
                     }
                     true
-                }
-
+                }*/
             } finally {
                 recycle()
             }
@@ -121,32 +119,31 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-        super.onTouchEvent(ev)
+        Timber.d("onTouch")
         if (isShowingMic) {
             mListener?.checkRecordAudioPermission() {
-                if (mIsLongPressed) {
-                    when (ev.actionMasked) {
-                        ACTION_CANCEL -> {
-                            Timber.d("ACTION_CANCEL")
-                            actionCancel()
-                        }
-                        ACTION_DOWN -> {
-                            setupNotificationSound(context, R.raw.tone_start_recording_audio)
-                            Timber.d("ACTION_DOWN")
-                            actionDown(ev)
-                        }
-                        ACTION_MOVE -> {
-                            actionMove(ev)
-                        }
-                        ACTION_UP -> {
-                            Timber.d("ACTION_UP")
-                            actionUp()
-                            performClick()
-                        }
-                        ACTION_POINTER_UP -> {
-                            Timber.d("ACTION_POINTER_UP")
-                            actionPointerUp(ev)
-                        }
+                when (ev.actionMasked) {
+                    ACTION_CANCEL -> {
+                        Timber.d("ACTION_CANCEL")
+                        actionCancel()
+                    }
+                    ACTION_DOWN -> {
+                        //setupNotificationSound(context, R.raw.tone_start_recording_audio)
+                        Timber.d("ACTION_DOWN")
+                        actionDown(ev)
+                    }
+                    ACTION_MOVE -> {
+                        //actionMove(ev)
+                        newMove(ev)
+                    }
+                    ACTION_UP -> {
+                        Timber.d("ACTION_UP")
+                        actionUp()
+                        //performClick()
+                    }
+                    ACTION_POINTER_UP -> {
+                        Timber.d("ACTION_POINTER_UP")
+                        actionPointerUp(ev)
                     }
                 }
             }
@@ -183,8 +180,8 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
 
     private fun actionDown(ev: MotionEvent) {
         if (isShowingMic) {
-            mInitialX = this.x
-            mInitialY = this.y
+            mInitialX = ev.x
+            mInitialY = ev.y
 
             val objectAnimator = AnimatorInflater.loadAnimator(
                 context,
@@ -195,12 +192,6 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
                 mListener?.onMicActionDown()
             }
             objectAnimator.start()
-
-            ev.actionIndex.also { pointerIndex ->
-                // Remember where we started (for dragging)
-                mLastTouchX = ev.getX(pointerIndex)
-                mLastTouchY = ev.getY(pointerIndex)
-            }
 
             // Save the ID of this pointer (for dragging)
             mActivePointerId = ev.getPointerId(0)
@@ -215,10 +206,8 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
             mPosY = 0f
             mLastTouchX = 0f
             mLastTouchY = 0f
-            if (mInitialX != 0f && mInitialY != 0f) {
-                this.x = mInitialX
-                this.y = mInitialY
-            }
+            this.translationX = 0f
+            this.translationY = 0f
 
             val objectAnimator = AnimatorInflater.loadAnimator(
                 context,
@@ -228,6 +217,41 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
             objectAnimator.start()
             mListener?.onMicActionUp(mHasLocked, mHasCancel)
         }
+    }
+
+    private fun newMove(ev: MotionEvent) {
+        val (x: Float, y: Float) = ev.x to ev.y
+
+        Timber.d("newMove, ev.x: ${ev.x}, ev.y: ${ev.y}")
+
+        mLastTouchX = getXOffset(ev.x)
+        mLastTouchY = getYOffset(ev.y)
+
+        Timber.d("FabSend mLastTouchX: $mLastTouchX, mLastTouchY: $mLastTouchY")
+
+        if (abs(mLastTouchX) > abs(mLastTouchY)) {
+            mLastTouchY = 0f
+        } else {
+            mLastTouchX = 0f
+        }
+
+        Timber.d("FabSend mLastTouchX: $mLastTouchX, mLastTouchY: $mLastTouchY")
+
+        this.translationX = if (mLastTouchX > 0) mLastTouchX - 50 else mLastTouchX
+        this.translationY = if (mLastTouchY > 0) mLastTouchY - 50 else mLastTouchY
+    }
+
+    private fun getXOffset(x: Float): Float {
+        Timber.d("FabSend getXOffset, initialX: $mInitialX")
+        return -max(
+            0f,
+            this.mInitialX - x
+        )
+    }
+
+    private fun getYOffset(y: Float): Float {
+        Timber.d("FabSend getYOffset, initialY: $mInitialY")
+        return min(0f, y - this.mInitialY)
     }
 
     private fun actionMove(ev: MotionEvent): Boolean {
@@ -314,7 +338,7 @@ class FabSend(context: Context, attrs: AttributeSet) : FloatingActionButton(cont
         mIsOnlyHorizontal = true
         mIsOnlyVertical = false
 
-        val maxX = mInitialX * 0.7
+        val maxX = mInitialX * 0.5
 
         if (futureX > maxX) {
             this.x += mPosX

@@ -18,6 +18,7 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Vibrator
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.provider.Settings
@@ -33,7 +34,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
 import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
@@ -68,7 +68,7 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
-import com.naposystems.napoleonchat.ui.custom.fabSend.FabSend
+import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
@@ -79,6 +79,9 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewMode
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.napoleonchat.utility.adapters.showToast
+import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
+import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.adapters.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
@@ -102,7 +105,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ConversationFragment : BaseFragment(),
-    MediaPlayerManager.Listener, FabSend.FabSendListener, ConversationAdapter.ClickListener {
+    MediaPlayerManager.Listener, ConversationAdapter.ClickListener, InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -162,6 +165,7 @@ class ConversationFragment : BaseFragment(),
     private lateinit var actionMode: ActionModeMenu
     private var menuOptionsContact: Menu? = null
     private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
+    private var showCase : ShowCaseManager? = null
 
     private val mediaPlayer: MediaPlayer by lazy {
         MediaPlayer().apply {
@@ -199,6 +203,8 @@ class ConversationFragment : BaseFragment(),
     private var isFabScroll = false
     private var enterConversation = false
     private var counterNotification = 0
+    private var menuCreated : Boolean = false
+    private var showShowCase : Boolean = false
     private var isSelectedMessage = false
 
     private val mHandler: Handler by lazy {
@@ -344,7 +350,6 @@ class ConversationFragment : BaseFragment(),
 
         binding.contact = args.contact
 
-        binding.floatingActionButtonSend.setListener(this)
 
         setupActionMode()
 
@@ -362,11 +367,7 @@ class ConversationFragment : BaseFragment(),
         showCounterNotification()
         enterConversation = false
 
-        binding.inputPanel.getTextCancelAudio().setOnClickListener {
-            setupVoiceNoteSound(requireContext(), R.raw.tone_cancel_audio)
-            isRecordingAudio = false
-            resetAudioRecording()
-        }
+        binding.inputPanel.setListener(this)
 
         binding.buttonCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
@@ -572,13 +573,15 @@ class ConversationFragment : BaseFragment(),
                     val text = getEditTex().text.toString()
 
                     if (text.isNotEmpty() && !isEditTextFilled) {
-                        binding.floatingActionButtonSend.morphToSend()
-                        isEditTextFilled = true
+                        showImageButtonSend()
+                        hideButtonRecord()
                         hideImageButtonCamera()
+                        isEditTextFilled = true
                     } else if (text.isEmpty()) {
-                        binding.floatingActionButtonSend.morphToMic()
-                        isEditTextFilled = false
+                        hideImageButtonSend()
+                        showButtonRecord()
                         showImageButtonCamera()
+                        isEditTextFilled = false
                     }
                 }
             }
@@ -588,7 +591,7 @@ class ConversationFragment : BaseFragment(),
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     private fun inputPanelFabClickListener() {
-        with(binding.floatingActionButtonSend) {
+        /*with(binding.floatingActionButtonSend) {
             this.setSafeOnClickListener {
                 Timber.d("setOnClickListener")
                 if (!this.isShowingMic() && !isRecordingAudio) {
@@ -612,7 +615,7 @@ class ConversationFragment : BaseFragment(),
                 }
                 binding.inputPanel.closeQuote()
             }
-        }
+        }*/
     }
 
     @ExperimentalCoroutinesApi
@@ -881,7 +884,7 @@ class ConversationFragment : BaseFragment(),
 
                     if (!allIsPurchased) {
                         binding.inputPanel.isVisible = false
-                        binding.floatingActionButtonSend.isVisible = false
+//                        binding.floatingActionButtonSend.isVisible = false
                         binding.buttonCall.isVisible = false
                         binding.buttonVideoCall.isVisible = false
                     }
@@ -923,9 +926,6 @@ class ConversationFragment : BaseFragment(),
                 obtainTimeSelfDestruct(),
                 shareViewModel.getQuoteWebId() ?: ""
             )
-
-            resetAudioRecording()
-            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 
@@ -1119,15 +1119,13 @@ class ConversationFragment : BaseFragment(),
             onOptionsItemSelected(scheduleMenuItem)
         }
 
-        ShowCaseManager().apply {
-            setActivity(requireActivity())
-            setSeventhView(scheduleMenuItem.actionView)
-            showFromSeventh()
-        }
-
         contactProfileShareViewModel.contact.value?.let { contact ->
             setTextSilenceOfMenu(contact)
         }
+
+        menuCreated = true
+
+        showCase()
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -1189,16 +1187,12 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
+        showCase?.setPaused(false)
+        showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
-//        mediaPlayerManager.registerProximityListener()
         setConversationBackground()
-//        messagedLoadedFirstTime = false
-        if (isEditTextFilled) {
-            binding.floatingActionButtonSend.morphToSend()
-        } else {
-            binding.floatingActionButtonSend.morphToMic()
-        }
+        //messagedLoadedFirstTime = false
     }
 
     override fun onDestroy() {
@@ -1690,6 +1684,10 @@ class ConversationFragment : BaseFragment(),
     override fun onPause() {
         super.onPause()
         Timber.d("onPause")
+        stopRecording()
+        showCase?.setPaused(true)
+        showCase?.dismiss()
+        showShowCase = false
         resetAudioRecording()
         MediaPlayerManager.pauseAudio()
         if (actionMode.mode != null) {
@@ -1715,17 +1713,17 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun resetAudioRecording() {
-        binding.inputPanel.changeViewSwitcherToInputPanel()
+//        binding.inputPanel.changeViewSwitcherToInputPanel()
         if (mRecordingAudioRunnable != null) {
             mHandler.removeCallbacks(mRecordingAudioRunnable!!)
             mRecordingAudioRunnable = null
         }
 
-        binding.floatingActionButtonSend.reset()
+//        binding.floatingActionButtonSend.reset()
 
-        binding.floatingActionButtonSend.morphToMic()
+//        binding.floatingActionButtonSend.morphToMic()
 
-        binding.containerLockAudio.container.visibility = View.GONE
+//        binding.containerLockAudio.container.visibility = View.GONE
         recordingTime = 0L
         stopRecording()
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -1778,7 +1776,7 @@ class ConversationFragment : BaseFragment(),
             }
         } catch (e: Exception) {
             RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
-            resetAudioRecording()
+            stopRecording()
         }
     }
 
@@ -1796,39 +1794,77 @@ class ConversationFragment : BaseFragment(),
                 mRecordingAudioRunnable = null
             }
             binding.inputPanel.setRecordingTime(0L)
+            recordingTime = 0L
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 150)
         } catch (e: Exception) {
             Timber.e(e)
         }
     }
 
-    private fun deleteRecordFile() {
-        recordFile?.let { file ->
-            if (file.exists()) {
-                file.delete()
-            }
+    //region Implementation InputPanelWidget.Listener
+
+    override fun checkRecordAudioPermission(successCallback: () -> Unit) {
+        this@ConversationFragment.verifyPermission(
+            Manifest.permission.RECORD_AUDIO,
+            drawableIconId = R.drawable.ic_mic_primary,
+            message = R.string.text_explanation_to_record_audio_attacment
+        ) {
+            successCallback()
         }
     }
 
-    private fun setupVoiceNoteSound(context: Context, sound: Int) {
-        try {
-            mediaPlayer.apply {
-                reset()
-                setDataSource(
-                    context,
-                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
-                )
-                if (isPlaying) {
-                    stop()
-                    reset()
-                    release()
-                }
-                prepare()
-                start()
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
+    @InternalCoroutinesApi
+    override fun onRecorderStarted() {
+        MediaPlayerManager.resetMediaPlayer()
+        startRecording()
+        Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
     }
+
+    @InternalCoroutinesApi
+    override fun onRecorderReleased() {
+        if (mRecordingAudioRunnable != null) {
+            mHandler.removeCallbacks(mRecordingAudioRunnable!!)
+            mRecordingAudioRunnable = null
+        }
+        if (isRecordingAudio && recordingTime >= minTimeRecording) {
+            saveAndSendRecordAudio()
+        }
+        binding.inputPanel.closeQuote()
+    }
+
+    override fun onRecorderLocked() {
+        isRecordingAudio = true
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    override fun onRecorderCanceled() {
+        isRecordingAudio = false
+        stopRecording()
+    }
+
+    @InternalCoroutinesApi
+    override fun onSendButtonClicked() {
+        if (binding.inputPanel.isRecordingInLockedMode() && recordingTime >= minTimeRecording) {
+            binding.inputPanel.releaseRecordingLock()
+            return
+        }
+
+        val quote = binding.inputPanel.getQuote()
+
+        viewModel.saveMessageLocally(
+            binding.inputPanel.getEditTex().text.toString().trim(),
+            obtainTimeSelfDestruct(),
+            quote?.message?.webId ?: ""
+        )
+
+        with(binding.inputPanel.getEditTex()) {
+            setText("")
+        }
+        binding.inputPanel.closeQuote()
+    }
+
+    //endregion
 
     //region Implementation MediaPlayerManager.Listener
     override fun onErrorPlayingAudio() {
@@ -1847,94 +1883,6 @@ class ConversationFragment : BaseFragment(),
         // Intentionally empty
     }
 
-    //endregion
-
-    //region Implementation FabSend.FabSendListener
-
-    override fun checkRecordAudioPermission(successCallback: () -> Unit) {
-        this@ConversationFragment.verifyPermission(
-            Manifest.permission.RECORD_AUDIO,
-            drawableIconId = R.drawable.ic_mic_primary,
-            message = R.string.text_explanation_to_record_audio_attacment
-        ) {
-            successCallback()
-        }
-    }
-
-    @ExperimentalCoroutinesApi
-    @InternalCoroutinesApi
-    override fun onMicActionDown() {
-        MediaPlayerManager.resetMediaPlayer()
-        startRecording()
-        binding.inputPanel.changeViewSwitcherToSlideToCancel()
-        binding.containerLockAudio.container.slideUp(200)
-        binding.containerLockAudio.container.post {
-            binding.floatingActionButtonSend.setContainerLock(binding.containerLockAudio)
-        }
-    }
-
-    override fun onMicActionUp(hasLock: Boolean, hasCancel: Boolean) {
-        if (!hasLock && !hasCancel) {
-            binding.inputPanel.changeViewSwitcherToInputPanel()
-            if (mRecordingAudioRunnable != null) {
-                mHandler.removeCallbacks(mRecordingAudioRunnable!!)
-                mRecordingAudioRunnable = null
-            }
-            binding.containerLockAudio.container.visibility = View.GONE
-            stopRecording()
-        }
-    }
-
-    override fun onMicLocked() {
-        isRecordingAudio = true
-        val animTime = 200L
-
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        binding.inputPanel.changeViewSwitcherToCancel()
-
-        binding.containerLockAudio.container.animate().scaleX(1.5f).scaleY(1.5f)
-            .setDuration(animTime).withEndAction {
-                binding.containerLockAudio.container.animate().scaleX(1.0f).scaleY(1.0f)
-                    .setDuration(animTime).withEndAction {
-                        binding.containerLockAudio.container.animate().scaleX(1.5f).scaleY(1.5f)
-                            .setDuration(animTime).withEndAction {
-                                binding.containerLockAudio.container.animate().scaleX(1.0f)
-                                    .scaleY(1.0f).setDuration(animTime).withEndAction {
-                                        binding.containerLockAudio.container.apply {
-                                            visibility = View.GONE
-
-                                            val constraintSet = ConstraintSet()
-
-                                            // clonamos el constrainSet del padre del elemento que vamos a modificar
-                                            constraintSet.clone(binding.containerConversation)
-
-                                            // Obtenemos el id del elemento a modificar
-                                            val id = id
-
-                                            constraintSet.constrainHeight(
-                                                id,
-                                                ConstraintSet.MATCH_CONSTRAINT
-                                            )
-                                            constraintSet.connect(
-                                                id,
-                                                ConstraintSet.BOTTOM,
-                                                binding.floatingActionButtonSend.id,
-                                                ConstraintSet.BOTTOM
-                                            )
-
-                                            constraintSet.applyTo(binding.containerConversation)
-                                        }
-                                    }
-                            }
-                    }
-            }
-    }
-
-    override fun onMicCancel() {
-        setupVoiceNoteSound(requireContext(), R.raw.tone_cancel_audio)
-        isRecordingAudio = false
-        resetAudioRecording()
-    }
     //endregion
 
     //region Implementation ConversationAdapter.ClickListener
@@ -2070,6 +2018,18 @@ class ConversationFragment : BaseFragment(),
 
     override fun updateMessageState(message: Message) {
         viewModel.updateMessage(message)
+    }
+
+    private fun showCase() {
+        if (menuCreated && !showShowCase) {
+            showCase = ShowCaseManager().apply {
+                setActivity(requireActivity())
+                setSeventhView(actionViewSchedule!!)
+                showFromSeventh()
+            }
+
+            showShowCase = true
+        }
     }
 
     //endregion
