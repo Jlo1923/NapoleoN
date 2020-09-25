@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/custom_input_panel_widget">
+
+    <data />
+
+    <FrameLayout
+        android:layout_width="24dp"
+        android:layout_height="24dp">
+
+        <ImageButton
+            android:id="@+id/imageButton_audio_toggle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_mic_primary" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_lock"
+            android:layout_width="@dimen/conversation_fab_size"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/bg_lock_audio_record"
+            android:translationX="8dp"
+            android:translationY="@dimen/recording_voice_lock_target"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_lock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:tint="?attr/attrTintColorSecondaryDark"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_lock_outline_black" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/imageView_up_arrow"
+                android:layout_width="@dimen/conversation_fab_size"
+                android:layout_height="@dimen/conversation_fab_size"
+                android:layout_marginTop="@dimen/small_margin"
+                android:translationY="-20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView_lock"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/swipe_up_anim" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/quick_audio_fab"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_gravity="end|bottom"
+            android:background="@drawable/bg_badge"
+            android:backgroundTint="@color/colorPrimary"
+            android:clickable="false"
+            android:padding="8dp"
+            android:translationX="15dp"
+            android:translationY="12dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_mic_black"
+            app:tint="#FFFFFF"
+            tools:ignore="ContentDescription"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+</layout>

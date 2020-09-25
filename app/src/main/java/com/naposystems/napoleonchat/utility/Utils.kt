@@ -30,7 +30,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
@@ -294,7 +293,7 @@ class Utils {
             message: Int,
             isCancelable: Boolean,
             childFragmentManager: Context,
-            location : Int,
+            location: Int,
             titlePositiveButton: Int,
             titleNegativeButton: Int,
             clickPositiveButton: (Boolean) -> Unit,
@@ -409,17 +408,20 @@ class Utils {
             }
         }
 
-        fun compareDurationAttachmentWithSelfAutoDestructionInSeconds(duration: Int, timeActual : Int): Int {
-            return if(duration >= convertItemOfTimeInSeconds(timeActual)) {
+        fun compareDurationAttachmentWithSelfAutoDestructionInSeconds(
+            duration: Int,
+            timeActual: Int
+        ): Int {
+            return if (duration >= convertItemOfTimeInSeconds(timeActual)) {
                 when {
                     duration >= TimeUnit.DAYS.toSeconds(1).toInt() -> EVERY_SEVEN_DAY.time
                     duration >= TimeUnit.HOURS.toSeconds(12).toInt() -> EVERY_ONE_DAY.time
-                    duration >= TimeUnit.HOURS.toSeconds(1).toInt() ->  EVERY_TWELVE_HOURS.time
-                    duration >= TimeUnit.MINUTES.toSeconds(30).toInt()-> EVERY_ONE_HOUR.time
-                    duration >= TimeUnit.MINUTES.toSeconds(10).toInt()-> EVERY_THIRTY_MINUTES.time
-                    duration >= TimeUnit.MINUTES.toSeconds(1).toInt()->  EVERY_TEN_MINUTES.time
+                    duration >= TimeUnit.HOURS.toSeconds(1).toInt() -> EVERY_TWELVE_HOURS.time
+                    duration >= TimeUnit.MINUTES.toSeconds(30).toInt() -> EVERY_ONE_HOUR.time
+                    duration >= TimeUnit.MINUTES.toSeconds(10).toInt() -> EVERY_THIRTY_MINUTES.time
+                    duration >= TimeUnit.MINUTES.toSeconds(1).toInt() -> EVERY_TEN_MINUTES.time
                     duration >= TimeUnit.SECONDS.toSeconds(30).toInt() -> EVERY_ONE_MINUTE.time
-                    duration >= TimeUnit.SECONDS.toSeconds(15).toInt()-> EVERY_THIRTY_SECONDS.time
+                    duration >= TimeUnit.SECONDS.toSeconds(15).toInt() -> EVERY_THIRTY_SECONDS.time
                     else -> EVERY_FIFTEEN_SECONDS.time
                 }
             } else {
@@ -449,7 +451,7 @@ class Utils {
             val hour = (millisUntilFinished / (1000 * 60 * 60) % 24)
             val days = (millisUntilFinished / (1000 * 60 * 60 * 24))
 
-            if(days > 0) {
+            if (days > 0) {
                 duration += "${days}d "
             }
 
@@ -616,7 +618,7 @@ class Utils {
             return isOnline
         }
 
-        fun showToast(context: Context, string : String) {
+        fun showToast(context: Context, string: String) {
             val vwToast: Toast = Toast.makeText(
                 context,
                 string,

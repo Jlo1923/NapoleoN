@@ -7,14 +7,20 @@ import androidx.emoji.widget.EmojiAppCompatEditText
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 
 interface IContractInputPanel {
+    fun setListener(listener: InputPanelWidget.Listener)
+    fun isRecordingInLockedMode(): Boolean
+    fun releaseRecordingLock()
     fun setEditTextWatcher(textWatcher: TextWatcher)
     fun getEditTex(): EmojiAppCompatEditText
     fun getImageButtonAttachment(): ImageButton
     fun getImageButtonCamera(): ImageButton
     fun getImageButtonEmoji(): ImageButton
-    fun getTextCancelAudio(): TextView
     fun hideImageButtonCamera()
     fun showImageButtonCamera()
+    fun hideImageButtonSend()
+    fun showImageButtonSend()
+    fun hideButtonRecord()
+    fun showButtonRecord()
     fun openQuote(messageAndAttachment: MessageAndAttachment)
     fun getWebIdQuote(): String
     fun closeQuote()

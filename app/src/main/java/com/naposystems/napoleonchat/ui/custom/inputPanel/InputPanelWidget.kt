@@ -1,33 +1,30 @@
 package com.naposystems.napoleonchat.ui.custom.inputPanel
 
-import android.animation.AnimatorInflater
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.AnimationUtils
+import android.view.animation.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomInputPanelWidgetBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView
 import com.naposystems.napoleonchat.utility.Utils
 import java.util.concurrent.TimeUnit
 
 class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
-    IContractInputPanel {
+    IContractInputPanel, MicrophoneRecorderView.Listener {
 
     private var binding: CustomInputPanelWidgetBinding
     private var showEmojiIcon: Boolean = true
     private var showCameraIcon: Boolean = true
     private var showAttachmentIcon: Boolean = true
-
-    private val objectAnimatorMic = AnimatorInflater.loadAnimator(
-        context,
-        R.animator.animator_alpha_repeat_infinite
-    ) as ObjectAnimator
+    private var mListener: Listener? = null
 
     init {
         context.theme.obtainStyledAttributes(
@@ -56,11 +53,70 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
                 binding.imageButtonCamera.visibility =
                     if (showCameraIcon) View.VISIBLE else View.GONE
 
+                binding.microphoneRecorderView.setListener(this@InputPanelWidget)
+
+                binding.textViewCancel.setOnClickListener {
+                    showButtonRecord()
+                    binding.microphoneRecorderView.cancelAction()
+                }
+
+                binding.imageButtonSend.setOnClickListener {
+                    mListener?.onSendButtonClicked()
+                }
 
             } finally {
                 recycle()
             }
         }
+    }
+
+    interface Listener {
+        fun checkRecordAudioPermission(successCallback: () -> Unit)
+        fun onRecorderStarted()
+        fun onRecorderReleased()
+        fun onRecorderLocked()
+        fun onRecorderCanceled()
+        fun onSendButtonClicked()
+    }
+
+    private fun hideSlideToCancel() {
+        binding.containerTextSlide.postDelayed(
+            Runnable {
+                val animation = AnimationSet(true)
+                animation.addAnimation(
+                    TranslateAnimation(
+                        Animation.ABSOLUTE, binding.containerTextSlide.translationX,
+                        Animation.ABSOLUTE, 0f,
+                        Animation.RELATIVE_TO_SELF, 0f,
+                        Animation.RELATIVE_TO_SELF, 0f
+                    )
+                )
+                animation.addAnimation(AlphaAnimation(1f, 0f))
+
+                animation.duration = 200
+//                animation.fillBefore = true
+//                animation.fillAfter = false
+
+                binding.containerTextSlide.startAnimation(animation)
+            },
+            100
+        )
+    }
+
+    //region IContractInputPanel
+    override fun setListener(listener: Listener) {
+        this.mListener = listener
+    }
+
+    override fun isRecordingInLockedMode(): Boolean {
+        return binding.microphoneRecorderView.isRecordingLocked()
+    }
+
+    override fun releaseRecordingLock() {
+        if (binding.viewSwitcherText.nextView.id == binding.containerTextSlide.id) {
+            binding.viewSwitcherText.showNext()
+        }
+        binding.microphoneRecorderView.unlockAction()
     }
 
     override fun setEditTextWatcher(textWatcher: TextWatcher) {
@@ -77,14 +133,36 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
 
     override fun getImageButtonEmoji() = binding.imageButtonEmoji
 
-    override fun getTextCancelAudio() = binding.textViewCancel
-
     override fun hideImageButtonCamera() {
         binding.imageButtonCamera.visibility = View.GONE
     }
 
     override fun showImageButtonCamera() {
         binding.imageButtonCamera.visibility = View.VISIBLE
+    }
+
+    override fun hideImageButtonSend() {
+        binding.imageButtonSend.animate()
+            .alpha(0f)
+            .setDuration(150)
+            .start()
+        binding.imageButtonSend.isVisible = false
+    }
+
+    override fun showImageButtonSend() {
+        binding.imageButtonSend.animate()
+            .alpha(1f)
+            .setDuration(150)
+            .start()
+        binding.imageButtonSend.isVisible = true
+    }
+
+    override fun hideButtonRecord() {
+        binding.microphoneRecorderView.isVisible = false
+    }
+
+    override fun showButtonRecord() {
+        binding.microphoneRecorderView.isVisible = true
     }
 
     override fun openQuote(messageAndAttachment: MessageAndAttachment) {
@@ -114,7 +192,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun changeViewSwitcherToSlideToCancel() {
-        if (binding.viewSwitcher.nextView.id == binding.containerSlideToCancel.id) {
+        /*if (binding.viewSwitcher.nextView.id == binding.containerSlideToCancel.id) {
             binding.layoutQuote.visibility = View.GONE
             binding.viewSwitcher.inAnimation =
                 AnimationUtils.loadAnimation(context, R.anim.slide_in_right)
@@ -123,22 +201,23 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
             binding.viewSwitcher.showNext()
             objectAnimatorMic.target = binding.imageViewMic
             objectAnimatorMic.start()
-        }
+        }*/
     }
 
     override fun changeViewSwitcherToInputPanel() {
-        if (binding.viewSwitcher.nextView.id == binding.containerInputPanel.id) {
+        /*if (binding.viewSwitcher.nextView.id == binding.containerInputPanel.id) {
             binding.viewSwitcher.inAnimation =
                 AnimationUtils.loadAnimation(context, R.anim.slide_in_left)
             binding.viewSwitcher.outAnimation =
                 AnimationUtils.loadAnimation(context, R.anim.slide_out_right)
             binding.viewSwitcher.showNext()
             objectAnimatorMic.cancel()
-        }
+        }*/
 
-        if (binding.viewSwitcherText.nextView.id == binding.containerTextSlide.id) {
+        /*if (binding.viewSwitcherText.nextView.id == binding.containerTextSlide.id) {
             binding.viewSwitcherText.showNext()
-        }
+        }*/
+//        binding.microphoneRecorderView.cancelAction()
     }
 
     override fun setRecordingTime(time: Long) {
@@ -151,5 +230,168 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.textInputEditTextInput.setText("")
     }
 
+    //endregion
+
+    //region MicrophoneRecorderView.Listener
+    override fun checkRecordAudioPermission(successCallback: () -> Unit) {
+        mListener?.checkRecordAudioPermission(successCallback)
+    }
+
+    override fun onRecordPressed() {
+        mListener?.onRecorderStarted()
+        binding.containerInputPanel.startAnimation(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.slide_out_left
+            )
+        )
+        binding.containerInputPanel.isVisible = false
+        /*Utils.fadeIn(binding.containerSlideToCancel, 150)
+        Utils.fadeOut(binding.containerInputPanel, 150, View.INVISIBLE)*/
+        binding.containerSlideToCancel.startAnimation(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.slide_in_right
+            )
+        )
+        binding.containerSlideToCancel.isVisible = true
+
+        /*if (binding.viewSwitcher.nextView.id == binding.containerSlideToCancel.id) {
+            binding.layoutQuote.visibility = View.GONE
+            binding.viewSwitcher.inAnimation =
+                AnimationUtils.loadAnimation(context, R.anim.slide_in_right)
+            binding.viewSwitcher.outAnimation =
+                AnimationUtils.loadAnimation(context, R.anim.slide_out_left)
+            binding.viewSwitcher.showNext()
+            objectAnimatorMic.target = binding.imageViewMic
+            objectAnimatorMic.start()
+        }*/
+    }
+
+    override fun onRecordReleased() {
+        /*binding.imageButtonSend.animate()
+            .alpha(0f)
+            .setDuration(150)
+            .start()*/
+        binding.imageButtonSend.isVisible = false
+
+
+        binding.containerInputPanel.startAnimation(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.slide_in_left
+            )
+        )
+        binding.containerInputPanel.isVisible = true
+        binding.containerSlideToCancel.startAnimation(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.slide_out_right
+            )
+        )
+        binding.containerSlideToCancel.isVisible = false
+
+
+        /*val future: SettableFuture<Void> = SettableFuture()
+
+        val animation = AnimationSet(true)
+        animation.addAnimation(
+            TranslateAnimation(
+                Animation.ABSOLUTE, binding.containerSlideToCancel.translationX,
+                Animation.ABSOLUTE, 0f,
+                Animation.RELATIVE_TO_SELF, 0f,
+                Animation.RELATIVE_TO_SELF, 0f
+            )
+        )
+        animation.addAnimation(AlphaAnimation(1f, 0f))
+
+        animation.duration = 150
+        animation.fillBefore = true
+        animation.fillAfter = false
+
+        binding.containerSlideToCancel.postDelayed(
+            Runnable { future.set(null) },
+            150
+        )
+        binding.containerSlideToCancel.visibility = View.GONE
+        binding.containerSlideToCancel.startAnimation(animation)
+
+        future.addListener(object : AssertedSuccessListener<Void>() {
+            override fun onSuccess(result: Void?) {
+                Utils.fadeIn(binding.containerInputPanel, 150)
+            }
+        })*/
+
+        mListener?.onRecorderReleased()
+    }
+
+    override fun onRecordCanceled() {
+        binding.imageButtonSend.animate()
+            .alpha(0f)
+            .setDuration(150)
+            .start()
+        binding.imageButtonSend.isVisible = false
+
+        binding.containerInputPanel.startAnimation(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.slide_in_left
+            )
+        )
+        binding.containerInputPanel.isVisible = true
+        binding.containerSlideToCancel.startAnimation(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.slide_out_right
+            )
+        )
+        binding.containerSlideToCancel.isVisible = false
+        if (binding.viewSwitcherText.nextView.id == binding.containerTextSlide.id) {
+            binding.viewSwitcherText.showNext()
+        }
+
+        mListener?.onRecorderCanceled()
+
+    }
+
+    override fun onRecordLocked() {
+        if (binding.viewSwitcherText.nextView.id == binding.textViewCancel.id) {
+            binding.viewSwitcherText.showNext()
+        }
+        binding.microphoneRecorderView.isVisible = false
+        binding.imageButtonSend.animate()
+            .alpha(1f)
+            .setDuration(150)
+            .start()
+        binding.imageButtonSend.isVisible = true
+    }
+
+    override fun onRecordMoved(offsetX: Float, absoluteX: Float) {
+        val animation: Animation = TranslateAnimation(
+            Animation.ABSOLUTE, offsetX,
+            Animation.ABSOLUTE, offsetX,
+            Animation.RELATIVE_TO_SELF, 0f,
+            Animation.RELATIVE_TO_SELF, 0f
+        )
+
+        animation.duration = 0
+//        animation.fillAfter = true
+//        animation.fillBefore = true
+
+        binding.containerTextSlide.startAnimation(animation)
+
+        val direction = ViewCompat.getLayoutDirection(this)
+        val position: Float = absoluteX / binding.containerSlideToCancel.width
+
+        if (direction == ViewCompat.LAYOUT_DIRECTION_LTR && position <= 0.5 ||
+            direction == ViewCompat.LAYOUT_DIRECTION_RTL && position >= 0.6
+        ) {
+            binding.microphoneRecorderView.cancelAction()
+        }
+    }
+
+    override fun onRecordPermissionRequired() {
+
+    }
     //endregion
 }
