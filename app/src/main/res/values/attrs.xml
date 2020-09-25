@@ -31,6 +31,8 @@
         <attr name="showCameraIcon" format="boolean" />
         <attr name="showAttachmentIcon" format="boolean" />
         <attr name="showQuote" format="boolean" />
+        <attr name="showMicrophone" format="boolean" />
+        <attr name="showFabSend" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="Quote">
@@ -206,7 +208,7 @@
         <attr name="image" format="reference" />
         <attr name="titleEmptyState" format="string" />
         <attr name="description" format="string" />
-        <attr name="location" format="integer"/>
+        <attr name="location" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="TextInputParamsCustomView">

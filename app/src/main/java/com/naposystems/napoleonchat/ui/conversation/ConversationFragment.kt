@@ -41,7 +41,6 @@ import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -67,7 +66,6 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
-import com.naposystems.napoleonchat.ui.custom.fabSend.FabSend
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -92,13 +90,13 @@ import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.lang.Runnable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -956,7 +954,8 @@ class ConversationFragment : BaseFragment(),
                     )
                 } else {
                     if (conversationList.last().message.isMine == Constants.IsMine.NO.value &&
-                        conversationList.last().message.status == Constants.MessageStatus.UNREAD.status) {
+                        conversationList.last().message.status == Constants.MessageStatus.UNREAD.status
+                    ) {
                         counterNotification++
                         showCounterNotification()
                     }
@@ -1150,14 +1149,8 @@ class ConversationFragment : BaseFragment(),
         showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
-//        mediaPlayerManager.registerProximityListener()
         setConversationBackground()
         messagedLoadedFirstTime = false
-        if (isEditTextFilled) {
-//            binding.floatingActionButtonSend.morphToSend()
-        } else {
-//            binding.floatingActionButtonSend.morphToMic()
-        }
     }
 
     override fun onDestroy() {
@@ -1759,35 +1752,7 @@ class ConversationFragment : BaseFragment(),
             binding.inputPanel.setRecordingTime(0L)
             recordingTime = 0L
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-    }
-
-    private fun deleteRecordFile() {
-        recordFile?.let { file ->
-            if (file.exists()) {
-                file.delete()
-            }
-        }
-    }
-
-    private fun setupVoiceNoteSound(context: Context, sound: Int) {
-        try {
-            mediaPlayer.apply {
-                reset()
-                setDataSource(
-                    context,
-                    Uri.parse("android.resource://" + context.packageName + "/" + sound)
-                )
-                if (isPlaying) {
-                    stop()
-                    reset()
-                    release()
-                }
-                prepare()
-                start()
-            }
+            Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 150)
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -1809,6 +1774,7 @@ class ConversationFragment : BaseFragment(),
     override fun onRecorderStarted() {
         MediaPlayerManager.resetMediaPlayer()
         startRecording()
+        Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
     }
 
     @InternalCoroutinesApi
@@ -1829,7 +1795,6 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun onRecorderCanceled() {
-        setupVoiceNoteSound(requireContext(), R.raw.tone_cancel_audio)
         isRecordingAudio = false
         stopRecording()
     }
@@ -1873,94 +1838,6 @@ class ConversationFragment : BaseFragment(),
         // Intentionally empty
     }
 
-    //endregion
-
-    //region Implementation FabSend.FabSendListener
-
-    /*override fun checkRecordAudioPermission(successCallback: () -> Unit) {
-        this@ConversationFragment.verifyPermission(
-            Manifest.permission.RECORD_AUDIO,
-            drawableIconId = R.drawable.ic_mic_primary,
-            message = R.string.text_explanation_to_record_audio_attacment
-        ) {
-            successCallback()
-        }
-    }
-
-    @ExperimentalCoroutinesApi
-    @InternalCoroutinesApi
-    override fun onMicActionDown() {
-        MediaPlayerManager.resetMediaPlayer()
-        startRecording()
-        binding.inputPanel.changeViewSwitcherToSlideToCancel()
-//        binding.containerLockAudio.container.slideUp(200)
-        *//*binding.containerLockAudio.container.post {
-            binding.floatingActionButtonSend.setContainerLock(binding.containerLockAudio)
-        }*//*
-    }
-
-    override fun onMicActionUp(hasLock: Boolean, hasCancel: Boolean) {
-        if (!hasLock && !hasCancel) {
-            binding.inputPanel.changeViewSwitcherToInputPanel()
-            if (mRecordingAudioRunnable != null) {
-                mHandler.removeCallbacks(mRecordingAudioRunnable!!)
-                mRecordingAudioRunnable = null
-            }
-//            binding.containerLockAudio.container.visibility = View.GONE
-            stopRecording()
-        }
-    }
-
-    override fun onMicLocked() {
-        isRecordingAudio = true
-        val animTime = 200L
-
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        binding.inputPanel.changeViewSwitcherToCancel()
-
-        *//*binding.containerLockAudio.container.animate().scaleX(1.5f).scaleY(1.5f)
-            .setDuration(animTime).withEndAction {
-                binding.containerLockAudio.container.animate().scaleX(1.0f).scaleY(1.0f)
-                    .setDuration(animTime).withEndAction {
-                        binding.containerLockAudio.container.animate().scaleX(1.5f).scaleY(1.5f)
-                            .setDuration(animTime).withEndAction {
-                                binding.containerLockAudio.container.animate().scaleX(1.0f)
-                                    .scaleY(1.0f).setDuration(animTime).withEndAction {
-                                        binding.containerLockAudio.container.apply {
-                                            visibility = View.GONE
-
-                                            val constraintSet = ConstraintSet()
-
-                                            // clonamos el constrainSet del padre del elemento que vamos a modificar
-                                            constraintSet.clone(binding.containerConversation)
-
-                                            // Obtenemos el id del elemento a modificar
-                                            val id = id
-
-                                            constraintSet.constrainHeight(
-                                                id,
-                                                ConstraintSet.MATCH_CONSTRAINT
-                                            )
-                                            constraintSet.connect(
-                                                id,
-                                                ConstraintSet.BOTTOM,
-                                                binding.floatingActionButtonSend.id,
-                                                ConstraintSet.BOTTOM
-                                            )
-
-                                            constraintSet.applyTo(binding.containerConversation)
-                                        }
-                                    }
-                            }
-                    }
-            }*//*
-    }
-
-    override fun onMicCancel() {
-        setupVoiceNoteSound(requireContext(), R.raw.tone_cancel_audio)
-        isRecordingAudio = false
-        resetAudioRecording()
-    }*/
     //endregion
 
     //region Implementation ConversationAdapter.ClickListener

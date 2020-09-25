@@ -26,9 +26,6 @@ interface IContractInputPanel {
     fun closeQuote()
     fun resetImage()
     fun getQuote(): MessageAndAttachment?
-    fun changeViewSwitcherToCancel()
-    fun changeViewSwitcherToSlideToCancel()
-    fun changeViewSwitcherToInputPanel()
     fun setRecordingTime(time: Long)
     fun clearTextEditText()
 }

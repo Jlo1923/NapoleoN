@@ -199,7 +199,7 @@ class EnterCodeWidget(context: Context, attrs: AttributeSet) : RelativeLayout(co
         linearTextInputs.startAnimation(
             AnimationUtils.loadAnimation(context, R.anim.shake)
         )
-        Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type)
+        Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 400)
         clearAllTextInputs()
     }
 

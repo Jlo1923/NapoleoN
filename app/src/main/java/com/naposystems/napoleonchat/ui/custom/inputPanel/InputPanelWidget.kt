@@ -24,6 +24,8 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     private var showEmojiIcon: Boolean = true
     private var showCameraIcon: Boolean = true
     private var showAttachmentIcon: Boolean = true
+    private var showMicrophone: Boolean = true
+    private var showFabSend: Boolean = true
     private var mListener: Listener? = null
 
     init {
@@ -46,12 +48,16 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
                 showAttachmentIcon =
                     getBoolean(R.styleable.InputPanelWidget_showAttachmentIcon, true)
                 showCameraIcon = getBoolean(R.styleable.InputPanelWidget_showCameraIcon, true)
+                showMicrophone = getBoolean(R.styleable.InputPanelWidget_showMicrophone, true)
+                showFabSend = getBoolean(R.styleable.InputPanelWidget_showFabSend, false)
 
                 binding.imageButtonEmoji.visibility = if (showEmojiIcon) View.VISIBLE else View.GONE
                 binding.imageButtonAttachment.visibility =
                     if (showAttachmentIcon) View.VISIBLE else View.GONE
                 binding.imageButtonCamera.visibility =
                     if (showCameraIcon) View.VISIBLE else View.GONE
+                binding.microphoneRecorderView.isVisible = showMicrophone
+                binding.imageButtonSend.isVisible = showFabSend
 
                 binding.microphoneRecorderView.setListener(this@InputPanelWidget)
 
@@ -77,30 +83,6 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         fun onRecorderLocked()
         fun onRecorderCanceled()
         fun onSendButtonClicked()
-    }
-
-    private fun hideSlideToCancel() {
-        binding.containerTextSlide.postDelayed(
-            Runnable {
-                val animation = AnimationSet(true)
-                animation.addAnimation(
-                    TranslateAnimation(
-                        Animation.ABSOLUTE, binding.containerTextSlide.translationX,
-                        Animation.ABSOLUTE, 0f,
-                        Animation.RELATIVE_TO_SELF, 0f,
-                        Animation.RELATIVE_TO_SELF, 0f
-                    )
-                )
-                animation.addAnimation(AlphaAnimation(1f, 0f))
-
-                animation.duration = 200
-//                animation.fillBefore = true
-//                animation.fillAfter = false
-
-                binding.containerTextSlide.startAnimation(animation)
-            },
-            100
-        )
     }
 
     //region IContractInputPanel
@@ -184,41 +166,6 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun getQuote() = binding.layoutQuote.getMessageAndAttachment()
-
-    override fun changeViewSwitcherToCancel() {
-        if (binding.viewSwitcherText.nextView.id == binding.textViewCancel.id) {
-            binding.viewSwitcherText.showNext()
-        }
-    }
-
-    override fun changeViewSwitcherToSlideToCancel() {
-        /*if (binding.viewSwitcher.nextView.id == binding.containerSlideToCancel.id) {
-            binding.layoutQuote.visibility = View.GONE
-            binding.viewSwitcher.inAnimation =
-                AnimationUtils.loadAnimation(context, R.anim.slide_in_right)
-            binding.viewSwitcher.outAnimation =
-                AnimationUtils.loadAnimation(context, R.anim.slide_out_left)
-            binding.viewSwitcher.showNext()
-            objectAnimatorMic.target = binding.imageViewMic
-            objectAnimatorMic.start()
-        }*/
-    }
-
-    override fun changeViewSwitcherToInputPanel() {
-        /*if (binding.viewSwitcher.nextView.id == binding.containerInputPanel.id) {
-            binding.viewSwitcher.inAnimation =
-                AnimationUtils.loadAnimation(context, R.anim.slide_in_left)
-            binding.viewSwitcher.outAnimation =
-                AnimationUtils.loadAnimation(context, R.anim.slide_out_right)
-            binding.viewSwitcher.showNext()
-            objectAnimatorMic.cancel()
-        }*/
-
-        /*if (binding.viewSwitcherText.nextView.id == binding.containerTextSlide.id) {
-            binding.viewSwitcherText.showNext()
-        }*/
-//        binding.microphoneRecorderView.cancelAction()
-    }
 
     override fun setRecordingTime(time: Long) {
         binding.textViewTime.apply {
