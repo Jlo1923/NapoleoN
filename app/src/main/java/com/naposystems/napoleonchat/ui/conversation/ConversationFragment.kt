@@ -19,7 +19,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Vibrator
+import android.os.PowerManager
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
@@ -80,6 +82,7 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListen
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.adapters.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -89,6 +92,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.U
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -193,13 +197,15 @@ class ConversationFragment : BaseFragment(),
     private var verticalCenter = 0
     private var isRecordingAudio: Boolean = false
     private var minTimeRecording = TimeUnit.SECONDS.toMillis(1)
-    private var messagedLoadedFirstTime: Boolean = false
+
+    //    private var messagedLoadedFirstTime: Boolean = false
     private var actionViewSchedule: View? = null
     private var isFabScroll = false
     private var enterConversation = false
     private var counterNotification = 0
     private var menuCreated : Boolean = false
     private var showShowCase : Boolean = false
+    private var isSelectedMessage = false
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -357,24 +363,32 @@ class ConversationFragment : BaseFragment(),
 
         inputPanelCameraButtonClickListener()
 
+        counterNotification = 0
+        showCounterNotification()
+        enterConversation = false
+
         binding.inputPanel.setListener(this)
 
         binding.buttonCall.setSafeOnClickListener {
-            this.verifyCameraAndMicPermission {
-                viewModel.setIsVideoCall(false)
-                viewModel.callContact()
-                binding.buttonCall.isEnabled = false
-                binding.buttonVideoCall.isEnabled = false
-            }
+//            if (checkBatteryOptimized()) {
+                this.verifyCameraAndMicPermission {
+                    viewModel.setIsVideoCall(false)
+                    viewModel.callContact()
+                    binding.buttonCall.isEnabled = false
+                    binding.buttonVideoCall.isEnabled = false
+                }
+//            }
         }
 
         binding.buttonVideoCall.setSafeOnClickListener {
-            this.verifyCameraAndMicPermission {
-                viewModel.setIsVideoCall(true)
-                viewModel.callContact()
-                binding.buttonCall.isEnabled = false
-                binding.buttonVideoCall.isEnabled = false
-            }
+//            if (checkBatteryOptimized()) {
+                this.verifyCameraAndMicPermission {
+                    viewModel.setIsVideoCall(true)
+                    viewModel.callContact()
+                    binding.buttonCall.isEnabled = false
+                    binding.buttonVideoCall.isEnabled = false
+                }
+//            }
         }
 
         binding.inputPanel.getImageButtonEmoji().setOnClickListener {
@@ -429,6 +443,26 @@ class ConversationFragment : BaseFragment(),
         MediaPlayerManager.initializeBluetoothManager()
 
         return binding.root
+    }
+
+    private fun checkBatteryOptimized(): Boolean {
+        val powerManager = requireActivity().getSystemService(Context.POWER_SERVICE) as PowerManager
+        val packageName = requireActivity().packageName
+
+        return if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+            Utils.showDialogToInformPermission(
+                requireContext(),
+                childFragmentManager,
+                R.drawable.ic_battery,
+                R.string.explanation_camera_and_storage_permission, //TODO: Texto para optimización de bateria|!!
+                {
+                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                    startActivity(intent)
+                },
+                {}
+            )
+            false
+        } else true
     }
 
     private fun inputPanelCameraButtonClickListener() {
@@ -561,12 +595,10 @@ class ConversationFragment : BaseFragment(),
             this.setSafeOnClickListener {
                 Timber.d("setOnClickListener")
                 if (!this.isShowingMic() && !isRecordingAudio) {
-                    val quote = binding.inputPanel.getQuote()
-
                     viewModel.saveMessageLocally(
                         binding.inputPanel.getEditTex().text.toString().trim(),
                         obtainTimeSelfDestruct(),
-                        quote?.message?.webId ?: ""
+                        binding.inputPanel.getQuote()?.message?.webId ?: ""
                     )
 
                     with(binding.inputPanel.getEditTex()) {
@@ -598,6 +630,8 @@ class ConversationFragment : BaseFragment(),
             }
         }
 
+        eventCounterBadgeMessage()
+
         shareViewModel.hasAudioSendClicked.observe(requireActivity(), Observer {
             if (it == true) {
                 shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
@@ -612,6 +646,8 @@ class ConversationFragment : BaseFragment(),
 
         shareViewModel.attachmentSelected.observe(requireActivity(), Observer { attachment ->
             if (attachment != null) {
+                val quote = binding.inputPanel.getQuote()
+                shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
                 viewModel.saveMessageAndAttachment(
                     shareViewModel.getMessage() ?: "",
                     attachment,
@@ -633,6 +669,8 @@ class ConversationFragment : BaseFragment(),
         shareViewModel.gifSelected.observe(requireActivity(), Observer { gifAttachment ->
             try {
                 if (gifAttachment != null) {
+                    val quote = binding.inputPanel.getQuote()
+                    shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
                     findNavController().navigate(
                         ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                             gifAttachment,
@@ -775,6 +813,8 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
             if (it != null) {
+                val quote = binding.inputPanel.getQuote()
+                shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
                 val attachment = Attachment(
                     id = 0,
                     messageId = 0,
@@ -794,9 +834,10 @@ class ConversationFragment : BaseFragment(),
                     attachment = attachment,
                     numberAttachments = 1,
                     selfDestructTime = obtainTimeSelfDestruct(),
-                    quote = ""
+                    quote = shareViewModel.getQuoteWebId() ?: ""
                 )
                 viewModel.resetDocumentCopied()
+                binding.inputPanel.closeQuote()
             }
         })
 
@@ -856,6 +897,8 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     private fun saveAndSendRecordAudio() {
         recordFile?.let { file ->
+            val quote = binding.inputPanel.getQuote()
+            shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
 
             val attachment = Attachment(
                 id = 0,
@@ -916,52 +959,51 @@ class ConversationFragment : BaseFragment(),
 
     private fun observeMessageMessages() {
         viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
-            Timber.d("observeMessageMessages")
-            conversationAdapter.submitList(conversationList) {
-                if (!messagedLoadedFirstTime) {
-                    val friendlyMessageCount: Int = conversationAdapter.itemCount
+            if (conversationList.isNotEmpty()) {
+                conversationAdapter.submitList(conversationList) {
                     if (enterConversation) {
-                        validScroll(conversationList, friendlyMessageCount)
+                        validScroll(conversationList, conversationAdapter.itemCount)
                     } else {
-                        binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+                        binding.recyclerViewConversation.scrollToPosition(conversationAdapter.itemCount - 1)
                         enterConversation = true
                     }
                 }
-            }
-            if (conversationList.isNotEmpty()) {
-                Timber.d("*TestMessage: ${conversationList.last()}")
+
+//                Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
             }
         })
+    }
+
+    private fun eventCounterBadgeMessage() {
+        val disposableNewMessageEvent =
+            RxBus.listen(RxEvent.NewMessageEventForCounter::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contact.id == it.contactId && isFabScroll) {
+                        counterNotification++
+                        showCounterNotification()
+                    }
+                }
+
+        disposable.add(disposableNewMessageEvent)
     }
 
     private fun validScroll(
         conversationList: List<MessageAndAttachment>,
         friendlyMessageCount: Int
     ) {
-        if (!conversationList.isNullOrEmpty()) {
-            if (conversationList.last().message.isMine == Constants.IsMine.YES.value &&
-                conversationList.last().message.status == Constants.MessageStatus.SENDING.status
-            ) {
-//            Timber.d("*TestScroll: setMessages with scroll")
-                counterNotification = 0
-                showCounterNotification()
-                binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
-            } else {
-                if (!isFabScroll) {
-                    binding.recyclerViewConversation.scrollToPosition(
-                        friendlyMessageCount - 1
-                    )
-                } else {
-                    if (conversationList.last().message.isMine == Constants.IsMine.NO.value &&
-                        conversationList.last().message.status == Constants.MessageStatus.UNREAD.status
-                    ) {
-                        counterNotification++
-                        showCounterNotification()
-                    }
-                }
-            }
+        if (conversationList.last().message.isMine == Constants.IsMine.YES.value &&
+            conversationList.last().message.status == Constants.MessageStatus.SENDING.status
+        ) {
+            counterNotification = 0
+            showCounterNotification()
+            binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
         }
+        if (!isFabScroll && actionMode.mode == null && !isSelectedMessage) {
+            binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
+        } else isSelectedMessage = false
+
     }
 
     private fun showCounterNotification() {
@@ -1150,7 +1192,7 @@ class ConversationFragment : BaseFragment(),
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
         setConversationBackground()
-        messagedLoadedFirstTime = false
+        //messagedLoadedFirstTime = false
     }
 
     override fun onDestroy() {
@@ -1415,6 +1457,8 @@ class ConversationFragment : BaseFragment(),
                 }
             }, clickBack = {
                 cleanSelectionMessages()
+                isSelectedMessage = true
+//                Toast.makeText(context, "is Back", Toast.LENGTH_SHORT).show()
             })
     }
 
@@ -1817,6 +1861,7 @@ class ConversationFragment : BaseFragment(),
         with(binding.inputPanel.getEditTex()) {
             setText("")
         }
+        binding.inputPanel.closeQuote()
     }
 
     //endregion

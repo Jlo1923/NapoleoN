@@ -88,7 +88,7 @@ class HomeFragment : Fragment() {
         super.onAttach(context)
     }
 
-    private var showCase : ShowCaseManager? = null
+    private var showCase: ShowCaseManager? = null
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var mFirebaseStorage: FirebaseStorage
     private var isShowingVersionDialog: Boolean = false
@@ -281,7 +281,7 @@ class HomeFragment : Fragment() {
         showCase?.dismiss()
         showShowCase = false
         viewModel.cleanVariables()
-        if (::popup.isInitialized){
+        if (::popup.isInitialized) {
             popup.dismiss()
         }
         super.onPause()

@@ -56,7 +56,7 @@ open class ConversationViewHolder constructor(
 
     var progressVisibility = false
 
-    fun countDown(
+    open fun countDown(
         item: MessageAndAttachment,
         textView: TextView?,
         itemToEliminate: (MessageAndAttachment) -> Unit
@@ -67,7 +67,7 @@ open class ConversationViewHolder constructor(
         if (endTime > 0) {
             val remainingTime =
                 (endTime - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
-            remainingTime.let { time ->
+            remainingTime.let {
                 countDownTimer = object : CountDownTimer(
                     TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
                     1

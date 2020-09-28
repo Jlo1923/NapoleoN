@@ -29,7 +29,7 @@ interface IContractSocketService {
 
         suspend fun getContacts()
 
-        fun getMyMessages()
+        fun getMyMessages(contactId: Int?)
 
         fun verifyMessagesReceived()
 

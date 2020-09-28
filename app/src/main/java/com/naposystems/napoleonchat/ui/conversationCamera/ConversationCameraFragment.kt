@@ -429,8 +429,8 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
     }
 
     private fun stopRecording() {
-        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         try {
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             binding.imageButtonCamera.isEnabled = false
             binding.imageButtonCamera.background =
                 resources.getDrawable(R.drawable.bg_button_take_picture, requireContext().theme)

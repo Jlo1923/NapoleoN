@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.webService.socket
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventRes
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
@@ -70,7 +71,7 @@ class SocketService @Inject constructor(
         try {
             pusher.disconnect()
             Timber.d("Socket disconnected")
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
     }
@@ -244,7 +245,7 @@ class SocketService @Inject constructor(
 
                             listenCancelCall(generalChannel)
 
-                            repository.getMyMessages()
+                            repository.getMyMessages(null)
                         }
                     })
             }
@@ -256,8 +257,23 @@ class SocketService @Inject constructor(
     private fun listenNewMessageEvent(privateChannel: PrivateChannel) {
         privateChannel.bind("App\\Events\\NewMessageEvent", object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
-                Timber.d("NewMessageEvent: ${event?.data}")
-                repository.getMyMessages()
+//                Timber.d("NewMessageEvent: ${event?.data}")
+                try {
+                    event?.data?.let { dataEventRes ->
+                        val moshi = Moshi.Builder().build()
+                        val jsonAdapter: JsonAdapter<NewMessageEventRes> =
+                            moshi.adapter(NewMessageEventRes::class.java)
+                        val dataEvent = jsonAdapter.fromJson(dataEventRes)
+
+                        dataEvent?.data?.let {newMessageDataEventRes ->
+                            Timber.d("NewMessageEvent: ${newMessageDataEventRes.contactId}")
+                            repository.getMyMessages(newMessageDataEventRes.contactId)
+                        }
+                    }
+
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
             }
 
             override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {

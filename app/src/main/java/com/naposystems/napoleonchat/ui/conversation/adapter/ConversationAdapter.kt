@@ -386,7 +386,9 @@ class ConversationAdapter constructor(
                 TYPE_INCOMING_MESSAGE_VIDEO,
                 TYPE_INCOMING_MESSAGE_GIF_NN,
                 TYPE_INCOMING_MESSAGE_DOCUMENT,
-                TYPE_INCOMING_MESSAGE_LOCATION ->
+                TYPE_INCOMING_MESSAGE_LOCATION,
+                TYPE_MISSED_CALL,
+                TYPE_SYSTEM_MESSAGE ->
                     (holder as ConversationViewHolder)
                         .bind(item, clickListener, isFirst, timeFormat)
                 TYPE_MY_MESSAGE_AUDIO,
@@ -394,10 +396,6 @@ class ConversationAdapter constructor(
                     (holder as ConversationViewHolder)
                         .bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
                 }
-                TYPE_MISSED_CALL -> (holder as MessageMissedCallViewHolder)
-                    .bind(item, clickListener, timeFormat)
-                TYPE_SYSTEM_MESSAGE -> (holder as SystemMessageViewHolder)
-                    .bind(item, clickListener)
                 TYPE_GROUP_DATE_MESSAGES -> (holder as GroupDateMessageViewHolder)
                     .bind(item)
             }
@@ -591,7 +589,13 @@ class ConversationAdapter constructor(
         fun uploadAttachment(attachment: Attachment, message: Message)
         fun updateAttachmentState(messageAndAttachment: Attachment)
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
-        fun sendMessageRead(messageId : String, messageWebId: String, isComplete: Boolean, position: Int = -1)
+        fun sendMessageRead(
+            messageId: String,
+            messageWebId: String,
+            isComplete: Boolean,
+            position: Int = -1
+        )
+
         fun reSendMessage(message: Message)
         fun scrollToNextAudio(nextPosition: Int)
         fun updateMessageState(message: Message)

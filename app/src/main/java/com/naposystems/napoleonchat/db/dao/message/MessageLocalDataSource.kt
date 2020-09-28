@@ -101,6 +101,8 @@ class MessageLocalDataSource @Inject constructor(
 
                 mutableListMessages.filter {
                     it.message.numberAttachments == 0 || (it.message.numberAttachments > 0 && it.attachmentList.count() > 0)
+                }.filter {
+                    (it.message.quoted.isEmpty() && it.quote == null) || (it.message.quoted.isNotEmpty() && it.quote != null)
                 }.toList()
 
             }
