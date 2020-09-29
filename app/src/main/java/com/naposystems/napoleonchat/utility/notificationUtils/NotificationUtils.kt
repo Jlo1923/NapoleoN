@@ -183,7 +183,7 @@ class NotificationUtils @Inject constructor(
                         if (silenced != null && silenced == true) {
                             Timber.d("--- Esta silenciada la mka esa xd")
                         } else {
-                            setupNotificationSound(context, R.raw.tone_receive_message)
+//                            setupNotificationSound(context, R.raw.tone_receive_message)
 
                             val titleKey =
                                 Constants.NotificationKeys.TITLE

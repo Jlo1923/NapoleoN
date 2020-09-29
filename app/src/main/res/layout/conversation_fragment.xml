@@ -56,6 +56,8 @@
                 android:id="@+id/container_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="?attr/attrBackgroundColorPrimary"
                 android:elevation="1dp"
                 android:padding="@dimen/small_padding"
@@ -179,24 +181,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/fabIconColor"
                 tools:visibility="visible" />
-
-            <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_go_down"
-                style="@style/FabGoDown"
-                android:outlineProvider="none"
-                android:src="@drawable/ic_keyboard_arrow_down_black"
-                android:visibility="gone"
-                app:backgroundTint="@color/fabNotificationMessage"
-                app:borderWidth="0dp"
-                app:elevation="16dp"
-                app:fabCustomSize="40dp"
-                app:fabSize="normal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/fabIconColor"
-                tools:visibility="visible" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

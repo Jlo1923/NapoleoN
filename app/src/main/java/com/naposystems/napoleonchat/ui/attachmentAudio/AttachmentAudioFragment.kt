@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -17,17 +18,16 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentAudioFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
-import com.naposystems.napoleonchat.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
+class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
 
     companion object {
         fun newInstance() = AttachmentAudioFragment()
@@ -81,10 +81,8 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
             findNavController().navigateUp()
         }
 
-        MediaPlayerManager.setContext(requireContext())
-        MediaPlayerManager.initializeBluetoothManager()
-        MediaPlayerManager.isEncryptedFile(false)
-        MediaPlayerManager.setListener(this)
+        MediaPlayerGalleryManager.setContext(requireContext())
+        MediaPlayerGalleryManager.setListener(this)
 
         setupAdapter()
 
@@ -154,15 +152,16 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
 
             override fun onPlayClick(
                 mediaStoreAudio: MediaStoreAudio,
-                imageButtonPlay: AnimatedTwoVectorView
+                imageButtonPlay: ImageView
             ) {
-                MediaPlayerManager.apply {
-                    setImageButtonPlay(imageButtonPlay)
+                MediaPlayerGalleryManager.apply {
                     setAudioId(mediaStoreAudio.id.toString())
-                    isEncryptedFile(false)
+                    setImageButtonPlay(imageButtonPlay)
+                    setContext(requireContext())
                     setAudioUri(mediaStoreAudio.contentUri)
                     playAudio()
                 }
+                adapter.notifyDataSetChanged()
             }
         })
 
@@ -171,11 +170,11 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
     }
 
     override fun onDestroy() {
-        MediaPlayerManager.resetMediaPlayer()
+        MediaPlayerGalleryManager.resetMediaPlayer()
         super.onDestroy()
     }
 
-    //region Implementation MediaPlayerManager.Listener
+    //region Implementation _root_ide_package_.com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager.Listener
     override fun onErrorPlayingAudio() {
         Utils.showSimpleSnackbar(
             binding.coordinator,
@@ -184,12 +183,8 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerManager.Listener {
         )
     }
 
-    override fun onPauseAudio(messageWebId: String?) {
-        // Intentionally empty
-    }
-
-    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
-        // Intentionally empty
+    override fun onCompleteAudio(messageId: String) {
+        adapter.notifyDataSetChanged()
     }
 
     //endregion

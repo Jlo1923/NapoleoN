@@ -13,6 +13,8 @@ import com.naposystems.napoleonchat.dto.conversation.call.reject.RejectCallReqDT
 import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
@@ -62,7 +64,7 @@ class SocketRepository @Inject constructor(
         }
     }
 
-    override fun getMyMessages() {
+    override fun getMyMessages(contactId: Int?) {
         GlobalScope.launch {
             try {
                 getContacts()
@@ -102,6 +104,12 @@ class SocketRepository @Inject constructor(
 
                                 attachmentLocalDataSource.insertAttachments(listAttachments)
                                 Timber.d("Conversation insertó attachment")
+
+                                contactId?.let {
+                                    RxBus.publish(
+                                        RxEvent.NewMessageEventForCounter(contactId)
+                                    )
+                                }
                             }
                         }
                     }

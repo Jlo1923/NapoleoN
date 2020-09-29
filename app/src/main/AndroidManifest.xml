@@ -6,7 +6,9 @@
     <!--<uses-feature
         android:name="android.hardware.camera"
         android:required="true" />-->
-    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
 
     <uses-permission android:name="android.hardware.sensor.proximity" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -25,6 +27,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission  android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
     <application
         android:name=".app.NapoleonApplication"

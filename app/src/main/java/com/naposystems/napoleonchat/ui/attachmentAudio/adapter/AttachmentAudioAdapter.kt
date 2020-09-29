@@ -1,12 +1,15 @@
 package com.naposystems.napoleonchat.ui.attachmentAudio.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentAudioItemBinding
 import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
-import com.naposystems.napoleonchat.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
 
 class AttachmentAudioAdapter constructor(private val clickListener: ClickListener) :
     ListAdapter<MediaStoreAudio, AttachmentAudioAdapter.AttachmentAudioViewHolder>(MediaStoreAudio.DiffCallback) {
@@ -26,11 +29,31 @@ class AttachmentAudioAdapter constructor(private val clickListener: ClickListene
         fun bind(item: MediaStoreAudio, clickListener: ClickListener) {
             binding.mediaStoreAudio = item
             binding.clickListener = clickListener
+            val context = binding.container.context
+
+            if (MediaPlayerGalleryManager.getAudioId() == item.id.toString()) {
+                if (MediaPlayerGalleryManager.isPlaying()) {
+                    changeIconPlayPause(context, R.drawable.ic_baseline_pause_circle)
+                } else {
+                    changeIconPlayPause(context, R.drawable.ic_baseline_play_circle)
+                }
+            } else {
+                changeIconPlayPause(context, R.drawable.ic_baseline_play_circle)
+            }
 
             binding.imageButtonPlay.setOnClickListener {
                 clickListener.onPlayClick(item, binding.imageButtonPlay)
             }
+
             binding.executePendingBindings()
+        }
+
+        private fun changeIconPlayPause(context: Context, drawable: Int) {
+            binding.imageButtonPlay.setImageDrawable(
+                context.resources.getDrawable(
+                    drawable, context.theme
+                )
+            )
         }
 
         companion object {
@@ -52,7 +75,7 @@ class AttachmentAudioAdapter constructor(private val clickListener: ClickListene
         fun onClick(mediaStoreAudio: MediaStoreAudio)
         fun onPlayClick(
             mediaStoreAudio: MediaStoreAudio,
-            imageButtonPlay: AnimatedTwoVectorView
+            imageButtonPlay: ImageView
         )
     }
 }

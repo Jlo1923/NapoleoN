@@ -16,15 +16,16 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@android:color/transparent"
-        android:orientation="vertical"
+        android:gravity="center"
+        android:orientation="horizontal"
         tools:background="@color/colorPrimary">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/container_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,6 +33,7 @@
             android:background="@drawable/ripple_action_back"
             android:clickable="true"
             android:focusable="true"
+            android:gravity="center"
             android:paddingStart="0dp"
             android:paddingTop="@dimen/x_small_padding"
             android:paddingEnd="@dimen/x_small_padding"
@@ -48,9 +50,6 @@
                 android:clickable="false"
                 android:scaleType="fitCenter"
                 android:tint="?attr/attrBackgroundTintIconToolbar"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back_white" />
 
             <ImageView
@@ -63,18 +62,16 @@
                 android:padding="1dp"
                 android:scaleType="fitCenter"
                 app:avatarActionBar="@{contact}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/imageButton_back"
-                app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_default_avatar" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/container_profile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="0dp"
+            android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
@@ -121,6 +118,6 @@
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </layout>

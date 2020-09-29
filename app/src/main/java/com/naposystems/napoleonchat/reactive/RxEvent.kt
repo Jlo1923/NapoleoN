@@ -8,6 +8,7 @@ import org.webrtc.SessionDescription
 
 class RxEvent {
     data class NewMessageReceivedEvent(val channelName: String, val jsonObject: JSONObject)
+    data class NewMessageEventForCounter(val contactId: Int)
     class NewFriendshipRequest
     class FriendshipRequestAccepted
     class NoInternetConnection

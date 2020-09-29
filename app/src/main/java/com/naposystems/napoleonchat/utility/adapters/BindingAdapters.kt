@@ -90,6 +90,10 @@ fun Fragment.verifyCameraAndMicPermission(successCallback: () -> Unit) {
     }
 }
 
+fun Fragment.verifyBatteryOptimization(successCallback: () -> Unit) {
+
+}
+
 fun Fragment.showToast(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
@@ -320,7 +324,7 @@ fun bindNameFormat(textView: TextView, format: Int) {
 
 @BindingAdapter("nickNameFormat", "contactIdNickNameFormat")
 fun bindNickNameFormat(textView: TextView, format: Int, contactId: Int) {
-    if(contactId == 0) {
+    if (contactId == 0) {
         textView.visibility = View.GONE
     } else {
         when (format) {
@@ -353,7 +357,7 @@ fun bindNameFormatContact(textView: TextView, format: Int, contactId: Int) {
 }
 
 @BindingAdapter("styleChangeName")
-fun bindStyleChangeName(textInputEditText: TextInputEditText, location : Int) {
+fun bindStyleChangeName(textInputEditText: TextInputEditText, location: Int) {
     textInputEditText.apply {
         when (location) {
             Constants.ChangeParams.NAME_USER.option,
