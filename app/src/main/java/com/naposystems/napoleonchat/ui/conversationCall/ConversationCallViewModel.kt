@@ -67,11 +67,12 @@ class ConversationCallViewModel @Inject constructor(
         }
     }
 
-    override fun cancelCall(contactId: Int) {
+    override fun cancelCall(contactId: Int, channel: String) {
         viewModelScope.launch {
             try {
                 val cancelCallReqDTO = CancelCallReqDTO(
-                    contactId
+                    contactId,
+                    channel
                 )
                 val response = repository.cancelCall(cancelCallReqDTO)
 

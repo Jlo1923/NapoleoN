@@ -344,14 +344,16 @@ class WebRTCClient constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Timber.d("ContactCancelCall")
-                try {
-                    stopMediaPlayer()
-                    unSubscribeCallChannel()
-                    localAudioTrack?.setEnabled(false)
-                } catch (e: Exception) {
-                    Timber.e("Error manejado, $e")
-                } finally {
-                    dispose()
+                if (it.channel == this.channel) {
+                    try {
+                        stopMediaPlayer()
+                        unSubscribeCallChannel()
+                        localAudioTrack?.setEnabled(false)
+                    } catch (e: Exception) {
+                        Timber.e("Error manejado, $e")
+                    } finally {
+                        dispose()
+                    }
                 }
             }
 

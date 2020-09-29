@@ -5,5 +5,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class CancelCallReqDTO(
-    @Json(name = "contact_id") val contactId: Int
+    @Json(name = "contact_id") val contactId: Int,
+    @Json(name = "channel") val channel: String
 )
