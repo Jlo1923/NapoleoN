@@ -73,18 +73,18 @@
             app:layout_constraintTop_toBottomOf="@id/textView_document_name"
             tools:text="00:40 - 7.1 MB" />
 
-        <com.naposystems.napoleonchat.ui.custom.animatedTwoVectorView.AnimatedTwoVectorView
+        <ImageView
             android:id="@+id/imageButton_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/small_margin"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="@dimen/x_small_padding"
             android:tint="?attr/attrColorButtonTint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:secondAnimation="@drawable/anim_pause_to_play"
-            app:srcCompat="@drawable/ic_play_arrow_black" />
+            app:srcCompat="@drawable/ic_baseline_play_circle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
