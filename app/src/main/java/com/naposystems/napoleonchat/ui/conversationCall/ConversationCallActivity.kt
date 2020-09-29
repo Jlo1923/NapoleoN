@@ -153,7 +153,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 when {
                     !isIncomingCall && !webRTCClient.isActiveCall() -> {
                         viewModel.sendMissedCall(contactId, isVideoCall)
-                        viewModel.cancelCall(contactId)
+                        viewModel.cancelCall(contactId, channel)
                     }
                     !isFromClosedApp -> {
                         val intent = Intent(this, WebRTCCallService::class.java)
@@ -454,8 +454,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     }
 
     override fun contactNotAnswer() {
-        if (!isIncomingCall)
+        if (!isIncomingCall) {
+            viewModel.cancelCall(contactId, channel)
             viewModel.sendMissedCall(contactId, isVideoCall)
+        }
     }
 
     override fun showTimer() {

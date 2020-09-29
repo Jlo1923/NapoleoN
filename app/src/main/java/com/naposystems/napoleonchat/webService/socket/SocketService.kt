@@ -70,7 +70,7 @@ class SocketService @Inject constructor(
         try {
             pusher.disconnect()
             Timber.d("Socket disconnected")
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
     }
@@ -490,13 +490,19 @@ class SocketService @Inject constructor(
         privateChannel.bind("App\\Events\\CancelCallEvent", object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent) {
                 Timber.d("CancelCallEvent: ${event.data}, notificationId: ${NotificationUtils.NOTIFICATION_RINGING}")
+                val jsonObject = JSONObject(event.data)
+                if (jsonObject.has("data")) {
+                    val jsonData = jsonObject.getJSONObject("data")
+                    if (jsonData.has("channel_private")) {
+                        val privateChannel = jsonData.getString("channel_private")
+                        RxBus.publish(RxEvent.ContactCancelCall(privateChannel))
+                    }
+                }
                 val notificationManager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.cancel(NotificationUtils.NOTIFICATION_RINGING)
                 val intent = Intent(context, WebRTCCallService::class.java)
                 context.stopService(intent)
-
-                RxBus.publish(RxEvent.ContactCancelCall())
             }
 
             override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}

@@ -13,7 +13,7 @@ interface IContractConversationCall {
         fun getContact(contactId: Int)
         fun resetIsOnCallPref()
         fun sendMissedCall(contactId: Int, isVideoCall: Boolean)
-        fun cancelCall(contactId: Int)
+        fun cancelCall(contactId: Int, channel: String)
     }
 
     interface Repository {
