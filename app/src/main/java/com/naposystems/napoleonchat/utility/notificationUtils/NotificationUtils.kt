@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import androidx.core.app.NotificationCompat.*
 import androidx.core.app.NotificationManagerCompat
@@ -23,13 +25,15 @@ import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+
 
 class NotificationUtils @Inject constructor(
     applicationContext: Context
@@ -183,6 +187,13 @@ class NotificationUtils @Inject constructor(
                         if (silenced != null && silenced == true) {
                             Timber.d("--- Esta silenciada la mka esa xd")
                         } else {
+                            if (Data.contactId != data.getValue(contact).toInt()) {
+                                Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
+                                }, 200)
+                            }
+
 //                            setupNotificationSound(context, R.raw.tone_receive_message)
 
                             val titleKey =

@@ -29,7 +29,8 @@
     <string name="label_edit_photo">Edit photo</string>
     <string name="label_edit_cover">Edit banner</string>
     <string name="text_edit">Edit</string>
-    <string name="text_share">Share</string>
+    <string name="text_share_android">Share with Android</string>
+    <string name="text_share_ios">Share with iOS</string>
     <string name="text_search">Search</string>
     <string name="text_add_contact">Add contact</string>
     <string name="text_finish">Finish</string>

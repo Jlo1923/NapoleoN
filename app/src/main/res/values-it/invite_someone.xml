@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_info_invite_someone">Proteggi la privacy dei tuoi amici.\nInvitali a usare la chat segreta di NapoleoN.</string>
-    <string name="text_share_link">Ti invito a scaricare questa super app!\nhttp://bit.ly/NapoleonAndroid</string>
+    <string name="text_share_link_android">Ti invito a scaricare questa super app!\nhttp://bit.ly/NapoleonAndroid</string>
+    <string name="text_share_link_ios">Ti invito a scaricare questa super app!\nhttp://bit.ly/NapoleonIOS</string>
 </resources>

@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.InviteSomeoneFragmentBinding
+import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 
 class InviteSomeoneFragment : Fragment() {
 
@@ -26,18 +27,26 @@ class InviteSomeoneFragment : Fragment() {
             inflater, R.layout.invite_someone_fragment, container, false
         )
 
-        binding.buttonShare.setOnClickListener {
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, getString(R.string.text_share_link))
-                type = "text/plain"
-            }
+        binding.buttonShareAndroid.setSafeOnClickListener {
+            shareLink(R.string.text_share_link_android)
+        }
 
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
+        binding.buttonShareIos.setSafeOnClickListener {
+            shareLink(R.string.text_share_link_ios)
         }
 
         return binding.root
+    }
+
+    private fun shareLink(string : Int) {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, getString(string))
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
 }

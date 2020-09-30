@@ -33,9 +33,6 @@ fun binFileSize(textView: TextView, size: Long) {
 
 @BindingAdapter("isMediaSelected")
 fun bindIsSelected(imageView: AppCompatImageView, isSelected: Boolean) {
-
-    val context = imageView.context
-
     if (isSelected) {
         val animation: Animation = AnimationUtils.loadAnimation(imageView.context, R.anim.scale_up)
         imageView.visibility = View.VISIBLE
