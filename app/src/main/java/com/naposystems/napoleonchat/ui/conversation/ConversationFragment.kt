@@ -1757,7 +1757,7 @@ class ConversationFragment : BaseFragment(),
                             binding.inputPanel.setRecordingTime(recordingTime)
 
                             if (recordingTime == Constants.MAX_AUDIO_RECORD_TIME) {
-                                saveAndSendRecordAudio()
+                                binding.inputPanel.releaseRecordingLock()
                             } else {
                                 mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
                             }
@@ -1845,23 +1845,29 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onSendButtonClicked() {
-        if (binding.inputPanel.isRecordingInLockedMode() && recordingTime >= minTimeRecording) {
-            binding.inputPanel.releaseRecordingLock()
-            return
+        when {
+            binding.inputPanel.isRecordingInLockedMode() && recordingTime >= minTimeRecording -> {
+                binding.inputPanel.releaseRecordingLock()
+            }
+            !isRecordingAudio -> {
+                val quote = binding.inputPanel.getQuote()
+
+                viewModel.saveMessageLocally(
+                    binding.inputPanel.getEditTex().text.toString().trim(),
+                    obtainTimeSelfDestruct(),
+                    quote?.message?.webId ?: ""
+                )
+
+                with(binding.inputPanel.getEditTex()) {
+                    setText("")
+                }
+                binding.inputPanel.closeQuote()
+            }
+            else -> {
+                binding.inputPanel.cancelRecording()
+            }
         }
 
-        val quote = binding.inputPanel.getQuote()
-
-        viewModel.saveMessageLocally(
-            binding.inputPanel.getEditTex().text.toString().trim(),
-            obtainTimeSelfDestruct(),
-            quote?.message?.webId ?: ""
-        )
-
-        with(binding.inputPanel.getEditTex()) {
-            setText("")
-        }
-        binding.inputPanel.closeQuote()
     }
 
     //endregion

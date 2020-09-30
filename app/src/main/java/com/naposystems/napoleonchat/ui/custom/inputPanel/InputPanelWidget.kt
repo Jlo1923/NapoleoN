@@ -177,6 +177,11 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.textInputEditTextInput.setText("")
     }
 
+    override fun cancelRecording() {
+        showButtonRecord()
+        binding.microphoneRecorderView.cancelAction()
+    }
+
     //endregion
 
     //region MicrophoneRecorderView.Listener

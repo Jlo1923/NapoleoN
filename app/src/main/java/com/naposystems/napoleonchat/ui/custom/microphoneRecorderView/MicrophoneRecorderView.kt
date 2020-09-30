@@ -128,6 +128,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
     private fun hideUi() {
         floatingRecordButton.hide()
         binding.imageButtonAudioToggle.isVisible = true
+        binding.containerLock.isVisible = false
     }
 
     private class FloatingRecordButton internal constructor(
@@ -232,11 +233,9 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
     }
 
     override fun unlockAction() {
-        if (state == State.RUNNING_LOCKED) {
-            state = State.NOT_RUNNING
-            binding.quickAudioFab.isVisible = false
-            hideUi()
-            mListener?.onRecordReleased()
-        }
+        state = State.NOT_RUNNING
+        binding.quickAudioFab.isVisible = false
+        hideUi()
+        mListener?.onRecordReleased()
     }
 }

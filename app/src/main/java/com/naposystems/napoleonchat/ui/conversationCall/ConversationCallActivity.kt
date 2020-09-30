@@ -25,6 +25,8 @@ import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
@@ -70,8 +72,15 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     private var isFromClosedApp: Boolean = false
     private var hangUpPressed: Boolean = false
 
+    private val audioManagerCompat by lazy {
+        AudioManagerCompat.create(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
+
+        audioManagerCompat.requestCallAudioFocus()
+
         Timber.d("onCreate")
 
         val intentFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)

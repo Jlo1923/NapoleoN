@@ -28,4 +28,5 @@ interface IContractInputPanel {
     fun getQuote(): MessageAndAttachment?
     fun setRecordingTime(time: Long)
     fun clearTextEditText()
+    fun cancelRecording()
 }
