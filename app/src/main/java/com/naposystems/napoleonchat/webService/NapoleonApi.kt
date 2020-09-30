@@ -57,6 +57,7 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.FRIEND_SHIP_SE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH_BY_DATE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GENERATE_CODE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUESTS
+import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUESTS_RECEIVED
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUEST_QUANTITY
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_MY_MESSAGES
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_QUESTIONS
@@ -196,6 +197,9 @@ interface NapoleonApi {
 
     @GET(GET_FRIENDSHIP_REQUESTS)
     suspend fun getFriendshipRequests(): Response<FriendshipRequestsResDTO>
+
+    @GET(GET_FRIENDSHIP_REQUESTS_RECEIVED)
+    suspend fun getFriendShipRequestReceivedHome() : Response<List<FriendshipRequestReceivedDTO>>
 
     @PUT(PUT_FRIENDSHIP_REQUEST)
     suspend fun putFriendshipRequest(

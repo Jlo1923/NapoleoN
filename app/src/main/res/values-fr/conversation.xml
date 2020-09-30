@@ -58,4 +58,6 @@
         <item quantity="other">%d heures</item>
     </plurals>
     <string name="text_video_call_rejected">Il a rejeté la demande de l\'appel vidéo</string>
+    <string name="text_section_conversations">Mes conversations</string>
+    <string name="text_section_see_more">voir tout</string>
 </resources>

@@ -58,4 +58,6 @@
         <item quantity="other">%d stunden</item>
     </plurals>
     <string name="text_video_call_rejected">Es hat sich die Anforderung für den Videoanruf abgelehnt</string>
+    <string name="text_section_conversations">Meine Gespräche</string>
+    <string name="text_section_see_more">alles sehen</string>
 </resources>

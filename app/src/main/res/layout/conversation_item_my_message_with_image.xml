@@ -67,7 +67,7 @@
                 android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:layout_marginBottom="@dimen/x_small_margin"
-                android:background="@color/black_40"
+                android:background="@drawable/round_image"
                 android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
@@ -110,53 +110,6 @@
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <!-- BUTTON ATTACHMENT STATE -->
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/imageButton_state"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="@dimen/x_small_margin"
-                android:layout_marginBottom="@dimen/x_small_margin"
-                android:background="@drawable/bg_black_40"
-                android:padding="@dimen/x_small_padding"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_file_upload_black"
-                android:tint="@color/white"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
-                app:layout_constraintStart_toStartOf="parent"
-                custom:iconForState="@{conversation}"
-                tools:visibility="visible" />
-
-            <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_margin="0dp"
-                android:padding="0dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
-                app:layout_constraintEnd_toEndOf="@id/imageButton_state"
-                app:layout_constraintStart_toStartOf="@id/imageButton_state"
-                app:layout_constraintTop_toTopOf="@id/imageButton_state"
-                custom:progress="0"
-                custom:progressBarThickness="3dp"
-                custom:progressbarColor="?attr/attrTintProgressBar"
-                tools:progress="70"
-                tools:visibility="gone" />
-
-            <ProgressBar
-                android:id="@+id/progressBar_indeterminate"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:indeterminate="true"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
-                app:layout_constraintEnd_toEndOf="@id/imageButton_state"
-                app:layout_constraintStart_toStartOf="@id/imageButton_state"
-                app:layout_constraintTop_toTopOf="@id/imageButton_state"
-                tools:visibility="visible" />
-
             <androidx.emoji.widget.EmojiAppCompatTextView
                 android:id="@+id/textView_message"
                 style="@style/MyMessageTextView"
@@ -197,6 +150,53 @@
                 tools:srcCompat="@drawable/ic_message_sent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- BUTTON ATTACHMENT STATE -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/imageButton_state"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_margin="@dimen/small_margin"
+            android:background="@drawable/bg_black_40"
+            android:padding="@dimen/x_small_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_file_upload_black"
+            android:tint="@color/white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/container_message"
+            app:layout_constraintTop_toTopOf="parent"
+            custom:iconForState="@{conversation}"
+            tools:visibility="visible" />
+
+        <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+            app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+            app:layout_constraintStart_toStartOf="@id/imageButton_state"
+            app:layout_constraintTop_toTopOf="@id/imageButton_state"
+            custom:progress="0"
+            custom:progressBarThickness="3dp"
+            custom:progressbarColor="?attr/attrTintProgressBar"
+            tools:progress="70"
+            tools:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progressBar_indeterminate"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+            app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+            app:layout_constraintStart_toStartOf="@id/imageButton_state"
+            app:layout_constraintTop_toTopOf="@id/imageButton_state"
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

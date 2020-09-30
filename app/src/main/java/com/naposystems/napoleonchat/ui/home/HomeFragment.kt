@@ -27,21 +27,25 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
+import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
+import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
@@ -67,6 +71,7 @@ class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
+    private val shareFriendShipViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -78,6 +83,10 @@ class HomeFragment : Fragment() {
     }
     private lateinit var binding: HomeFragmentBinding
     lateinit var adapter: ConversationAdapter
+    private lateinit var friendShipRequestReceivedAdapter: FriendShipRequestReceivedAdapter
+    private var existConversation: Boolean = false
+    private var existFriendShip: Boolean = false
+
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
     }
@@ -96,8 +105,8 @@ class HomeFragment : Fragment() {
 
     private var addContactsMenuItem: MenuItem? = null
     private var homeMenuItem: View? = null
-    private var menuCreated : Boolean = false
-    private var showShowCase : Boolean = false
+    private var menuCreated: Boolean = false
+    private var showShowCase: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,6 +141,8 @@ class HomeFragment : Fragment() {
 
         setAdapter()
 
+        setFriendshipRequest()
+
         binding.containerStatus.setOnClickListener {
             goToStatus()
         }
@@ -146,11 +157,16 @@ class HomeFragment : Fragment() {
             )
         }
 
+        binding.buttonShowAllFriendship.setOnClickListener {
+            goToAddContactFragment()
+        }
+
         val disposableNewMessageReceived =
             RxBus.listen(RxEvent.NewFriendshipRequest::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     viewModel.getFriendshipQuantity()
+                    viewModel.getFriendshipRequestHome()
                 }
 
         disposable.add(disposableNewMessageReceived)
@@ -178,6 +194,14 @@ class HomeFragment : Fragment() {
 
         viewModel.getFriendshipQuantity()
 
+        viewModel.getFriendshipRequestHome()
+
+        observeFriendshipRequestPutSuccessfully()
+
+        observeFriendshipRequestWsError()
+
+        observeFriendshipRequestAcceptedSuccessfully()
+
         viewModel.subscribeToGeneralSocketChannel()
 
         userDisplayFormatShareViewModel.getUserDisplayFormat()
@@ -187,18 +211,23 @@ class HomeFragment : Fragment() {
         viewModel.conversations?.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 adapter.submitList(it)
-                if (it.isEmpty() && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
-                    binding.viewSwitcherChats.showNext()
-                } else if (it.isNotEmpty() && binding.viewSwitcherChats.nextView.id == binding.recyclerViewChats.id) {
-                    binding.viewSwitcherChats.showNext()
-                }
+                existConversation = it.isNotEmpty()
+                validateViewSwitcher(existConversation, existFriendShip)
                 viewModel.resetConversations()
             }
         })
 
         viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
-            if (it != -1) {
-                setupBadge(it)
+            if (it != -1) setupBadge(it)
+        })
+
+        viewModel.friendShipRequestReceived.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                friendShipRequestReceivedAdapter.submitList(it)
+                binding.containerFriendRequestReceived.isVisible = it.isNotEmpty()
+                existFriendShip = it.isNotEmpty()
+                validateViewSwitcher(existConversation, existFriendShip)
+                viewModel.getFriendshipQuantity()
             }
         })
 
@@ -269,6 +298,14 @@ class HomeFragment : Fragment() {
         })
 
         (activity as MainActivity).getUser()
+    }
+
+    private fun validateViewSwitcher(existConversation: Boolean, existFriendShip: Boolean){
+        if (!existConversation && !existFriendShip && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
+            binding.viewSwitcherChats.showNext()
+        } else if ((existConversation || existFriendShip) && binding.viewSwitcherChats.nextView.id == binding.containerContentHome.id) {
+            binding.viewSwitcherChats.showNext()
+        }
     }
 
     override fun onDetach() {
@@ -464,6 +501,55 @@ class HomeFragment : Fragment() {
         findNavController().navigate(
             HomeFragmentDirections.actionHomeFragmentToContactProfileFragment(contact.id)
         )
+    }
+
+    private fun observeFriendshipRequestAcceptedSuccessfully() {
+        shareFriendShipViewModel.friendshipRequestAcceptedSuccessfully.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (it == true) {
+                    viewModel.getFriendshipRequestHome()
+                }
+            })
+    }
+
+    private fun observeFriendshipRequestWsError() {
+        shareFriendShipViewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+
+                val list = ArrayList<String>()
+                list.add(it)
+
+                val snackbarUtils = SnackbarUtils(binding.coordinator, list)
+
+                snackbarUtils.showSnackbar()
+            }
+        })
+    }
+
+    private fun observeFriendshipRequestPutSuccessfully() {
+        shareFriendShipViewModel.friendshipRequestPutSuccessfully.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (it == true) {
+                    viewModel.getFriendshipRequestHome()
+                }
+            })
+    }
+
+    private fun setFriendshipRequest() {
+        friendShipRequestReceivedAdapter = FriendShipRequestReceivedAdapter(object :
+            FriendShipRequestReceivedAdapter.ClickListener {
+            override fun onRefuse(friendshipRequest: FriendShipRequest) {
+                shareFriendShipViewModel.refuseFriendshipRequest(friendshipRequest)
+            }
+
+            override fun onAccept(friendshipRequest: FriendShipRequest) {
+                shareFriendShipViewModel.acceptFriendshipRequest(friendshipRequest)
+            }
+        })
+
+        binding.recyclerViewFriendshipRequest.adapter = friendShipRequestReceivedAdapter
     }
 
     private fun deleteChat(contact: Contact) {

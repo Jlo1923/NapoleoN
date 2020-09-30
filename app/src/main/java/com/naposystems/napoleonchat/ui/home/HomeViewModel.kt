@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.dto.addContact.FriendshipRequestReceivedDTO
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -18,13 +20,17 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val user: LiveData<User>
         get() = _user
 
-    private var _conversations : LiveData<List<MessageAndAttachment>>?
-    val conversations : LiveData<List<MessageAndAttachment>>?
+    private var _conversations: LiveData<List<MessageAndAttachment>>?
+    val conversations: LiveData<List<MessageAndAttachment>>?
         get() = _conversations
 
     private val _quantityFriendshipRequest = MutableLiveData<Int>()
     val quantityFriendshipRequest: LiveData<Int>
         get() = _quantityFriendshipRequest
+
+    private val _friendShipRequestReceived = MutableLiveData<List<FriendShipRequest>>()
+    val friendShipRequestReceived: LiveData<List<FriendShipRequest>>
+        get() = _friendShipRequestReceived
 
     private val _jsonCleaned = MutableLiveData<String>()
     val jsonCleaned: LiveData<String>
@@ -57,6 +63,23 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
                         response.body()!!.quantityFriendshipRequestReceived
 
                     _quantityFriendshipRequest.value = friendshipRequestReceived
+                }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    override fun getFriendshipRequestHome() {
+        viewModelScope.launch {
+            try {
+                val response = repository.getFriendshipRequestHome()
+
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _friendShipRequestReceived.value =
+                            FriendshipRequestReceivedDTO.toListFriendshipRequestReceivedEntity(it)
+                    }
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
@@ -120,13 +143,13 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
         _jsonNotification.value = repository.getJsonNotification()
     }
 
-    override fun getContact(contactId : Int) {
+    override fun getContact(contactId: Int) {
         viewModelScope.launch {
             _contact.value = repository.getContact(contactId)
         }
     }
 
-    override fun cleanJsonNotification(json : String) {
+    override fun cleanJsonNotification(json: String) {
         viewModelScope.launch {
             repository.cleanJsonNotification()
             _jsonCleaned.value = json
