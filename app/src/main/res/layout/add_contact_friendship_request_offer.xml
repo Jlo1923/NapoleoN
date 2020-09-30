@@ -18,12 +18,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_home_item"
-        android:padding="@dimen/normal_padding">
+        android:paddingStart="@dimen/normal_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingEnd="@dimen/normal_padding"
+        android:paddingBottom="@dimen/small_padding">
 
         <ImageView
             android:id="@+id/imageView_user_image"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:background="@drawable/border_avatar_contact"
             app:avatar="@{friendshipRequest.contact}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -40,11 +43,11 @@
             android:layout_marginBottom="@dimen/x_small_margin"
             android:ellipsize="end"
             android:lines="1"
-            app:name="@{friendshipRequest.contact}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
+            app:name="@{friendshipRequest.contact}"
             tools:text="@tools:sample/full_names" />
 
         <TextView

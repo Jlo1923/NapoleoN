@@ -161,7 +161,6 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
                     setAudioUri(mediaStoreAudio.contentUri)
                     playAudio()
                 }
-                adapter.notifyDataSetChanged()
             }
         })
 

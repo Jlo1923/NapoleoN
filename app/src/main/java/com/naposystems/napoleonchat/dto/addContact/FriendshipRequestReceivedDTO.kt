@@ -16,18 +16,42 @@ data class FriendshipRequestReceivedDTO(
     @Json(name = "friendship_request_offer") val contact: ContactResDTO
 ) {
     companion object {
+        fun toListFriendshipRequestReceivedEntity(
+            listFriendshipRequestReceivedDTO: List<FriendshipRequestReceivedDTO>
+        ): List<FriendShipRequest> {
+
+            val listFriendShip: MutableList<FriendShipRequest> = arrayListOf()
+
+            for (friendShipReceivedDTO in listFriendshipRequestReceivedDTO) {
+                listFriendShip.add(
+                    FriendShipRequest(
+                        id = friendShipReceivedDTO.id,
+                        userOffer = friendShipReceivedDTO.userOffer,
+                        userObtainer = friendShipReceivedDTO.userObtainer,
+                        state = friendShipReceivedDTO.state,
+                        createdAt = friendShipReceivedDTO.createdAt,
+                        contact = ContactResDTO.toEntity(friendShipReceivedDTO.contact),
+                        isReceived = true
+                    )
+                )
+            }
+
+            return listFriendShip
+        }
+
         fun toFriendshipRequestEntity(response: FriendshipRequestReceivedDTO): FriendShipRequest {
             val friendshipRequest = FriendShipRequest(
-                response.id,
-                response.userOffer,
-                response.userObtainer,
-                response.state,
-                response.createdAt,
-                ContactResDTO.toEntity(response.contact),
-                true
+                id = response.id,
+                userOffer = response.userOffer,
+                userObtainer = response.userObtainer,
+                state = response.state,
+                createdAt = response.createdAt,
+                contact = ContactResDTO.toEntity(response.contact),
+                isReceived = true
             )
 
-            friendshipRequest.type = Constants.FriendShipRequestType.FRIENDSHIP_REQUEST_RECEIVED.type
+            friendshipRequest.type =
+                Constants.FriendShipRequestType.FRIENDSHIP_REQUEST_RECEIVED.type
 
             return friendshipRequest
         }

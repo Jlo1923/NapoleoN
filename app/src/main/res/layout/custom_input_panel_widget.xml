@@ -237,7 +237,7 @@
             android:tint="@color/white"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_send_black"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
     </LinearLayout>
 

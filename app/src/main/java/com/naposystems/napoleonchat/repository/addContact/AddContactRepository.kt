@@ -22,8 +22,8 @@ import javax.inject.Inject
 
 class AddContactRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
-    private val contactLocalDataSource: ContactDataSource,
-    private val messageLocalDataSource: MessageDataSource,
+    /*private val contactLocalDataSource: ContactDataSource,
+    private val messageLocalDataSource: MessageDataSource,*/
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :
@@ -50,7 +50,7 @@ class AddContactRepository @Inject constructor(
         return napoleonApi.putFriendshipRequest(friendShipRequest.id.toString(), request)
     }
 
-    override suspend fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO> {
+    /*override suspend fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO> {
         val request = FriendshipRequestPutReqDTO(FriendshipRequestPutAction.REFUSE.action)
         return napoleonApi.putFriendshipRequest(friendShipRequest.id.toString(), request)
     }
@@ -58,15 +58,6 @@ class AddContactRepository @Inject constructor(
     override suspend fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO> {
         val request = FriendshipRequestPutReqDTO(FriendshipRequestPutAction.ACCEPT.action)
         return napoleonApi.putFriendshipRequest(friendShipRequest.id.toString(), request)
-    }
-
-    override fun getError(response: Response<FriendshipRequestPutResDTO>): String {
-        val moshi = Moshi.Builder().build()
-        val adapter = moshi.adapter(FriendshipRequestPutErrorDTO::class.java)
-
-        val updateUserInfoError = adapter.fromJson(response.errorBody()!!.string())
-
-        return updateUserInfoError!!.error
     }
 
     override suspend fun addContact(friendShipRequest: FriendShipRequest) {
@@ -79,6 +70,15 @@ class AddContactRepository @Inject constructor(
 
     override fun insertMessage(message: Message): Long {
         return messageLocalDataSource.insertMessage(message)
+    }*/
+
+    override fun getError(response: Response<FriendshipRequestPutResDTO>): String {
+        val moshi = Moshi.Builder().build()
+        val adapter = moshi.adapter(FriendshipRequestPutErrorDTO::class.java)
+
+        val updateUserInfoError = adapter.fromJson(response.errorBody()!!.string())
+
+        return updateUserInfoError!!.error
     }
 
     override suspend fun getUser(): User {

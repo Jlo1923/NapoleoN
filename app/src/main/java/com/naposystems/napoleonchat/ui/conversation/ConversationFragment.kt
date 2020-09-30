@@ -694,6 +694,8 @@ class ConversationFragment : BaseFragment(),
 
         binding.viewModel = viewModel
 
+        Data.contactId = args.contact.id
+
         cleanSelectionMessages()
 
         contactProfileShareViewModel.getLocalContact(args.contact.id)
@@ -1198,6 +1200,7 @@ class ConversationFragment : BaseFragment(),
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
+        Data.contactId = 0
         resetConversationBackground()
         MediaPlayerManager.unregisterProximityListener()
         MediaPlayerManager.resetMediaPlayer()
@@ -1684,6 +1687,7 @@ class ConversationFragment : BaseFragment(),
     override fun onPause() {
         super.onPause()
         Timber.d("onPause")
+        Data.contactId = 0
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()
@@ -1796,7 +1800,7 @@ class ConversationFragment : BaseFragment(),
             binding.inputPanel.setRecordingTime(0L)
             recordingTime = 0L
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 150)
+            //Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 150)
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -1841,6 +1845,7 @@ class ConversationFragment : BaseFragment(),
     override fun onRecorderCanceled() {
         isRecordingAudio = false
         stopRecording()
+        Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 200)
     }
 
     @InternalCoroutinesApi

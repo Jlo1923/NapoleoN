@@ -25,8 +25,8 @@ interface IContractAddContact {
         fun sendFriendshipRequest(contact: Contact)
         fun getFriendshipRequests()
         fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest)
-        fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest)
-        fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest)
+        /*fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest)
+        fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest)*/
     }
 
     interface Repository {
@@ -34,12 +34,12 @@ interface IContractAddContact {
         suspend fun sendFriendshipRequest(contact: Contact): Response<FriendshipRequestResDTO>
         suspend fun getFriendshipRequest(): Response<FriendshipRequestsResDTO>
         suspend fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
-        suspend fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
+        /*suspend fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
         suspend fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
-        fun getError(response: Response<FriendshipRequestPutResDTO>): String
         suspend fun addContact(friendShipRequest: FriendShipRequest)
         suspend fun sendNewContactMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
-        fun insertMessage(message: Message): Long
+        fun insertMessage(message: Message): Long*/
+        fun getError(response: Response<FriendshipRequestPutResDTO>): String
         suspend fun getUser(): User
     }
 }
