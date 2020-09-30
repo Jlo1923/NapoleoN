@@ -9,23 +9,9 @@ import com.naposystems.napoleonchat.databinding.AddContactFriendshipRequestRecei
 import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
 
 class FriendShipRequestReceivedAdapter constructor(private val clickListener: ClickListener) :
-    ListAdapter<FriendShipRequest, FriendShipRequestReceivedAdapter.FriendShipRequestReceivedViewHolder>(DiffCallback) {
-
-    object DiffCallback : DiffUtil.ItemCallback<FriendShipRequest>() {
-        override fun areItemsTheSame(
-            oldItem: FriendShipRequest,
-            newItem: FriendShipRequest
-        ): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(
-            oldItem: FriendShipRequest,
-            newItem: FriendShipRequest
-        ): Boolean {
-            return oldItem == newItem
-        }
-    }
+    ListAdapter<FriendShipRequest, FriendShipRequestReceivedAdapter.FriendShipRequestReceivedViewHolder>(
+        FriendShipRequest.DiffCallback
+    ) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
