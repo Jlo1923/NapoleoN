@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.home
 
 import androidx.lifecycle.LiveData
+import com.naposystems.napoleonchat.dto.addContact.FriendshipRequestReceivedDTO
 import com.naposystems.napoleonchat.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.User
@@ -13,6 +14,7 @@ interface IContractHome {
         fun getConversation()
         fun getUserLiveData()
         fun getFriendshipQuantity()
+        fun getFriendshipRequestHome()
         fun subscribeToGeneralSocketChannel()
         fun getMessages()
         fun getDeletedMessages()
@@ -30,6 +32,7 @@ interface IContractHome {
     interface Repository {
         suspend fun getUserLiveData(): LiveData<User>
         suspend fun getFriendshipQuantity(): Response<FriendshipRequestQuantityResDTO>
+        suspend fun getFriendshipRequestHome(): Response<List<FriendshipRequestReceivedDTO>>
         suspend fun subscribeToGeneralSocketChannel()
         suspend fun getRemoteMessages()
         suspend fun getDeletedMessages()

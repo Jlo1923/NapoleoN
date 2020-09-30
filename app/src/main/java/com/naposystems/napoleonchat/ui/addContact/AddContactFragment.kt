@@ -21,6 +21,7 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
+import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -38,6 +39,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
+    private val shareViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
     private lateinit var binding: AddContactFragmentBinding
     private val args: AddContactFragmentArgs by navArgs()
     private lateinit var mainActivity: MainActivity
@@ -124,7 +126,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendshipRequestAcceptedSuccessfully() {
-        viewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, Observer {
+        shareViewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 viewModel.getFriendshipRequests()
             }
@@ -132,7 +134,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendshipRequestWsError() {
-        viewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
+        shareViewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
 
                 val list = ArrayList<String>()
@@ -146,7 +148,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendshipRequestPutSuccessfully() {
-        viewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, Observer {
+        shareViewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 viewModel.getFriendshipRequests()
             }
@@ -203,11 +205,13 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         friendshipRequestsAdapter =
             FriendshipRequestAdapter(object : FriendshipRequestAdapter.ClickListener {
                 override fun onRefuse(friendshipRequest: FriendShipRequest) {
-                    viewModel.refuseFriendshipRequest(friendshipRequest)
+//                    viewModel.refuseFriendshipRequest(friendshipRequest)
+                    shareViewModel.refuseFriendshipRequest(friendshipRequest)
                 }
 
                 override fun onAccept(friendshipRequest: FriendShipRequest) {
-                    viewModel.acceptFriendshipRequest(friendshipRequest)
+//                    viewModel.acceptFriendshipRequest(friendshipRequest)
+                    shareViewModel.acceptFriendshipRequest(friendshipRequest)
                 }
 
                 override fun onCancel(friendshipRequest: FriendShipRequest) {

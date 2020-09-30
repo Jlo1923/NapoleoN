@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
+import com.naposystems.napoleonchat.dto.addContact.FriendshipRequestReceivedDTO
 import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.dto.home.FriendshipRequestQuantityResDTO
@@ -49,6 +50,10 @@ class HomeRepository @Inject constructor(
 
     override suspend fun getFriendshipQuantity(): Response<FriendshipRequestQuantityResDTO> {
         return napoleonApi.getFriendshipRequestQuantity()
+    }
+
+    override suspend fun getFriendshipRequestHome(): Response<List<FriendshipRequestReceivedDTO>> {
+        return napoleonApi.getFriendShipRequestReceivedHome()
     }
 
     override suspend fun subscribeToGeneralSocketChannel() {

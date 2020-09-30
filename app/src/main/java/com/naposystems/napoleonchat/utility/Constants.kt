@@ -45,6 +45,7 @@ object Constants {
         const val SEARCH_USER = "users/search/{nick}"
         const val SEND_FRIENDSHIP_REQUEST = "friendshiprequest"
         const val GET_FRIENDSHIP_REQUESTS = "friendshiprequest"
+        const val GET_FRIENDSHIP_REQUESTS_RECEIVED = "friendshiprequest/friendshipRequestReceived"
         const val PUT_FRIENDSHIP_REQUEST = "friendshiprequest/{id}"
         const val GET_FRIENDSHIP_REQUEST_QUANTITY = "friendshiprequest/countfriendshiprequest"
         const val PUT_BLOCK_CONTACT = "friendship/blockuser/{id}"
