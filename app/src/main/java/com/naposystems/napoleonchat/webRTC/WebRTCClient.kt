@@ -188,6 +188,7 @@ class WebRTCClient constructor(
     }
 
     init {
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         bluetoothStateManager = BluetoothStateManager(context, this)
         createPeerConnection()
         subscribeToRXEvents()
@@ -481,8 +482,6 @@ class WebRTCClient constructor(
                         intent.action = WebRTCCallService.ACTION_CALL_CONNECTED
                         context.startService(intent)
 
-                        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-
                         if (!isVideoCall && incomingCall) {
                             audioManager.isSpeakerphoneOn = false
                             mListener?.changeCheckedSpeaker(false)
@@ -674,21 +673,6 @@ class WebRTCClient constructor(
             val videoTrack = firstMediaStream.videoTracks[0]
             try {
                 stopProximitySensor()
-                val outputDevices = audioManager.getDevices(GET_DEVICES_OUTPUTS)
-
-                var isHeadsetConnected = false
-
-                outputDevices.forEach {
-                    Timber.d("AudioDEviceInfo Type ${it.type}")
-                    if (it.type == AudioDeviceInfo.TYPE_WIRED_HEADSET || it.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES) {
-                        isHeadsetConnected = true
-                    }
-                    isHeadsetConnected =
-                        it.type == AudioDeviceInfo.TYPE_WIRED_HEADSET || it.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
-                }
-
-                Timber.d("AudioDEviceInfo $isHeadsetConnected")
-                this.isHeadsetConnected = isHeadsetConnected
 
                 if (isBluetoothAvailable) {
                     audioManager.isSpeakerphoneOn = false
