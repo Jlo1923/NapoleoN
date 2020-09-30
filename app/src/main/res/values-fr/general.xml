@@ -13,7 +13,8 @@
     <string name="label_edit_photo">Modifier la photo</string>
     <string name="label_edit_cover">Modifier la bannière</string>
     <string name="text_edit">Modifier</string>
-    <string name="text_share">Partager</string>
+    <string name="text_share_android">Partager avec Android</string>
+    <string name="text_share_ios">Partager avec iOS</string>
     <string name="text_search">Cherchez</string>
     <string name="text_add_contact">Ajouter un contact</string>
     <string name="text_finish">Terminer</string>

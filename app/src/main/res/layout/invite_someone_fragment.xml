@@ -36,22 +36,34 @@
             android:layout_marginBottom="@dimen/x_large_margin"
             android:text="@string/text_info_invite_someone"
             android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@+id/button_share"
+            app:layout_constraintBottom_toTopOf="@+id/button_share_android"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView_logo" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_share"
+            android:id="@+id/button_share_android"
             style="@style/AppPrimaryButton.Icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/text_share"
+            android:text="@string/text_share_android"
             app:icon="@drawable/ic_share_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_info" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_share_ios"
+            style="@style/AppPrimaryButton.Icon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/text_share_ios"
+            android:layout_marginTop="@dimen/x_large_margin"
+            app:icon="@drawable/ic_share_black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_share_android" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
