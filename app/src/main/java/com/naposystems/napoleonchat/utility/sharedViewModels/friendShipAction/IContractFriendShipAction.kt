@@ -11,11 +11,13 @@ interface IContractFriendShipAction {
     interface ViewModel {
         fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest)
         fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest)
+        fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest)
     }
 
     interface Repository {
         suspend fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
         suspend fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
+        suspend fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO>
         fun getError(response: Response<FriendshipRequestPutResDTO>): String
         suspend fun addContact(friendShipRequest: FriendShipRequest)
         suspend fun sendNewContactMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
