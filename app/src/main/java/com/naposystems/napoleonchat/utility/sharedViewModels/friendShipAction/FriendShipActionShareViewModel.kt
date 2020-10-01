@@ -84,7 +84,7 @@ class FriendShipActionShareViewModel @Inject constructor(
                             id = 0,
                             webId = "",
                             body = body,
-                            quoted = "quote",
+                            quoted = "",
                             contactId = friendShipRequest.contact.id,
                             updatedAt = 0,
                             createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
@@ -111,6 +111,22 @@ class FriendShipActionShareViewModel @Inject constructor(
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
+                _friendshipRequestWsError.value = context.getString(R.string.text_fail)
+            }
+        }
+    }
+
+    override fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest) {
+        viewModelScope.launch {
+            try {
+                val response = repository.cancelFriendshipRequest(friendShipRequest)
+
+                if (response.isSuccessful) {
+                    _friendshipRequestPutSuccessfully.value = true
+                } else {
+                    _friendshipRequestWsError.value = repository.getError(response)
+                }
+            } catch (ex: Exception) {
                 _friendshipRequestWsError.value = context.getString(R.string.text_fail)
             }
         }

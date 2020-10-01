@@ -81,6 +81,14 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
         disposable.add(disposableNewMessageReceived)
 
+        val disposableCancelOrRejectFriendshipRequest = RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                viewModel.getFriendshipRequests()
+            }
+
+        disposable.add(disposableCancelOrRejectFriendshipRequest)
+
         return binding.root
     }
 
@@ -133,26 +141,33 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         })
     }
 
-    private fun observeFriendshipRequestWsError() {
-        shareViewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
-
-                val list = ArrayList<String>()
-                list.add(it)
-
-                val snackbarUtils = SnackbarUtils(binding.coordinator, list)
-
-                snackbarUtils.showSnackbar()
-            }
-        })
-    }
-
     private fun observeFriendshipRequestPutSuccessfully() {
         shareViewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 viewModel.getFriendshipRequests()
             }
         })
+    }
+
+    private fun observeFriendshipRequestWsError() {
+        shareViewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
+            showError(it)
+        })
+
+        viewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
+            showError(it)
+        })
+    }
+
+    private fun showError(error: String){
+        if (error.isNotEmpty()) {
+            val list = ArrayList<String>()
+            list.add(error)
+
+            val snackbarUtils = SnackbarUtils(binding.coordinator, list)
+
+            snackbarUtils.showSnackbar()
+        }
     }
 
     private fun observeFriendshipRequests() {
@@ -215,7 +230,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 }
 
                 override fun onCancel(friendshipRequest: FriendShipRequest) {
-                    viewModel.cancelFriendshipRequest(friendshipRequest)
+                    shareViewModel.cancelFriendshipRequest(friendshipRequest)
                 }
             })
 

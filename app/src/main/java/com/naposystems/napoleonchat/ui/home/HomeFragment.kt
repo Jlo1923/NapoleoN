@@ -171,6 +171,14 @@ class HomeFragment : Fragment() {
 
         disposable.add(disposableNewMessageReceived)
 
+        val disposableCancelOrRejectFriendshipRequest = RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                viewModel.getFriendshipRequestHome()
+            }
+
+        disposable.add(disposableCancelOrRejectFriendshipRequest)
+
         binding.textViewStatus.isSelected = true
 
         return binding.root
@@ -549,6 +557,7 @@ class HomeFragment : Fragment() {
             }
         })
 
+        binding.recyclerViewFriendshipRequest.itemAnimator = null
         binding.recyclerViewFriendshipRequest.adapter = friendShipRequestReceivedAdapter
     }
 

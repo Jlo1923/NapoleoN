@@ -32,6 +32,11 @@ class FriendShipActionShareRepository @Inject constructor(
         return napoleonApi.putFriendshipRequest(friendShipRequest.id.toString(), request)
     }
 
+    override suspend fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO> {
+        val request = FriendshipRequestPutReqDTO(Constants.FriendshipRequestPutAction.CANCEL.action)
+        return napoleonApi.putFriendshipRequest(friendShipRequest.id.toString(), request)
+    }
+
     override fun getError(response: Response<FriendshipRequestPutResDTO>): String {
         val moshi = Moshi.Builder().build()
         val adapter = moshi.adapter(FriendshipRequestPutErrorDTO::class.java)

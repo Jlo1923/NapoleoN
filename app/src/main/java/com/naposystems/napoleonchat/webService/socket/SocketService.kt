@@ -235,6 +235,8 @@ class SocketService @Inject constructor(
 
                             listenNotifyMessagesReceived(generalChannel)
 
+                            listenCancelOrRejectFriendshipRequestEvent(generalChannel)
+
                             listenMessagesRead(generalChannel)
 
                             listenMessagesDestroy(generalChannel)
@@ -265,7 +267,7 @@ class SocketService @Inject constructor(
                             moshi.adapter(NewMessageEventRes::class.java)
                         val dataEvent = jsonAdapter.fromJson(dataEventRes)
 
-                        dataEvent?.data?.let {newMessageDataEventRes ->
+                        dataEvent?.data?.let { newMessageDataEventRes ->
                             Timber.d("NewMessageEvent: ${newMessageDataEventRes.contactId}")
                             repository.getMyMessages(newMessageDataEventRes.contactId)
                         }
@@ -303,6 +305,22 @@ class SocketService @Inject constructor(
 
                 }
             })
+    }
+
+    private fun listenCancelOrRejectFriendshipRequestEvent(privateChannel: PrivateChannel) {
+        privateChannel.bind(
+            "App\\Events\\CancelOrRejectFriendshipRequestEvent",
+            object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent?) {
+                    RxBus.publish(RxEvent.CancelOrRejectFriendshipRequestEvent())
+                }
+
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
+
+                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) =
+                    Unit
+            }
+        )
     }
 
     private fun listenMessagesRead(privateChannel: PrivateChannel) {
