@@ -9,10 +9,10 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.giphy.sdk.ui.Giphy
 import com.google.android.libraries.places.api.Places
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
@@ -21,7 +21,6 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.emojiManager.EmojiManager
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
-import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -50,7 +49,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
             Stetho.initializeWithDefaults(this)
             Timber.plant(Timber.DebugTree())
         }
-        Fabric.with(this, Crashlytics())
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         EmojiManager.instance.install()
         configEmojiCompat()
         Giphy.configure(this, Constants.GIPHY_API_KEY)
