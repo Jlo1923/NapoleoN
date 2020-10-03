@@ -82,7 +82,7 @@ class HomeFragment : Fragment() {
         viewModelFactory
     }
     private lateinit var binding: HomeFragmentBinding
-    lateinit var adapter: ConversationAdapter
+    lateinit var conversationAdapter: ConversationAdapter
     private lateinit var friendShipRequestReceivedAdapter: FriendShipRequestReceivedAdapter
     private var existConversation: Boolean = false
     private var existFriendShip: Boolean = false
@@ -171,11 +171,12 @@ class HomeFragment : Fragment() {
 
         disposable.add(disposableNewMessageReceived)
 
-        val disposableCancelOrRejectFriendshipRequest = RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                viewModel.getFriendshipRequestHome()
-            }
+        val disposableCancelOrRejectFriendshipRequest =
+            RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    viewModel.getFriendshipRequestHome()
+                }
 
         disposable.add(disposableCancelOrRejectFriendshipRequest)
 
@@ -218,9 +219,10 @@ class HomeFragment : Fragment() {
 
         viewModel.conversations?.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                adapter.submitList(it)
+                conversationAdapter.submitList(it)
                 existConversation = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
+//                Timber.d("*TestHome: Conversation")
                 viewModel.resetConversations()
             }
         })
@@ -235,6 +237,7 @@ class HomeFragment : Fragment() {
                 binding.containerFriendRequestReceived.isVisible = it.isNotEmpty()
                 existFriendShip = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
+//                Timber.d("*TestHome: Friendship")
                 viewModel.getFriendshipQuantity()
             }
         })
@@ -308,7 +311,7 @@ class HomeFragment : Fragment() {
         (activity as MainActivity).getUser()
     }
 
-    private fun validateViewSwitcher(existConversation: Boolean, existFriendShip: Boolean){
+    private fun validateViewSwitcher(existConversation: Boolean, existFriendShip: Boolean) {
         if (!existConversation && !existFriendShip && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
             binding.viewSwitcherChats.showNext()
         } else if ((existConversation || existFriendShip) && binding.viewSwitcherChats.nextView.id == binding.containerContentHome.id) {
@@ -459,7 +462,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        adapter = ConversationAdapter(
+        conversationAdapter = ConversationAdapter(
             object : ConversationAdapter.ClickListener {
                 override fun onClick(item: MessageAndAttachment) {
                     findNavController().navigate(
@@ -494,9 +497,11 @@ class HomeFragment : Fragment() {
             userDisplayFormatShareViewModel.getValUserDisplayFormat(),
             timeFormatShareViewModel.getValTimeFormat()
         )
-        binding.recyclerViewChats.adapter = adapter
-        binding.recyclerViewChats.itemAnimator = ItemAnimator()
-
+        binding.recyclerViewChats.apply {
+            adapter = conversationAdapter
+            isNestedScrollingEnabled = false
+            itemAnimator = ItemAnimator()
+        }
     }
 
     private fun startConversation(contact: Contact) {
@@ -557,7 +562,6 @@ class HomeFragment : Fragment() {
             }
         })
 
-        binding.recyclerViewFriendshipRequest.itemAnimator = null
         binding.recyclerViewFriendshipRequest.adapter = friendShipRequestReceivedAdapter
     }
 
