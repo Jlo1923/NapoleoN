@@ -15,48 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "614707134174-tpobv4vjm6jjuhc474vn7tt52qblpfhn.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDcAkhqRS4BO-BoKM89HiXuR4ruLr8fj1w"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "614707134174-tpobv4vjm6jjuhc474vn7tt52qblpfhn.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "614707134174-spcolgks2tppagmqinphpuiviui5kfbg.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.naposystems.napoleonchat",
-                "app_store_id": "1527883056"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:614707134174:android:d1854ef375569e09fd8c4f",
-        "android_client_info": {
-          "package_name": "com.naposystems.pepito"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "614707134174-ed3cc30ors3vvr4689pvgfvl61g4cs42.apps.googleusercontent.com",
+          "client_id": "614707134174-nh88cq9e51pu1sr10fpl93jf03eo4fvk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.naposystems.pepito",
-            "certificate_hash": "86370d3fae17ee44bc91bd6503dcb838240f25d9"
+            "package_name": "com.naposystems.napoleonchat",
+            "certificate_hash": "689e7ac23b4b31899a868347d711a0940cf84d7f"
           }
         },
         {

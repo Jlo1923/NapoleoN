@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -160,7 +159,6 @@ class NapoleonKeyboardStickerFragment : Fragment() {
                 }
             }
         } catch (e: Exception) {
-            Crashlytics.log(e.localizedMessage)
             Timber.e(e)
         }
     }
