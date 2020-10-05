@@ -11,10 +11,8 @@ import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.media.MediaRecorder
+import android.media.*
+import android.media.audiofx.AcousticEchoCanceler
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -1092,7 +1090,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun showSnackbar(listError: List<String>) {
         val snackbarUtils = SnackbarUtils(binding.coordinator, listError)
-        snackbarUtils.showSnackbar()
+        snackbarUtils.showSnackbar{}
     }
 
     private fun handlerGoDown() {
@@ -1744,7 +1742,8 @@ class ConversationFragment : BaseFragment(),
             )
 
             recorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                AcousticEchoCanceler.isAvailable()
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 val fileOutputStream = FileOutputStream(recordFile!!)
                 setOutputFile(fileOutputStream.fd)

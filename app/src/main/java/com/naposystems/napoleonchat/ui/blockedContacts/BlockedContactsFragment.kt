@@ -99,7 +99,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         observeBlockedContacts()
 
         viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
-            SnackbarUtils(binding.coordinator, it).showSnackbar()
+            SnackbarUtils(binding.coordinator, it).showSnackbar{}
         })
 
         observeListBlockedContacts()

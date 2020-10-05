@@ -131,4 +131,8 @@ class FriendShipActionShareViewModel @Inject constructor(
             }
         }
     }
+
+    override fun clearMessageError() {
+        _friendshipRequestWsError.value = null
+    }
 }

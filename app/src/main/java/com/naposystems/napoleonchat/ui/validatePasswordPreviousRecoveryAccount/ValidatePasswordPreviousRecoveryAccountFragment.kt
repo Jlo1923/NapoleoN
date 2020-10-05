@@ -102,7 +102,7 @@ class ValidatePasswordPreviousRecoveryAccountFragment : Fragment() {
         viewModel.recoveryOlderPasswordCreatingError.observe(viewLifecycleOwner, Observer {
             binding.viewSwitcherRecoveryAccount.showNext()
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
         })
     }
 
