@@ -2,6 +2,7 @@
 <resources>
 
     <attr name="progressbarColor" format="reference" />
+    <attr name="progress" format="integer" />
 
     <declare-styleable name="EnterCodeWidget">
         <attr name="numBoxes" format="integer" />
@@ -169,7 +170,7 @@
     <declare-styleable name="CircleProgressBar">
         <attr name="min" format="integer" />
         <attr name="max" format="integer" />
-        <attr name="progress" format="integer" />
+        <attr name="progress" />
         <attr name="progressbarColor" />
         <attr name="progressBarThickness" format="dimension" />
     </declare-styleable>
@@ -212,6 +213,6 @@
     </declare-styleable>
 
     <declare-styleable name="TextInputParamsCustomView">
-        <attr name="locationTextInput" format="integer"/>
+        <attr name="locationTextInput" format="integer" />
     </declare-styleable>
 </resources>

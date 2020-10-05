@@ -40,15 +40,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_message"
             style="@style/ContainerMyMessageBubble"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="wrap"
-            app:layout_constraintWidth_percent="0.7">
+            app:layout_constraintStart_toStartOf="@id/guideline"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
@@ -90,8 +96,8 @@
                 android:tint="@color/white"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
-                app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
-                app:layout_constraintStart_toStartOf="@id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/imageView_attachment"
                 app:srcCompat="@drawable/ic_play_arrow_black" />
 
@@ -105,7 +111,7 @@
                 app:layout_constraintBottom_toTopOf="@id/textView_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
-                tools:text="@tools:sample/lorem" />
+                tools:text="@tools:sample/lorem[10]" />
 
             <TextView
                 android:id="@+id/textView_date"

@@ -42,7 +42,7 @@ class GroupDateMessageViewHolder constructor(
             else -> {
                 sdf.format(messageDate)
             }
-        } + " "
+        } + context.getString(R.string.unicode_no_break_space)
         binding.executePendingBindings()
     }
 

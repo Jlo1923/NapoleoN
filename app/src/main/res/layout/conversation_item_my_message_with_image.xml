@@ -46,9 +46,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_max="wrap"
-            app:layout_constraintWidth_percent="0.7">
+            app:layout_constraintStart_toStartOf="@id/guideline"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
@@ -88,8 +87,8 @@
                 android:padding="@dimen/small_padding"
                 android:tint="@color/white"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_attachment"
-                app:layout_constraintEnd_toEndOf="@id/imageView_attachment"
-                app:layout_constraintStart_toStartOf="@id/imageView_attachment"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/imageView_attachment"
                 app:srcCompat="@drawable/ic_eye_black" />
 
