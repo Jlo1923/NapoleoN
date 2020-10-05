@@ -100,4 +100,5 @@
     <string name="text_title_attach_doc">Attached document</string>
     <string name="text_attch_doc_not_allowed">The selected file is not allowed</string>
     <string name="text_attch_doc_size_exceed">The selected file exceeds the allowed size (100MB)</string>
+    <string name="unicode_no_break_space" translatable="false">\u00A0</string>
 </resources>

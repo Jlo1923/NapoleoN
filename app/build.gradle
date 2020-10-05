@@ -24,7 +24,7 @@ android {
     defaultConfig {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 9
 
         versionName "1.0.0-interna09"
@@ -140,7 +140,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.3.0-alpha01'
+    implementation 'androidx.appcompat:appcompat:1.3.0-alpha02'
     implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -174,14 +174,14 @@ dependencies {
     implementation "com.airbnb.android:lottie:$lottieVersion"
 
     //Firebase Cloud Messaging
-    implementation 'com.google.firebase:firebase-messaging:20.1.7'
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
 
     //Timber Logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:$version_retrofit"
@@ -259,17 +259,17 @@ dependencies {
     implementation 'com.giphy.sdk:ui:1.2.2'
 
     //Firebase Remote Config
-    implementation 'com.google.firebase:firebase-config:19.1.4'
+    implementation 'com.google.firebase:firebase-config:19.2.0'
 
     //Firebase Storage
-    implementation 'com.google.firebase:firebase-storage:19.1.1'
+    implementation 'com.google.firebase:firebase-storage:19.2.0'
 
     // Location
     implementation "com.google.android.gms:play-services-maps:17.0.0"
-    implementation "com.google.android.gms:play-services-location:17.0.0"
+    implementation "com.google.android.gms:play-services-location:17.1.0"
 
     // Google Places
-    implementation 'com.google.android.libraries.places:places:2.3.0'
+    implementation 'com.google.android.libraries.places:places:2.4.0'
 
     // Google Maps Utils
     implementation 'com.google.maps.android:android-maps-utils:1.2.1'
