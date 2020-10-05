@@ -114,7 +114,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
             bandera = true
         }
 
-        handler.postDelayed(runnable, 400)
+        handler.postDelayed(runnable!!, 400)
     }
 
     private fun lockAction() {

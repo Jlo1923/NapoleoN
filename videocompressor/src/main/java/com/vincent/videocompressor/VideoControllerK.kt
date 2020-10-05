@@ -102,11 +102,11 @@ class VideoControllerK {
             val format = extractor.getTrackFormat(i)
             val mime = format.getString(MediaFormat.KEY_MIME)
             if (audio) {
-                if (mime.startsWith("audio/")) {
+                if (mime!!.startsWith("audio/")) {
                     return i
                 }
             } else {
-                if (mime.startsWith("video/")) {
+                if (mime!!.startsWith("video/")) {
                     return i
                 }
             }
@@ -348,7 +348,8 @@ class VideoControllerK {
                             inputSurface.makeCurrent()
                             encoder.start()
                             decoder =
-                                MediaCodec.createDecoderByType(inputFormat.getString(MediaFormat.KEY_MIME))
+                                MediaCodec.createDecoderByType(inputFormat.getString(MediaFormat.KEY_MIME)
+                                    .toString())
                             outputSurface = OutputSurface()
                             decoder.configure(inputFormat, outputSurface.surface, null, 0)
                             decoder.start()
@@ -566,7 +567,7 @@ class VideoControllerK {
                                                             outputSurface.awaitNewImage()
                                                         } catch (e: Exception) {
                                                             errorWait = true
-                                                            Log.e("tmessages", e.message)
+                                                            Log.e("tmessages", e.message.toString())
                                                         }
                                                         if (!errorWait) {
                                                             outputSurface.drawImage(false)
@@ -600,7 +601,7 @@ class VideoControllerK {
                                 videoStartTime = videoTime
                             }
                         } catch (e: Exception) {
-                            Log.e("tmessages", e.message)
+                            Log.e("tmessages", e.message.toString())
                             error = true
                         }
                         extractor.unselectTrack(videoIndex)
@@ -642,7 +643,7 @@ class VideoControllerK {
                 }
             } catch (e: Exception) {
                 error = true
-                Log.e("tmessages", e.message)
+                Log.e("tmessages", e.message.toString())
                 offer(VideoCompressResult.Fail)
             } finally {
                 extractor?.release()
@@ -650,7 +651,7 @@ class VideoControllerK {
                     try {
                         mediaMixer.finishMovie(false)
                     } catch (e: Exception) {
-                        Log.e("tmessages", e.message)
+                        Log.e("tmessages", e.message.toString())
                     }
                 }
                 Log.e(

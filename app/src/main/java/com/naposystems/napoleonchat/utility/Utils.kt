@@ -626,9 +626,9 @@ class Utils {
             )
 
             val view = vwToast.view
-            view.setBackgroundResource(R.drawable.bd_rounded_toast)
+            view!!.setBackgroundResource(R.drawable.bd_rounded_toast)
 
-            val tv = vwToast.view.findViewById<View>(android.R.id.message) as TextView
+            val tv = vwToast.view!!.findViewById<View>(android.R.id.message) as TextView
             tv.gravity = Gravity.CENTER
             tv.textSize = 14F
             vwToast.show()
