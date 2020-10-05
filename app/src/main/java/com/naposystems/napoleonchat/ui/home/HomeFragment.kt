@@ -222,7 +222,6 @@ class HomeFragment : Fragment() {
                 conversationAdapter.submitList(it)
                 existConversation = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
-//                Timber.d("*TestHome: Conversation")
                 viewModel.resetConversations()
             }
         })
