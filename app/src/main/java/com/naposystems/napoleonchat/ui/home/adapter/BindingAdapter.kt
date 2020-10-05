@@ -163,15 +163,20 @@ fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAtt
     }
 }
 
-@BindingAdapter("unreadMessages")
-fun bindUnreadMessages(textView: TextView, unreadMessages: Int) {
+@BindingAdapter("unreadMessages", "typeMessage")
+fun bindUnreadMessages(textView: TextView, unreadMessages: Int, typeMessage : Int) {
     textView.visibility = View.VISIBLE
     when (unreadMessages) {
         0 -> {
             textView.visibility = View.GONE
         }
         in 1..99 -> {
-            textView.text = unreadMessages.toString()
+            if (typeMessage == Constants.MessageType.MESSAGE.type || typeMessage == Constants.MessageType.MESSAGES_GROUP_DATE.type) {
+                textView.visibility = View.VISIBLE
+                textView.text = unreadMessages.toString()
+            } else {
+                textView.visibility = View.GONE
+            }
         }
         else -> {
             val max = "+99"
@@ -190,6 +195,8 @@ fun bindStatusMessage(imageView: ImageView, message: Message) {
                 val drawable =
                     context.resources.getDrawable(drawableId(message.status), context.theme)
                 imageView.setImageDrawable(drawable)
+            } else {
+                imageView.visibility = View.GONE
             }
         }
         else -> {

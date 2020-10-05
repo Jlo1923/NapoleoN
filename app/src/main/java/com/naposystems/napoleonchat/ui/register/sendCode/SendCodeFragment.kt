@@ -75,7 +75,7 @@ class SendCodeFragment : Fragment() {
             if (it.isNotEmpty()) {
                 binding.viewSwitcher.showNext()
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
+                snackbarUtils.showSnackbar{}
             }
         })
 

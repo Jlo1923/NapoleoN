@@ -14,7 +14,7 @@ class SnackbarUtils(
     private var hasFinishedShowingErrors = false
     private lateinit var snackbar: Snackbar
 
-    fun showSnackbar() {
+    fun showSnackbar(ok : (Boolean) -> Unit) {
         if (errorList.isNotEmpty()) {
             snackbar =
                 Snackbar.make(coordinatorLayout, errorList[errorIndex], Snackbar.LENGTH_INDEFINITE)
@@ -24,7 +24,7 @@ class SnackbarUtils(
                         }
                     })
                     .setAction(R.string.text_okay) {
-                        // Intentionally empty
+                        ok(true)
                     }
             val snackbarView = snackbar.view
 
@@ -38,7 +38,7 @@ class SnackbarUtils(
     private fun snackbarErrorHandler() {
         if (errorIndex < errorList.size - 1 && !hasFinishedShowingErrors) {
             errorIndex += 1
-            showSnackbar()
+            showSnackbar{}
         } else {
             errorIndex = 0
             hasFinishedShowingErrors = true

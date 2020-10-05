@@ -123,7 +123,7 @@ class ContactUsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.pqrsCreatingErrors.observe(viewLifecycleOwner, Observer {
-            SnackbarUtils(binding.coordinator, it).showSnackbar()
+            SnackbarUtils(binding.coordinator, it).showSnackbar{}
             enableForm()
         })
 

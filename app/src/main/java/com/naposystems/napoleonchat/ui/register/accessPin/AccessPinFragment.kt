@@ -85,7 +85,7 @@ class AccessPinFragment : Fragment() {
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
+                snackbarUtils.showSnackbar{}
                 enableAllWidgets()
                 binding.viewSwitcher.showPrevious()
             }

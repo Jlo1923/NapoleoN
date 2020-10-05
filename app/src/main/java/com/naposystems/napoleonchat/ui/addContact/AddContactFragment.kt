@@ -166,7 +166,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
             val snackbarUtils = SnackbarUtils(binding.coordinator, list)
 
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
         }
     }
 

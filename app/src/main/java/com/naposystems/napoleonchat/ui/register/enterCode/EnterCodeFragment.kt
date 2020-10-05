@@ -118,7 +118,7 @@ class EnterCodeFragment :
             if (!it.isNullOrEmpty()) {
                 binding.viewSwitcher.showNext()
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
+                snackbarUtils.showSnackbar{}
             }
         })
 
