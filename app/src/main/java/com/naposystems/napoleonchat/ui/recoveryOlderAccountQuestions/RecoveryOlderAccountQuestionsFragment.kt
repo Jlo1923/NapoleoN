@@ -114,7 +114,7 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         viewModel.recoveryOlderQuestionsCreatingError.observe(viewLifecycleOwner, Observer {
             binding.viewSwitcherRecoveryAccount.showNext()
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
         })
 
         viewModel.recoveryAnswersCreatingErrors.observe(viewLifecycleOwner, Observer {
@@ -133,7 +133,7 @@ class RecoveryOlderAccountQuestionsFragment : Fragment() {
         viewModel.recoveryOlderAnswersCreatingError.observe(viewLifecycleOwner, Observer {
             binding.viewSwitcherRecoveryAccount.showNext()
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
         })
     }
 

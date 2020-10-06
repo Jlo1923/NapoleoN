@@ -283,7 +283,7 @@ class ProfileFragment : BaseFragment() {
         userProfileShareViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
+                snackbarUtils.showSnackbar{}
                 hideAvatarProgressBar()
             }
         })
