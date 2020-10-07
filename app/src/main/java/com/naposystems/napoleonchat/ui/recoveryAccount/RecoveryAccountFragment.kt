@@ -143,7 +143,7 @@ class RecoveryAccountFragment : Fragment() {
 
         viewModel.recoveryQuestionsCreatingError.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
             binding.viewSwitcherRecoveryAccount.showPrevious()
         })
 

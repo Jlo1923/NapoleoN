@@ -71,6 +71,7 @@
             app:layout_constraintEnd_toEndOf="@id/textView_hora"
             app:layout_constraintTop_toTopOf="@+id/linear_container"
             app:unreadMessages="@{conversation.messagesUnReads}"
+            app:typeMessage="@{conversation.message.messageType}"
             tools:text="100"
             tools:visibility="visible" />
 

@@ -12,6 +12,7 @@ interface IContractFriendShipAction {
         fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest)
         fun acceptFriendshipRequest(friendShipRequest: FriendShipRequest)
         fun cancelFriendshipRequest(friendShipRequest: FriendShipRequest)
+        fun clearMessageError()
     }
 
     interface Repository {

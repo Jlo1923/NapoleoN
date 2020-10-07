@@ -254,7 +254,7 @@ class ContactProfileFragment : BaseFragment() {
         viewModel.muteConversationWsError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
+                snackbarUtils.showSnackbar{}
             }
         })
 
