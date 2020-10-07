@@ -2,6 +2,7 @@
 <resources>
     <string name="text_call">Call</string>
     <string name="text_video_call">Video call</string>
+    <string name="text_download_gif">Download GIF</string>
     <string name="text_schedule">Schedule</string>
     <string name="text_see_contact">See contact</string>
     <string name="text_write_message">Write message</string>

@@ -1258,4 +1258,13 @@
         <item name="android:textColor">?attr/attrTextColorMessageAndTimeHome</item>
     </style>
 
+    <style name="imageAvatarItem">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:layout_marginStart">@dimen/normal_margin</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+        <item name="android:background">@drawable/border_avatar_contact</item>
+    </style>
+
 </resources>

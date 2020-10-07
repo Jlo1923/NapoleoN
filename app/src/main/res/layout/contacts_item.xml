@@ -27,17 +27,12 @@
 
         <ImageView
             android:id="@+id/imageView_user_image"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="@dimen/normal_margin"
-            android:layout_marginTop="@dimen/small_margin"
-            android:layout_marginBottom="@dimen/small_margin"
-            android:background="@drawable/border_avatar_contact"
+            style="@style/imageAvatarItem"
             app:avatar="@{contact}"
-            tools:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            tools:scaleType="fitCenter"
             tools:src="@drawable/ic_default_avatar" />
 
         <TextView
@@ -49,14 +44,14 @@
             android:layout_marginEnd="@dimen/normal_margin"
             android:ellipsize="end"
             android:lines="1"
-            app:name="@{contact}"
             app:contactIdNameFormat="@{contact.id}"
-            app:nameFormatContact="@{viewModel.userDisplayFormat}"
             app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
             app:layout_constraintEnd_toStartOf="@id/button_more"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
+            app:name="@{contact}"
+            app:nameFormatContact="@{viewModel.userDisplayFormat}"
             tools:text="@tools:sample/full_names" />
 
         <TextView
@@ -69,12 +64,12 @@
             android:ellipsize="end"
             android:lines="1"
             android:textColor="?attr/attrColorButtonTint"
+            app:contactIdNickNameFormat="@{contact.id}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_more"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
             app:nickNameFormat="@{viewModel.userDisplayFormat}"
-            app:contactIdNickNameFormat="@{contact.id}"
             app:nickname="@{contact}"
             tools:text="@tools:sample/first_names" />
 
@@ -83,8 +78,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/normal_margin"
-            android:padding="@dimen/x_small_padding"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="@dimen/x_small_padding"
             android:tint="@color/colorSecondaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
