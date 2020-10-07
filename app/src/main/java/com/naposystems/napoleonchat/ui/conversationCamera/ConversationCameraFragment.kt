@@ -355,8 +355,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
             videoFile,
             mainExecutor,
             object : VideoCapture.OnVideoSavedCallback {
-
-                override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
+                override fun onVideoSaved(file: File) {
                     if (!isBackPressed) {
                         val attachment = Attachment(
                             id = 0,
