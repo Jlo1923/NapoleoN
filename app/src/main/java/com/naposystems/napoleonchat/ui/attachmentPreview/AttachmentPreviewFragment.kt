@@ -138,7 +138,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
         binding.containerVideoView.setOnClickListener {
             if (!isPlayingVideo) {
-                binding.imageViewPlay.startAnimation(animationFadeOut)
+//                binding.imageViewPlay.startAnimation(animationFadeOut)
                 binding.imageViewPlay.visibility = View.GONE
                 binding.videoView.start()
                 mHandler.postDelayed(mRunnable, 0)
@@ -189,7 +189,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
     }
 
     private fun showPlayButton() {
-        binding.imageViewPlay.startAnimation(animationFadeIn)
+//        binding.imageViewPlay.startAnimation(animationFadeIn)
         binding.imageViewPlay.visibility = View.VISIBLE
         binding.videoView.pause()
     }
