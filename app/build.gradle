@@ -13,7 +13,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file('D:\\Proyectos_NN\\Desarrollo\\Llaves JKS Android\\pepito.jks')
+            storeFile file('C:\\Users\\android1\\Documents\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
@@ -189,8 +189,6 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:$play_services_maps_version"
 
     //AndroidX**************************************************************************************
-    //AppCompat
-    implementation "androidx.appcompat:appcompat:$app_compat_version"
 
     //Biometric Prompt
     implementation "androidx.biometric:biometric:$biometric_version"
