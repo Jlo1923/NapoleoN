@@ -2,7 +2,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.attachmentPreview.AttachmentPreviewFragment">
 
     <data>
 
@@ -17,8 +18,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.attachmentPreview.AttachmentPreviewFragment">
+        android:layout_height="match_parent">
 
         <ViewSwitcher
             android:id="@+id/viewSwitcher"
@@ -42,7 +42,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:background="@color/black"
-                    android:scaleType="centerInside"
                     android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
                     app:attachmentImage="@{viewModel.attachmentTaken}"
                     tools:src="@drawable/vertical_photo" />
@@ -126,7 +125,6 @@
                 app:layout_constraintTop_toTopOf="@id/seekbar"
                 tools:text="10:34" />
         </LinearLayout>
-
 
         <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
             android:id="@+id/inputPanel"

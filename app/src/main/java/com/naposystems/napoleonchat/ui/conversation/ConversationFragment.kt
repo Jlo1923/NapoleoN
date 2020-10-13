@@ -575,11 +575,13 @@ class ConversationFragment : BaseFragment(),
                         hideButtonRecord()
                         hideImageButtonCamera()
                         isEditTextFilled = true
+                        containerWrap()
                     } else if (text.isEmpty()) {
                         hideImageButtonSend()
                         showButtonRecord()
                         showImageButtonCamera()
                         isEditTextFilled = false
+                        containerNoWrap()
                     }
                 }
             }

@@ -8,4 +8,5 @@
         android:endColor="@color/white"
         android:gradientRadius="@dimen/small_radius"
         android:type="radial" />
+    <corners android:radius="@dimen/small_radius"/>
 </shape>

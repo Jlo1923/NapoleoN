@@ -169,10 +169,6 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
             }
         })
 
-        binding.scrollView.setOnClickListener {
-
-        }
-
         binding.executePendingBindings()
 
         if (args.message.isNotEmpty()) {
