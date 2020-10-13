@@ -100,7 +100,7 @@ class RoomModule {
 
     @Provides
     @Singleton
-    fun provideQuoteMessageDao(napoleonRoomDatabase: NapoleonRoomDatabase): QuoteDao {
+    fun provideQuoteDao(napoleonRoomDatabase: NapoleonRoomDatabase): QuoteDao {
         return napoleonRoomDatabase.quoteDao()
     }
 
