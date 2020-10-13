@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.addContact.adapter
 
-import android.graphics.drawable.Animatable
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.button.MaterialButton
@@ -9,23 +8,19 @@ import com.naposystems.napoleonchat.entity.addContact.FriendshipRequestTitle
 
 @BindingAdapter("haveFriendshipRequest")
 fun haveFriendShipRequest(button: MaterialButton, haveFriendShipRequest: Boolean) {
-
     val context = button.context
 
-    val animatedVectorDrawableCompat =
-        button.icon as Animatable
-
     if (haveFriendShipRequest) {
-        animatedVectorDrawableCompat.start()
         button.setTextColor(context.getColor(R.color.green))
         button.text = context.resources.getString(R.string.text_sent)
+        button.setIconResource(R.drawable.ic_check_primary)
         button.setStrokeColorResource(R.color.green)
     } else {
         button.setTextColor(context.getColor(R.color.buttonTint))
         button.text = context.resources.getString(R.string.text_add)
+        button.setIconResource(R.drawable.ic_add_primary)
         button.setStrokeColorResource(R.color.buttonTint)
     }
-
 }
 
 @BindingAdapter("titleFriendshipRequest")

@@ -31,4 +31,5 @@ class RxEvent {
     data class MessagesToEliminate(val id: List<MessageAndAttachment>)
     data class EnableButtonPlayAudio(val state: Boolean)
     data class ContactCancelCall(val channel: String)
+    class ContactBlockOrDelete
 }
