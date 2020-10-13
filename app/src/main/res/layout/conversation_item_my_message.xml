@@ -102,6 +102,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- BUTTON ATTACHMENT STATE -->
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/imageButton_send"
             android:layout_width="36dp"

@@ -67,7 +67,6 @@ class MyMessageImageViewHolder constructor(
                 val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
 
                 transformationList.add(CenterCrop())
-                transformationList.add(RoundedCorners(8))
 
                 when (attachment.type) {
                     Constants.AttachmentType.IMAGE.type,
@@ -82,6 +81,8 @@ class MyMessageImageViewHolder constructor(
                         binding.containerBrandGiphy.visibility = View.VISIBLE
                     }
                 }
+
+                transformationList.add(RoundedCorners(8))
 
                 Glide.with(binding.imageViewAttachment)
                     .load(attachment.body)
