@@ -82,7 +82,7 @@
                     android:textAlignment="textStart"
                     android:textAllCaps="true"
                     app:haveFriendshipRequest="@{contact.haveFriendshipRequest}"
-                    app:icon="@drawable/anim_add_to_check" />
+                    app:icon="@drawable/ic_add_primary" />
 
                 <ProgressBar
                     android:id="@+id/progressBar"

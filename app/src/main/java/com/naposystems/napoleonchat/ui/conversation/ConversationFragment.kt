@@ -165,17 +165,6 @@ class ConversationFragment : BaseFragment(),
     private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
     private var showCase : ShowCaseManager? = null
 
-    private val mediaPlayer: MediaPlayer by lazy {
-        MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build()
-            )
-        }
-    }
-
     private var clipboard: ClipboardManager? = null
     private var recorder: MediaRecorder? = null
     private var recordFile: File? = null
@@ -439,6 +428,24 @@ class ConversationFragment : BaseFragment(),
         binding.textViewUserStatus.isSelected = true
         MediaPlayerManager.setContext(requireContext())
         MediaPlayerManager.initializeBluetoothManager()
+
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    findNavController().popBackStack()
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
+        val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onRecorderReleased()
+                binding.inputPanel.cancelRecording()
+            }
+
+        disposable.add(disposableIncomingCall)
 
         return binding.root
     }
@@ -1684,9 +1691,12 @@ class ConversationFragment : BaseFragment(),
         icon.draw(c)
     }
 
+    @InternalCoroutinesApi
     override fun onPause() {
         super.onPause()
-        Timber.d("onPause")
+        if (binding.inputPanel.getEditTex().text.toString().count() <= 0) {
+            binding.inputPanel.cancelRecording()
+        }
         Data.contactId = 0
         stopRecording()
         showCase?.setPaused(true)
