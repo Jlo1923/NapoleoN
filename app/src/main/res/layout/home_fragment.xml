@@ -75,7 +75,7 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    tools:text="Disponible" />
+                    tools:text="@tools:sample/lorem[10]" />
 
                 <ImageButton
                     android:id="@+id/imageButton_status_end_icon"
@@ -86,6 +86,19 @@
 
             </LinearLayout>
 
+            <!-- RETURN CALL -->
+            <TextView
+                android:id="@+id/textView_return_call"
+                style="@style/TextViewReturnCall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/text_return_call"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_status"
+                tools:visibility="visible" />
+
             <ViewSwitcher
                 android:id="@+id/viewSwitcher_chats"
                 android:layout_width="match_parent"
@@ -93,7 +106,7 @@
                 android:inAnimation="@anim/fade_in"
                 android:outAnimation="@anim/fade_out"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/container_status">
+                app:layout_constraintTop_toBottomOf="@id/textView_return_call">
 
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/container_content_home"

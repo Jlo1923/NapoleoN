@@ -81,7 +81,7 @@
     <string name="text_yesterday">Yesterday</string>
     <string name="text_close">Close</string>
     <string name="text_confirm">Confirm</string>
-    <string name="text_hang_up_call">Reject</string>
+    <string name="text_hang_up_call">Hang up</string>
     <string name="text_answer_call">Answer</string>
     <string name="text_update_title">A new version of NapoleoN is available</string>
     <string name="text_update_message">Version %1$s is now available on the Play Store</string>
@@ -101,4 +101,5 @@
     <string name="text_attch_doc_not_allowed">The selected file is not allowed</string>
     <string name="text_attch_doc_size_exceed">The selected file exceeds the allowed size (100MB)</string>
     <string name="unicode_no_break_space" translatable="false">\u00A0</string>
+    <string name="text_reject">Reject</string>
 </resources>

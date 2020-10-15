@@ -88,7 +88,6 @@ class CreateAccountRepository @Inject constructor(
     }
 
 
-
     fun get422Error(response: Response<CreateAccountResDTO>): ArrayList<String> {
         val moshi = Moshi.Builder().build()
 

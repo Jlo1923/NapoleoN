@@ -61,4 +61,8 @@
     <string name="text_video_call_rejected">It has rejected the request for the video call</string>
     <string name="text_section_conversations">My Conversations</string>
     <string name="text_section_see_more">see all</string>
+    <string name="text_secure_outgoing_call">Secure outgoing call</string>
+    <string name="text_secure_outgoing_video_call">Secure outgoing video call</string>
+    <string name="text_call_in_progress">Ongoing call</string>
+    <string name="text_return_call">Return call</string>
 </resources>

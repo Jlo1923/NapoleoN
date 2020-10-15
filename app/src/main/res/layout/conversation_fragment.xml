@@ -22,8 +22,8 @@
 
         <com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView
             android:id="@+id/scrollView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:fillViewport="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -114,6 +114,18 @@
                     tools:ignore="ContentDescription" />
 
             </LinearLayout>
+            <!-- RETURN CALL -->
+            <TextView
+                android:id="@+id/textView_return_call"
+                style="@style/TextViewReturnCall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/text_return_call"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_status"
+                tools:visibility="visible" />
 
             <!-- INPUT PANEL -->
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
