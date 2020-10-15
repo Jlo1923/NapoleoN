@@ -31,7 +31,7 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
 
     abstract fun messageDao(): MessageDao
 
-    abstract fun quoteMessageDao(): QuoteDao
+    abstract fun quoteDao(): QuoteDao
 
     abstract fun attachmentDao(): AttachmentDao
 

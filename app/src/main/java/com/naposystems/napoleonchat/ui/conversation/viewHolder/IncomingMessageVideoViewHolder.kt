@@ -62,8 +62,8 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
                     .thumbnail(0.1f)
                     .transform(
                         CenterCrop(),
-                        RoundedCorners(8),
-                        BlurTransformation(context)
+                        BlurTransformation(context),
+                        RoundedCorners(8)
                     )
                     .into(binding.imageViewAttachment)
             }

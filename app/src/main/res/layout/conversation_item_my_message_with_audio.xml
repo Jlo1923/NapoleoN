@@ -103,16 +103,11 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- BUTTON ATTACHMENT STATE -->
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/imageButton_state"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:background="@drawable/bg_black_40"
-            android:padding="@dimen/x_small_padding"
-            android:scaleType="fitCenter"
+            style="@style/ButtonState"
             android:src="@drawable/ic_file_upload_black"
-            android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/container_message"
             app:layout_constraintEnd_toStartOf="@id/container_message"
             app:layout_constraintTop_toTopOf="@id/container_message"
@@ -121,29 +116,17 @@
 
         <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="0dp"
-            android:padding="0dp"
-            android:visibility="gone"
+            style="@style/CircleProgressBar"
             app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
             app:layout_constraintEnd_toEndOf="@id/imageButton_state"
             app:layout_constraintStart_toStartOf="@id/imageButton_state"
             app:layout_constraintTop_toTopOf="@id/imageButton_state"
-            custom:progress="0"
-            custom:progressBarThickness="3dp"
-            custom:progressbarColor="?attr/attrTintProgressBar"
             tools:progress="70"
             tools:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/progressBar_indeterminate"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
-            android:layout_margin="0dp"
-            android:indeterminate="true"
-            android:padding="0dp"
-            android:visibility="gone"
+            style="@style/ProgressIndeterminate"
             app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
             app:layout_constraintEnd_toEndOf="@id/imageButton_state"
             app:layout_constraintStart_toStartOf="@id/imageButton_state"

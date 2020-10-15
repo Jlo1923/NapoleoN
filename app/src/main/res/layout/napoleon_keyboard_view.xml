@@ -21,11 +21,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/container_bottom_navigation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:padding="@dimen/small_padding"
+            android:gravity="center"
             android:background="?attr/attrBackgroundColorBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,70 +37,62 @@
             <!-- SEARCH ICON -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:tint="?attr/attrActionBarItemBackground"
                 android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_search_white"
                 tools:visibility="visible" />
 
-            <!-- EMOJIS -->
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imageView_emoji"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:tint="?attr/attrActionBarItemBackground"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/imageView_sticker"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/imageView_search"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_insert_emoticon_black"
-                app:tint="?attr/attrBackgroundColorPrimary" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1">
 
-            <!-- STICKER -->
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imageView_sticker"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="@dimen/small_margin"
-                android:layout_marginEnd="@dimen/small_margin"
-                android:tint="?attr/attrActionBarItemBackground"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/imageView_gif"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/imageView_emoji"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_notification_icon" />
+                <!-- EMOJIS -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageView_emoji"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:tint="?attr/attrActionBarItemBackground"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:srcCompat="@drawable/ic_insert_emoticon_black"
+                    app:tint="?attr/attrBackgroundColorPrimary" />
 
-            <!-- GIF -->
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imageView_gif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:tint="?attr/attrActionBarItemBackground"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/imageView_backspace"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/imageView_sticker"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_gif_black" />
+                <!-- STICKER -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageView_sticker"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="@dimen/large_margin"
+                    android:layout_marginEnd="@dimen/large_margin"
+                    android:tint="?attr/attrActionBarItemBackground"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:srcCompat="@drawable/ic_notification_icon" />
+
+                <!-- GIF -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageView_gif"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:tint="?attr/attrActionBarItemBackground"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:srcCompat="@drawable/ic_gif_black" />
+
+
+            </LinearLayout>
 
             <!-- DELETE -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_backspace"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:tint="?attr/attrActionBarItemBackground"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_backspace_black" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

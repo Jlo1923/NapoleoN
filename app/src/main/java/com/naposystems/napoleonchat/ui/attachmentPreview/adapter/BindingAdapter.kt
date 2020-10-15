@@ -23,7 +23,6 @@ fun bindGalleryImage(imageView: ImageView, attachment: Attachment?) {
             Glide.with(imageView)
                 .asGif()
                 .load(attachment)
-                .centerInside()
                 .into(imageView)
         }
     }

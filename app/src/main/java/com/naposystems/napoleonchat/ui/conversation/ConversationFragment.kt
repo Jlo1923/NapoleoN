@@ -167,17 +167,6 @@ class ConversationFragment : BaseFragment(),
     private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
     private var showCase: ShowCaseManager? = null
 
-    private val mediaPlayer: MediaPlayer by lazy {
-        MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build()
-            )
-        }
-    }
-
     private var clipboard: ClipboardManager? = null
     private var recorder: MediaRecorder? = null
     private var recordFile: File? = null
@@ -462,6 +451,24 @@ class ConversationFragment : BaseFragment(),
         MediaPlayerManager.setContext(requireContext())
         MediaPlayerManager.initializeBluetoothManager()
 
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    findNavController().popBackStack()
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
+        val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onRecorderReleased()
+                binding.inputPanel.cancelRecording()
+            }
+
+        disposable.add(disposableIncomingCall)
+
         return binding.root
     }
 
@@ -597,11 +604,13 @@ class ConversationFragment : BaseFragment(),
                         hideButtonRecord()
                         hideImageButtonCamera()
                         isEditTextFilled = true
+                        containerWrap()
                     } else if (text.isEmpty()) {
                         hideImageButtonSend()
                         showButtonRecord()
                         showImageButtonCamera()
                         isEditTextFilled = false
+                        containerNoWrap()
                     }
                 }
             }
@@ -1715,9 +1724,12 @@ class ConversationFragment : BaseFragment(),
         icon.draw(c)
     }
 
+    @InternalCoroutinesApi
     override fun onPause() {
         super.onPause()
-        Timber.d("onPause")
+        if (binding.inputPanel.getEditTex().text.toString().count() <= 0) {
+            binding.inputPanel.cancelRecording()
+        }
         Data.contactId = 0
         stopRecording()
         showCase?.setPaused(true)
@@ -1784,8 +1796,6 @@ class ConversationFragment : BaseFragment(),
                 try {
                     prepare()
 
-                    isRecordingAudio = true
-
                     mRecordingAudioRunnable = Runnable {
                         if (mRecordingAudioRunnable != null) {
                             val oneSecond = TimeUnit.SECONDS.toMillis(1)
@@ -1793,8 +1803,10 @@ class ConversationFragment : BaseFragment(),
                             binding.inputPanel.setRecordingTime(recordingTime)
 
                             if (recordingTime == Constants.MAX_AUDIO_RECORD_TIME) {
+                                isRecordingAudio = false
                                 binding.inputPanel.releaseRecordingLock()
                             } else {
+                                isRecordingAudio = true
                                 mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
                             }
                         }
@@ -1884,9 +1896,12 @@ class ConversationFragment : BaseFragment(),
     override fun onSendButtonClicked() {
         when {
             binding.inputPanel.isRecordingInLockedMode() && recordingTime >= minTimeRecording -> {
+                Timber.d("onSendButtonClicked 1")
                 binding.inputPanel.releaseRecordingLock()
             }
             !isRecordingAudio -> {
+                Timber.d("onSendButtonClicked 2")
+
                 val quote = binding.inputPanel.getQuote()
 
                 viewModel.saveMessageLocally(
@@ -1901,6 +1916,7 @@ class ConversationFragment : BaseFragment(),
                 binding.inputPanel.closeQuote()
             }
             else -> {
+                Timber.d("onSendButtonClicked 3")
                 binding.inputPanel.cancelRecording()
             }
         }

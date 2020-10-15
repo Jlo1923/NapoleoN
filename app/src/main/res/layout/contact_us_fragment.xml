@@ -35,7 +35,7 @@
                     app:layout_constraintStart_toStartOf="@id/guideline_start"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatSpinner
+                <Spinner
                     android:id="@+id/spinner_category"
                     style="@style/BackgroundSpinner"
                     android:layout_width="0dp"

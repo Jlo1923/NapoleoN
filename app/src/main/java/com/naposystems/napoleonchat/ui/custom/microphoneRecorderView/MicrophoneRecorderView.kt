@@ -76,7 +76,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
                     if (bandera) {
                         bandera = false
 
-                        aLaMierda()
+                        blockButtonSend()
 
                         state = State.RUNNING_HELD
                         binding.imageButtonAudioToggle.isVisible = false
@@ -109,7 +109,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
         return false
     }
 
-    private fun aLaMierda() {
+    private fun blockButtonSend() {
         runnable = Runnable {
             bandera = true
         }
