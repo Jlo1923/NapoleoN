@@ -21,71 +21,72 @@
         android:background="?attr/attrBackgroundColorBackground"
         tools:context=".ui.securitySettings.SecuritySettingsFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <!-- CONVERSATION TITLE -->
             <TextView
                 android:id="@+id/textView_conversation"
                 style="@style/SmallBodyTextView"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/attrBackgroundSectionColor"
                 android:padding="@dimen/small_padding"
-                android:text="@string/text_conversation"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:text="@string/text_conversation" />
 
             <!-- OPTION SELF DESTRUCT TIME -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_message_self_destruct"
                 style="@style/Option"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView_conversation">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <!-- START ICON -->
                 <ImageView
                     android:id="@+id/imageView_message_option_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_timer_black" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/normal_margin"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_weight="1">
+
+                    <!-- OPTION TITLE -->
+                    <TextView
+                        android:id="@+id/textView_message_title"
+                        style="@style/OptionTitle"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_default_message_self_destruct_time"/>
+
+                    <!-- OPTION VALUE -->
+                    <TextView
+                        android:id="@+id/textView_message_self_destruct_time"
+                        style="@style/OptionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:selfDestructTime="@{selfDestructViewModel.selfDestructTimeGlobal}"
+                        tools:text="1 día" />
+
+                </LinearLayout>
 
                 <!-- EDIT ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_message_option_end_icon"
                     style="@style/OptionEndIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_edit_black" />
 
-                <!-- OPTION TITLE -->
-                <TextView
-                    android:id="@+id/textView_message_title"
-                    style="@style/OptionTitle"
-                    android:text="@string/text_default_message_self_destruct_time"
-                    app:layout_constraintBottom_toTopOf="@id/textView_message_self_destruct_time"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_message_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@id/imageView_message_option_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- OPTION VALUE -->
-                <TextView
-                    android:id="@+id/textView_message_self_destruct_time"
-                    style="@style/OptionValue"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/textView_message_title"
-                    app:layout_constraintStart_toStartOf="@id/textView_message_title"
-                    app:layout_constraintTop_toBottomOf="@id/textView_message_title"
-                    app:selfDestructTime="@{selfDestructViewModel.selfDestructTimeGlobal}"
-                    tools:text="1 día" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <!-- OPTION ALLOW DOWNLOAD ATTACHMENTS -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -131,202 +132,191 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- OPTION MESSAGE SELF DESTRUCT TIME NOT SEND -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_message_self_destruct_time_not_sent"
                 style="@style/Option.WithOutLine"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_allow_download">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <!-- START ICON -->
                 <ImageView
                     android:id="@+id/imageView_message_not_send_option_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_timer_black" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/normal_margin"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_weight="1">
+
+                    <!-- OPTION TITLE -->
+                    <TextView
+                        android:id="@+id/textView_message_not_send_title"
+                        style="@style/OptionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:text="@string/text_message_self_destruct_time_not_send" />
+
+                    <!-- OPTION VALUE -->
+                    <TextView
+                        android:id="@+id/textView_message_not_send_time"
+                        style="@style/OptionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        app:messageSelfDestructTimeNotSent="@{selfDestructViewModel.messageSelfDestructTimeNotSent}"
+                        tools:text="1 día" />
+
+                </LinearLayout>
 
                 <!-- EDIT ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_message_not_send_option_end_icon"
                     style="@style/OptionEndIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_edit_black" />
 
-                <!-- OPTION TITLE -->
-                <TextView
-                    android:id="@+id/textView_message_not_send_title"
-                    style="@style/OptionTitle"
-                    android:text="@string/text_message_self_destruct_time_not_send"
-                    app:layout_constraintBottom_toTopOf="@id/textView_message_not_send_time"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_message_not_send_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@id/imageView_message_not_send_option_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- OPTION VALUE -->
-                <TextView
-                    android:id="@+id/textView_message_not_send_time"
-                    style="@style/OptionValue"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/textView_message_not_send_title"
-                    app:layout_constraintStart_toStartOf="@id/textView_message_not_send_title"
-                    app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct_time_not_sent"
-                    app:messageSelfDestructTimeNotSent="@{selfDestructViewModel.messageSelfDestructTimeNotSent}"
-                    tools:text="1 día" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <!-- SECURITY TITLE -->
             <TextView
                 android:id="@+id/textView_security"
                 style="@style/SmallBodyTextView"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/attrBackgroundSectionColor"
                 android:padding="@dimen/small_padding"
-                android:text="@string/text_access"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct_time_not_sent" />
+                android:text="@string/text_access"/>
 
             <!-- OPTION EDIT ACCESS PIN -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_edit_access_pin"
                 style="@style/Option"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView_security">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <!-- START ICON -->
                 <ImageView
                     android:id="@+id/imageView_edit_access_pin_option_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_edit_black" />
-
-                <!-- EDIT ICON -->
-                <ImageButton
-                    android:id="@+id/imageButton_edit_access_pin_option_end_icon"
-                    style="@style/OptionEndIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_arrow_right_primary" />
 
                 <!-- OPTION TITLE -->
                 <TextView
                     android:id="@+id/textView_label_edit_access_pin"
                     style="@style/OptionTitle"
                     android:text="@string/text_access_pin"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_edit_access_pin_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@id/imageView_edit_access_pin_option_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_weight="1" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- EDIT ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_edit_access_pin_option_end_icon"
+                    style="@style/OptionEndIcon"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+            </LinearLayout>
 
             <!-- OPTION BIOMETRICS -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_biometrics"
                 style="@style/Option"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_edit_access_pin">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <!-- START ICON -->
                 <ImageView
                     android:id="@+id/imageView_biometrics_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_fingerprint" />
-
-                <!-- EDIT ICON -->
-                <ImageButton
-                    android:id="@+id/imageButton_biometrics_end_icon"
-                    style="@style/OptionEndIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_edit_black" />
 
                 <!-- OPTION TITLE -->
                 <TextView
                     android:id="@+id/textView_biometrics"
                     style="@style/OptionTitle"
-                    android:text="@string/text_unlock_options"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_biometrics_end_icon"
-                    app:layout_constraintStart_toEndOf="@id/imageView_biometrics_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_weight="1"
+                    android:text="@string/text_unlock_options" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- EDIT ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_biometrics_end_icon"
+                    style="@style/OptionEndIcon"
+                    app:srcCompat="@drawable/ic_edit_black" />
+
+            </LinearLayout>
 
             <!-- OPTION TIME TO REQUEST ACCESS PIN -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_time_request_access_pin"
                 style="@style/Option.WithOutLine"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_biometrics">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <!-- START ICON -->
                 <ImageView
                     android:id="@+id/imageView_time_option_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_schedule_white" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/normal_margin"
+                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_weight="1">
+
+                    <!-- OPTION TITLE -->
+                    <TextView
+                        android:id="@+id/textView_time_title"
+                        style="@style/OptionTitle"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_time_to_request_access_pin" />
+
+                    <!-- OPTION VALUE -->
+                    <TextView
+                        android:id="@+id/textView_time_request_access_pin"
+                        style="@style/OptionValue"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:timeRequestAccessPin="@{viewModel.timeRequestAccessPin}"
+                        tools:text="10 min" />
+
+                </LinearLayout>
 
                 <!-- EDIT ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_time_option_end_icon"
                     style="@style/OptionEndIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-                <!-- OPTION TITLE -->
-                <TextView
-                    android:id="@+id/textView_time_title"
-                    style="@style/OptionTitle"
-                    android:text="@string/text_time_to_request_access_pin"
-                    app:layout_constraintBottom_toTopOf="@id/textView_time_request_access_pin"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_time_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@id/imageView_time_option_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- OPTION VALUE -->
-                <TextView
-                    android:id="@+id/textView_time_request_access_pin"
-                    style="@style/OptionValue"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/textView_time_title"
-                    app:layout_constraintStart_toStartOf="@id/textView_time_title"
-                    app:layout_constraintTop_toBottomOf="@id/textView_time_title"
-                    app:timeRequestAccessPin="@{viewModel.timeRequestAccessPin}"
-                    tools:text="10 min" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <!-- GENERAL TITLE -->
             <TextView
                 android:id="@+id/textView_general"
                 style="@style/SmallBodyTextView"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/attrBackgroundSectionColor"
                 android:padding="@dimen/small_padding"
-                android:text="@string/text_general"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_time_request_access_pin" />
+                android:text="@string/text_general" />
 
             <!-- OPTION MASK APP -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -367,43 +357,34 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- OPTION ACCOUNT RECOVERY INFORMATION -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_account_recovery_information"
                 style="@style/Option"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_mask_app">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <!-- START ICON -->
                 <ImageView
                     android:id="@+id/imageView_account_recovery_option_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_info_black" />
-
-                <!-- EDIT ICON -->
-                <ImageButton
-                    android:id="@+id/imageButton_account_recovery_option_end_icon"
-                    style="@style/OptionEndIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_arrow_right_primary" />
 
                 <!-- OPTION TITLE -->
                 <TextView
                     android:id="@+id/textView_title_recovery"
                     style="@style/OptionTitle"
                     android:text="@string/text_account_recovery_information"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_account_recovery_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@id/imageView_account_recovery_option_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_weight="1" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- EDIT ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_account_recovery_option_end_icon"
+                    style="@style/OptionEndIcon"
+                    app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+        </LinearLayout>
 
     </ScrollView>
 </layout>

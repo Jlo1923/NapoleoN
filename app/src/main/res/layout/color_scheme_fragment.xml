@@ -16,12 +16,12 @@
         android:layout_height="match_parent"
         tools:context=".ui.colorScheme.ColorSchemeFragment">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/imageView_theme_preview"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
@@ -37,32 +37,26 @@
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/text_section_system_themes"
                         style="@style/SmallBodyTextView"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="?attr/attrBackgroundSectionColor"
                         android:inputType="textCapCharacters"
                         android:padding="@dimen/small_padding"
                         android:text="@string/text_section_system_themes"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="TextViewEdits" />
 
                     <RadioGroup
                         android:id="@+id/radioGroup_theme"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/text_section_system_themes">
+                        android:layout_height="match_parent">
 
                         <RadioButton
                             android:id="@+id/radioButton_light_napoleon"
@@ -142,10 +136,10 @@
 
                     </RadioGroup>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </ScrollView>
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

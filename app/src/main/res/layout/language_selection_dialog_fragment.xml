@@ -5,20 +5,19 @@
 
     <data />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="?attr/attrBackgroundColorBackgroundDialog">
 
         <View
             android:id="@+id/view_indicator"
-            android:layout_width="0dp"
+            android:layout_width="50dp"
             android:layout_height="5dp"
+            android:layout_gravity="center"
             android:layout_marginTop="@dimen/small_margin"
             android:background="@drawable/bg_bottom_sheet_indicator"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.2" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -37,5 +36,5 @@
             tools:context=".ui.languageSelection.LanguageSelectionDialogFragment"
             tools:itemCount="6"
             tools:listitem="@layout/language_selection_dialog_fragment_item" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

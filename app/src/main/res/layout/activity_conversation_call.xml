@@ -38,24 +38,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/container_calling"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <include
                     layout="@layout/logo_napoleon_blur"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:contact="@{contact}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_video_call"
@@ -90,49 +90,50 @@
         </ViewSwitcher>
 
         <!-- TOP CONTAINER -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/container_top"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#998B8989"
+            android:orientation="vertical"
             android:paddingTop="@dimen/small_padding"
             android:paddingBottom="@dimen/small_padding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/appCompatImageView2"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/x_small_margin"
-                android:tint="@color/white"
-                app:layout_constraintBottom_toBottomOf="@id/textView_title"
-                app:layout_constraintEnd_toStartOf="@+id/textView_title"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/textView_title"
-                app:srcCompat="@drawable/ic_baseline_lock" />
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView_title"
-                style="@style/CallTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/x_small_margin"
-                android:elevation="2dp"
-                android:fontFamily="@font/roboto"
-                android:text="@{isVideoCall ? @string/text_encrypted_video_call : @string/text_encrypted_call}"
-                android:textAlignment="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/appCompatImageView2"
-                app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:id="@+id/appCompatImageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/x_small_margin"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_baseline_lock" />
+
+                <TextView
+                    android:id="@+id/textView_title"
+                    style="@style/CallTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/x_small_margin"
+                    android:elevation="2dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@{isVideoCall ? @string/text_encrypted_video_call : @string/text_encrypted_call}"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textView_nickname"
                 style="@style/CallNickname"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/x_small_margin"
                 android:elevation="2dp"
                 android:fontFamily="@font/roboto"
@@ -150,8 +151,8 @@
             <TextView
                 android:id="@+id/textView_name"
                 style="@style/CallTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/x_small_margin"
                 android:elevation="2dp"
                 android:fontFamily="@font/roboto"
@@ -180,7 +181,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_name" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <View
             android:id="@+id/view_top_separator"
@@ -216,12 +217,14 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <!-- CALL CONTROLS -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/container_controls"
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:background="#998B8989"
-            android:padding="@dimen/normal_padding"
+            android:padding="@dimen/small_padding"
+            android:orientation="horizontal"
+            android:gravity="center"
             android:visibility="@{isIncomingCall ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -233,6 +236,10 @@
                 style="@style/ConversationCallButton"
                 android:layout_width="31dp"
                 android:layout_height="31dp"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:padding="@dimen/normal_padding"
+                android:layout_gravity="center"
                 android:background="@drawable/conversation_call_button_flip_camera"
                 android:visibility="@{isVideoCall ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -245,6 +252,10 @@
                 style="@style/ConversationCallButton"
                 android:background="@drawable/conversation_call_button_speaker"
                 android:visibility="@{isVideoCall ? View.GONE : View.VISIBLE}"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:padding="@dimen/normal_padding"
+                android:layout_gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_bluetooth"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_switch_camera"
@@ -256,24 +267,24 @@
                 style="@style/ConversationCallButton"
                 android:background="@drawable/conversation_call_button_bluetooth"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_change_to_video"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_speaker"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:layout_gravity="center"
                 tools:checked="false"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_change_to_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginBottom="@dimen/x_small_margin"
                 android:background="@android:color/transparent"
                 android:foreground="?attr/selectableItemBackground"
                 android:visibility="@{isVideoCall ? View.GONE : View.VISIBLE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_mute_video"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_bluetooth"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:padding="@dimen/normal_padding"
+                android:layout_gravity="center"
                 app:srcCompat="@drawable/ic_video_cam_white" />
 
             <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
@@ -282,10 +293,10 @@
                 android:background="@drawable/conversation_call_button_mute_video"
                 android:checked="false"
                 android:visibility="@{isVideoCall ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_mic_off"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_change_to_video"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:padding="@dimen/normal_padding"
+                android:layout_gravity="center"
                 tools:checked="false"
                 tools:visibility="visible" />
 
@@ -294,13 +305,13 @@
                 style="@style/ConversationCallButton"
                 android:background="@drawable/conversation_call_button_mic_off"
                 android:checked="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_mute_video"
-                app:layout_constraintTop_toTopOf="parent"
+                android:padding="@dimen/normal_padding"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:layout_gravity="center"
                 tools:checked="false" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <!-- BUTTON HANGUP -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton

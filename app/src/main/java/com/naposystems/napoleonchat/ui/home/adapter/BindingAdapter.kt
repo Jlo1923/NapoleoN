@@ -39,15 +39,10 @@ fun bindMessageDate(textView: TextView, timestamp: Int, format: Int, unreadMessa
 
             when {
                 timeInit > timeActual -> {
-                    textView.text = context.getString(R.string.text_now)
+                    textView.text = returnHour(format).format(Date(timestamp.toLong() * 1000))
                 }
                 timeInit < timeActual && dayMessage == dayActual -> {
-                    val sdf = if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
-                        SimpleDateFormat("HH:mm", Locale.getDefault())
-                    } else {
-                        SimpleDateFormat("hh:mm aa", Locale.getDefault())
-                    }
-                    textView.text = sdf.format(Date(timestamp.toLong() * 1000))
+                    textView.text = returnHour(format).format(Date(timestamp.toLong() * 1000))
                 }
                 timeInit < timeActual && dayNext == dayActual -> {
                     textView.text = context.getString(R.string.text_yesterday)
@@ -70,6 +65,14 @@ fun bindMessageDate(textView: TextView, timestamp: Int, format: Int, unreadMessa
         } catch (e: Exception) {
             Timber.e("Error parsing date")
         }
+    }
+}
+
+private fun returnHour(format: Int) : SimpleDateFormat {
+    return if (format == Constants.TimeFormat.EVERY_TWENTY_FOUR_HOURS.time) {
+        SimpleDateFormat("HH:mm", Locale.getDefault())
+    } else {
+        SimpleDateFormat("hh:mm aa", Locale.getDefault())
     }
 }
 

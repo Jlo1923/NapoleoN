@@ -8,6 +8,7 @@
     <dimen name="badge_text_size">9sp</dimen>
     <dimen name="normal_button_text_size">16sp</dimen>
     <dimen name="large_button_text_size">16sp</dimen>
+    <dimen name="xx_large_padding">64dp</dimen>
     <dimen name="x_large_padding">32dp</dimen>
     <dimen name="large_padding">24dp</dimen>
     <dimen name="normal_padding">16dp</dimen>
@@ -20,6 +21,7 @@
     <dimen name="normal_margin">16dp</dimen>
     <dimen name="large_margin">24dp</dimen>
     <dimen name="x_large_margin">32dp</dimen>
+    <dimen name="xx_large_margin">64dp</dimen>
     <dimen name="elevation">4dp</dimen>
     <dimen name="height_editText_enter_code">70dp</dimen>
     <dimen name="text_size_editText_enter_code">24sp</dimen>

@@ -22,7 +22,7 @@
         android:onClick="@{() -> clickListener.onPlaceSelected(place)}"
         android:padding="@dimen/small_padding">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/imageView_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
