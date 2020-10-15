@@ -1022,6 +1022,8 @@ class ConversationFragment : BaseFragment(),
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 binding.textViewReturnCall.isVisible = false
+                binding.buttonCall.isEnabled = true
+                binding.buttonVideoCall.isEnabled = true
             }
 
         disposable.add(disposableNewMessageEvent)
@@ -1129,7 +1131,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun showSnackbar(listError: List<String>) {
         val snackbarUtils = SnackbarUtils(binding.coordinator, listError)
-        snackbarUtils.showSnackbar{}
+        snackbarUtils.showSnackbar {}
     }
 
     private fun handlerGoDown() {
@@ -1232,8 +1234,11 @@ class ConversationFragment : BaseFragment(),
         Timber.d("onResume")
         setConversationBackground()
 
-        binding.textViewReturnCall.visibility =
-            if (webRTCClient.isActiveCall()) View.VISIBLE else View.GONE
+        with(webRTCClient.isActiveCall()) {
+            binding.textViewReturnCall.isVisible = this
+            binding.buttonCall.isEnabled = !this
+            binding.buttonVideoCall.isEnabled = !this
+        }
         //messagedLoadedFirstTime = false
     }
 

@@ -339,6 +339,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     }
 
     private fun hangUp() {
+        Timber.d("WebRTCClient hangUp")
         if (!hangUpPressed) {
 
             closeNotification()

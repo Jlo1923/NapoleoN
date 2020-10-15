@@ -94,9 +94,9 @@ class WebRTCCallService : Service() {
                     stopSelf()
                 }
                 ACTION_HANG_UP -> {
-                    RxBus.publish(RxEvent.HangupByNotification(channel))
                     stopForeground(true)
                     stopSelf()
+                    RxBus.publish(RxEvent.HangupByNotification(channel))
                 }
                 else -> {
                 }
@@ -169,7 +169,10 @@ class WebRTCCallService : Service() {
                         putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
                         putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
                         putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
-                        putBoolean(ConversationCallActivity.ANSWER_CALL, true)
+                        putBoolean(
+                            ConversationCallActivity.ANSWER_CALL,
+                            action == ACTION_ANSWER_CALL
+                        )
                     })
                 }
 
