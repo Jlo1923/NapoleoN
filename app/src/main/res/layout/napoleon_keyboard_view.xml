@@ -35,8 +35,8 @@
             <!-- SEARCH ICON -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:tint="?attr/attrActionBarItemBackground"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -48,8 +48,8 @@
             <!-- EMOJIS -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_emoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:tint="?attr/attrActionBarItemBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/imageView_sticker"
@@ -62,10 +62,10 @@
             <!-- STICKER -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_sticker"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="@dimen/small_margin"
-                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="@dimen/large_margin"
+                android:layout_marginEnd="@dimen/large_margin"
                 android:tint="?attr/attrActionBarItemBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/imageView_gif"
@@ -77,8 +77,8 @@
             <!-- GIF -->
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_gif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:tint="?attr/attrActionBarItemBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/imageView_backspace"
