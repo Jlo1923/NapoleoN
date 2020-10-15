@@ -180,6 +180,18 @@ class HomeFragment : Fragment() {
 
         disposable.add(disposableCancelOrRejectFriendshipRequest)
 
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    contactRepositoryShareViewModel.getContacts(
+                        Constants.FriendShipState.ACTIVE.state,
+                        Constants.LocationGetContact.OTHER.location
+                    )
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
         binding.textViewStatus.isSelected = true
 
         return binding.root

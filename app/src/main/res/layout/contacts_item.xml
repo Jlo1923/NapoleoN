@@ -73,7 +73,7 @@
             app:nickname="@{contact}"
             tools:text="@tools:sample/first_names" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <ImageButton
             android:id="@+id/button_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

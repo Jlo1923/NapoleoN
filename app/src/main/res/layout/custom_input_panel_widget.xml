@@ -78,13 +78,13 @@
                                 android:clipToPadding="false"
                                 android:orientation="horizontal">
 
-                            <ImageButton
-                                android:id="@+id/imageButton_emoji"
-                                style="@style/OptionEndIcon"
-                                android:layout_gravity="center_vertical"
-                                android:src="@drawable/ic_insert_emoticon_black" />
+                                <ImageButton
+                                    android:id="@+id/imageButton_emoji"
+                                    style="@style/OptionEndIcon"
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@drawable/ic_insert_emoticon_black" />
 
-                        </LinearLayout>
+                            </LinearLayout>
 
                             <androidx.emoji.widget.EmojiAppCompatEditText
                                 android:id="@+id/textInputEditText_input"

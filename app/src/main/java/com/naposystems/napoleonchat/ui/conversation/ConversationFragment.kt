@@ -1763,8 +1763,6 @@ class ConversationFragment : BaseFragment(),
                 try {
                     prepare()
 
-                    isRecordingAudio = true
-
                     mRecordingAudioRunnable = Runnable {
                         if (mRecordingAudioRunnable != null) {
                             val oneSecond = TimeUnit.SECONDS.toMillis(1)
@@ -1772,8 +1770,10 @@ class ConversationFragment : BaseFragment(),
                             binding.inputPanel.setRecordingTime(recordingTime)
 
                             if (recordingTime == Constants.MAX_AUDIO_RECORD_TIME) {
+                                isRecordingAudio = false
                                 binding.inputPanel.releaseRecordingLock()
                             } else {
+                                isRecordingAudio = true
                                 mHandler.postDelayed(mRecordingAudioRunnable!!, oneSecond)
                             }
                         }
@@ -1863,9 +1863,12 @@ class ConversationFragment : BaseFragment(),
     override fun onSendButtonClicked() {
         when {
             binding.inputPanel.isRecordingInLockedMode() && recordingTime >= minTimeRecording -> {
+                Timber.d("onSendButtonClicked 1")
                 binding.inputPanel.releaseRecordingLock()
             }
             !isRecordingAudio -> {
+                Timber.d("onSendButtonClicked 2")
+
                 val quote = binding.inputPanel.getQuote()
 
                 viewModel.saveMessageLocally(
@@ -1880,6 +1883,7 @@ class ConversationFragment : BaseFragment(),
                 binding.inputPanel.closeQuote()
             }
             else -> {
+                Timber.d("onSendButtonClicked 3")
                 binding.inputPanel.cancelRecording()
             }
         }
