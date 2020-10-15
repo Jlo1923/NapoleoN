@@ -52,10 +52,7 @@ class StatusRepository @Inject constructor(
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(
-            enterCodeError!!,
-            RegisterRecoveryAccount422DTO::class.java
-        )
+        return WebServiceUtils.get422Errors(enterCodeError!!)
     }
 
     fun getDefaultError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
