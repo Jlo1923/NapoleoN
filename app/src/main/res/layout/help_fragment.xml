@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.help.HelpFragment">
 
     <data>
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/attrBackgroundColorBackground"
-        tools:context=".ui.help.HelpFragment">
+        android:baselineAligned="false"
+        android:orientation="vertical">
 
         <!-- OPTION REPEAT SHOW CASE -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/option_repeat_show_case"
             style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -25,6 +30,7 @@
             <TextView
                 style="@style/OptionTitle"
                 android:layout_marginStart="0dp"
+                android:layout_weight="1"
                 android:text="@string/text_repeat_tutorial"
                 app:layout_constraintEnd_toStartOf="@id/imageButton_repeat_show_case_option_end_icon"
                 app:layout_constraintStart_toStartOf="parent"
@@ -39,20 +45,20 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <!-- OPTION CONTACT US -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/option_contact_us"
             style="@style/Option"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/option_repeat_show_case">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <!-- OPTION TITLE -->
             <TextView
                 style="@style/OptionTitle"
                 android:layout_marginStart="0dp"
+                android:layout_weight="1"
                 android:text="@string/text_contact_us"
                 app:layout_constraintEnd_toStartOf="@id/imageButton_contact_option_end_icon"
                 app:layout_constraintStart_toStartOf="parent"
@@ -67,20 +73,20 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <!-- OPTION FREQUENT QUESTIONS -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/option_frequent_questions"
             style="@style/Option"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/option_contact_us">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <!-- OPTION TITLE -->
             <TextView
                 style="@style/OptionTitle"
                 android:layout_marginStart="0dp"
+                android:layout_weight="1"
                 android:text="@string/text_frequent_questions"
                 app:layout_constraintEnd_toStartOf="@id/imageButton_frequent_option_end_icon"
                 app:layout_constraintStart_toStartOf="parent"
@@ -95,48 +101,42 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <!-- OPTION TERMS AND CONDITIONS -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/option_terms_and_conditions"
             style="@style/Option"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/option_frequent_questions">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <!-- OPTION TITLE -->
             <TextView
                 style="@style/OptionTitle"
                 android:layout_marginStart="0dp"
-                android:text="@string/text_terms_and_conditions"
-                app:layout_constraintEnd_toStartOf="@id/imageButton_terms_option_end_icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_weight="1"
+                android:text="@string/text_terms_and_conditions" />
 
             <!-- EDIT ICON -->
             <ImageButton
                 android:id="@+id/imageButton_terms_option_end_icon"
                 style="@style/OptionEndIcon"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <!-- OPTION ABOUT -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/option_about"
             style="@style/Option"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/option_terms_and_conditions">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <!-- OPTION TITLE -->
             <TextView
                 style="@style/OptionTitle"
                 android:layout_marginStart="0dp"
+                android:layout_weight="1"
                 android:text="@string/text_about"
                 app:layout_constraintEnd_toStartOf="@id/imageButton_about_option_end_icon"
                 app:layout_constraintStart_toStartOf="parent"
@@ -151,7 +151,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

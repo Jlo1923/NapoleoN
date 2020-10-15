@@ -79,6 +79,7 @@
                     android:paddingStart="@dimen/x_small_padding"
                     android:paddingEnd="@dimen/small_padding"
                     android:text="@string/text_add"
+                    android:layout_marginEnd="@dimen/small_margin"
                     android:textAlignment="textStart"
                     android:textAllCaps="true"
                     app:haveFriendshipRequest="@{contact.haveFriendshipRequest}"
