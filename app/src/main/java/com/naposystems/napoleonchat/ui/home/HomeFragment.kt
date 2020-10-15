@@ -32,6 +32,7 @@ import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
+import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -50,6 +51,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -68,6 +70,9 @@ class HomeFragment : Fragment() {
 
     @Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle
+
+    @Inject
+    lateinit var webRTCClient: IContractWebRTCClient
 
     private val viewModel: HomeViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
@@ -161,6 +166,26 @@ class HomeFragment : Fragment() {
             goToAddContactFragment()
         }
 
+        binding.textViewReturnCall.setOnClickListener {
+            Timber.d("startCallActivity returnCall HomeFragment")
+            val intent = Intent(context, ConversationCallActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.getContactId())
+                    putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
+                    putBoolean(
+                        ConversationCallActivity.IS_VIDEO_CALL,
+                        webRTCClient.isVideoCall()
+                    )
+                    putBoolean(
+                        ConversationCallActivity.IS_INCOMING_CALL,
+                        webRTCClient.isIncomingCall()
+                    )
+                    putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
+                })
+            }
+            startActivity(intent)
+        }
+
         val disposableNewMessageReceived =
             RxBus.listen(RxEvent.NewFriendshipRequest::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -169,7 +194,6 @@ class HomeFragment : Fragment() {
                     viewModel.getFriendshipRequestHome()
                 }
 
-        disposable.add(disposableNewMessageReceived)
 
         val disposableCancelOrRejectFriendshipRequest =
             RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
@@ -178,7 +202,15 @@ class HomeFragment : Fragment() {
                     viewModel.getFriendshipRequestHome()
                 }
 
+        val disposableContactHasHangup = RxBus.listen(RxEvent.CallEnd::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                binding.textViewReturnCall.isVisible = false
+            }
+
+        disposable.add(disposableNewMessageReceived)
         disposable.add(disposableCancelOrRejectFriendshipRequest)
+        disposable.add(disposableContactHasHangup)
 
         binding.textViewStatus.isSelected = true
 
@@ -370,6 +402,7 @@ class HomeFragment : Fragment() {
         showCase?.setPaused(false)
         viewModel.getJsonNotification()
         showCase()
+        binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall()
         /*if (!isShowingVersionDialog && !BuildConfig.DEBUG)
             getRemoteConfig()*/
     }
@@ -593,7 +626,7 @@ class HomeFragment : Fragment() {
     private fun showCase() {
         Handler().postDelayed({
             if (menuCreated && !showShowCase) {
-                val drawerMenu = (activity as MainActivity).getNavView().menu
+                val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
 
                 val securitySettingMenuItem =
                     drawerMenu.findItem(R.id.security_settings).actionView as ConstraintLayout

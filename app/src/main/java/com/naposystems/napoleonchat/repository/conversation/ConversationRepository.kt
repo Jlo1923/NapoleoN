@@ -478,7 +478,10 @@ class ConversationRepository @Inject constructor(
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.get422Errors(
+            conversationError!!,
+            RegisterRecoveryAccount422DTO::class.java
+        )
     }
 
     override fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
@@ -499,7 +502,10 @@ class ConversationRepository @Inject constructor(
 
         val conversationError = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.get422Errors(
+            conversationError!!,
+            RegisterRecoveryAccount422DTO::class.java
+        )
     }
 
     override fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
@@ -541,7 +547,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketService.subscribeToCallChannel(channel)
+        socketService.subscribeToCallChannel(channel, false)
     }
 
     override suspend fun downloadAttachment(

@@ -2,7 +2,9 @@ package com.naposystems.napoleonchat.repository.notificationUtils
 
 import com.naposystems.napoleonchat.db.dao.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReceivedReqDTO
+import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -33,14 +35,17 @@ class NotificationUtilsRepository @Inject constructor(
         }
     }
 
-    override fun getIsOnCallPref() =
-        sharedPreferencesManager.getBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+    override fun getIsOnCallPref() = Data.isOnCall
 
-    override fun getContactSilenced(contactId: Int, silenced : (Boolean?) -> Unit) {
+    override fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit) {
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
                 silenced(contactLocalDataSource.getContactSilenced(contactId))
             }
         }
+    }
+
+    override fun getContact(contactId: Int): Contact? {
+        return contactLocalDataSource.getContactById(contactId)
     }
 }
