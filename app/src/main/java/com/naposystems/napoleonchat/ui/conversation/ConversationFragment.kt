@@ -1094,13 +1094,13 @@ class ConversationFragment : BaseFragment(),
 
                 actionMode.hideCopyButton = false
 
-                //setupWidgets(0, View.GONE)
+                setupWidgets(0, View.GONE)
 
                 when (listMessageAndAttachment.count()) {
 
                     Constants.QUANTITY_TO_HIDE_ACTIONMODE -> {
                         actionMode.mode?.finish()
-                        //setupWidgets(binding.containerStatus.height, View.VISIBLE)
+                        setupWidgets(binding.containerStatus.height, View.VISIBLE)
                     }
 
                     Constants.QUANTITY_MIN_TO_SHOW_ACTIONMODE -> {
