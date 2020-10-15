@@ -246,18 +246,18 @@ class PreviewMediaFragment : Fragment() {
                                 setSeekbarProgress()
 
                                 mHandler.postDelayed(
-                                    mRunnable,
+                                    mRunnable!!,
                                     50
                                 )
                             }
 
-                            mHandler.postDelayed(mRunnable, 0)
+                            mHandler.postDelayed(mRunnable!!, 0)
                         }
                     }
 
                     Player.STATE_ENDED -> {
                         if (mRunnable != null) {
-                            mHandler.removeCallbacks(mRunnable)
+                            mHandler.removeCallbacks(mRunnable!!)
                             mRunnable = null
                         }
 

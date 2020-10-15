@@ -24,7 +24,6 @@
             android:id="@+id/container_conversation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
             tools:layout_height="match_parent"
             tools:showIn="@layout/conversation_fragment">
 
@@ -56,10 +55,9 @@
                 android:id="@+id/container_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="?attr/attrBackgroundColorPrimary"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/attrBackgroundColorPrimary"
-                android:elevation="1dp"
                 android:padding="@dimen/small_padding"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -105,16 +103,28 @@
                     app:srcCompat="@drawable/ic_video_cam_white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- RETURN CALL -->
+            <TextView
+                android:id="@+id/textView_return_call"
+                style="@style/TextViewReturnCall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/text_return_call"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_status"
+                tools:visibility="visible" />
+
             <!-- RECYCLERVIEW -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_conversation"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:clipToPadding="true"
                 app:layout_constraintBottom_toTopOf="@id/inputPanel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/container_status"
+                app:layout_constraintTop_toBottomOf="@+id/textView_return_call"
                 tools:itemCount="3"
                 tools:listitem="@layout/conversation_item_my_message" />
 

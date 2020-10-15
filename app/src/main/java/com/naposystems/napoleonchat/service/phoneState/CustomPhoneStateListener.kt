@@ -4,6 +4,7 @@ import android.content.Context
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 
 
@@ -17,24 +18,15 @@ class CustomPhoneStateListener(
         when (state) {
             TelephonyManager.CALL_STATE_IDLE -> {
                 //when Idle i.e no call
-                sharedPreferencesManager.putBoolean(
-                    Constants.SharedPreferences.PREF_IS_ON_CALL,
-                    false
-                )
+                Data.isOnCall = false
             }
             TelephonyManager.CALL_STATE_OFFHOOK -> {
                 //when Off hook i.e in call
-                sharedPreferencesManager.putBoolean(
-                    Constants.SharedPreferences.PREF_IS_ON_CALL,
-                    true
-                )
+                Data.isOnCall = true
             }
             TelephonyManager.CALL_STATE_RINGING -> {
                 //when Ringing
-                sharedPreferencesManager.putBoolean(
-                    Constants.SharedPreferences.PREF_IS_ON_CALL,
-                    true
-                )
+                Data.isOnCall = true
             }
         }
     }

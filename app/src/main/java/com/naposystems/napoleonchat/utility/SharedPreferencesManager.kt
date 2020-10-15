@@ -133,7 +133,6 @@ class SharedPreferencesManager(private val context: Context) {
         editor.remove(SharedPreferences.PREF_UNLOCK_TIME_APP)
         editor.remove(SharedPreferences.PREF_UNLOCK_ATTEMPTS)
         editor.remove(SharedPreferences.PREF_UNLOCK_TOTAL_ATTEMPTS)
-        editor.remove(SharedPreferences.PREF_IS_ON_CALL)
         editor.remove(SharedPreferences.PREF_SHOW_CASE_FIRST_STEP_HAS_BEEN_SHOW)
         editor.remove(SharedPreferences.PREF_SHOW_CASE_SECOND_STEP_HAS_BEEN_SHOW)
         editor.remove(SharedPreferences.PREF_SHOW_CASE_THIRD_STEP_HAS_BEEN_SHOW)

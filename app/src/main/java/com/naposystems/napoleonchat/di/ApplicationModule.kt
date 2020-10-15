@@ -20,6 +20,8 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_ANSWE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_PASSWORD_OLD_ACCOUNT
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
+import com.naposystems.napoleonchat.webRTC.WebRTCClient
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.naposystems.napoleonchat.webService.socket.SocketService
@@ -78,6 +80,7 @@ class ApplicationModule {
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
             .readTimeout(15, TimeUnit.MINUTES)
+            .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
             .connectTimeout(15, TimeUnit.MINUTES)
 
         httpClient.addNetworkInterceptor(StethoInterceptor())
@@ -325,5 +328,15 @@ class ApplicationModule {
     @Singleton
     fun provideBillingClient(context: Context): BillingClientLifecycle {
         return BillingClientLifecycle(context as NapoleonApplication)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWebRTCClient(
+        context: Context,
+        socketService: IContractSocketService.SocketService,
+        sharedPreferencesManager: SharedPreferencesManager
+    ): IContractWebRTCClient {
+        return WebRTCClient(context, socketService, sharedPreferencesManager)
     }
 }

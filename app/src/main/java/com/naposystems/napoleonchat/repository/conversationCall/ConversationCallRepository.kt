@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import retrofit2.Response
@@ -24,7 +25,7 @@ class ConversationCallRepository @Inject constructor(
     }
 
     override fun resetIsOnCallPref() {
-        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+        Data.isOnCall = false
     }
 
     override suspend fun sendMissedCall(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {

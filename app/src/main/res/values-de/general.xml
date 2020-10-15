@@ -81,4 +81,5 @@
     <string name="text_title_attach_doc">Anhang</string>
     <string name="text_attch_doc_not_allowed">Die ausgewählte Datei nicht erlaubt ist</string>
     <string name="text_attch_doc_size_exceed">Die ausgewählte Datei überschreitet die zulässige Größe (100MB)</string>
+    <string name="text_reject">Ablehnen</string>
 </resources>

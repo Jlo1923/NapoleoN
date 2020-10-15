@@ -60,4 +60,8 @@
     <string name="text_video_call_rejected">Essa ha respinto la richiesta per la videochiamata</string>
     <string name="text_section_conversations">Le mie conversazioni</string>
     <string name="text_section_see_more">vedi tutto</string>
+    <string name="text_secure_outgoing_call">Cassetta di sicurezza in uscita</string>
+    <string name="text_secure_outgoing_video_call">Sicuro videochiamata in uscita</string>
+    <string name="text_call_in_progress">Chiamata in corso</string>
+    <string name="text_return_call">Richiamata</string>
 </resources>

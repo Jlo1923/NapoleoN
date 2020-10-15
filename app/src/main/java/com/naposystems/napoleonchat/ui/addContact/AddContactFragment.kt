@@ -220,12 +220,10 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         friendshipRequestsAdapter =
             FriendshipRequestAdapter(object : FriendshipRequestAdapter.ClickListener {
                 override fun onRefuse(friendshipRequest: FriendShipRequest) {
-//                    viewModel.refuseFriendshipRequest(friendshipRequest)
                     shareViewModel.refuseFriendshipRequest(friendshipRequest)
                 }
 
                 override fun onAccept(friendshipRequest: FriendShipRequest) {
-//                    viewModel.acceptFriendshipRequest(friendshipRequest)
                     shareViewModel.acceptFriendshipRequest(friendshipRequest)
                 }
 
@@ -260,8 +258,6 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     override fun onQuery(text: String) {
-//        val searchLength = if (text.contains("@")) 4 else 3
-
         if (text.length >= 3) {
             viewModel.searchContact(text.toLowerCase(Locale.getDefault()))
         } else {

@@ -54,12 +54,13 @@
             </LinearLayout>
 
             <!-- STATUS -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/container_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_status"
                 android:backgroundTint="?attr/attrBackgroundSectionColor"
+                android:orientation="horizontal"
                 android:padding="@dimen/small_padding"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -72,28 +73,35 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/small_margin"
                     android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_weight="1"
                     android:ellipsize="marquee"
                     android:fadingEdge="horizontal"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/imageButton_status_end_icon"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Disponible" />
+                    tools:text="@tools:sample/lorem[10]" />
 
                 <ImageButton
                     android:id="@+id/imageButton_status_end_icon"
                     style="@style/OptionEndIcon"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:tint="?attr/attrTintColorSecondaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <!-- RETURN CALL -->
+            <TextView
+                android:id="@+id/textView_return_call"
+                style="@style/TextViewReturnCall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/text_return_call"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_status"
+                tools:visibility="visible" />
 
             <ViewSwitcher
                 android:id="@+id/viewSwitcher_chats"
@@ -102,72 +110,77 @@
                 android:inAnimation="@anim/fade_in"
                 android:outAnimation="@anim/fade_out"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/container_status">
+                app:layout_constraintTop_toBottomOf="@id/textView_return_call">
 
-                <LinearLayout
+                <androidx.core.widget.NestedScrollView
                     android:id="@+id/container_content_home"
-                    android:animateLayoutChanges="true"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
                     <LinearLayout
-                        android:id="@+id/container_friend_request_received"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:orientation="vertical">
 
                         <LinearLayout
+                            android:id="@+id/container_friend_request_received"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:background="?attr/attrBackgroundSectionOtherColor">
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/attrBackgroundSectionOtherColor"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    style="@style/TextViewListTitle"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/text_friend_requests_received" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/button_show_all_friendship"
+                                    style="@style/AppPrimaryButtonText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/text_section_see_more"
+                                    android:textColor="?attr/attrTextColorSecondaryTextColor"
+                                    app:rippleColor="?attr/attrBackgroundSectionColor" />
+
+                            </LinearLayout>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recyclerView_friendship_request"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/attrBackgroundColorBackground"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:itemCount="3"
+                                tools:listitem="@layout/add_contact_item" />
 
                             <TextView
                                 style="@style/TextViewListTitle"
-                                android:layout_width="0dp"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/text_friend_requests_received" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/button_show_all_friendship"
-                                style="@style/AppPrimaryButtonText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="?attr/attrTextColorSecondaryTextColor"
-                                android:text="@string/text_section_see_more"
-                                app:rippleColor="?attr/attrBackgroundSectionColor"/>
+                                android:text="@string/text_section_conversations" />
 
                         </LinearLayout>
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerView_friendship_request"
+                            android:id="@+id/recyclerView_chats"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="?attr/attrBackgroundColorBackground"
+                            android:layout_height="match_parent"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:listitem="@layout/add_contact_item"
-                            tools:itemCount="3"/>
-
-                        <TextView
-                            style="@style/TextViewListTitle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/text_section_conversations" />
+                            tools:listitem="@layout/home_fragment_item" />
 
                     </LinearLayout>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView_chats"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/home_fragment_item" />
-
-                </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
 
                 <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
                     android:id="@+id/empty_state"

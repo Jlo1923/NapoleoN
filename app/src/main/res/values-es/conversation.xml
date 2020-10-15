@@ -60,4 +60,8 @@
     <string name="text_video_call_rejected">Se ha rechazado la solicitud de la videollamada</string>
     <string name="text_section_conversations">Mis Conversaciones</string>
     <string name="text_section_see_more">ver todas</string>
+    <string name="text_secure_outgoing_call">Llamada saliente segura</string>
+    <string name="text_secure_outgoing_video_call">Videollamada saliente segura</string>
+    <string name="text_call_in_progress">Llamada en curso</string>
+    <string name="text_return_call">Retomar llamada</string>
 </resources>

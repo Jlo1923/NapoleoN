@@ -18,7 +18,6 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.Vibrator
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.provider.Settings
@@ -82,7 +81,6 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListen
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
-import com.naposystems.napoleonchat.utility.adapters.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -91,6 +89,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -120,6 +119,9 @@ class ConversationFragment : BaseFragment(),
 
     @Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle
+
+    @Inject
+    lateinit var webRTCClient: IContractWebRTCClient
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -165,7 +167,7 @@ class ConversationFragment : BaseFragment(),
     private lateinit var actionMode: ActionModeMenu
     private var menuOptionsContact: Menu? = null
     private lateinit var deletionMessagesDialog: DeletionMessagesDialogFragment
-    private var showCase : ShowCaseManager? = null
+    private var showCase: ShowCaseManager? = null
 
     private val mediaPlayer: MediaPlayer by lazy {
         MediaPlayer().apply {
@@ -203,8 +205,8 @@ class ConversationFragment : BaseFragment(),
     private var isFabScroll = false
     private var enterConversation = false
     private var counterNotification = 0
-    private var menuCreated : Boolean = false
-    private var showShowCase : Boolean = false
+    private var menuCreated: Boolean = false
+    private var showShowCase: Boolean = false
     private var isSelectedMessage = false
 
     private val mHandler: Handler by lazy {
@@ -371,24 +373,44 @@ class ConversationFragment : BaseFragment(),
 
         binding.buttonCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
-                this.verifyCameraAndMicPermission {
-                    viewModel.setIsVideoCall(false)
-                    viewModel.callContact()
-                    binding.buttonCall.isEnabled = false
-                    binding.buttonVideoCall.isEnabled = false
-                }
+            this.verifyCameraAndMicPermission {
+                viewModel.setIsVideoCall(false)
+                viewModel.callContact()
+                binding.buttonCall.isEnabled = false
+                binding.buttonVideoCall.isEnabled = false
+            }
 //            }
         }
 
         binding.buttonVideoCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
-                this.verifyCameraAndMicPermission {
-                    viewModel.setIsVideoCall(true)
-                    viewModel.callContact()
-                    binding.buttonCall.isEnabled = false
-                    binding.buttonVideoCall.isEnabled = false
-                }
+            this.verifyCameraAndMicPermission {
+                viewModel.setIsVideoCall(true)
+                viewModel.callContact()
+                binding.buttonCall.isEnabled = false
+                binding.buttonVideoCall.isEnabled = false
+            }
 //            }
+        }
+
+        binding.textViewReturnCall.setSafeOnClickListener {
+            Timber.d("startCallActivity returnCall ConversationFragment")
+            val intent = Intent(context, ConversationCallActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.getContactId())
+                    putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
+                    putBoolean(
+                        ConversationCallActivity.IS_VIDEO_CALL,
+                        webRTCClient.isVideoCall()
+                    )
+                    putBoolean(
+                        ConversationCallActivity.IS_INCOMING_CALL,
+                        webRTCClient.isIncomingCall()
+                    )
+                    putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
+                })
+            }
+            startActivity(intent)
         }
 
         binding.inputPanel.getImageButtonEmoji().setOnClickListener {
@@ -735,6 +757,7 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
+                Timber.d("startCallActivity contactCalledSuccessfully")
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
@@ -988,7 +1011,14 @@ class ConversationFragment : BaseFragment(),
                     }
                 }
 
+        val disposableContactHasHangup = RxBus.listen(RxEvent.CallEnd::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                binding.textViewReturnCall.isVisible = false
+            }
+
         disposable.add(disposableNewMessageEvent)
+        disposable.add(disposableContactHasHangup)
     }
 
     private fun validScroll(
@@ -1055,13 +1085,13 @@ class ConversationFragment : BaseFragment(),
 
                 actionMode.hideCopyButton = false
 
-                setupWidgets(0, View.GONE)
+                //setupWidgets(0, View.GONE)
 
                 when (listMessageAndAttachment.count()) {
 
                     Constants.QUANTITY_TO_HIDE_ACTIONMODE -> {
                         actionMode.mode?.finish()
-                        setupWidgets(binding.containerStatus.height, View.VISIBLE)
+                        //setupWidgets(binding.containerStatus.height, View.VISIBLE)
                     }
 
                     Constants.QUANTITY_MIN_TO_SHOW_ACTIONMODE -> {
@@ -1194,6 +1224,9 @@ class ConversationFragment : BaseFragment(),
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
         setConversationBackground()
+
+        binding.textViewReturnCall.visibility =
+            if (webRTCClient.isActiveCall()) View.VISIBLE else View.GONE
         //messagedLoadedFirstTime = false
     }
 

@@ -81,4 +81,5 @@
     <string name="text_title_attach_doc">Pièce jointe</string>
     <string name="text_attch_doc_not_allowed">Le fichier sélectionné est pas autorisé</string>
     <string name="text_attch_doc_size_exceed">Le fichier sélectionné dépasse la taille maximale autorisée (100MB)</string>
+    <string name="text_reject">Refuser</string>
 </resources>
