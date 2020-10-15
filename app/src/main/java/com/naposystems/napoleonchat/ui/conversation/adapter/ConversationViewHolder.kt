@@ -42,7 +42,7 @@ open class ConversationViewHolder constructor(
     private var downloadJob: Job? = null
     private var countDownTimer: CountDownTimer? = null
 
-    var parentContainerMessage: ConstraintLayout? = null
+    var parentContainerMessage: View? = null
     var textViewCountDown: TextView? = null
     var quote: InputPanelQuote? = null
     var progressBarIndeterminate: ProgressBar? = null

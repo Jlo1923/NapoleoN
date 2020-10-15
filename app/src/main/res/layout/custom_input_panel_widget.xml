@@ -169,12 +169,13 @@
                     android:visibility="gone"
                     tools:visibility="gone">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/imageView_mic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tint="@color/red"
-                        app:srcCompat="@drawable/ic_mic_black" />
+                        android:src="@drawable/ic_mic_black"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:id="@+id/textView_time"
@@ -200,10 +201,11 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <androidx.appcompat.widget.AppCompatImageView
+                            <ImageView
                                 android:id="@+id/appCompatImageView"
                                 style="@style/OptionEndIcon"
-                                app:srcCompat="@drawable/ic_keyboard_arrow_left_black" />
+                                android:src="@drawable/ic_keyboard_arrow_left_black"
+                                tools:ignore="ContentDescription" />
 
                             <TextView
                                 android:id="@+id/textView_slide_to_cancel"
@@ -247,7 +249,7 @@
             android:background="@drawable/bg_button_send"
             android:tint="@color/white"
             android:visibility="gone"
-            app:srcCompat="@drawable/ic_send_black"
+            android:src="@drawable/ic_send_black"
             tools:visibility="visible" />
 
     </LinearLayout>

@@ -1034,7 +1034,7 @@
     </style>
 
     <style name="Option.WithOutLine">
-        <item name="android:background">?attr/attrBackgroundColorBackground</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="OptionTitle" parent="BodyTextView.Bold">
