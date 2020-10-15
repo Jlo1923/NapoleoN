@@ -17,6 +17,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.emojiManager.EmojiManager
 import dagger.android.AndroidInjector
@@ -63,8 +64,14 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onStart(owner: LifecycleOwner) {
         Timber.d("onStart")
-        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+        Data.isOnCall = false
         isAppVisible = true
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        Timber.d("onStart")
+        isAppVisible = false
     }
 
     override fun onStop(owner: LifecycleOwner) {
@@ -73,7 +80,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+        Data.isOnCall = false
         super.onDestroy(owner)
     }
 

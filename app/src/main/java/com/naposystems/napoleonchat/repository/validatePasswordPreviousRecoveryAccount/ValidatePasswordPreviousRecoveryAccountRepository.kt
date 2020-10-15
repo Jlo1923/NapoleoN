@@ -56,7 +56,10 @@ class ValidatePasswordPreviousRecoveryAccountRepository @Inject constructor(
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(enterCodeError!!)
+        return WebServiceUtils.get422Errors(
+            enterCodeError!!,
+            RegisterRecoveryAccount422DTO::class.java
+        )
     }
 
     override fun getDefaultError(response: Response<ValidatePasswordPreviousRecoveryAccountResDTO>): ArrayList<String> {

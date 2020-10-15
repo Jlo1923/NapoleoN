@@ -83,7 +83,7 @@ class SendCodeRepository @Inject constructor(
         val adapter = moshi.adapter(SendCode422DTO::class.java)
         val error = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(error!!)
+        return WebServiceUtils.get422Errors(error!!, RegisterRecoveryAccount422DTO::class.java)
     }
 
     override fun getDefaultError(response: Response<SendCodeResDTO>): ArrayList<String> {

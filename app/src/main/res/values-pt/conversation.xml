@@ -60,4 +60,8 @@
     <string name="text_video_call_rejected">Ele rejeitou o pedido de chamada de vídeo</string>
     <string name="text_section_conversations">Minhas conversas</string>
     <string name="text_section_see_more">ver tudo</string>
+    <string name="text_secure_outgoing_call">Seguro de saída</string>
+    <string name="text_secure_outgoing_video_call">Chamada de vídeo de saída segura</string>
+    <string name="text_call_in_progress">Chamada em andamento</string>
+    <string name="text_return_call">Retorne a ligação</string>
 </resources>

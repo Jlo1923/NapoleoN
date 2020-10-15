@@ -27,7 +27,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.android.vending.BILLING" />
-    <uses-permission  android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name=".app.NapoleonApplication"
@@ -43,7 +43,6 @@
         tools:replace="android:allowBackup"
         tools:targetApi="n">
 
-        <service android:name=".firebase.TestService" />
         <service android:name=".service.webRTCCall.WebRTCCallService" />
 
         <meta-data
@@ -66,7 +65,11 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/FullscreenTheme" />
+            android:theme="@style/FullscreenTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.mainActivity.MainActivity" />
+        </activity>
 
         <!-- uCrop cropping activity -->
         <activity

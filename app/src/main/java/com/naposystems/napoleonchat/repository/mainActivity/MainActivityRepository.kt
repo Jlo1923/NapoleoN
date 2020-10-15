@@ -7,6 +7,7 @@ import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import javax.inject.Inject
 
@@ -77,6 +78,6 @@ class MainActivityRepository @Inject constructor(
         contactLocalDataSource.getContactById(contactId)
 
     override fun resetIsOnCallPref() {
-        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.PREF_IS_ON_CALL, false)
+        Data.isOnCall = false
     }
 }

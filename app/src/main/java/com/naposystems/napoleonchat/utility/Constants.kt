@@ -68,6 +68,7 @@ object Constants {
     }
 
     object CallKeys {
+        const val IS_INCOMING_CALL = "is_incoming_call"
         const val CHANNEL = "channel_private"
         const val CONTACT_ID = "contact_id"
         const val IS_VIDEO_CALL = "is_videocall"
@@ -470,8 +471,6 @@ object Constants {
         const val PREF_UNLOCK_ATTEMPTS = "unlock_attempts"
         const val PREF_UNLOCK_TOTAL_ATTEMPTS = "unlock_total_attempts"
         //endregion
-
-        const val PREF_IS_ON_CALL = "is_on_call"
 
         //region
         const val PREF_SHOW_CASE_FIRST_STEP_HAS_BEEN_SHOW = "show_case_first_step_has_been_show"

@@ -20,11 +20,12 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
 
     val context = imageView.context
 
+    val defaultAvatar = context.resources.getDrawable(
+        R.drawable.logo_napoleon_app_blur,
+        context.theme
+    )
+
     if (contact != null) {
-        val defaultAvatar = context.resources.getDrawable(
-            R.drawable.logo_napoleon_app_blur,
-            context.theme
-        )
 
         val loadImage = when {
             contact.imageUrlFake.isNotEmpty() -> {
@@ -53,6 +54,11 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
         Glide.with(context)
             .load(loadImage ?: defaultAvatar)
             .transform(*bitmapTransformation.toTypedArray())
+            .into(imageView)
+    } else {
+        Glide.with(context)
+            .load(defaultAvatar)
+            .transform(CenterInside())
             .into(imageView)
     }
 

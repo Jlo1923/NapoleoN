@@ -12,11 +12,9 @@
             type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="0dp"
-        android:paddingEnd="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,45 +22,36 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/normal_margin"
             android:layout_marginBottom="@dimen/x_small_margin"
-            app:cardElevation="2dp"
             android:backgroundTint="?attr/attrBackgroundColorSystem"
+            app:cardElevation="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="wrap">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container"
+            <TextView
+                android:id="@+id/textView_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/x_x_small_margin"
-                android:elevation="1dp"
                 android:paddingStart="@dimen/small_padding"
                 android:paddingTop="@dimen/x_small_padding"
                 android:paddingEnd="@dimen/small_padding"
-                android:paddingBottom="@dimen/x_small_padding">
-
-                <TextView
-                    android:id="@+id/textView_body"
-                    android:textColor="?attr/attrTextColorSystem"
-                    android:textSize="@dimen/minor_text_size"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/x_small_margin"
-                    android:textStyle="italic"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="wrap"
-                    tools:text="Hoy " />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:paddingBottom="@dimen/x_small_padding"
+                android:textColor="?attr/attrTextColorSystem"
+                android:textSize="@dimen/minor_text_size"
+                android:textStyle="italic"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Hoy\u00A0" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -80,5 +69,5 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.95" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

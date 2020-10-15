@@ -96,7 +96,10 @@ class CreateAccountRepository @Inject constructor(
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(enterCodeError!!)
+        return WebServiceUtils.get422Errors(
+            enterCodeError!!,
+            RegisterRecoveryAccount422DTO::class.java
+        )
     }
 
     fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {

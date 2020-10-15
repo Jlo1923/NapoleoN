@@ -48,6 +48,7 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
+import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -182,14 +183,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
-                    val intent = Intent(this, ConversationCallActivity::class.java).apply {
-                        putExtras(Bundle().apply {
-                            putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
-                            putString(ConversationCallActivity.CHANNEL, it.channel)
-                            putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
-                            putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
-                        })
-                    }
+                    Timber.d("startCallActivity MainActivity")
+                    val notificationUtils = NotificationUtils(this.applicationContext)
+                    notificationUtils.startWebRTCCallService(
+                        it.channel,
+                        it.isVideoCall,
+                        it.contactId,
+                        true,
+                        this
+                    )
+
+                    val intent =
+                        Intent(applicationContext, ConversationCallActivity::class.java).apply {
+                            putExtras(Bundle().apply {
+                                putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
+                                putString(ConversationCallActivity.CHANNEL, it.channel)
+                                putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
+                                putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                            })
+                        }
                     startActivity(intent)
                 }
             }
@@ -287,6 +299,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         viewModel.contact.observe(this, Observer { contact ->
             if (contact != null && this.hasMicAndCameraPermission()) {
+                Timber.d("startCallActivity MainActivity viewmodel.contact")
                 val intent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putSerializable(ConversationCallActivity.CONTACT_ID, contact)
@@ -501,6 +514,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onBackPressed() {
+        Timber.d("startCallActivity onBackPressed")
         when {
             binding.drawerLayout.isDrawerOpen(GravityCompat.START) -> {
                 binding.drawerLayout.closeDrawer(GravityCompat.START)

@@ -3,17 +3,20 @@ package com.naposystems.napoleonchat.webService.socket
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventRes
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.pusher.client.Pusher
+import com.pusher.client.channel.Channel
 import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
@@ -50,6 +53,7 @@ class SocketService @Inject constructor(
         const val CONTACT_TURN_OFF_CAMERA = 5
         const val CONTACT_TURN_ON_CAMERA = 6
         const val CONTACT_CANCEL_CHANGE_TO_VIDEO = 7
+        const val CONTACT_CANT_CHANGE_TO_VIDEO = 8
         const val TYPE = "type"
         const val ICE_CANDIDATE = "candidate"
         const val OFFER = "offer"
@@ -81,27 +85,30 @@ class SocketService @Inject constructor(
         Timber.d("Subscribe to $jsonObject")
     }
 
-    override fun subscribeToCallChannel(channel: String) {
+    override fun subscribeToCallChannel(channel: String, isActionAnswer: Boolean) {
         Timber.d("subscribeToCallChannel: $channel")
-        callChannel = pusher.subscribePrivate(channel, object : PrivateChannelEventListener {
-            override fun onEvent(event: PusherEvent) {
-                Timber.d("event: ${event.data}")
-            }
+        if (pusher.getPrivateChannel(channel) == null) {
+            callChannel = pusher.subscribePrivate(channel, object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent) {
+                    Timber.d("event: ${event.data}")
+                }
 
-            override fun onAuthenticationFailure(message: String, e: java.lang.Exception) {
+                override fun onAuthenticationFailure(message: String, e: java.lang.Exception) {
 
-            }
+                }
 
-            override fun onSubscriptionSucceeded(channelName: String) {
-                listenCallEvents(callChannel!!)
-                sharedPreferencesManager.putBoolean(
-                    Constants.SharedPreferences.PREF_IS_ON_CALL,
-                    true
-                )
+                override fun onSubscriptionSucceeded(channelName: String) {
+                    listenCallEvents(callChannel!!)
+                    Data.isOnCall = true
 
-                Timber.d("Subscribe call channel to $channelName")
-            }
-        })
+                    Timber.d("Subscribe call channel to $channelName")
+
+                    if (isActionAnswer) {
+                        joinToCall(channel)
+                    }
+                }
+            })
+        }
     }
 
     override fun subscribeToCallChannelFromBackground(channel: String) {
@@ -117,10 +124,7 @@ class SocketService @Inject constructor(
 
             override fun onSubscriptionSucceeded(channelName: String) {
                 listenCallEvents(callChannel!!)
-                sharedPreferencesManager.putBoolean(
-                    Constants.SharedPreferences.PREF_IS_ON_CALL,
-                    true
-                )
+                Data.isOnCall = true
 
                 joinToCall(channelName)
 
@@ -402,6 +406,11 @@ class SocketService @Inject constructor(
                                     event.channelName
                                 )
                             )
+                            CONTACT_CANT_CHANGE_TO_VIDEO -> RxBus.publish(
+                                RxEvent.ContactCantChangeToVideoCall(
+                                    event.channelName
+                                )
+                            )
                         }
                     } else {
                         val jsonData = JSONObject(event.data)
@@ -468,10 +477,9 @@ class SocketService @Inject constructor(
 
                         adapter.fromJson(event.data)
 
-                        val isOnCallPref = sharedPreferencesManager.getBoolean(
-                            Constants.SharedPreferences.PREF_IS_ON_CALL,
-                            false
-                        )
+                        val isOnCallPref = Data.isOnCall
+
+                        Timber.d("IsOnCall: $isOnCallPref")
 
                         if (isOnCallPref) {
                             repository.rejectCall(
@@ -479,13 +487,19 @@ class SocketService @Inject constructor(
                                 channel
                             )
                         } else {
-                            RxBus.publish(
-                                RxEvent.IncomingCall(
-                                    channel,
-                                    incomingCall.data.contactId,
-                                    incomingCall.data.isVideoCall
-                                )
-                            )
+                            if (context is NapoleonApplication) {
+                                val app = context as NapoleonApplication
+                                if (app.isAppVisible()) {
+                                    Data.isOnCall = true
+                                    RxBus.publish(
+                                        RxEvent.IncomingCall(
+                                            channel,
+                                            incomingCall.data.contactId,
+                                            incomingCall.data.isVideoCall
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
                 } catch (e: Exception) {
@@ -544,4 +558,7 @@ class SocketService @Inject constructor(
             override fun onSubscriptionSucceeded(channelName: String?) {}
         })
     }
+
+    override fun getPusherChannel(channel: String): PrivateChannel? =
+        pusher.getPrivateChannel(channel)
 }

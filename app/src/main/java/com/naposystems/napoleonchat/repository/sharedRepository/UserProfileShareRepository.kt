@@ -43,7 +43,10 @@ class UserProfileShareRepository @Inject constructor(
     fun get422Error(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
         val adapter = moshi.adapter(UpdateUserInfo422DTO::class.java)
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
-        return WebServiceUtils.get422Errors(enterCodeError!!)
+        return WebServiceUtils.get422Errors(
+            enterCodeError!!,
+            RegisterRecoveryAccount422DTO::class.java
+        )
     }
 
     fun getDefaultError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
