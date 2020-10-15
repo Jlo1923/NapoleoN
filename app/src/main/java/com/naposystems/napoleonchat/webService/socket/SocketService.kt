@@ -366,100 +366,104 @@ class SocketService @Inject constructor(
     }
 
     private fun listenCallEvents(privateChannel: PrivateChannel) {
-        privateChannel.bind(CALL_NN, object : PrivateChannelEventListener {
-            override fun onEvent(event: PusherEvent) {
-                try {
-                    val eventType = event.data.toIntOrNull()
+        try {
+            privateChannel.bind(CALL_NN, object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent) {
+                    try {
+                        val eventType = event.data.toIntOrNull()
 
-                    if (eventType != null) {
-                        Timber.d("LLegó $CALL_NN $eventType")
+                        if (eventType != null) {
+                            Timber.d("LLegó $CALL_NN $eventType")
 
-                        when (eventType) {
-                            CONTACT_JOIN_TO_CALL -> RxBus.publish(
-                                RxEvent.ContactHasJoinToCall(
-                                    event.channelName
-                                )
-                            )
-                            HANGUP_CALL -> RxBus.publish(RxEvent.ContactHasHangup(event.channelName))
-                            CONTACT_WANT_CHANGE_TO_VIDEO -> RxBus.publish(
-                                RxEvent.ContactWantChangeToVideoCall(
-                                    event.channelName
-                                )
-                            )
-                            CONTACT_ACCEPT_CHANGE_TO_VIDEO -> RxBus.publish(
-                                RxEvent.ContactAcceptChangeToVideoCall(
-                                    event.channelName
-                                )
-                            )
-                            CONTACT_TURN_OFF_CAMERA -> RxBus.publish(
-                                RxEvent.ContactTurnOffCamera(
-                                    event.channelName
-                                )
-                            )
-                            CONTACT_TURN_ON_CAMERA -> RxBus.publish(
-                                RxEvent.ContactTurnOnCamera(
-                                    event.channelName
-                                )
-                            )
-                            CONTACT_CANCEL_CHANGE_TO_VIDEO -> RxBus.publish(
-                                RxEvent.ContactCancelChangeToVideoCall(
-                                    event.channelName
-                                )
-                            )
-                            CONTACT_CANT_CHANGE_TO_VIDEO -> RxBus.publish(
-                                RxEvent.ContactCantChangeToVideoCall(
-                                    event.channelName
-                                )
-                            )
-                        }
-                    } else {
-                        val jsonData = JSONObject(event.data)
-
-                        Timber.d("LLegó $CALL_NN $jsonData")
-
-                        if (jsonData.has(TYPE)) {
-
-                            when (jsonData.getString(TYPE)) {
-                                ICE_CANDIDATE -> RxBus.publish(
-                                    RxEvent.IceCandidateReceived(
-                                        event.channelName,
-                                        jsonData.toIceCandidate()
+                            when (eventType) {
+                                CONTACT_JOIN_TO_CALL -> RxBus.publish(
+                                    RxEvent.ContactHasJoinToCall(
+                                        event.channelName
                                     )
                                 )
-                                OFFER -> {
-                                    RxBus.publish(
-                                        RxEvent.OfferReceived(
+                                HANGUP_CALL -> RxBus.publish(RxEvent.ContactHasHangup(event.channelName))
+                                CONTACT_WANT_CHANGE_TO_VIDEO -> RxBus.publish(
+                                    RxEvent.ContactWantChangeToVideoCall(
+                                        event.channelName
+                                    )
+                                )
+                                CONTACT_ACCEPT_CHANGE_TO_VIDEO -> RxBus.publish(
+                                    RxEvent.ContactAcceptChangeToVideoCall(
+                                        event.channelName
+                                    )
+                                )
+                                CONTACT_TURN_OFF_CAMERA -> RxBus.publish(
+                                    RxEvent.ContactTurnOffCamera(
+                                        event.channelName
+                                    )
+                                )
+                                CONTACT_TURN_ON_CAMERA -> RxBus.publish(
+                                    RxEvent.ContactTurnOnCamera(
+                                        event.channelName
+                                    )
+                                )
+                                CONTACT_CANCEL_CHANGE_TO_VIDEO -> RxBus.publish(
+                                    RxEvent.ContactCancelChangeToVideoCall(
+                                        event.channelName
+                                    )
+                                )
+                                CONTACT_CANT_CHANGE_TO_VIDEO -> RxBus.publish(
+                                    RxEvent.ContactCantChangeToVideoCall(
+                                        event.channelName
+                                    )
+                                )
+                            }
+                        } else {
+                            val jsonData = JSONObject(event.data)
+
+                            Timber.d("LLegó $CALL_NN $jsonData")
+
+                            if (jsonData.has(TYPE)) {
+
+                                when (jsonData.getString(TYPE)) {
+                                    ICE_CANDIDATE -> RxBus.publish(
+                                        RxEvent.IceCandidateReceived(
+                                            event.channelName,
+                                            jsonData.toIceCandidate()
+                                        )
+                                    )
+                                    OFFER -> {
+                                        RxBus.publish(
+                                            RxEvent.OfferReceived(
+                                                event.channelName,
+                                                jsonData.toSessionDescription(
+                                                    SessionDescription.Type.OFFER
+                                                )
+                                            )
+                                        )
+                                    }
+                                    ANSWER -> RxBus.publish(
+                                        RxEvent.AnswerReceived(
                                             event.channelName,
                                             jsonData.toSessionDescription(
-                                                SessionDescription.Type.OFFER
+                                                SessionDescription.Type.ANSWER
                                             )
                                         )
                                     )
                                 }
-                                ANSWER -> RxBus.publish(
-                                    RxEvent.AnswerReceived(
-                                        event.channelName,
-                                        jsonData.toSessionDescription(
-                                            SessionDescription.Type.ANSWER
-                                        )
-                                    )
-                                )
                             }
                         }
+                    } catch (e: Exception) {
+                        Timber.e(e)
                     }
-                } catch (e: Exception) {
-                    Timber.e(e)
                 }
-            }
 
-            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
 
-            }
+                }
 
-            override fun onSubscriptionSucceeded(channelName: String?) {
+                override fun onSubscriptionSucceeded(channelName: String?) {
 
-            }
-        })
+                }
+            })
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     private fun listenIncomingCall(privateChannel: PrivateChannel) {
