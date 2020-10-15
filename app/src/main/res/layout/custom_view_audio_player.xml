@@ -29,10 +29,11 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/ic_baseline_play_circle" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/container_controls"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:layout_marginStart="@dimen/small_margin"
             android:layout_marginTop="@dimen/small_margin"
             android:orientation="horizontal"
@@ -43,29 +44,24 @@
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_rewind"
                 style="@style/AudioPlayerControlStyle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_speed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
                 app:srcCompat="@drawable/ic_fast_rewind_black" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_speed"
                 style="@style/AudioPlayerControlStyle"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_forward"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_rewind"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
                 app:srcCompat="@drawable/ic_baseline_2x_circle_outline" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_forward"
                 style="@style/AudioPlayerControlStyle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_speed"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
                 app:srcCompat="@drawable/ic_fast_forward_black" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView_duration"

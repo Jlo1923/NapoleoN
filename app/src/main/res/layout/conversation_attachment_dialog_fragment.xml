@@ -42,28 +42,27 @@
                 style="@style/CardViewAttachmentItem"
                 app:cardElevation="@dimen/elevation">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:background="?attr/attrBackgroundColorBackgroundDialog"
                     android:padding="@dimen/normal_padding">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/imageView_gallery"
                         style="@style/ImageViewAttachment"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_gallery" />
 
                     <TextView
                         style="@style/TextViewAttachment"
-                        android:text="@string/text_gallery"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/imageView_gallery" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/text_gallery"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -73,28 +72,27 @@
                 style="@style/CardViewAttachmentItem"
                 app:cardElevation="@dimen/elevation">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:background="?attr/attrBackgroundColorBackgroundDialog"
                     android:padding="@dimen/normal_padding">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/imageView_camera"
                         style="@style/ImageViewAttachment"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_camera" />
 
                     <TextView
                         style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="@string/text_camera"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/imageView_camera" />
+                        android:layout_gravity="center"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -104,28 +102,27 @@
                 style="@style/CardViewAttachmentItem"
                 app:cardElevation="@dimen/elevation">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:background="?attr/attrBackgroundColorBackgroundDialog"
                     android:padding="@dimen/normal_padding">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/imageView_location"
                         style="@style/ImageViewAttachment"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_location_" />
 
                     <TextView
                         style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="@string/text_location"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/imageView_location" />
+                        android:layout_gravity="center"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -135,28 +132,27 @@
                 style="@style/CardViewAttachmentItem"
                 app:cardElevation="@dimen/elevation">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:background="?attr/attrBackgroundColorBackgroundDialog"
                     android:padding="@dimen/normal_padding">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/imageView_audio"
                         style="@style/ImageViewAttachment"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_audio" />
 
                     <TextView
                         style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="@string/text_audio"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/imageView_audio" />
+                        android:layout_gravity="center"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -166,28 +162,27 @@
                 style="@style/CardViewAttachmentItem"
                 app:cardElevation="@dimen/elevation">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:background="?attr/attrBackgroundColorBackgroundDialog"
                     android:padding="@dimen/normal_padding">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/imageView_document"
                         style="@style/ImageViewAttachment"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_document" />
 
                     <TextView
                         style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="@string/text_document"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/imageView_document" />
+                        android:layout_gravity="center"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -197,25 +192,21 @@
                 style="@style/CardViewAttachmentItem"
                 app:cardElevation="@dimen/elevation">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?attr/attrBackgroundColorBackgroundDialog"
-                    android:padding="@dimen/normal_padding">
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="?attr/attrBackgroundColorBackgroundDialog">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageView_close"
                         android:layout_width="56dp"
                         android:layout_height="56dp"
-                        android:layout_gravity="center"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_arrow_down_black"
                         android:tint="?attr/attrTextColorSecondaryTextColor"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 

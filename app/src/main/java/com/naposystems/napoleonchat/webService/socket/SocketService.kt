@@ -251,6 +251,8 @@ class SocketService @Inject constructor(
 
                             listenCancelCall(generalChannel)
 
+                            listenContactBlockOrDelete(generalChannel)
+
                             repository.getMyMessages(null)
                         }
                     })
@@ -565,4 +567,18 @@ class SocketService @Inject constructor(
 
     override fun getPusherChannel(channel: String): PrivateChannel? =
         pusher.getPrivateChannel(channel)
+
+    private fun listenContactBlockOrDelete(privateChannel: PrivateChannel) {
+        privateChannel.bind("App\\Events\\BlockOrDeleteFrienshipEvent", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                RxBus.publish(RxEvent.ContactBlockOrDelete())
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) = Unit
+
+            override fun onSubscriptionSucceeded(channelName: String?) = Unit
+
+        })
+    }
+
 }

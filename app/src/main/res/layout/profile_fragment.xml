@@ -21,15 +21,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/attrBackgroundColorBackground">
+                android:background="?attr/attrBackgroundColorBackground"
+                android:orientation="vertical">
 
                 <!-- HEADER -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/container_header"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="220dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -160,9 +161,9 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <!-- OPTION NAME -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/option_name"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_white_with_separator"
                     android:padding="@dimen/normal_padding"
@@ -175,6 +176,7 @@
                         android:id="@+id/imageView_name_option_start_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:scaleType="fitCenter"
                         android:tint="?attr/attrTintColorSecondaryDark"
@@ -183,10 +185,58 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_person_black" />
 
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <!-- LABEL NAME -->
+                        <TextView
+                            android:id="@+id/textView_label_name"
+                            style="@style/BodyTextView.Bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/normal_margin"
+                            android:layout_marginBottom="@dimen/small_margin"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:text="@string/text_name"
+                            app:layout_constraintBottom_toTopOf="@id/editText_display_name"
+                            app:layout_constraintEnd_toStartOf="@id/imageButton_name_option_end_icon"
+                            app:layout_constraintStart_toEndOf="@id/imageView_name_option_start_icon"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/editText_display_name"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:enabled="false"
+                            android:hint="@string/text_display_name"
+                            android:inputType="textCapWords|textNoSuggestions"
+                            android:maxLength="@integer/max_length_display_name"
+                            android:padding="0dp"
+                            android:singleLine="true"
+                            android:textColor="?attr/attrColorButtonTint"
+                            android:textColorHint="?attr/attrTextColorHint"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/textView_label_name"
+                            app:layout_constraintStart_toStartOf="@id/textView_label_name"
+                            app:layout_constraintTop_toBottomOf="@id/textView_label_name"
+                            app:nameUser="@{viewModel.user}"
+                            tools:text="Giussep Ricardo Cachaya" />
+
+                    </LinearLayout>
+
                     <ImageButton
                         android:id="@+id/imageButton_name_option_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="@dimen/x_small_padding"
                         android:scaleType="center"
@@ -196,50 +246,12 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_edit_secondary_black" />
 
-                    <!-- LABEL NAME -->
-                    <TextView
-                        android:id="@+id/textView_label_name"
-                        style="@style/BodyTextView.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/normal_margin"
-                        android:layout_marginEnd="@dimen/normal_margin"
-                        android:layout_marginBottom="@dimen/small_margin"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@string/text_name"
-                        app:layout_constraintBottom_toTopOf="@id/editText_display_name"
-                        app:layout_constraintEnd_toStartOf="@id/imageButton_name_option_end_icon"
-                        app:layout_constraintStart_toEndOf="@id/imageView_name_option_start_icon"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/editText_display_name"
-                        style="@style/SmallBodyTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:enabled="false"
-                        android:hint="@string/text_display_name"
-                        android:inputType="textCapWords|textNoSuggestions"
-                        android:maxLength="@integer/max_length_display_name"
-                        android:padding="0dp"
-                        android:singleLine="true"
-                        android:textColor="?attr/attrColorButtonTint"
-                        android:textColorHint="?attr/attrTextColorHint"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/textView_label_name"
-                        app:layout_constraintStart_toStartOf="@id/textView_label_name"
-                        app:layout_constraintTop_toBottomOf="@id/textView_label_name"
-                        app:nameUser="@{viewModel.user}"
-                        tools:text="Giussep Ricardo Cachaya" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
                 <!-- OPTION STATUS -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/option_status"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_white_with_separator"
                     android:foreground="?attr/selectableItemBackground"
@@ -253,6 +265,7 @@
                         android:id="@+id/imageView_status_option_start_icon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:scaleType="fitCenter"
                         android:tint="?attr/attrTintColorSecondaryDark"
@@ -261,11 +274,58 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_status_black" />
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <!-- LABEL STATUS -->
+                        <TextView
+                            android:id="@+id/textView_label_status"
+                            style="@style/BodyTextView.Bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/normal_margin"
+                            android:layout_marginBottom="@dimen/small_margin"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:text="@string/text_status"
+                            app:layout_constraintBottom_toTopOf="@id/editText_status"
+                            app:layout_constraintEnd_toStartOf="@id/imageButton_status_option_end_icon"
+                            app:layout_constraintStart_toEndOf="@id/imageView_status_option_start_icon"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <!-- USER STATUS -->
+                        <TextView
+                            android:id="@+id/editText_status"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:enabled="true"
+                            android:maxLength="@dimen/max_length_status"
+                            android:padding="0dp"
+                            android:singleLine="true"
+                            android:text="@{viewModel.user.status}"
+                            android:textColor="?attr/attrColorButtonTint"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/textView_label_status"
+                            app:layout_constraintStart_toStartOf="@id/textView_label_status"
+                            app:layout_constraintTop_toBottomOf="@id/textView_label_status"
+                            tools:text="Disponible" />
+
+                    </LinearLayout>
+
                     <!-- EDIT ICON -->
                     <ImageButton
                         android:id="@+id/imageButton_status_option_end_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="@dimen/x_small_padding"
                         android:scaleType="center"
@@ -275,48 +335,12 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_edit_black" />
 
-                    <!-- LABEL STATUS -->
-                    <TextView
-                        android:id="@+id/textView_label_status"
-                        style="@style/BodyTextView.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/normal_margin"
-                        android:layout_marginEnd="@dimen/normal_margin"
-                        android:layout_marginBottom="@dimen/small_margin"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@string/text_status"
-                        app:layout_constraintBottom_toTopOf="@id/editText_status"
-                        app:layout_constraintEnd_toStartOf="@id/imageButton_status_option_end_icon"
-                        app:layout_constraintStart_toEndOf="@id/imageView_status_option_start_icon"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- USER STATUS -->
-                    <TextView
-                        android:id="@+id/editText_status"
-                        style="@style/SmallBodyTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:enabled="true"
-                        android:maxLength="@dimen/max_length_status"
-                        android:padding="0dp"
-                        android:singleLine="true"
-                        android:text="@{viewModel.user.status}"
-                        android:textColor="?attr/attrColorButtonTint"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/textView_label_status"
-                        app:layout_constraintStart_toStartOf="@id/textView_label_status"
-                        app:layout_constraintTop_toBottomOf="@id/textView_label_status"
-                        tools:text="Disponible" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
                 <!-- OPTION BLOCKED USERS -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/option_blocked_contacts"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_white_with_separator"
                     android:foreground="?attr/selectableItemBackground"
@@ -332,11 +356,30 @@
                         android:layout_height="24dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:scaleType="fitCenter"
+                        android:layout_gravity="center"
                         android:tint="?attr/attrTintColorSecondaryDark"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_block_black" />
+
+                    <!-- LABEL BLOCKED CONTACTS -->
+                    <TextView
+                        android:id="@+id/textView_label_blocked_contacts"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/text_blocked_contacts"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/imageButton_blocked_contacts_option_end_icon"
+                        app:layout_constraintStart_toEndOf="@id/imageView_blocked_contacts_option_start_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <!-- GO ICON -->
                     <ImageButton
@@ -351,28 +394,12 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_right_black" />
 
-                    <!-- LABEL BLOCKED CONTACTS -->
-                    <TextView
-                        android:id="@+id/textView_label_blocked_contacts"
-                        style="@style/BodyTextView.Bold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/normal_margin"
-                        android:layout_marginEnd="@dimen/normal_margin"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@string/text_blocked_contacts"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/imageButton_blocked_contacts_option_end_icon"
-                        app:layout_constraintStart_toEndOf="@id/imageView_blocked_contacts_option_start_icon"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
                 <!-- OPTION BLOCKED USERS -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/option_logout"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_white_with_separator"
                     android:foreground="?attr/selectableItemBackground"
@@ -388,6 +415,7 @@
                         android:layout_height="24dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:scaleType="fitCenter"
+                        android:layout_gravity="center"
                         android:tint="?attr/attrTintColorSecondaryDark"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -400,6 +428,7 @@
                         style="@style/BodyTextView.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:layout_marginStart="@dimen/normal_margin"
                         android:layout_marginEnd="@dimen/normal_margin"
                         android:ellipsize="end"
@@ -410,9 +439,9 @@
                         app:layout_constraintStart_toEndOf="@id/imageView_logout_option_start_icon"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </ScrollView>
 </layout>

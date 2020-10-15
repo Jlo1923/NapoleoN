@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.attachmentPreview.AttachmentPreviewFragment">
 
     <data>
 
@@ -17,8 +17,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.attachmentPreview.AttachmentPreviewFragment">
+        android:layout_height="match_parent">
 
         <ViewSwitcher
             android:id="@+id/viewSwitcher"
@@ -42,7 +41,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:background="@color/black"
-                    android:scaleType="centerInside"
                     android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
                     app:attachmentImage="@{viewModel.attachmentTaken}"
                     tools:src="@drawable/vertical_photo" />
@@ -60,7 +58,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/imageView_play"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
@@ -76,7 +74,7 @@
 
         </ViewSwitcher>
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <ImageButton
             android:id="@+id/imageButton_close"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -102,7 +100,7 @@
             app:layout_constraintTop_toTopOf="@id/imageButton_close"
             tools:visibility="visible">
 
-            <androidx.appcompat.widget.AppCompatSeekBar
+            <SeekBar
                 android:id="@+id/seekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -126,7 +124,6 @@
                 app:layout_constraintTop_toTopOf="@id/seekbar"
                 tools:text="10:34" />
         </LinearLayout>
-
 
         <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
             android:id="@+id/inputPanel"

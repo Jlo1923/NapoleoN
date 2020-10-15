@@ -2,6 +2,7 @@
 <resources>
     <string name="text_call">Rufen Sie an</string>
     <string name="text_video_call">Videoanruf</string>
+    <string name="text_download_gif">Herunterladen GIF</string>
     <string name="text_schedule">Zeitplan</string>
     <string name="text_see_contact">Siehe Kontakt</string>
     <string name="text_write_message">Nachricht schreiben</string>

@@ -21,42 +21,27 @@
 
         <ImageView
             android:id="@+id/imageView_user_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="@dimen/normal_margin"
-            android:layout_marginTop="@dimen/normal_margin"
-            android:layout_marginBottom="@dimen/normal_margin"
-            android:background="@drawable/border_avatar_contact"
+            style="@style/imageAvatarItem"
             app:avatar="@{contact}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingStart="82dp"
-            android:paddingEnd="@dimen/normal_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            tools:scaleType="fitCenter"
+            tools:src="@drawable/ic_default_avatar" />
 
             <TextView
                 android:id="@+id/textView_user_name"
                 style="@style/BodyTextView.Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/x_small_margin"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
                 app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
                 app:layout_constraintEnd_toStartOf="@id/viewSwitcher"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed"
                 app:name="@{contact}"
@@ -66,12 +51,14 @@
                 android:id="@+id/textView_user_nickname"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
                 android:ellipsize="end"
                 android:lines="1"
                 android:textColor="?attr/attrColorButtonTint"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/textView_user_name"
-                app:layout_constraintStart_toStartOf="@id/textView_user_name"
+                app:layout_constraintEnd_toStartOf="@id/viewSwitcher"
+                app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
                 app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
                 app:nickname="@{contact}"
                 tools:text="@tools:sample/first_names" />
@@ -92,10 +79,11 @@
                     android:paddingStart="@dimen/x_small_padding"
                     android:paddingEnd="@dimen/small_padding"
                     android:text="@string/text_add"
+                    android:layout_marginEnd="@dimen/small_margin"
                     android:textAlignment="textStart"
                     android:textAllCaps="true"
                     app:haveFriendshipRequest="@{contact.haveFriendshipRequest}"
-                    app:icon="@drawable/anim_add_to_check" />
+                    app:icon="@drawable/ic_add_primary" />
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -104,7 +92,7 @@
                     android:layout_gravity="center" />
 
             </ViewSwitcher>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

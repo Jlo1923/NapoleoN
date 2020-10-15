@@ -13,7 +13,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file('C:\\Users\\android\\Documents\\pepito.jks')
+            storeFile file('C:\\Users\\Usuario\\Documents\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 9
+        versionCode 10
 
-        versionName "1.0.0-interna09"
+        versionName "1.0.0-interna10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -140,17 +140,21 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    //Kotlin****************************************************************************************
+    //region Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.core:core-ktx:$core_ktx_version"
+    //endregion
 
-    //Android***************************************************************************************
+    //region Android
 
     //Google Billing
     implementation "com.android.billingclient:billing:$billing_version"
     implementation "com.android.billingclient:billing-ktx:$billing_version"
 
-    //Google****************************************************************************************
+    //endregion
+
+    //region Google
+
     //ExoPlayer
     implementation "com.google.android.exoplayer:exoplayer-core:$exo_player_version"
 
@@ -188,9 +192,9 @@ dependencies {
     //Maps
     implementation "com.google.android.gms:play-services-maps:$play_services_maps_version"
 
-    //AndroidX**************************************************************************************
-    //AppCompat
-    implementation "androidx.appcompat:appcompat:$app_compat_version"
+    //endregion
+
+    //region AndroidX
 
     //Biometric Prompt
     implementation "androidx.biometric:biometric:$biometric_version"
@@ -245,7 +249,10 @@ dependencies {
     //Security
     implementation "androidx.security:security-crypto:$security_version"
 
-    //Terceros**************************************************************************************
+    //endregion
+
+    //region Terceros
+
     //Dagger
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
@@ -304,18 +311,21 @@ dependencies {
 
     // WebRTC
     implementation "org.webrtc:google-webrtc:$web_rtc_version"
+    //endregion
 
-    //Testing***************************************************************************************
+    //region Testing
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
+    //endregion
 
-    //Proyectos Adicionales*************************************************************************
+    //region Proyectos Adicionales
     //Showcase
     implementation project(':Spotlight-library')
 
     //Video Compressor
     implementation project(':videocompressor')
+    //endregion
 
 }
 
