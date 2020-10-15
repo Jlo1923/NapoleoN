@@ -63,8 +63,8 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
                     .thumbnail(0.1f)
                     .transform(
                         CenterCrop(),
-                        RoundedCorners(8),
-                        BlurTransformation(context)
+                        BlurTransformation(context),
+                        RoundedCorners(8)
                     )
                     .into(binding.imageViewAttachment)
             }

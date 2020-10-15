@@ -39,13 +39,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.7" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_message"
             style="@style/ContainerIncomingMessageBubble"
@@ -67,21 +60,21 @@
                 app:layout_constraintWidth_min="wrap"
                 tools:visibility="gone" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/imageView_attachment"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
+                android:layout_marginBottom="@dimen/x_small_margin"
+                android:background="@drawable/round_image"
+                android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:scaleType="centerCrop"
-                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
-                app:layout_constraintDimensionRatio="4:3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/quote"
+                app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:layout_constraintWidth_max="wrap"
                 app:layout_constraintWidth_percent="1"
-                tools:src="@drawable/vertical_photo"
-                tools:visibility="visible" />
+                tools:src="@drawable/vertical_photo" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_play"
@@ -145,49 +138,39 @@
         <!-- BUTTON ATTACHMENT STATE -->
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/imageButton_state"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="@dimen/small_margin"
-            android:background="@drawable/bg_black_40"
-            android:padding="@dimen/x_small_padding"
-            android:scaleType="fitCenter"
+            style="@style/ButtonState"
             android:src="@drawable/ic_file_download_black"
-            android:tint="@color/white"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/container_message"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/container_message"
+            app:layout_constraintStart_toEndOf="@id/container_message"
+            app:layout_constraintTop_toTopOf="@id/container_message"
             custom:iconForState="@{conversation}"
             tools:visibility="visible" />
 
         <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="0dp"
-            android:padding="0dp"
-            android:visibility="gone"
+            style="@style/CircleProgressBar"
             app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
             app:layout_constraintEnd_toEndOf="@id/imageButton_state"
             app:layout_constraintStart_toStartOf="@id/imageButton_state"
             app:layout_constraintTop_toTopOf="@id/imageButton_state"
-            custom:progress="0"
-            custom:progressBarThickness="3dp"
-            custom:progressbarColor="?attr/attrTintProgressBar"
             tools:progress="70"
             tools:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/progressBar_indeterminate"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
-            android:indeterminate="true"
-            android:visibility="gone"
+            style="@style/ProgressIndeterminate"
             app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
             app:layout_constraintEnd_toEndOf="@id/imageButton_state"
             app:layout_constraintStart_toStartOf="@id/imageButton_state"
             app:layout_constraintTop_toTopOf="@id/imageButton_state"
             tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.7" />
 
         <TextView
             android:id="@+id/textView_count_down"

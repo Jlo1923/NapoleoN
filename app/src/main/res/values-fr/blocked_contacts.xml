@@ -3,7 +3,7 @@
     <string name="text_blocked_contacts_info">Les contacts de cette liste ne pourront ni communiquer avec vous ni accéder à votre profil.</string>
     <string name="text_empty_state_blocked_contacts_title">Contacts bloqués</string>
     <string name="text_empty_state_blocked_contacts_description">Il n\'a pas de contacts bloqués</string>
-    <string name="text_blocked_contact_not_found">Ups! Tu búsqueda no trajo resultados</string>
+    <string name="text_blocked_contact_not_found">Oups! Votre recherche n\'a produit aucun résultat</string>
     <string name="text_wish_unblock_contact">Voulez-vous débloquer ce contact?</string>
     <string name="text_unblocked_contact">Contact déverrouillé</string>
 </resources>

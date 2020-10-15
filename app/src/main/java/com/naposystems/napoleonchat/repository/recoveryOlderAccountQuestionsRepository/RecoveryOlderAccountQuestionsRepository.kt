@@ -83,7 +83,7 @@ class RecoveryOlderAccountQuestionsRepository @Inject constructor(
         val adapter = moshi.adapter(RecoveryOlderAccountQuestionsAnswers422DTO::class.java)
         val error = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(error!!, RegisterRecoveryAccount422DTO::class.java)
+        return WebServiceUtils.get422Errors(error!!)
     }
 
     override suspend fun getDefaultQuestionsError(response: Response<RecoveryOlderAccountQuestionsResDTO>): ArrayList<String> {

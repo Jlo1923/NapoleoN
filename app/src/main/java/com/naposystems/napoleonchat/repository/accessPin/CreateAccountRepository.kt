@@ -88,7 +88,6 @@ class CreateAccountRepository @Inject constructor(
     }
 
 
-
     fun get422Error(response: Response<CreateAccountResDTO>): ArrayList<String> {
         val moshi = Moshi.Builder().build()
 
@@ -96,10 +95,7 @@ class CreateAccountRepository @Inject constructor(
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(
-            enterCodeError!!,
-            RegisterRecoveryAccount422DTO::class.java
-        )
+        return WebServiceUtils.get422Errors(enterCodeError!!)
     }
 
     fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {

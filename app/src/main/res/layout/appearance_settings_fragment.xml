@@ -16,319 +16,308 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="?attr/attrBackgroundColorBackground"
+            android:orientation="vertical"
             tools:context=".ui.appearanceSettings.AppearanceSettingsFragment">
 
             <!-- OPTION COLOR COMBINATION -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_color_scheme"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_white_with_separator"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:padding="@dimen/normal_padding"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:padding="@dimen/normal_padding">
 
                 <ImageView
                     android:id="@+id/imageView_option_color_scheme_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_color_lens_black" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/small_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- LABEL COLOR COMBINATION -->
+                    <TextView
+                        android:id="@+id/textView_label_color"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="@dimen/small_margin"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/text_color_scheme" />
+
+                    <!-- COLOR SCHEME SELECTED -->
+                    <TextView
+                        android:id="@+id/textView_color_selected"
+                        style="@style/OptionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:background="@android:color/transparent"
+                        android:enabled="true"
+                        android:maxLength="@dimen/max_length_status"
+                        android:singleLine="true"
+                        app:colorScheme="@{viewModel.colorScheme}"
+                        tools:text="Tema claro" />
+
+                </LinearLayout>
 
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_color_option_end_icon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_gravity="center"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
                     android:tint="?attr/attrTintColorSecondaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_right_black" />
 
-                <!-- LABEL COLOR COMBINATION -->
-                <TextView
-                    android:id="@+id/textView_label_color"
-                    style="@style/BodyTextView.Bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/small_padding"
-                    android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="@string/text_color_scheme"
-                    app:layout_constraintBottom_toTopOf="@id/textView_color_selected"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_color_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@+id/imageView_option_color_scheme_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- COLOR SCHEME SELECTED -->
-                <TextView
-                    android:id="@+id/textView_color_selected"
-                    style="@style/OptionValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:enabled="true"
-                    android:maxLength="@dimen/max_length_status"
-                    android:padding="0dp"
-                    android:singleLine="true"
-                    app:colorScheme="@{viewModel.colorScheme}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/textView_label_color"
-                    app:layout_constraintStart_toStartOf="@+id/textView_label_color"
-                    app:layout_constraintTop_toBottomOf="@id/textView_label_color"
-                    tools:text="Tema claro" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <!-- OPTION USER DISPLAY FORMAT -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_display_format"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_white_with_separator"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:padding="@dimen/normal_padding"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_color_scheme">
+                android:padding="@dimen/normal_padding">
 
                 <ImageView
                     android:id="@+id/imageView_option_display_format_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_person_black" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/small_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- LABEL COLOR COMBINATION -->
+                    <TextView
+                        android:id="@+id/textView_user_display_color"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/small_margin"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/text_user_display_format" />
+
+                    <!-- COLOR SCHEME SELECTED -->
+                    <TextView
+                        android:id="@+id/textView_user_display_selected"
+                        style="@style/OptionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:enabled="true"
+                        android:maxLength="@dimen/max_length_status"
+                        android:padding="0dp"
+                        android:singleLine="true"
+                        app:userDisplayFormat="@{viewModel.userDisplayFormat}"
+                        tools:text="Nombre y usuario" />
+
+                </LinearLayout>
+
 
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_user_display_option_end_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
                     android:tint="?attr/attrTintColorSecondaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_edit_black" />
 
-                <!-- LABEL COLOR COMBINATION -->
-                <TextView
-                    android:id="@+id/textView_user_display_color"
-                    style="@style/BodyTextView.Bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/small_padding"
-                    android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="@string/text_user_display_format"
-                    app:layout_constraintBottom_toTopOf="@id/textView_user_display_selected"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_user_display_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@+id/imageView_option_display_format_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- COLOR SCHEME SELECTED -->
-                <TextView
-                    android:id="@+id/textView_user_display_selected"
-                    style="@style/OptionValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:enabled="true"
-                    android:maxLength="@dimen/max_length_status"
-                    android:padding="0dp"
-                    android:singleLine="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/textView_user_display_color"
-                    app:layout_constraintStart_toStartOf="@id/textView_user_display_color"
-                    app:layout_constraintTop_toBottomOf="@id/textView_user_display_color"
-                    app:userDisplayFormat="@{viewModel.userDisplayFormat}"
-                    tools:text="Nombre y usuario" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <!-- OPTION LANGUAGE -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_language"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_white_with_separator"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:padding="@dimen/normal_padding"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/option_display_format">
+                android:padding="@dimen/normal_padding">
 
                 <ImageView
                     android:id="@+id/imageView_option_language_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_language_black" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/small_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- LABEL COLOR COMBINATION -->
+                    <TextView
+                        android:id="@+id/textView_language_color"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/small_margin"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/text_language" />
+
+                    <!-- COLOR SCHEME SELECTED -->
+                    <TextView
+                        android:id="@+id/textView_language_selected"
+                        style="@style/OptionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:enabled="true"
+                        android:maxLength="@dimen/max_length_status"
+                        android:padding="0dp"
+                        android:singleLine="true"
+                        tools:text="Español" />
+
+                </LinearLayout>
 
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_language_option_end_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
                     android:tint="?attr/attrTintColorSecondaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_edit_black" />
 
-                <!-- LABEL COLOR COMBINATION -->
-                <TextView
-                    android:id="@+id/textView_language_color"
-                    style="@style/BodyTextView.Bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/small_padding"
-                    android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="@string/text_language"
-                    app:layout_constraintBottom_toTopOf="@id/textView_language_selected"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_language_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@+id/imageView_option_language_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
 
-                <!-- COLOR SCHEME SELECTED -->
-                <TextView
-                    android:id="@+id/textView_language_selected"
-                    style="@style/OptionValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:enabled="true"
-                    android:maxLength="@dimen/max_length_status"
-                    android:padding="0dp"
-                    android:singleLine="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/textView_language_color"
-                    app:layout_constraintStart_toStartOf="@id/textView_language_color"
-                    app:layout_constraintTop_toBottomOf="@id/textView_language_color"
-                    tools:text="Español" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_time_format"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_white_with_separator"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:padding="@dimen/normal_padding"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/option_language">
+                android:padding="@dimen/normal_padding">
 
                 <ImageView
                     android:id="@+id/imageView_option_time_format_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_format_time" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/small_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- LABEL COLOR COMBINATION -->
+                    <TextView
+                        android:id="@+id/textView_time_format_color"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/small_margin"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/text_time_format" />
+
+                    <!-- COLOR SCHEME SELECTED -->
+                    <TextView
+                        android:id="@+id/textView_format_hour"
+                        style="@style/OptionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:enabled="true"
+                        android:maxLength="@dimen/max_length_status"
+                        android:padding="0dp"
+                        android:singleLine="true"
+                        app:timeFormat="@{viewModel.timeFormat}"
+                        tools:text="24 Hours" />
+
+                </LinearLayout>
+
 
                 <!-- GO ICON -->
                 <ImageButton
                     android:id="@+id/imageButton_time_format_option_end_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
                     android:tint="?attr/attrTintColorSecondaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_edit_black" />
 
-                <!-- LABEL COLOR COMBINATION -->
-                <TextView
-                    android:id="@+id/textView_time_format_color"
-                    style="@style/BodyTextView.Bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/small_padding"
-                    android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="@string/text_time_format"
-                    app:layout_constraintBottom_toTopOf="@id/textView_format_hour"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_time_format_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@+id/imageView_option_time_format_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!-- COLOR SCHEME SELECTED -->
-                <TextView
-                    android:id="@+id/textView_format_hour"
-                    style="@style/OptionValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:enabled="true"
-                    android:maxLength="@dimen/max_length_status"
-                    android:padding="0dp"
-                    android:singleLine="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/textView_time_format_color"
-                    app:layout_constraintStart_toStartOf="@id/textView_time_format_color"
-                    app:layout_constraintTop_toBottomOf="@id/textView_time_format_color"
-                    app:timeFormat="@{viewModel.timeFormat}"
-                    tools:text="24 Hours" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <!-- OPTION CHAT BACKGROUND -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/option_chat_background"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_white_with_separator"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                android:padding="@dimen/normal_padding"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/option_time_format">
+                android:padding="@dimen/normal_padding">
 
                 <ImageView
                     android:id="@+id/imageView_option_chat_background_start_icon"
                     style="@style/OptionStartIcon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_panorama_black" />
+
+                <!-- LABEL COLOR COMBINATION -->
+                <TextView
+                    android:id="@+id/textView_chat_background"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/small_padding"
+                    android:layout_marginEnd="@dimen/small_padding"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="@string/text_conversation_background" />
 
                 <!-- GO ICON -->
                 <ImageButton
@@ -338,29 +327,10 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
                     android:tint="?attr/attrTintColorSecondaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_right_black" />
 
-                <!-- LABEL COLOR COMBINATION -->
-                <TextView
-                    android:id="@+id/textView_chat_background"
-                    style="@style/BodyTextView.Bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/small_padding"
-                    android:layout_marginEnd="@dimen/normal_margin"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="@string/text_conversation_background"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/imageButton_chat_background_option_end_icon"
-                    app:layout_constraintStart_toEndOf="@+id/imageView_option_chat_background_start_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

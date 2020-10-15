@@ -22,6 +22,8 @@ interface IContractInputPanel {
     fun hideButtonRecord()
     fun showButtonRecord()
     fun openQuote(messageAndAttachment: MessageAndAttachment)
+    fun containerWrap()
+    fun containerNoWrap()
     fun getWebIdQuote(): String
     fun closeQuote()
     fun resetImage()

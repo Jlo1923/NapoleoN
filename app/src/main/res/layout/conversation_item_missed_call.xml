@@ -59,7 +59,6 @@
                 app:layout_constraintStart_toEndOf="@id/imageView_icon_timer"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="24:00" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -97,6 +96,5 @@
                 tools:text="Llamada perdida a las 5:40 " />
 
         </LinearLayout>
-
     </RelativeLayout>
 </layout>

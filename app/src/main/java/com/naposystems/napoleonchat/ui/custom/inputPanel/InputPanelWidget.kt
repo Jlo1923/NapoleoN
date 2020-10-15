@@ -5,6 +5,7 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.animation.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
@@ -151,7 +152,19 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.textInputEditTextInput.requestFocus()
         binding.layoutQuote.setupMessageAndAttachment(messageAndAttachment)
         binding.layoutQuote.visibility = View.VISIBLE
-        //Utils.openKeyboard(binding.textInputEditTextInput)
+        Utils.openKeyboard(binding.textInputEditTextInput)
+    }
+
+    override fun containerWrap() {
+        val layoutParams = binding.viewSwitcher.layoutParams
+        layoutParams.height = WRAP_CONTENT
+        binding.viewSwitcher.layoutParams = layoutParams
+    }
+
+    override fun containerNoWrap() {
+        val layoutParams = binding.viewSwitcher.layoutParams
+        layoutParams.height = resources.getDimension(R.dimen.conversation_fab_size).toInt()
+        binding.viewSwitcher.layoutParams = layoutParams
     }
 
     override fun getWebIdQuote() =
