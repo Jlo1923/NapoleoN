@@ -126,9 +126,11 @@ class ConversationRepository @Inject constructor(
             val sourceFile = File(path, attachment.fileName)
             val destFile =
                 File(
-                    path, "${attachment.fileName
-                        .replace("_compress", "")
-                        .split('.')[0]}_compress.${attachment.extension}"
+                    path, "${
+                        attachment.fileName
+                            .replace("_compress", "")
+                            .split('.')[0]
+                    }_compress.${attachment.extension}"
                 )
 
             compressVideo(attachment, sourceFile, destFile, this)
@@ -156,7 +158,7 @@ class ConversationRepository @Inject constructor(
                                     attachment,
                                     this as Job,
                                     progress = { progress ->
-                                        offer(UploadResult.Progress(attachment, progress,this))
+                                        offer(UploadResult.Progress(attachment, progress, this))
                                     }
                                 )
 
@@ -240,7 +242,7 @@ class ConversationRepository @Inject constructor(
     private fun createPartFromFile(
         attachment: Attachment,
         job: Job,
-        progress : (Float) -> Unit
+        progress: (Float) -> Unit
     ): MultipartBody.Part {
         val subfolder =
             FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
@@ -448,7 +450,7 @@ class ConversationRepository @Inject constructor(
     ) {
         listMessages.filter { messageAndAttachment ->
             messageAndAttachment.attachmentList.count() > 0 &&
-            messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
+                    messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
         }.let { listMessagesFiltered ->
             if (listMessagesFiltered.count() > 0) {
                 RxBus.publish(RxEvent.MessagesToEliminate(listMessagesFiltered))
@@ -478,10 +480,7 @@ class ConversationRepository @Inject constructor(
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(
-            conversationError!!,
-            RegisterRecoveryAccount422DTO::class.java
-        )
+        return WebServiceUtils.get422Errors(conversationError!!)
     }
 
     override fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
@@ -502,10 +501,7 @@ class ConversationRepository @Inject constructor(
 
         val conversationError = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(
-            conversationError!!,
-            RegisterRecoveryAccount422DTO::class.java
-        )
+        return WebServiceUtils.get422Errors(conversationError!!)
     }
 
     override fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
@@ -798,7 +794,7 @@ class ConversationRepository @Inject constructor(
                         Constants.MessageStatus.READED.status
                     )
                 }
-            } else if(messageAndAttachment == null) {
+            } else if (messageAndAttachment == null) {
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
                         arrayListOf(messageWebId)

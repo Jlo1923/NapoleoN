@@ -99,7 +99,7 @@ class EnterCodeRepository @Inject constructor(
         val adapter = moshi.adapter(EnterCode422DTO::class.java)
         val error = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(error!!, RegisterRecoveryAccount422DTO::class.java)
+        return WebServiceUtils.get422Errors(error!!)
     }
 
     override fun getDefaultError(response: Response<EnterCodeResDTO>): ArrayList<String> {
@@ -113,7 +113,7 @@ class EnterCodeRepository @Inject constructor(
         val adapter = moshi.adapter(SendCode422DTO::class.java)
         val error = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(error!!, RegisterRecoveryAccount422DTO::class.java)
+        return WebServiceUtils.get422Errors(error!!)
     }
 
     override fun getDefaultErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String> {
