@@ -279,7 +279,7 @@ class SubscriptionFragment : Fragment() {
         viewModel.getTypeSubscriptionError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar()
+                snackbarUtils.showSnackbar{}
                 binding.viewSwitcher.showPrevious()
             }
         })
@@ -296,7 +296,7 @@ class SubscriptionFragment : Fragment() {
 
         viewModel.sendPaymentError.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
             binding.viewSwitcher.showPrevious()
         })
 

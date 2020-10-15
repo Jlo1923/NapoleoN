@@ -139,12 +139,12 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
 
         viewModel.recoveryAnswerCreatingErrors.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
         })
 
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar()
+            snackbarUtils.showSnackbar{}
         })
     }
 

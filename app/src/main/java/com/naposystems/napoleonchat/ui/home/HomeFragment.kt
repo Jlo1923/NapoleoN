@@ -359,6 +359,7 @@ class HomeFragment : Fragment() {
         showCase?.setPaused(true)
         showCase?.dismiss()
         showShowCase = false
+        shareFriendShipViewModel.clearMessageError()
         viewModel.cleanVariables()
         if (::popup.isInitialized) {
             popup.dismiss()
@@ -560,14 +561,17 @@ class HomeFragment : Fragment() {
 
     private fun observeFriendshipRequestWsError() {
         shareFriendShipViewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()) {
+            if (it != null && it.isNotEmpty()) {
 
                 val list = ArrayList<String>()
                 list.add(it)
 
                 val snackbarUtils = SnackbarUtils(binding.coordinator, list)
 
-                snackbarUtils.showSnackbar()
+                snackbarUtils.showSnackbar{ ok ->
+                    if (ok)
+                        shareFriendShipViewModel.clearMessageError()
+                }
             }
         })
     }

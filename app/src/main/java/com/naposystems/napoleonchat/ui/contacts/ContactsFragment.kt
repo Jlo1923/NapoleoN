@@ -103,7 +103,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
         observeContacts()
 
         viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
-            SnackbarUtils(binding.coordinator, it).showSnackbar()
+            SnackbarUtils(binding.coordinator, it).showSnackbar{}
         })
 
         viewModel.contactsLoaded.observe(viewLifecycleOwner, Observer {
