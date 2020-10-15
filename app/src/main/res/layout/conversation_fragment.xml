@@ -48,7 +48,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipChildren="false"
-            tools:layout_height="match_parent"
             tools:showIn="@layout/conversation_fragment">
 
             <!-- RECYCLERVIEW -->
@@ -56,7 +55,6 @@
                 android:id="@+id/recyclerView_conversation"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:clipToPadding="true"
                 android:layout_marginBottom="@dimen/x_small_margin"
                 app:layout_constraintBottom_toTopOf="@id/inputPanel"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -92,25 +90,25 @@
                     tools:text="@tools:sample/lorem[2]" />
 
                 <ImageButton
-                    android:id="@+id/button_call"
-                    style="@style/ConversationToolbarIcon"
-                    android:layout_marginEnd="@dimen/small_margin"
-                    android:tint="?attr/attrConversationIconColor"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_phone_white"
-                    tools:ignore="ContentDescription" />
-
-                <ImageButton
                     android:id="@+id/button_video_call"
                     style="@style/ConversationToolbarIcon"
-                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_marginEnd="@dimen/normal_margin"
                     android:tint="?attr/attrConversationIconColor"
                     app:layout_constraintBottom_toBottomOf="@id/button_call"
                     app:layout_constraintEnd_toStartOf="@id/button_call"
                     app:layout_constraintTop_toTopOf="@id/button_call"
                     app:srcCompat="@drawable/ic_video_cam_white"
+                    tools:ignore="ContentDescription" />
+
+                <ImageButton
+                    android:id="@+id/button_call"
+                    style="@style/ConversationToolbarIcon"
+                    android:layout_marginEnd="@dimen/x_small_margin"
+                    android:tint="?attr/attrConversationIconColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_phone_white"
                     tools:ignore="ContentDescription" />
 
             </LinearLayout>
@@ -161,14 +159,14 @@
                 android:id="@+id/fab_go_down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="60dp"
                 android:outlineProvider="none"
                 android:src="@drawable/ic_go_down"
                 android:visibility="gone"
                 app:backgroundTint="@color/fabNotificationMessage"
                 app:borderWidth="0dp"
                 app:fabSize="mini"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="60dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:tint="@color/fabIconColor"
