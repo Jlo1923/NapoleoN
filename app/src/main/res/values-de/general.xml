@@ -13,8 +13,7 @@
     <string name="label_edit_photo">Foto bearbeiten</string>
     <string name="label_edit_cover">Banner bearbeiten</string>
     <string name="text_edit">Bearbeiten</string>
-    <string name="text_share_android">Mit Android teilen</string>
-    <string name="text_share_ios">Mit iOS teilen</string>
+    <string name="text_share_android">Aktie</string>
     <string name="text_search">Suche</string>
     <string name="text_add_contact">Kontakt hinzufügen</string>
     <string name="text_finish">Fertig</string>
