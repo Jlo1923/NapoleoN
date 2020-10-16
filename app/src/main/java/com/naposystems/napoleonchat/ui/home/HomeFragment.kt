@@ -510,33 +510,40 @@ class HomeFragment : Fragment() {
         conversationAdapter = ConversationAdapter(
             object : ConversationAdapter.ClickListener {
                 override fun onClick(item: MessageAndAttachment) {
-                    findNavController().navigate(
-                        HomeFragmentDirections.actionHomeFragmentToConversationFragment(item.contact)
-                    )
+                    item.contact?.let { contact ->
+                        findNavController().navigate(
+                            HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
+                        )
+                    }
                 }
 
                 override fun onClickAvatar(item: MessageAndAttachment) {
-                    seeProfile(item.contact)
+                    item.contact?.let { contact ->
+                        seeProfile(contact)
+                    }
+
                 }
 
                 override fun onLongClick(item: MessageAndAttachment, view: View) {
-                    popup = PopupMenu(context!!, view)
-                    popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
+                    item.contact?.let { contact ->
+                        popup = PopupMenu(context!!, view)
+                        popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
 
-                    popup.setOnMenuItemClickListener {
-                        when (it.itemId) {
-                            R.id.start_chat_from_inbox ->
-                                startConversation(item.contact)
-                            R.id.see_profile_from_inbox ->
-                                seeProfile(item.contact)
-                            R.id.delete_chat_from_inbox ->
-                                deleteChat(item.contact)
-                            R.id.block_contact_from_inbox ->
-                                blockContact(item.contact)
+                        popup.setOnMenuItemClickListener {
+                            when (it.itemId) {
+                                R.id.start_chat_from_inbox ->
+                                    startConversation(contact)
+                                R.id.see_profile_from_inbox ->
+                                    seeProfile(contact)
+                                R.id.delete_chat_from_inbox ->
+                                    deleteChat(contact)
+                                R.id.block_contact_from_inbox ->
+                                    blockContact(contact)
+                            }
+                            true
                         }
-                        true
+                        popup.show()
                     }
-                    popup.show()
                 }
             },
             userDisplayFormatShareViewModel.getValUserDisplayFormat(),

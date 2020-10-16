@@ -186,7 +186,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         } else {
             val contact = messageAndAttachment.contact
             binding.textViewTitleQuote.setTextColor(textColorYourName)
-            binding.textViewTitleQuote.text = contact.let {
+            binding.textViewTitleQuote.text = contact?.let {
                 if (contact.nicknameFake.isNotEmpty()) {
                     contact.nicknameFake
                 } else {
