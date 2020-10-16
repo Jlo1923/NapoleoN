@@ -28,11 +28,7 @@ class InviteSomeoneFragment : Fragment() {
         )
 
         binding.buttonShareAndroid.setSafeOnClickListener {
-            shareLink(R.string.text_share_link_android)
-        }
-
-        binding.buttonShareIos.setSafeOnClickListener {
-            shareLink(R.string.text_share_link_ios)
+            shareLink(R.string.text_share_link)
         }
 
         return binding.root

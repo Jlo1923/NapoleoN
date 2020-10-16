@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.inviteSomeone.InviteSomeoneFragment">
 
     <data>
 
@@ -10,8 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/attrBackgroundColorBackground"
-        tools:context=".ui.inviteSomeone.InviteSomeoneFragment">
+        android:background="?attr/attrBackgroundColorBackground">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView_logo"
@@ -43,7 +43,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_share_android"
-            style="@style/AppPrimaryButton.Icon"
+            style="@style/AppPrimaryButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/text_share_android"
@@ -52,18 +52,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_info" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_share_ios"
-            style="@style/AppPrimaryButton.Icon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/text_share_ios"
-            android:layout_marginTop="@dimen/x_large_margin"
-            app:icon="@drawable/ic_share_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_share_android" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

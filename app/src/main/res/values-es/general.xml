@@ -14,8 +14,7 @@
     <string name="text_blocked_contacts">Contactos bloqueados</string>
     <string name="label_edit_photo">Editar foto</string>
     <string name="label_edit_cover">Editar banner</string>
-    <string name="text_share_android">Compartir con Android</string>
-    <string name="text_share_ios">Compartir con iOS</string>
+    <string name="text_share_android">Compartir</string>
     <string name="text_search">Buscar</string>
     <string name="text_add_contact">Agregar contacto</string>
     <string name="text_register">Registrar</string>
