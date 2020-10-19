@@ -174,7 +174,7 @@ class ShowCaseManager : IContractShowCaseManager {
                     callback()
                 }
             }
-        }, 500)
+        }, 1000)
     }
 
     private fun showSeventh(callback: () -> Unit) {

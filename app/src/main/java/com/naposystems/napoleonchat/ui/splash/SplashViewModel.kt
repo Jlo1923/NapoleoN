@@ -94,21 +94,7 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    override fun setDefaultPreferences() {
-        viewModelScope.launch {
-            repository.setDefaultTheme()
-            repository.setDefaultUserDisplayFormat()
-            repository.setDefaultTimeFormat()
-            repository.setDefaultSelfDestructTime()
-            repository.setDefaultTimeRequestAccessPin()
-            repository.setDefaultAllowDownloadAttachments()
-            repository.setDefaultLockType()
-            repository.setDefaultSelfDestructTimeMessageNotSent()
-            repository.setDefaultAttemptsForRetryCode()
-            repository.setDefaultTimeForRetryCode()
-            repository.setDefaultAttemptsForNewCode()
-        }
-    }
+
 
     override fun setDefaultLanguage(language: String) {
         viewModelScope.launch {
