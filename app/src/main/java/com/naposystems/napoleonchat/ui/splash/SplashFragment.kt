@@ -15,6 +15,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SplashFragmentBinding
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.LocaleHelper
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class SplashFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: SplashViewModel by viewModels { viewModelFactory }
+    private val viewModelDefaultPreferences : DefaultPreferencesViewModel by viewModels { viewModelFactory }
     private lateinit var binding: SplashFragmentBinding
 
     //region Variables Access Pin
@@ -128,7 +130,7 @@ class SplashFragment : Fragment() {
         })
 
         //region Set DefaultPreferences
-        viewModel.setDefaultPreferences()
+        viewModelDefaultPreferences.setDefaultPreferences()
         viewModel.setDefaultLanguage(LocaleHelper.getLanguagePreference(requireContext()))
         setDefaultBiometricsOption()
         //endregion

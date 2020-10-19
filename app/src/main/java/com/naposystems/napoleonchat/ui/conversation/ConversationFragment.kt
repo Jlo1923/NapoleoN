@@ -1901,11 +1901,9 @@ class ConversationFragment : BaseFragment(),
     override fun onSendButtonClicked() {
         when {
             binding.inputPanel.isRecordingInLockedMode() && recordingTime >= minTimeRecording -> {
-                Timber.d("onSendButtonClicked 1")
                 binding.inputPanel.releaseRecordingLock()
             }
             !isRecordingAudio -> {
-                Timber.d("onSendButtonClicked 2")
 
                 val quote = binding.inputPanel.getQuote()
 
@@ -1921,7 +1919,6 @@ class ConversationFragment : BaseFragment(),
                 binding.inputPanel.closeQuote()
             }
             else -> {
-                Timber.d("onSendButtonClicked 3")
                 binding.inputPanel.cancelRecording()
             }
         }

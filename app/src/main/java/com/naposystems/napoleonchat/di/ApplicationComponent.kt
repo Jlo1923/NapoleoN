@@ -33,7 +33,7 @@ import javax.inject.Singleton
         SubscriptionModule::class, NapoleonKeyboardGifModule::class,
         AttachmentLocationModule::class, ConversationCallModule::class, NotificationUtilsModule::class,
         WebRTCCallServiceModule::class, PreviewMediaModule::class, LogoutModule::class,
-        CancelSubscriptionModule::class, FriendShipActionShareModule::class,
+        CancelSubscriptionModule::class, FriendShipActionShareModule::class, DefaultPreferencesModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
