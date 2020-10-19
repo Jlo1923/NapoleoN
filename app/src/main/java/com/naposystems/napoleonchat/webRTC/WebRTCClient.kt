@@ -50,8 +50,10 @@ class WebRTCClient @Inject constructor(
 
     private val vibratePattern = longArrayOf(0, 400, 1000, 600, 1000, 800, 1000, 1000)
 
+    private val countDownTime = TimeUnit.SECONDS.toMillis(30)
+
     private var countDownEndCall: CountDownTimer =
-        object : CountDownTimer(TimeUnit.SECONDS.toMillis(40), TimeUnit.SECONDS.toMillis(1)) {
+        object : CountDownTimer(countDownTime, TimeUnit.SECONDS.toMillis(1)) {
             override fun onFinish() {
                 Timber.d("CountDown finish")
                 if (!isActiveCall) {
@@ -69,6 +71,21 @@ class WebRTCClient @Inject constructor(
         object : CountDownTimer(TimeUnit.SECONDS.toMillis(3), TimeUnit.SECONDS.toMillis(1)) {
             override fun onFinish() {
                 if (!isActiveCall) {
+                    dispose()
+                }
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                // Intentionally empty
+            }
+        }
+
+    private var countDownIncomingCall: CountDownTimer =
+        object : CountDownTimer(countDownTime, TimeUnit.SECONDS.toMillis(1)) {
+            override fun onFinish() {
+                Timber.d("CountDown finish")
+                if (!isActiveCall) {
+                    mListener?.contactNotAnswer()
                     dispose()
                 }
             }
@@ -514,6 +531,7 @@ class WebRTCClient @Inject constructor(
                     if (iceConnectionState == PeerConnection.IceConnectionState.CONNECTED) {
                         isActiveCall = true
                         countDownEndCall.cancel()
+                        countDownIncomingCall.cancel()
                         initializeProximitySensor()
                         mListener?.enableControls()
                         //mListener?.showTimer()
@@ -563,6 +581,8 @@ class WebRTCClient @Inject constructor(
                         val intent = Intent(context, WebRTCCallService::class.java)
                         intent.action = WebRTCCallService.ACTION_CALL_END
                         context.startService(intent)
+
+                        mHandler.removeCallbacks(mCallTimeRunnable)
 
                         isMicOn = true
                         isVideoMuted = false
@@ -950,6 +970,7 @@ class WebRTCClient @Inject constructor(
 
     override fun playRingtone() {
         mediaPlayerHasStopped = false
+        countDownIncomingCall.start()
         playSound(Settings.System.DEFAULT_RINGTONE_URI, true) {
             // Intentionally empty
         }
@@ -1012,6 +1033,8 @@ class WebRTCClient @Inject constructor(
     override fun dispose() {
         Timber.d("Dispose")
 
+        socketService.unSubscribeCallChannel(this.channel)
+
         Data.isOnCall = false
 
         val intent = Intent(context, WebRTCCallService::class.java)
@@ -1027,6 +1050,7 @@ class WebRTCClient @Inject constructor(
 
         countDownEndCallBusy.cancel()
         countDownEndCall.cancel()
+        countDownIncomingCall.cancel()
 
         stopRingAndVibrate()
         stopMediaPlayer()

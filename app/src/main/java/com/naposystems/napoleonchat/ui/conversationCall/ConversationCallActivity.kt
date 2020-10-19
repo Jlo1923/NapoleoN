@@ -9,7 +9,6 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnticipateOvershootInterpolator
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
@@ -327,6 +326,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 val answerCall = bundle.getBoolean(ANSWER_CALL, false)
 
                 if (answerCall) {
+                    Timber.d("webRTCClient.stopRingAndVibrate()")
                     webRTCClient.stopRingAndVibrate()
                     binding.fabAnswer.isVisible = false
                 }
@@ -360,6 +360,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             }
 
             webRTCClient.dispose()
+            Timber.d("SocketService webRTCClient.dispose()")
         }
     }
 

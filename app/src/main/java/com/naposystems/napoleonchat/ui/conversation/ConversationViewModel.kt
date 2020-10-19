@@ -154,53 +154,57 @@ class ConversationViewModel @Inject constructor(
         quote: String
     ) {
         viewModelScope.launch {
-            val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(attachment?.duration ?: 0).toInt()
+            val durationAttachment =
+                TimeUnit.MILLISECONDS.toSeconds(attachment?.duration ?: 0).toInt()
             val selfAutoDestruction = compareDurationAttachmentWithSelfAutoDestructionInSeconds(
                 durationAttachment, selfDestructTime
             )
-            val message = Message(
-                id = 0,
-                webId = "",
-                body = messageString,
-                quoted = quote,
-                contactId = contact.id,
-                updatedAt = 0,
-                createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
-                isMine = Constants.IsMine.YES.value,
-                status = Constants.MessageStatus.SENDING.status,
-                numberAttachments = numberAttachments,
-                messageType = Constants.MessageType.MESSAGE.type,
-                selfDestructionAt = selfAutoDestruction
-            )
 
-            if (BuildConfig.ENCRYPT_API) {
-                message.encryptBody(cryptoMessage)
+            if (messageString.isNotEmpty() || attachment != null) {
+                val message = Message(
+                    id = 0,
+                    webId = "",
+                    body = messageString,
+                    quoted = quote,
+                    contactId = contact.id,
+                    updatedAt = 0,
+                    createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
+                    isMine = Constants.IsMine.YES.value,
+                    status = Constants.MessageStatus.SENDING.status,
+                    numberAttachments = numberAttachments,
+                    messageType = Constants.MessageType.MESSAGE.type,
+                    selfDestructionAt = selfAutoDestruction
+                )
+
+                if (BuildConfig.ENCRYPT_API) {
+                    message.encryptBody(cryptoMessage)
+                }
+
+                val messageId = repository.insertMessage(message).toInt()
+                Timber.d("insertMessage")
+                _newMessageSend.value = true
+
+                message.id = messageId
+
+                attachment?.let {
+                    attachment.messageId = messageId
+
+                    val attachmentId = repository.insertAttachment(attachment)
+                    attachment.id = attachmentId.toInt()
+                }
+
+                if (message.quoted.isNotEmpty()) {
+                    repository.insertQuote(quote, message)
+                }
+
+                sendMessageAndAttachment(
+                    attachment = attachment,
+                    message = message,
+                    numberAttachments = numberAttachments,
+                    selfDestructTime = selfAutoDestruction,
+                    quote = quote
+                )
             }
-
-            val messageId = repository.insertMessage(message).toInt()
-            Timber.d("insertMessage")
-            _newMessageSend.value = true
-
-            message.id = messageId
-
-            attachment?.let {
-                attachment.messageId = messageId
-
-                val attachmentId = repository.insertAttachment(attachment)
-                attachment.id = attachmentId.toInt()
-            }
-
-            if (message.quoted.isNotEmpty()) {
-                repository.insertQuote(quote, message)
-            }
-
-            sendMessageAndAttachment(
-                attachment = attachment,
-                message = message,
-                numberAttachments = numberAttachments,
-                selfDestructTime = selfAutoDestruction,
-                quote = quote
-            )
         }
     }
 

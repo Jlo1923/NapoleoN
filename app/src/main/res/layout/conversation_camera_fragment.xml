@@ -125,15 +125,6 @@
             app:layout_constraintTop_toTopOf="@id/imageButton_camera"
             app:srcCompat="@drawable/ic_switch_camera_black" />
 
-        <!--<com.naposystems.napoleonchat.ui.custom.verticalSlider.VerticalSlider
-            android:id="@+id/verticalSlider"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.5"
-            app:layout_constraintTop_toTopOf="parent" />-->
-
         <ImageView
             android:id="@+id/imageView_add"
             android:layout_width="18dp"

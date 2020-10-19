@@ -16,10 +16,7 @@ import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.pusher.client.Pusher
-import com.pusher.client.channel.Channel
-import com.pusher.client.channel.PrivateChannel
-import com.pusher.client.channel.PrivateChannelEventListener
-import com.pusher.client.channel.PusherEvent
+import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.connection.ConnectionStateChange
@@ -176,36 +173,38 @@ class SocketService @Inject constructor(
     }
 
     private fun connectToSocket() {
-        Timber.d("connectToSocket")
-        pusher.connect(object : ConnectionEventListener {
-            override fun onConnectionStateChange(change: ConnectionStateChange?) {
-                when (change?.currentState) {
-                    ConnectionState.CONNECTED -> {
-                        try {
-                            sharedPreferencesManager.putString(
-                                Constants.SharedPreferences.PREF_SOCKET_ID,
-                                pusher.connection.socketId
-                            )
-                            Timber.d("Conectó al socket ${pusher.connection.socketId}")
+        Timber.d("connectToSocket: ${pusher.connection.state}")
+        if (pusher.connection.state != ConnectionState.CONNECTED) {
+            pusher.connect(object : ConnectionEventListener {
+                override fun onConnectionStateChange(change: ConnectionStateChange?) {
+                    when (change?.currentState) {
+                        ConnectionState.CONNECTED -> {
+                            try {
+                                sharedPreferencesManager.putString(
+                                    Constants.SharedPreferences.PREF_SOCKET_ID,
+                                    pusher.connection.socketId
+                                )
+                                Timber.d("Conectó al socket ${pusher.connection.socketId}")
 
-                            subscribeToGeneralChannel()
-                        } catch (e: Exception) {
-                            Timber.e(e)
+                                subscribeToGeneralChannel()
+                            } catch (e: Exception) {
+                                Timber.e(e)
+                            }
                         }
+                        ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
+                        ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
+                        ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
+                        ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
+                        else -> Timber.d("Socket Error")
                     }
-                    ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
-                    ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
-                    ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
-                    ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
-                    else -> Timber.d("Socket Error")
                 }
-            }
 
-            override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-                Timber.e("Pusher onError $message, code: $code")
-                pusher.connect()
-            }
-        })
+                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+                    Timber.e("Pusher onError $message, code: $code")
+                    pusher.connect()
+                }
+            })
+        }
     }
 
     private fun subscribeToGeneralChannel() {
@@ -217,48 +216,55 @@ class SocketService @Inject constructor(
                 val channelName =
                     "private-general.${userId}"
 
-                generalChannel =
-                    pusher.subscribePrivate(channelName, object : PrivateChannelEventListener {
-                        override fun onEvent(event: PusherEvent) {
-                            Timber.d("Subscribe general: ${event.data}")
-                        }
+                if (pusher.getPrivateChannel(channelName) == null) {
+                    generalChannel =
+                        pusher.subscribePrivate(channelName, object : PrivateChannelEventListener {
+                            override fun onEvent(event: PusherEvent) {
+                                Timber.d("Subscribe general: ${event.data}")
+                            }
 
-                        override fun onAuthenticationFailure(
-                            message: String?,
-                            e: java.lang.Exception?
-                        ) {
-                            Timber.d("$message, $e")
-                        }
+                            override fun onAuthenticationFailure(
+                                message: String?,
+                                e: java.lang.Exception?
+                            ) {
+                                Timber.d("$message, $e")
+                            }
 
-                        override fun onSubscriptionSucceeded(channelName: String?) {
-                            Timber.d("onSubscriptionSucceeded: $channelName")
+                            override fun onSubscriptionSucceeded(channelName: String?) {
+                                Timber.d("onSubscriptionSucceeded: $channelName")
 
-                            listenOnDisconnect(generalChannel)
+                                if (!Data.isGeneralChannelSubscribed) {
 
-                            listenNewMessageEvent(generalChannel)
+                                    Data.isGeneralChannelSubscribed = true
 
-                            listenNotifyMessagesReceived(generalChannel)
+                                    listenOnDisconnect(generalChannel)
 
-                            listenCancelOrRejectFriendshipRequestEvent(generalChannel)
+                                    listenNewMessageEvent(generalChannel)
 
-                            listenMessagesRead(generalChannel)
+                                    listenNotifyMessagesReceived(generalChannel)
 
-                            listenMessagesDestroy(generalChannel)
+                                    listenCancelOrRejectFriendshipRequestEvent(generalChannel)
 
-                            listenIncomingCall(generalChannel)
+                                    listenMessagesRead(generalChannel)
 
-                            listenCallRejected(generalChannel)
+                                    listenMessagesDestroy(generalChannel)
 
-                            listenCancelCall(generalChannel)
+                                    listenIncomingCall(generalChannel)
 
-                            listenContactBlockOrDelete(generalChannel)
+                                    listenCallRejected(generalChannel)
 
-                            repository.getMyMessages(null)
-                        }
-                    })
+                                    listenCancelCall(generalChannel)
+
+                                    listenContactBlockOrDelete(generalChannel)
+                                }
+
+                                repository.getMyMessages(null)
+                            }
+                        })
+                }
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.e("subscribeToGeneralChannel $e")
         }
     }
 
@@ -569,16 +575,19 @@ class SocketService @Inject constructor(
         pusher.getPrivateChannel(channel)
 
     private fun listenContactBlockOrDelete(privateChannel: PrivateChannel) {
-        privateChannel.bind("App\\Events\\BlockOrDeleteFrienshipEvent", object : PrivateChannelEventListener {
-            override fun onEvent(event: PusherEvent) {
-                RxBus.publish(RxEvent.ContactBlockOrDelete())
-            }
+        privateChannel.bind(
+            "App\\Events\\BlockOrDeleteFrienshipEvent",
+            object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent) {
+                    RxBus.publish(RxEvent.ContactBlockOrDelete())
+                }
 
-            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) = Unit
+                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) =
+                    Unit
 
-            override fun onSubscriptionSucceeded(channelName: String?) = Unit
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
 
-        })
+            })
     }
 
 }
