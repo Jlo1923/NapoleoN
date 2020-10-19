@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.StatusFragmentItemBinding
 import com.naposystems.napoleonchat.entity.Status
+import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 
 class StatusAdapter(
     private val status: List<Status>,
@@ -32,7 +33,7 @@ class StatusAdapter(
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
-            binding.buttonMore.setOnClickListener {
+            binding.buttonMore.setSafeOnClickListener {
                 clickListener.onMoreClick(status, it)
             }
         }

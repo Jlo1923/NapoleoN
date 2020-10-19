@@ -11,7 +11,6 @@ interface IContractSplash {
         fun getLockType()
         fun getUnlockTimeApp()
         fun getAccountStatus()
-        fun setDefaultPreferences()
         fun setDefaultLanguage(language: String)
         fun setDefaultBiometricsOption(biometricOption: Int)
     }
@@ -24,19 +23,8 @@ interface IContractSplash {
         suspend fun getLockType(): Int
         suspend fun getUnlockTimeApp(): Long
         suspend fun getAccountStatus(): Int
-        suspend fun setDefaultTheme()
         suspend fun setDefaultLanguage(language: String)
-        suspend fun setDefaultUserDisplayFormat()
-        suspend fun setDefaultTimeFormat()
-        suspend fun setDefaultSelfDestructTime()
-        suspend fun setDefaultTimeRequestAccessPin()
-        suspend fun setDefaultAllowDownloadAttachments()
         suspend fun setDefaultBiometricsOption(biometricOption: Int)
-        suspend fun setDefaultLockType()
-        suspend fun setDefaultSelfDestructTimeMessageNotSent()
-        suspend fun setDefaultAttemptsForRetryCode()
-        suspend fun setDefaultTimeForRetryCode()
-        suspend fun setDefaultAttemptsForNewCode()
     }
 }
 

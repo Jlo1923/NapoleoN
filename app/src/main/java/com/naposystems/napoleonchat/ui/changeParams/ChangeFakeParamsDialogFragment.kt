@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.Cont
 import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import java.util.*
 import javax.inject.Inject
 
 private const val CONTACT_ID = "contactId"
@@ -69,7 +70,9 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
         binding.buttonAccept.setOnClickListener {
             arguments?.let { args ->
                 viewModel.updateNicknameFakeContact(
-                    args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString()
+                    args.getInt(CONTACT_ID), binding.editTextDisplay.text.toString().toLowerCase(
+                        Locale.getDefault()
+                    )
                 )
             }
         }

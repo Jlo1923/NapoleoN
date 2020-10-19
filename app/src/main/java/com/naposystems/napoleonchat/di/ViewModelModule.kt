@@ -55,6 +55,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.Cont
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
@@ -361,4 +362,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(FriendShipActionShareViewModel::class)
     internal abstract fun bindFriendShipActionShareViewModel(viewModel: FriendShipActionShareViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DefaultPreferencesViewModel::class)
+    internal abstract fun bindDefaultPreferencesViewModel(viewModel: DefaultPreferencesViewModel): ViewModel
 }
