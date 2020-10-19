@@ -1003,7 +1003,7 @@ class ConversationFragment : BaseFragment(),
 
                 Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
-            }
+            } else conversationAdapter.submitList(conversationList)
         })
     }
 
