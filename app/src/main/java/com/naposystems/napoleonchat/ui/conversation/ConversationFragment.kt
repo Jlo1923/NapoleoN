@@ -455,7 +455,8 @@ class ConversationFragment : BaseFragment(),
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    findNavController().popBackStack()
+                    if (it.contactId == args.contact.id)
+                        findNavController().popBackStack()
                 }
 
         disposable.add(disposableContactBlockOrDelete)
@@ -553,7 +554,7 @@ class ConversationFragment : BaseFragment(),
                         message = R.string.text_explanation_to_send_location_attachment
                     ) {
                         findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment()
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment(args.contact.id)
                         )
                     }
                 }
@@ -704,7 +705,8 @@ class ConversationFragment : BaseFragment(),
                         ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                             gifAttachment,
                             0,
-                            shareViewModel.getQuoteWebId() ?: ""
+                            shareViewModel.getQuoteWebId() ?: "",
+                            contactId = args.contact.id
                         )
                     )
                     shareViewModel.resetGifSelected()

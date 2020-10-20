@@ -15,12 +15,16 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentGalleryFoldersFragmentBinding
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryFolder
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryResult
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -39,6 +43,10 @@ class AttachmentGalleryFoldersFragment : Fragment() {
     private val args: AttachmentGalleryFoldersFragmentArgs by navArgs()
     private lateinit var binding: AttachmentGalleryFoldersFragmentBinding
     private lateinit var adapter: AttachmentGalleryFolderAdapter
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,6 +67,16 @@ class AttachmentGalleryFoldersFragment : Fragment() {
         )
         setupAdapter()
 
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contact?.id == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
         return binding.root
     }
 
@@ -78,6 +96,11 @@ class AttachmentGalleryFoldersFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onDestroy() {
+        disposable.dispose()
+        super.onDestroy()
     }
 
     private fun setToolbarTitle() {
