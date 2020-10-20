@@ -59,8 +59,8 @@
         <item quantity="other">%d stunden</item>
     </plurals>
     <string name="text_video_call_rejected">Es hat sich die Anforderung für den Videoanruf abgelehnt</string>
-    <string name="text_section_conversations">Meine Gespräche</string>
-    <string name="text_section_see_more">alles sehen</string>
+    <string name="text_section_conversations">Meine gespräche</string>
+    <string name="text_section_see_more">Alles sehen</string>
     <string name="text_secure_outgoing_call">Abgehende Safe</string>
     <string name="text_secure_outgoing_video_call">Sichere abgehender Videoanruf</string>
     <string name="text_call_in_progress">Laufendes Gespräch</string>
