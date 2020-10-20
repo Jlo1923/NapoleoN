@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -35,6 +36,8 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentLocationFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.model.attachment.location.Place
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.custom.attachmentLocationBottomSheet.AttachmentLocationBottomSheet
@@ -46,6 +49,8 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.Conver
 import com.naposystems.napoleonchat.utility.toBounds
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -75,6 +80,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     private lateinit var mainActivity: MainActivity
     private lateinit var snapReadyCallback : GoogleMap.SnapshotReadyCallback
     private lateinit var mapLoadedCallback : OnMapLoadedCallback
+    private val args : AttachmentLocationFragmentArgs by navArgs()
 
     private val adapter: AttachmentLocationAdapter by lazy {
         AttachmentLocationAdapter(this)
@@ -84,6 +90,9 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     }
     private val token: AutocompleteSessionToken by lazy {
         AutocompleteSessionToken.newInstance()
+    }
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
     }
 
     private val callback = OnMapReadyCallback { googleMap ->
@@ -141,6 +150,16 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
 
         binding.recyclerViewPlace.adapter = adapter
 
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contactId == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
         return binding.root
     }
 
@@ -175,6 +194,11 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
             searchView.setMenuItem(menu.findItem(R.id.search))
             searchView.setListener(this)
         }
+    }
+
+    override fun onDestroy() {
+        disposable.dispose()
+        super.onDestroy()
     }
 
     private fun setCurrentLocation(location: LatLng) {

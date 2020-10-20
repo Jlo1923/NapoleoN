@@ -26,6 +26,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.changeParams.ChangeFakeParamsDialogFragment
@@ -45,6 +47,8 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShar
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -74,6 +78,10 @@ class ContactProfileFragment : BaseFragment() {
 
     private val args: ContactProfileFragmentArgs by navArgs()
     private lateinit var binding: ContactProfileFragmentBinding
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     private var compressedFile: File? = null
     private var contactSilenced: Boolean = false
@@ -147,6 +155,16 @@ class ContactProfileFragment : BaseFragment() {
             dialog.show(childFragmentManager, "ChangeNickNameFakeDialog")
         }
 
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contactId == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
         return binding.root
     }
 
@@ -188,6 +206,11 @@ class ContactProfileFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
     }
 
     private fun optionDeleteContactClickListener() {

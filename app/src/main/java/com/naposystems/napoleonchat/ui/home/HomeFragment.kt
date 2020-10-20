@@ -212,18 +212,6 @@ class HomeFragment : Fragment() {
         disposable.add(disposableCancelOrRejectFriendshipRequest)
         disposable.add(disposableContactHasHangup)
 
-        val disposableContactBlockOrDelete =
-            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    contactRepositoryShareViewModel.getContacts(
-                        Constants.FriendShipState.ACTIVE.state,
-                        Constants.LocationGetContact.OTHER.location
-                    )
-                }
-
-        disposable.add(disposableContactBlockOrDelete)
-
         binding.textViewStatus.isSelected = true
 
         return binding.root
@@ -257,13 +245,12 @@ class HomeFragment : Fragment() {
 
         viewModel.subscribeToGeneralSocketChannel()
 
-        userDisplayFormatShareViewModel.getUserDisplayFormat()
-
         timeFormatShareViewModel.getTimeFormat()
 
         viewModel.conversations?.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 conversationAdapter.submitList(it)
+                conversationAdapter.notifyDataSetChanged()
                 existConversation = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
                 viewModel.resetConversations()
@@ -546,7 +533,7 @@ class HomeFragment : Fragment() {
                     }
                 }
             },
-            userDisplayFormatShareViewModel.getValUserDisplayFormat(),
+            userDisplayFormatShareViewModel.getUserDisplayFormat(),
             timeFormatShareViewModel.getValTimeFormat()
         )
         binding.recyclerViewChats.apply {
