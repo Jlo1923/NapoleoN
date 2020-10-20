@@ -1,9 +1,11 @@
 package com.naposystems.napoleonchat.ui.conversation.viewHolder
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.databinding.ConversationItemIncomingMessageWithVideoBinding
@@ -55,17 +57,21 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
             val context = binding.imageViewAttachment.context
             messageAndAttachment.getFirstAttachment()?.let { attachment ->
 
-                binding.imageViewAttachment.visibility = View.VISIBLE
+                val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
+
+                transformationList.add(CenterCrop())
+                transformationList.add(BlurTransformation(context))
+                transformationList.add(RoundedCorners(8))
 
                 Glide.with(binding.imageViewAttachment)
                     .load(attachment.body)
-                    .thumbnail(0.1f)
                     .transform(
-                        CenterCrop(),
-                        BlurTransformation(context),
-                        RoundedCorners(8)
+                        *transformationList.toTypedArray()
                     )
                     .into(binding.imageViewAttachment)
+
+                binding.imageViewAttachment.visibility = View.VISIBLE
+
             }
         } catch (e: Exception) {
             Timber.e(e)

@@ -125,18 +125,18 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun hideImageButtonSend() {
-        binding.imageButtonSend.animate()
+        /*binding.imageButtonSend.animate()
             .alpha(0f)
             .setDuration(150)
-            .start()
+            .start()*/
         binding.imageButtonSend.isVisible = false
     }
 
     override fun showImageButtonSend() {
-        binding.imageButtonSend.animate()
+        /*binding.imageButtonSend.animate()
             .alpha(1f)
             .setDuration(150)
-            .start()
+            .start()*/
         binding.imageButtonSend.isVisible = true
     }
 
@@ -291,10 +291,10 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onRecordCanceled() {
-        binding.imageButtonSend.animate()
+        /*binding.imageButtonSend.animate()
             .alpha(0f)
             .setDuration(150)
-            .start()
+            .start()*/
         binding.imageButtonSend.isVisible = false
 
         binding.containerInputPanel.startAnimation(
@@ -324,10 +324,10 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
             binding.viewSwitcherText.showNext()
         }
         binding.microphoneRecorderView.isVisible = false
-        binding.imageButtonSend.animate()
+        /*binding.imageButtonSend.animate()
             .alpha(1f)
             .setDuration(150)
-            .start()
+            .start()*/
         binding.imageButtonSend.isVisible = true
     }
 
