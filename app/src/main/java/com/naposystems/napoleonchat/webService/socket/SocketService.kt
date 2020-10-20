@@ -575,19 +575,30 @@ class SocketService @Inject constructor(
         pusher.getPrivateChannel(channel)
 
     private fun listenContactBlockOrDelete(privateChannel: PrivateChannel) {
-        privateChannel.bind(
-            "App\\Events\\BlockOrDeleteFrienshipEvent",
-            object : PrivateChannelEventListener {
-                override fun onEvent(event: PusherEvent) {
-                    RxBus.publish(RxEvent.ContactBlockOrDelete())
+        privateChannel.bind("App\\Events\\BlockOrDeleteFrienshipEvent", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent) {
+                Timber.d("-- BlockOrDeleteFrienshipEvent ${event.data}")
+                val jsonObject = JSONObject(event.data)
+                if (jsonObject.has("data")) {
+                    jsonObject.getJSONObject("data").let { jsonData ->
+                        if (jsonData.has("contact_id")) {
+                            jsonData.getInt("contact_id").let { contactId ->
+                                repository.deleteContact(contactId)
+                                RxBus.publish(RxEvent.ContactBlockOrDelete(
+                                        jsonData.getInt("contact_id")
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
+            }
 
-                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) =
-                    Unit
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) = Unit
 
-                override fun onSubscriptionSucceeded(channelName: String?) = Unit
+            override fun onSubscriptionSucceeded(channelName: String?) = Unit
 
-            })
+        })
     }
 
 }

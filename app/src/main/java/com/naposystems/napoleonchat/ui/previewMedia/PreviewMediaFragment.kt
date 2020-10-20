@@ -32,10 +32,14 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.PreviewMediaFragmentBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -81,6 +85,11 @@ class PreviewMediaFragment : Fragment() {
             R.anim.fade_out_fast
         )
     }
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
+
     private val mHandler: Handler by lazy {
         Handler()
     }
@@ -199,6 +208,16 @@ class PreviewMediaFragment : Fragment() {
             }
 
         }
+
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.messageAndAttachment.contact?.id == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
 
         binding.executePendingBindings()
 
@@ -366,6 +385,7 @@ class PreviewMediaFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        disposable.dispose()
         if (tempFile?.exists() == true) {
             tempFile?.delete()
         }

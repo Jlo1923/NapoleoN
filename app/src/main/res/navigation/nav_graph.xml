@@ -687,6 +687,13 @@
             android:name="message"
             android:defaultValue=''
             app:argType="string" />
+        <argument
+            android:name="contactId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_attachmentPreviewFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"
@@ -760,7 +767,12 @@
         android:id="@+id/attachmentLocationFragment"
         android:name="com.naposystems.napoleonchat.ui.attachmentLocation.AttachmentLocationFragment"
         android:label="@string/text_location"
-        tools:layout="@layout/attachment_location_fragment" />
+        tools:layout="@layout/attachment_location_fragment" >
+        <argument
+            android:name="contactId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/previewImageFragment"
         android:name="com.naposystems.napoleonchat.ui.previewImage.PreviewImageFragment"

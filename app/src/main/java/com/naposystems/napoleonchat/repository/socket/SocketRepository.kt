@@ -120,6 +120,16 @@ class SocketRepository @Inject constructor(
         }
     }
 
+    override fun deleteContact(contactId: Int?) {
+        GlobalScope.launch {
+            contactId?.let {
+                contactLocalDataSource.getContactById(contactId)?.let { contact ->
+                    contactLocalDataSource.deleteContact(contact)
+                }
+            }
+        }
+    }
+
     private suspend fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(messageRes.quoted, false)
