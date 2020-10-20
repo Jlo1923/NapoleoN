@@ -12,7 +12,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.RecyclerView
@@ -287,6 +286,11 @@ open class ConversationViewHolder constructor(
         }
     }
 
+    fun setStateMessage(state : Int) {
+        imageButtonSend?.isEnabled =
+            !(state == Constants.StateMessage.START.state || state == Constants.StateMessage.SUCCESS.state)
+    }
+
     open fun bind(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener,
@@ -447,8 +451,9 @@ open class ConversationViewHolder constructor(
             imageButtonPlay?.visibility = View.GONE
         }
 
-        imageButtonSend?.setOnClickListener {
+        imageButtonSend?.setSafeOnClickListener {
             if (item.message.status == Constants.MessageStatus.ERROR.status) {
+                imageButtonSend?.isEnabled = false
                 clickListener.reSendMessage(item.message)
             }
         }

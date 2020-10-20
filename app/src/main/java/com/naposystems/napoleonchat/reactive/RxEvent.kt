@@ -36,4 +36,5 @@ class RxEvent {
     data class HangupByNotification(val channel: String)
     data class ContactCantChangeToVideoCall(val channel: String)
     data class RejectCallByNotification(val channel: String)
+    class IncomingCallSystem
 }

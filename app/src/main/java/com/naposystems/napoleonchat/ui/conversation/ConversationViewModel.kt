@@ -81,6 +81,10 @@ class ConversationViewModel @Inject constructor(
     val uploadProgress: LiveData<UploadResult>
         get() = _uploadProgress
 
+    private val _stateMessage = MutableLiveData<StateMessage>()
+    val stateMessage: LiveData<StateMessage>
+        get() = _stateMessage
+
     private val _documentCopied = MutableLiveData<File>()
     val documentCopied: LiveData<File>
         get() = _documentCopied
@@ -641,9 +645,14 @@ class ConversationViewModel @Inject constructor(
                     messageType = Constants.MessageType.MESSAGE.type
                 )
 
+                _stateMessage.value = StateMessage.Start(message.id)
+
                 val messageResponse = repository.sendMessage(messageReqDTO)
 
                 if (messageResponse.isSuccessful) {
+
+                    _stateMessage.value = StateMessage.Success(message.id)
+
                     val messageEntity = MessageResDTO.toMessageEntity(
                         message,
                         messageResponse.body()!!,
@@ -656,6 +665,9 @@ class ConversationViewModel @Inject constructor(
                     repository.updateMessage(messageEntity)
                     Timber.d("updateMessage")
                 } else {
+
+                    _stateMessage.value = StateMessage.Error(message.id)
+
                     setStatusErrorMessageAndAttachment(message, null)
 
                     when (messageResponse.code()) {
@@ -665,6 +677,8 @@ class ConversationViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                _stateMessage.value = StateMessage.Error(message.id)
+
                 setStatusErrorMessageAndAttachment(message, null)
                 Timber.e(e)
             }
