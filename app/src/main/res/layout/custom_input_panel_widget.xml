@@ -120,7 +120,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="@dimen/conversation_fab_size"
                                     android:layout_gravity="end|bottom"
-                                    android:animateLayoutChanges="true"
                                     android:clipChildren="false"
                                     android:clipToPadding="false"
                                     android:orientation="horizontal">

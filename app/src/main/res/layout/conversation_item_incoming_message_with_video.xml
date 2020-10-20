@@ -66,15 +66,16 @@
                 android:layout_height="200dp"
                 android:layout_marginBottom="@dimen/x_small_margin"
                 android:background="@drawable/round_image"
-                android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
                 android:scaleType="centerCrop"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/textView_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:layout_constraintWidth_max="wrap"
                 app:layout_constraintWidth_percent="1"
-                tools:src="@drawable/vertical_photo" />
+                tools:src="@drawable/vertical_photo"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_play"
