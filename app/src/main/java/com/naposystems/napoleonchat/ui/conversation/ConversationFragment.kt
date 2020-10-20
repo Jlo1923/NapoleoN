@@ -470,6 +470,15 @@ class ConversationFragment : BaseFragment(),
 
         disposable.add(disposableIncomingCall)
 
+        val disposableIncomingCallSystem = RxBus.listen(RxEvent.IncomingCallSystem::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onRecorderReleased()
+                binding.inputPanel.cancelRecording()
+            }
+
+        disposable.add(disposableIncomingCallSystem)
+
         return binding.root
     }
 
@@ -817,6 +826,23 @@ class ConversationFragment : BaseFragment(),
                     }
                     is DownloadAttachmentResult.Success -> {
                         conversationAdapter.setDownloadComplete(it.itemPosition)
+                    }
+                }
+            }
+        })
+
+        viewModel.stateMessage.observe(viewLifecycleOwner, {
+            if (it  != null) {
+                Timber.d("--- State ${it}")
+                when(it) {
+                    is StateMessage.Start -> {
+                        conversationAdapter.setStateMessage(it.messageId, Constants.StateMessage.START.state)
+                    }
+                    is StateMessage.Success -> {
+                        conversationAdapter.setStateMessage(it.messageId, Constants.StateMessage.SUCCESS.state)
+                    }
+                    is StateMessage.Error -> {
+                        conversationAdapter.setStateMessage(it.messageId, Constants.StateMessage.ERROR.state)
                     }
                 }
             }
@@ -1820,6 +1846,7 @@ class ConversationFragment : BaseFragment(),
 
                             if (recordingTime == Constants.MAX_AUDIO_RECORD_TIME) {
                                 isRecordingAudio = false
+                                saveAndSendRecordAudio()
                                 binding.inputPanel.releaseRecordingLock()
                             } else {
                                 isRecordingAudio = true

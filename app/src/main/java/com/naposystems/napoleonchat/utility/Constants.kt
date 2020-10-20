@@ -396,6 +396,12 @@ object Constants {
         CALL_ACTIVITY(2)
     }
 
+    enum class StateMessage(val state: Int) {
+        START(1),
+        SUCCESS(2),
+        ERROR(3)
+    }
+
     enum class SubscriptionStatus(val state: String) {
         PENDING("Pending"),
         ACTIVE("Active"),
