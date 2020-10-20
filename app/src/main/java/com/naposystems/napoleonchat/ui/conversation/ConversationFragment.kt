@@ -554,7 +554,9 @@ class ConversationFragment : BaseFragment(),
                         message = R.string.text_explanation_to_send_location_attachment
                     ) {
                         findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment(args.contact.id)
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment(
+                                args.contact.id
+                            )
                         )
                     }
                 }
@@ -1242,6 +1244,13 @@ class ConversationFragment : BaseFragment(),
             binding.buttonVideoCall.isEnabled = !this
         }
         //messagedLoadedFirstTime = false
+        if (binding.inputPanel.getEditTex().text.toString().isNotEmpty()) {
+            binding.inputPanel.apply {
+                showImageButtonSend()
+                hideButtonRecord()
+                hideImageButtonCamera()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -1589,7 +1598,7 @@ class ConversationFragment : BaseFragment(),
         binding.recyclerViewConversation.setHasFixedSize(false)
         binding.recyclerViewConversation.adapter = conversationAdapter
         binding.recyclerViewConversation.layoutManager = linearLayoutManager
-        binding.recyclerViewConversation.itemAnimator = ItemAnimator()
+        binding.recyclerViewConversation.itemAnimator = null
 
         /*conversationAdapter.registerAdapterDataObserver(object :
             RecyclerView.AdapterDataObserver() {
