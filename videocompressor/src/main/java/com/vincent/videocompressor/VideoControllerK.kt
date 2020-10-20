@@ -9,7 +9,7 @@ import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.Log
 import com.vincent.videocompressor.VideoController.COMPRESS_QUALITY_CUSTOM
-import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.isActive
 import java.io.File
@@ -126,7 +126,7 @@ class VideoControllerK {
         sourceFile: File,
         destinationFile: File,
         quality: Int,
-        job: ProducerScope<*>
+        job: CoroutineScope
     ) = channelFlow {
         offer(VideoCompressResult.Start)
         path = sourceFile.absolutePath

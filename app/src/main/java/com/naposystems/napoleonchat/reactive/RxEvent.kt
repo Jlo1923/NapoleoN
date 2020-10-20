@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.reactive
 
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 import org.json.JSONObject
 import org.webrtc.IceCandidate
@@ -36,4 +37,20 @@ class RxEvent {
     data class HangupByNotification(val channel: String)
     data class ContactCantChangeToVideoCall(val channel: String)
     data class RejectCallByNotification(val channel: String)
+
+    data class UploadStart(val attachment: Attachment)
+    data class UploadSuccess(val attachment: Attachment)
+    data class UploadError(
+        val attachment: Attachment,
+        val message: String,
+        val cause: Exception? = null
+    )
+    data class CompressProgress(
+        val attachment: Attachment,
+        val progress: Float
+    )
+    data class UploadProgress(
+        val attachment: Attachment,
+        val progress: Float
+    )
 }

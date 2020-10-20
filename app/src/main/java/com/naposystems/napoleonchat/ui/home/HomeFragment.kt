@@ -587,7 +587,7 @@ class HomeFragment : Fragment() {
 
                 val snackbarUtils = SnackbarUtils(binding.coordinator, list)
 
-                snackbarUtils.showSnackbar{ ok ->
+                snackbarUtils.showSnackbar { ok ->
                     if (ok)
                         shareFriendShipViewModel.clearMessageError()
                 }

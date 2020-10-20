@@ -1,7 +1,9 @@
 package com.naposystems.napoleonchat.ui.conversation
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +21,7 @@ import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
 import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
@@ -154,7 +157,8 @@ class ConversationViewModel @Inject constructor(
         quote: String
     ) {
         viewModelScope.launch {
-            val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(attachment?.duration ?: 0).toInt()
+            val durationAttachment =
+                TimeUnit.MILLISECONDS.toSeconds(attachment?.duration ?: 0).toInt()
             val selfAutoDestruction = compareDurationAttachmentWithSelfAutoDestructionInSeconds(
                 durationAttachment, selfDestructTime
             )
@@ -533,11 +537,18 @@ class ConversationViewModel @Inject constructor(
                     }
                 } else {
                     repository.suspendUpdateAttachment(attachment)
-                    repository.uploadAttachment(attachment, message)
+                    val intent = Intent(context, UploadService::class.java).apply {
+                        putExtras(Bundle().apply {
+                            putParcelable(UploadService.MESSAGE_KEY, message)
+                            putParcelable(UploadService.ATTACHMENT_KEY, attachment)
+                        })
+                    }
+                    context.startService(intent)
+                    /*repository.uploadAttachment(attachment, message)
                         .flowOn(Dispatchers.IO)
                         .collect {
                             _uploadProgress.value = it
-                        }
+                        }*/
                 }
             } catch (e: Exception) {
                 setStatusErrorMessageAndAttachment(message, attachment)

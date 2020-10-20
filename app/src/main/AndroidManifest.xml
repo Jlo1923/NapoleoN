@@ -45,6 +45,8 @@
 
         <service android:name=".service.webRTCCall.WebRTCCallService" />
 
+        <service android:name=".service.uploadService.UploadService" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDcAkhqRS4BO-BoKM89HiXuR4ruLr8fj1w" />

@@ -23,7 +23,7 @@ class ProgressRequestBody(
     override fun contentLength(): Long = mLength
 
     override fun writeTo(sink: BufferedSink) {
-        Timber.d("writeTo")
+        Timber.d("UploadServiceRepository writeTo")
         try {
             ByteArrayInputStream(bytes).use { inputStream ->
                 val buffer = ByteArray(DEFAULT_BUFFER_SIZE)

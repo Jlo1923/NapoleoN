@@ -8,5 +8,8 @@
     <string name="alerts_channel_id" translatable="false">alerts_channel</string>
     <string name="alerts_channel_name" translatable="false">Alerts channel</string>
     <string name="alerts_channel_description" translatable="false">Alerts channel description</string>
+    <string name="upload_channel_id" translatable="false">upload_channel</string>
+    <string name="upload_channel_name" translatable="false">Upload channel</string>
+    <string name="upload_channel_description" translatable="false">Upload channel description</string>
     <string name="calls_group_key" translatable="false">napoleon_calls</string>
 </resources>
