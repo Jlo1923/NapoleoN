@@ -35,6 +35,8 @@ interface IContractSocketService {
 
         fun getMyMessages(contactId: Int?)
 
+        fun deleteContact(contactId: Int?)
+
         fun verifyMessagesReceived()
 
         fun verifyMessagesRead()

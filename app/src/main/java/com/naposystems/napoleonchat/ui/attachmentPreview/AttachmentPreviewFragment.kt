@@ -17,11 +17,15 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 
 class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
@@ -54,6 +58,10 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         Handler()
     }
     private lateinit var mRunnable: Runnable
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,11 +183,22 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
             binding.inputPanel.getEditTex().setText(args.message)
         }
 
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contactId == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
         return binding.root
     }
 
     override fun onDestroy() {
         deleteFile()
+        disposable.dispose()
         conversationShareViewModel.resetAttachmentTaken()
         super.onDestroy()
     }

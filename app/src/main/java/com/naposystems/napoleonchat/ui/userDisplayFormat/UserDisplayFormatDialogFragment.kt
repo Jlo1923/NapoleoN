@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.UserDisplayFormatDialogFragmentBinding
@@ -31,7 +31,7 @@ class UserDisplayFormatDialogFragment : DialogFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private val viewModel: UserDisplayFormatShareViewModel by activityViewModels { viewModelFactory }
+    private val viewModel: UserDisplayFormatShareViewModel by viewModels { viewModelFactory }
     private lateinit var binding: UserDisplayFormatDialogFragmentBinding
     private lateinit var listener: UserDisplayFormatListener
     private var format: Int = 0
@@ -86,7 +86,7 @@ class UserDisplayFormatDialogFragment : DialogFragment() {
         viewModel.getUserDisplayFormat()
 
         activity?.let { activity ->
-            viewModel.userDisplayFormat.observe(activity, Observer {
+            viewModel.userDisplayFormat.observe(viewLifecycleOwner, Observer {
                 if(it != null) {
                     this.format = it
                     when (it) {

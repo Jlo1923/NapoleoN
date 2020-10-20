@@ -21,12 +21,10 @@ class UserDisplayFormatShareViewModel @Inject constructor(
         repository.setUserDisplayFormat(format)
     }
 
-    override fun getUserDisplayFormat() {
-        _userDisplayFormat.value = repository.getUserDisplayFormat()
-    }
-
-    override fun getValUserDisplayFormat(): Int? {
-        return userDisplayFormat.value
+    override fun getUserDisplayFormat() : Int {
+        val response = repository.getUserDisplayFormat()
+        _userDisplayFormat.value = response
+        return response
     }
     //endregion
 }
