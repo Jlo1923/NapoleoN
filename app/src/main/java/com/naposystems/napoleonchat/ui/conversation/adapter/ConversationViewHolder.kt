@@ -5,6 +5,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.CountDownTimer
 import android.view.View
@@ -20,6 +21,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.ui.custom.audioPlayer.AudioPlayerCustomView
 import com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
@@ -38,7 +40,6 @@ open class ConversationViewHolder constructor(
     private val context: Context
 ) : RecyclerView.ViewHolder(view) {
 
-    private var uploadJob: ProducerScope<*>? = null
     private var downloadJob: Job? = null
     private var countDownTimer: CountDownTimer? = null
 
@@ -96,11 +97,11 @@ open class ConversationViewHolder constructor(
     }
 
     fun setProgress(
-        progress: Long
+        progress: Float
     ) {
         try {
             if (this.downloadJob?.isActive == true) {
-                Timber.d(" setProgress this.uploadjob: ${this.uploadJob}, this.downloadJob: ${this.downloadJob}")
+                Timber.d(" setProgress this.downloadJob: ${this.downloadJob}")
 
                 if (progress > 0) {
                     Timber.d("*Test: Download Progress: $progress")
@@ -110,7 +111,7 @@ open class ConversationViewHolder constructor(
                     progressBarIndeterminate?.visibility = View.GONE
                 }
 
-                if (progress == 100L) {
+                if (progress == 100f) {
                     Timber.d("*Test: Download Success: $progress")
                     progressBar?.visibility = View.GONE
                     imageButtonState?.visibility = View.INVISIBLE
@@ -126,10 +127,9 @@ open class ConversationViewHolder constructor(
     }
 
     fun setUploadProgressAndJob(
-        progress: Float,
-        job: ProducerScope<*>
+        progress: Float
     ) {
-        Timber.d("*Test: Upload Progress: $progress, job: $job")
+        Timber.d("*Test: Upload Progress: $progress")
         progressBar?.let { circleProgressBar ->
             when {
                 progress < 10f -> {
@@ -160,22 +160,12 @@ open class ConversationViewHolder constructor(
                 }
             }
         }
-
-        this.uploadJob = job
-
-        if (job.isClosedForSend) {
-            progressBar?.setProgress(0.0f)
-            progressBar?.visibility = View.GONE
-        }
     }
 
     fun setCompressProgressAndJob(
-        progress: Float,
-        job: ProducerScope<*>
+        progress: Float
     ) {
-        Timber.d("*Test: Compress Progress: $progress, job: $job")
-
-        this.uploadJob = job
+        Timber.d("*Test: Compress Progress: $progress")
     }
 
     fun setDownloadProgressAndJob(
@@ -206,14 +196,6 @@ open class ConversationViewHolder constructor(
             Timber.d("enablePlayButton setUploadComplete: true")
             audioPlayer?.enablePlayButton(true)
         }
-    }
-
-    fun setUploadStart(job: ProducerScope<*>) {
-        Timber.d("setUploadStart: $job")
-        this.uploadJob = job
-        imageButtonState?.visibility = View.VISIBLE
-        imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
-        progressBarIndeterminate?.visibility = View.VISIBLE
     }
 
     fun setDownloadStart(job: Job) {
@@ -419,7 +401,7 @@ open class ConversationViewHolder constructor(
                 }
             }
 
-            imageButtonState?.setSafeOnClickListener{
+            imageButtonState?.setSafeOnClickListener {
                 imageButtonStateClickListener(
                     attachment,
                     clickListener,
@@ -539,7 +521,7 @@ open class ConversationViewHolder constructor(
                     }
                 }
 
-                override fun onComplete(messageId : String, audioId: String?) {
+                override fun onComplete(messageId: String, audioId: String?) {
                     Timber.d("--onComplete $audioId")
                     audioId?.let {
                         clickListener.sendMessageRead(messageId, audioId, true, adapterPosition)
@@ -556,21 +538,22 @@ open class ConversationViewHolder constructor(
     ) {
         when (attachment.status) {
             Constants.AttachmentStatus.SENDING.status -> {
-                Timber.d("this.uploadJob: ${this.uploadJob}")
-                if (this.uploadJob?.isActive == true) {
-                    this.uploadJob?.close()
-                } else {
-                    attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                    clickListener.updateAttachmentState(attachment)
-                    val message = item.message
-                    message.status = Constants.MessageStatus.ERROR.status
-                    clickListener.updateMessageState(message)
-                }
+                attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
+                clickListener.updateAttachmentState(attachment)
+                val message = item.message
+                message.status = Constants.MessageStatus.ERROR.status
+                clickListener.updateMessageState(message)
                 progressBar?.setProgress(0.0f)
                 progressBar?.visibility = View.INVISIBLE
                 progressBarIndeterminate?.isVisible = false
                 imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
                 imageButtonState?.visibility = View.VISIBLE
+
+                val intent = Intent(context, UploadService::class.java).apply {
+                    action = UploadService.ACTION_CANCEL_UPLOAD
+                }
+
+                context.startService(intent)
             }
             Constants.AttachmentStatus.UPLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {

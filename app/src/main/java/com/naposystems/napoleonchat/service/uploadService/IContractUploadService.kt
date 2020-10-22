@@ -15,7 +15,7 @@ interface IContractUploadService {
             attachment: Attachment,
             message: Message
         )
-
+        fun cancelUpload()
         fun updateAttachment(attachment: Attachment)
         fun updateMessage(message: Message)
         suspend fun compressVideo(

@@ -21,5 +21,5 @@ sealed class DownloadAttachmentResult {
     data class Cancel(val messageAndAttachment: MessageAndAttachment, val itemPosition: Int) :
         DownloadAttachmentResult()
 
-    data class Progress(val itemPosition: Int, val progress: Long) : DownloadAttachmentResult()
+    data class Progress(val itemPosition: Int, val progress: Float) : DownloadAttachmentResult()
 }

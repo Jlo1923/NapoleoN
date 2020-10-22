@@ -627,7 +627,7 @@ class ConversationRepository @Inject constructor(
                                     offer(
                                         DownloadAttachmentResult.Progress(
                                             itemPosition,
-                                            finalPercentage
+                                            finalPercentage.toFloat()
                                         )
                                     )
                                 }

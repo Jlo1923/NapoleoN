@@ -16,9 +16,7 @@ import android.media.audiofx.AcousticEchoCanceler
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.PowerManager
 import android.provider.MediaStore
-import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
@@ -451,45 +449,7 @@ class ConversationFragment : BaseFragment(),
         MediaPlayerManager.setContext(requireContext())
         MediaPlayerManager.initializeBluetoothManager()
 
-        val disposableContactBlockOrDelete =
-            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    findNavController().popBackStack()
-                }
-
-        disposable.add(disposableContactBlockOrDelete)
-
-        val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                onRecorderReleased()
-                binding.inputPanel.cancelRecording()
-            }
-
-        disposable.add(disposableIncomingCall)
-
         return binding.root
-    }
-
-    private fun checkBatteryOptimized(): Boolean {
-        val powerManager = requireActivity().getSystemService(Context.POWER_SERVICE) as PowerManager
-        val packageName = requireActivity().packageName
-
-        return if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-            Utils.showDialogToInformPermission(
-                requireContext(),
-                childFragmentManager,
-                R.drawable.ic_battery,
-                R.string.explanation_camera_and_storage_permission, //TODO: Texto para optimización de bateria|!!
-                {
-                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                    startActivity(intent)
-                },
-                {}
-            )
-            false
-        } else true
     }
 
     private fun inputPanelCameraButtonClickListener() {
@@ -659,7 +619,7 @@ class ConversationFragment : BaseFragment(),
             }
         }
 
-        eventCounterBadgeMessage()
+        subscribeRxEvents()
 
         shareViewModel.hasAudioSendClicked.observe(requireActivity(), Observer {
             if (it == true) {
@@ -795,7 +755,7 @@ class ConversationFragment : BaseFragment(),
                         conversationAdapter.setStartDownload(it.itemPosition, it.job)
                     }
                     is DownloadAttachmentResult.Progress -> {
-                        conversationAdapter.setProgress(
+                        conversationAdapter.setDownloadProgress(
                             it.itemPosition,
                             it.progress
                         )
@@ -818,7 +778,7 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
+        /*viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 when (it) {
                     is UploadResult.Start -> conversationAdapter.setUploadStart(
@@ -841,7 +801,7 @@ class ConversationFragment : BaseFragment(),
                     is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
                 }
             }
-        })
+        })*/
 
         viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -1007,7 +967,22 @@ class ConversationFragment : BaseFragment(),
         })
     }
 
-    private fun eventCounterBadgeMessage() {
+    @OptIn(InternalCoroutinesApi::class)
+    private fun subscribeRxEvents() {
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    findNavController().popBackStack()
+                }
+
+        val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onRecorderReleased()
+                binding.inputPanel.cancelRecording()
+            }
+
         val disposableNewMessageEvent =
             RxBus.listen(RxEvent.NewMessageEventForCounter::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1026,8 +1001,78 @@ class ConversationFragment : BaseFragment(),
                 binding.buttonVideoCall.isEnabled = true
             }
 
+        /*when (it) {
+            is UploadResult.Start -> conversationAdapter.setUploadStart(
+                it.attachment,
+                it.job
+            )
+            is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
+            is UploadResult.CompressProgress -> conversationAdapter.setCompressProgress(
+                it.attachment,
+                it.progress,
+                it.job
+            )
+            is UploadResult.Progress -> {
+                conversationAdapter.setUploadProgress(
+                    it.attachment,
+                    it.progress,
+                    it.job
+                )
+            }
+            is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
+        }*/
+
+        val disposableUploadStart = RxBus.listen(RxEvent.UploadStart::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadStart")
+                conversationAdapter.setUploadStart(
+                    it.attachment
+                )
+            }
+
+        val disposableUploadSuccess = RxBus.listen(RxEvent.UploadSuccess::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadSuccess")
+                conversationAdapter.setUploadComplete(it.attachment)
+            }
+
+        val disposableUploadError = RxBus.listen(RxEvent.UploadError::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadError")
+            }
+
+        val disposableUploadProgress = RxBus.listen(RxEvent.UploadProgress::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadProgress: ${it.progress}")
+                conversationAdapter.setUploadProgress(
+                    it.attachment,
+                    it.progress
+                )
+            }
+
+        val disposableCompressProgress = RxBus.listen(RxEvent.CompressProgress::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.CompressProgress")
+                conversationAdapter.setCompressProgress(
+                    it.attachment,
+                    it.progress
+                )
+            }
+
+        disposable.add(disposableContactBlockOrDelete)
+        disposable.add(disposableIncomingCall)
         disposable.add(disposableNewMessageEvent)
         disposable.add(disposableContactHasHangup)
+        disposable.add(disposableUploadStart)
+        disposable.add(disposableUploadSuccess)
+        disposable.add(disposableUploadError)
+        disposable.add(disposableUploadProgress)
+        disposable.add(disposableCompressProgress)
     }
 
     private fun validScroll(

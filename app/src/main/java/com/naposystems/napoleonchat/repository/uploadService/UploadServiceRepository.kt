@@ -41,12 +41,13 @@ class UploadServiceRepository @Inject constructor(
 
     private var viewModelJob = Job()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.IO)
+    private var uploadJob: Job? = null
 
     override fun uploadAttachment(
         attachment: Attachment,
         message: Message
     ) {
-        coroutineScope.launch {
+        uploadJob = coroutineScope.launch {
             try {
                 updateAttachment(attachment)
                 message.status = Constants.MessageStatus.SENDING.status
@@ -153,7 +154,7 @@ class UploadServiceRepository @Inject constructor(
                                 }
                             }
                             is VideoCompressResult.Progress -> {
-                                //Timber.d("VideoCompressResult.Progress ${it.progress}")
+                                Timber.d("VideoCompressResult.Progress ${it.progress}")
                                 //offer(UploadResult.CompressProgress(attachment, it.progress, this))
                                 RxBus.publish(RxEvent.CompressProgress(attachment, it.progress))
                             }
@@ -180,6 +181,12 @@ class UploadServiceRepository @Inject constructor(
                 message.status = Constants.MessageStatus.ERROR.status
                 updateMessage(message)
             }
+        }
+    }
+
+    override fun cancelUpload() {
+        if (uploadJob?.isActive == true) {
+            uploadJob?.cancel()
         }
     }
 

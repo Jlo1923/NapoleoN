@@ -3,23 +3,14 @@ package com.naposystems.napoleonchat.service.uploadService
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.utility.UploadResult
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -29,19 +20,13 @@ class UploadService : Service(), IContractUploadService {
         const val PROGRESS_MAX = 100
         const val MESSAGE_KEY = "message"
         const val ATTACHMENT_KEY = "attachment"
+        const val ACTION_CANCEL_UPLOAD = "action_cancel_upload"
     }
 
     @Inject
     lateinit var repository: IContractUploadService.Repository
 
     private lateinit var napoleonApplication: NapoleonApplication
-
-    private var viewModelJob = Job()
-    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.IO)
-
-    private val _uploadProgress = MutableLiveData<UploadResult>()
-    val uploadProgress: LiveData<UploadResult>
-        get() = _uploadProgress
 
     private val notificationId = NotificationUtils.NOTIFICATION_UPLOADING
 
@@ -78,9 +63,18 @@ class UploadService : Service(), IContractUploadService {
 
         if (message != null && attachment != null) {
             repository.uploadAttachment(attachment!!, message!!)
+            showNotification()
         }
 
-        showNotification()
+        intent.action?.let { action ->
+            Timber.d("onStartCommand action: $action")
+            if (action == ACTION_CANCEL_UPLOAD) {
+                repository.cancelUpload()
+                stopSelf()
+                stopForeground(true)
+            }
+        }
+
         return START_NOT_STICKY
     }
 
@@ -114,13 +108,11 @@ class UploadService : Service(), IContractUploadService {
 
         val disposableUploadProgress = RxBus.listen(RxEvent.UploadProgress::class.java)
             .subscribe {
-                Timber.d("RxEvent.UploadProgress: ${it.progress}")
                 notificationUtils.updateUploadProgress(PROGRESS_MAX, it.progress.toInt())
             }
 
         val disposableCompressProgress = RxBus.listen(RxEvent.CompressProgress::class.java)
             .subscribe {
-                Timber.d("RxEvent.CompressProgress")
             }
 
         compositeDisposable.add(disposableUploadStart)
