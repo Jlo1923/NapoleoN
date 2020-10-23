@@ -208,7 +208,6 @@ class WebRTCClient @Inject constructor(
     }
 
     init {
-        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         bluetoothStateManager = BluetoothStateManager(context, this)
         subscribeToRXEvents()
     }
@@ -788,6 +787,7 @@ class WebRTCClient @Inject constructor(
         this.mListener = webRTCClientListener
         isOnCallActivity = true
         Timber.d("isOnCallActivity: $isOnCallActivity")
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         if (!isActiveCall) {
             createPeerConnection()

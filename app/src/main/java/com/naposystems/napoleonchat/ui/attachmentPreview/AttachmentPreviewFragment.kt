@@ -2,6 +2,8 @@ package com.naposystems.napoleonchat.ui.attachmentPreview
 
 import android.os.Bundle
 import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -192,6 +194,21 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
                 }
 
         disposable.add(disposableContactBlockOrDelete)
+
+        binding.inputPanel.setEditTextWatcher(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+
+
+            override fun afterTextChanged(s: Editable?) {
+                binding.inputPanel.apply {
+                    val text = getEditTex().text.toString()
+                    if (text.isNotEmpty()) containerWrap() else containerNoWrap()
+                }
+            }
+        })
 
         return binding.root
     }

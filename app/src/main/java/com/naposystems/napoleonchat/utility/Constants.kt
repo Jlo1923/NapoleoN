@@ -80,6 +80,7 @@ object Constants {
         const val BODY = "body"
         const val TITLE = "title"
         const val CONTACT = "contact"
+        const val ATTACK = "attacker_id"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
