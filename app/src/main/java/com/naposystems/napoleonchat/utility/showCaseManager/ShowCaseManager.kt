@@ -348,4 +348,11 @@ class ShowCaseManager : IContractShowCaseManager {
         }
     }
 
+    override fun getStateShowCaseSixth(): Boolean {
+        return sharedPreferencesManager.getBoolean(
+            Constants.SharedPreferences.PREF_SHOW_CASE_SIXTH_STEP_HAS_BEEN_SHOW,
+            true
+        )
+    }
+
 }

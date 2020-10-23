@@ -1769,6 +1769,7 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     override fun onPause() {
         super.onPause()
+        MediaPlayerManager.completeAudioPlaying()
         if (binding.inputPanel.getEditTex().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }

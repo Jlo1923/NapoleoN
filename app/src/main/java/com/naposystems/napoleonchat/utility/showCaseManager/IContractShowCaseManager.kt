@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.utility.showCaseManager
 
-import android.app.Activity
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 
@@ -24,4 +23,5 @@ interface IContractShowCaseManager {
     fun showFromSixth()
     fun showFromSeventh()
     fun showSixth(callback: () -> Unit)
+    fun getStateShowCaseSixth() : Boolean
 }
