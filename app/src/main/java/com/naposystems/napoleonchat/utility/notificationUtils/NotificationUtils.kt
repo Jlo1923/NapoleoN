@@ -43,7 +43,10 @@ class NotificationUtils @Inject constructor(
     companion object {
         const val NOTIFICATION_RINGING = 950707
         const val NOTIFICATION = 162511
-        const val NOTIFICATION_NUMBER = 1
+
+        //        const val NOTIFICATION_NUMBER = 1
+        const val SUMMARY_ID = 12345678
+        const val GROUP_MESSAGE = "GROUP_MESSAGE"
 
         fun cancelWebRTCCallNotification(context: Context) {
             val notificationManager =
@@ -83,8 +86,8 @@ class NotificationUtils @Inject constructor(
         val iconBitmap = BitmapFactory.decodeResource(
             context.resources, R.drawable.ic_notification_icon
         )
-        //val notificationCount = if(data.containsKey("badge")) data.getValue("badge").toInt() else 0
-        //Timber.d("--OLA $notificationCount")
+        val notificationCount = if (data.containsKey("badge")) data.getValue("badge").toInt() else 0
+        Timber.d("*Notification: $notificationCount")
 
         val pair =
             createPendingIntent(
@@ -107,7 +110,7 @@ class NotificationUtils @Inject constructor(
             .setDefaults(DEFAULT_ALL)
             .setPriority(PRIORITY_MAX)
             .setVisibility(VISIBILITY_PUBLIC)
-            .setNumber(NOTIFICATION_NUMBER)
+            .setNumber(notificationCount)
             .setBadgeIconType(BADGE_ICON_SMALL)
             .setAutoCancel(true)
 
@@ -138,6 +141,8 @@ class NotificationUtils @Inject constructor(
                 val messageKey =
                     Constants.NotificationKeys.MESSAGE_ID
 
+                val attackKey = Constants.NotificationKeys.ATTACK
+
                 if (this.containsKey(typeNotificationKey)) {
                     notificationType1 = this.getValue(typeNotificationKey).toInt()
                     notificationIntent.putExtra(typeNotificationKey, notificationType1.toString())
@@ -149,6 +154,10 @@ class NotificationUtils @Inject constructor(
 
                 if (this.containsKey(messageKey)) {
                     notificationIntent.putExtra(messageKey, this.getValue(messageKey).toString())
+                }
+
+                if (this.containsKey(attackKey)) {
+                    notificationIntent.putExtra(attackKey, this.getValue(attackKey).toString())
                 }
             }
         }
@@ -195,8 +204,6 @@ class NotificationUtils @Inject constructor(
                                 }, 200)
                             }
 
-//                            setupNotificationSound(context, R.raw.tone_receive_message)
-
                             val titleKey =
                                 Constants.NotificationKeys.TITLE
                             val bodyKey =
@@ -216,9 +223,12 @@ class NotificationUtils @Inject constructor(
                                 repository.notifyMessageReceived(data.getValue(messageId))
                             }
 
+                            builder.setGroup(GROUP_MESSAGE)
+
                             if (!app.isAppVisible()) {
                                 with(NotificationManagerCompat.from(context)) {
-                                    notify(Random().nextInt(), builder.build())
+                                    notify(data.getValue(contact).toInt(), builder.build())
+                                    notify(SUMMARY_ID, createSummaryNotification(context))
                                 }
                             }
                         }
@@ -292,6 +302,23 @@ class NotificationUtils @Inject constructor(
                 notificationManager.cancelAll()
             }
         }
+    }
+
+    private fun createSummaryNotification(context: Context): Notification {
+
+        return Builder(context, context.getString(R.string.default_notification_channel_id))
+//            .setContentTitle("Messages")
+            .setSmallIcon(R.drawable.ic_notification_icon)
+            .setStyle(
+                InboxStyle()
+                    .setBigContentTitle("Messages")
+                    .setSummaryText("Messages")
+            )
+            .setPriority(PRIORITY_LOW)
+            .setGroupAlertBehavior(GROUP_ALERT_CHILDREN)
+            .setGroup(GROUP_MESSAGE)
+            .setGroupSummary(true)
+            .build()
     }
 
     fun startWebRTCCallService(
@@ -485,7 +512,7 @@ class NotificationUtils @Inject constructor(
 
             val channel = NotificationChannel(id, name, importance).apply {
                 description = descriptionText
-                setShowBadge(true)
+                setShowBadge(false)
                 lockscreenVisibility = PRIORITY_MAX
             }
 

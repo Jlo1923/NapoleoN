@@ -172,7 +172,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val dialog = AccountAttackDialogFragment()
-
                 dialog.show(supportFragmentManager, "AttackDialog")
 
             }
@@ -357,6 +356,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     )
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
+            }
+            if (args.containsKey(Constants.NotificationKeys.ATTACK)){
+                val dialog = AccountAttackDialogFragment()
+                dialog.show(supportFragmentManager, "AttackDialog")
             }
         }
     }

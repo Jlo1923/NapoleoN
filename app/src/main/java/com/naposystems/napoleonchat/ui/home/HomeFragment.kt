@@ -190,7 +190,6 @@ class HomeFragment : Fragment() {
             RxBus.listen(RxEvent.NewFriendshipRequest::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    viewModel.getFriendshipQuantity()
                     viewModel.getFriendshipRequestHome()
                 }
 
@@ -233,7 +232,7 @@ class HomeFragment : Fragment() {
 
         viewModel.getDeletedMessages()
 
-        viewModel.getFriendshipQuantity()
+//        viewModel.getFriendshipQuantity()
 
         viewModel.getFriendshipRequestHome()
 
@@ -268,7 +267,7 @@ class HomeFragment : Fragment() {
                 existFriendShip = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
 //                Timber.d("*TestHome: Friendship")
-                viewModel.getFriendshipQuantity()
+//                viewModel.getFriendshipQuantity()
             }
         })
 
