@@ -81,4 +81,5 @@
     <string name="text_attch_doc_not_allowed">O arquivo selecionado não é permitido</string>
     <string name="text_attch_doc_size_exceed">O ficheiro seleccionado, excede o tamanho permitido (100MB)</string>
     <string name="text_reject">Recusar</string>
+    <string name="text_count_messages">Postagens</string>
 </resources>

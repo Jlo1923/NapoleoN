@@ -1,9 +1,6 @@
 package com.naposystems.napoleonchat.utility.notificationUtils
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -305,16 +302,26 @@ class NotificationUtils @Inject constructor(
     }
 
     private fun createSummaryNotification(context: Context): Notification {
+        // Create an Intent for the activity you want to start
+        val resultIntent = Intent(context, MainActivity::class.java)
+        // Create the TaskStackBuilder
+        val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+            // Add the intent, which inflates the back stack
+            addNextIntentWithParentStack(resultIntent)
+            // Get the PendingIntent containing the entire back stack
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
 
         return Builder(context, context.getString(R.string.default_notification_channel_id))
 //            .setContentTitle("Messages")
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setStyle(
                 InboxStyle()
-                    .setBigContentTitle("Messages")
-                    .setSummaryText("Messages")
+//                    .setBigContentTitle("Messages")
+                    .setSummaryText(context.getString(R.string.text_count_messages))
             )
             .setPriority(PRIORITY_LOW)
+            .setContentIntent(resultPendingIntent)
             .setGroupAlertBehavior(GROUP_ALERT_CHILDREN)
             .setGroup(GROUP_MESSAGE)
             .setGroupSummary(true)
