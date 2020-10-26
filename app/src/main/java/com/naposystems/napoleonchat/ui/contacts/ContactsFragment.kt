@@ -226,9 +226,11 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
 
     private fun goToConversation(item: Contact) {
         searchView.close()
-        findNavController().navigate(
-            ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
-        )
+        findNavController().currentDestination?.getAction(R.id.action_contactsFragment_to_conversationFragment)?.let {
+            findNavController().navigate(
+                ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
+            )
+        }
     }
 
     private fun goToAddContacts() {

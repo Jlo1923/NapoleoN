@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.napoleonchat.ui.activateBiometrics.ActivateBiometricsDialogFragment
+import com.naposystems.napoleonchat.ui.contacts.ContactsFragmentDirections
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -159,10 +160,13 @@ class SecuritySettingsFragment : Fragment() {
     }
 
     private fun optionEditAccessPinClickListener() {
-        this.findNavController().navigate(
-            SecuritySettingsFragmentDirections
-                .actionSecuritySettingsFragmentToEditAccessPinFragment()
-        )
+        findNavController().currentDestination?.getAction(R.id.action_securitySettingsFragment_to_editAccessPinFragment)
+            ?.let {
+                this.findNavController().navigate(
+                    SecuritySettingsFragmentDirections
+                        .actionSecuritySettingsFragmentToEditAccessPinFragment()
+                )
+            }
     }
 
     private fun optionBiometrictsClickListener() {
@@ -193,9 +197,12 @@ class SecuritySettingsFragment : Fragment() {
     }
 
     private fun optionRegisterRecoveryAccountClickListener() {
-        findNavController().navigate(
-            SecuritySettingsFragmentDirections
-                .actionSecuritySettingsFragmentToRegisterRecoveryAccountFragment()
-        )
+        findNavController().currentDestination?.getAction(R.id.action_securitySettingsFragment_to_registerRecoveryAccountFragment)
+            ?.let {
+                findNavController().navigate(
+                    SecuritySettingsFragmentDirections
+                        .actionSecuritySettingsFragmentToRegisterRecoveryAccountFragment()
+                )
+            }
     }
 }

@@ -499,9 +499,11 @@ class HomeFragment : Fragment() {
             object : ConversationAdapter.ClickListener {
                 override fun onClick(item: MessageAndAttachment) {
                     item.contact?.let { contact ->
-                        findNavController().navigate(
-                            HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
-                        )
+                        findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_conversationFragment)?.let {
+                            findNavController().navigate(
+                                HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
+                            )
+                        }
                     }
                 }
 
@@ -551,9 +553,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun seeProfile(contact: Contact) {
-        findNavController().navigate(
-            HomeFragmentDirections.actionHomeFragmentToContactProfileFragment(contact.id)
-        )
+        findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_contactProfileFragment)?.let {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToContactProfileFragment(contact.id)
+            )
+        }
     }
 
     private fun observeFriendshipRequestAcceptedSuccessfully() {
