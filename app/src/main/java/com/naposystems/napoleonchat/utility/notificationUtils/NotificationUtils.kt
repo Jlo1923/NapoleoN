@@ -223,9 +223,9 @@ class NotificationUtils @Inject constructor(
                                 repository.notifyMessageReceived(data.getValue(messageId))
                             }
 
-                            builder.setGroup(GROUP_MESSAGE)
-
                             if (!app.isAppVisible()) {
+                                builder.setGroup(GROUP_MESSAGE)
+
                                 with(NotificationManagerCompat.from(context)) {
                                     notify(data.getValue(contact).toInt(), builder.build())
                                     notify(SUMMARY_ID, createSummaryNotification(context))
