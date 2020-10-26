@@ -220,9 +220,9 @@ class NotificationUtils @Inject constructor(
                                 repository.notifyMessageReceived(data.getValue(messageId))
                             }
 
-                            builder.setGroup(GROUP_MESSAGE)
-
                             if (!app.isAppVisible()) {
+                                builder.setGroup(GROUP_MESSAGE)
+
                                 with(NotificationManagerCompat.from(context)) {
                                     notify(data.getValue(contact).toInt(), builder.build())
                                     notify(SUMMARY_ID, createSummaryNotification(context))
@@ -302,7 +302,6 @@ class NotificationUtils @Inject constructor(
     }
 
     private fun createSummaryNotification(context: Context): Notification {
-
         // Create an Intent for the activity you want to start
         val resultIntent = Intent(context, MainActivity::class.java)
         // Create the TaskStackBuilder
