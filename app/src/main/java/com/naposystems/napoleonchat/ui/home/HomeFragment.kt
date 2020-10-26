@@ -134,16 +134,6 @@ class HomeFragment : Fragment() {
             R.layout.home_fragment, container, false
         )
 
-        this.verifyPermission(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_PHONE_STATE,
-            drawableIconId = R.drawable.ic_camera_primary,
-            message = R.string.text_explanation_camera_to_receive_calls
-        ) {
-            //Intentionally empty
-        }
-
         setAdapter()
 
         setFriendshipRequest()
@@ -397,6 +387,18 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (showCase?.getStateShowCaseSixth() == true) {
+            this.verifyPermission(
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_PHONE_STATE,
+                drawableIconId = R.drawable.ic_camera_primary,
+                message = R.string.text_explanation_camera_to_receive_calls
+            ) {
+                //Intentionally empty
+            }
+        }
+
         showCase?.setPaused(false)
         viewModel.getJsonNotification()
         showCase()
@@ -661,6 +663,6 @@ class HomeFragment : Fragment() {
 
                 showShowCase = true
             }
-        }, 500)
+        }, 800)
     }
 }

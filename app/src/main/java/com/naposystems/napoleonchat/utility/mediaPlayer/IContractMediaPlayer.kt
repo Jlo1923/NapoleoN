@@ -36,4 +36,5 @@ interface IContractMediaPlayer {
     fun getAudioId(): String
     fun refreshSeekbarProgress()
     fun isPlaying(): Boolean
+    fun completeAudioPlaying()
 }
