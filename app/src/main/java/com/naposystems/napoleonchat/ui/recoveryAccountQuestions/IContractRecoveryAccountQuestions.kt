@@ -11,6 +11,7 @@ interface IContractRecoveryAccountQuestions {
     interface ViewModel {
         fun sendRecoveryAnswers(nickname: String)
         fun addRecoveryAnswer(answer: RecoveryAccountAnswers)
+        fun setFreeTrialPref(subscription: Boolean)
         fun setAttemptPref()
     }
 
@@ -20,7 +21,7 @@ interface IContractRecoveryAccountQuestions {
         fun setRecoveredAccountPref()
         fun setRecoveredQuestionsPref()
         suspend fun setAttemptPref()
-        suspend fun setFreeTrialPref()
+        suspend fun setFreeTrialPref(subscription: Boolean)
         fun get422Error(response: ResponseBody) :ArrayList<String>
         fun getError(response: ResponseBody): ArrayList<String>
         suspend fun insertUser(recoveryAccountUserDTO: RecoveryAccountUserDTO)

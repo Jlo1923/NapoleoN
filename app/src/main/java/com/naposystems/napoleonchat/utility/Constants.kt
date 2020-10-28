@@ -351,8 +351,7 @@ object Constants {
     }
 
     enum class FreeTrialUsers(val time: Int) {
-        FORTY_FIVE_DAYS(45),
-        THREE_MONTHS(3)
+        THIRTY_DAYS(30)
     }
 
     enum class LocationImageSelectorBottomSheet(val location: Int) {
@@ -425,6 +424,12 @@ object Constants {
         MONTHLY("com.naposystems.napoleonchat.monthly"),
         SEMIANNUAL("com.naposystems.napoleonchat.semiannual"),
         YEARLY("com.naposystems.napoleonchat.yearly")
+    }
+
+    enum class SubscriptionsTimeType(val subscription: Int) {
+        MONTHLY(1),
+        SEMIANNUAL(6),
+        YEARLY(1)
     }
 
     enum class HeadsetState(val state: Int) {

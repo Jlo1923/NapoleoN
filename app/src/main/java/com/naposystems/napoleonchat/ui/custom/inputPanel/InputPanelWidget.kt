@@ -108,7 +108,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         }
     }
 
-    override fun getEditTex() = binding.textInputEditTextInput
+    override fun getEditText() = binding.textInputEditTextInput
 
     override fun getImageButtonAttachment() = binding.imageButtonAttachment
 

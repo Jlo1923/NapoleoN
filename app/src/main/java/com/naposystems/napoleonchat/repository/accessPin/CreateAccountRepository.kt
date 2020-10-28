@@ -61,20 +61,27 @@ class CreateAccountRepository @Inject constructor(
         )
     }
 
-    override suspend fun setFreeTrialPref() {
-        val firebaseId = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
-        )
-        val user = userLocalDataSource.getUser(firebaseId)
-        val createAtMiliseconds = TimeUnit.SECONDS.toMillis(user.createAt)
-        val calendar = Calendar.getInstance()
+    override suspend fun setFreeTrialPref(subscription: Boolean) {
+        if (subscription) {
+            sharedPreferencesManager.putLong(
+                Constants.SharedPreferences.PREF_FREE_TRIAL, 0
+            )
+        } else {
+            val firebaseId = sharedPreferencesManager.getString(
+                Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+            )
+            val createAtMilliseconds = TimeUnit.SECONDS.toMillis(
+                userLocalDataSource.getUser(firebaseId).createAt
+            )
 
-        calendar.time = Date(createAtMiliseconds)
+            val calendar = Calendar.getInstance()
+            calendar.time = Date(createAtMilliseconds)
+            calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.THIRTY_DAYS.time)
 
-        calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.FORTY_FIVE_DAYS.time)
-        sharedPreferencesManager.putLong(
-            Constants.SharedPreferences.PREF_FREE_TRIAL, calendar.timeInMillis
-        )
+            sharedPreferencesManager.putLong(
+                Constants.SharedPreferences.PREF_FREE_TRIAL, calendar.timeInMillis
+            )
+        }
     }
 
     override fun saveSecretKey(secretKey: String) {
