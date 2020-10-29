@@ -63,8 +63,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
                 binding.microphoneRecorderView.setListener(this@InputPanelWidget)
 
                 binding.textViewCancel.setOnClickListener {
-                    showButtonRecord()
-                    binding.microphoneRecorderView.cancelAction()
+                    cancelRecording()
                 }
 
                 binding.imageButtonSend.setOnClickListener {
@@ -191,8 +190,12 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun cancelRecording() {
-        showButtonRecord()
         binding.microphoneRecorderView.cancelAction()
+        if (binding.textInputEditTextInput.text.toString().count() <= 0) {
+            showButtonRecord()
+        } else {
+            showImageButtonSend()
+        }
     }
 
     //endregion

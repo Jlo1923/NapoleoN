@@ -591,19 +591,22 @@ class ConversationFragment : BaseFragment(),
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.inputPanel.apply {
                     val text = getEditText().text.toString()
+                    if (!binding.inputPanel.isRecordingInLockedMode()) {
+                        val text = getEditText().text.toString()
 
-                    if (text.isNotEmpty() && !isEditTextFilled) {
-                        showImageButtonSend()
-                        hideButtonRecord()
-                        hideImageButtonCamera()
-                        isEditTextFilled = true
-                        containerWrap()
-                    } else if (text.isEmpty()) {
-                        hideImageButtonSend()
-                        showButtonRecord()
-                        showImageButtonCamera()
-                        isEditTextFilled = false
-                        containerNoWrap()
+                        if (text.isNotEmpty() && !isEditTextFilled) {
+                            showImageButtonSend()
+                            hideButtonRecord()
+                            hideImageButtonCamera()
+                            isEditTextFilled = true
+                            containerWrap()
+                        } else if (text.isEmpty()) {
+                            hideImageButtonSend()
+                            showButtonRecord()
+                            showImageButtonCamera()
+                            isEditTextFilled = false
+                            containerNoWrap()
+                        }
                     }
                 }
             }
@@ -1791,7 +1794,7 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     override fun onPause() {
         super.onPause()
-        MediaPlayerManager.completeAudioPlaying()
+        //MediaPlayerManager.completeAudioPlaying()
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
