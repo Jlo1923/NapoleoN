@@ -53,6 +53,9 @@ class AccessPinFragment : Fragment() {
 
     private lateinit var firebaseId: String
 
+    private var observerCreateUser = false
+    private var observerSubscription = false
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -112,6 +115,7 @@ class AccessPinFragment : Fragment() {
 
         viewModel.userCreatedLocallySuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
+                billingClientLifecycle.queryPurchasesHistory()
                 viewModel.openHomeFragment()
             }
         })
@@ -124,13 +128,11 @@ class AccessPinFragment : Fragment() {
 
         viewModel.openHomeFragment.observe(viewLifecycleOwner, Observer {
             if (it == true) {
+                observerCreateUser = true
                 viewModel.createdUserPref()
                 viewModelDefaultPreferences.setDefaultPreferences()
-                billingClientLifecycle.queryPurchasesHistory()
-                findNavController().navigate(
-                    AccessPinFragmentDirections.actionAccessPinFragmentToHomeFragment()
-                )
                 viewModel.onOpenedHomeFragment()
+                validateNextView()
             }
         })
 
@@ -138,8 +140,10 @@ class AccessPinFragment : Fragment() {
             viewLifecycleOwner,
             Observer { purchasesHistory ->
                 purchasesHistory?.let {
+                    observerSubscription = true
                     val subscription = purchasesHistory.isNotEmpty()
                     viewModel.setFreeTrialPref(subscription)
+                    validateNextView()
                 }
             })
 
@@ -147,6 +151,14 @@ class AccessPinFragment : Fragment() {
         binding.textInputEditTextConfirmAccessPin.addTextChangedListener(textWatcherConfirmAccessPin())
 
         return binding.root
+    }
+
+    private fun validateNextView() {
+        if (observerCreateUser && observerSubscription){
+            findNavController().navigate(
+                AccessPinFragmentDirections.actionAccessPinFragmentToHomeFragment()
+            )
+        }
     }
 
     private fun validateAccessPin() {

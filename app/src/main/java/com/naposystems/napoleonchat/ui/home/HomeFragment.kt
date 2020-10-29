@@ -146,6 +146,10 @@ class HomeFragment : Fragment() {
             goToStatus()
         }
 
+        binding.containerSubscription.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSubscriptionFragment())
+        }
+
         binding.imageButtonStatusEndIcon.setOnClickListener {
             goToStatus()
         }
