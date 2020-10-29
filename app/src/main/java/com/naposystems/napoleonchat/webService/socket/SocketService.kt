@@ -259,6 +259,8 @@ class SocketService @Inject constructor(
                                 }
 
                                 repository.getMyMessages(null)
+                                repository.verifyMessagesReceived()
+                                repository.verifyMessagesRead()
                             }
                         })
                 }
@@ -500,7 +502,7 @@ class SocketService @Inject constructor(
                             )
                         } else {
                             if (context is NapoleonApplication) {
-                                val app = context as NapoleonApplication
+                                val app = context
                                 if (app.isAppVisible()) {
                                     Data.isOnCall = true
                                     RxBus.publish(
