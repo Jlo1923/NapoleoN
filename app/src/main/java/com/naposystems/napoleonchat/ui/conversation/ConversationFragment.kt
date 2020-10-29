@@ -16,9 +16,7 @@ import android.media.audiofx.AcousticEchoCanceler
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.PowerManager
 import android.provider.MediaStore
-import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
@@ -48,6 +46,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchaseHistoryRecord
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
@@ -98,6 +97,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -332,7 +333,7 @@ class ConversationFragment : BaseFragment(),
 
         emojiKeyboard = NapoleonKeyboard(
             binding.coordinator,
-            binding.inputPanel.getEditTex()
+            binding.inputPanel.getEditText()
         )
 
         binding.lifecycleOwner = this
@@ -482,26 +483,6 @@ class ConversationFragment : BaseFragment(),
         return binding.root
     }
 
-    private fun checkBatteryOptimized(): Boolean {
-        val powerManager = requireActivity().getSystemService(Context.POWER_SERVICE) as PowerManager
-        val packageName = requireActivity().packageName
-
-        return if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-            Utils.showDialogToInformPermission(
-                requireContext(),
-                childFragmentManager,
-                R.drawable.ic_battery,
-                R.string.explanation_camera_and_storage_permission, //TODO: Texto para optimización de bateria|!!
-                {
-                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                    startActivity(intent)
-                },
-                {}
-            )
-            false
-        } else true
-    }
-
     private fun inputPanelCameraButtonClickListener() {
         binding.inputPanel.getImageButtonCamera().setOnClickListener {
             verifyCameraAndMicPermission {
@@ -511,7 +492,7 @@ class ConversationFragment : BaseFragment(),
                         args.contact.id,
                         binding.inputPanel.getWebIdQuote(),
                         Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                        binding.inputPanel.getEditTex().text.toString().trim()
+                        binding.inputPanel.getEditText().text.toString().trim()
                     )
                 )
             }
@@ -535,7 +516,7 @@ class ConversationFragment : BaseFragment(),
                                 args.contact,
                                 binding.inputPanel.getWebIdQuote(),
                                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditTex().text.toString().trim()
+                                binding.inputPanel.getEditText().text.toString().trim()
                             )
                         )
                     }
@@ -549,7 +530,7 @@ class ConversationFragment : BaseFragment(),
                                 args.contact.id,
                                 binding.inputPanel.getWebIdQuote(),
                                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditTex().text.toString().trim()
+                                binding.inputPanel.getEditText().text.toString().trim()
                             )
                         )
                     }
@@ -609,8 +590,9 @@ class ConversationFragment : BaseFragment(),
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.inputPanel.apply {
+                    val text = getEditText().text.toString()
                     if (!binding.inputPanel.isRecordingInLockedMode()) {
-                        val text = getEditTex().text.toString()
+                        val text = getEditText().text.toString()
 
                         if (text.isNotEmpty() && !isEditTextFilled) {
                             showImageButtonSend()
@@ -703,7 +685,7 @@ class ConversationFragment : BaseFragment(),
 
         shareViewModel.emojiSelected.observe(requireActivity(), Observer { emoji ->
             if (emoji != null) {
-                binding.inputPanel.getEditTex().text?.append(
+                binding.inputPanel.getEditText().text?.append(
                     EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
                 )
             }
@@ -834,17 +816,26 @@ class ConversationFragment : BaseFragment(),
         })
 
         viewModel.stateMessage.observe(viewLifecycleOwner, {
-            if (it  != null) {
+            if (it != null) {
                 Timber.d("--- State ${it}")
-                when(it) {
+                when (it) {
                     is StateMessage.Start -> {
-                        conversationAdapter.setStateMessage(it.messageId, Constants.StateMessage.START.state)
+                        conversationAdapter.setStateMessage(
+                            it.messageId,
+                            Constants.StateMessage.START.state
+                        )
                     }
                     is StateMessage.Success -> {
-                        conversationAdapter.setStateMessage(it.messageId, Constants.StateMessage.SUCCESS.state)
+                        conversationAdapter.setStateMessage(
+                            it.messageId,
+                            Constants.StateMessage.SUCCESS.state
+                        )
                     }
                     is StateMessage.Error -> {
-                        conversationAdapter.setStateMessage(it.messageId, Constants.StateMessage.ERROR.state)
+                        conversationAdapter.setStateMessage(
+                            it.messageId,
+                            Constants.StateMessage.ERROR.state
+                        )
                     }
                 }
             }
@@ -937,24 +928,56 @@ class ConversationFragment : BaseFragment(),
 
         billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchaseList ->
             purchaseList?.let {
-                var allIsPurchased = false
-
                 val freeTrial = viewModel.getFreeTrial()
 
                 if (System.currentTimeMillis() > freeTrial) {
-                    purchaseList.forEach {
-                        allIsPurchased = it.purchaseState == Purchase.PurchaseState.PURCHASED
-                    }
-
-                    if (!allIsPurchased) {
+                    if (purchaseList.isEmpty()) {
                         binding.inputPanel.isVisible = false
-//                        binding.floatingActionButtonSend.isVisible = false
                         binding.buttonCall.isVisible = false
                         binding.buttonVideoCall.isVisible = false
+                    } else {
+                        try{
+                            val dateExpireSubscriptionMillis = getDataSubscription(purchaseList)
+                            if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
+                                binding.inputPanel.isVisible = false
+                                binding.buttonCall.isVisible = false
+                                binding.buttonVideoCall.isVisible = false
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
                     }
+                } else {
+                    binding.inputPanel.isVisible = true
+                    binding.buttonCall.isVisible = true
+                    binding.buttonVideoCall.isVisible = true
                 }
             }
         })
+    }
+
+    private fun getDataSubscription(purchaseList: List<Purchase>): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = purchaseList.last().purchaseTime
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val lastPurchase = purchaseList.last()
+
+        when (lastPurchase.sku) {
+            Constants.SkuSubscriptions.MONTHLY.sku -> calendar.add(
+                Calendar.MONTH,
+                Constants.SubscriptionsTimeType.MONTHLY.subscription
+            )
+
+            Constants.SkuSubscriptions.SEMIANNUAL.sku -> calendar.add(
+                Calendar.MONTH,
+                Constants.SubscriptionsTimeType.SEMIANNUAL.subscription
+            )
+
+            else -> calendar.add(Calendar.YEAR, Constants.SubscriptionsTimeType.YEARLY.subscription)
+        }
+
+        val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
+        return dateExpireSubscription!!.time
     }
 
     @ExperimentalCoroutinesApi
@@ -1272,7 +1295,7 @@ class ConversationFragment : BaseFragment(),
             binding.buttonVideoCall.isEnabled = !this
         }
         //messagedLoadedFirstTime = false
-        if (binding.inputPanel.getEditTex().text.toString().isNotEmpty()) {
+        if (binding.inputPanel.getEditText().text.toString().isNotEmpty()) {
             binding.inputPanel.apply {
                 showImageButtonSend()
                 hideButtonRecord()
@@ -1772,7 +1795,7 @@ class ConversationFragment : BaseFragment(),
     override fun onPause() {
         super.onPause()
         //MediaPlayerManager.completeAudioPlaying()
-        if (binding.inputPanel.getEditTex().text.toString().count() <= 0) {
+        if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
         Data.contactId = 0
@@ -1949,12 +1972,12 @@ class ConversationFragment : BaseFragment(),
                 val quote = binding.inputPanel.getQuote()
 
                 viewModel.saveMessageLocally(
-                    binding.inputPanel.getEditTex().text.toString().trim(),
+                    binding.inputPanel.getEditText().text.toString().trim(),
                     obtainTimeSelfDestruct(),
                     quote?.message?.webId ?: ""
                 )
 
-                with(binding.inputPanel.getEditTex()) {
+                with(binding.inputPanel.getEditText()) {
                     setText("")
                 }
                 binding.inputPanel.closeQuote()

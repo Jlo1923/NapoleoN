@@ -68,16 +68,16 @@ class SubscriptionViewModel @Inject constructor(
         return repository.getFreeTrial()
     }
 
-    override fun getRemoteSubscription() {
+    /*override fun getRemoteSubscription() {
         viewModelScope.launch {
             repository.getRemoteSubscription()
             getSubscription()
         }
-    }
+    }*/
 
-    override fun getSubscription() {
+    /*override fun getSubscription() {
         _subscriptionUser.value = repository.getSubscription()
-    }
+    }*/
 
     override fun sendPayment(typePayment: Int) {
         viewModelScope.launch {

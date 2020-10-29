@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.*
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -57,7 +58,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
 
@@ -140,6 +144,10 @@ class HomeFragment : Fragment() {
 
         binding.containerStatus.setOnClickListener {
             goToStatus()
+        }
+
+        binding.containerSubscription.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSubscriptionFragment())
         }
 
         binding.imageButtonStatusEndIcon.setOnClickListener {
@@ -264,21 +272,25 @@ class HomeFragment : Fragment() {
         billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
                 Timber.d("Billing purchases")
-                if (purchasesList.isEmpty()) {
+                billingClientLifecycle.queryPurchasesHistory()
+                /*if (purchasesList.isEmpty()) {
                     billingClientLifecycle.queryPurchasesHistory()
                 } else {
-                    binding.containerSubscription.isVisible = false
+                    val dateExpireSubscriptionMillis = getDataSubscription(purchasesList)
+
+                    *//*binding.containerSubscription.isVisible = false
                     purchasesList[0].let {
                         if (it.purchaseState == Purchase.PurchaseState.PURCHASED) {
                             // Melito
                         } else {
                             // TODO: Que se va a hacer en caso de que la suscripcion este en los otros estado
                         }
-                    }
-                }
-                purchasesList.forEach {
+                    }*//*
+
+                }*/
+                /*purchasesList.forEach {
                     Timber.d("${it.sku}, ${it.purchaseTime}, ${it.purchaseState}")
-                }
+                }*/
             }
         })
 
@@ -286,7 +298,31 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner,
             Observer { purchasesHistory ->
                 purchasesHistory?.let {
-                    validateSubscriptionTime(purchasesHistory)
+                    val freeTrial = viewModel.getFreeTrial()
+                    Timber.d("freeTrial: $freeTrial")
+
+
+
+                    if (System.currentTimeMillis() > freeTrial) {
+                        if (purchasesHistory.isEmpty()) {
+                            binding.textViewMessageSubscription.text =
+                                getString(R.string.text_free_trial_expired)
+                            binding.containerSubscription.isVisible = true
+                        } else {
+                            try {
+                                val dateExpireSubscriptionMillis = getDataSubscription(purchasesHistory)
+                                if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
+                                    binding.textViewMessageSubscription.text =
+                                        getString(R.string.text_subscription_expired)
+                                    binding.containerSubscription.isVisible = true
+                                } else binding.containerSubscription.isVisible = false
+                            } catch (e: Exception) {
+                                Timber.e(e)
+                            }
+                        }
+                    } else {
+                        binding.containerSubscription.isVisible = false
+                    }
                 }
             })
 
@@ -328,6 +364,30 @@ class HomeFragment : Fragment() {
         })
 
         (activity as MainActivity).getUser()
+    }
+
+    private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = purchasesHistory.last().purchaseTime
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val lastPurchase = purchasesHistory.last()
+
+        when (lastPurchase.sku) {
+            Constants.SkuSubscriptions.MONTHLY.sku -> calendar.add(
+                Calendar.MONTH,
+                Constants.SubscriptionsTimeType.MONTHLY.subscription
+            )
+
+            Constants.SkuSubscriptions.SEMIANNUAL.sku -> calendar.add(
+                Calendar.MONTH,
+                Constants.SubscriptionsTimeType.SEMIANNUAL.subscription
+            )
+
+            else -> calendar.add(Calendar.YEAR, Constants.SubscriptionsTimeType.YEARLY.subscription)
+        }
+
+        val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
+        return dateExpireSubscription!!.time
     }
 
     private fun validateViewSwitcher(existConversation: Boolean, existFriendShip: Boolean) {
@@ -456,9 +516,11 @@ class HomeFragment : Fragment() {
                     getString(R.string.text_free_trial_expired)
                 binding.containerSubscription.isVisible = true
             } else {
-                binding.textViewMessageSubscription.text =
-                    getString(R.string.text_subscription_expired)
-                binding.containerSubscription.isVisible = true
+                if (System.currentTimeMillis() > purchaseHistoryList.last().purchaseTime) {
+                    binding.textViewMessageSubscription.text =
+                        getString(R.string.text_subscription_expired)
+                    binding.containerSubscription.isVisible = true
+                } else binding.containerSubscription.isVisible = false
             }
         } else {
             binding.containerSubscription.isVisible = false
@@ -499,11 +561,14 @@ class HomeFragment : Fragment() {
             object : ConversationAdapter.ClickListener {
                 override fun onClick(item: MessageAndAttachment) {
                     item.contact?.let { contact ->
-                        findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_conversationFragment)?.let {
-                            findNavController().navigate(
-                                HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
-                            )
-                        }
+                        findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_conversationFragment)
+                            ?.let {
+                                findNavController().navigate(
+                                    HomeFragmentDirections.actionHomeFragmentToConversationFragment(
+                                        contact
+                                    )
+                                )
+                            }
                     }
                 }
 
@@ -553,11 +618,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun seeProfile(contact: Contact) {
-        findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_contactProfileFragment)?.let {
-            findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToContactProfileFragment(contact.id)
-            )
-        }
+        findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_contactProfileFragment)
+            ?.let {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToContactProfileFragment(contact.id)
+                )
+            }
     }
 
     private fun observeFriendshipRequestAcceptedSuccessfully() {
@@ -579,7 +645,7 @@ class HomeFragment : Fragment() {
 
                 val snackbarUtils = SnackbarUtils(binding.coordinator, list)
 
-                snackbarUtils.showSnackbar{ ok ->
+                snackbarUtils.showSnackbar { ok ->
                     if (ok)
                         shareFriendShipViewModel.clearMessageError()
                 }

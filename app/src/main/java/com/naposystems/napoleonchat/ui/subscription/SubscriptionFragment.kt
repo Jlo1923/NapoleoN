@@ -157,7 +157,18 @@ class SubscriptionFragment : Fragment() {
                 if (purchasesList.isEmpty()) {
                     billingClientLifecycle.queryPurchasesHistory()
                 } else {
-                    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    try {
+                        val (sdf, dateExpireSubscriptionMillis) = getDataSubscription(purchasesList)
+                        val netDate = Date(dateExpireSubscriptionMillis)
+                        binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+
+                        Timber.d("*Subs: $dateExpireSubscriptionMillis / ${sdf.format(netDate)}")
+
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
+
+                    /*val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                     val netDate: Date
 
                     val lastPurchase = purchasesList[0]
@@ -167,7 +178,7 @@ class SubscriptionFragment : Fragment() {
                         else -> getString(R.string.text_subscription_yearly)
                     }
                     netDate = Date(lastPurchase.purchaseTime)
-                    binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
+                    binding.textViewSubscriptionExpiration.text = sdf.format(netDate)*/
                 }
             }
         })
@@ -196,7 +207,7 @@ class SubscriptionFragment : Fragment() {
                         }
                     } else {
                         // Get last purchase
-                        val lastPurchase = purchasesHistory[0]
+                        val lastPurchase = purchasesHistory.last()
                         binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
                             Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
                             Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
@@ -279,7 +290,7 @@ class SubscriptionFragment : Fragment() {
         viewModel.getTypeSubscriptionError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
                 binding.viewSwitcher.showPrevious()
             }
         })
@@ -296,7 +307,7 @@ class SubscriptionFragment : Fragment() {
 
         viewModel.sendPaymentError.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar{}
+            snackbarUtils.showSnackbar {}
             binding.viewSwitcher.showPrevious()
         })
 
@@ -311,6 +322,35 @@ class SubscriptionFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun getDataSubscription(purchasesList: List<Purchase>): Pair<SimpleDateFormat, Long> {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = purchasesList.last().purchaseTime
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val lastPurchase = purchasesList.last()
+
+        binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
+            Constants.SkuSubscriptions.MONTHLY.sku -> {
+                calendar.add(Calendar.MONTH, Constants.SubscriptionsTimeType.MONTHLY.subscription)
+                getString(R.string.text_subscription_monthly)
+            }
+            Constants.SkuSubscriptions.SEMIANNUAL.sku -> {
+                calendar.add(
+                    Calendar.MONTH,
+                    Constants.SubscriptionsTimeType.SEMIANNUAL.subscription
+                )
+                getString(R.string.text_subscription_semiannual)
+            }
+            else -> {
+                calendar.add(Calendar.YEAR, Constants.SubscriptionsTimeType.YEARLY.subscription)
+                getString(R.string.text_subscription_yearly)
+            }
+        }
+
+        val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
+        val dateExpireSubscriptionMillis = dateExpireSubscription!!.time
+        return Pair(sdf, dateExpireSubscriptionMillis)
     }
 
     private fun setPriceTextButton() {
@@ -388,7 +428,11 @@ class SubscriptionFragment : Fragment() {
             val sku = purchase.sku
             val purchaseToken = purchase.purchaseToken
             Timber.d("Register purchase with sku: $sku, token: $purchaseToken")
-            Utils.showSimpleSnackbar(binding.coordinator, getString(R.string.text_subscription_successfully), 3)
+            Utils.showSimpleSnackbar(
+                binding.coordinator,
+                getString(R.string.text_subscription_successfully),
+                3
+            )
             if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
                 binding.viewSwitcher.showNext()
             }
