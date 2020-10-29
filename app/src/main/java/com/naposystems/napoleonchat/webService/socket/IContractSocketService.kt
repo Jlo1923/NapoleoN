@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.webService.socket
 
-import com.pusher.client.channel.Channel
+import com.pusher.client.channel.PresenceChannel
 import com.pusher.client.channel.PrivateChannel
 import org.json.JSONObject
 
@@ -10,11 +10,13 @@ interface IContractSocketService {
 
         fun initSocket()
 
+        fun connectToSocketReadyForCall(channel: String)
+
         fun disconnectSocket()
 
         fun subscribe(jsonObject: String)
 
-        fun subscribeToCallChannel(channel: String, isActionAnswer: Boolean)
+        fun subscribeToCallChannel(channel: String, isActionAnswer: Boolean, isVideoCall: Boolean)
 
         fun subscribeToCallChannelFromBackground(channel: String)
 
@@ -26,7 +28,7 @@ interface IContractSocketService {
 
         fun emitToCall(channel: String, eventType: Int)
 
-        fun getPusherChannel(channel: String): PrivateChannel?
+        fun getPusherChannel(channel: String): PresenceChannel?
     }
 
     interface Repository {
@@ -44,6 +46,8 @@ interface IContractSocketService {
         fun getDeletedMessages()
 
         fun rejectCall(contactId: Int, channel: String)
+
+        fun readyForCall(contactId: Int, isVideoCall: Boolean, channelPrivate: String)
     }
 
 }

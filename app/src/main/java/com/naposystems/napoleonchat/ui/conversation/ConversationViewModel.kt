@@ -454,9 +454,9 @@ class ConversationViewModel @Inject constructor(
 
     override fun callContact() {
         viewModelScope.launch {
-            val channel = "private-private.${contact.id}.${user.id}"
+            val channel = "presence-private.${contact.id}_${user.id}"
             try {
-                repository.subscribeToCallChannel(channel)
+                repository.subscribeToCallChannel(channel, isVideoCall)
                 val response = repository.callContact(contact, isVideoCall)
 
                 if (response.isSuccessful) {

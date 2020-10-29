@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.napoleonchat.dto.conversation.call.readyForCall.ReadyForCallReqDTO
 import com.naposystems.napoleonchat.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.entity.message.Quote
@@ -201,6 +202,23 @@ class SocketRepository @Inject constructor(
 
             if (response.isSuccessful) {
                 Timber.d("LLamada rechazada bb")
+            }
+        }
+    }
+
+    /**
+     * El channelPrivate debe ser sin el presence-
+     */
+    override fun readyForCall(contactId: Int, isVideoCall: Boolean, channelPrivate: String) {
+        GlobalScope.launch {
+            val readyForCallReqDTO = ReadyForCallReqDTO(
+                contactId, isVideoCall, channelPrivate
+            )
+
+            val response = napoleonApi.readyForCall(readyForCallReqDTO)
+
+            if (response.isSuccessful) {
+                Timber.d("Usuario llamado")
             }
         }
     }

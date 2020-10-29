@@ -108,7 +108,7 @@ interface IContractConversation {
         suspend fun copyMessagesSelected(contactId: Int): List<String>
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>>
         suspend fun callContact(contact: Contact, isVideoCall: Boolean): Response<CallContactResDTO>
-        fun subscribeToCallChannel(channel: String)
+        fun subscribeToCallChannel(channel: String, isVideoCall: Boolean)
         suspend fun downloadAttachment(
             messageAndAttachment: MessageAndAttachment,
             itemPosition: Int

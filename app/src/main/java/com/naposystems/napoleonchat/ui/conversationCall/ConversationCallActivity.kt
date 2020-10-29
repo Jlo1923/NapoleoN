@@ -342,6 +342,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         Timber.d("WebRTCClient hangUp")
         if (!hangUpPressed) {
 
+            Data.isContactReadyForCall = false
+
             closeNotification()
 
             hangUpPressed = true

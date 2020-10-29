@@ -528,7 +528,7 @@ class ConversationRepository @Inject constructor(
         return napoleonApi.callContact(callContactReqDTO)
     }
 
-    override fun subscribeToCallChannel(channel: String) {
+    override fun subscribeToCallChannel(channel: String, isVideoCall: Boolean) {
 
         val headersReqDTO = HeadersReqDTO(
             firebaseId
@@ -543,7 +543,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketService.subscribeToCallChannel(channel, false)
+        socketService.subscribeToCallChannel(channel, false, isVideoCall)
     }
 
     override suspend fun downloadAttachment(
