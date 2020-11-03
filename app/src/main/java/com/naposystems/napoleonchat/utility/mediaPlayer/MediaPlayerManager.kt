@@ -215,6 +215,8 @@ object MediaPlayerManager :
             return
         }
 
+        if (mIsBluetoothConnected) return
+
         Timber.d("Conver onSensorChanged: ${event.sensor.type}")
 
         mediaPlayer?.let { mediaPlayer ->
@@ -225,7 +227,7 @@ object MediaPlayerManager :
                     AudioManager.STREAM_MUSIC
                 }
 
-            if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn && !mIsBluetoothConnected) {
+            if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn) {
                 val progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
                 Timber.d("Conver progress: $progress")
                 if (progress > 0) {
