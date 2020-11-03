@@ -795,8 +795,24 @@ class SocketService @Inject constructor(
             "App\\Events\\UserAvailableForCallEvent",
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent) {
-                    Timber.d("-- UserAvailableForCallEvent ${event.data}")
-                    subscribeToCallChannelUserAvailableForCall("presence-private.9_10")
+                    try {
+                        Timber.d("-- UserAvailableForCallEvent ${event.data}")
+                        val jsonObject = JSONObject(event.data)
+                        if (jsonObject.has("data")) {
+                            val jsonObjectData = jsonObject.getJSONObject("data")
+                            if (jsonObjectData.has("channel_private")) {
+                                subscribeToCallChannelUserAvailableForCall(
+                                    "presence-${
+                                        jsonObjectData.getString(
+                                            "channel_private"
+                                        )
+                                    }"
+                                )
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Timber.e("UserAvailableForCallEvent: $e")
+                    }
                 }
 
                 override fun onAuthenticationFailure(
