@@ -70,6 +70,7 @@ object MediaPlayerManager :
     private var tempFile: File? = null
     private var mDuration: Long = 0L
     private var mWebId: String? = null
+    private var mStatusPlayWithSensor : Boolean = false
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -168,11 +169,6 @@ object MediaPlayerManager :
         }
     }
 
-    private fun stop() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-    }
-
     private fun enableSpeedControl(isEnabled: Boolean) {
         mImageButtonSpeed?.isEnabled = isEnabled
     }
@@ -213,7 +209,11 @@ object MediaPlayerManager :
 
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type != Sensor.TYPE_PROXIMITY) return
-        if (mediaPlayer == null || mediaPlayer?.playbackState != Player.STATE_READY) return
+        if (mediaPlayer == null || mediaPlayer?.isPlaying == false) {
+            if (wakeLock.isHeld && !mStatusPlayWithSensor)
+                wakeLock.release()
+            return
+        }
 
         Timber.d("Conver onSensorChanged: ${event.sensor.type}")
 
@@ -225,27 +225,28 @@ object MediaPlayerManager :
                     AudioManager.STREAM_MUSIC
                 }
 
-            if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn) {
-                val progress =
-                    ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
+            if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn && !mIsBluetoothConnected) {
+                val progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
                 Timber.d("Conver progress: $progress")
-                wakeLock.acquire()
-                try {
-                    isProximitySensorActive = true
-                    mSpeed = if (mSpeed == NORMAL_SPEED) {
-                        mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
-                        NORMAL_SPEED
-                    } else {
-                        mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_1x_circle_outline)
-                        TWO_X_SPEED
+                if (progress > 0) {
+                    wakeLock.acquire()
+                    try {
+                        isProximitySensorActive = true
+                        mSpeed = if (mSpeed == NORMAL_SPEED) {
+                            mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
+                            NORMAL_SPEED
+                        } else {
+                            mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_1x_circle_outline)
+                            TWO_X_SPEED
+                        }
+                        mHandler.removeCallbacks(mRunnable)
+                        mediaPlayer.stop()
+                        mediaPlayer.release()
+                        this.mediaPlayer = null
+                        playAudio(progress = progress.toInt(), isEarpiece = true)
+                    } catch (e: IOException) {
+                        Timber.e(e)
                     }
-                    mHandler.removeCallbacks(mRunnable)
-                    mediaPlayer.stop()
-                    mediaPlayer.release()
-                    this.mediaPlayer = null
-                    playAudio(progress = progress.toInt(), isEarpiece = true)
-                } catch (e: IOException) {
-                    Timber.e(e)
                 }
             } else if (streamType == AudioManager.STREAM_MUSIC && System.currentTimeMillis() - mStartAudioTime > 500 && !mAudioManager.isWiredHeadsetOn) {
 //                unregisterProximityListener()
@@ -398,6 +399,9 @@ object MediaPlayerManager :
                                         Timber.d("Conver Already started. Ignoring.")
                                         return
                                     }
+
+                                    mStatusPlayWithSensor = false
+
                                     started = true
 
                                     mediaPlayer?.let {
@@ -426,6 +430,7 @@ object MediaPlayerManager :
                                 }
 
                                 Player.STATE_ENDED -> {
+                                    mStatusPlayWithSensor = true
                                     Timber.i("Conver onComplete")
                                     mSeekBar?.progress = 0
                                     mSensorManager.unregisterListener(this@MediaPlayerManager)
@@ -442,6 +447,8 @@ object MediaPlayerManager :
 
                         override fun onPlayerError(error: ExoPlaybackException?) {
                             Timber.w("Conver MediaPlayer Error: $error")
+
+                            mStatusPlayWithSensor = false
 
                             mSensorManager.unregisterListener(this@MediaPlayerManager)
                             if (wakeLock.isHeld) {

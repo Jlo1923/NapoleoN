@@ -323,6 +323,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onRecordLocked() {
+        mListener?.onRecorderLocked()
         if (binding.viewSwitcherText.nextView.id == binding.textViewCancel.id) {
             binding.viewSwitcherText.showNext()
         }

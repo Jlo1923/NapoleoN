@@ -1812,6 +1812,7 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     override fun onPause() {
         super.onPause()
+        MediaPlayerManager.unregisterProximityListener()
         //MediaPlayerManager.completeAudioPlaying()
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
@@ -1969,13 +1970,13 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun onRecorderLocked() {
-        isRecordingAudio = true
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onRecorderCanceled() {
         isRecordingAudio = false
         stopRecording()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 200)
     }
 
