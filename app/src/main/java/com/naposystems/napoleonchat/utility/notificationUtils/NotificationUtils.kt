@@ -511,8 +511,8 @@ class NotificationUtils @Inject constructor(
             applicationContext.getString(R.string.alerts_channel_id)
         )
             .setSmallIcon(R.drawable.ic_file_upload_black)
-            .setContentTitle("Enviando archivo titulo")
-            .setContentText("Enviando archivo")
+            .setContentTitle(applicationContext.getString(R.string.text_sending_file))
+            .setContentText(applicationContext.getString(R.string.text_sending_file))
             .setProgress(max, progress, false)
             .setOngoing(true)
 

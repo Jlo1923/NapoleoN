@@ -300,9 +300,6 @@ class HomeFragment : Fragment() {
                 purchasesHistory?.let {
                     val freeTrial = viewModel.getFreeTrial()
                     Timber.d("freeTrial: $freeTrial")
-
-
-
                     if (System.currentTimeMillis() > freeTrial) {
                         if (purchasesHistory.isEmpty()) {
                             binding.textViewMessageSubscription.text =
