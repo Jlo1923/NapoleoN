@@ -182,7 +182,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         binding.executePendingBindings()
 
         if (args.message.isNotEmpty()) {
-            binding.inputPanel.getEditTex().setText(args.message)
+            binding.inputPanel.getEditText().setText(args.message)
         }
 
         val disposableContactBlockOrDelete =
@@ -204,7 +204,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
             override fun afterTextChanged(s: Editable?) {
                 binding.inputPanel.apply {
-                    val text = getEditTex().text.toString()
+                    val text = getEditText().text.toString()
                     if (text.isNotEmpty()) containerWrap() else containerNoWrap()
                 }
             }
@@ -255,7 +255,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
     override fun onSendButtonClicked() {
         with(conversationShareViewModel) {
             setQuoteWebId(args.quote)
-            setMessage(binding.inputPanel.getEditTex().text.toString().trim())
+            setMessage(binding.inputPanel.getEditText().text.toString().trim())
             setAttachmentSelected(args.attachment)
             resetAttachmentSelected()
             resetMessage()

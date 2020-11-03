@@ -5,6 +5,7 @@ import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.ui.splash.IContractSplash
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import java.util.*
 import javax.inject.Inject
 
 class SplashRepository @Inject constructor(

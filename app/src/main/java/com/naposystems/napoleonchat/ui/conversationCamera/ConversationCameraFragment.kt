@@ -256,7 +256,10 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                         when (location) {
                             Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
                                 lifecycleScope.launch {
-                                    photoFileCompress = FileManager.compressImageFromFile(requireContext(), photoFile)
+                                    photoFileCompress =
+//                                        FileManager.compressImageFromFile(requireContext(), photoFile)
+                                        photoFile
+
                                     val attachment = Attachment(
                                         id = 0,
                                         messageId = 0,
@@ -280,9 +283,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                                             args.message
                                         )
                                     )
-
-                                    Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
-                                }.let {}
+                                }
                             }
                             else -> {
                                 context?.let { context ->
