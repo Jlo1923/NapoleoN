@@ -43,11 +43,11 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://prueba8.napoleon-chat.com/api/\"")
-            buildConfigField("String", "HOST_URL", "\"prueba8.napoleon-chat.com\"")
-            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prueba8.napoleon-chat.com:3478\"")
-            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prueba8  .napoleon-chat.com:3478\"")
-            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prueba8.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "BASE_URL", "\"https://dev.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"dev.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://dev.napoleon-chat.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "false")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
