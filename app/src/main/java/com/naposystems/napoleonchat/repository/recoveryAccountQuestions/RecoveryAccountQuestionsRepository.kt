@@ -77,21 +77,27 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
         )
     }
 
-    override suspend fun setFreeTrialPref() {
-        val firebaseId = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
-        )
-        val createAtMiliseconds = TimeUnit.SECONDS.toMillis(
-            userLocalDataSource.getUser(firebaseId).createAt
-        )
+    override suspend fun setFreeTrialPref(subscription: Boolean) {
+        if (subscription) {
+            sharedPreferencesManager.putLong(
+                Constants.SharedPreferences.PREF_FREE_TRIAL, 0
+            )
+        } else {
+            val firebaseId = sharedPreferencesManager.getString(
+                Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+            )
+            val createAtMilliseconds = TimeUnit.SECONDS.toMillis(
+                userLocalDataSource.getUser(firebaseId).createAt
+            )
 
-        val calendar = Calendar.getInstance()
-        calendar.time = Date(createAtMiliseconds)
-        calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.FORTY_FIVE_DAYS.time)
+            val calendar = Calendar.getInstance()
+            calendar.time = Date(createAtMilliseconds)
+            calendar.add(Calendar.DAY_OF_YEAR, Constants.FreeTrialUsers.THIRTY_DAYS.time)
 
-        sharedPreferencesManager.putLong(
-            Constants.SharedPreferences.PREF_FREE_TRIAL, calendar.timeInMillis
-        )
+            sharedPreferencesManager.putLong(
+                Constants.SharedPreferences.PREF_FREE_TRIAL, calendar.timeInMillis
+            )
+        }
     }
 
     override fun get422Error(response: ResponseBody): ArrayList<String> {

@@ -73,9 +73,9 @@ class AccessPinViewModel @Inject constructor(
         repository.createdUserPref()
     }
 
-    override fun insertFreeTrialPref() {
+    override fun setFreeTrialPref(subscription: Boolean) {
         viewModelScope.launch {
-            repository.setFreeTrialPref()
+            repository.setFreeTrialPref(subscription)
         }
     }
 

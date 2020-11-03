@@ -3,7 +3,8 @@ package com.naposystems.napoleonchat.service.phoneState
 import android.content.Context
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
-import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 
@@ -26,6 +27,9 @@ class CustomPhoneStateListener(
             }
             TelephonyManager.CALL_STATE_RINGING -> {
                 //when Ringing
+                RxBus.publish(
+                    RxEvent.IncomingCallSystem()
+                )
                 Data.isOnCall = true
             }
         }

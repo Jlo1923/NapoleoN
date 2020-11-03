@@ -11,8 +11,8 @@ interface IContractSubscription {
     interface ViewModel {
         fun getTypeSubscription()
         fun getFreeTrial(): Long
-        fun getRemoteSubscription()
-        fun getSubscription()
+//        fun getRemoteSubscription()
+//        fun getSubscription()
         fun sendPayment(typePayment: Int)
         fun checkSubscription()
         fun resetViewModel()
@@ -21,8 +21,8 @@ interface IContractSubscription {
     interface Repository {
         suspend fun getTypeSubscription(): Response<List<SubscriptionsResDTO>>
         fun getFreeTrial(): Long
-        suspend fun getRemoteSubscription()
-        fun getSubscription(): SubscriptionUser
+//        suspend fun getRemoteSubscription()
+//        fun getSubscription(): SubscriptionUser
         suspend fun sendPayment(typePayment: Int): Response<SubscriptionUrlResDTO>
         fun getSubscriptionUserError(response: ResponseBody): ArrayList<String>
         fun getError(response: ResponseBody): ArrayList<String>

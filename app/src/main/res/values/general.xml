@@ -101,4 +101,6 @@
     <string name="text_attch_doc_size_exceed">The selected file exceeds the allowed size (100MB)</string>
     <string name="unicode_no_break_space" translatable="false">\u00A0</string>
     <string name="text_reject">Reject</string>
+    <string name="text_count_messages">Messages</string>
+    <string name="text_sending_file">Sending file</string>
 </resources>

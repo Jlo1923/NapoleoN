@@ -81,4 +81,6 @@
     <string name="text_attch_doc_not_allowed">Die ausgewählte Datei nicht erlaubt ist</string>
     <string name="text_attch_doc_size_exceed">Die ausgewählte Datei überschreitet die zulässige Größe (100MB)</string>
     <string name="text_reject">Ablehnen</string>
+    <string name="text_count_messages">Beiträge</string>
+    <string name="text_sending_file">Senden Datei</string>
 </resources>

@@ -17,6 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AccessPinFragmentBinding
 import com.naposystems.napoleonchat.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
@@ -38,7 +39,11 @@ class AccessPinFragment : Fragment() {
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private lateinit var viewModel: AccessPinViewModel
-    private val viewModelDefaultPreferences : DefaultPreferencesViewModel by viewModels { viewModelFactory }
+    private val viewModelDefaultPreferences: DefaultPreferencesViewModel by viewModels { viewModelFactory }
+
+    @Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle
+
     private lateinit var binding: AccessPinFragmentBinding
     private lateinit var nickname: String
     private lateinit var displayName: String
@@ -48,9 +53,17 @@ class AccessPinFragment : Fragment() {
 
     private lateinit var firebaseId: String
 
+    private var observerCreateUser = false
+    private var observerSubscription = false
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(billingClientLifecycle)
     }
 
     override fun onCreateView(
@@ -88,7 +101,7 @@ class AccessPinFragment : Fragment() {
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
                 enableAllWidgets()
                 binding.viewSwitcher.showPrevious()
             }
@@ -102,6 +115,7 @@ class AccessPinFragment : Fragment() {
 
         viewModel.userCreatedLocallySuccessfully.observe(viewLifecycleOwner, Observer {
             if (it == true) {
+                billingClientLifecycle.queryPurchasesHistory()
                 viewModel.openHomeFragment()
             }
         })
@@ -114,19 +128,37 @@ class AccessPinFragment : Fragment() {
 
         viewModel.openHomeFragment.observe(viewLifecycleOwner, Observer {
             if (it == true) {
+                observerCreateUser = true
                 viewModel.createdUserPref()
-                viewModel.insertFreeTrialPref()
                 viewModelDefaultPreferences.setDefaultPreferences()
-                findNavController()
-                    .navigate(AccessPinFragmentDirections.actionAccessPinFragmentToHomeFragment())
                 viewModel.onOpenedHomeFragment()
+                validateNextView()
             }
         })
+
+        billingClientLifecycle.purchasesHistory.observe(
+            viewLifecycleOwner,
+            Observer { purchasesHistory ->
+                purchasesHistory?.let {
+                    observerSubscription = true
+                    val subscription = purchasesHistory.isNotEmpty()
+                    viewModel.setFreeTrialPref(subscription)
+                    validateNextView()
+                }
+            })
 
         binding.textInputEditTextAccessPin.addTextChangedListener(textWatcherAccessPin())
         binding.textInputEditTextConfirmAccessPin.addTextChangedListener(textWatcherConfirmAccessPin())
 
         return binding.root
+    }
+
+    private fun validateNextView() {
+        if (observerCreateUser && observerSubscription){
+            findNavController().navigate(
+                AccessPinFragmentDirections.actionAccessPinFragmentToHomeFragment()
+            )
+        }
     }
 
     private fun validateAccessPin() {

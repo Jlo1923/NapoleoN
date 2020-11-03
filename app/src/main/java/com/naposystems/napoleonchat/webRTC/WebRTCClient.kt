@@ -195,7 +195,7 @@ class WebRTCClient @Inject constructor(
         fun callEnded()
         fun changeLocalRenderVisibility(visibility: Int)
         fun changeTextViewTitle(stringResourceId: Int)
-        fun changeBluetoothButtonVisibility(visibility: Int)
+        fun changeBluetoothButtonVisibility(isVisible : Boolean)
         fun enableControls()
         fun resetIsOnCallPref()
         fun contactNotAnswer()
@@ -208,8 +208,6 @@ class WebRTCClient @Inject constructor(
     }
 
     init {
-        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        bluetoothStateManager = BluetoothStateManager(context, this)
         subscribeToRXEvents()
     }
 
@@ -786,8 +784,10 @@ class WebRTCClient @Inject constructor(
 
     override fun setListener(webRTCClientListener: WebRTCClientListener) {
         this.mListener = webRTCClientListener
+        bluetoothStateManager = BluetoothStateManager(context, this)
         isOnCallActivity = true
         Timber.d("isOnCallActivity: $isOnCallActivity")
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         if (!isActiveCall) {
             createPeerConnection()
@@ -1113,7 +1113,7 @@ class WebRTCClient @Inject constructor(
             audioManager.isSpeakerphoneOn = false
         }
 
-        mListener?.changeBluetoothButtonVisibility(if (isAvailable) View.VISIBLE else View.GONE)
+        mListener?.changeBluetoothButtonVisibility(isAvailable)
     }
     //endregion
 }

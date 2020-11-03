@@ -11,7 +11,6 @@ import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Job
 import timber.log.Timber
 
@@ -26,6 +25,7 @@ class ConversationAdapter constructor(
         const val IS_UPLOAD = "is_upload"
         const val COMPRESS_PROGRESS = "compress_progress"
         const val PROGRESS = "progress"
+        const val STATE_MESSAGE = "state"
         const val DOWNLOAD_START = "download_start"
         const val DOWNLOAD_COMPLETE = "download_complete"
         const val DOWNLOAD_CANCEL = "download_cancel"
@@ -54,9 +54,6 @@ class ConversationAdapter constructor(
     }
 
     private var isFirst = false
-    private val disposable: CompositeDisposable by lazy {
-        CompositeDisposable()
-    }
 
     object DiffCallback : DiffUtil.ItemCallback<MessageAndAttachment>() {
         override fun areItemsTheSame(
@@ -132,6 +129,17 @@ class ConversationAdapter constructor(
             notifyItemChanged(
                 getPositionByItem(attachment),
                 Bundle().apply { putBoolean(IS_UPLOAD, true) })
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    fun setStateMessage(messageId: Int, stateMessage : Int) {
+        try {
+            notifyItemChanged(
+                getPositionByMessageId(messageId.toString()),
+                Bundle().apply { putInt(STATE_MESSAGE, stateMessage) }
+            )
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -441,6 +449,7 @@ class ConversationAdapter constructor(
         val playAudio = bundle.getBoolean(PLAY_AUDIO, false)
         val downloadComplete = bundle.getBoolean(DOWNLOAD_COMPLETE, false)
         val compressProgress = bundle.getFloat(COMPRESS_PROGRESS, -1f)
+        val stateMessage = bundle.getInt(STATE_MESSAGE)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,
             TYPE_MY_MESSAGE_GIF,
@@ -485,6 +494,7 @@ class ConversationAdapter constructor(
             TYPE_INCOMING_MESSAGE -> {
                 (holder as ConversationViewHolder).apply {
                     startFocusAnim(focusMessage)
+                    setStateMessage(stateMessage)
                 }
             }
         }

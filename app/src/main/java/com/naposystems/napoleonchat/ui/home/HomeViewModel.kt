@@ -79,6 +79,7 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
                     response.body()?.let {
                         _friendShipRequestReceived.value =
                             FriendshipRequestReceivedDTO.toListFriendshipRequestReceivedEntity(it)
+                        getFriendshipQuantity()
                     }
                 }
             } catch (ex: Exception) {

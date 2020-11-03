@@ -46,6 +46,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchaseHistoryRecord
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
@@ -96,6 +97,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -330,7 +333,7 @@ class ConversationFragment : BaseFragment(),
 
         emojiKeyboard = NapoleonKeyboard(
             binding.coordinator,
-            binding.inputPanel.getEditTex()
+            binding.inputPanel.getEditText()
         )
 
         binding.lifecycleOwner = this
@@ -461,7 +464,7 @@ class ConversationFragment : BaseFragment(),
                         args.contact.id,
                         binding.inputPanel.getWebIdQuote(),
                         Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                        binding.inputPanel.getEditTex().text.toString().trim()
+                        binding.inputPanel.getEditText().text.toString().trim()
                     )
                 )
             }
@@ -485,7 +488,7 @@ class ConversationFragment : BaseFragment(),
                                 args.contact,
                                 binding.inputPanel.getWebIdQuote(),
                                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditTex().text.toString().trim()
+                                binding.inputPanel.getEditText().text.toString().trim()
                             )
                         )
                     }
@@ -499,7 +502,7 @@ class ConversationFragment : BaseFragment(),
                                 args.contact.id,
                                 binding.inputPanel.getWebIdQuote(),
                                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditTex().text.toString().trim()
+                                binding.inputPanel.getEditText().text.toString().trim()
                             )
                         )
                     }
@@ -513,7 +516,9 @@ class ConversationFragment : BaseFragment(),
                         message = R.string.text_explanation_to_send_location_attachment
                     ) {
                         findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment()
+                            ConversationFragmentDirections.actionConversationFragmentToAttachmentLocationFragment(
+                                args.contact.id
+                            )
                         )
                     }
                 }
@@ -557,20 +562,23 @@ class ConversationFragment : BaseFragment(),
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.inputPanel.apply {
-                    val text = getEditTex().text.toString()
+                    val text = getEditText().text.toString()
+                    if (!binding.inputPanel.isRecordingInLockedMode()) {
+                        val text = getEditText().text.toString()
 
-                    if (text.isNotEmpty() && !isEditTextFilled) {
-                        showImageButtonSend()
-                        hideButtonRecord()
-                        hideImageButtonCamera()
-                        isEditTextFilled = true
-                        containerWrap()
-                    } else if (text.isEmpty()) {
-                        hideImageButtonSend()
-                        showButtonRecord()
-                        showImageButtonCamera()
-                        isEditTextFilled = false
-                        containerNoWrap()
+                        if (text.isNotEmpty() && !isEditTextFilled) {
+                            showImageButtonSend()
+                            hideButtonRecord()
+                            hideImageButtonCamera()
+                            isEditTextFilled = true
+                            containerWrap()
+                        } else if (text.isEmpty()) {
+                            hideImageButtonSend()
+                            showButtonRecord()
+                            showImageButtonCamera()
+                            isEditTextFilled = false
+                            containerNoWrap()
+                        }
                     }
                 }
             }
@@ -649,7 +657,7 @@ class ConversationFragment : BaseFragment(),
 
         shareViewModel.emojiSelected.observe(requireActivity(), Observer { emoji ->
             if (emoji != null) {
-                binding.inputPanel.getEditTex().text?.append(
+                binding.inputPanel.getEditText().text?.append(
                     EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
                 )
             }
@@ -664,7 +672,8 @@ class ConversationFragment : BaseFragment(),
                         ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                             gifAttachment,
                             0,
-                            shareViewModel.getQuoteWebId() ?: ""
+                            shareViewModel.getQuoteWebId() ?: "",
+                            contactId = args.contact.id
                         )
                     )
                     shareViewModel.resetGifSelected()
@@ -778,30 +787,31 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        /*viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
+        viewModel.stateMessage.observe(viewLifecycleOwner, {
             if (it != null) {
+                Timber.d("--- State ${it}")
                 when (it) {
-                    is UploadResult.Start -> conversationAdapter.setUploadStart(
-                        it.attachment,
-                        it.job
-                    )
-                    is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
-                    is UploadResult.CompressProgress -> conversationAdapter.setCompressProgress(
-                        it.attachment,
-                        it.progress,
-                        it.job
-                    )
-                    is UploadResult.Progress -> {
-                        conversationAdapter.setUploadProgress(
-                            it.attachment,
-                            it.progress,
-                            it.job
+                    is StateMessage.Start -> {
+                        conversationAdapter.setStateMessage(
+                            it.messageId,
+                            Constants.StateMessage.START.state
                         )
                     }
-                    is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
+                    is StateMessage.Success -> {
+                        conversationAdapter.setStateMessage(
+                            it.messageId,
+                            Constants.StateMessage.SUCCESS.state
+                        )
+                    }
+                    is StateMessage.Error -> {
+                        conversationAdapter.setStateMessage(
+                            it.messageId,
+                            Constants.StateMessage.ERROR.state
+                        )
+                    }
                 }
             }
-        })*/
+        })
 
         viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -865,24 +875,56 @@ class ConversationFragment : BaseFragment(),
 
         billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchaseList ->
             purchaseList?.let {
-                var allIsPurchased = false
-
                 val freeTrial = viewModel.getFreeTrial()
 
                 if (System.currentTimeMillis() > freeTrial) {
-                    purchaseList.forEach {
-                        allIsPurchased = it.purchaseState == Purchase.PurchaseState.PURCHASED
-                    }
-
-                    if (!allIsPurchased) {
+                    if (purchaseList.isEmpty()) {
                         binding.inputPanel.isVisible = false
-//                        binding.floatingActionButtonSend.isVisible = false
                         binding.buttonCall.isVisible = false
                         binding.buttonVideoCall.isVisible = false
+                    } else {
+                        try{
+                            val dateExpireSubscriptionMillis = getDataSubscription(purchaseList)
+                            if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
+                                binding.inputPanel.isVisible = false
+                                binding.buttonCall.isVisible = false
+                                binding.buttonVideoCall.isVisible = false
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
                     }
+                } else {
+                    binding.inputPanel.isVisible = true
+                    binding.buttonCall.isVisible = true
+                    binding.buttonVideoCall.isVisible = true
                 }
             }
         })
+    }
+
+    private fun getDataSubscription(purchaseList: List<Purchase>): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = purchaseList.last().purchaseTime
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val lastPurchase = purchaseList.last()
+
+        when (lastPurchase.sku) {
+            Constants.SkuSubscriptions.MONTHLY.sku -> calendar.add(
+                Calendar.MONTH,
+                Constants.SubscriptionsTimeType.MONTHLY.subscription
+            )
+
+            Constants.SkuSubscriptions.SEMIANNUAL.sku -> calendar.add(
+                Calendar.MONTH,
+                Constants.SubscriptionsTimeType.SEMIANNUAL.subscription
+            )
+
+            else -> calendar.add(Calendar.YEAR, Constants.SubscriptionsTimeType.YEARLY.subscription)
+        }
+
+        val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
+        return dateExpireSubscription!!.time
     }
 
     @ExperimentalCoroutinesApi
@@ -963,7 +1005,7 @@ class ConversationFragment : BaseFragment(),
 
                 Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
-            }
+            } else conversationAdapter.submitList(conversationList)
         })
     }
 
@@ -977,6 +1019,13 @@ class ConversationFragment : BaseFragment(),
                 }
 
         val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onRecorderReleased()
+                binding.inputPanel.cancelRecording()
+            }
+
+        val disposableIncomingCallSystem = RxBus.listen(RxEvent.IncomingCallSystem::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 onRecorderReleased()
@@ -1000,27 +1049,6 @@ class ConversationFragment : BaseFragment(),
                 binding.buttonCall.isEnabled = true
                 binding.buttonVideoCall.isEnabled = true
             }
-
-        /*when (it) {
-            is UploadResult.Start -> conversationAdapter.setUploadStart(
-                it.attachment,
-                it.job
-            )
-            is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
-            is UploadResult.CompressProgress -> conversationAdapter.setCompressProgress(
-                it.attachment,
-                it.progress,
-                it.job
-            )
-            is UploadResult.Progress -> {
-                conversationAdapter.setUploadProgress(
-                    it.attachment,
-                    it.progress,
-                    it.job
-                )
-            }
-            is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
-        }*/
 
         val disposableUploadStart = RxBus.listen(RxEvent.UploadStart::class.java)
             .observeOn(AndroidSchedulers.mainThread())
@@ -1073,6 +1101,7 @@ class ConversationFragment : BaseFragment(),
         disposable.add(disposableUploadError)
         disposable.add(disposableUploadProgress)
         disposable.add(disposableCompressProgress)
+        disposable.add(disposableIncomingCallSystem)
     }
 
     private fun validScroll(
@@ -1285,6 +1314,13 @@ class ConversationFragment : BaseFragment(),
             binding.buttonVideoCall.isEnabled = !this
         }
         //messagedLoadedFirstTime = false
+        if (binding.inputPanel.getEditText().text.toString().isNotEmpty()) {
+            binding.inputPanel.apply {
+                showImageButtonSend()
+                hideButtonRecord()
+                hideImageButtonCamera()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -1632,7 +1668,7 @@ class ConversationFragment : BaseFragment(),
         binding.recyclerViewConversation.setHasFixedSize(false)
         binding.recyclerViewConversation.adapter = conversationAdapter
         binding.recyclerViewConversation.layoutManager = linearLayoutManager
-        binding.recyclerViewConversation.itemAnimator = ItemAnimator()
+        binding.recyclerViewConversation.itemAnimator = null
 
         /*conversationAdapter.registerAdapterDataObserver(object :
             RecyclerView.AdapterDataObserver() {
@@ -1777,7 +1813,8 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     override fun onPause() {
         super.onPause()
-        if (binding.inputPanel.getEditTex().text.toString().count() <= 0) {
+        //MediaPlayerManager.completeAudioPlaying()
+        if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
         Data.contactId = 0
@@ -1854,6 +1891,7 @@ class ConversationFragment : BaseFragment(),
 
                             if (recordingTime == Constants.MAX_AUDIO_RECORD_TIME) {
                                 isRecordingAudio = false
+                                saveAndSendRecordAudio()
                                 binding.inputPanel.releaseRecordingLock()
                             } else {
                                 isRecordingAudio = true
@@ -1953,12 +1991,12 @@ class ConversationFragment : BaseFragment(),
                 val quote = binding.inputPanel.getQuote()
 
                 viewModel.saveMessageLocally(
-                    binding.inputPanel.getEditTex().text.toString().trim(),
+                    binding.inputPanel.getEditText().text.toString().trim(),
                     obtainTimeSelfDestruct(),
                     quote?.message?.webId ?: ""
                 )
 
-                with(binding.inputPanel.getEditTex()) {
+                with(binding.inputPanel.getEditText()) {
                     setText("")
                 }
                 binding.inputPanel.closeQuote()

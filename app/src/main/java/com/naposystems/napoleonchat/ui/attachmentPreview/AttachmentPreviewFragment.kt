@@ -2,6 +2,8 @@ package com.naposystems.napoleonchat.ui.attachmentPreview
 
 import android.os.Bundle
 import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +19,15 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 
 class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
@@ -54,6 +60,10 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         Handler()
     }
     private lateinit var mRunnable: Runnable
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -172,14 +182,40 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         binding.executePendingBindings()
 
         if (args.message.isNotEmpty()) {
-            binding.inputPanel.getEditTex().setText(args.message)
+            binding.inputPanel.getEditText().setText(args.message)
         }
+
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contactId == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
+
+        binding.inputPanel.setEditTextWatcher(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+
+
+            override fun afterTextChanged(s: Editable?) {
+                binding.inputPanel.apply {
+                    val text = getEditText().text.toString()
+                    if (text.isNotEmpty()) containerWrap() else containerNoWrap()
+                }
+            }
+        })
 
         return binding.root
     }
 
     override fun onDestroy() {
         deleteFile()
+        disposable.dispose()
         conversationShareViewModel.resetAttachmentTaken()
         super.onDestroy()
     }
@@ -219,7 +255,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
     override fun onSendButtonClicked() {
         with(conversationShareViewModel) {
             setQuoteWebId(args.quote)
-            setMessage(binding.inputPanel.getEditTex().text.toString().trim())
+            setMessage(binding.inputPanel.getEditText().text.toString().trim())
             setAttachmentSelected(args.attachment)
             resetAttachmentSelected()
             resetMessage()

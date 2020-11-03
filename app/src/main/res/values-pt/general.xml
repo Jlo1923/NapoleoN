@@ -70,7 +70,7 @@
     <string name="text_explanation_camera_to_receive_calls">NapoleoN precisa de acesso à câmera e microfone para fazer e receber chamadas</string>
     <string name="text_twentyfour_hours">24 horas</string>
     <string name="text_access">ACESSO</string>
-    <string name="text_yes">sim</string>
+    <string name="text_yes">Sim</string>
     <string name="text_no">Não</string>
     <string name="text_empty_state_search_contacts">Sua busca não gerou resultados</string>
     <string name="text_contact">CONTATO</string>
@@ -81,4 +81,6 @@
     <string name="text_attch_doc_not_allowed">O arquivo selecionado não é permitido</string>
     <string name="text_attch_doc_size_exceed">O ficheiro seleccionado, excede o tamanho permitido (100MB)</string>
     <string name="text_reject">Recusar</string>
+    <string name="text_count_messages">Postagens</string>
+    <string name="text_sending_file">Envio de arquivo</string>
 </resources>

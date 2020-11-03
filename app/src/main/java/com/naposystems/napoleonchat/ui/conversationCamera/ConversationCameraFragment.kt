@@ -24,12 +24,16 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationCameraFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.custom.cameraButton.CameraButton
 import com.naposystems.napoleonchat.ui.custom.customVerticalSeekbar.CustomVerticalSeekBar
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
@@ -66,6 +70,10 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private val mHandler: Handler by lazy {
         Handler()
+    }
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
     }
 
     private var flashMode by Delegates.observable(ImageCapture.FLASH_MODE_OFF) { _, _, newValue ->
@@ -110,6 +118,16 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
         )
 
         binding.viewFinder.bindToLifecycle(this)
+
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contactId == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
 
 
 //        flashMode = ImageCapture.FLASH_MODE_OFF
@@ -217,6 +235,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
         if (binding.viewFinder.isRecording) {
             binding.viewFinder.stopRecording()
         }
+        disposable.dispose()
         ProcessCameraProvider.getInstance(requireContext()).get().unbindAll()
     }
 
@@ -237,7 +256,10 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                         when (location) {
                             Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
                                 lifecycleScope.launch {
-                                    photoFileCompress = FileManager.compressImageFromFile(requireContext(), photoFile)
+                                    photoFileCompress =
+//                                        FileManager.compressImageFromFile(requireContext(), photoFile)
+                                        photoFile
+
                                     val attachment = Attachment(
                                         id = 0,
                                         messageId = 0,
@@ -261,9 +283,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                                             args.message
                                         )
                                     )
-
-                                    Timber.d("Photo capture succeeded: ${outputFileResults.savedUri}")
-                                }.let {}
+                                }
                             }
                             else -> {
                                 context?.let { context ->

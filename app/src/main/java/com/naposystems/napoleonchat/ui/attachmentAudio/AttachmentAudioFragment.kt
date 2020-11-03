@@ -17,6 +17,8 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentAudioFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.ItemAnimator
@@ -25,6 +27,8 @@ import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManage
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
@@ -44,6 +48,9 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
 
     private var chargeContent = false
 
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
 
     private val animationScaleUp: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -80,6 +87,16 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
             conversationShareViewModel.resetAudioSendClicked()
             findNavController().navigateUp()
         }
+
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (args.contact.id == it.contactId)
+                        findNavController().popBackStack(R.id.homeFragment, false)
+                }
+
+        disposable.add(disposableContactBlockOrDelete)
 
         MediaPlayerGalleryManager.setContext(requireContext())
         MediaPlayerGalleryManager.setListener(this)
@@ -170,6 +187,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
 
     override fun onDestroy() {
         MediaPlayerGalleryManager.resetMediaPlayer()
+        disposable.dispose()
         super.onDestroy()
     }
 

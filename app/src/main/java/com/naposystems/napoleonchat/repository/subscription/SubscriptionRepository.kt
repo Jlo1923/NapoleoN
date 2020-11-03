@@ -27,7 +27,7 @@ class SubscriptionRepository @Inject constructor(
         )
     }
 
-    override suspend fun getRemoteSubscription() {
+    /*override suspend fun getRemoteSubscription() {
         val response = napoleonApi.getSubscriptionUser()
         response.body()?.let { responseBody ->
             val currentTimeSubscriptionLocal = sharedPreferencesManager.getLong(
@@ -46,9 +46,9 @@ class SubscriptionRepository @Inject constructor(
                 )
             }
         }
-    }
+    }*/
 
-    override fun getSubscription(): SubscriptionUser {
+    /*override fun getSubscription(): SubscriptionUser {
         val subscriptionTime = sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
         )
@@ -64,7 +64,7 @@ class SubscriptionRepository @Inject constructor(
             ),
             subscriptionTime
         )
-    }
+    }*/
 
     override suspend fun getTypeSubscription(): Response<List<SubscriptionsResDTO>> {
         return napoleonApi.typeSubscriptions()

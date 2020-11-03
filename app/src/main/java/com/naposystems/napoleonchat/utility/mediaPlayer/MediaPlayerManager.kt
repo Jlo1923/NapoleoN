@@ -622,6 +622,10 @@ object MediaPlayerManager :
 
     override fun isPlaying() = mediaPlayer?.isPlaying ?: false
 
+    override fun completeAudioPlaying() {
+        mListener?.onPauseAudio(mWebId)
+    }
+
     override fun refreshSeekbarProgress() {
         setSeekbarProgress()
     }

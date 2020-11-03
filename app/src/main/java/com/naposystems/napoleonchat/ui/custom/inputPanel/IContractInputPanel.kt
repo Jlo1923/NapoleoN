@@ -11,7 +11,7 @@ interface IContractInputPanel {
     fun isRecordingInLockedMode(): Boolean
     fun releaseRecordingLock()
     fun setEditTextWatcher(textWatcher: TextWatcher)
-    fun getEditTex(): EmojiAppCompatEditText
+    fun getEditText(): EmojiAppCompatEditText
     fun getImageButtonAttachment(): ImageButton
     fun getImageButtonCamera(): ImageButton
     fun getImageButtonEmoji(): ImageButton

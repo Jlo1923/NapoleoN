@@ -13,7 +13,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file('C:\\Users\\android\\Documents\\pepito.jks')
+            storeFile file('C:\\Users\\peper\\Documents\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'

@@ -1,9 +1,6 @@
 package com.naposystems.napoleonchat.utility.notificationUtils
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -45,7 +42,10 @@ class NotificationUtils @Inject constructor(
         const val NOTIFICATION_RINGING = 950707
         const val NOTIFICATION_UPLOADING = 20102020
         const val NOTIFICATION = 162511
-        const val NOTIFICATION_NUMBER = 1
+
+        //        const val NOTIFICATION_NUMBER = 1
+        const val SUMMARY_ID = 12345678
+        const val GROUP_MESSAGE = "GROUP_MESSAGE"
 
         fun cancelWebRTCCallNotification(context: Context) {
             val notificationManager =
@@ -86,8 +86,8 @@ class NotificationUtils @Inject constructor(
         val iconBitmap = BitmapFactory.decodeResource(
             context.resources, R.drawable.ic_notification_icon
         )
-        //val notificationCount = if(data.containsKey("badge")) data.getValue("badge").toInt() else 0
-        //Timber.d("--OLA $notificationCount")
+        val notificationCount = if (data.containsKey("badge")) data.getValue("badge").toInt() else 0
+        Timber.d("*Notification: $notificationCount")
 
         val pair =
             createPendingIntent(
@@ -110,7 +110,7 @@ class NotificationUtils @Inject constructor(
             .setDefaults(DEFAULT_ALL)
             .setPriority(PRIORITY_MAX)
             .setVisibility(VISIBILITY_PUBLIC)
-            .setNumber(NOTIFICATION_NUMBER)
+            .setNumber(notificationCount)
             .setBadgeIconType(BADGE_ICON_SMALL)
             .setAutoCancel(true)
 
@@ -141,6 +141,8 @@ class NotificationUtils @Inject constructor(
                 val messageKey =
                     Constants.NotificationKeys.MESSAGE_ID
 
+                val attackKey = Constants.NotificationKeys.ATTACK
+
                 if (this.containsKey(typeNotificationKey)) {
                     notificationType1 = this.getValue(typeNotificationKey).toInt()
                     notificationIntent.putExtra(typeNotificationKey, notificationType1.toString())
@@ -152,6 +154,10 @@ class NotificationUtils @Inject constructor(
 
                 if (this.containsKey(messageKey)) {
                     notificationIntent.putExtra(messageKey, this.getValue(messageKey).toString())
+                }
+
+                if (this.containsKey(attackKey)) {
+                    notificationIntent.putExtra(attackKey, this.getValue(attackKey).toString())
                 }
             }
         }
@@ -198,8 +204,6 @@ class NotificationUtils @Inject constructor(
                                 }, 200)
                             }
 
-//                            setupNotificationSound(context, R.raw.tone_receive_message)
-
                             val titleKey =
                                 Constants.NotificationKeys.TITLE
                             val bodyKey =
@@ -220,8 +224,11 @@ class NotificationUtils @Inject constructor(
                             }
 
                             if (!app.isAppVisible()) {
+                                builder.setGroup(GROUP_MESSAGE)
+
                                 with(NotificationManagerCompat.from(context)) {
-                                    notify(Random().nextInt(), builder.build())
+                                    notify(data.getValue(contact).toInt(), builder.build())
+                                    notify(SUMMARY_ID, createSummaryNotification(context))
                                 }
                             }
                         }
@@ -295,6 +302,33 @@ class NotificationUtils @Inject constructor(
                 notificationManager.cancelAll()
             }
         }
+    }
+
+    private fun createSummaryNotification(context: Context): Notification {
+        // Create an Intent for the activity you want to start
+        val resultIntent = Intent(context, MainActivity::class.java)
+        // Create the TaskStackBuilder
+        val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+            // Add the intent, which inflates the back stack
+            addNextIntentWithParentStack(resultIntent)
+            // Get the PendingIntent containing the entire back stack
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        return Builder(context, context.getString(R.string.default_notification_channel_id))
+//            .setContentTitle("Messages")
+            .setSmallIcon(R.drawable.ic_notification_icon)
+            .setStyle(
+                InboxStyle()
+//                    .setBigContentTitle("Messages")
+                    .setSummaryText(context.getString(R.string.text_count_messages))
+            )
+            .setPriority(PRIORITY_LOW)
+            .setContentIntent(resultPendingIntent)
+            .setGroupAlertBehavior(GROUP_ALERT_CHILDREN)
+            .setGroup(GROUP_MESSAGE)
+            .setGroupSummary(true)
+            .build()
     }
 
     fun startWebRTCCallService(
@@ -452,8 +486,8 @@ class NotificationUtils @Inject constructor(
             context.getString(R.string.alerts_channel_id)
         )
             .setSmallIcon(R.drawable.ic_file_upload_black)
-            .setContentTitle("Enviando archivo titulo")
-            .setContentText("Enviando archivo")
+            .setContentTitle(context.getString(R.string.text_sending_file))
+            .setContentText(context.getString(R.string.text_sending_file))
             .setProgress(0, 0, true)
             .setOngoing(true)
 
@@ -522,7 +556,7 @@ class NotificationUtils @Inject constructor(
 
             val channel = NotificationChannel(id, name, importance).apply {
                 description = descriptionText
-                setShowBadge(true)
+                setShowBadge(false)
                 lockscreenVisibility = PRIORITY_MAX
             }
 

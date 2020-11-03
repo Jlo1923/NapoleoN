@@ -72,6 +72,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
 
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
+
         webRTCClient.setListener(this)
 
         audioManagerCompat.requestCallAudioFocus()
@@ -98,8 +100,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         }*/
 
         super.onCreate(savedInstanceState)
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
         initSurfaceRenders()
 
@@ -484,12 +484,12 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             )
     }
 
-    override fun changeBluetoothButtonVisibility(visibility: Int) {
+    override fun changeBluetoothButtonVisibility(isVisible: Boolean) {
         val audioManager: AudioManager = Utils.getAudioManager(this)
 
         Timber.d("isBluetoothScoOn: ${audioManager.isBluetoothScoOn}")
 
-        binding.imageButtonBluetooth.visibility = visibility
+        binding.imageButtonBluetooth.visibility = if (isVisible) View.VISIBLE else View.GONE
 
         when {
             audioManager.isBluetoothScoOn -> {
