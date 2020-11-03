@@ -9,21 +9,19 @@ import java.io.ByteArrayInputStream
 class ProgressRequestBody(
     private val bytes: ByteArray,
     private val mediaType: MediaType,
-    private val progress : (Float) -> Unit
+    private val progress: (Float) -> Unit
 ) : RequestBody() {
 
     private val mLength = bytes.size.toLong()
-
-    interface Listener {
-        fun onRequestCancel()
-    }
+    private var writeToCall = 0
 
     override fun contentType(): MediaType = mediaType
 
     override fun contentLength(): Long = mLength
 
     override fun writeTo(sink: BufferedSink) {
-        Timber.d("writeTo")
+        Timber.d("UploadServiceRepository writeTo")
+        writeToCall++
         try {
             ByteArrayInputStream(bytes).use { inputStream ->
                 val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
@@ -33,7 +31,9 @@ class ProgressRequestBody(
                 while (inputStream.read(buffer).also { read = it } != -1) {
                     sink.write(buffer, 0, read)
                     uploaded += read
-                    progress(100f * uploaded / mLength)
+                    if (writeToCall == 2) {
+                        progress(100f * uploaded / mLength)
+                    }
                 }
             }
         } catch (e: Exception) {

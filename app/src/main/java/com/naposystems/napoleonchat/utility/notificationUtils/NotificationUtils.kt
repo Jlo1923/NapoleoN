@@ -19,6 +19,7 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.repository.notificationUtils.NotificationUtilsRepository
+import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -39,6 +40,7 @@ class NotificationUtils @Inject constructor(
 
     companion object {
         const val NOTIFICATION_RINGING = 950707
+        const val NOTIFICATION_UPLOADING = 20102020
         const val NOTIFICATION = 162511
 
         //        const val NOTIFICATION_NUMBER = 1
@@ -67,6 +69,7 @@ class NotificationUtils @Inject constructor(
         createNotificationChannel(applicationContext)
         createCallNotificationChannel(applicationContext)
         createAlertsNotificationChannel(applicationContext)
+        createUploadNotificationChannel(applicationContext)
     }
 
     fun createInformativeNotification(
@@ -475,6 +478,40 @@ class NotificationUtils @Inject constructor(
         return notificationBuilder.build()
     }
 
+    fun createUploadNotification(
+        context: Context
+    ): Notification {
+        val notificationBuilder = Builder(
+            context,
+            context.getString(R.string.alerts_channel_id)
+        )
+            .setSmallIcon(R.drawable.ic_file_upload_black)
+            .setContentTitle(context.getString(R.string.text_sending_file))
+            .setContentText(context.getString(R.string.text_sending_file))
+            .setProgress(0, 0, true)
+            .setOngoing(true)
+
+        return notificationBuilder.build()
+    }
+
+    fun updateUploadProgress(max: Int, progress: Int) {
+        val notificationBuilder = Builder(
+            applicationContext,
+            applicationContext.getString(R.string.alerts_channel_id)
+        )
+            .setSmallIcon(R.drawable.ic_file_upload_black)
+            .setContentTitle("Enviando archivo titulo")
+            .setContentText("Enviando archivo")
+            .setProgress(max, progress, false)
+            .setOngoing(true)
+
+        val notification = notificationBuilder.build()
+
+        val mNotificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        mNotificationManager.notify(NOTIFICATION_UPLOADING, notification)
+    }
+
     fun getNotificationId(context: Context, type: Int): Int {
         return if (callActivityRestricted(context) && type == Constants.NotificationType.INCOMING_CALL.type) {
             NOTIFICATION_RINGING
@@ -548,6 +585,29 @@ class NotificationUtils @Inject constructor(
             val (id: String, name) = context.getString(R.string.alerts_channel_id) to
                     context.getString(R.string.alerts_channel_name)
             val descriptionText = context.getString(R.string.alerts_channel_description)
+            val importance = NotificationManager.IMPORTANCE_LOW
+
+            val channel = NotificationChannel(id, name, importance).apply {
+                description = descriptionText
+                setShowBadge(true)
+                lockscreenVisibility = PRIORITY_LOW
+            }
+
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createUploadNotificationChannel(context: Context) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val (id: String, name) = context.getString(R.string.upload_channel_id) to
+                    context.getString(R.string.upload_channel_name)
+            val descriptionText = context.getString(R.string.upload_channel_description)
             val importance = NotificationManager.IMPORTANCE_LOW
 
             val channel = NotificationChannel(id, name, importance).apply {

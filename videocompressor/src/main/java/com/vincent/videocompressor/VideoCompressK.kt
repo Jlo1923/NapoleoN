@@ -1,5 +1,6 @@
 package com.vincent.videocompressor
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import java.io.File
@@ -48,7 +49,7 @@ object VideoCompressK {
     fun compressVideoCustom(
         srcFile: File,
         destFile: File,
-        job: ProducerScope<*>
+        job: CoroutineScope
     ): Flow<VideoCompressResult> {
         return VideoControllerK.instance!!.convertVideo(
             srcFile,

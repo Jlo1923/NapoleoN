@@ -1,6 +1,8 @@
 package com.naposystems.napoleonchat.di
 
 import com.naposystems.napoleonchat.service.phoneState.PhoneStateBroadcastReceiver
+import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
+import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import dagger.Module
@@ -17,4 +19,7 @@ abstract class ServiceBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindPhoneStateBroadcastReceiver(): PhoneStateBroadcastReceiver
+
+    @ContributesAndroidInjector
+    abstract fun bindUploadService(): UploadService
 }

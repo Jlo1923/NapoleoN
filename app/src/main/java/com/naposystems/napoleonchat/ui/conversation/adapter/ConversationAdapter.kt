@@ -10,10 +10,8 @@ import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.UploadResult
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.ProducerScope
 import timber.log.Timber
 
 class ConversationAdapter constructor(
@@ -24,6 +22,7 @@ class ConversationAdapter constructor(
     ListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
+        const val IS_UPLOAD = "is_upload"
         const val COMPRESS_PROGRESS = "compress_progress"
         const val PROGRESS = "progress"
         const val STATE_MESSAGE = "state"
@@ -101,9 +100,9 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setProgress(position: Int, progress: Long) {
+    fun setDownloadProgress(position: Int, progress: Float) {
         try {
-            notifyItemChanged(position, Bundle().apply { putLong(PROGRESS, progress) })
+            notifyItemChanged(position, Bundle().apply { putFloat(PROGRESS, progress) })
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -125,9 +124,11 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setUploadStart(attachment: Attachment, job: ProducerScope<UploadResult>) {
+    fun setUploadStart(attachment: Attachment) {
         try {
-            notifyItemChanged(getPositionByItem(attachment), job)
+            notifyItemChanged(
+                getPositionByItem(attachment),
+                Bundle().apply { putBoolean(IS_UPLOAD, true) })
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -146,13 +147,12 @@ class ConversationAdapter constructor(
 
     fun setCompressProgress(
         attachment: Attachment,
-        progress: Float,
-        job: ProducerScope<UploadResult>
+        progress: Float
     ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
-                listOf(Bundle().apply { putFloat(COMPRESS_PROGRESS, progress) }, job)
+                listOf(Bundle().apply { putFloat(COMPRESS_PROGRESS, progress) })
             )
         } catch (e: Exception) {
             Timber.e(e)
@@ -161,13 +161,15 @@ class ConversationAdapter constructor(
 
     fun setUploadProgress(
         attachment: Attachment,
-        progress: Float,
-        job: ProducerScope<UploadResult>
+        progress: Float
     ) {
         try {
             notifyItemChanged(
                 getPositionByItem(attachment),
-                listOf(Bundle().apply { putFloat(PROGRESS, progress) }, job)
+                Bundle().apply {
+                    putFloat(PROGRESS, progress)
+                    putBoolean(IS_UPLOAD, true)
+                }
             )
         } catch (e: Exception) {
             Timber.e(e)
@@ -425,53 +427,10 @@ class ConversationAdapter constructor(
                 try {
                     when (val any = payloads.first()) {
                         is Bundle -> handleBundlePayload(any, position, holder)
-                        is ProducerScope<*> -> handleProducerScopePayload(any, position, holder)
                         is Job -> handleJobPayload(any, position, holder)
-                        is List<*> -> {
-                            if (any.isNotEmpty()) {
-                                handleBundleAndJobPayload(
-                                    any[0] as Bundle,
-                                    any[1] as ProducerScope<*>,
-                                    position,
-                                    holder
-                                )
-                            }
-                        }
                     }
                 } catch (e: Exception) {
                     Timber.e(e)
-                }
-            }
-        }
-    }
-
-    private fun handleProducerScopePayload(
-        job: ProducerScope<*>,
-        position: Int,
-        holder: RecyclerView.ViewHolder
-    ) {
-        Timber.d("handleProducerScopePayload: ${getItemViewType(position)}")
-        when (getItemViewType(position)) {
-            TYPE_INCOMING_MESSAGE_IMAGE,
-            TYPE_INCOMING_MESSAGE_VIDEO,
-            TYPE_INCOMING_MESSAGE_GIF,
-            TYPE_INCOMING_MESSAGE_GIF_NN,
-            TYPE_INCOMING_MESSAGE_AUDIO,
-            TYPE_INCOMING_MESSAGE_DOCUMENT,
-            TYPE_INCOMING_MESSAGE_LOCATION -> {
-                (holder as ConversationViewHolder).apply {
-//                    setDownloadStart()
-                }
-            }
-            TYPE_MY_MESSAGE_IMAGE,
-            TYPE_MY_MESSAGE_VIDEO,
-            TYPE_MY_MESSAGE_GIF,
-            TYPE_MY_MESSAGE_GIF_NN,
-            TYPE_MY_MESSAGE_AUDIO,
-            TYPE_MY_MESSAGE_DOCUMENT,
-            TYPE_MY_MESSAGE_LOCATION -> {
-                (holder as ConversationViewHolder).apply {
-                    setUploadStart(job)
                 }
             }
         }
@@ -482,12 +441,14 @@ class ConversationAdapter constructor(
         position: Int,
         holder: RecyclerView.ViewHolder
     ) {
-        val progress = bundle.getLong(PROGRESS)
+        val isUpload = bundle.getBoolean(IS_UPLOAD, false)
+        val progress = bundle.getFloat(PROGRESS, -1f)
         val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
         val downloadCancel = bundle.getBoolean(DOWNLOAD_CANCEL, false)
         val focusMessage = bundle.getBoolean(FOCUS_MESSAGE, false)
         val playAudio = bundle.getBoolean(PLAY_AUDIO, false)
         val downloadComplete = bundle.getBoolean(DOWNLOAD_COMPLETE, false)
+        val compressProgress = bundle.getFloat(COMPRESS_PROGRESS, -1f)
         val stateMessage = bundle.getInt(STATE_MESSAGE)
         when (getItemViewType(position)) {
             TYPE_MY_MESSAGE_IMAGE,
@@ -498,10 +459,20 @@ class ConversationAdapter constructor(
             TYPE_MY_MESSAGE_DOCUMENT,
             TYPE_MY_MESSAGE_LOCATION -> {
                 (holder as ConversationViewHolder).apply {
-                    setProgress(progress)
-                    setUploadComplete(uploadComplete)
-                    startFocusAnim(focusMessage)
-                    playAudio(playAudio)
+                    if (isUpload) {
+                        if (progress > -1) {
+                            setUploadProgressAndJob(progress)
+                        }
+                        if (compressProgress > -1) {
+                            setCompressProgressAndJob(progress)
+                        }
+                        setUploadComplete(uploadComplete)
+                    } else {
+                        setProgress(progress)
+                        setUploadComplete(uploadComplete)
+                        startFocusAnim(focusMessage)
+                        playAudio(playAudio)
+                    }
                 }
             }
             TYPE_INCOMING_MESSAGE_IMAGE,
@@ -525,45 +496,6 @@ class ConversationAdapter constructor(
                     startFocusAnim(focusMessage)
                     setStateMessage(stateMessage)
                 }
-            }
-        }
-    }
-
-    private fun handleBundleAndJobPayload(
-        bundle: Bundle,
-        job: ProducerScope<*>,
-        position: Int,
-        holder: RecyclerView.ViewHolder
-    ) {
-        val progress = bundle.getFloat(PROGRESS, -1f)
-        val compressProgress = bundle.getFloat(COMPRESS_PROGRESS, -1f)
-        val uploadComplete = bundle.getBoolean(UPLOAD_COMPLETE, false)
-        when (getItemViewType(position)) {
-            TYPE_MY_MESSAGE_IMAGE,
-            TYPE_MY_MESSAGE_GIF,
-            TYPE_MY_MESSAGE_VIDEO,
-            TYPE_MY_MESSAGE_GIF_NN,
-            TYPE_MY_MESSAGE_AUDIO,
-            TYPE_MY_MESSAGE_DOCUMENT,
-            TYPE_MY_MESSAGE_LOCATION -> {
-                (holder as ConversationViewHolder).apply {
-                    if (progress > -1) {
-                        setUploadProgressAndJob(progress, job)
-                    }
-                    if (compressProgress > -1) {
-                        setCompressProgressAndJob(progress, job)
-                    }
-                    setUploadComplete(uploadComplete)
-                }
-            }
-            TYPE_INCOMING_MESSAGE_IMAGE,
-            TYPE_INCOMING_MESSAGE_GIF,
-            TYPE_INCOMING_MESSAGE_VIDEO,
-            TYPE_INCOMING_MESSAGE_GIF_NN,
-            TYPE_INCOMING_MESSAGE_DOCUMENT,
-            TYPE_INCOMING_MESSAGE_AUDIO,
-            TYPE_INCOMING_MESSAGE_LOCATION -> {
-                (holder as ConversationViewHolder).setDownloadProgressAndJob(progress, job)
             }
         }
     }

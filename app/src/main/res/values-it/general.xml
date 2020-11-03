@@ -82,4 +82,5 @@
     <string name="text_attch_doc_size_exceed">Il file selezionato supera la dimensione consentita (100MB)</string>
     <string name="text_reject">Per rifiutare</string>
     <string name="text_count_messages">Messaggi</string>
+    <string name="text_sending_file">File di Invio</string>
 </resources>

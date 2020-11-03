@@ -452,34 +452,6 @@ class ConversationFragment : BaseFragment(),
         MediaPlayerManager.setContext(requireContext())
         MediaPlayerManager.initializeBluetoothManager()
 
-        val disposableContactBlockOrDelete =
-            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (it.contactId == args.contact.id)
-                        findNavController().popBackStack()
-                }
-
-        disposable.add(disposableContactBlockOrDelete)
-
-        val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                onRecorderReleased()
-                binding.inputPanel.cancelRecording()
-            }
-
-        disposable.add(disposableIncomingCall)
-
-        val disposableIncomingCallSystem = RxBus.listen(RxEvent.IncomingCallSystem::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                onRecorderReleased()
-                binding.inputPanel.cancelRecording()
-            }
-
-        disposable.add(disposableIncomingCallSystem)
-
         return binding.root
     }
 
@@ -655,7 +627,7 @@ class ConversationFragment : BaseFragment(),
             }
         }
 
-        eventCounterBadgeMessage()
+        subscribeRxEvents()
 
         shareViewModel.hasAudioSendClicked.observe(requireActivity(), Observer {
             if (it == true) {
@@ -792,7 +764,7 @@ class ConversationFragment : BaseFragment(),
                         conversationAdapter.setStartDownload(it.itemPosition, it.job)
                     }
                     is DownloadAttachmentResult.Progress -> {
-                        conversationAdapter.setProgress(
+                        conversationAdapter.setDownloadProgress(
                             it.itemPosition,
                             it.progress
                         )
@@ -837,31 +809,6 @@ class ConversationFragment : BaseFragment(),
                             Constants.StateMessage.ERROR.state
                         )
                     }
-                }
-            }
-        })
-
-        viewModel.uploadProgress.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                when (it) {
-                    is UploadResult.Start -> conversationAdapter.setUploadStart(
-                        it.attachment,
-                        it.job
-                    )
-                    is UploadResult.Success -> conversationAdapter.setUploadComplete(it.attachment)
-                    is UploadResult.CompressProgress -> conversationAdapter.setCompressProgress(
-                        it.attachment,
-                        it.progress,
-                        it.job
-                    )
-                    is UploadResult.Progress -> {
-                        conversationAdapter.setUploadProgress(
-                            it.attachment,
-                            it.progress,
-                            it.job
-                        )
-                    }
-                    is UploadResult.Complete -> conversationAdapter.setUploadComplete(it.attachment)
                 }
             }
         })
@@ -1062,7 +1009,29 @@ class ConversationFragment : BaseFragment(),
         })
     }
 
-    private fun eventCounterBadgeMessage() {
+    @OptIn(InternalCoroutinesApi::class)
+    private fun subscribeRxEvents() {
+        val disposableContactBlockOrDelete =
+            RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    findNavController().popBackStack()
+                }
+
+        val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onRecorderReleased()
+                binding.inputPanel.cancelRecording()
+            }
+
+        val disposableIncomingCallSystem = RxBus.listen(RxEvent.IncomingCallSystem::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onRecorderReleased()
+                binding.inputPanel.cancelRecording()
+            }
+
         val disposableNewMessageEvent =
             RxBus.listen(RxEvent.NewMessageEventForCounter::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1081,8 +1050,58 @@ class ConversationFragment : BaseFragment(),
                 binding.buttonVideoCall.isEnabled = true
             }
 
+        val disposableUploadStart = RxBus.listen(RxEvent.UploadStart::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadStart")
+                conversationAdapter.setUploadStart(
+                    it.attachment
+                )
+            }
+
+        val disposableUploadSuccess = RxBus.listen(RxEvent.UploadSuccess::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadSuccess")
+                conversationAdapter.setUploadComplete(it.attachment)
+            }
+
+        val disposableUploadError = RxBus.listen(RxEvent.UploadError::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadError")
+            }
+
+        val disposableUploadProgress = RxBus.listen(RxEvent.UploadProgress::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.UploadProgress: ${it.progress}")
+                conversationAdapter.setUploadProgress(
+                    it.attachment,
+                    it.progress
+                )
+            }
+
+        val disposableCompressProgress = RxBus.listen(RxEvent.CompressProgress::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.CompressProgress")
+                conversationAdapter.setCompressProgress(
+                    it.attachment,
+                    it.progress
+                )
+            }
+
+        disposable.add(disposableContactBlockOrDelete)
+        disposable.add(disposableIncomingCall)
         disposable.add(disposableNewMessageEvent)
         disposable.add(disposableContactHasHangup)
+        disposable.add(disposableUploadStart)
+        disposable.add(disposableUploadSuccess)
+        disposable.add(disposableUploadError)
+        disposable.add(disposableUploadProgress)
+        disposable.add(disposableCompressProgress)
+        disposable.add(disposableIncomingCallSystem)
     }
 
     private fun validScroll(
