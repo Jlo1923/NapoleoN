@@ -81,6 +81,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onDestroy(owner: LifecycleOwner) {
         Data.isOnCall = false
+        Data.isContactReadyForCall = false
         super.onDestroy(owner)
     }
 

@@ -22,6 +22,7 @@ import com.naposystems.napoleonchat.utility.adapters.toJSONObject
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.naposystems.napoleonchat.webService.socket.SocketService
+import com.pusher.client.channel.PresenceChannel
 import com.pusher.client.channel.PrivateChannel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -261,6 +262,7 @@ class WebRTCClient @Inject constructor(
             .subscribe {
                 Timber.d("ContactHasHangup")
                 if (it.channel == this.channel && !isIncomingCall()) {
+                    Data.isContactReadyForCall = false
                     stopMediaPlayer()
                     unSubscribeCallChannel()
                     localPeer?.dispose()
@@ -325,6 +327,7 @@ class WebRTCClient @Inject constructor(
         val disposableContactRejectCall = RxBus.listen(RxEvent.ContactRejectCall::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                Data.isContactReadyForCall = false
                 mListener?.changeTextViewTitle(R.string.text_contact_is_busy)
                 countDownEndCallBusy.start()
                 playSound(
@@ -373,6 +376,7 @@ class WebRTCClient @Inject constructor(
                 Timber.d("ContactCancelCall")
                 if (it.channel == this.channel) {
                     try {
+                        Data.isContactReadyForCall = false
                         stopMediaPlayer()
                         unSubscribeCallChannel()
                         localAudioTrack?.setEnabled(false)
@@ -389,6 +393,7 @@ class WebRTCClient @Inject constructor(
             .subscribe {
                 Timber.d("HangupByNotification")
                 if (it.channel == this.channel) {
+                    Data.isContactReadyForCall = false
                     mListener?.hangupByNotification()
                 }
             }
@@ -575,6 +580,7 @@ class WebRTCClient @Inject constructor(
                     if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED ||
                         iceConnectionState == PeerConnection.IceConnectionState.CLOSED
                     ) {
+                        Data.isContactReadyForCall = false
                         RxBus.publish(RxEvent.CallEnd())
                         val intent = Intent(context, WebRTCCallService::class.java)
                         intent.action = WebRTCCallService.ACTION_CALL_END
@@ -819,7 +825,7 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun subscribeToChannel(isActionAnswer: Boolean) {
-        socketService.subscribeToCallChannel(channel, isActionAnswer)
+        socketService.subscribeToCallChannel(channel, isActionAnswer, isVideoCall)
     }
 
     override fun setTextViewCallDuration(textView: TextView) {
@@ -1078,7 +1084,7 @@ class WebRTCClient @Inject constructor(
         socketService.joinToCall(channel)
     }
 
-    override fun getPusherChannel(channel: String): PrivateChannel? {
+    override fun getPusherChannel(channel: String): PresenceChannel? {
         return socketService.getPusherChannel(channel)
     }
 

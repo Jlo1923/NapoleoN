@@ -340,7 +340,6 @@ class ConversationFragment : BaseFragment(),
 
         binding.contact = args.contact
 
-
         setupActionMode()
 
         setupAdapter()

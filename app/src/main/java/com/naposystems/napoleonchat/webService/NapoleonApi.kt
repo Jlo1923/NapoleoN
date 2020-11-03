@@ -17,6 +17,8 @@ import com.naposystems.napoleonchat.dto.contacts.unblockContact.UnblockContactRe
 import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.dto.conversation.call.CallContactResDTO
+import com.naposystems.napoleonchat.dto.conversation.call.readyForCall.ReadyForCallReqDTO
+import com.naposystems.napoleonchat.dto.conversation.call.readyForCall.ReadyForCallResDTO
 import com.naposystems.napoleonchat.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesResDTO
@@ -69,6 +71,7 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.NOTIFY_MESSAGE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.PUT_BLOCK_CONTACT
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.PUT_FRIENDSHIP_REQUEST
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.PUT_UNBLOCK_CONTACT
+import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.READY_CALL
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.REJECT_CALL
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEARCH_USER
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_ANSWERS
@@ -263,4 +266,7 @@ interface NapoleonApi {
 
     @POST(CANCEL_CALL)
     suspend fun cancelCall(@Body cancelCallReqDTO: CancelCallReqDTO): Response<CancelCallResDTO>
+
+    @POST(READY_CALL)
+    suspend fun readyForCall(@Body readyForCallReqDTO: ReadyForCallReqDTO): Response<ReadyForCallResDTO>
 }

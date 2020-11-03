@@ -277,7 +277,7 @@ class NotificationUtils @Inject constructor(
                     var isVideoCall = false
 
                     if (data.containsKey(Constants.CallKeys.CHANNEL)) {
-                        channel = "private-${data[Constants.CallKeys.CHANNEL]}"
+                        channel = "presence-${data[Constants.CallKeys.CHANNEL]}"
                     }
 
                     if (data.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
@@ -289,7 +289,7 @@ class NotificationUtils @Inject constructor(
                         contactId = data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
                     }
 
-                    if (channel != "private-" && contactId != 0) {
+                    if (channel != "presence-" && contactId != 0) {
                         startWebRTCCallService(channel, isVideoCall, contactId, true, context)
                     }
                 }
@@ -300,6 +300,17 @@ class NotificationUtils @Inject constructor(
                 val notificationManager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.cancelAll()
+            }
+            Constants.NotificationType.USER_AVAILABLE_FOR_CALL.type -> {
+                Timber.d("USER_AVAILABLE_FOR_CALL")
+                if (!app.isAppVisible()) {
+                    var channel = ""
+
+                    if (data.containsKey(Constants.CallKeys.CHANNEL)) {
+                        channel = "presence-${data[Constants.CallKeys.CHANNEL]}"
+                    }
+                    socketService.connectToSocketReadyForCall(channel)
+                }
             }
         }
     }
