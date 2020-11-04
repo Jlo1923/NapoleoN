@@ -66,6 +66,7 @@
                     android:id="@+id/imageView_sticker"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
+                    android:padding="3dp"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/large_margin"
                     android:tint="?attr/attrActionBarItemBackground"
