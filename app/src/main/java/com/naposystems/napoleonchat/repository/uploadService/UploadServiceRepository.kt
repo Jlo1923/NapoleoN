@@ -180,6 +180,13 @@ class UploadServiceRepository @Inject constructor(
 
                 message.status = Constants.MessageStatus.ERROR.status
                 updateMessage(message)
+                RxBus.publish(
+                    RxEvent.UploadError(
+                        attachment,
+                        "Algo ha salido mal",
+                        null
+                    )
+                )
             }
         }
     }

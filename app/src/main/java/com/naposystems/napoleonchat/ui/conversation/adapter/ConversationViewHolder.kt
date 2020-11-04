@@ -16,6 +16,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.RecyclerView
+import com.jakewharton.rxbinding2.view.RxView
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -28,6 +29,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.isActive
@@ -405,12 +407,17 @@ open class ConversationViewHolder constructor(
                 }
             }
 
-            imageButtonState?.setSafeOnClickListener {
-                imageButtonStateClickListener(
-                    attachment,
-                    clickListener,
-                    item
-                )
+            imageButtonState?.let {
+                RxView.clicks(it)
+                    .debounce(300, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        imageButtonStateClickListener(
+                            attachment,
+                            clickListener,
+                            item
+                        )
+                    }
             }
 
             imageViewAttachment?.setOnClickListener {

@@ -104,6 +104,8 @@ class UploadService : Service(), IContractUploadService {
         val disposableUploadError = RxBus.listen(RxEvent.UploadError::class.java)
             .subscribe {
                 Timber.d("RxEvent.UploadError")
+                stopSelf()
+                stopForeground(true)
             }
 
         val disposableUploadProgress = RxBus.listen(RxEvent.UploadProgress::class.java)
