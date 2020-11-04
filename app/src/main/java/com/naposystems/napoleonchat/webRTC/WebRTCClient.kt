@@ -1042,6 +1042,7 @@ class WebRTCClient @Inject constructor(
         socketService.unSubscribeCallChannel(this.channel)
 
         Data.isOnCall = false
+        Data.isContactReadyForCall = false
 
         val intent = Intent(context, WebRTCCallService::class.java)
         intent.action = WebRTCCallService.ACTION_CALL_END

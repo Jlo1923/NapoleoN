@@ -13,7 +13,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file('C:\\Users\\Android1\\Documents\\pepito.jks')
+            storeFile file('C:\\Users\\peper\\Documents\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
@@ -298,6 +298,7 @@ dependencies {
     //RXKotlin & RXAndroid
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation  'com.jakewharton.rxbinding2:rxbinding:2.0.0'
 
     //Stetho
     implementation "com.facebook.stetho:stetho:$stetho_version"

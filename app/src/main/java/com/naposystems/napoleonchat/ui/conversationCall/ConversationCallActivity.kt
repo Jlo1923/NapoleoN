@@ -351,9 +351,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             when {
                 !isIncomingCall && !webRTCClient.isActiveCall() -> {
                     viewModel.sendMissedCall(contactId, isVideoCall)
+                    Timber.d("CancelCall 1")
                     viewModel.cancelCall(contactId, channel)
                 }
                 isIncomingCall && !webRTCClient.isActiveCall() -> {
+                    Timber.d("CancelCall 2")
                     viewModel.cancelCall(contactId, channel)
                 }
                 else -> {
@@ -528,6 +530,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
     override fun contactNotAnswer() {
         if (!isIncomingCall) {
+            Timber.d("CancelCall")
             viewModel.cancelCall(contactId, channel)
             viewModel.sendMissedCall(contactId, isVideoCall)
         }
