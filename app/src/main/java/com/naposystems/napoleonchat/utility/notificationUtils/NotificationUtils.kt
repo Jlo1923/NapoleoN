@@ -559,6 +559,7 @@ class NotificationUtils @Inject constructor(
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.i("*Test: Ring createCallNotificationChannel")
 
             val (id: String, name) = context.getString(R.string.calls_channel_id) to
                     context.getString(R.string.calls_channel_name)
@@ -596,12 +597,22 @@ class NotificationUtils @Inject constructor(
             val (id: String, name) = context.getString(R.string.alerts_channel_id) to
                     context.getString(R.string.alerts_channel_name)
             val descriptionText = context.getString(R.string.alerts_channel_description)
-            val importance = NotificationManager.IMPORTANCE_LOW
+            val importance = NotificationManager.IMPORTANCE_HIGH
 
             val channel = NotificationChannel(id, name, importance).apply {
                 description = descriptionText
                 setShowBadge(true)
                 lockscreenVisibility = PRIORITY_LOW
+            }
+
+            if (Build.VERSION.SDK_INT >= 29) {
+                val soundUri = Settings.System.DEFAULT_RINGTONE_URI
+
+                val audioAttributes: AudioAttributes = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build()
+                channel.setSound(soundUri, audioAttributes)
             }
 
             // Register the channel with the system
@@ -640,7 +651,7 @@ class NotificationUtils @Inject constructor(
         iconResId: Int,
         titleResId: Int,
         channel: String,
-        contactId: Int,
+         contactId: Int,
         isVideoCall: Boolean
     ): Action? {
 

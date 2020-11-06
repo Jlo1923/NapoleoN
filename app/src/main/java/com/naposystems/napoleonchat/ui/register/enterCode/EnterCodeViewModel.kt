@@ -66,7 +66,8 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                _responseErrors.value = arrayListOf("Error inesperado|!!")
+                //TODO:change text
+                _responseErrors.value = arrayListOf("Unexpected error")
             }
         }
     }
@@ -95,7 +96,8 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                _responseErrors.value = arrayListOf("Error inesperado|!!")
+                //TODO:change text
+                _responseErrors.value = arrayListOf("Unexpected error")
             }
         }
     }

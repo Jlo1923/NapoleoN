@@ -196,7 +196,7 @@ class WebRTCClient @Inject constructor(
         fun callEnded()
         fun changeLocalRenderVisibility(visibility: Int)
         fun changeTextViewTitle(stringResourceId: Int)
-        fun changeBluetoothButtonVisibility(isVisible : Boolean)
+        fun changeBluetoothButtonVisibility(isVisible: Boolean)
         fun enableControls()
         fun resetIsOnCallPref()
         fun contactNotAnswer()
@@ -975,6 +975,7 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun playRingtone() {
+        Timber.i("*Test: Ring WebRTC")
         mediaPlayerHasStopped = false
         countDownIncomingCall.start()
         playSound(Settings.System.DEFAULT_RINGTONE_URI, true) {

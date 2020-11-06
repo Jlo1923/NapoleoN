@@ -127,6 +127,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         if (!webRTCClient.isActiveCall()) {
             if (isIncomingCall) {
                 if (Build.VERSION.SDK_INT < 29 || !isFromClosedApp) {
+                    Timber.i("*Test: Ring CallActivity")
                     webRTCClient.playRingtone()
                 }
             } else {

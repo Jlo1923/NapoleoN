@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.utility
 
 object Constants {
-    const val URL_TERMS_AND_CONDITIONS = "https://napoleonsecretchat.com/privacidad/"
-    const val URL_FREQUENT_QUESTIONS = "https://napoleonsecretchat.com/privacidad/"
+    const val URL_TERMS_AND_CONDITIONS = "https://napoleon.chat/terminos-condiciones/"
+    const val URL_FREQUENT_QUESTIONS = "https://napoleon.chat/faqs"
     const val GIPHY_API_KEY = "R6CTqCVGyxWIAEad1tbbRFouJ6C6hFQX"
     const val DATA_CRYPT = "datacrypt"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="show_case_first_title">AGGIUNGI DES CONTATTI</string>
-    <string name="show_case_first_subtitle">Ici, vous pouvez che invita les gens à la recherche versare pair eux sono surnom.</string>
+    <string name="show_case_first_subtitle">Qui è possibile aggiungere contatti, alla ricerca di loro con il suo soprannome.</string>
     <string name="show_case_second_title">CONTATTI</string>
-    <string name="show_case_second_subtitle">Trouverez vous ici que vous les contatti Ajoutés Napoléon avez dans le chat.</string>
-    <string name="show_case_third_title">ETAT</string>
-    <string name="show_case_third_subtitle">Faites vos contatti à savoir que vous une frase rencontrez.</string>
+    <string name="show_case_second_subtitle">Qui potete trovare i contatti che hai aggiunto in Napoléon Chat.</string>
+    <string name="show_case_third_title">STATO</string>
+    <string name="show_case_third_subtitle">Dì ai tuoi contatti come si incontrano una frase.</string>
     <string name="show_case_fourth_title">MENU PRINCIPALE</string>
-    <string name="show_case_fourth_subtitle">Vous nous versare différentes donnons opzioni à votre compte modificatore Le Goût.</string>
-    <string name="show_case_fifth_title">LES PARAMÈTRES DE SECURITE</string>
-    <string name="show_case_fifth_subtitle">Gardez votre sécurité de l\'information nel définissant votre sécurité de compte.</string>
-    <string name="show_case_sixth_title">RÉCUPÉRATION DU COMPTE</string>
-    <string name="show_case_sixth_subtitle">Voulez vous garder votre se même utilisateur, veuillez répondre aux domande de sécurité.</string>
-    <string name="show_case_seventh_title">SUICIDIO DI MESSAGGI</string>
-    <string name="show_case_seventh_subtitle">Personnaliser durée de vos messaggi.</string>
-    <string name="text_repeat_tutorial">Ripetere esercitazione</string>
+    <string name="show_case_fourth_subtitle">Noi vi diamo diverse opzioni per modificare l\'account a proprio piacimento.</string>
+    <string name="show_case_fifth_title">IMPOSTAZIONI DI SICUREZZA</string>
+    <string name="show_case_fifth_subtitle">Mantieni le tue informazioni al sicuro configurando la SICUREZZA del tuo account.</string>
+    <string name="show_case_sixth_title">RECUPERO DELL\'ACCOUNT</string>
+    <string name="show_case_sixth_subtitle">Se si desidera mantenere il vostro stesso utente, domande di sicurezza complete.</string>
+    <string name="show_case_seventh_title">AUTODISTRUZIONE MESSAGGI</string>
+    <string name="show_case_seventh_subtitle">Personalizzare la durata dei messaggi.</string>
+    <string name="text_repeat_tutorial">ripetere esercitazione</string>
     <string name="text_message_dialog_repeat_tutorial">Si vuole dare una panoramica delle principali funzioni della app?</string>
 </resources>

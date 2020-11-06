@@ -882,7 +882,7 @@ class ConversationFragment : BaseFragment(),
                         binding.buttonCall.isVisible = false
                         binding.buttonVideoCall.isVisible = false
                     } else {
-                        try{
+                        try {
                             val dateExpireSubscriptionMillis = getDataSubscription(purchaseList)
                             if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
                                 binding.inputPanel.isVisible = false
@@ -1775,9 +1775,7 @@ class ConversationFragment : BaseFragment(),
                         event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
                     binding.inputPanel.resetImage()
-                    if (messageAndAttachment.message.status == Constants.MessageStatus.ERROR.status) {
-                        this.showToast("No se puede citar de un mensaje fallido|!!")
-                    } else {
+                    if (messageAndAttachment.message.status != Constants.MessageStatus.ERROR.status) {
                         binding.inputPanel.openQuote(messageAndAttachment)
                     }
                 }
@@ -2091,10 +2089,6 @@ class ConversationFragment : BaseFragment(),
                     conversationAdapter.startFocusAnimation(mQuotedMessage)
                 }
             }
-        } else {
-            Toast.makeText(
-                context, "No se encuentra el mensaje original|!!", Toast.LENGTH_SHORT
-            ).show()
         }
     }
 

@@ -67,12 +67,16 @@ class ValidateNicknameViewModel @Inject constructor(private val repository: Vali
 
                             _webServiceError.value = sendCodeErrorDTO!!.error
                         }
-                        else -> _webServiceError.value = "Error inesperado|!!"
+                        else -> {
+                            //TODO:change text
+                            _webServiceError.value = "Unexpected error"
+                        }
                     }
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                _webServiceError.value = "Error inesperado|!!"
+                //TODO:change text
+                _webServiceError.value = "Unexpected error"
             }
         }
     }

@@ -380,7 +380,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
                     findNavController().popBackStack(R.id.conversationFragment, false)
 
                 } else {
-                    this.showToast("Ha ocurrido un error al capturar el mapa|!!")
+                    this.showToast(getString(R.string.text_error_map))
                 }
 
             }
@@ -431,7 +431,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
                     val statusCode = apiException.statusCode
                     // Handle error with given status code.
                     Timber.e("Place not found: " + exception.message)
-                    this.showToast("No se pudo encontrar el sitio|!!")
+                    this.showToast(getString(R.string.text_site_not_found))
                 }
             }
     }

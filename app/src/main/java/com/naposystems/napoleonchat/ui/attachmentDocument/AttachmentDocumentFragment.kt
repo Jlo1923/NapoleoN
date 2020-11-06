@@ -40,7 +40,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        setEmptyText("No tienes documentos|!!")
+        setEmptyText(getString(R.string.text_no_documents))
 
         mAdapter = AttachmentDocumentAdapter(context, null)
 

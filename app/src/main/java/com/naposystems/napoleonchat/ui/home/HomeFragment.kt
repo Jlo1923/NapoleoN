@@ -464,7 +464,7 @@ class HomeFragment : Fragment() {
             getRemoteConfig()*/
     }
 
-    private fun getRemoteConfig() {
+    /*private fun getRemoteConfig() {
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
         mFirebaseStorage = FirebaseStorage.getInstance()
 
@@ -476,7 +476,7 @@ class HomeFragment : Fragment() {
                     this.showToast("No se han podido obtener el remote config|!!")
                 }
             }
-    }
+    }*/
 
     private fun getVersion() {
         val versionApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
