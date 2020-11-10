@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -47,11 +49,7 @@ class NotificationUtils @Inject constructor(
         const val SUMMARY_ID = 12345678
         const val GROUP_MESSAGE = "GROUP_MESSAGE"
 
-        fun cancelWebRTCCallNotification(context: Context) {
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            //notificationManager.cancel(NOTIFICATION_RINGING)
-        }
+        val mediaPlayer: MediaPlayer = MediaPlayer()
     }
 
     @Inject
@@ -62,6 +60,42 @@ class NotificationUtils @Inject constructor(
 
     private val app: NapoleonApplication by lazy {
         applicationContext as NapoleonApplication
+    }
+
+    private fun playRingTone(context: Context) {
+        try {
+            Utils.getAudioManager(context).isSpeakerphoneOn = true
+            mediaPlayer.apply {
+                Timber.d("*Test: Play Ring")
+                setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
+//                reset()
+                if (isPlaying) {
+//                    stop()
+                    reset()
+                }
+                setDataSource(
+                    context,
+                    Settings.System.DEFAULT_RINGTONE_URI
+                )
+                this.isLooping = isLooping
+                prepare()
+                start()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    fun stopMediaPlayer() {
+        try {
+            Timber.d("*Test: Stop Ring")
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.reset()
+//                mediaPlayer.release()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     init {
@@ -449,6 +483,7 @@ class NotificationUtils @Inject constructor(
             notificationBuilder.setFullScreenIntent(fullScreenPendingIntent, true)
             notificationBuilder.priority = PRIORITY_HIGH
             notificationBuilder.setCategory(CATEGORY_CALL)
+            playRingTone(context)
         }
 
         return notificationBuilder.build()
@@ -531,7 +566,7 @@ class NotificationUtils @Inject constructor(
         }
     }
 
-    fun callActivityRestricted(context: Context): Boolean {
+    private fun callActivityRestricted(context: Context): Boolean {
         return Build.VERSION.SDK_INT >= 29 && !(context as NapoleonApplication).isAppVisible()
     }
 
@@ -539,6 +574,8 @@ class NotificationUtils @Inject constructor(
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.d("*NotificationTest: createNotificationChannel")
+
             val channelId = context.getString(R.string.default_notification_channel_id)
             val name = context.getString(R.string.default_notification_channel_id)
             val descriptionText = context.getString(R.string.channel_description)
@@ -559,7 +596,7 @@ class NotificationUtils @Inject constructor(
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Timber.i("*Test: Ring createCallNotificationChannel")
+            Timber.d("*NotificationTest: createCallNotificationChannel")
 
             val (id: String, name) = context.getString(R.string.calls_channel_id) to
                     context.getString(R.string.calls_channel_name)
@@ -570,16 +607,6 @@ class NotificationUtils @Inject constructor(
                 description = descriptionText
                 setShowBadge(false)
                 lockscreenVisibility = PRIORITY_MAX
-            }
-
-            if (Build.VERSION.SDK_INT >= 29) {
-                val soundUri = Settings.System.DEFAULT_RINGTONE_URI
-
-                val audioAttributes: AudioAttributes = AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build()
-                channel.setSound(soundUri, audioAttributes)
             }
 
             // Register the channel with the system
@@ -593,11 +620,12 @@ class NotificationUtils @Inject constructor(
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.d("*NotificationTest: createAlertsNotificationChannel")
 
             val (id: String, name) = context.getString(R.string.alerts_channel_id) to
                     context.getString(R.string.alerts_channel_name)
             val descriptionText = context.getString(R.string.alerts_channel_description)
-            val importance = NotificationManager.IMPORTANCE_HIGH
+            val importance = NotificationManager.IMPORTANCE_LOW
 
             val channel = NotificationChannel(id, name, importance).apply {
                 description = descriptionText
@@ -605,7 +633,7 @@ class NotificationUtils @Inject constructor(
                 lockscreenVisibility = PRIORITY_LOW
             }
 
-            if (Build.VERSION.SDK_INT >= 29) {
+            /*if (Build.VERSION.SDK_INT >= 29) {
                 val soundUri = Settings.System.DEFAULT_RINGTONE_URI
 
                 val audioAttributes: AudioAttributes = AudioAttributes.Builder()
@@ -613,7 +641,7 @@ class NotificationUtils @Inject constructor(
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                     .build()
                 channel.setSound(soundUri, audioAttributes)
-            }
+            }*/
 
             // Register the channel with the system
             val notificationManager: NotificationManager =
@@ -626,6 +654,7 @@ class NotificationUtils @Inject constructor(
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.d("*NotificationTest: createUploadNotificationChannel")
 
             val (id: String, name) = context.getString(R.string.upload_channel_id) to
                     context.getString(R.string.upload_channel_name)
@@ -645,7 +674,7 @@ class NotificationUtils @Inject constructor(
         }
     }
 
-    fun getServiceNotificationAction(
+    private fun getServiceNotificationAction(
         context: Context,
         action: String,
         iconResId: Int,

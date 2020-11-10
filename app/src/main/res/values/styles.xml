@@ -1068,8 +1068,10 @@
     </style>
 
     <style name="ConversationToolbarIcon">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">fitCenter</item>
     </style>

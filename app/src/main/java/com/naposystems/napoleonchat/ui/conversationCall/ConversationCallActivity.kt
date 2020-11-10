@@ -69,8 +69,12 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         AudioManagerCompat.create(this)
     }
 
+    private lateinit var notificationUtils: NotificationUtils
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
+
+        notificationUtils = NotificationUtils(this.applicationContext)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
@@ -127,11 +131,12 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         if (!webRTCClient.isActiveCall()) {
             if (isIncomingCall) {
                 if (Build.VERSION.SDK_INT < 29 || !isFromClosedApp) {
-                    Timber.i("*Test: Ring CallActivity")
+                    Timber.d("*Test: Ring CallActivity")
                     webRTCClient.playRingtone()
                 }
+                /*webRTCClient.playRingtone()
+                Timber.d("*Test: Ring CallActivity")*/
             } else {
-                val notificationUtils = NotificationUtils(this.applicationContext)
                 notificationUtils.startWebRTCCallService(
                     channel, isVideoCall, contactId, false, this
                 )
@@ -154,7 +159,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
         binding.fabAnswer.setOnClickListener {
             if (isIncomingCall) {
-                NotificationUtils.cancelWebRTCCallNotification(this)
+                notificationUtils.stopMediaPlayer()
                 webRTCClient.emitJoinToCall()
                 webRTCClient.stopRingAndVibrate()
                 binding.fabAnswer.visibility = View.GONE
@@ -257,19 +262,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         super.onStop()
         //hangUp()
     }
-
-    /*override fun onStop() {
-        Timber.d("onStop")
-        webRTCClient.unSubscribeCallChannel()
-        viewModel.resetIsOnCallPref()
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        Timber.d("onDestroy")
-        //webRTCClient.unSubscribeCallChannel()
-        super.onDestroy()
-    }*/
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)

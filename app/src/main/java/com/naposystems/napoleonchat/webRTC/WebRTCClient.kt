@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.AudioManager.MODE_IN_CALL
+import android.media.AudioManager.MODE_IN_COMMUNICATION
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
@@ -377,6 +378,8 @@ class WebRTCClient @Inject constructor(
                 if (it.channel == this.channel) {
                     try {
                         Data.isContactReadyForCall = false
+                        audioManager.isSpeakerphoneOn = false
+                        audioManager.mode = AudioManager.MODE_NORMAL
                         stopMediaPlayer()
                         unSubscribeCallChannel()
                         localAudioTrack?.setEnabled(false)
@@ -408,7 +411,7 @@ class WebRTCClient @Inject constructor(
                     }
                 }
 
-        val disposableRejectByNotification =
+        /*val disposableRejectByNotification =
             RxBus.listen(RxEvent.RejectCallByNotification::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -416,7 +419,7 @@ class WebRTCClient @Inject constructor(
                     if (it.channel == this.channel) {
                         mListener?.rejectByNotification()
                     }
-                }
+                }*/
 
         disposable.add(disposableContactJoinToCall)
         disposable.add(disposableIceCandidateReceived)
@@ -793,7 +796,6 @@ class WebRTCClient @Inject constructor(
         bluetoothStateManager = BluetoothStateManager(context, this)
         isOnCallActivity = true
         Timber.d("isOnCallActivity: $isOnCallActivity")
-        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         if (!isActiveCall) {
             createPeerConnection()
@@ -975,13 +977,13 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun playRingtone() {
-        Timber.i("*Test: Ring WebRTC")
         mediaPlayerHasStopped = false
         countDownIncomingCall.start()
         playSound(Settings.System.DEFAULT_RINGTONE_URI, true) {
             // Intentionally empty
         }
         audioManager.isSpeakerphoneOn = !(isBluetoothAvailable || isHeadsetConnected)
+        Timber.d("*Test: ${audioManager.isSpeakerphoneOn}")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val effect = VibrationEffect.createWaveform(vibratePattern, 0)
             vibrator?.vibrate(effect)
@@ -991,6 +993,7 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun playCallingTone() {
+        audioManager.mode = MODE_IN_COMMUNICATION
         if (isBluetoothAvailable || isHeadsetConnected) {
             audioManager.isSpeakerphoneOn = false
         } else {
