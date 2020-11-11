@@ -71,7 +71,7 @@
                 android:background="?attr/attrBackgroundColorPrimary"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="@dimen/small_padding"
+                android:paddingStart="@dimen/small_padding"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -79,6 +79,8 @@
                     style="@style/BodyTextView.White"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_padding"
+                    android:layout_marginBottom="@dimen/small_padding"
                     android:layout_marginEnd="@dimen/small_margin"
                     android:layout_weight="1"
                     android:ellipsize="marquee"
@@ -92,7 +94,7 @@
                 <ImageButton
                     android:id="@+id/button_video_call"
                     style="@style/ConversationToolbarIcon"
-                    android:layout_marginEnd="@dimen/normal_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
                     android:tint="?attr/attrConversationIconColor"
                     app:layout_constraintBottom_toBottomOf="@id/button_call"
                     app:layout_constraintEnd_toStartOf="@id/button_call"
@@ -103,7 +105,6 @@
                 <ImageButton
                     android:id="@+id/button_call"
                     style="@style/ConversationToolbarIcon"
-                    android:layout_marginEnd="@dimen/x_small_margin"
                     android:tint="?attr/attrConversationIconColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

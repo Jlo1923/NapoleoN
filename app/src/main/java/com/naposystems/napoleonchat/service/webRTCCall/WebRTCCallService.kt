@@ -76,6 +76,7 @@ class WebRTCCallService : Service() {
         }
         intent.action?.let { action ->
             Timber.d("onStartCommand action: $action")
+            notificationUtils.stopMediaPlayer()
             when (action) {
                 ACTION_ANSWER_CALL -> {
                     startConversationCallActivity(
@@ -84,7 +85,7 @@ class WebRTCCallService : Service() {
                     )
                 }
                 ACTION_DENY_CALL -> {
-                    RxBus.publish(RxEvent.RejectCallByNotification(channel))
+//                    RxBus.publish(RxEvent.RejectCallByNotification(channel))
                     repository.rejectCall(contactId, channel)
                     stopForeground(true)
                     stopSelf()

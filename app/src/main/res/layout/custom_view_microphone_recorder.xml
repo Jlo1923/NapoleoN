@@ -7,14 +7,15 @@
     <data />
 
     <FrameLayout
-        android:layout_width="24dp"
-        android:layout_height="24dp">
+        android:layout_width="32dp"
+        android:layout_height="match_parent">
 
         <ImageButton
             android:id="@+id/imageButton_audio_toggle"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:padding="@dimen/x_small_padding"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_mic_primary" />
