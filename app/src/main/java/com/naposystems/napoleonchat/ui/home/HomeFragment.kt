@@ -264,33 +264,16 @@ class HomeFragment : Fragment() {
                 binding.containerFriendRequestReceived.isVisible = it.isNotEmpty()
                 existFriendShip = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
-//                Timber.d("*TestHome: Friendship")
-//                viewModel.getFriendshipQuantity()
             }
         })
 
         billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
-                Timber.d("Billing purchases")
+                for (purchase in purchasesList) {
+                    billingClientLifecycle.acknowledged(purchase)
+                }
+                Timber.d("Billing purchases $purchasesList")
                 billingClientLifecycle.queryPurchasesHistory()
-                /*if (purchasesList.isEmpty()) {
-                    billingClientLifecycle.queryPurchasesHistory()
-                } else {
-                    val dateExpireSubscriptionMillis = getDataSubscription(purchasesList)
-
-                    *//*binding.containerSubscription.isVisible = false
-                    purchasesList[0].let {
-                        if (it.purchaseState == Purchase.PurchaseState.PURCHASED) {
-                            // Melito
-                        } else {
-                            // TODO: Que se va a hacer en caso de que la suscripcion este en los otros estado
-                        }
-                    }*//*
-
-                }*/
-                /*purchasesList.forEach {
-                    Timber.d("${it.sku}, ${it.purchaseTime}, ${it.purchaseState}")
-                }*/
             }
         })
 
@@ -298,16 +281,14 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner,
             Observer { purchasesHistory ->
                 purchasesHistory?.let {
+                    Timber.d("Billing purchases $purchasesHistory")
                     val freeTrial = viewModel.getFreeTrial()
                     Timber.d("freeTrial: $freeTrial")
                     if (System.currentTimeMillis() > freeTrial) {
-                        if (purchasesHistory.isEmpty()) {
-                            binding.textViewMessageSubscription.text =
-                                getString(R.string.text_free_trial_expired)
-                            binding.containerSubscription.isVisible = true
-                        } else {
+                        if (purchasesHistory.isNotEmpty()) {
                             try {
-                                val dateExpireSubscriptionMillis = getDataSubscription(purchasesHistory)
+                                val dateExpireSubscriptionMillis =
+                                    getDataSubscription(purchasesHistory)
                                 if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
                                     binding.textViewMessageSubscription.text =
                                         getString(R.string.text_subscription_expired)
@@ -316,10 +297,12 @@ class HomeFragment : Fragment() {
                             } catch (e: Exception) {
                                 Timber.e(e)
                             }
+                        } else {
+                            binding.textViewMessageSubscription.text =
+                                getString(R.string.text_free_trial_expired)
+                            binding.containerSubscription.isVisible = true
                         }
-                    } else {
-                        binding.containerSubscription.isVisible = false
-                    }
+                    } else binding.containerSubscription.isVisible = false
                 }
             })
 
@@ -365,9 +348,9 @@ class HomeFragment : Fragment() {
 
     private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = purchasesHistory.last().purchaseTime
+        calendar.timeInMillis = purchasesHistory[0].purchaseTime
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val lastPurchase = purchasesHistory.last()
+        val lastPurchase = purchasesHistory[0]
 
         when (lastPurchase.sku) {
             Constants.SkuSubscriptions.MONTHLY.sku -> calendar.add(

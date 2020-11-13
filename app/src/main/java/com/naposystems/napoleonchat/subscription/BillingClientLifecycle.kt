@@ -5,6 +5,9 @@ import androidx.lifecycle.*
 import com.android.billingclient.api.*
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.utility.Constants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -206,6 +209,18 @@ class BillingClientLifecycle @Inject constructor(private val app: NapoleonApplic
             _purchasesHistory.postValue(
                 purchasesHistoryList
             )
+        }
+    }
+
+    fun acknowledged(purchase: Purchase) {
+        if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged) {
+            val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
+                .setPurchaseToken(purchase.purchaseToken)
+            GlobalScope.launch(Dispatchers.IO) {
+                val ackPurchaseResult =
+                    billingClient.acknowledgePurchase(acknowledgePurchaseParams.build())
+                Timber.d("Billing ${ackPurchaseResult.responseCode}, ${ackPurchaseResult.debugMessage}")
+            }
         }
     }
 
