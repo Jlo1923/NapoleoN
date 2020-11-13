@@ -258,9 +258,9 @@ class NotificationUtils @Inject constructor(
                             }
 
                             if (!app.isAppVisible()) {
-                                builder.setGroup(GROUP_MESSAGE)
-
+                                Timber.d("*NotificationTest: App not visible")
                                 with(NotificationManagerCompat.from(context)) {
+                                    builder.setGroup(GROUP_MESSAGE)
                                     notify(data.getValue(contact).toInt(), builder.build())
                                     notify(SUMMARY_ID, createSummaryNotification(context))
                                 }

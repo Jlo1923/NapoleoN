@@ -9,7 +9,7 @@ buildscript {
         //endregion
 
         //region Android
-        billing_version = "3.0.0"
+        billing_version = "3.0.1"
         //endregion
 
         //region Google

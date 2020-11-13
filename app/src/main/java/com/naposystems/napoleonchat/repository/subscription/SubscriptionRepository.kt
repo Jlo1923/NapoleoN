@@ -27,45 +27,6 @@ class SubscriptionRepository @Inject constructor(
         )
     }
 
-    /*override suspend fun getRemoteSubscription() {
-        val response = napoleonApi.getSubscriptionUser()
-        response.body()?.let { responseBody ->
-            val currentTimeSubscriptionLocal = sharedPreferencesManager.getLong(
-                Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
-            )
-            if (System.currentTimeMillis() > currentTimeSubscriptionLocal &&
-                response.isSuccessful && responseBody.subscriptionId != 0
-            ) {
-                sharedPreferencesManager.putInt(
-                    Constants.SharedPreferences.PREF_TYPE_SUBSCRIPTION,
-                    responseBody.subscriptionId
-                )
-                sharedPreferencesManager.putLong(
-                    Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME,
-                    TimeUnit.SECONDS.toMillis(responseBody.dateExpires)
-                )
-            }
-        }
-    }*/
-
-    /*override fun getSubscription(): SubscriptionUser {
-        val subscriptionTime = sharedPreferencesManager.getLong(
-            Constants.SharedPreferences.PREF_SUBSCRIPTION_TIME
-        )
-        if (subscriptionTime != 0L) {
-            sharedPreferencesManager.putLong(
-                Constants.SharedPreferences.PREF_FREE_TRIAL, 0L
-            )
-        }
-
-        return SubscriptionUser(
-            sharedPreferencesManager.getInt(
-                Constants.SharedPreferences.PREF_TYPE_SUBSCRIPTION
-            ),
-            subscriptionTime
-        )
-    }*/
-
     override suspend fun getTypeSubscription(): Response<List<SubscriptionsResDTO>> {
         return napoleonApi.typeSubscriptions()
     }

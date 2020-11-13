@@ -154,32 +154,7 @@ class SubscriptionFragment : Fragment() {
 
         billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
-                if (purchasesList.isEmpty()) {
-                    billingClientLifecycle.queryPurchasesHistory()
-                } else {
-                    try {
-                        val (sdf, dateExpireSubscriptionMillis) = getDataSubscription(purchasesList)
-                        val netDate = Date(dateExpireSubscriptionMillis)
-                        binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
-
-                        Timber.d("*Subs: $dateExpireSubscriptionMillis / ${sdf.format(netDate)}")
-
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                    }
-
-                    /*val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                    val netDate: Date
-
-                    val lastPurchase = purchasesList[0]
-                    binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
-                        Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
-                        Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
-                        else -> getString(R.string.text_subscription_yearly)
-                    }
-                    netDate = Date(lastPurchase.purchaseTime)
-                    binding.textViewSubscriptionExpiration.text = sdf.format(netDate)*/
-                }
+                billingClientLifecycle.queryPurchasesHistory()
             }
         })
 
@@ -189,34 +164,39 @@ class SubscriptionFragment : Fragment() {
                 purchasesHistory?.let {
                     val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                     val netDate: Date
-                    val freeTrialTimeStamp = viewModel.getFreeTrial()
-                    if (purchasesHistory.isEmpty()) {
-                        if (System.currentTimeMillis() > freeTrialTimeStamp) {
+                    val freeTrial = viewModel.getFreeTrial()
+                    Timber.d("freeTrial: $freeTrial")
+                    if (System.currentTimeMillis() > freeTrial) {
+                        if (purchasesHistory.isNotEmpty()) {
+                            val dateExpireSubscriptionMillis =
+                                getDataSubscription(purchasesHistory)
+                            val lastPurchase = purchasesHistory[0]
+                            val time = System.currentTimeMillis()
+                            if (time > dateExpireSubscriptionMillis) {
+                                binding.textViewSubscriptionActual.text =
+                                    getString(R.string.text_subscription_expired)
+                            } else {
+                                binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
+                                    Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
+                                    Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
+                                    else -> getString(R.string.text_subscription_yearly)
+                                }
+                            }
+                            netDate = Date(dateExpireSubscriptionMillis)
+                        } else {
                             binding.textViewSubscriptionActual.text =
                                 getString(R.string.text_free_trial_expired)
-                            netDate = Date(freeTrialTimeStamp)
-                        } else {
-                            netDate = Date(freeTrialTimeStamp)
-                            val daysMillis = viewModel.getFreeTrial() - System.currentTimeMillis()
-
-                            binding.textViewSubscriptionActual.text =
-                                getString(
-                                    R.string.text_trial_period,
-                                    TimeUnit.MILLISECONDS.toDays(daysMillis)
-                                )
+                            netDate = Date(freeTrial)
                         }
                     } else {
-                        // Get last purchase
-                        val lastPurchase = purchasesHistory.last()
-                        binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
-                            Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
-                            Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
-                            else -> getString(R.string.text_subscription_yearly)
-                        }
-                        netDate = Date(lastPurchase.purchaseTime)
-                        purchasesHistory.forEach {
-                            Timber.d("purchasesHistory ${it.sku}, ${it.purchaseTime}")
-                        }
+                        netDate = Date(freeTrial)
+                        val daysMillis = viewModel.getFreeTrial() - System.currentTimeMillis()
+
+                        binding.textViewSubscriptionActual.text =
+                            getString(
+                                R.string.text_trial_period,
+                                TimeUnit.MILLISECONDS.toDays(daysMillis)
+                            )
                     }
                     binding.textViewSubscriptionExpiration.text = sdf.format(netDate)
                 }
@@ -324,33 +304,28 @@ class SubscriptionFragment : Fragment() {
         })
     }
 
-    private fun getDataSubscription(purchasesList: List<Purchase>): Pair<SimpleDateFormat, Long> {
+    private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = purchasesList.last().purchaseTime
+        calendar.timeInMillis = purchasesHistory[0].purchaseTime
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val lastPurchase = purchasesList.last()
+        val lastPurchase = purchasesHistory[0]
 
-        binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
-            Constants.SkuSubscriptions.MONTHLY.sku -> {
+
+        when (lastPurchase.sku) {
+            Constants.SkuSubscriptions.MONTHLY.sku ->
                 calendar.add(Calendar.MONTH, Constants.SubscriptionsTimeType.MONTHLY.subscription)
-                getString(R.string.text_subscription_monthly)
-            }
-            Constants.SkuSubscriptions.SEMIANNUAL.sku -> {
+            Constants.SkuSubscriptions.SEMIANNUAL.sku ->
                 calendar.add(
                     Calendar.MONTH,
                     Constants.SubscriptionsTimeType.SEMIANNUAL.subscription
                 )
-                getString(R.string.text_subscription_semiannual)
-            }
-            else -> {
+            Constants.SkuSubscriptions.YEARLY.sku ->
                 calendar.add(Calendar.YEAR, Constants.SubscriptionsTimeType.YEARLY.subscription)
-                getString(R.string.text_subscription_yearly)
-            }
+
         }
 
         val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
-        val dateExpireSubscriptionMillis = dateExpireSubscription!!.time
-        return Pair(sdf, dateExpireSubscriptionMillis)
+        return dateExpireSubscription!!.time
     }
 
     private fun setPriceTextButton() {
@@ -438,10 +413,7 @@ class SubscriptionFragment : Fragment() {
             }
             binding.checkBoxPaymentDescription.isChecked = false
             billingClientLifecycle.queryPurchases()
-            /*subscriptionViewModel.registerSubscription(
-                sku = sku,
-                purchaseToken = purchaseToken
-            )*/
+            billingClientLifecycle.acknowledged(purchase)
         }
     }
 }

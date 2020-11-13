@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 13
+        versionCode 16
 
-        versionName "1.0.0-interna13"
+        versionName "1.0.0-interna16"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -78,6 +78,22 @@ android {
             buildConfigField("boolean", "ENCRYPT_API", "true")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
             buildConfigField("String", "PUSHER_KEY", "\"6a11211af223541f2069\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
+        }
+        qaTest {
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"https://qatest.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"qatest.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-qatest.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-qatest.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://qatest.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            buildConfigField("String", "PUSHER_KEY", "\"80ce06fc03dc14b7a2dc\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
