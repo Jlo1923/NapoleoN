@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_biometrics_description">Choisissez votre mode de déverrouillage favori</string>
+    <string name="text_only_pin">Épingle</string>
+    <string name="text_pin_and_fingerprint">Broche + empreinte digitale</string>
+    <string name="text_pin_and_unlock_facial">Pin + Face Unlock</string>
+</resources>

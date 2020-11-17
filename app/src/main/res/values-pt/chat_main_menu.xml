@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_profile_title">Perfil</string>
+    <string name="text_security_settings_title">Configurações de segurança</string>
+    <string name="text_appearance_settings_title">Configurações de aparência</string>
+    <string name="text_preview_background_chat_title">Vista previa fondo de chat</string>
+    <string name="text_invite_someone_title">Convide alguém</string>
+    <string name="text_help_title">Ajuda</string>
+    <string name="text_subscription_title">Inscrição</string>
+</resources>

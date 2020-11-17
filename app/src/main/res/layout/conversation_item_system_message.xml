@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.naposystems.napoleonchat.utility.Constants" />
+
+        <variable
+            name="conversation"
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
+        android:paddingStart="0dp"
+        android:paddingEnd="@dimen/small_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_counter_new_contact_message"
+            android:elevation="3dp"
+            android:padding="@dimen/x_x_small_padding"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/x_small_padding"
+            app:layout_constraintBottom_toTopOf="@id/cardView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cardView">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_icon_timer"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:tint="?attr/attrTextColorTimeMyMessage"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_access_time_black" />
+
+            <TextView
+                android:id="@+id/textView_count_down"
+                style="@style/MinorBodyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_self_destruct_time"
+                android:layout_marginStart="@dimen/x_x_small_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:elevation="1dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="?attr/attrTextColorTimeMyMessage"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_icon_timer"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="30 segundos" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/normal_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:backgroundTint="?attr/attrBackgroundColorSystem"
+            app:cardElevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="wrap">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/x_x_small_margin"
+                android:elevation="1dp"
+                android:paddingStart="@dimen/small_padding"
+                android:paddingTop="@dimen/x_small_padding"
+                android:paddingEnd="@dimen/small_padding"
+                android:paddingBottom="@dimen/x_small_padding">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageView_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginTop="@dimen/x_small_margin"
+                    android:tint="?attr/attrTextColorSystem"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_people_tint" />
+
+                <TextView
+                    android:id="@+id/textView_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/x_small_margin"
+                    android:padding="2dp"
+                    android:textColor="?attr/attrTextColorSystem"
+                    android:textSize="@dimen/minor_text_size"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="@id/imageView_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imageView_icon"
+                    app:layout_constraintTop_toTopOf="@id/imageView_icon"
+                    app:layout_constraintWidth_default="wrap"
+                    tools:text="@string/text_new_contact" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.95" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="progressbarColor" format="reference" />
+    <attr name="progress" format="integer" />
+
+    <declare-styleable name="EnterCodeWidget">
+        <attr name="numBoxes" format="integer" />
+        <attr name="isSecureText" format="boolean" />
+        <attr name="errorText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="FabSend">
+        <attr name="showOnlySendIcon" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CameraButton">
+        <attr name="allowSlide" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="SearchView">
+        <attr name="hint" format="string" />
+        <attr name="characterCount" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="NumericKeyboardCustomView">
+        <attr name="showBiometric" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="InputPanelWidget">
+        <attr name="showEmojiIcon" format="boolean" />
+        <attr name="showCameraIcon" format="boolean" />
+        <attr name="showAttachmentIcon" format="boolean" />
+        <attr name="showQuote" format="boolean" />
+        <attr name="showMicrophone" format="boolean" />
+        <attr name="showFabSend" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="Quote">
+        <attr name="isCancelable" format="boolean" />
+        <attr name="isGoTo" format="boolean" />
+        <attr name="isFromInputPanel" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="AnimatedTwoVectorView">
+        <attr name="firstAnimation" format="reference" />
+        <attr name="secondAnimation" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AudioPlayerCustomView">
+        <attr name="controlColors" format="reference" />
+        <attr name="isEncryptedFile" format="boolean" />
+        <attr name="absolutePath" format="string" />
+        <attr name="seekbarProgressBackgroundTint" format="reference" />
+        <attr name="seekbarProgressTint" format="reference" />
+        <attr name="seekbarThumbTint" format="reference" />
+    </declare-styleable>
+
+    <!--//Background-->
+    <attr name="attrBackgroundColorPrimary" format="reference" />
+    <attr name="attrBackgroundColorSecondary" format="reference" />
+    <attr name="attrBackgroundColorPrimary50" format="reference" />
+    <attr name="attrBackgroundSectionColor" format="reference" />
+    <attr name="attrBackgroundSectionOtherColor" format="reference" />
+    <attr name="attrBackgroundColorBackground" format="reference" />
+    <attr name="attrBackgroundColorBackgroundDialog" format="reference" />
+    <attr name="attrColorTextButtonTintCamera" format="reference" />
+    <attr name="attrBackgroundColorActionMode" format="reference" />
+    <attr name="attrBackgroundBatchMessage" format="reference" />
+    <attr name="attrBackgroundMyMessage" format="reference" />
+    <attr name="attrBorderIncomingMessage" format="reference" />
+    <attr name="attrBackgroundConversation" format="reference" />
+    <attr name="attrBubbleIncomingMessage" format="reference" />
+    <attr name="attrBubbleMyMessage" format="reference" />
+    <attr name="attrBackgroundColorSystem" format="reference" />
+
+    <!--//Tint-->
+    <attr name="attrTintColorSecondaryDark" format="reference" />
+    <attr name="attrTintColorControlMyMessage" format="reference" />
+    <attr name="attrTintColorControlIncomingMessage" format="reference" />
+    <attr name="attrTintProgressBar" format="reference" />
+    <attr name="attrTintColorIconMedia" format="reference" />
+
+    <!--TextColor-->
+    <attr name="attrTextColorPrimaryTextColor" format="reference" />
+    <attr name="attrTextColorSecondaryTextColor" format="reference" />
+    <attr name="attrTextColorButtonTint" format="reference" />
+    <attr name="attrTextColorRed" format="reference" />
+    <attr name="attrTextColorWhite" format="reference" />
+    <attr name="attrTextBadge" format="reference" />
+    <attr name="attrTextColorDrawerAndStatus" format="reference" />
+    <attr name="attrTextColorMessageAndTimeHome" format="reference" />
+    <attr name="attrTextColorTimeMyMessage" format="reference" />
+    <attr name="attrTextColorTimeIncomingMessage" format="reference" />
+    <attr name="attrTextColorSystem" format="reference" />
+    <attr name="attrTextColorColorTextMyMessage" format="reference" />
+    <attr name="attrTextColorColorTextIncomingMessage" format="reference" />
+    <attr name="attrTextColorLinkTextColor" format="reference" />
+    <attr name="attrTextColorColorError" format="reference" />
+    <attr name="attrTextColorColorPrimary" format="reference" />
+    <attr name="attrTextColorHint" format="reference" />
+    <attr name="attrTextColorNameConversation" format="reference" />
+    <attr name="attrTextColorNicknameConversation" format="reference" />
+    <attr name="attrTextColorHintConversationInputPanel" format="reference" />
+    <attr name="attrTextColorConversationInputPanel" format="reference" />
+    <attr name="attrTextColorButtonsPreview" format="reference" />
+    <attr name="attrTextColorEnterCode" format="reference" />
+
+    <!--ActionBarItem-->
+    <attr name="attrActionBarItemBackground" format="reference" />
+
+    <!--HintTextColor-->
+    <attr name="attrHintTextColorSecondaryTextColor" format="reference" />
+
+    <!--IconTint-->
+    <attr name="attrIconTintWhite" format="reference" />
+    <attr name="attrIconTintArrow" format="reference" />
+
+    <!--BackgroundTint-->
+    <attr name="attrBackgroundTintColorSecondary" format="reference" />
+    <attr name="attrBackgroundTintButtonTint" format="reference" />
+    <attr name="attrBackgroundTintIconToolbar" format="reference" />
+
+    <!--StrokeColor-->
+    <attr name="attrStrokeColorButtonTint" format="reference" />
+    <attr name="attrStrokeColorRed" format="reference" />
+
+    <!--RippleColor-->
+    <attr name="attrRippleColorRippleTint" format="reference" />
+    <attr name="attrRippleColorRed" format="reference" />
+
+    <!--boxStrokeColor-->
+    <attr name="attrBoxStrokeColorTextInputLayoutBoxColor" format="reference" />
+
+    <!--boxStrokeErrorColor-->
+    <attr name="attrBoxStrokeErrorColorColorError" format="reference" />
+
+    <!--errorTextColor-->
+    <attr name="attrErrorTextColorColorError" format="reference" />
+
+    <!--errorIconTint-->
+    <attr name="attrErrorIconTintColorError" format="reference" />
+
+    <!--fabIconColor-->
+    <attr name="attrFabIconColor" format="reference" />
+
+    <!--conversationIconColor-->
+    <attr name="attrConversationIconColor" format="reference" />
+
+    <!--Color-->
+    <attr name="attrColorButtonTint" format="reference" />
+
+    <!--TrackColor-->
+    <attr name="attrColorTrackColor" format="reference" />
+
+    <!--Separator-->
+    <attr name="attrSeparatorColor" format="reference" />
+
+    <!--Drawer-->
+    <attr name="attrIconAndTextColorDrawer" format="reference" />
+
+    <!-- Seekbar Progress Tint -->
+    <attr name="attrSeekbarProgressTint" format="reference" />
+
+    <!-- Seekbar Thumb Tint -->
+    <attr name="attrSeekbarThumbTint" format="reference" />
+
+    <attr name="attrLogoAbout" format="reference" />
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="min" format="integer" />
+        <attr name="max" format="integer" />
+        <attr name="progress" />
+        <attr name="progressbarColor" />
+        <attr name="progressBarThickness" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ImageViewProgress">
+        <attr name="progressbarColor" />
+    </declare-styleable>
+
+    <!-- Quote -->
+    <attr name="attrBackgroundColorQuoteMyMessage" format="reference" />
+    <attr name="attrBackgroundColorQuoteIncomingMessage" format="reference" />
+    <attr name="attrIdentifierColorMyQuote" format="reference" />
+    <attr name="attrIdentifierColorYourQuote" format="reference" />
+    <attr name="attrTextColorBodyYourQuote" format="reference" />
+    <attr name="attrTextColorBodyMyQuote" format="reference" />
+
+    <!-- Empty State -->
+    <attr name="attrImageEmptyStateHome" format="reference" />
+    <attr name="attrImageEmptyStateFriendshipRequest" format="reference" />
+    <attr name="attrImageEmptyStateNoContacts" format="reference" />
+    <attr name="attrImageEmptyStateSearchContact" format="reference" />
+    <attr name="attrImageEmptyStateBlockContact" format="reference" />
+    <attr name="attrImageEmptyStateInfoRecovery" format="reference" />
+    <attr name="attrImageEmptyStateRecoveryAccount" format="reference" />
+
+    <!-- Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels. -->
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="metaButtonBarStyle" format="reference" />
+        <attr name="metaButtonBarButtonStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="EmptyStateCustomView">
+        <attr name="image" format="reference" />
+        <attr name="titleEmptyState" format="string" />
+        <attr name="description" format="string" />
+        <attr name="location" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="TextInputParamsCustomView">
+        <attr name="locationTextInput" format="integer" />
+    </declare-styleable>
+</resources>

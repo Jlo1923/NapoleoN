@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.conversation.ConversationFragment">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="com.naposystems.napoleonchat.entity.Contact" />
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.ui.conversation.ConversationViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/container_status"
+                tools:src="@drawable/vertical_photo" />
+        </com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_conversation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            tools:showIn="@layout/conversation_fragment">
+
+            <!-- RECYCLERVIEW -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_conversation"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/x_small_margin"
+                app:layout_constraintBottom_toTopOf="@id/inputPanel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/container_status"
+                tools:itemCount="3"
+                tools:listitem="@layout/conversation_item_my_message" />
+
+            <!-- HEADER STATUS -->
+            <LinearLayout
+                android:id="@+id/container_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/attrBackgroundColorPrimary"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="@dimen/small_padding"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textView_user_status"
+                    style="@style/BodyTextView.White"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_padding"
+                    android:layout_marginBottom="@dimen/small_padding"
+                    android:layout_marginEnd="@dimen/small_margin"
+                    android:layout_weight="1"
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@{contact.status}"
+                    tools:text="@tools:sample/lorem[2]" />
+
+                <ImageButton
+                    android:id="@+id/button_video_call"
+                    style="@style/ConversationToolbarIcon"
+                    android:layout_marginEnd="@dimen/small_margin"
+                    android:tint="?attr/attrConversationIconColor"
+                    app:layout_constraintBottom_toBottomOf="@id/button_call"
+                    app:layout_constraintEnd_toStartOf="@id/button_call"
+                    app:layout_constraintTop_toTopOf="@id/button_call"
+                    app:srcCompat="@drawable/ic_video_cam_white"
+                    tools:ignore="ContentDescription" />
+
+                <ImageButton
+                    android:id="@+id/button_call"
+                    style="@style/ConversationToolbarIcon"
+                    android:tint="?attr/attrConversationIconColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_phone_white"
+                    tools:ignore="ContentDescription" />
+
+            </LinearLayout>
+            <!-- RETURN CALL -->
+            <TextView
+                android:id="@+id/textView_return_call"
+                style="@style/TextViewReturnCall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/text_return_call"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_status"
+                tools:visibility="visible" />
+
+            <!-- INPUT PANEL -->
+            <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
+                android:id="@+id/inputPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/x_small_margin"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:isCancelable="true"
+                app:isGoTo="false"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/textView_notification_message"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/bg_text_view_notification_message"
+                android:elevation="17dp"
+                android:gravity="center"
+                android:minHeight="0dp"
+                android:outlineProvider="none"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:borderWidth="0dp"
+                app:layout_constraintEnd_toEndOf="@id/fab_go_down"
+                app:layout_constraintTop_toTopOf="@id/fab_go_down"
+                tools:text="+99"
+                tools:visibility="visible" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_go_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:outlineProvider="none"
+                android:elevation="1dp"
+                android:src="@drawable/ic_go_down"
+                android:visibility="gone"
+                app:backgroundTint="@color/fabNotificationMessage"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toBottomOf="@+id/recyclerView_conversation"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:tint="@color/fabIconColor"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

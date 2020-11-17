@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_description">Envíanos un comentario, una sugerencia o un reporte de error acerca de la aplicación. Para nosotros es muy importante saber tu opinión. Cada reporte enviado, ayuda al mejoramiento de la aplicación.</string>
+    <string name="text_report_problem">Reportar un problema</string>
+    <string name="text_commentary">Comentario</string>
+    <string name="text_suggestion">Sugerencia</string>
+    <string name="text_message">Mensaje</string>
+    <string name="text_pqrs_create">Tú solicitud ha sido envida satisfactoriamente</string>
+    <string name="text_send">Enviar</string>
+    <string name="text_min_twenty_char">Mínimo 20 caracteres</string>
+</resources>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.conversation.ConversationFragment">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="com.naposystems.napoleonchat.entity.Contact" />
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel" />
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@android:color/transparent"
+        android:baselineAligned="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        tools:background="@color/colorPrimary">
+
+        <LinearLayout
+            android:id="@+id/container_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:background="@drawable/ripple_action_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingStart="0dp"
+            android:paddingTop="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/x_small_padding"
+            android:paddingBottom="@dimen/x_small_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/imageButton_back"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:scaleType="fitCenter"
+                android:tint="?attr/attrBackgroundTintIconToolbar"
+                app:srcCompat="@drawable/ic_arrow_back_white"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/imageView_user"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="false"
+                android:foreground="@drawable/border_avatar_conversation"
+                android:padding="1dp"
+                android:scaleType="fitCenter"
+                app:avatarActionBar="@{contact}"
+                tools:src="@drawable/ic_default_avatar"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/container_profile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="0dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingEnd="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/container_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/container_back"
+            app:layout_constraintTop_toTopOf="@id/container_back">
+
+            <TextView
+                android:id="@+id/textView_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:contactIdNameFormat="@{contact.id}"
+                app:nameActionBar="@{contact}"
+                app:nameFormatContact="@{viewModel.userDisplayFormat}"
+                tools:text="@tools:sample/full_names" />
+
+            <TextView
+                android:id="@+id/textView_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/small_text_size"
+                app:contactIdNickNameFormat="@{contact.id}"
+                app:layout_constraintBottom_toBottomOf="@+id/container_back"
+                app:layout_constraintEnd_toStartOf="@+id/textView_user_tokens"
+                app:layout_constraintStart_toStartOf="@+id/textView_user_name"
+                app:layout_constraintTop_toBottomOf="@id/textView_user_name"
+                app:nickNameFormat="@{viewModel.userDisplayFormat}"
+                app:nicknameActionBar="@{contact}"
+                tools:text="@tools:sample/first_names" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

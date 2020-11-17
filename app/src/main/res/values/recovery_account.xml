@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_btn_recovery">Recover</string>
+    <string name="text_count_questions_recovery_account">Question %1$d / %2$d</string>
+    <string name="text_description_recovery">Recover your contacts quickly and safely by correctly answering security questions.</string>
+    <string name="text_recovery_success">Your account has been recovered, now you can chat privately and securely with your contacts.</string>
+    <string name="text_title_success">Account Recovery</string>
+    <string name="text_placeholder_password">Enter your Password</string>
+    <string name="text_description_enter_password">Enter your Password. You are one step away from recovering your account. Enter your account recovery password number.</string>
+    <string name="text_description_validate_old_answers">Security questions. You are closer to recovering your account, please help us confirm your identity. Answer the following security questions correctly</string>
+    <string name="text_password_incorrect">The password entered is incorrect</string>
+    <string name="text_answers_incorrect">The answers entered are incorrect.</string>
+    <string name="text_title_block_attempts">Blocked</string>
+    <string name="text_description_block_attempts">You have been blocked for exceeding the number of account recovery attempts</string>
+</resources>

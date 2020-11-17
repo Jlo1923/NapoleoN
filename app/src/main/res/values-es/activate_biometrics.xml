@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_biometrics_description">Elije tu método de desbloqueo favorito</string>
+    <string name="text_only_pin">Pin</string>
+    <string name="text_pin_and_fingerprint">Pin + Huella dactilar</string>
+    <string name="text_pin_and_unlock_facial">Pin + Desbloqueo facial</string>
+</resources>

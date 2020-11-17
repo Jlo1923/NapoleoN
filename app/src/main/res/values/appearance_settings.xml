@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_color_scheme">Theme Selection</string>
+    <string name="text_user_display_format">Username Format</string>
+    <string name="text_language">Language</string>
+    <string name="text_light_theme">Light theme</string>
+    <string name="text_dark_theme">Dark theme</string>
+    <string name="text_name_and_nickname">Name and nickname</string>
+    <string name="text_only_name">Only name</string>
+    <string name="text_only_nickname">Only nickname</string>
+    <string name="text_conversation_background">Conversation background</string>
+    <string name="text_updated_successfully">The background was applied correctly</string>
+    <string name="text_error_updating_conversation_background">An error occurred while changing the conversation background, please try again</string>
+    <string name="text_time_format">Time format</string>
+</resources>

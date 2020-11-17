@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#d8a608</color>
+    <color name="colorPrimary_50">#80d8a608</color>
+    <color name="colorPrimaryLight">#ffd74b</color>
+    <color name="colorPrimaryDark">#a27800</color>
+    <color name="colorSecondary">#cccccc</color>
+    <color name="colorSecondaryLight">#f2f2f2</color>
+    <color name="colorSecondaryDark">#9b9b9b</color>
+    <color name="primaryTextColor">#f2f2f2</color>
+    <color name="secondaryTextColor">#4d4d4d</color>
+    <color name="textColorEnterCode">#4d4d4d</color>
+    <color name="textColorDrawerAndStatus">#8B8989</color>
+    <color name="secondaryTextColorForAll">#4d4d4d</color>
+    <color name="linkTextColor">#29ABE2</color>
+    <color name="white">#f2f2f2</color>
+    <color name="textColorBadge">#f2f2f2</color>
+    <color name="black">#000000</color>
+    <color name="black_212121">#212121</color>
+    <color name="gray_F2F2F4">#F2F2F4</color>
+    <color name="gray_8B8989">#8B8989</color>
+    <color name="black_40">#66000000</color>
+    <color name="colorError">#EF5350</color>
+    <color name="separator">#CCCCCC</color>
+    <color name="green">#59BC88</color>
+    <color name="colorBackground">#f2f2f2</color>
+    <color name="colorBackgroundDialog">#f2f2f2</color>
+    <color name="colorSecondaryBackground">#d8a608</color>
+    <color name="buttonTint">#d8a608</color>
+    <color name="colorBackgroundMyMessage">#DFBD4C</color>
+    <color name="buttonTintCamera">#d8a608</color>
+    <color name="trackColor">#4Dd8a608</color>
+    <color name="disabledTrackColor">@color/colorSecondaryDark</color>
+    <color name="disabledThumbColor">@color/white</color>
+    <color name="sectionColor">#E6E6E6</color>
+    <color name="backgroundSpinnerColor">#f2f2f2</color>
+    <color name="fabIconColor">#f2f2f2</color>
+    <color name="flatActionBarColor">#d8a608</color>
+    <color name="colorTextMyMessage">#4d4d4d</color>
+    <color name="colorTextIncomingMessage">#4d4d4d</color>
+    <color name="red">#DA5E58</color>
+    <color name="redIntense">#ff5131</color>
+    <color name="searchViewTextColor">#4d4d4d</color>
+    <color name="searchViewHintColor">#808080</color>
+    <color name="fabNotificationMessage">#72000000</color>
+    <color name="colorButtonAlertDialog">#d8a608</color>
+    <color name="color_E8D8AB">#E8D8AB</color>
+    <color name="color_808080">#808080</color>
+    <color name="color_B1B0B0">#B1B0B0</color>
+    <color name="color_EFEFEF">#EFEFEF</color>
+
+    <!--   Dark NapoleoN-->
+    <color name="color_383838">#383838</color>
+    <color name="color_80383838">#80383838</color>
+    <color name="color_505564">#505564</color>
+    <color name="color_4Df2f2f2">#4Df2f2f2</color>
+    <color name="color_000015">#000015</color>
+    <color name="color_CCCACA">#CCCACA</color>
+    <color name="color_101010">#101010</color>
+    <color name="color_C0C0C0">#C0C0C0</color>
+
+    <!--   Cold Ocean-->
+    <color name="color_20202E">#20202e</color>
+    <color name="color_2A2C45">#2a2c45</color>
+    <color name="color_B1B0CF">#B1B0CF</color>
+    <color name="color_802A2C45">#802a2c45</color>
+    <color name="color_01001E">#01001e</color>
+    <color name="color_545570">#545570</color>
+    <color name="color_81819E">#81819e</color>
+    <color name="color_BFBFBF">#bfbfbf</color>
+    <color name="color_2F2D77">#2F2D77</color>
+    <color name="color_A19EA5">#A19EA5</color>
+
+    <!--Black Gold Alloy-->
+    <color name="color_626262">#626262</color>
+    <color name="color_8F8F8F">#8f8f8f</color>
+    <color name="color_121212">#121212</color>
+    <color name="color_282828">#282828</color>
+    <color name="color_80282828">#80282828</color>
+    <color name="color_FFFFFF">#ffffff</color>
+    <color name="color_D8A605">#d8a605</color>
+    <color name="color_A27800">#a27800</color>
+    <color name="color_000000">#000000</color>
+    <color name="color_505050">#505050</color>
+    <color name="color_775B09">#775B09</color>
+    <color name="color_423F3F">#423F3F</color>
+
+    <!--Camouflage-->
+    <color name="color_001600">#001600</color>
+    <color name="color_031E03">#031e03</color>
+    <color name="color_80031E03">#80031e03</color>
+    <color name="color_002100">#002100</color>
+    <color name="color_38732C">#38732c</color>
+    <color name="color_3CB043">#3cb043</color>
+    <color name="color_426842">#426842</color>
+    <color name="color_004500">#004500</color>
+
+    <!--Purple Bluebonnets-->
+    <color name="color_7D366F">#7d366f</color>
+    <color name="color_807D366F">#807d366f</color>
+    <color name="color_7D5B76">#7d5b76</color>
+    <color name="color_E6E6E6">#e6e6e6</color>
+    <color name="color_D8AFCE">#D8AFCE</color>
+
+    <!--Clear Sky-->
+    <color name="color_4AA3D9">#4aa3d9</color>
+    <color name="color_804AA3D9">#804aa3d9</color>
+    <color name="color_E6F2FF">#e6f2ff</color>
+    <color name="color_0074A7">#0074a7</color>
+    <color name="color_9B9B9B">#9b9b9b</color>
+    <color name="color_F2F2F2">#f2f2f2</color>
+    <color name="color_82D4FF">#82d4ff</color>
+    <color name="color_CCCCCC">#cccccc</color>
+    <color name="color_035B81">#035B81</color>
+    <color name="color_4D4D4D">#4d4d4d</color>
+    <color name="color_C4E3F1">#C4E3F1</color>
+    <color name="color_62C3EF">#62C3EF</color>
+
+    <!--Pink Dream-->
+    <color name="color_FFEFFF">#ffefff</color>
+    <color name="color_903B6E">#903b6e</color>
+    <color name="color_59BC88">#59bc88</color>
+    <color name="color_F38DC7">#f38dc7</color>
+    <color name="color_80F38DC7">#80f38dc7</color>
+    <color name="color_BF5D96">#bf5d96</color>
+    <color name="color_FFDCFF">#ffdcff</color>
+    <color name="color_D19DBB">#d19dbb</color>
+    <color name="color_9F6E8B">#9f6e8b</color>
+    <color name="color_FFCEED">#ffceed</color>
+    <color name="color_DA5E58">#da5e58</color>
+    <color name="color_EF5350">#ef5350</color>
+    <color name="color_29ABE2">#29abe2</color>
+    <color name="color_FBC1E4">#FBC1E4</color>
+    <color name="color_703E5C">#703E5C</color>
+
+    <color name="black_overlay">#66000000</color>
+
+</resources>

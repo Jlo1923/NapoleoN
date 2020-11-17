@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.conversationCall.ConversationCallActivity">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="contact"
+            type="com.naposystems.napoleonchat.entity.Contact" />
+
+        <variable
+            name="isIncomingCall"
+            type="Boolean" />
+
+        <variable
+            name="isVideoCall"
+            type="Boolean" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_212121">
+
+        <ViewSwitcher
+            android:id="@+id/viewSwitcher"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:id="@+id/container_calling"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include
+                    layout="@layout/logo_napoleon_blur"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:contact="@{contact}" />
+
+            </RelativeLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_video_call"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <org.webrtc.SurfaceViewRenderer
+                    android:id="@+id/remote_surface_render"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/camera_off"
+                    layout="@layout/conversation_call_camera_off"
+                    app:contact="@{contact}" />
+
+                <org.webrtc.SurfaceViewRenderer
+                    android:id="@+id/surface_render"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ViewSwitcher>
+
+        <!-- TOP CONTAINER -->
+        <LinearLayout
+            android:id="@+id/container_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#998B8989"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/small_padding"
+            android:paddingBottom="@dimen/small_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/appCompatImageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/x_small_margin"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_baseline_lock" />
+
+                <TextView
+                    android:id="@+id/textView_title"
+                    style="@style/CallTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/x_small_margin"
+                    android:elevation="2dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@{isVideoCall ? @string/text_encrypted_video_call : @string/text_encrypted_call}"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView_nickname"
+                style="@style/CallNickname"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/x_small_margin"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto"
+                android:maxLines="1"
+                android:paddingStart="@dimen/normal_padding"
+                android:paddingEnd="@dimen/normal_padding"
+                android:singleLine="true"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_title"
+                custom:callTitle="@{contact}"
+                tools:text="@tools:sample/first_names" />
+
+            <TextView
+                android:id="@+id/textView_name"
+                style="@style/CallTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/x_small_margin"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto"
+                android:paddingStart="@dimen/normal_padding"
+                android:paddingEnd="@dimen/normal_padding"
+                android:singleLine="true"
+                android:text="@{contact.name}"
+                android:textAlignment="center"
+                android:visibility="@{contact.name.empty ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_nickname"
+                tools:text="@tools:sample/full_names" />
+
+            <TextView
+                android:id="@+id/textView_call_duration"
+                style="@style/CallDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:elevation="2dp"
+                android:singleLine="true"
+                android:text="00:00"
+                android:textAlignment="center"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_name" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view_top_separator"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/color_D8A605"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container_top" />
+
+        <TextView
+            android:id="@+id/textView_calling"
+            style="@style/CallCalling"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:elevation="4dp"
+            android:singleLine="true"
+            android:text="@{isIncomingCall ? isVideoCall ? @string/text_incoming_video_call_title: @string/text_incoming_call_title : @string/text_calling_call_title}"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_top_separator"
+            tools:text="Llamando" />
+
+        <View
+            android:id="@+id/view_bottom_separator"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/color_D8A605"
+            app:layout_constraintBottom_toTopOf="@id/container_controls"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_controls"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:background="#998B8989"
+            android:padding="@dimen/normal_padding"
+            android:visibility="@{isIncomingCall ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
+
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
+                android:id="@+id/imageButton_switch_camera"
+                style="@style/ConversationCallButton"
+                android:layout_width="31dp"
+                android:layout_height="31dp"
+                android:background="@drawable/conversation_call_button_flip_camera"
+                android:visibility="@{isVideoCall ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_speaker"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
+                android:id="@+id/imageButton_speaker"
+                style="@style/ConversationCallButton"
+                android:background="@drawable/conversation_call_button_speaker"
+                android:visibility="@{isVideoCall ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_bluetooth"
+                app:layout_constraintStart_toEndOf="@+id/imageButton_switch_camera"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:checked="false" />
+
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
+                android:id="@+id/imageButton_bluetooth"
+                style="@style/ConversationCallButton"
+                android:background="@drawable/conversation_call_button_bluetooth"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_change_to_video"
+                app:layout_constraintStart_toEndOf="@+id/imageButton_speaker"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:checked="false"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/imageButton_change_to_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:foreground="?attr/selectableItemBackground"
+                android:visibility="@{isVideoCall ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_mute_video"
+                app:layout_constraintStart_toEndOf="@+id/imageButton_bluetooth"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_video_cam_white" />
+
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
+                android:id="@+id/imageButton_mute_video"
+                style="@style/ConversationCallButton"
+                android:background="@drawable/conversation_call_button_mute_video"
+                android:checked="false"
+                android:visibility="@{isVideoCall ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_mic_off"
+                app:layout_constraintStart_toEndOf="@+id/imageButton_change_to_video"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:checked="false"
+                tools:visibility="visible" />
+
+            <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
+                android:id="@+id/imageButton_mic_off"
+                style="@style/ConversationCallButton"
+                android:background="@drawable/conversation_call_button_mic_off"
+                android:checked="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageButton_mute_video"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:checked="false" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- BUTTON HANGUP -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_hangup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/normal_margin"
+            android:backgroundTint="@color/red"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toTopOf="@id/container_controls"
+            app:layout_constraintEnd_toStartOf="@+id/fab_answer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_call_end_black_24"
+            app:tint="@color/white" />
+
+        <!-- BUTTON ANSWER -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/green"
+            android:visibility="@{isIncomingCall ? View.VISIBLE : View.GONE}"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/fab_hangup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/fab_hangup"
+            app:layout_constraintTop_toTopOf="@id/fab_hangup"
+            app:srcCompat="@drawable/ic_call_black_24"
+            app:tint="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="conversation"
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="itemPosition"
+            type="Integer" />
+
+        <variable
+            name="timeFormat"
+            type="Integer" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+
+        <variable
+            name="isFirst"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_incoming_message"
+        style="@style/ContainerMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_message"
+            style="@style/ContainerIncomingMessageBubble"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.7">
+
+            <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
+                android:id="@+id/quote"
+                style="@style/QuoteConversation"
+                android:onClick="@{() -> clickListener.goToQuote(conversation, itemPosition)}"
+                app:isGoTo="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/imageView_document_type"
+                app:layout_constraintWidth_min="wrap"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_document_type"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="@dimen/x_small_margin"
+                app:attachmentDocumentIcon="@{conversation}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/quote"
+                app:layout_constraintBottom_toTopOf="@id/textView_date"
+                app:tint="@color/colorTextIncomingMessage"
+                tools:src="@drawable/ic_attachment_doc" />
+
+            <TextView
+                android:id="@+id/textView_document_name"
+                style="@style/IncomingMessageTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                app:attachmentDocumentName="@{conversation}"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_document_type"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_document_type"
+                app:layout_constraintTop_toTopOf="@id/imageView_document_type"
+                tools:text="@tools:sample/lorem" />
+
+            <TextView
+                android:id="@+id/textView_date"
+                style="@style/IncomingMessageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:formatTime="@{timeFormat}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView_document_type"
+                app:messageDateIncoming="@{conversation.message.createdAt}"
+                tools:text="10:34 "
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- BUTTON ATTACHMENT STATE -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/imageButton_state"
+            style="@style/ButtonState"
+            android:src="@drawable/ic_file_download_black"
+            app:layout_constraintBottom_toBottomOf="@id/container_message"
+            app:layout_constraintStart_toEndOf="@id/container_message"
+            app:layout_constraintTop_toTopOf="@id/container_message"
+            custom:iconForState="@{conversation}"
+            tools:visibility="visible" />
+
+        <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
+            android:id="@+id/progressBar"
+            style="@style/CircleProgressBar"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+            app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+            app:layout_constraintStart_toStartOf="@id/imageButton_state"
+            app:layout_constraintTop_toTopOf="@id/imageButton_state"
+            tools:progress="70"
+            tools:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progressBar_indeterminate"
+            style="@style/ProgressIndeterminate"
+            app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+            app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+            app:layout_constraintStart_toStartOf="@id/imageButton_state"
+            app:layout_constraintTop_toTopOf="@id/imageButton_state"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/textView_count_down"
+            style="@style/TextCountDownSelfDestruct"
+            app:layout_constraintBottom_toTopOf="@+id/container_message"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_message"
+            tools:text="10:34:20" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

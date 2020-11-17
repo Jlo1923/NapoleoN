@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_count_questions">Sicherheitsfrage %1$d/%2$d</string>
+    <string name="text_add_question">Weitere Frage hinzufügen</string>
+    <string name="text_security_questions">Wähle eine Frage</string>
+    <string name="text_select_question">Sie müssen eine Frage auswählen</string>
+    <string name="text_title_register_questions">Mit der Option "Konto wiederherstellen" können Sie Ihren Spitznamen, Ihre Kontakte und Ihre Einstellungen wiederherstellen. Denken Sie daran, dass eine schwierige Antwort der Schlüssel zu Ihrer Privatsphäre und Sicherheit ist</string>
+    <string name="text_description_cancel">Es werden keine Informationen zur Kontowiederherstellung aufgezeichnet. Bist du sicher, dass du gehen willst?</string>
+    <string name="text_title_cancel">Abmelden?</string>
+    <string name="text_successful_message">Information erfolgreich registriert</string>
+    <string name="text_error_message">Fehler beim Registrieren der Informationen</string>
+    <string name="text_final_register">Bist du sicher, dass du ausgehen willst? Die Anwendung speichert die vorherigen Antworten in Ihren Kontowiederherstellungseinstellungen.</string>
+</resources>

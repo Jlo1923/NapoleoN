@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_reset_contact">Restore contact</string>
+    <string name="text_want_delete_conversation">You sure you want to delete this conversation?</string>
+    <string name="text_want_reset_contact">You sure you want to reestablish contact?</string>
+    <string name="text_want_mute_conversation">Tem certeza de que quer contato restabelecer?</string>
+    <string name="text_alert_nickname">The nickname must contain at least 5 and up to 20 characters</string>
+    <string name="text_alert_name">The name must contain at least 3 and maximum 50 characters</string>
+    <string name="text_name_not_contain_enough_char">The name must contain at least 2 characters.</string>
+    <string name="text_name_invalid">Invalid Name</string>
+    <string name="text_nickname_invalid">Invalid Nickname</string>
+    <string name="text_change_contact_photo">Change contact photo</string>
+</resources>

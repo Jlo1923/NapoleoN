@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.selfDestructTime.SelfDestructTimeDialogFragment">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/attrBackgroundColorBackgroundDialog">
+
+        <TextView
+            android:id="@+id/textView_title"
+            style="@style/TextViewSecondaryTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:height="62dp"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/large_padding"
+            android:paddingEnd="0dp"
+            android:text="@string/text_message_self_destruction"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view_title_separator"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_title" />
+
+        <ScrollView
+            android:id="@+id/scrollView_radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="265dp"
+            app:layout_constraintTop_toBottomOf="@id/view_title_separator"
+            android:scrollbarThumbVertical="@color/colorSecondaryDark"
+            android:scrollbars="vertical">
+
+            <RadioGroup
+                android:id="@+id/radioGroup_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/large_padding"
+                android:paddingEnd="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_title_separator">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_five_seconds"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_five_seconds" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_fifteen_seconds"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_fifteen_seconds" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_thirty_seconds"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_thirty_seconds" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_one_minute"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_one_minute" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_ten_minutes"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_ten_minutes" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_thirty_minutes"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_thirty_minutes" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_one_hour"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_one_hour" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_twelve_hours"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_twelve_hours" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_one_day"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_one_day" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButton_seven_days"
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/x_large_padding"
+                    android:paddingEnd="0dp"
+                    android:text="@string/text_every_seven_days" />
+
+            </RadioGroup>
+
+        </ScrollView>
+
+        <View
+            android:id="@+id/view_radio_group_separator"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView_radioGroup" />
+
+        <TextView
+            android:id="@+id/textView_info"
+            style="@style/SmallBodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:paddingStart="@dimen/large_padding"
+            android:paddingEnd="@dimen/large_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_radio_group_separator"
+            tools:text="@string/text_info_message_self_destruction" />
+
+        <Button
+            android:id="@+id/button_accept"
+            style="@style/AppPrimaryButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:text="@string/text_accept"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_info" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_cancel"
+            style="@style/AppPrimaryButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:text="@string/text_cancel"
+            app:layout_constraintBottom_toBottomOf="@id/button_accept"
+            app:layout_constraintEnd_toStartOf="@id/button_accept"
+            app:layout_constraintTop_toTopOf="@id/button_accept" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

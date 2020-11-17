@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_biometrics_description">Wählen Sie Ihre Lieblings Entriegelung</string>
+    <string name="text_only_pin">Stift</string>
+    <string name="text_pin_and_fingerprint">PIN + Fingerabdruck</string>
+    <string name="text_pin_and_unlock_facial">PIN + Face entsperren</string>
+</resources>

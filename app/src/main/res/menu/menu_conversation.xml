@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_item_schedule"
+        app:actionLayout="@layout/menu_item_schedule"
+        android:title=""
+        app:iconTint="?attr/attrBackgroundTintIconToolbar"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_item_see_contact"
+        android:title="@string/text_see_contact"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/menu_item_block_contact"
+        android:title="@string/text_block_contact"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/menu_item_mute_conversation"
+        android:title="@string/text_mute_conversation"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/menu_item_delete_messages"
+        android:title="@string/text_delete_messages_conversation"
+        app:showAsAction="collapseActionView" />
+
+</menu>

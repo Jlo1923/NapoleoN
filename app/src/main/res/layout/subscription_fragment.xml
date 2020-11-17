@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.subscription.SubscriptionFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView_section_subscription_actual"
+                style="@style/SmallBodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/attrBackgroundSectionColor"
+                android:padding="@dimen/small_padding"
+                android:text="@string/text_current_subscription"
+                android:textAllCaps="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_subscription_actual"
+                style="@style/Option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_section_subscription_actual">
+
+                <!-- START ICON -->
+                <ImageView
+                    android:id="@+id/imageView_subscription_actual_option_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_star_black" />
+
+                <!-- OPTION TITLE -->
+                <TextView
+                    android:id="@+id/textView_subscription_actual_title"
+                    style="@style/OptionTitle"
+                    android:text="@string/text_current_subscription"
+                    app:layout_constraintBottom_toTopOf="@id/textView_subscription_actual"
+                    app:layout_constraintStart_toEndOf="@id/imageView_subscription_actual_option_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- OPTION VALUE -->
+                <TextView
+                    android:id="@+id/textView_subscription_actual"
+                    style="@style/OptionValue"
+                    android:singleLine="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/textView_subscription_actual_title"
+                    app:layout_constraintTop_toBottomOf="@id/textView_subscription_actual_title"
+                    tools:text="periodo de prueba" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_subscription_expiration"
+                style="@style/Option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/option_subscription_actual">
+
+                <!-- START ICON -->
+                <ImageView
+                    android:id="@+id/imageView_subscription_expiration_option_start_icon"
+                    style="@style/OptionStartIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_date_suscription" />
+
+                <!-- OPTION TITLE -->
+                <TextView
+                    android:id="@+id/textView_subscription_expiration_title"
+                    style="@style/OptionTitle"
+                    android:text="@string/text_subscription_expiration"
+                    app:layout_constraintBottom_toTopOf="@id/textView_subscription_expiration"
+                    app:layout_constraintStart_toEndOf="@id/imageView_subscription_expiration_option_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- OPTION VALUE -->
+                <TextView
+                    android:id="@+id/textView_subscription_expiration"
+                    style="@style/OptionValue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/textView_subscription_expiration_title"
+                    app:layout_constraintTop_toBottomOf="@id/textView_subscription_expiration_title"
+                    tools:text="periodo de prueba" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/textView_add_subscription_actual"
+                style="@style/SmallBodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/attrBackgroundSectionColor"
+                android:padding="@dimen/small_padding"
+                android:text="@string/text_get_subscription"
+                android:textAllCaps="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/option_subscription_expiration" />
+
+            <TextView
+                android:id="@+id/textView_type_subscription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/small_padding"
+                android:text="@string/text_subscription_type"
+                android:textColor="?attr/attrTextColorSecondaryTextColor"
+                app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
+                app:layout_constraintStart_toStartOf="@+id/spinner_payment"
+                app:layout_constraintTop_toBottomOf="@id/textView_add_subscription_actual" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_payment"
+                style="@style/BackgroundSpinner"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_marginTop="@dimen/small_margin"
+                android:textColor="?attr/attrTextColorHint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_type_subscription"
+                app:layout_constraintWidth_percent="0.9"
+                tools:listitem="@layout/subscription_item" />
+
+            <TextView
+                android:id="@+id/textView_payment_method"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:padding="@dimen/small_padding"
+                android:text="@string/text_payment_method"
+                android:textColor="?attr/attrTextColorSecondaryTextColor"
+                app:layout_constraintEnd_toEndOf="@+id/spinner_payment"
+                app:layout_constraintStart_toStartOf="@+id/spinner_payment"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_payment" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/checkBox_payment_description"
+                style="@style/BodyTextView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView"
+                app:layout_constraintStart_toStartOf="@+id/spinner_payment"
+                app:layout_constraintTop_toTopOf="@+id/nestedScrollView"
+                app:layout_constraintVertical_bias="0.50" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/large_margin"
+                android:layout_marginBottom="@dimen/normal_margin"
+                android:scrollbars="vertical"
+                app:layout_constraintBottom_toTopOf="@id/viewSwitcher"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/checkBox_payment_description"
+                app:layout_constraintTop_toBottomOf="@+id/textView_payment_method">
+
+                <TextView
+                    style="@style/BodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:text="@string/text_warning" />
+
+            </androidx.core.widget.NestedScrollView>
+
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/normal_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="@dimen/width_app_button">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_buy_subscription"
+                    style="@style/AppPrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/normal_padding"
+                    tools:text="Comprar subscripcion" />
+
+                <ProgressBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </ViewSwitcher>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

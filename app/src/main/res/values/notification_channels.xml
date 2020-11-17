@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_description" translatable="false">Default channel description</string>
+    <string name="default_notification_channel_id" translatable="false">Default channel</string>
+    <string name="calls_channel_id" translatable="false">calls_channel</string>
+    <string name="calls_channel_name" translatable="false">Calls channel</string>
+    <string name="calls_channel_description" translatable="false">Calls channel description</string>
+    <string name="alerts_channel_id" translatable="false">alerts_channel</string>
+    <string name="alerts_channel_name" translatable="false">Alerts channel</string>
+    <string name="alerts_channel_description" translatable="false">Alerts channel description</string>
+    <string name="upload_channel_id" translatable="false">upload_channel</string>
+    <string name="upload_channel_name" translatable="false">Upload channel</string>
+    <string name="upload_channel_description" translatable="false">Upload channel description</string>
+    <string name="calls_group_key" translatable="false">napoleon_calls</string>
+</resources>

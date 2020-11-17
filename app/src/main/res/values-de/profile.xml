@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="explanation_camera_and_storage_permission">Ermöglichen Sie NapoleoN den Zugriff auf Ihre Kamera, Fotos und Multimedia-Inhalte Ihres Geräts, um das Profil und das Titelbild zu ändern.</string>
+    <string name="text_profile_photo">Bild</string>
+    <string name="text_cover_photo">Titelbild</string>
+    <string name="text_message_restore_cover_photo">Möchten Sie das Standard-Titelbild wirklich wiederherstellen?</string>
+    <string name="text_message_restore_profile_photo">Sind Sie sicher, dass Sie das Standard-Profilbild zurücksetzen?</string>
+    <string name="text_logout_title">Ausloggen</string>
+    <string name="text_logout_desc">Bist du sicher? Wenn Sie diese Sitzung zu schließen, ohne zuerst die Kontowiederherstellung Formular ausgefüllt haben, verlieren Sie Ihren Namen und aktuelle Kontakte.</string>
+    <string name="text_yes_im_sure">Ja, ich bin mir sicher</string>
+    <string name="text_no_logout">Sie nicht sich abzumelden</string>
+    <string name="text_closed_session">geschlossene Sitzung</string>
+    <string name="text_closed_session_desc">Ihre Sitzung wurde erfolgreich geschlossen. Wir hoffen, dass Sie uns bald wieder.</string>
+    <string name="text_error_logout">Ein Fehler bei der Abschlusssitzung stattgefunden hat, versuchen Sie es später erneut.</string>
+</resources>

@@ -1,0 +1,1311 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="fontFamily">@font/roboto</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:actionBarStyle">@color/green</item>
+        <item name="attrTextColorDrawerAndStatus">@color/textColorDrawerAndStatus</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/secondaryTextColor</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="attrBackgroundColorPrimary">@color/colorPrimary</item>
+        <item name="attrBackgroundColorSecondary">@color/colorSecondaryBackground</item>
+        <item name="attrBackgroundColorPrimary50">@color/colorPrimary_50</item>
+        <item name="attrTextColorPrimaryTextColor">@color/primaryTextColor</item>
+        <item name="attrIconTintWhite">@color/textColorBadge</item>
+        <item name="attrBackgroundTintColorSecondary">@color/colorSecondary</item>
+        <item name="attrTextColorSecondaryTextColor">@color/secondaryTextColor</item>
+        <item name="attrTextColorBodyYourQuote">@color/secondaryTextColor</item>
+        <item name="attrTextColorBodyMyQuote">@color/secondaryTextColor</item>
+        <item name="attrTextColorEnterCode">@color/textColorEnterCode</item>
+        <item name="attrTextColorButtonTint">@color/buttonTint</item>
+        <item name="attrColorTextButtonTintCamera">@color/buttonTintCamera</item>
+        <item name="attrStrokeColorButtonTint">@color/buttonTint</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/red</item>
+        <item name="attrStrokeColorRed">@color/red</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/white</item>
+        <item name="attrTextBadge">@color/textColorBadge</item>
+        <item name="attrBackgroundSectionColor">@color/sectionColor</item>
+        <item name="attrTextColorTimeMyMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorTimeIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorTextMyMessage">@color/colorTextMyMessage</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/colorTextIncomingMessage</item>
+        <item name="attrTextColorLinkTextColor">@color/linkTextColor</item>
+        <item name="attrTextColorColorError">@color/colorError</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/secondaryTextColor</item>
+        <item name="attrBackgroundTintButtonTint">@color/buttonTint</item>
+        <item name="attrBackgroundColorBackground">@color/colorBackground</item>
+        <item name="attrBackgroundConversation">@color/color_FFFFFF</item>
+        <item name="attrTintColorSecondaryDark">@color/colorSecondaryDark</item>
+        <item name="attrIconTintArrow">@color/colorSecondaryDark</item>
+        <item name="attrTextColorColorPrimary">@color/colorPrimary</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/colorError</item>
+        <item name="attrErrorTextColorColorError">@color/colorError</item>
+        <item name="attrErrorIconTintColorError">@color/colorError</item>
+        <item name="attrColorButtonTint">@color/buttonTint</item>
+        <item name="attrBackgroundMyMessage">@color/color_EFEFEF</item>
+        <item name="attrBorderIncomingMessage">@color/color_C0C0C0</item>
+        <item name="attrBubbleIncomingMessage">@color/buttonTint</item>
+        <item name="attrBubbleMyMessage">@color/buttonTint</item>
+        <item name="attrBackgroundBatchMessage">@color/buttonTint</item>
+        <item name="attrColorTrackColor">@color/trackColor</item>
+        <item name="attrSeparatorColor">@color/separator</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/colorBackgroundDialog</item>
+        <item name="attrBackgroundSectionOtherColor">@color/separator</item>
+        <item name="attrBackgroundColorActionMode">@color/colorPrimaryDark</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/secondaryTextColor</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/secondaryTextColor</item>
+        <item name="attrTextColorHint">@color/secondaryTextColor</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_FFFFFF</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_A27800</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_8F8F8F</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts</item>
+        <item name="attrImageEmptyStateSearchContact">@drawable/image_empty_state_search_contacts
+        </item>
+        <item name="attrImageEmptyStateBlockContact">@drawable/image_empty_state_block_contact
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">@drawable/image_empty_state_info_recovery
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
+        <item name="attrTextColorSystem">@color/white</item>
+        <item name="attrBackgroundColorSystem">@color/color_B1B0B0</item>
+        <item name="attrTintColorControlMyMessage">@color/color_4D4D4D</item>
+        <item name="attrTintColorControlIncomingMessage">@color/color_4D4D4D</item>
+        <item name="attrTintProgressBar">@color/colorPrimary</item>
+        <item name="attrTintColorIconMedia">@color/color_C0C0C0</item>
+    </style>
+
+    <style name="AppThemeDarkNapoleon" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_383838</item>
+        <item name="colorSecondary">@color/color_8F8F8F</item>
+        <item name="colorPrimaryDark">@color/color_000000</item>
+        <item name="android:colorBackground">@color/color_121212</item>
+        <item name="android:actionBarStyle">@color/color_59BC88</item>
+        <item name="attrTextColorDrawerAndStatus">@color/color_4D4D4D</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/color_F2F2F2</item>
+        <item name="colorAccent">@color/color_383838</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_383838</item>
+        <item name="attrBackgroundColorSecondary">@color/color_282828</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_80383838</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_000000</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_101010</item>
+        <item name="attrTextColorEnterCode">@color/textColorEnterCode</item>
+        <item name="attrTextColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrColorTextButtonTintCamera">@color/secondaryTextColorForAll</item>
+        <item name="attrStrokeColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_000000</item>
+        <item name="attrBackgroundSectionColor">@color/color_282828</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_121212</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorBackground">@color/color_121212</item>
+        <item name="attrTintColorSecondaryDark">@color/color_505564</item>
+        <item name="attrIconTintArrow">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorPrimary">@color/color_383838</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundBatchMessage">@color/color_F2F2F2</item>
+        <item name="attrColorTrackColor">@color/color_4Df2f2f2</item>
+        <item name="attrSeparatorColor">@color/color_8F8F8F</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_121212</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_8F8F8F</item>
+        <item name="attrBackgroundColorActionMode">@color/color_000000</item>
+        <item name="attrFabIconColor">@color/color_121212</item>
+        <item name="attrActionBarItemBackground">@color/color_F2F2F2</item>
+        <item name="attrConversationIconColor">@color/color_F2F2F2</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_F2F2F2</item>
+        <item name="attrTextColorHint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintIconToolbar">@color/color_F2F2F2</item>
+        <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <item name="attrTextColorNicknameConversation">@color/color_F2F2F2</item>
+        <item name="attrTextColorNameConversation">@color/color_F2F2F2</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/color_F2F2F2</item>
+        <item name="attrSeekbarProgressTint">@color/color_000015</item>
+        <item name="attrSeekbarThumbTint">@color/color_8F8F8F</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_101010</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_4D4D4D</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts</item>
+        <item name="attrImageEmptyStateSearchContact">@drawable/image_empty_state_search_contacts
+        </item>
+        <item name="attrImageEmptyStateBlockContact">@drawable/image_empty_state_block_contact
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">@drawable/image_empty_state_info_recovery
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
+        <item name="attrBackgroundConversation">@color/color_121212</item>
+        <item name="attrTextColorTimeMyMessage">@color/color_121212</item>
+        <item name="attrTextColorTimeIncomingMessage">@color/color_121212</item>
+        <item name="attrBackgroundMyMessage">@color/color_F2F2F2</item>
+        <item name="attrBubbleIncomingMessage">@color/color_C0C0C0</item>
+        <item name="attrBubbleMyMessage">@color/color_C0C0C0</item>
+        <item name="attrTextColorSystem">@color/color_121212</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_CCCACA</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_CCCACA</item>
+        <item name="attrBackgroundColorSystem">@color/color_F2F2F2</item>
+        <item name="attrTintColorControlMyMessage">@color/color_121212</item>
+        <item name="attrTintColorControlIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrTintProgressBar">@color/color_121212</item>
+        <item name="attrTintColorIconMedia">@color/color_C0C0C0</item>
+    </style>
+
+    <style name="AppThemePinkDream" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_F38DC7</item>
+        <item name="colorSecondary">@color/color_D19DBB</item>
+        <item name="colorPrimaryDark">@color/color_BF5D96</item>
+        <item name="android:colorBackground">@color/color_FFEFFF</item>
+        <item name="colorAccent">@color/color_F38DC7</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_F38DC7</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_80F38DC7</item>
+        <item name="attrTextColorDrawerAndStatus">@color/color_9F6E8B</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/color_9F6E8B</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_FFEFFF</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_D19DBB</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_903B6E</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_903B6E</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_903B6E</item>
+        <item name="attrTextColorEnterCode">@color/color_903B6E</item>
+        <item name="attrTextColorButtonTint">@color/color_903B6E</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_903B6E</item>
+        <item name="attrStrokeColorButtonTint">@color/color_903B6E</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_F38DC7</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_E6E6E6</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_FFCEED</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_903B6E</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_903B6E</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_903B6E</item>
+        <item name="attrBackgroundColorBackground">@color/color_FFEFFF</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9F6E8B</item>
+        <item name="attrIconTintArrow">@color/color_9F6E8B</item>
+        <item name="attrTextColorColorPrimary">@color/color_F38DC7</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_903B6E</item>
+        <item name="attrBackgroundMyMessage">@color/color_903B6E</item>
+        <item name="attrBackgroundBatchMessage">@color/color_903B6E</item>
+        <item name="attrColorTrackColor">@color/color_F38DC7</item>
+        <item name="android:itemBackground">@color/color_FFEFFF</item>
+        <item name="android:panelFullBackground">@color/color_FFEFFF</item>
+        <item name="attrSeparatorColor">@color/color_903B6E</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_FFEFFF</item>
+        <item name="attrBackgroundColorActionMode">@color/color_BF5D96</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/color_9F6E8B</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_903B6E</item>
+        <item name="attrTextColorHint">@color/secondaryTextColor</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_D19DBB</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_FBC1E4</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_BF5D96</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_703E5C</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_light</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_light
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_light
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_light
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_light
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_light
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_light
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
+    </style>
+
+    <style name="AppThemeClearSky" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_4AA3D9</item>
+        <item name="colorSecondary">@color/color_CCCCCC</item>
+        <item name="colorPrimaryDark">@color/color_0074A7</item>
+        <item name="android:colorBackground">@color/color_E6F2FF</item>
+        <item name="colorAccent">@color/color_4AA3D9</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_4AA3D9</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_804AA3D9</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorEnterCode">@color/color_4D4D4D</item>
+        <item name="attrTextColorButtonTint">@color/color_0074A7</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_0074A7</item>
+        <item name="attrStrokeColorButtonTint">@color/color_0074A7</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_82D4FF</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_E6E6E6</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_0074A7</item>
+        <item name="attrBackgroundColorBackground">@color/color_E6F2FF</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
+        <item name="attrIconTintArrow">@color/color_9B9B9B</item>
+        <item name="attrTextColorColorPrimary">@color/color_4AA3D9</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_0074A7</item>
+        <item name="attrBackgroundMyMessage">@color/color_0074A7</item>
+        <item name="attrBackgroundBatchMessage">@color/color_0074A7</item>
+        <item name="attrColorTrackColor">@color/color_4AA3D9</item>
+        <item name="android:itemBackground">@color/color_E6F2FF</item>
+        <item name="android:panelFullBackground">@color/color_E6F2FF</item>
+        <item name="attrSeparatorColor">@color/color_0074A7</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_E6F2FF</item>
+        <item name="attrBackgroundColorActionMode">@color/color_0074A7</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/color_9B9B9B</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_4D4D4D</item>
+        <item name="attrTextColorHint">@color/colorSecondary</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_62C3EF</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_C4E3F1</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_035B81</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_9B9B9B</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_light</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_light
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_light
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_light
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_light
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_light
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_light
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
+    </style>
+
+    <style name="AppThemePurpleBluebonnets" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_7D366F</item>
+        <item name="colorSecondary">@color/color_CCCCCC</item>
+        <item name="colorPrimaryDark">@color/color_7D5B76</item>
+        <item name="android:colorBackground">@color/color_F2F2F2</item>
+        <item name="colorAccent">@color/color_7D366F</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_7D366F</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_807D366F</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_CCCCCC</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_4D4D4D</item>
+        <item name="attrTextColorEnterCode">@color/color_4D4D4D</item>
+        <item name="attrTextColorButtonTint">@color/color_7D366F</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_7D366F</item>
+        <item name="attrStrokeColorButtonTint">@color/color_7D366F</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_E6E6E6</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_4D4D4D</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_7D366F</item>
+        <item name="attrBackgroundColorBackground">@color/color_F2F2F2</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
+        <item name="attrIconTintArrow">@color/color_9B9B9B</item>
+        <item name="attrTextColorColorPrimary">@color/color_7D366F</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_7D5B76</item>
+        <item name="attrBackgroundMyMessage">@color/color_7D5B76</item>
+        <item name="attrBackgroundBatchMessage">@color/color_7D5B76</item>
+        <item name="attrColorTrackColor">@color/color_7D366F</item>
+        <item name="android:itemBackground">@color/color_F2F2F2</item>
+        <item name="android:panelFullBackground">@color/color_F2F2F2</item>
+        <item name="attrSeparatorColor">@color/color_7D366F</item>
+        <item name="attrBackgroundColorActionMode">@color/color_7D5B76</item>
+        <item name="attrFabIconColor">@color/fabIconColor</item>
+        <item name="attrActionBarItemBackground">@color/color_9B9B9B</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_4D4D4D</item>
+        <item name="attrTextColorHint">@color/colorSecondary</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/colorTextIncomingMessage</item>
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_D8AFCE</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_703E5C</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_9B9B9B</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_light</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_light
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_light
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_light
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_light
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_light
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_light
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical</item>
+    </style>
+
+    <style name="AppThemeCamouflage" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_031E03</item>
+        <item name="colorSecondary">@color/color_38732C</item>
+        <item name="colorPrimaryDark">@color/color_002100</item>
+        <item name="android:colorBackground">@color/color_001600</item>
+        <item name="colorAccent">@color/color_031E03</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_031E03</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_80031E03</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_38732C</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrTextColorDrawerAndStatus">@color/white</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/white</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_38732C</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_59BC88</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_59BC88</item>
+        <item name="attrTextColorEnterCode">@color/color_59BC88</item>
+        <item name="attrTextColorButtonTint">@color/color_3CB043</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_3CB043</item>
+        <item name="attrStrokeColorButtonTint">@color/color_3CB043</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_031E03</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_002100</item>
+        <item name="attrTextColorColorTextMyMessage">@color/white</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_59BC88</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_3CB043</item>
+        <item name="attrBackgroundColorBackground">@color/color_001600</item>
+        <item name="attrTintColorSecondaryDark">@color/color_9B9B9B</item>
+        <item name="attrIconTintArrow">@color/color_9B9B9B</item>
+        <item name="attrTextColorColorPrimary">@color/color_031E03</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_3CB043</item>
+        <item name="attrBackgroundMyMessage">@color/color_3CB043</item>
+        <item name="attrBackgroundBatchMessage">@color/color_002100</item>
+        <item name="attrBackgroundColorActionMode">@color/color_002100</item>
+        <item name="attrFabIconColor">@color/color_002100</item>
+        <item name="attrActionBarItemBackground">@color/color_59BC88</item>
+        <item name="attrConversationIconColor">@color/white</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_59BC88</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_001600</item>
+        <item name="attrTextColorHint">@color/white</item>
+        <item name="attrBackgroundTintIconToolbar">@color/white</item>
+        <item name="attrTextColorNicknameConversation">@color/color_3CB043</item>
+        <item name="attrTextColorNameConversation">@color/color_59BC88</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/white</item>
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_426842</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_9B9B9B</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_004500</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_F2F2F2</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_dark</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_dark
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_dark
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_dark
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_dark
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
+    </style>
+
+    <style name="AppThemeBlackGoldAlloy" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_282828</item>
+        <item name="colorSecondary">@color/color_8F8F8F</item>
+        <item name="colorPrimaryDark">@color/color_000000</item>
+        <item name="android:colorBackground">@color/color_121212</item>
+        <item name="colorAccent">@color/color_282828</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_282828</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_80282828</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_8F8F8F</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_F2F2F2</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_F2F2F2</item>
+        <item name="attrTextColorEnterCode">@color/color_F2F2F2</item>
+        <item name="attrTextColorButtonTint">@color/color_D8A605</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_D8A605</item>
+        <item name="attrStrokeColorButtonTint">@color/color_D8A605</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_282828</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_121212</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_F2F2F2</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_D8A605</item>
+        <item name="attrBackgroundColorBackground">@color/color_121212</item>
+        <item name="attrTintColorSecondaryDark">@color/color_D8A605</item>
+        <item name="attrIconTintArrow">@color/color_D8A605</item>
+        <item name="attrTextColorColorPrimary">@color/color_282828</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_D8A605</item>
+        <item name="attrBackgroundMyMessage">@color/color_D8A605</item>
+        <item name="attrBackgroundBatchMessage">@color/color_000000</item>
+        <item name="attrBackgroundColorActionMode">@color/color_000000</item>
+        <item name="attrFabIconColor">@color/color_000000</item>
+        <item name="attrActionBarItemBackground">@color/white</item>
+        <item name="attrConversationIconColor">@color/color_D8A605</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_121212</item>
+        <item name="attrTextColorHint">@color/white</item>
+        <item name="attrBackgroundTintIconToolbar">@color/color_D8A605</item>
+        <item name="attrTextColorNicknameConversation">@color/color_D8A605</item>
+        <item name="attrTextColorNameConversation">@color/white</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/white</item>
+        <item name="attrSeekbarProgressTint">@color/colorSecondaryLight</item>
+        <item name="attrSeekbarThumbTint">@color/colorSecondary</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_775B09</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_9B9B9B</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_423F3F</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_F2F2F2</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_dark</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_dark
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_dark
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_dark
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_dark
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
+    </style>
+
+    <style name="AppThemeColdOcean" parent="AppTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_2A2C45</item>
+        <item name="colorSecondary">@color/color_81819E</item>
+        <item name="colorPrimaryDark">@color/color_01001E</item>
+        <item name="android:colorBackground">@color/color_20202E</item>
+        <item name="colorAccent">@color/color_2A2C45</item>
+        <item name="colorControlNormal">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorPrimary">@color/color_2A2C45</item>
+        <item name="attrBackgroundColorPrimary50">@color/color_802A2C45</item>
+        <item name="attrTextColorPrimaryTextColor">@color/color_F2F2F2</item>
+        <item name="attrIconTintWhite">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionOtherColor">@color/color_2A2C45</item>
+        <item name="attrBackgroundTintColorSecondary">@color/color_81819E</item>
+        <item name="attrTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrTextColorBodyYourQuote">@color/color_59BC88</item>
+        <item name="attrTextColorBodyMyQuote">@color/color_59BC88</item>
+        <item name="attrTextColorEnterCode">@color/color_59BC88</item>
+        <item name="attrTextColorButtonTint">@color/color_59BC88</item>
+        <item name="attrColorTextButtonTintCamera">@color/color_2A2C45</item>
+        <item name="attrStrokeColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrRippleColorRippleTint">@color/ripple_tint</item>
+        <item name="attrTextColorRed">@color/color_DA5E58</item>
+        <item name="attrStrokeColorRed">@color/color_DA5E58</item>
+        <item name="attrRippleColorRed">@color/ripple_red</item>
+        <item name="attrTextColorWhite">@color/color_F2F2F2</item>
+        <item name="attrTextBadge">@color/color_F2F2F2</item>
+        <item name="attrBackgroundSectionColor">@color/color_2A2C45</item>
+        <item name="attrTextColorDrawerAndStatus">@color/color_F2F2F2</item>
+        <item name="attrTextColorMessageAndTimeHome">@color/color_F2F2F2</item>
+        <item name="attrTextColorColorTextMyMessage">@color/color_4D4D4D</item>
+        <item name="attrTextColorColorTextIncomingMessage">@color/color_59BC88</item>
+        <item name="attrTextColorLinkTextColor">@color/color_29ABE2</item>
+        <item name="attrTextColorColorError">@color/color_EF5350</item>
+        <item name="attrHintTextColorSecondaryTextColor">@color/color_59BC88</item>
+        <item name="attrBackgroundTintButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundColorBackground">@color/color_20202E</item>
+        <item name="attrTintColorSecondaryDark">@color/color_59BC88</item>
+        <item name="attrIconTintArrow">@color/color_59BC88</item>
+        <item name="attrTextColorColorPrimary">@color/color_2A2C45</item>
+        <item name="attrBoxStrokeColorTextInputLayoutBoxColor">@color/textinput_layout_box_color
+        </item>
+        <item name="attrBoxStrokeErrorColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorTextColorColorError">@color/color_EF5350</item>
+        <item name="attrErrorIconTintColorError">@color/color_EF5350</item>
+        <item name="attrColorButtonTint">@color/color_F2F2F2</item>
+        <item name="attrBackgroundMyMessage">@color/color_F2F2F2</item>
+        <item name="attrBackgroundBatchMessage">@color/color_2A2C45</item>
+        <item name="attrBackgroundColorActionMode">@color/color_01001E</item>
+        <item name="attrFabIconColor">@color/color_2A2C45</item>
+        <item name="attrActionBarItemBackground">@color/color_59BC88</item>
+        <item name="attrConversationIconColor">@color/color_59BC88</item>
+        <item name="attrBackgroundColorBackgroundDialog">@color/color_20202E</item>
+        <item name="attrIconAndTextColorDrawer">@color/color_59BC88</item>
+        <item name="attrTextColorHint">@color/white</item>
+        <item name="attrBackgroundTintIconToolbar">@color/color_59BC88</item>
+        <item name="attrTextColorNicknameConversation">@color/white</item>
+        <item name="attrTextColorNameConversation">@color/color_59BC88</item>
+        <item name="attrTextColorHintConversationInputPanel">@color/searchViewHintColor</item>
+        <item name="attrTextColorConversationInputPanel">@color/white</item>
+        <item name="attrSeekbarProgressTint">@color/color_B1B0CF</item>
+        <item name="attrSeekbarThumbTint">@color/color_81819E</item>
+        <item name="attrBackgroundColorQuoteMyMessage">@color/color_81819E</item>
+        <item name="attrBackgroundColorQuoteIncomingMessage">@color/color_A19EA5</item>
+        <item name="attrIdentifierColorMyQuote">@color/color_2F2D77</item>
+        <item name="attrIdentifierColorYourQuote">@color/color_59BC88</item>
+        <item name="attrImageEmptyStateHome">@drawable/image_empty_state_home_dark</item>
+        <item name="attrImageEmptyStateFriendshipRequest">
+            @drawable/image_empty_state_friendship_request_dark
+        </item>
+        <item name="attrImageEmptyStateNoContacts">@drawable/image_empty_state_no_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateSearchContact">
+            @drawable/image_empty_state_search_contacts_dark
+        </item>
+        <item name="attrImageEmptyStateBlockContact">
+            @drawable/image_empty_state_block_contact_dark
+        </item>
+        <item name="attrImageEmptyStateInfoRecovery">
+            @drawable/image_empty_state_info_recovery_dark
+        </item>
+        <item name="attrImageEmptyStateRecoveryAccount">
+            @drawable/image_empty_state_recovery_account_dark
+        </item>
+        <item name="attrLogoAbout">@drawable/logo_napoleon_vertical_white</item>
+    </style>
+
+    <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">?attr/attrBackgroundTintIconToolbar</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">?attr/attrBackgroundColorBackgroundDialog</item>
+        <item name="android:textColorPrimary">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
+    <style name="AppPrimaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="background">?attr/attrBackgroundColorPrimary</item>
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="layout_constraintWidth_percent">@dimen/width_app_button</item>
+    </style>
+
+    <style name="AppPrimaryButton.Icon" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:background">?attr/attrBackgroundColorPrimary</item>
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="layout_constraintWidth_percent">@dimen/width_app_button</item>
+        <item name="iconTint">?attr/attrIconTintWhite</item>
+    </style>
+
+    <style name="AppSecondaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">?attr/attrBackgroundTintColorSecondary</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AppOutlinedPrimaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
+        <item name="strokeColor">?attr/attrStrokeColorButtonTint</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AppOutlinedPrimaryButtonSmall" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/green</item>
+        <item name="iconTint">@null</item>
+        <item name="android:textSize">@dimen/minor_text_size</item>
+        <item name="strokeColor">@color/green</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="rippleColor">?attr/attrRippleColorRippleTint</item>
+    </style>
+
+    <style name="AppOutlinedPrimaryButtonSmall.Red" parent="AppOutlinedPrimaryButtonSmall">
+        <item name="android:textColor">?attr/attrTextColorRed</item>
+        <item name="strokeColor">?attr/attrStrokeColorRed</item>
+        <item name="rippleColor">?attr/attrRippleColorRed</item>
+    </style>
+
+    <style name="AppPrimaryButtonText.Keyboard" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">?attr/attrColorButtonTint</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="tint">?attr/attrColorButtonTint</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="AppPrimaryButtonText" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">?attr/attrColorButtonTint</item>
+        <item name="android:textSize">@dimen/normal_button_text_size</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AppPrimaryButtonText.Primary">
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
+    </style>
+
+    <style name="AppPrimaryButtonText.Primary.Camera">
+        <item name="android:textColor">?attr/attrColorTextButtonTintCamera</item>
+    </style>
+
+    <style name="TextViewPrimaryTitle">
+        <item name="android:textSize">@dimen/title_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorPrimaryTextColor</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextViewSecondaryTitle">
+        <item name="android:textSize">@dimen/title_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextViewSecondaryTitle.White">
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
+    </style>
+
+    <style name="BodyTextView">
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
+    <style name="BodyTextView.nickname">
+        <item name="android:textSize">@dimen/normal_text_size</item>
+    </style>
+
+    <style name="BodyTextView.message">
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorMessageAndTimeHome</item>
+    </style>
+
+    <style name="BodyTextView.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="BodyTextView.White">
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
+    </style>
+
+    <style name="CallTitle">
+        <item name="android:textSize">@dimen/text_size_call_title</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CallDuration">
+        <item name="android:textSize">@dimen/text_size_call_duration</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CallCalling">
+        <item name="android:textSize">@dimen/text_size_calling</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CallNickname">
+        <item name="android:textSize">@dimen/text_size_call_nickname</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextViewListTitle" parent="BodyTextView.Bold">
+        <item name="android:background">?attr/attrBackgroundSectionOtherColor</item>
+        <item name="android:padding">@dimen/small_padding</item>
+
+    </style>
+
+    <style name="BodyTextView.Tint">
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
+    </style>
+
+    <style name="BodyTextView.SecondaryForAll">
+        <item name="android:textColor">@color/secondaryTextColorForAll</item>
+    </style>
+
+    <style name="MyMessageTextView">
+        <item name="android:layout_marginBottom">@dimen/x_small_margin</item>
+        <item name="android:textSize">@dimen/text_size_message</item>
+        <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:textColorLink">?attr/attrTextColorColorTextMyMessage</item>
+    </style>
+
+    <style name="TextCountDownSelfDestruct">
+        <item name="android:layout_width">@dimen/width_self_destruct_time</item>
+        <item name="android:layout_height">@dimen/height_self_destruct_time</item>
+        <item name="android:layout_marginStart">@dimen/small_padding</item>
+        <item name="android:layout_marginEnd">@dimen/small_padding</item>
+        <item name="android:background">@drawable/bg_self_destruct_time_my_message</item>
+        <item name="android:elevation">1dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">?attr/attrTextColorTimeMyMessage</item>
+        <item name="android:textSize">@dimen/text_size_self_destruct_time</item>
+    </style>
+
+    <style name="IncomingMessageTextView">
+        <item name="android:layout_marginBottom">@dimen/x_small_margin</item>
+        <item name="android:textSize">@dimen/text_size_message</item>
+        <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:textColorLink">?attr/attrTextColorColorTextIncomingMessage</item>
+    </style>
+
+    <style name="SmallBodyTextView">
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
+    <style name="SmallBodyTextView.Time">
+        <item name="android:textSize">@dimen/minor_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorMessageAndTimeHome</item>
+    </style>
+
+    <style name="SmallBodyTextView.Link">
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorLinkTextColor</item>
+    </style>
+
+    <style name="SmallBodyTextView.Error" parent="SmallBodyTextView">
+        <item name="android:textColor">?attr/attrTextColorColorError</item>
+    </style>
+
+    <style name="SmallBodyTextView.White" parent="SmallBodyTextView">
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
+    </style>
+
+    <style name="MyMessageDateTextView">
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_marginEnd">@dimen/x_x_small_margin</item>
+        <item name="android:paddingStart">@dimen/x_x_small_margin</item>
+        <item name="android:paddingEnd">@dimen/x_x_small_margin</item>
+        <item name="android:textColor">?attr/attrTextColorColorTextMyMessage</item>
+        <item name="android:textSize">@dimen/text_size_message_date</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="IncomingMessageDateTextView" parent="MyMessageDateTextView">
+        <item name="android:textColor">?attr/attrTextColorColorTextIncomingMessage</item>
+    </style>
+
+    <style name="MyMessageStatus">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">1dp</item>
+    </style>
+
+    <style name="SmallBodyTextView.WhiteBold" parent="SmallBodyTextView">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MinorBodyTextView">
+        <item name="android:textSize">@dimen/minor_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+    </style>
+
+    <style name="MinorBodyTextView.White" parent="MinorBodyTextView">
+        <item name="android:textColor">?attr/attrTextColorWhite</item>
+    </style>
+
+    <style name="MinorBodyTextViewBadge" parent="MinorBodyTextView">
+        <item name="android:textColor">?attr/attrTextBadge</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+
+    <style name="TextViewEnterCodeStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/height_editText_enter_code</item>
+        <item name="android:background">@drawable/bg_enter_code</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">?attr/attrTextColorEnterCode</item>
+        <item name="android:textSize">@dimen/text_size_editText_enter_code</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:hint">@string/middle_dash</item>
+    </style>
+
+    <style name="TextInputLayoutOutlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">?attr/attrHintTextColorSecondaryTextColor</item>
+        <item name="android:textColorHint">?attr/attrTextColorConversationInputPanel</item>
+        <item name="boxStrokeColor">@color/textinput_layout_box_color</item>
+        <item name="boxStrokeErrorColor">?attr/attrBoxStrokeErrorColorColorError</item>
+        <item name="android:colorAccent">?attr/attrColorButtonTint</item>
+        <item name="errorTextColor">?attr/attrErrorTextColorColorError</item>
+        <item name="errorIconTint">?attr/attrErrorIconTintColorError</item>
+    </style>
+
+    <style name="EditTextInputPanel" parent="Widget.AppCompat.EditText">
+        <item name="hintTextColor">?attr/attrHintTextColorSecondaryTextColor</item>
+        <item name="android:textColor">?attr/attrTextColorColorPrimary</item>
+    </style>
+
+    <style name="OptionEndIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">?attr/attrTintColorSecondaryDark</item>
+    </style>
+
+    <style name="OptionStartIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">?attr/attrTintColorSecondaryDark</item>
+    </style>
+
+    <style name="Option">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_white_with_separator</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:padding">@dimen/normal_padding</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="Option.WithOutLine">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="OptionTitle" parent="BodyTextView.Bold">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/normal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/normal_margin</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">3</item>
+    </style>
+
+    <style name="OptionValue" parent="SmallBodyTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">?attr/attrColorButtonTint</item>
+    </style>
+
+    <style name="AccessPinEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:digits">@string/only_numbers</item>
+        <item name="android:inputType">numberPassword</item>
+        <item name="android:lines">1</item>
+        <item name="android:maxLength">4</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="ConversationToolbarIcon">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="CardViewAttachmentItem">
+        <item name="android:selectable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_marginEnd">@dimen/normal_margin</item>
+        <item name="android:layout_marginBottom">@dimen/normal_margin</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="ImageViewAttachment">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="TextViewAttachment" parent="BodyTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">@dimen/minor_text_size</item>
+    </style>
+
+    <style name="TextViewCountTime">
+        <item name="android:textSize">@dimen/count_time_size</item>
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="BackgroundSpinner">
+        <item name="android:background">@drawable/bg_spinner</item>
+    </style>
+
+    <style name="FabPrimary">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">?attr/attrBackgroundTintButtonTint</item>
+    </style>
+
+    <style name="RadioButtonTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layoutDirection">rtl</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/attrTextColorSecondaryTextColor</item>
+        <item name="android:background">@drawable/bg_white_with_separator</item>
+    </style>
+
+    <style name="SearchStyle">
+        <item name="android:digits">@string/nickname_configuration</item>
+    </style>
+
+    <style name="OnlyLettersUpperCaseAndNumbers">
+        <item name="android:digits">@string/only_letters_upper_case_and_numbers</item>
+    </style>
+
+    <style name="OnlyLetters">
+        <item name="android:digits">@string/only_letters</item>
+    </style>
+
+    <style name="SearchStyleLocation">
+        <item name="android:digits">@string/location_configuration</item>
+    </style>
+
+    <style name="MyAppActionBarTheme" parent="android:Theme.Holo.Light">
+        <item name="android:popupMenuStyle">@style/MyApp.PopupMenu</item>
+    </style>
+
+    <style name="MyApp.PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">?attr/attrBackgroundColorBackground</item>
+    </style>
+
+    <style name="FabGoDown">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">?attr/attrBackgroundColorActionMode</item>
+        <item name="titleTextStyle">@style/ActionModeTitleTextStyle</item>
+    </style>
+
+    <style name="ActionModeTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AudioPlayerControlStyle">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="AudioPlayerControlStyle.Incoming">
+        <item name="android:tint">@color/colorTextIncomingMessage</item>
+    </style>
+
+    <style name="SeekbarMyMessageStyle">
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:max">100</item>
+        <item name="android:progressBackgroundTint">@color/black</item>
+        <item name="android:progressTint">@color/white</item>
+        <item name="android:thumbTint">@color/colorSecondary</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="ConversationCallButton">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:textOn">@null</item>
+        <item name="android:textOff">@null</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginBottom">@dimen/x_small_margin</item>
+    </style>
+
+    <style name="AppOutlinedPrimaryButtonPackage" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/attrTextColorButtonTint</item>
+        <item name="strokeColor">?attr/attrStrokeColorButtonTint</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingTop">@dimen/x_small_padding</item>
+        <item name="android:paddingBottom">@dimen/x_small_padding</item>
+    </style>
+
+    <style name="ContainerMessage">
+        <item name="android:paddingStart">@dimen/normal_padding</item>
+        <item name="android:paddingEnd">@dimen/normal_padding</item>
+        <item name="android:paddingBottom">@dimen/x_small_padding</item>
+    </style>
+
+    <style name="ContainerMyMessageBubble">
+        <item name="android:layout_marginTop">@dimen/l_small_margin</item>
+        <item name="android:background">@drawable/bg_my_message</item>
+        <item name="android:minWidth">110dp</item>
+        <item name="android:paddingStart">@dimen/small_padding</item>
+        <item name="android:paddingEnd">@dimen/small_padding</item>
+        <item name="android:paddingTop">@dimen/l_small_padding</item>
+        <item name="android:paddingBottom">@dimen/x_small_padding</item>
+    </style>
+
+    <style name="ContainerIncomingMessageBubble" parent="ContainerMyMessageBubble">
+        <item name="android:background">@drawable/bg_incoming_message</item>
+    </style>
+
+    <style name="ButtonState">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_margin">@dimen/small_margin</item>
+        <item name="android:padding">@dimen/x_small_padding</item>
+        <item name="android:background">@drawable/bg_black_40</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="CircleProgressBar">
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:visibility">gone</item>
+        <item name="progressbarColor">?attr/attrTintProgressBar</item>
+        <item name="progressBarThickness">3dp</item>
+        <item name="progress">0</item>
+    </style>
+
+    <style name="ProgressIndeterminate">
+        <item name="android:layout_width">43dp</item>
+        <item name="android:layout_height">43dp</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:progressBackgroundTint">?attr/attrSeekbarProgressTint</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="QuoteConversation">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:minWidth">250dp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="italicText">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorMessageAndTimeHome</item>
+    </style>
+
+    <style name="normalText">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">?attr/attrTextColorMessageAndTimeHome</item>
+    </style>
+
+    <style name="imageAvatarItem">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:layout_marginStart">@dimen/normal_margin</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+        <item name="android:background">@drawable/border_avatar_contact</item>
+    </style>
+
+    <style name="TextViewReturnCall" parent="BodyTextView.Bold">
+        <item name="android:background">@color/green</item>
+        <item name="android:paddingStart">@dimen/normal_padding</item>
+        <item name="android:paddingTop">@dimen/small_padding</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingBottom">@dimen/small_padding</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+</resources>

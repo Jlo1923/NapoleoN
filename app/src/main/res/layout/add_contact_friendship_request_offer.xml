@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.napoleonchat.ui.addContact.adapter.FriendshipRequestAdapter.ClickListener" />
+
+        <variable
+            name="friendshipRequest"
+            type="com.naposystems.napoleonchat.entity.addContact.FriendShipRequest" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_home_item"
+        android:paddingStart="@dimen/normal_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingEnd="@dimen/normal_padding"
+        android:paddingBottom="@dimen/small_padding">
+
+        <ImageView
+            android:id="@+id/imageView_user_image"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/border_avatar_contact"
+            app:avatar="@{friendshipRequest.contact}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/textView_user_name"
+            style="@style/BodyTextView.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginBottom="@dimen/x_small_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:name="@{friendshipRequest.contact}"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/textView_user_nickname"
+            style="@style/BodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="?attr/attrColorButtonTint"
+            app:layout_constraintEnd_toEndOf="@id/textView_user_name"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            app:nickname="@{friendshipRequest.contact}"
+            tools:text="@tools:sample/first_names" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_cancel"
+            style="@style/AppOutlinedPrimaryButtonSmall.Red"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/x_small_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/small_padding"
+            android:text="@string/text_cancel"
+            android:textAlignment="textStart"
+            android:textAllCaps="true"
+            app:icon="@drawable/ic_close_black_24"
+            app:iconTint="@color/red"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@id/textView_user_nickname" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

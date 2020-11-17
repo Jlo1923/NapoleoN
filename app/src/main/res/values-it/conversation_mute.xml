@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_silence_conversation">Conversazione muta</string>
+    <string name="text_one_hours">1 Ora</string>
+    <string name="text_eight_hours">8 Ore</string>
+    <string name="text_one_days">1 Giorno</string>
+    <string name="text_one_year">1 Anno</string>
+    <string name="text_message_information">La volta successiva le notifiche verranno disattivate per questo contatto.</string>
+</resources>

@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="25dp"
+    android:height="23.061dp"
+    android:viewportWidth="25"
+    android:viewportHeight="23.061">
+  <path
+      android:pathData="M18.175,3.707L3.185,3.707A2.181,2.181 0,0 0,1 5.874L1,20.744A2.181,2.181 0,0 0,3.185 22.907h14.99a2.181,2.181 0,0 0,2.185 -2.167L20.36,5.874A2.163,2.163 0,0 0,18.175 3.707ZM3.185,21.814a1.076,1.076 0,0 1,-1.079 -1.07L2.106,19.537l3.983,-5.185a1.011,1.011 0,0 1,0.8 -0.412,1.07 1.07,0 0,1 0.83,0.329l7.191,7.572L3.185,21.841ZM19.254,20.744a1.076,1.076 0,0 1,-1.079 1.07L16.46,21.814L11.4,16.519 12.45,15.147a1.011,1.011 0,0 1,0.8 -0.412,1.07 1.07,0 0,1 0.83,0.329l5.172,5.432ZM19.254,18.906 L14.884,14.324a2.2,2.2 0,0 0,-1.715 -0.686,2.234 2.234,0 0,0 -1.632,0.85l-0.94,1.207 -2.1,-2.222a2.2,2.2 0,0 0,-1.715 -0.686,2.234 2.234,0 0,0 -1.632,0.85l-3.042,4.088L2.108,5.874a1.076,1.076 0,0 1,1.079 -1.07h14.99a1.076,1.076 0,0 1,1.079 1.07Z"
+      android:strokeWidth="0.3"
+      android:fillColor="?attr/attrColorButtonTint"
+      android:strokeColor="?attr/attrColorButtonTint" />
+  <path
+      android:pathData="M20.882,1L5.892,1A2.181,2.181 0,0 0,3.707 3.167a0.553,0.553 0,0 0,1.106 0,1.076 1.076,0 0,1 1.079,-1.07h14.99a1.076,1.076 0,0 1,1.079 1.07L21.961,18.037a1.076,1.076 0,0 1,-1.079 1.07,0.549 0.549,0 1,0 0,1.1 2.181,2.181 0,0 0,2.185 -2.167L23.067,3.167A2.163,2.163 0,0 0,20.882 1Z"
+      android:strokeWidth="0.3"
+      android:fillColor="?attr/attrColorButtonTint"
+      android:strokeColor="?attr/attrColorButtonTint" />
+  <path
+      android:pathData="M5.184,7.083a1.969,1.969 0,1 0,1.969 1.969A1.975,1.975 0,0 0,5.184 7.083ZM5.184,10.036a0.984,0.984 0,1 1,0.984 -0.984A0.987,0.987 0,0 1,5.184 10.036Z"
+      android:strokeWidth="0.3"
+      android:fillColor="?attr/attrColorButtonTint"
+      android:strokeColor="?attr/attrColorButtonTint" />
+</vector>

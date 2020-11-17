@@ -1,0 +1,349 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
+apply plugin: 'com.google.firebase.crashlytics'
+
+android {
+    signingConfigs {
+        config {
+            storeFile file('C:\\Users\\Android1\\Documents\\pepito.jks')
+            keyAlias = 'napoleonsecretchat'
+            storePassword 'gQADhnGTHEcQAn9U'
+            keyPassword 'gQADhnGTHEcQAn9U'
+        }
+    }
+    compileSdkVersion 30
+    buildToolsVersion "29.0.3"
+    defaultConfig {
+        applicationId "com.naposystems.napoleonchat"
+        minSdkVersion 24
+        targetSdkVersion 30
+        versionCode 16
+
+        versionName "1.0.0-interna16"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables.useSupportLibrary = true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation"  : "$projectDir/schemas".toString(),
+                        "room.incremental"     : "true",
+                        "room.expandProjection": "true"]
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://dev.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"dev.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://dev.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "false")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("String", "PUSHER_KEY", "\"36880baf488e08473554\"")
+        }
+        release {
+            buildConfigField("String", "BASE_URL", "\"https://prod.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"prod.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            buildConfigField("String", "PUSHER_KEY", "\"6a11211af223541f2069\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        releaseDebug {
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"https://prod.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"prod.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://prod.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            buildConfigField("String", "PUSHER_KEY", "\"6a11211af223541f2069\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
+        }
+        qaTest {
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"https://qatest.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"qatest.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-qatest.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-qatest.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://qatest.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            buildConfigField("String", "PUSHER_KEY", "\"80ce06fc03dc14b7a2dc\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
+        }
+        pruebaInterna {
+            debuggable false
+            buildConfigField("String", "BASE_URL", "\"https://dev.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"dev.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://dev.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "false")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("String", "PUSHER_KEY", "\"36880baf488e08473554\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
+        }
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    bundle {
+        language {
+            // Specifies that the app bundle should not support
+            // configuration APKs for language resources. These
+            // resources are instead packaged with each base and
+            // dynamic feature APK.
+            enableSplit = false
+        }
+        density {
+            // This property is set to true by default.
+            enableSplit = true
+        }
+        abi {
+            // This property is set to true by default.
+            enableSplit = true
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //region Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    //endregion
+
+    //region Android
+
+    //Google Billing
+    implementation "com.android.billingclient:billing:$billing_version"
+    implementation "com.android.billingclient:billing-ktx:$billing_version"
+
+    //endregion
+
+    //region Google
+
+    //ExoPlayer
+    implementation "com.google.android.exoplayer:exoplayer-core:$exo_player_version"
+
+    implementation "com.google.android.exoplayer:exoplayer-dash:$exo_player_version"
+
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exo_player_version"
+
+    //Firebase Cloud Messaging
+    implementation "com.google.firebase:firebase-messaging:$firebase_cloud_messaging_version"
+
+    //Firebase Crashlytics.
+    implementation "com.google.firebase:firebase-crashlytics:$firebase_crashlytics_version"
+
+    //Firebase Remote Config
+    implementation "com.google.firebase:firebase-config:$firebase_remote_config_version"
+
+    //Firebase Storage
+    implementation "com.google.firebase:firebase-storage:$firebase_storage_version"
+
+    //Google Analytics.
+    implementation "com.google.firebase:firebase-analytics:$google_analytics_version"
+
+    // Google Maps Utils
+    implementation "com.google.maps.android:android-maps-utils:$google_maps_utils_version"
+
+    //Google Material
+    implementation "com.google.android.material:material:$google_material_version"
+
+    // Google Places
+    implementation "com.google.android.libraries.places:places:$google_places_version"
+
+    //Location
+    implementation "com.google.android.gms:play-services-location:$play_services_location_version"
+
+    //Maps
+    implementation "com.google.android.gms:play-services-maps:$play_services_maps_version"
+
+    //endregion
+
+    //region AndroidX
+
+    //Biometric Prompt
+    implementation "androidx.biometric:biometric:$biometric_version"
+
+    //CameraX
+    implementation "androidx.camera:camera-core:$camerax_version"
+
+    // CameraX Camera2 extensions
+    implementation "androidx.camera:camera-camera2:$camera2_version"
+
+    // CameraX Lifecycle library
+    implementation "androidx.camera:camera-lifecycle:$camera_lifecycle_version"
+
+    // CameraX View class
+    implementation "androidx.camera:camera-view:$camerax_view"
+
+    //Constraint Layout
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+
+    //EmojiCompat
+    implementation "androidx.emoji:emoji:$emoji_compat_version"
+    implementation "androidx.emoji:emoji-appcompat:$emoji_compat_version"
+    implementation "androidx.emoji:emoji-bundled:$emoji_compat_version"
+
+    //Legacy Support
+    implementation "androidx.legacy:legacy-support-v4:$legacy_support_version"
+
+    //ViewModel and LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+
+    //LifeCycle
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+    //Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+
+    //Pagination
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+
+    //RecyclerView
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+
+    //Room
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
+    //Security
+    implementation "androidx.security:security-crypto:$security_version"
+
+    //endregion
+
+    //region Terceros
+
+    //Dagger
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+
+    //Giphy
+    implementation "com.giphy.sdk:ui:$giphy_version"
+
+    //Glide
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+
+    //Image Compressor
+    implementation "id.zelory:compressor:$image_compressor_version"
+
+    //Socket-io
+    implementation("io.socket:socket.io-client:$io_socket_version") {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
+
+    //Lottie
+    implementation "com.airbnb.android:lottie:$lottie_version"
+
+    //Moshi
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+
+    //Permissions
+    implementation "com.karumi:dexter:$permissions_dexter_version"
+
+    //Pusher
+    implementation "com.pusher:pusher-java-client:$pusher_version"
+
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+
+    //Coroutines to retrofit
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$retrofit_coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$retrofit_coroutines_version"
+
+    //RXKotlin & RXAndroid
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation  'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+
+    //Stetho
+    implementation "com.facebook.stetho:stetho:$stetho_version"
+    implementation "com.facebook.stetho:stetho-okhttp3:$stetho_version"
+
+    //Timber Logging
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
+    //Image Crop
+    implementation "com.github.yalantis:ucrop:$ucrop_version"
+
+    // WebRTC
+    implementation "org.webrtc:google-webrtc:$web_rtc_version"
+    //endregion
+
+    //region Testing
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
+    //endregion
+
+    //region Proyectos Adicionales
+    //Showcase
+    implementation project(':Spotlight-library')
+
+    //Video Compressor
+    implementation project(':videocompressor')
+    //endregion
+
+}
+
+apply plugin: 'com.google.gms.google-services'

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_current_status">Aktueller Status</string>
+    <string name="text_status_hint">Geben Sie einen Bundesstaat ein</string>
+    <string name="text_select_a_status">Wählen Sie einen Staat aus</string>
+    <string name="text_status_available">Verfügbar</string>
+    <string name="text_status_busy">Beschäftigt</string>
+    <string name="text_status_in_meeting">In der Besprechung</string>
+    <string name="text_status_only_messages">Nur Nachrichten</string>
+    <string name="text_status_sleeping">Schlafen</string>
+    <string name="text_status_only_emergency">Nur für Notfälle</string>
+    <string name="text_error_getting_local_status">Beim Abrufen der Status ist ein Fehler aufgetreten. Versuchen Sie es erneut</string>
+    <string name="text_delete_status">Status löschen</string>
+    <string name="text_status_updated_successfully">Status erfolgreich aktualisiert</string>
+
+</resources>

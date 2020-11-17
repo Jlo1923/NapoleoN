@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_insert_code">Enter code</string>
+    <string name="text_dont_receive_code">I didn\'t receive the code</string>
+    <string name="text_message_code_fail">The code doesn\'t match, try again</string>
+    <string name="text_number_attempts">Number of attemps: %1$d/%2$d</string>
+    <string name="text_invalid_code">Invalid code</string>
+    <plurals name="text_new_attempt_in_x_seconds">
+        <item quantity="one">New attempt in: %d second</item>
+        <item quantity="other">New attempt in: %d seconds</item>
+    </plurals>
+    <plurals name="text_new_attempt_in_x_minutes">
+        <item quantity="one">New attempt in: %d minute</item>
+        <item quantity="other">New attempt in: %d minutes</item>
+    </plurals>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/conversation_call_button_bg" />
+    <item
+        android:id="@+id/audio_player_speed_icon"
+        android:bottom="3dp"
+        android:drawable="@drawable/ic_2x_speed_black_toggle"
+        android:left="3dp"
+        android:right="3dp"
+        android:top="3dp" />
+
+</layer-list>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/attrBackgroundColorBackgroundDialog"
+        tools:context=".ui.attachment.AttachmentDialogFragment">
+
+        <View
+            android:id="@+id/view_indicator"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:background="@drawable/bg_bottom_sheet_indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
+
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:columnCount="3"
+            android:paddingStart="@dimen/normal_padding"
+            android:paddingTop="@dimen/normal_padding"
+            android:paddingEnd="0dp"
+            android:paddingBottom="@dimen/small_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_indicator">
+
+            <!-- GALLERY -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_gallery"
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="?attr/attrBackgroundColorBackgroundDialog"
+                    android:padding="@dimen/normal_padding">
+
+                    <ImageView
+                        android:id="@+id/imageView_gallery"
+                        style="@style/ImageViewAttachment"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_gallery" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/text_gallery"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CAMERA -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_camera"
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="?attr/attrBackgroundColorBackgroundDialog"
+                    android:padding="@dimen/normal_padding">
+
+                    <ImageView
+                        android:id="@+id/imageView_camera"
+                        style="@style/ImageViewAttachment"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_camera" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_camera"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- LOCATION -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_location"
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="?attr/attrBackgroundColorBackgroundDialog"
+                    android:padding="@dimen/normal_padding">
+
+                    <ImageView
+                        android:id="@+id/imageView_location"
+                        style="@style/ImageViewAttachment"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_location_" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_location"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- AUDIO -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_audio"
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="?attr/attrBackgroundColorBackgroundDialog"
+                    android:padding="@dimen/normal_padding">
+
+                    <ImageView
+                        android:id="@+id/imageView_audio"
+                        style="@style/ImageViewAttachment"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_audio" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_audio"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- DOCUMENT -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_document"
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="?attr/attrBackgroundColorBackgroundDialog"
+                    android:padding="@dimen/normal_padding">
+
+                    <ImageView
+                        android:id="@+id/imageView_document"
+                        style="@style/ImageViewAttachment"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_document" />
+
+                    <TextView
+                        style="@style/TextViewAttachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_document"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CLOSE -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_close"
+                style="@style/CardViewAttachmentItem"
+                app:cardElevation="@dimen/elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="?attr/attrBackgroundColorBackgroundDialog">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_close"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        app:srcCompat="@drawable/ic_arrow_down_black"
+                        android:tint="?attr/attrTextColorSecondaryTextColor"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

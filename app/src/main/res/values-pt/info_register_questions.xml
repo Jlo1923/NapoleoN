@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_info_register_account">Na conta de informações de recuperação de gravação / edição, você deve adicionar um mínimo de 3 e um máximo de 5 perguntas, que será mostrado no momento de recuperar a sua conta</string>
+    <string name="text_title_info">Importante</string>
+</resources>
