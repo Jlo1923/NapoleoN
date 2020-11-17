@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.editAccessPin.EditAccessPinFragment">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imageView_empty_state"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                    app:layout_constraintHeight_percent="0.3"
+                    app:layout_constraintStart_toStartOf="@id/guideline_start"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="?attr/attrImageEmptyStateInfoRecovery" />
+
+                <TextView
+                    android:id="@+id/textView_info"
+                    style="@style/BodyTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:text="@string/text_edit_access_pin"
+                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                    app:layout_constraintStart_toStartOf="@id/guideline_start"
+                    app:layout_constraintTop_toBottomOf="@id/imageView_empty_state" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_old_access_pin"
+                    style="@style/TextInputLayoutOutlined"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:hint="@string/text_old_access_pin"
+                    android:nextFocusDown="@id/textInputLayout_access_pin"
+                    app:errorEnabled="true"
+                    app:layout_constraintBottom_toTopOf="@+id/textInputLayout_access_pin"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+                    app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_info"
+                    app:layout_constraintVertical_chainStyle="packed">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_old_access_pin"
+                        style="@style/AccessPinEditText"
+                        android:text="@{viewModel.oldAccessPin}"
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_access_pin"
+                    style="@style/TextInputLayoutOutlined"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:hint="@string/text_new_access_pin"
+                    android:nextFocusDown="@id/text_input_layout_confirm_access_pin"
+                    app:errorEnabled="true"
+                    app:layout_constraintBottom_toTopOf="@+id/text_input_layout_confirm_access_pin"
+                    app:layout_constraintEnd_toEndOf="@+id/textInputLayout_old_access_pin"
+                    app:layout_constraintStart_toStartOf="@+id/textInputLayout_old_access_pin"
+                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout_old_access_pin">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_access_pin"
+                        style="@style/AccessPinEditText"
+                        android:text="@{viewModel.newAccessPin}"
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_layout_confirm_access_pin"
+                    style="@style/TextInputLayoutOutlined"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:layout_marginBottom="@dimen/normal_margin"
+                    android:hint="@string/text_confirm_access_pin"
+                    app:errorEnabled="true"
+                    app:layout_constraintBottom_toTopOf="@+id/viewSwitcher"
+                    app:layout_constraintEnd_toEndOf="@+id/textInputLayout_access_pin"
+                    app:layout_constraintStart_toStartOf="@+id/textInputLayout_access_pin"
+                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout_access_pin">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_confirm_access_pin"
+                        style="@style/AccessPinEditText"
+                        android:imeOptions="actionDone"
+                        android:text="@{viewModel.confirmAccessPin}"
+                        android:textColor="?attr/attrTextColorConversationInputPanel" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ViewSwitcher
+                    android:id="@+id/viewSwitcher"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/x_large_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                    app:layout_constraintStart_toStartOf="@id/guideline_start"
+                    app:layout_constraintWidth_percent="@dimen/width_app_button">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_edit"
+                        style="@style/AppPrimaryButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:text="@string/text_edit" />
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal" />
+                </ViewSwitcher>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="@dimen/normal_margin" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="@dimen/normal_margin" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

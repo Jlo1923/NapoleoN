@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_message_self_destruction">Auto-destruição da mensagem</string>
+    <string name="text_every_five_minutes">5 minutos</string>
+    <string name="text_every_fifteen_minutes">15 minutos</string>
+    <string name="text_every_thirty_minutes">30 minutos</string>
+    <string name="text_every_one_hour">1 hora</string>
+    <string name="text_every_six_hours">6 horas</string>
+    <string name="text_every_twenty_four_hours">24 horas</string>
+    <string name="text_info_message_self_destruction">As mensagens enviadas serão apagados depois de o tempo seleccionado, depois de terem sido visto ou ouvido.</string>
+    <string name="text_every_seven_days">7 dias</string>
+    <string name="text_every_five_seconds">5 segundos</string>
+    <string name="text_every_fifteen_seconds">15 segundos</string>
+    <string name="text_every_thirty_seconds">30 segundos</string>
+    <string name="text_every_one_minute">1 minuto</string>
+    <string name="text_every_ten_minutes">10 minutos</string>
+    <string name="text_every_twelve_hours">12 horas</string>
+    <string name="text_every_one_day">1 dia</string>
+    <string name="text_info_conversation_message_self_destruction">Mensagens enviadas nesta conversa serão apagados após o tempo selecionado.</string>
+    <string name="text_info_message_autodestruction_time_failed_messages">mensagens enviadas em conversas que não atingem o seu destino ou não são lidos, serão apagados após o tempo selecionado</string>
+</resources>

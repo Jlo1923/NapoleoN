@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="file"
+            type="java.io.File" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.napoleonchat.ui.napoleonKeyboardStickerPage.adapter.NapoleonKeyboardStickerPageAdapter.NapoleonKeyboardStickerPageListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginStart="@dimen/x_small_margin"
+        android:layout_marginEnd="@dimen/x_small_margin"
+        android:onClick="@{() -> clickListener.onGifSelected(file)}">
+
+        <com.naposystems.napoleonchat.ui.custom.imageViewProgress.ImageViewProgress
+            android:id="@+id/imageView_progress"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            custom:layout_constraintBottom_toBottomOf="parent"
+            custom:layout_constraintEnd_toEndOf="parent"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toTopOf="parent"
+            custom:progressbarColor="?attr/attrBackgroundColorPrimary" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

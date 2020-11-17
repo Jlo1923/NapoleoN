@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_section_system_themes">TEMAS DEL SISTEMA</string>
+    <string name="text_section_dark_themes">TEMAS OSCUROS</string>
+    <string name="text_section_light_themes">TEMAS CLAROS</string>
+</resources>

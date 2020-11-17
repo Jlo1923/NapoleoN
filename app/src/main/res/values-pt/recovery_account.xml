@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_btn_recovery">Recuperar</string>
+    <string name="text_count_questions_recovery_account">Pergunta %1$d / %2$d</string>
+    <string name="text_description_recovery">Recupere seus contatos de forma rápida e segura, respondendo corretamente a perguntas de segurança.</string>
+    <string name="text_recovery_success">Sua conta foi recuperada, agora você pode conversar de forma privada e segura com seus contatos.</string>
+    <string name="text_title_success">Recuperação de Conta</string>
+    <string name="text_placeholder_password">Digite sua senha</string>
+    <string name="text_description_enter_password">Digite sua senha. Você está a um passo de recuperar sua conta. Digite o número da senha de recuperação da sua conta.</string>
+    <string name="text_description_validate_old_answers">Questões de segurança. Você está mais perto de recuperar sua conta. Ajude-nos a confirmar sua identidade. Responda às seguintes perguntas de segurança corretamente</string>
+    <string name="text_password_incorrect">A senha digitada está incorreta</string>
+    <string name="text_answers_incorrect">As respostas inseridas estão incorretas.</string>
+    <string name="text_title_block_attempts">trancado</string>
+    <string name="text_description_block_attempts">Você foi bloqueado por exceder o número de tentativas de recuperação de conta</string>
+</resources>

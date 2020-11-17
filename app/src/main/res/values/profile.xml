@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="explanation_camera_and_storage_permission">To be able to change the profile and cover photo, allow NapoleoN to access your camera, photos and multimedia content of your device.</string>
+    <string name="text_profile_photo">Profile picture</string>
+    <string name="text_cover_photo">Cover photo</string>
+    <string name="text_message_restore_cover_photo">Are you sure you want to restore the default cover image?</string>
+    <string name="text_message_restore_profile_photo">Are you sure you want to reset the default profile picture?</string>
+    <string name="text_logout_title">Log out</string>
+    <string name="text_logout_desc">Are you sure? If you close this session without first having completed the account recovery form, you lose your nickname and current contacts.</string>
+    <string name="text_yes_im_sure">Yes, I\'m sure</string>
+    <string name="text_no_logout">Do not sign out</string>
+    <string name="text_closed_session">Closed session</string>
+    <string name="text_closed_session_desc">Your session has been successfully closed. We hope you come back soon.</string>
+    <string name="text_error_logout">An error has occurred at the closing session, please try again later.</string>
+</resources>

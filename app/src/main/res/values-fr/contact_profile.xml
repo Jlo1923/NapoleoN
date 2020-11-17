@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_reset_contact">Rétablir le contact</string>
+    <string name="text_want_delete_conversation">Voulez-vous vraiment supprimer cette conversation?</string>
+    <string name="text_want_reset_contact">Vous êtes sûr que vous souhaitez contacter Rétablissez?</string>
+    <string name="text_want_mute_conversation">Tem certeza de que quer contato restabelecer?</string>
+    <string name="text_alert_nickname">Le pseudo ne doit contenir au moins 5 et jusquà 20 caractères</string>
+    <string name="text_alert_name">Le nom doit contenir au moins 3 et 50 caractères au maximum</string>
+    <string name="text_name_not_contain_enough_char">Le nom doit contenir au moins 2 caractères.</string>
+    <string name="text_name_invalid">Pseudo invalide</string>
+    <string name="text_nickname_invalid">Apodo no válido</string>
+    <string name="text_change_contact_photo">Contact photo de changement</string>
+</resources>

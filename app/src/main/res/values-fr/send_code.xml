@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_welcome_napoleon">Bienvenue sur NapoleoN Chat</string>
+    <string name="text_description_welcome_napoleon">Notre priorité est votre vie PRIVÉE. Si vous souhaitez continuer à recevoir un code pour activer votre inscription.</string>
+    <string name="text_send_register_code">Envoyer le code d\'enregistrement</string>
+    <string name="text_check_push">Remarque: Vérifiez les notifications push</string>
+</resources>

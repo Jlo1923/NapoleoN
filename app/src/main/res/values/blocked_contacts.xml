@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_blocked_contacts_info">The contacts in this list will not be able to communicate with you or access your profile.</string>
+    <string name="text_empty_state_blocked_contacts_title">Blocked contacts</string>
+    <string name="text_empty_state_blocked_contacts_description">You have no blocked contacts</string>
+    <string name="text_blocked_contact_not_found">Oops! Your search produced no results</string>
+    <string name="text_wish_unblock_contact">Do you want to unblock this contact?</string>
+    <string name="text_unblocked_contact">Contact Unlocked</string>
+</resources>

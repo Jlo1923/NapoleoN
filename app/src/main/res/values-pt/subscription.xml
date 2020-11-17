@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_trial_period">Período experimental - %1$d dias restantes</string>
+    <string name="text_current_subscription">Assinatura atual</string>
+    <string name="text_get_subscription">Compre uma assinatura</string>
+    <string name="text_subscription_type">Tipo de assinatura</string>
+    <string name="text_select_subscription">Selecione um tipo de assinatura</string>
+    <string name="text_expired_subscription">Assinatura expirada</string>
+    <string name="text_free_trial_expired">Tempo de teste expirado</string>
+    <string name="text_subscription_expiration">Expiração da assinatura</string>
+    <string name="text_check_conditions">Você está prestes a ir para uma plataforma externa ao aplicativo. O NapoleoN Chat não salva nem tem acesso aos dados fornecidos nesta plataforma. Tem certeza de que deseja ir a este site?</string>
+    <string name="text_payment_method">Método de pago</string>
+    <string name="text_message_selection_type_subscription">Você deve selecionar um tipo de assinatura</string>
+    <string name="text_warning">Em seguida, você será redirecionado para um portal de pagamento, este portal é externo ao NapoleoN Chat, portanto, não possui as mesmas características de nosso aplicativo e você deve aceitar os termos e condições estipulados para seu uso. Não nos responsabilizamos pelo tratamento dos dados fornecidos no módulo de pagamento.</string>
+    <string name="text_subscription_and_time">%1$s - %2$d dias restantes</string>
+    <string name="text_you_want_to_unsubscribe_title">Você deseja cancelar a inscrição?</string>
+    <string name="text_you_want_to_unsubscribe_desc">Se você cancelar essa assinatura, você só pode usar o chat para NN DD-MM-AA (que termina subscrição data place)</string>
+    <string name="text_not_for_now">Não por agora</string>
+    <string name="text_yes_cancel">SIM, o Anular</string>
+    <string name="text_unsubscribed_title">Unsubscribed</string>
+    <string name="text_unsubscribed_desc">Lembre-se que você pode se inscrever para um outro pacote que se adapte às suas necessidades a qualquer momento.</string>
+    <string name="text_finalize">Finalizar</string>
+    <string name="text_error_unsubscribe">Um erro cancelar a sua assinatura, por favor tente mais tarde ocorreu.</string>
+    <string name="text_subscription_monthly">Por mês</string>
+    <string name="text_subscription_semiannual">Semestral</string>
+    <string name="text_subscription_yearly">Anual</string>
+    <string name="text_purchase">Comprar %1$s (%2$s)</string>
+    <string name="text_subscription_successfully">Assinatura com sucesso.</string>
+    <string name="text_subscription_already_owned">Você já tem este plano ativo no momento.</string>
+    <string name="text_operation_cancelled">Operação cancelada.</string>
+    <string name="text_subscription_error">Ocorreu um erro. Tente mais tarde.</string>
+    <string name="text_subscription_expired">Sua Assinatura expirada, você só vai receber mensagens.</string>
+</resources>

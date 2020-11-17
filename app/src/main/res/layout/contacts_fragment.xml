@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.ui.contacts.ContactsViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/attrBackgroundColorBackground"
+        tools:context=".ui.contacts.ContactsFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ViewSwitcher
+                    android:id="@+id/viewSwitcher"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ViewSwitcher
+                        android:id="@+id/viewSwitcher_search_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView_contacts"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/contacts_item" />
+
+                        <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
+                            android:id="@+id/empty_state_search"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            custom:image="?attr/attrImageEmptyStateSearchContact"
+                            custom:location="@integer/location_empty_state_contacts"
+                            custom:titleEmptyState="@string/text_empty_state_search_contacts" />
+
+                    </ViewSwitcher>
+
+                    <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
+                        android:id="@+id/empty_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        custom:description="@string/text_empty_state_contacts_description"
+                        custom:image="?attr/attrImageEmptyStateNoContacts"
+                        custom:location="@integer/location_empty_state_contacts"
+                        custom:titleEmptyState="@string/text_empty_state_contacts_title" />
+
+                </ViewSwitcher>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

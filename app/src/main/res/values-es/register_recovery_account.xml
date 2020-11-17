@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_recovery_account_false">No tienes registrada informacion para recuperacion de cuenta</string>
+    <string name="text_recovery_account_ok">Ya tienes registrada información para recuperación de cuenta, al Editar se descartará información anterior.</string>
+    <string name="text_terms_and_conditions_line_one_register_recovery_account">Al hacer click en  Registrar / Editar, aceptará los</string>
+</resources>

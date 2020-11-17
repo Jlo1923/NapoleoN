@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.naposystems.napoleonchat.ui.splash.SplashFragment"
+        android:label="splash_fragment"
+        app:startDestination="@id/action_splashFragment_to_unlockAppTimeFragment"
+        tools:layout="@layout/splash_fragment">
+        <action
+            android:id="@+id/action_splashFragment_to_landingFragment"
+            app:destination="@id/landingFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_accessPinFragment"
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_enterPinFragment"
+            app:destination="@id/enterPinFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_unlockAppTimeFragment"
+            app:destination="@id/unlockAppTimeFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/landingFragment"
+        android:name="com.naposystems.napoleonchat.ui.landing.LandingFragment"
+        android:label="landing_fragment"
+        tools:layout="@layout/landing_fragment">
+        <action
+            android:id="@+id/action_landingFragment_to_sendCodeFragment"
+            app:destination="@id/sendCodeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_landingFragment_to_recoveryAccountFragment"
+            app:destination="@id/recoveryAccountFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.validateNickname.ValidateNicknameFragment"
+        android:label="@string/text_create_account"
+        tools:layout="@layout/validate_nickname_fragment">
+        <action
+            android:id="@+id/action_registerFragment_to_accessPinFragment"
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendCodeFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.sendCode.SendCodeFragment"
+        android:label="@string/text_send_register_code"
+        tools:layout="@layout/send_code_fragment">
+        <action
+            android:id="@+id/action_sendCodeFragment_to_enterCodeFragment"
+            app:destination="@id/enterCodeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterCodeFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.enterCode.EnterCodeFragment"
+        android:label="@string/text_insert_code"
+        tools:layout="@layout/enter_code_fragment">
+        <action
+            android:id="@+id/action_enterCodeFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/accessPinFragment"
+        android:name="com.naposystems.napoleonchat.ui.register.accessPin.AccessPinFragment"
+        android:label="@string/text_access_pin"
+        tools:layout="@layout/access_pin_fragment">
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+        <argument
+            android:name="displayName"
+            app:argType="string" />
+        <argument
+            android:name="isRecoveredAccount"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/action_accessPinFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.naposystems.napoleonchat.ui.home.HomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/home_fragment">
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_securitySettingsFragment"
+            app:destination="@id/securitySettingsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_appearanceSettingsFragment"
+            app:destination="@id/appearanceSettingsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_inviteSomeoneFragment"
+            app:destination="@id/inviteSomeoneFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_helpFragment"
+            app:destination="@id/helpFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_contactsFragment"
+            app:destination="@id/contactsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_conversationFragment"
+            app:destination="@id/conversationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_statusFragment"
+            app:destination="@id/statusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_subscriptionFragment"
+            app:destination="@id/subscriptionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.naposystems.napoleonchat.ui.profile.ProfileFragment"
+        android:label="@string/text_profile_title"
+        tools:layout="@layout/profile_fragment">
+        <action
+            android:id="@+id/action_profileFragment_to_imageSelectorBottomSheetFragment"
+            app:destination="@id/imageSelectorBottomSheetFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_statusFragment"
+            app:destination="@id/statusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_profileFragment_to_blockedContactsFragment"
+            app:destination="@id/blockedContactsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_profileFragment_to_previewImageFragment"
+            app:destination="@id/previewImageFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_conversationCameraFragment"
+            app:destination="@id/conversationCameraFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_landingFragment"
+            app:destination="@id/landingFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/securitySettingsFragment"
+        android:name="com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsFragment"
+        android:label="@string/text_security_settings_title"
+        tools:layout="@layout/security_settings_fragment">
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_editAccessPinFragment"
+            app:destination="@id/editAccessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_registerRecoveryAccountFragment"
+            app:destination="@id/registerRecoveryAccountFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_securitySettingsFragment_to_activateBiometricsFragment"
+            app:destination="@id/activateBiometricsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="showShowCase"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/appearanceSettingsFragment"
+        android:name="com.naposystems.napoleonchat.ui.appearanceSettings.AppearanceSettingsFragment"
+        android:label="@string/text_appearance_settings_title"
+        tools:layout="@layout/appearance_settings_fragment">
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_colorSchemeFragment"
+            app:destination="@id/colorSchemeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_userDisplayFormatDialogFragment"
+            app:destination="@id/userDisplayFormatDialogFragment" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_previewBackgroundChatFragment"
+            app:destination="@id/previewBackgroundChatFragment" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
+        <action
+            android:id="@+id/action_appearanceSettingsFragment_to_conversationCameraFragment"
+            app:destination="@id/conversationCameraFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewBackgroundChatFragment"
+        android:name="com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatFragment"
+        android:label="@string/text_preview_background_chat_title"
+        tools:layout="@layout/preview_background_chat_fragment">
+        <argument
+            android:name="uri"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/inviteSomeoneFragment"
+        android:name="com.naposystems.napoleonchat.ui.inviteSomeone.InviteSomeoneFragment"
+        android:label="@string/text_invite_someone_title"
+        tools:layout="@layout/invite_someone_fragment" />
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="com.naposystems.napoleonchat.ui.help.HelpFragment"
+        android:label="@string/text_help_title"
+        tools:layout="@layout/help_fragment">
+        <action
+            android:id="@+id/action_helpFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_helpFragment_to_contactUsFragment"
+            app:destination="@id/contactUsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <dialog
+        android:id="@+id/imageSelectorBottomSheetFragment"
+        android:name="com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment"
+        android:label="image_selector_bottom_sheet_fragment"
+        tools:layout="@layout/image_selector_bottom_sheet_fragment" />
+    <fragment
+        android:id="@+id/statusFragment"
+        android:name="com.naposystems.napoleonchat.ui.status.StatusFragment"
+        android:label="@string/text_status"
+        tools:layout="@layout/status_fragment">
+        <argument
+            android:name="user"
+            app:argType="com.naposystems.napoleonchat.entity.User" />
+    </fragment>
+    <fragment
+        android:id="@+id/blockedContactsFragment"
+        android:name="com.naposystems.napoleonchat.ui.blockedContacts.BlockedContactsFragment"
+        android:label="@string/text_blocked_contacts"
+        tools:layout="@layout/blocked_contacts_fragment">
+        <action
+            android:id="@+id/action_blockedContactsFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/colorSchemeFragment"
+        android:name="com.naposystems.napoleonchat.ui.colorScheme.ColorSchemeFragment"
+        android:label="@string/text_color_scheme" />
+    <dialog
+        android:id="@+id/userDisplayFormatDialogFragment"
+        android:name="com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment"
+        android:label="user_display_format_dialog_fragment"
+        tools:layout="@layout/user_display_format_dialog_fragment" />
+    <fragment
+        android:id="@+id/editAccessPinFragment"
+        android:name="com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinFragment"
+        android:label="@string/text_access_pin"
+        tools:layout="@layout/edit_access_pin_fragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.naposystems.napoleonchat.ui.about.AboutFragment"
+        android:label="@string/text_about"
+        tools:layout="@layout/about_fragment" />
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.naposystems.napoleonchat.ui.contacts.ContactsFragment"
+        android:label="@string/text_my_contacts"
+        tools:layout="@layout/contacts_fragment">
+        <action
+            android:id="@+id/action_contactsFragment_to_conversationFragment"
+            app:destination="@id/conversationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_contactsFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_contactsFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactUsFragment"
+        android:name="com.naposystems.napoleonchat.ui.contactUs.ContactUsFragment"
+        android:label="@string/text_contact_us"
+        tools:layout="@layout/contact_us_fragment" />
+    <fragment
+        android:id="@+id/registerRecoveryAccountFragment"
+        android:name="com.naposystems.napoleonchat.ui.registerRecoveryAccount.RegisterRecoveryAccountFragment"
+        android:label="@string/text_account_recovery_information"
+        tools:layout="@layout/register_recovery_account">
+        <action
+            android:id="@+id/action_registerRecoveryAccountFragment_to_registerRecoveryAccountQuestionFragment"
+            app:destination="@id/registerRecoveryAccountQuestionFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerRecoveryAccountQuestionFragment"
+        android:name="com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment"
+        android:label="@string/text_account_recovery_information"
+        tools:layout="@layout/register_recovery_account_question_fragment" />
+    <fragment
+        android:id="@+id/conversationFragment"
+        android:name="com.naposystems.napoleonchat.ui.conversation.ConversationFragment"
+        android:label=""
+        tools:layout="@layout/conversation_fragment">
+        <argument
+            android:name="contact"
+            app:argType="com.naposystems.napoleonchat.entity.Contact" />
+        <action
+            android:id="@+id/action_conversationFragment_to_conversationCameraFragment"
+            app:destination="@id/conversationCameraFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_conversationFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentAudioFragment"
+            app:destination="@id/attachmentAudioFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_previewMediaFragment"
+            app:destination="@id/previewMediaFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentDocumentFragment"
+            app:destination="@id/attachmentDocumentFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentPreviewFragment"
+            app:destination="@id/attachmentPreviewFragment" />
+        <action
+            android:id="@+id/action_conversationFragment_to_attachmentLocationFragment"
+            app:destination="@id/attachmentLocationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recoveryAccountFragment"
+        android:name="com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountFragment"
+        android:label="@string/text_recovery_account"
+        tools:layout="@layout/recovery_account_fragment">
+        <action
+            android:id="@+id/action_recoveryAccountFragment_to_recoveryAccountQuestionsFragment"
+            app:destination="@id/recoveryAccountQuestionsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_recoveryAccountFragment_to_validatePasswordPreviousRecoveryAccountFragment"
+            app:destination="@id/validatePasswordPreviousRecoveryAccountFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/recoveryAccountQuestionsFragment"
+        android:name="com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment"
+        android:label="@string/text_recovery_account"
+        tools:layout="@layout/recovery_account_questions_fragment">
+        <argument
+            android:name="userType"
+            app:argType="com.naposystems.napoleonchat.model.recoveryAccount.RecoveryAccountUserType" />
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_recoveryAccountQuestionsFragment_to_accessPinFragment"
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterPinFragment"
+        android:name="com.naposystems.napoleonchat.ui.enterPin.EnterPinFragment"
+        android:label="EnterPinFragment"
+        app:startDestination="@id/action_enterPinFragment_to_unlockAppTimeFragment"
+        tools:layout="@layout/enter_pin_fragment">
+        <action
+            android:id="@+id/action_enterPinFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_enterPinFragment_to_unlockAppTimeFragment"
+            app:destination="@id/unlockAppTimeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/activateBiometricsFragment"
+        android:name="com.naposystems.napoleonchat.ui.activateBiometrics.ActivateBiometricsDialogFragment"
+        android:label="@string/text_unlock_options"
+        tools:layout="@layout/activate_biometrics_dialog_fragment" />
+    <fragment
+        android:id="@+id/unlockAppTimeFragment"
+        android:name="com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeFragment"
+        android:label="UnlockAppTimeFragment"
+        tools:layout="@layout/unlock_app_time_fragment">
+        <action
+            android:id="@+id/action_unlockAppTimeFragment_to_enterPinFragment"
+            app:destination="@id/enterPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/addContactFragment"
+        android:name="com.naposystems.napoleonchat.ui.addContact.AddContactFragment"
+        android:label="@string/text_friend_requests"
+        tools:layout="@layout/add_contact_fragment">
+        <argument
+            android:name="location"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="text"
+            android:defaultValue='""'
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/conversationCameraFragment"
+        android:name="com.naposystems.napoleonchat.ui.conversationCamera.ConversationCameraFragment"
+        android:label="ConversationCameraFragment"
+        tools:layout="@layout/conversation_camera_fragment">
+        <argument
+            android:name="userId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="contactId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_conversationCameraFragment_to_attachmentPreviewFragment"
+            app:destination="@id/attachmentPreviewFragment"
+            app:popUpTo="@id/conversationCameraFragment" />
+        <argument
+            android:name="quote"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="location"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="message"
+            android:defaultValue=''
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactProfileFragment"
+        android:name="com.naposystems.napoleonchat.ui.contactProfile.ContactProfileFragment"
+        tools:layout="@layout/contact_profile_fragment">
+        <argument
+            android:name="contactId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_contactProfileFragment_to_previewImageFragment"
+            app:destination="@id/previewImageFragment" />
+        <action
+            android:id="@+id/action_contactProfileFragment_to_attachmentGalleryFoldersFragment"
+            app:destination="@id/attachmentGalleryFoldersFragment" />
+        <action
+            android:id="@+id/action_contactProfileFragment_to_conversationCameraFragment"
+            app:destination="@id/conversationCameraFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentAudioFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentAudio.AttachmentAudioFragment"
+        tools:layout="@layout/attachment_audio_fragment">
+        <argument
+            android:name="contact"
+            app:argType="com.naposystems.napoleonchat.entity.Contact" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentGalleryFoldersFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentGalleryFolder.AttachmentGalleryFoldersFragment"
+        android:label=""
+        tools:layout="@layout/attachment_gallery_folders_fragment">
+        <argument
+            android:name="contact"
+            android:defaultValue="@null"
+            app:argType="com.naposystems.napoleonchat.entity.Contact"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_attachmentGalleryFragment_to_attachmentGalleryFragment"
+            app:destination="@id/attachmentGalleryFragment" />
+        <argument
+            android:name="quoteWebId"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="location"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="message"
+            android:defaultValue=''
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentGalleryFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentGallery.AttachmentGalleryFragment"
+        android:label=""
+        tools:layout="@layout/attachment_gallery_fragment">
+        <argument
+            android:name="contact"
+            android:defaultValue="@null"
+            app:argType="com.naposystems.napoleonchat.entity.Contact"
+            app:nullable="true" />
+        <argument
+            android:name="galleryFolder"
+            app:argType="com.naposystems.napoleonchat.model.attachment.gallery.GalleryFolder" />
+        <action
+            android:id="@+id/action_attachmentGalleryFragment_to_attachmentPreviewFragment"
+            app:destination="@id/attachmentPreviewFragment"
+            app:popUpTo="@id/attachmentGalleryFragment" />
+        <argument
+            android:name="quoteWebId"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="location"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="message"
+            android:defaultValue=''
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentPreviewFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentPreview.AttachmentPreviewFragment"
+        android:label="AttachmentPreviewFragment"
+        tools:layout="@layout/attachment_preview_fragment">
+        <argument
+            android:name="attachment"
+            app:argType="com.naposystems.napoleonchat.entity.message.attachments.Attachment" />
+        <action
+            android:id="@+id/action_attachmentPreviewFragment_to_conversationFragment"
+            app:destination="@id/conversationFragment" />
+        <argument
+            android:name="galleryItemId"
+            app:argType="integer" />
+        <argument
+            android:name="quote"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="message"
+            android:defaultValue=''
+            app:argType="string" />
+        <argument
+            android:name="contactId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_attachmentPreviewFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"
+        android:name="com.naposystems.napoleonchat.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment"
+        android:label="@string/text_recovery_account"
+        tools:layout="@layout/validate_password_previous_recovery_account_fragment">
+        <action
+            android:id="@+id/action_validatePasswordPreviousRecoveryAccountFragment_to_recoveryOlderAccountQuestionsFragment"
+            app:destination="@id/recoveryOlderAccountQuestionsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/recoveryOlderAccountQuestionsFragment"
+        android:name="com.naposystems.napoleonchat.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment"
+        android:label="@string/text_recovery_account"
+        tools:layout="@layout/recovery_older_account_questions_fragment">
+        <action
+            android:id="@+id/action_recoveryOlderAccountQuestionsFragment_to_accessPinFragment"
+            app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/subscriptionFragment"
+        android:name="com.naposystems.napoleonchat.ui.subscription.SubscriptionFragment"
+        android:label="@string/text_subscription_title"
+        tools:layout="@layout/subscription_fragment">
+        <action
+            android:id="@+id/action_subscriptionFragment_to_subscriptionPaymentFragment"
+            app:destination="@id/subscriptionPaymentFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/subscriptionPaymentFragment"
+        android:name="com.naposystems.napoleonchat.ui.subscriptionPayment.SubscriptionPaymentFragment"
+        android:label="@string/text_subscription_title"
+        tools:layout="@layout/subscription_payment_fragment">
+        <argument
+            android:name="url"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewMediaFragment"
+        android:name="com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaFragment"
+        android:label="PreviewMediaFragment"
+        tools:layout="@layout/preview_media_fragment">
+        <argument
+            android:name="messageAndAttachment"
+            app:argType="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+    </fragment>
+    <fragment
+        android:id="@+id/attachmentDocumentFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentDocument.AttachmentDocumentFragment"
+        android:label="@string/text_document"
+        tools:layout="@layout/attachment_document_fragment" />
+    <fragment
+        android:id="@+id/attachmentLocationFragment"
+        android:name="com.naposystems.napoleonchat.ui.attachmentLocation.AttachmentLocationFragment"
+        android:label="@string/text_location"
+        tools:layout="@layout/attachment_location_fragment" >
+        <argument
+            android:name="contactId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/previewImageFragment"
+        android:name="com.naposystems.napoleonchat.ui.previewImage.PreviewImageFragment"
+        android:label="@string/text_profile_title"
+        tools:layout="@layout/preview_image_fragment">
+        <argument
+            android:name="contact"
+            android:defaultValue="@null"
+            app:argType="com.naposystems.napoleonchat.entity.Contact"
+            app:nullable="true" />
+        <argument
+            android:name="titleToolbar"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="user"
+            android:defaultValue="@null"
+            app:argType="com.naposystems.napoleonchat.entity.User"
+            app:nullable="true" />
+    </fragment>
+</navigation>

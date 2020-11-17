@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.ui.blockedContacts.BlockedContactsViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.blockedContacts.BlockedContactsFragment">
+
+        <ViewFlipper
+            android:id="@+id/viewFlipper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- EMPTY STATE -->
+            <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
+                android:id="@+id/empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                custom:titleEmptyState="@string/text_empty_state_blocked_contacts_description"
+                custom:image="?attr/attrImageEmptyStateBlockContact" />
+
+            <!-- RECYCLERVIEW -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_recyclerView_blocked_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView_info"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_blocked_contacts_info"
+                    app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                    app:layout_constraintStart_toStartOf="@id/guideline_start"
+                    app:layout_constraintTop_toTopOf="@id/guideline_top" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_blocked_contacts"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView_info"
+                    tools:listitem="@layout/blocked_contacts_item" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="@dimen/normal_margin" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="@dimen/normal_margin" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="@dimen/normal_margin" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- SEARCH NOT FOUND -->
+            <com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
+                android:id="@+id/empty_state_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                custom:image="?attr/attrImageEmptyStateSearchContact"
+                custom:titleEmptyState="@string/text_empty_state_search_contacts" />
+
+        </ViewFlipper>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

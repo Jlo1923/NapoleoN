@@ -1,0 +1,37 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="25dp"
+    android:height="23dp"
+    android:viewportWidth="25"
+    android:viewportHeight="23">
+  <path
+      android:pathData="M3.605,4.271L3.605,3.492h0a0.782,0.782 0,0 1,0.782 -0.781h1.042a0.782,0.782 0,0 1,0.782 0.781L6.211,4.271"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.4"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/attrColorButtonTint"
+      android:fillType="evenOdd"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M6.89,5.421L1.68,5.421A0.683,0.683 0,0 0,1 6.107L1,20.472a0.683,0.683 0,0 0,0.68 0.686L23.05,21.158a0.683,0.683 0,0 0,0.68 -0.686L23.73,6.107a0.683,0.683 0,0 0,-0.68 -0.686h-5.2L16.193,2.589A1.315,1.315 0,0 0,15.167 2L9.589,2A1.325,1.325 0,0 0,8.56 2.589L6.89,5.421Z"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.4"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/attrColorButtonTint"
+      android:fillType="evenOdd"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M12.365,12.302m-5.731,0a5.731,5.731 0,1 1,11.462 0a5.731,5.731 0,1 1,-11.462 0"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.4"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/attrColorButtonTint"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M11.383,10.312A2.717,2.717 0,0 0,9.303 12.392"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.4"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/attrColorButtonTint"
+      android:fillType="evenOdd"
+      android:strokeLineCap="round"/>
+</vector>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="com.naposystems.napoleonchat.entity.Contact" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_camera_off"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_212121"
+        android:visibility="gone"
+        tools:showIn="@layout/activity_conversation_call"
+        tools:visibility="visible">
+
+        <include
+            android:id="@+id/logo_napoleon"
+            layout="@layout/logo_napoleon_blur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:contact="@{null}"
+            app:layout_constraintBottom_toTopOf="@+id/textView_message"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline_text"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/textView_message"
+            style="@style/BodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_call_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logo_napoleon"
+            custom:callMessage="@{contact}"
+            tools:text="El contacto ha apagado la cámara|!!" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/suscription"
+        android:title="@null"
+        app:actionLayout="@layout/drawer_menu_item_subscription" />
+
+    <item
+        android:id="@+id/security_settings"
+        android:title="@null"
+        app:actionLayout="@layout/drawer_menu_item_security_settings" />
+
+    <item
+        android:id="@+id/appearance_settings"
+        android:title="@null"
+        app:actionLayout="@layout/drawer_menu_item_appearance_settings" />
+
+    <item
+        android:id="@+id/invite_someone"
+        android:title="@null"
+        app:actionLayout="@layout/drawer_menu_item_invite_some_one" />
+
+    <item
+        android:id="@+id/help"
+        android:title="@null"
+        app:actionLayout="@layout/drawer_menu_item_help" />
+</menu>

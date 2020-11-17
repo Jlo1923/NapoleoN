@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/attrBackgroundColorBackgroundDialog"
+        android:orientation="vertical"
+        tools:context=".ui.deletionDialog.DeletionMessagesDialogFragment">
+
+        <View
+            android:id="@+id/view_indicator"
+            android:layout_width="50dp"
+            android:layout_height="5dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/small_margin"
+            android:background="@drawable/bg_bottom_sheet_indicator" />
+
+        <LinearLayout
+            android:id="@+id/option_delete_conversation"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageView_delete_conversation"
+                style="@style/OptionStartIcon"
+                app:srcCompat="@drawable/ic_delete_black" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_conversation"
+                style="@style/OptionTitle"
+                android:layout_weight="1"
+                android:text="@string/text_title_delete_conversation" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/option_delete_unread_messages"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageView_delete_unread_messages"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_message_unread" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_unread_messages"
+                style="@style/OptionTitle"
+                android:layout_weight="1"
+                android:text="@string/text_title_delete_unread_messages" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/option_delete_messages_unreceived"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageView_delete_messages_unreceived"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_message_sent" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_messages_unreceived"
+                style="@style/OptionTitle"
+                android:layout_weight="1"
+                android:text="@string/text_title_delete_messages_unreceived" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/option_delete_filed_messages"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- START ICON -->
+            <ImageView
+                android:id="@+id/imageView_delete_filed_messages"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_error_outline_black" />
+
+            <TextView
+                android:id="@+id/textView_title_delete_filed_messages"
+                style="@style/OptionTitle"
+                android:layout_weight="1"
+                android:text="@string/text_title_delete_failed_messages" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

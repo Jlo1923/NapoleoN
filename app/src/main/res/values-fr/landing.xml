@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_create_account">Créer un compte</string>
+    <string name="text_recovery_account">Récupérer le compte</string>
+    <string name="text_select_language">Choisir la langue</string>
+</resources>

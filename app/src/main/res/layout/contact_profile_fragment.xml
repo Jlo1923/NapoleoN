@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel" />
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.contactProfile.ContactProfileFragment">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/imageView_profile_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:scaleType="centerCrop"
+                        android:transitionName="transition_image_preview"
+                        app:avatarWithoutCircle="@{viewModel.contact}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@tools:sample/backgrounds/scenic" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/bg_black_gradient"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageButton
+                        android:id="@+id/imageButton_edit_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_marginBottom="@dimen/normal_margin"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="@dimen/x_small_padding"
+                        android:scaleType="center"
+                        android:tint="@color/colorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:srcCompat="@drawable/ic_edit_black" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/textView_information"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/attrBackgroundSectionColor"
+                    android:inputType="textCapCharacters"
+                    android:padding="@dimen/small_padding"
+                    android:text="@string/text_information"
+                    tools:ignore="TextViewEdits" />
+
+                <LinearLayout
+                    android:id="@+id/option_change_name"
+                    style="@style/Option"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imageView_change_name_start_icon"
+                        style="@style/OptionStartIcon"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_person_black" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView_name"
+                            style="@style/OptionTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="0dp"
+                            android:text="@string/text_name" />
+
+                        <TextView
+                            android:id="@+id/editText_name"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:maxLength="@integer/max_length_display_name"
+                            android:padding="0dp"
+                            android:singleLine="true"
+                            android:textColor="?attr/attrColorButtonTint"
+                            android:textColorHint="?attr/attrTextColorHint"
+                            app:nameContact="@{viewModel.contact}"
+                            tools:text="@tools:sample/full_names" />
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/imageButton_change_name_end_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="@dimen/x_small_padding"
+                        android:scaleType="center"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:srcCompat="@drawable/ic_edit_black" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option_change_nickname"
+                    style="@style/Option"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imageView_change_nickname_start_icon"
+                        style="@style/OptionStartIcon"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_at_black" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView_nickname"
+                            style="@style/OptionTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="0dp"
+                            android:text="@string/text_nickname" />
+
+                        <TextView
+                            android:id="@+id/editText_nickname"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:maxLength="@integer/max_length_nickname"
+                            android:padding="0dp"
+                            android:singleLine="true"
+                            android:textColor="?attr/attrColorButtonTint"
+                            app:nicknameContact="@{viewModel.contact}"
+                            tools:text="@tools:sample/first_names" />
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/imageButton_change_nickname_end_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="@dimen/x_small_padding"
+                        android:scaleType="center"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:srcCompat="@drawable/ic_edit_black" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView_general"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/attrBackgroundSectionColor"
+                    android:padding="@dimen/small_padding"
+                    android:text="@string/text_conversation"/>
+
+                <LinearLayout
+                    android:id="@+id/option_silence_conversation"
+                    style="@style/Option"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageView_silence_conversation_start_icon"
+                        style="@style/OptionStartIcon"
+                        app:srcCompat="@drawable/ic_volume_off_black" />
+
+                    <TextView
+                        android:id="@+id/textView_label_silence_conversation"
+                        style="@style/OptionTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="@string/text_mute_conversation" />
+
+                    <Switch
+                        android:id="@+id/switch_silence_conversation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option_delete_conversation"
+                    style="@style/Option"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageView_delete_chat_start_icon"
+                        style="@style/OptionStartIcon"
+                        app:srcCompat="@drawable/ic_delete_black" />
+
+                    <TextView
+                        android:id="@+id/textView_label_delete_chat"
+                        style="@style/OptionTitle"
+                        android:layout_weight="1"
+                        android:text="@string/text_title_delete_conversation" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView_contact"
+                    style="@style/SmallBodyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/attrBackgroundSectionColor"
+                    android:padding="@dimen/small_padding"
+                    android:text="@string/text_contact" />
+
+                <LinearLayout
+                    android:id="@+id/option_block_contact"
+                    style="@style/Option"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imageView_block_contact_start_icon"
+                        style="@style/OptionStartIcon"
+                        app:srcCompat="@drawable/ic_block_white" />
+
+                    <TextView
+                        android:id="@+id/textView_label_block_contact"
+                        style="@style/OptionTitle"
+                        android:layout_weight="1"
+                        android:text="@string/text_block_contact" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option_delete_contact"
+                    style="@style/Option"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imageView_delete_contact_start_icon"
+                        style="@style/OptionStartIcon"
+                        app:srcCompat="@drawable/ic_delete_contact" />
+
+                    <TextView
+                        android:id="@+id/textView_label_delete_contact"
+                        style="@style/OptionTitle"
+                        android:layout_weight="1"
+                        android:text="@string/text_delete_contact" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/option_restore_contact_chat"
+                    style="@style/Option"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/imageView_restore_contact_start_icon"
+                        style="@style/OptionStartIcon"
+                        app:srcCompat="@drawable/ic_restore" />
+
+                    <TextView
+                        android:id="@+id/textView_label_restore_contact_chat"
+                        style="@style/OptionTitle"
+                        android:layout_weight="1"
+                        android:text="@string/text_reset_contact" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

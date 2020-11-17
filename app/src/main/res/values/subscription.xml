@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_trial_period">Trial period - %1$d days remaining</string>
+    <string name="text_current_subscription">Current subscription</string>
+    <string name="text_get_subscription">Buy a subscription</string>
+    <string name="text_subscription_type">Subscription type</string>
+    <string name="text_select_subscription">Select a subscription type</string>
+    <string name="text_expired_subscription">Subscription expired</string>
+    <string name="text_free_trial_expired">Test time expired</string>
+    <string name="text_subscription_expiration">Subscription expiration</string>
+    <string name="text_check_conditions">You are about to go to a platform external to the application. NapoleoN Chat does not save or have access to the data provided on this platform. Are you sure you want to go to this site?</string>
+    <string name="text_payment_method">Payment method</string>
+    <string name="text_message_selection_type_subscription">You must select a subscription type</string>
+    <string name="text_warning">Next, you will be redirected to a payment portal, this portal is external to NapoleoN Chat, therefore, it does not have the same characteristics as our application and you must accept the terms and conditions stipulated for its use. We are not responsible for the treatment of the data provided in the payment module.</string>
+    <string name="text_subscription_and_time">%1$s - %2$d days remaining</string>
+    <string name="text_you_want_to_unsubscribe_title">You want to unsubscribe?</string>
+    <string name="text_you_want_to_unsubscribe_desc">If you cancel this subscription, you can only use chat to NN DD-MM-AA (ending date place subscription)</string>
+    <string name="text_not_for_now">Not for now</string>
+    <string name="text_yes_cancel">YES, Cancel</string>
+    <string name="text_unsubscribed_title">Unsubscribed</string>
+    <string name="text_unsubscribed_desc">Remember that you can subscribe to another package that suits your needs at any time.</string>
+    <string name="text_finalize">Finalize</string>
+    <string name="text_error_unsubscribe">An error canceling your subscription, please try later occurred.</string>
+    <string name="text_subscription_monthly">Monthly</string>
+    <string name="text_subscription_semiannual">Semiannual</string>
+    <string name="text_subscription_yearly">Annual</string>
+    <string name="text_purchase">Purchase %1$s (%2$s)</string>
+    <string name="text_subscription_successfully">Subscription successful.</string>
+    <string name="text_subscription_already_owned">You already have this plan currently active.</string>
+    <string name="text_operation_cancelled">Operation cancelled.</string>
+    <string name="text_subscription_error">An error ocurred. Please try again later.</string>
+    <string name="text_subscription_expired">Your subscription expired, you will only receive messages.</string>
+</resources>
+
+
+
+
+
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="show_case_first_title">ADD CONTACTS</string>
+    <string name="show_case_first_subtitle">Here you can invite people searching for them by his nickname.</string>
+    <string name="show_case_second_title">CONTACTS</string>
+    <string name="show_case_second_subtitle">Here you find the contacts you\'ve added in NapoleoN Chat.</string>
+    <string name="show_case_third_title">STATE</string>
+    <string name="show_case_third_subtitle">Tell your contacts as you meet a sentence.</string>
+    <string name="show_case_fourth_title">MAIN MENU</string>
+    <string name="show_case_fourth_subtitle">We give you different options to modify the account to your liking.</string>
+    <string name="show_case_fifth_title">SECURITY SETTINGS</string>
+    <string name="show_case_fifth_subtitle">Keep your information safe by setting the security of your account.</string>
+    <string name="show_case_sixth_title">Account Recovery</string>
+    <string name="show_case_sixth_subtitle">If you want to keep your same user, complete security questions.</string>
+    <string name="show_case_seventh_title">SELF-DESTRUCTION OF MESSAGES</string>
+    <string name="show_case_seventh_subtitle">Customize the duration of your messages.</string>
+    <string name="text_repeat_tutorial">Repeat tutorial</string>
+    <string name="text_message_dialog_repeat_tutorial">You want to give an overview of the main functions of the app?</string>
+</resources>

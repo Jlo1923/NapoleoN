@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/attrBackgroundColorBackground"
+        android:minHeight="56dp"
+        tools:context=".ui.imagePicker.ImageSelectorBottomSheetFragment">
+
+        <!-- TITLE -->
+        <TextView
+            android:id="@+id/textView_title"
+            style="@style/BodyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.54"
+            android:padding="@dimen/normal_padding"
+            android:text="@string/text_change_profile_photo" />
+
+        <!-- CAMERA OPTION -->
+        <LinearLayout
+            android:id="@+id/container_camera_option"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:paddingStart="@dimen/normal_padding"
+            android:paddingEnd="@dimen/normal_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_title">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_camera"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_camera_primary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorSecondaryDark" />
+
+            <TextView
+                style="@style/BodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/x_large_margin"
+                android:layout_weight="1"
+                android:text="@string/text_take_photo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_camera"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <!-- GALLERY OPTION -->
+        <LinearLayout
+            android:id="@+id/container_gallery_option"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="@dimen/normal_padding"
+            android:paddingEnd="@dimen/normal_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container_camera_option">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_gallery"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_image_black"
+                app:tint="@color/colorSecondaryDark"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                style="@style/BodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/x_large_margin"
+                android:text="@string/text_select_photo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_gallery"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <!-- GALLERY OPTION -->
+        <LinearLayout
+            android:id="@+id/container_default"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="@dimen/normal_padding"
+            android:paddingEnd="@dimen/normal_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/container_gallery_option">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_default"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_restore"
+                app:tint="@color/colorSecondaryDark" />
+
+            <TextView
+                style="@style/BodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/x_large_margin"
+                android:text="@string/text_select_default" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

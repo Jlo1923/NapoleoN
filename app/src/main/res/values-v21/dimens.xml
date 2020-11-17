@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- BEGIN MATERIAL RIPPLE DIMENS -->
+    <item name="low_ripple_pressed_alpha" format="float" type="dimen">0.24</item>
+    <item name="low_ripple_focused_alpha" format="float" type="dimen">0.24</item>
+    <item name="low_ripple_hovered_alpha" format="float" type="dimen">0.08</item>
+    <item name="low_ripple_default_alpha" format="float" type="dimen">0.24</item>
+    <!-- END MATERIAL RIPPLE DIMENS -->
+
+</resources>

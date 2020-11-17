@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="conversation"
+            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter.ClickListener" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/container_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(conversation)}"
+        android:paddingStart="0dp"
+        android:paddingTop="@dimen/x_small_padding"
+        android:paddingEnd="@dimen/small_padding">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_counter_new_contact_message"
+            android:elevation="3dp"
+            android:orientation="horizontal"
+            android:padding="@dimen/x_x_small_padding"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/x_small_padding">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_icon_timer"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center_vertical"
+                android:tint="?attr/attrTextColorTimeMyMessage"
+                app:srcCompat="@drawable/ic_access_time_black" />
+
+            <TextView
+                android:id="@+id/textView_count_down"
+                style="@style/MinorBodyTextView"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_self_destruct_time"
+                android:layout_marginStart="@dimen/x_x_small_margin"
+                android:layout_weight="1"
+                android:elevation="1dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="?attr/attrTextColorTimeMyMessage"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_icon_timer"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="24:00" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/container_missed_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/l_small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:background="@drawable/bg_container_missed_call"
+            android:elevation="1dp"
+            android:padding="@dimen/x_small_padding">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="6dp"
+                tools:srcCompat="@drawable/ic_call_missed_red" />
+
+            <TextView
+                android:id="@+id/textView_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="@dimen/x_small_margin"
+                android:textColor="?attr/attrTextColorSystem"
+                android:textSize="@dimen/minor_text_size"
+                android:textStyle="italic"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageView_icon"
+                app:layout_constraintTop_toTopOf="@id/imageView_icon"
+                tools:text="Llamada perdida a las 5:40 " />
+
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

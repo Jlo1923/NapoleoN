@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_access_pin">Zugangsstift</string>
+    <string name="text_confirm_access_pin">Neue PIN bestätigen Zugang</string>
+    <string name="text_access_pin_required">Der Zugangsstift darf nicht leer sein</string>
+    <string name="text_confirm_pin_access_required">Sie müssen die Zugangsnummer bestätigen</string>
+    <string name="text_access_pin_not_match">Der Zugriffsstift stimmt nicht überein</string>
+    <string name="text_access_pin_length">Die Zugangsnummer muss 4 Ziffern enthalten</string>
+    <string name="text_reset_access_pin_title">Pin Reset-Zugang</string>
+</resources>

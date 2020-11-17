@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.help.HelpFragment">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/attrBackgroundColorBackground"
+        android:baselineAligned="false"
+        android:orientation="vertical">
+
+        <!-- OPTION REPEAT SHOW CASE -->
+        <LinearLayout
+            android:id="@+id/option_repeat_show_case"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:text="@string/text_repeat_tutorial"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_repeat_show_case_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_repeat_show_case_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </LinearLayout>
+
+        <!-- OPTION CONTACT US -->
+        <LinearLayout
+            android:id="@+id/option_contact_us"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:text="@string/text_contact_us"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_contact_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_contact_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </LinearLayout>
+
+        <!-- OPTION FREQUENT QUESTIONS -->
+        <LinearLayout
+            android:id="@+id/option_frequent_questions"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:text="@string/text_frequent_questions"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_frequent_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_frequent_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </LinearLayout>
+
+        <!-- OPTION TERMS AND CONDITIONS -->
+        <LinearLayout
+            android:id="@+id/option_terms_and_conditions"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:text="@string/text_terms_and_conditions" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_terms_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </LinearLayout>
+
+        <!-- OPTION ABOUT -->
+        <LinearLayout
+            android:id="@+id/option_about"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- OPTION TITLE -->
+            <TextView
+                style="@style/OptionTitle"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:text="@string/text_about"
+                app:layout_constraintEnd_toStartOf="@id/imageButton_about_option_end_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_about_option_end_icon"
+                style="@style/OptionEndIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_right_primary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

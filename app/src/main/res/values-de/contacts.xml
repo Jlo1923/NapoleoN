@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_my_contacts">Meine Kontakte</string>
+    <string name="text_description_empty_state_contacts">Füge deine Freunde hinzu und teile sie auf sichere und private Weise.</string>
+    <string name="text_wish_block_contact">Möchten Sie diesen Kontakt wirklich blockieren?</string>
+    <string name="text_wish_delete_contact">Möchten Sie diesen Kontakt wirklich löschen?</string>
+    <string name="text_blocked_contact">Kontakt blockiert</string>
+    <string name="text_deleted_contact">Kontakt gelöscht</string>
+    <string name="search_by_nickname">Suche nach Spitznamen</string>
+    <string name="text_empty_state_contacts_title">Sie haben keine Kontakte hinzugefügt</string>
+    <string name="text_empty_state_contacts_description">Sie haben keine Kontakte hinzugefügt</string>
+    <string name="text_add_new_contact">Füge neuen Kontakt hinzu</string>
+    <string name="text_add_contacts">Kontakte hinzufügen</string>
+    <string name="text_search_contact">Meine Kontakte</string>
+</resources>

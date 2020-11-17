@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_color_scheme">Seleção de tópico</string>
+    <string name="text_user_display_format">Formato do nome de usuário</string>
+    <string name="text_language">Idioma</string>
+    <string name="text_light_theme">Tema claro</string>
+    <string name="text_dark_theme">Tema escuro</string>
+    <string name="text_name_and_nickname">Nome e apelido</string>
+    <string name="text_only_name">Apenas nome</string>
+    <string name="text_only_nickname">Somente apelido</string>
+    <string name="text_conversation_background">Contexto da conversa</string>
+    <string name="text_updated_successfully">O plano de fundo foi aplicado corretamente</string>
+    <string name="text_error_updating_conversation_background">Ocorreu um erro ao alterar o plano de fundo da conversa, tente novamente</string>
+    <string name="text_time_format">Formato de hora</string>
+</resources>

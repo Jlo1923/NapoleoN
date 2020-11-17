@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_immediately">Immediately</string>
+    <string name="text_ten_seconds">10 seconds</string>
+    <string name="text_thirty_seconds">30 seconds</string>
+    <string name="text_one_minute">1 minute</string>
+    <string name="text_five_minutes">5 minutes</string>
+    <string name="text_one_hour">1 hour</string>
+    <string name="text_one_day">1 day</string>
+    <string name="text_never">Never</string>
+    <string name="text_desc_pin_locked_time">The access PIN is requested after the selected time elapsed and the application is closed or in the background.</string>
+</resources>

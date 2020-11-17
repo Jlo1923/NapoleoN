@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_current_status">Estado actual</string>
+    <string name="text_status_hint">Ingresa un estado</string>
+    <string name="text_select_a_status">Seleccione un estado</string>
+    <string name="text_status_available">Disponible</string>
+    <string name="text_status_busy">Ocupado</string>
+    <string name="text_status_in_meeting">En reunión</string>
+    <string name="text_status_only_messages">Solo mensajes</string>
+    <string name="text_status_sleeping">Durmiendo</string>
+    <string name="text_status_only_emergency">Solo emergencias</string>
+    <string name="text_error_getting_local_status">Ha ocurrido un error al obtener los estados, inténtalo nuevamente</string>
+    <string name="text_delete_status">Eliminar estado</string>
+    <string name="text_status_updated_successfully">Estado actualizado satisfactoriamente</string>
+
+</resources>

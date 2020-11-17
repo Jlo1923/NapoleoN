@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.profile.ProfileFragment">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.ui.profile.ProfileViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/attrBackgroundColorBackground"
+                android:orientation="vertical">
+
+                <!-- HEADER -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <!-- BACKGROUND -->
+                    <ImageView
+                        android:id="@+id/imageView_background"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:scaleType="centerCrop"
+                        app:bannerUser="@{viewModel.user}"
+                        app:layout_constraintBottom_toTopOf="@id/header_separator"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@tools:sample/backgrounds/scenic" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/bg_black_gradient"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- USER AVATAR -->
+                    <ImageView
+                        android:id="@+id/imageView_profile_image"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginBottom="@dimen/small_margin"
+                        android:background="@drawable/bg_profile_avatar"
+                        android:scaleType="centerInside"
+                        android:transitionName="transition_image_preview"
+                        app:avatarUser="@{viewModel.user}"
+                        app:layout_constraintBottom_toTopOf="@+id/textView_user_name"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        tools:src="@drawable/ic_default_avatar" />
+
+                    <!-- IMAGEVIEW PROGRESSBAR -->
+                    <ProgressBar
+                        android:id="@+id/progress_avatar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/imageView_profile_image"
+                        app:layout_constraintEnd_toEndOf="@+id/imageView_profile_image"
+                        app:layout_constraintStart_toStartOf="@+id/imageView_profile_image"
+                        app:layout_constraintTop_toTopOf="@id/imageView_profile_image" />
+
+                    <!-- BUTTON EDIT AVATAR -->
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/floating_button_profile_image"
+                        style="@style/Widget.MaterialComponents.FloatingActionButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:borderWidth="0dp"
+                        app:fabCustomSize="32dp"
+                        app:layout_constraintBottom_toBottomOf="@id/imageView_profile_image"
+                        app:layout_constraintEnd_toEndOf="@id/imageView_profile_image"
+                        app:maxImageSize="16dp"
+                        app:srcCompat="@drawable/ic_camera_primary" />
+
+                    <!-- USER NAME -->
+                    <TextView
+                        android:id="@+id/textView_user_name"
+                        style="@style/TextViewSecondaryTitle.White"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:singleLine="true"
+                        android:textAlignment="center"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView_profile_image"
+                        app:nameUserCover="@{viewModel.user}"
+                        tools:text="Giussep Ricardo"
+                        tools:visibility="visible" />
+
+                    <!-- USER NICKNAME -->
+                    <TextView
+                        android:id="@+id/textView_user_nickname"
+                        style="@style/BodyTextView.White"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+                        app:nicknameUser="@{viewModel.user}"
+                        tools:text="\@giusseprc7" />
+
+                    <!-- EDIT ICON -->
+                    <ImageButton
+                        android:id="@+id/imageButton_edit_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/small_margin"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="@dimen/x_small_padding"
+                        android:scaleType="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:srcCompat="@drawable/ic_picture" />
+
+                    <!-- SEPARATOR -->
+                    <View
+                        android:id="@+id/header_separator"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:background="@color/separator"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/imageView_background" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- OPTION NAME -->
+                <LinearLayout
+                    android:id="@+id/option_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_with_separator"
+                    android:padding="@dimen/normal_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/container_header">
+
+                    <!-- START ICON -->
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_name_option_start_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_person_black" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <!-- LABEL NAME -->
+                        <TextView
+                            android:id="@+id/textView_label_name"
+                            style="@style/BodyTextView.Bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/normal_margin"
+                            android:layout_marginBottom="@dimen/small_margin"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:text="@string/text_name"
+                            app:layout_constraintBottom_toTopOf="@id/editText_display_name"
+                            app:layout_constraintEnd_toStartOf="@id/imageButton_name_option_end_icon"
+                            app:layout_constraintStart_toEndOf="@id/imageView_name_option_start_icon"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/editText_display_name"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:enabled="false"
+                            android:hint="@string/text_display_name"
+                            android:inputType="textCapWords|textNoSuggestions"
+                            android:maxLength="@integer/max_length_display_name"
+                            android:padding="0dp"
+                            android:singleLine="true"
+                            android:textColor="?attr/attrColorButtonTint"
+                            android:textColorHint="?attr/attrTextColorHint"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/textView_label_name"
+                            app:layout_constraintStart_toStartOf="@id/textView_label_name"
+                            app:layout_constraintTop_toBottomOf="@id/textView_label_name"
+                            app:nameUser="@{viewModel.user}"
+                            tools:text="Giussep Ricardo Cachaya" />
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/imageButton_name_option_end_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="@dimen/x_small_padding"
+                        android:scaleType="center"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_edit_secondary_black" />
+
+                </LinearLayout>
+
+                <!-- OPTION STATUS -->
+                <LinearLayout
+                    android:id="@+id/option_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_with_separator"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="@dimen/normal_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/option_name">
+
+                    <!-- START ICON -->
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_status_option_start_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_status_black" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <!-- LABEL STATUS -->
+                        <TextView
+                            android:id="@+id/textView_label_status"
+                            style="@style/BodyTextView.Bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/normal_margin"
+                            android:layout_marginBottom="@dimen/small_margin"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:text="@string/text_status"
+                            app:layout_constraintBottom_toTopOf="@id/editText_status"
+                            app:layout_constraintEnd_toStartOf="@id/imageButton_status_option_end_icon"
+                            app:layout_constraintStart_toEndOf="@id/imageView_status_option_start_icon"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <!-- USER STATUS -->
+                        <TextView
+                            android:id="@+id/editText_status"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:enabled="true"
+                            android:maxLength="@dimen/max_length_status"
+                            android:padding="0dp"
+                            android:singleLine="true"
+                            android:text="@{viewModel.user.status}"
+                            android:textColor="?attr/attrColorButtonTint"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/textView_label_status"
+                            app:layout_constraintStart_toStartOf="@id/textView_label_status"
+                            app:layout_constraintTop_toBottomOf="@id/textView_label_status"
+                            tools:text="Disponible" />
+
+                    </LinearLayout>
+
+                    <!-- EDIT ICON -->
+                    <ImageButton
+                        android:id="@+id/imageButton_status_option_end_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="@dimen/x_small_padding"
+                        android:scaleType="center"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_edit_black" />
+
+                </LinearLayout>
+
+                <!-- OPTION BLOCKED USERS -->
+                <LinearLayout
+                    android:id="@+id/option_blocked_contacts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_with_separator"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="@dimen/normal_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/option_status">
+
+                    <!-- START ICON -->
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_blocked_contacts_option_start_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_block_black" />
+
+                    <!-- LABEL BLOCKED CONTACTS -->
+                    <TextView
+                        android:id="@+id/textView_label_blocked_contacts"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/text_blocked_contacts"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/imageButton_blocked_contacts_option_end_icon"
+                        app:layout_constraintStart_toEndOf="@id/imageView_blocked_contacts_option_start_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- GO ICON -->
+                    <ImageButton
+                        android:id="@+id/imageButton_blocked_contacts_option_end_icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_right_black" />
+
+                </LinearLayout>
+
+                <!-- OPTION BLOCKED USERS -->
+                <LinearLayout
+                    android:id="@+id/option_logout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_with_separator"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:padding="@dimen/normal_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/option_blocked_contacts">
+
+                    <!-- START ICON -->
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageView_logout_option_start_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        android:tint="?attr/attrTintColorSecondaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_baseline_exit_to_app" />
+
+                    <!-- LABEL BLOCKED CONTACTS -->
+                    <TextView
+                        android:id="@+id/textView_label_logout"
+                        style="@style/BodyTextView.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginEnd="@dimen/normal_margin"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/text_logout_title"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/imageView_logout_option_start_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </ScrollView>
+</layout>

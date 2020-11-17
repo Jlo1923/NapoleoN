@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="show_case_first_title">AJOUTER DES CONTACTS</string>
+    <string name="show_case_first_subtitle">Ici, vous pouvez inviter les gens à la recherche pour eux par son surnom.</string>
+    <string name="show_case_second_title">CONTACTS</string>
+    <string name="show_case_second_subtitle">Vous trouverez ici les contacts que vous avez ajoutés dans NapoleoN Chat.</string>
+    <string name="show_case_third_title">ETAT</string>
+    <string name="show_case_third_subtitle">Faites savoir à vos contacts que vous rencontrez une phrase.</string>
+    <string name="show_case_fourth_title">MENU PRINCIPAL</string>
+    <string name="show_case_fourth_subtitle">Nous vous donnons différentes options pour modifier le compte à votre goût.</string>
+    <string name="show_case_fifth_title">LES PARAMÈTRES DE SÉCURITÉ</string>
+    <string name="show_case_fifth_subtitle">Gardez votre sécurité de l\'information en définissant la sécurité de votre compte.</string>
+    <string name="show_case_sixth_title">RÉCUPÉRATION DU COMPTE</string>
+    <string name="show_case_sixth_subtitle">Si vous voulez garder votre même utilisateur, veuillez répondre aux questions de sécurité.</string>
+    <string name="show_case_seventh_title">SUICIDE DE MESSAGES</string>
+    <string name="show_case_seventh_subtitle">Personnaliser la durée de vos messages.</string>
+    <string name="text_repeat_tutorial">Tutoriel répétition</string>
+    <string name="text_message_dialog_repeat_tutorial">Vous voulez donner un aperçu des principales fonctions de l\'application?</string>
+</resources>

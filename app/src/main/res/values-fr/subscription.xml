@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_trial_period">Période d\'essai - %1$d jours restants</string>
+    <string name="text_current_subscription">Abonnement actuel</string>
+    <string name="text_get_subscription">Acheter un abonnement</string>
+    <string name="text_subscription_type">Type d\'abonnement</string>
+    <string name="text_select_subscription">Sélectionnez un type d\'abonnement</string>
+    <string name="text_expired_subscription">L\'abonnement a expiré</string>
+    <string name="text_free_trial_expired">Le temps de test a expiré</string>
+    <string name="text_subscription_expiration">Expiration de l\'abonnement</string>
+    <string name="text_check_conditions">Vous êtes sur le point d\'accéder à une plateforme externe à l\'application. NapoleoN Chat ne sauvegarde ni n\'a accès aux données fournies sur cette plateforme. Êtes-vous sûr de vouloir accéder à ce site?</string>
+    <string name="text_payment_method">Procédé de paiement</string>
+    <string name="text_message_selection_type_subscription">Vous devez sélectionner un type d\'abonnement</string>
+    <string name="text_warning">Vous serez ensuite redirigé vers un portail de paiement, ce portail est externe à NapoleoN Chat, il n\'a donc pas les mêmes caractéristiques que notre application et vous devez accepter les termes et conditions stipulés pour son utilisation. Nous ne sommes pas responsables du traitement des données fournies dans le module de paiement.</string>
+    <string name="text_subscription_and_time">%1$s - %2$d jours restants</string>
+    <string name="text_you_want_to_unsubscribe_title">Vous souhaitez vous désabonner?</string>
+    <string name="text_you_want_to_unsubscribe_desc">Si vous annulez cet abonnement, vous ne pouvez utiliser le chat NN JJ-MM-AA (la fin de souscription lieu de date)</string>
+    <string name="text_not_for_now">Pas pour l\'instant</string>
+    <string name="text_yes_cancel">OUI, Annuler</string>
+    <string name="text_unsubscribed_title">Désabonné</string>
+    <string name="text_unsubscribed_desc">Rappelez-vous que vous pouvez vous abonner à un autre forfait qui convient à vos besoins à tout moment.</string>
+    <string name="text_finalize">Finaliser</string>
+    <string name="text_error_unsubscribe">une erreur annulation de votre abonnement, s\'il vous plaît essayer plus tard a eu lieu.</string>
+    <string name="text_subscription_monthly">Mensuel</string>
+    <string name="text_subscription_semiannual">Semestriel</string>
+    <string name="text_subscription_yearly">Annuel</string>
+    <string name="text_purchase">Acheter %1$s (%2$s)</string>
+    <string name="text_subscription_successfully">Abonnement réussi.</string>
+    <string name="text_subscription_already_owned">Vous disposez déjà de ce plan actuellement actif.</string>
+    <string name="text_operation_cancelled">Opération annulée.</string>
+    <string name="text_subscription_error">Une erreur est survenue! Réessayez plus tard.</string>
+    <string name="text_subscription_expired">Votre expirés d\'abonnement, vous ne recevrez des messages.</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_count_questions">Pregunta de Seguridad %1$d / %2$d</string>
+    <string name="text_add_question">Agregar otra pregunta</string>
+    <string name="text_security_questions">Elige una pregunta</string>
+    <string name="text_select_question">Debe seleccionar una pregunta</string>
+    <string name="text_title_register_questions">La opción de Recuperar Cuenta, te ayudara a recuperar tu Apodo, contactos y preferencias. Recuerda que una respuesta difícil es la clave para tu privacidad y seguridad</string>
+    <string name="text_description_cancel">No quedara registrada información para recuperación de cuenta. ¿Está seguro que deseas salir?</string>
+    <string name="text_title_cancel">¿Salir del registro?</string>
+    <string name="text_successful_message">Información registrada con éxito</string>
+    <string name="text_error_message">Error al registrar la información</string>
+    <string name="text_final_register">¿Estás seguro que desea salir? La aplicación guardara las respuestas anteriores en tu configuración de recuperación de cuenta.</string>
+</resources>

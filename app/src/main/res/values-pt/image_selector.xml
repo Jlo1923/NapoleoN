@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_change_profile_photo">Alterar foto do perfil</string>
+    <string name="text_change_cover_photo">Alterar foto da capa</string>
+    <string name="text_take_photo">Tirar foto</string>
+    <string name="text_select_photo">Selecionar foto</string>
+    <string name="text_select_default">Por padrão</string>
+</resources>

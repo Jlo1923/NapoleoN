@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="show_case_first_title">KONTAKTE HINZUFÜGEN</string>
+    <string name="show_case_first_subtitle">Hier können Sie die Menschen für sie durch seinen Spitznamen suchen einladen.</string>
+    <string name="show_case_second_title">KONTAKTE</string>
+    <string name="show_case_second_subtitle">Hier können Sie die Kontakte finden Sie in NapoleoN Chat hinzugefügt haben.</string>
+    <string name="show_case_third_title">ZUSTAND</string>
+    <string name="show_case_third_subtitle">Lassen Sie Ihre Kontakte, wie Sie einen Satz treffen.</string>
+    <string name="show_case_fourth_title">HAUPTMENÜ</string>
+    <string name="show_case_fourth_subtitle">Wir geben Ihnen verschiedene Optionen, um das Konto nach Ihren Wünschen zu ändern.</string>
+    <string name="show_case_fifth_title">SICHERHEITSEINSTELLUNGEN</string>
+    <string name="show_case_fifth_subtitle">Halten Sie Ihre Daten sicher, indem Sie die Sicherheit Ihres Kontos.</string>
+    <string name="show_case_sixth_title">KONTO-WIEDERHERSTELLUNG</string>
+    <string name="show_case_sixth_subtitle">Wenn Sie möchten, dass Ihre gleichen Benutzer, komplette Sicherheitsfragen zu halten.</string>
+    <string name="show_case_seventh_title">SELBSTZERSTÖRUNG NACHRICHTEN</string>
+    <string name="show_case_seventh_subtitle">Passen Sie die Dauer Ihrer Nachrichten.</string>
+    <string name="text_repeat_tutorial">Wiederholung Tutorial</string>
+    <string name="text_message_dialog_repeat_tutorial">Sie wollen einen Überblick über die wichtigsten Funktionen der App geben?</string>
+</resources>

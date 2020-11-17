@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_nickname">Apodo*</string>
+    <string name="text_terms_and_conditions_line_one">Al hacer click en Siguiente, aceptará los</string>
+    <string name="text_terms_and_conditions_line_two">términos, condiciones y políticas de privacidad.</string>
+    <string name="text_nickname_required">El Apodo es obligatorio</string>
+    <string name="text_nickname_must_not_contain_space">No puede contener espacios en blanco</string>
+    <string name="text_cant_contain_special_characters">No puede contener carácteres especiales</string>
+    <string name="text_nickname_contain_at_least_one_number">El apodo debe contener al menos un número</string>
+    <string name="text_nickname_not_contain_enough_char_and_number">El Apodo debe contener mínimo 3 caracteres y 1 número</string>
+    <string name="text_nickname_contain_at_least_one_letter">El Apodo debe contener al menos una letra</string>
+    <string name="text_only_start_letter">El Apodo debe comenzar con una letra</string>
+</resources>

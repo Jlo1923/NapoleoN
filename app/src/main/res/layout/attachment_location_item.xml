@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.attachmentLocation.AttachmentLocationFragment">
+
+    <data>
+
+        <variable
+            name="place"
+            type="com.naposystems.napoleonchat.model.attachment.location.Place" />
+
+        <variable
+            name="clickListener"
+            type="com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter.AttachmentLocationListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_white_with_separator"
+        android:onClick="@{() -> clickListener.onPlaceSelected(place)}"
+        android:padding="@dimen/small_padding">
+
+        <ImageView
+            android:id="@+id/imageView_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="?attr/attrTintColorSecondaryDark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_location_on_primary" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/textView_distance"
+            app:layout_constraintStart_toEndOf="@id/imageView_icon"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView_place_name"
+                style="@style/BodyTextView.Bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{place.name}"
+                tools:text="@tools:sample/full_names" />
+
+            <TextView
+                android:id="@+id/textView_place_address"
+                style="@style/SmallBodyTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{place.address}"
+                tools:text="@tools:sample/first_names" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView_distance"
+            style="@style/SmallBodyTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{String.valueOf((place.distanceInMeters / 1000)) + "Km"}'
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="6KM" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

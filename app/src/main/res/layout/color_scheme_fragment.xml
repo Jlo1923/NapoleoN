@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.naposystems.napoleonchat.ui.colorScheme.ColorSchemeViewModel" />
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.colorScheme.ColorSchemeFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView_theme_preview"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:previewTheme="@{viewModel.theme}"
+                tools:src="@drawable/theme_dark_napoleon" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_section_system_themes"
+                        style="@style/SmallBodyTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/attrBackgroundSectionColor"
+                        android:inputType="textCapCharacters"
+                        android:padding="@dimen/small_padding"
+                        android:text="@string/text_section_system_themes"
+                        tools:ignore="TextViewEdits" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup_theme"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <RadioButton
+                            android:id="@+id/radioButton_light_napoleon"
+                            style="@style/RadioButtonTheme"
+                            android:text="@string/text_theme_light_napoleon" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_dark_napoleon"
+                            style="@style/RadioButtonTheme"
+                            android:text="@string/text_theme_dark_napoleon" />
+
+                        <TextView
+                            android:id="@+id/text_section_dark_themes"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/attrBackgroundSectionColor"
+                            android:inputType="textCapCharacters"
+                            android:padding="@dimen/small_padding"
+                            android:visibility="gone"
+                            android:text="@string/text_section_dark_themes"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                            tools:ignore="TextViewEdits" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_black_gold_alloy"
+                            style="@style/RadioButtonTheme"
+                            android:visibility="gone"
+                            android:text="@string/text_theme_black_gold_alloy" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_cold_ocean"
+                            style="@style/RadioButtonTheme"
+                            android:visibility="gone"
+                            android:text="@string/text_theme_cold_ocean" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_camouflage"
+                            style="@style/RadioButtonTheme"
+                            android:visibility="gone"
+                            android:text="@string/text_theme_camouflage" />
+
+                        <TextView
+                            android:id="@+id/text_section_light_themes"
+                            style="@style/SmallBodyTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/attrBackgroundSectionColor"
+                            android:inputType="textCapCharacters"
+                            android:visibility="gone"
+                            android:padding="@dimen/small_padding"
+                            android:text="@string/text_section_light_themes"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                            tools:ignore="TextViewEdits" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_purple_bluebonnets"
+                            style="@style/RadioButtonTheme"
+                            android:visibility="gone"
+                            android:text="@string/text_theme_purple_bluebonnets" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_pink_dream"
+                            style="@style/RadioButtonTheme"
+                            android:visibility="gone"
+                            android:text="@string/text_theme_pink_dream" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_clear_sky"
+                            style="@style/RadioButtonTheme"
+                            android:visibility="gone"
+                            android:text="@string/text_theme_clear_sky" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+            </ScrollView>
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
