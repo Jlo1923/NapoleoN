@@ -52,6 +52,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_toStartOf="@id/microphone_recorder_view"
                     android:clipChildren="false"
+                    android:layout_marginEnd="@dimen/small_margin"
                     android:clipToPadding="false"
                     android:orientation="vertical">
 
@@ -148,11 +149,10 @@
                 <!-- RECORD TOGGLE -->
                 <com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView
                     android:id="@+id/microphone_recorder_view"
-                    android:layout_width="32dp"
+                    android:layout_width="42dp"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/x_small_margin"
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     tools:visibility="visible" />
