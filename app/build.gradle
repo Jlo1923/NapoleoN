@@ -13,7 +13,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file('C:\\Users\\Android1\\Documents\\pepito.jks')
+            storeFile file('C:\\Users\\peper\\Documents\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
@@ -106,6 +106,22 @@ android {
             buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
             buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
             buildConfigField("String", "SOCKET_BASE_URL", "\"https://dev.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "false")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("String", "PUSHER_KEY", "\"36880baf488e08473554\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
+        }
+        expose {
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"https://secrect-chat.sharedwithexpose.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"secrect-chat.sharedwithexpose.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://secrect-chat.sharedwithexpose.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "false")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")

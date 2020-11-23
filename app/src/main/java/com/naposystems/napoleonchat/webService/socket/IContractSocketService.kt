@@ -1,7 +1,8 @@
 package com.naposystems.napoleonchat.webService.socket
 
+import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageDataEventRes
+import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.pusher.client.channel.PresenceChannel
-import com.pusher.client.channel.PrivateChannel
 import org.json.JSONObject
 
 interface IContractSocketService {
@@ -48,6 +49,10 @@ interface IContractSocketService {
         fun rejectCall(contactId: Int, channel: String)
 
         fun readyForCall(contactId: Int, isVideoCall: Boolean, channelPrivate: String)
+
+        fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes)
+
+        fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
     }
 
 }

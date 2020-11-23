@@ -775,6 +775,7 @@ class ConversationFragment : BaseFragment(),
                             it.attachment
                         )
                         Timber.d("Error")
+                        conversationAdapter.setDownloadCancel(it.itemPosition)
                     }
                     is DownloadAttachmentResult.Cancel -> {
                         conversationAdapter.setDownloadCancel(it.itemPosition)
@@ -1301,6 +1302,7 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
+        Data.contactId = args.contact.id
         showCase?.setPaused(false)
         showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
