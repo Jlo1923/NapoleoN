@@ -38,6 +38,7 @@ import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
@@ -229,8 +230,6 @@ class HomeFragment : Fragment() {
         viewModel.getMessages()
 
         viewModel.getDeletedMessages()
-
-//        viewModel.getFriendshipQuantity()
 
         viewModel.getFriendshipRequestHome()
 
@@ -443,11 +442,14 @@ class HomeFragment : Fragment() {
         viewModel.getJsonNotification()
         showCase()
         binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall()
-        /*if (!isShowingVersionDialog && !BuildConfig.DEBUG)
-            getRemoteConfig()*/
+
+        if (!isShowingVersionDialog && !BuildConfig.DEBUG) {
+            Timber.d("*TestVersion: get remote")
+            getRemoteConfig()
+        }
     }
 
-    /*private fun getRemoteConfig() {
+    private fun getRemoteConfig() {
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
         mFirebaseStorage = FirebaseStorage.getInstance()
 
@@ -455,34 +457,42 @@ class HomeFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     getVersion()
-                } else {
+                } /*else {
                     this.showToast("No se han podido obtener el remote config|!!")
-                }
+                }*/
             }
-    }*/
+    }
 
     private fun getVersion() {
-        val versionApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
+        try {
+            val versionApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
+            val versionCodeApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_CODE_KEY)
 
-        if (versionApp != BuildConfig.VERSION_NAME) {
-            Utils.alertDialogInformative(
-                title = getString(R.string.text_alert_failure),
-                message = getString(R.string.text_update_message, versionApp),
-                titleButton = R.string.text_update,
-                childFragmentManager = requireContext(),
-                clickTopButton = {
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse(
-                            "https://play.google.com/store/apps/details?id=com.naposystems.pepito"
-                        )
-                        setPackage("com.android.vending")
-                    }
-                    startActivity(intent)
-                    isShowingVersionDialog = false
-                },
-                isCancelable = false
-            )
-            isShowingVersionDialog = true
+//            Timber.d("*TestVersion: $versionCodeApp")
+            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
+            
+            if (BuildConfig.VERSION_CODE < versionCodeApp.toInt()) {
+                Utils.alertDialogInformative(
+                    title = getString(R.string.text_alert_failure),
+                    message = getString(R.string.text_update_message, versionApp),
+                    titleButton = R.string.text_update,
+                    childFragmentManager = requireContext(),
+                    clickTopButton = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse(
+                                "https://play.google.com/store/apps/details?id=com.naposystems.pepito"
+                            )
+                            setPackage("com.android.vending")
+                        }
+                        startActivity(intent)
+                        isShowingVersionDialog = false
+                    },
+                    isCancelable = false
+                )
+                isShowingVersionDialog = true
+            }
+        }catch (e: Exception){
+            Timber.e(e)
         }
     }
 

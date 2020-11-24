@@ -7,6 +7,7 @@ object Constants {
     const val DATA_CRYPT = "datacrypt"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
     const val REMOTE_CONFIG_VERSION_KEY = "version_android"
+    const val REMOTE_CONFIG_VERSION_CODE_KEY = "version_code_android"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 3
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
