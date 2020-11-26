@@ -35,7 +35,6 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-
 class NotificationUtils @Inject constructor(
     private val applicationContext: Context
 ) {

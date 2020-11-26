@@ -155,9 +155,7 @@ class SocketRepository @Inject constructor(
                     messageLocalDataSource.insertMessage(message)
                 Timber.d("Conversation insertó mensajes")
 
-                // No in conversation
-                if (Data.contactId == 0)
-                    notifyMessageReceived(newMessageDataEventRes.messageId)
+                notifyMessageReceived(newMessageDataEventRes.messageId)
 
                 if (newMessageDataEventRes.message.quoted.isNotEmpty()) {
                     insertQuote(newMessageDataEventRes.message.quoted, messageId.toInt())

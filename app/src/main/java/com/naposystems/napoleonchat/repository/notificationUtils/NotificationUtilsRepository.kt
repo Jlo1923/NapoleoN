@@ -7,6 +7,7 @@ import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
 import com.naposystems.napoleonchat.db.dao.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
+import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReceivedReqDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
@@ -34,9 +35,41 @@ class NotificationUtilsRepository @Inject constructor(
 ) :
     IContractNotificationUtils.Repository {
 
+    private suspend fun getContacts() {
+        try {
+            val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
+
+            if (response.isSuccessful) {
+
+                val contactResDTO = response.body()!!
+
+                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
+
+                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
+
+                if (contactsToDelete.isNotEmpty()) {
+
+                    contactsToDelete.forEach { contact ->
+                        messageLocalDataSource.deleteMessageByType(
+                            contact.id,
+                            Constants.MessageType.NEW_CONTACT.type
+                        )
+                        contactLocalDataSource.deleteContact(contact)
+                    }
+                }
+            } else {
+                Timber.e(response.errorBody()!!.string())
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
 
     override fun insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes) {
         GlobalScope.launch(Dispatchers.IO) {
+
+            getContacts()
+
             val databaseMessage =
                 messageLocalDataSource.getMessageByWebId(newMessageEventMessageRes.id, false)
 
