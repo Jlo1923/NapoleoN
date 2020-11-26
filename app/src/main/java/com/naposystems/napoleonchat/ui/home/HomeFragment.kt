@@ -473,7 +473,7 @@ class HomeFragment : Fragment() {
                 clickTopButton = {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
                         data = Uri.parse(
-                            "https://play.google.com/store/apps/details?id=com.naposystems.pepito"
+                            "https://play.google.com/store/apps/details?id=com.naposystems.napoleonchat"
                         )
                         setPackage("com.android.vending")
                     }
