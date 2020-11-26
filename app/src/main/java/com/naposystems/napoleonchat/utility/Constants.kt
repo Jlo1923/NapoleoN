@@ -439,6 +439,11 @@ object Constants {
         UNPLUGGED(0)
     }
 
+    enum class StateFlag(val state: Int){
+        ON(1),
+        OFF(0)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"

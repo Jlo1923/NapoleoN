@@ -235,6 +235,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                             R.drawable.ic_baseline_pause_circle, context.theme
                         )
                     )
+                    Timber.d("*TestAudio: Play")
                 } else {
                     it.setStateImageButtonSpeed(binding.imageButtonSpeed, mWebId ?: "")
                     binding.imageButtonPlay.setImageDrawable(
@@ -242,6 +243,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                             R.drawable.ic_baseline_play_circle, context.theme
                         )
                     )
+                    Timber.d("*TestAudio: Pause")
                 }
 //                mediaPlayerManager?.setDuration(duration)
                 /*if (mediaPlayerManager?.isPlaying() == true && !binding.imageButtonPlay.hasBeenInitialized) {
@@ -259,6 +261,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                         R.drawable.ic_baseline_play_circle, context.theme
                     )
                 )
+//                Timber.d("*TestAudio: Pause")
             }
         } ?: run {
             binding.textViewDuration.text = Utils.getDuration(duration, false)

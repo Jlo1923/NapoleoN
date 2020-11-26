@@ -34,7 +34,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
     var state: State = State.NOT_RUNNING
 
     private var bandera: Boolean = true
-    private val mHandler: Handler = Handler()
+//    private val mHandler: Handler = Handler()
     private var runnable: Runnable? = null
 
     init {
@@ -80,7 +80,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
 
                         state = State.RUNNING_HELD
                         binding.imageButtonAudioToggle.isVisible = false
-                        floatingRecordButton.display(event.x, event.y)
+                        floatingRecordButton.display()
                         mListener?.onRecordPressed()
                     }
                 }
@@ -131,8 +131,8 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
         binding.containerLock.isVisible = false
     }
 
-    private class FloatingRecordButton internal constructor(
-        context: Context,
+    private class FloatingRecordButton(
+        private var context: Context,
         private val recordButtonFab: ImageView,
         private val containerLock: ConstraintLayout?
     ) {
@@ -140,12 +140,11 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
         private var startPositionY = 0f
         var lastOffsetX = 0f
         var lastOffsetY = 0f
-        private var context = context
 
         private val px12Y = Utils.dpToPx(context, 12f).toFloat()
         private val px15X = Utils.dpToPx(context, 15f).toFloat()
 
-        fun display(x: Float, y: Float) {
+        fun display() {
             startPositionX = 0f
             startPositionY = 0f
             recordButtonFab.visibility = View.VISIBLE

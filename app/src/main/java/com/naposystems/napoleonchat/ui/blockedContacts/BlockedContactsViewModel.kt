@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
+import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,11 +39,7 @@ class BlockedContactsViewModel @Inject constructor(private val repository: Block
 
     override fun searchLocalBlockedContact(query: String) {
         _listBlockedContacts.value = _blockedContacts.value!!.filter {
-            if (it.nicknameFake == "") {
-                it.nickname.contains(query)
-            } else {
-                it.nicknameFake.contains(query)
-            }
+            Utils.validateNickname(it, query) || Utils.validateDisplayName(it, query)
         }
     }
 
