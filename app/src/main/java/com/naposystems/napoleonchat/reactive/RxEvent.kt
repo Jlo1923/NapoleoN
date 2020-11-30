@@ -54,4 +54,6 @@ class RxEvent {
         val attachment: Attachment,
         val progress: Float
     )
+
+    data class StateFlag(val state: Int)
 }

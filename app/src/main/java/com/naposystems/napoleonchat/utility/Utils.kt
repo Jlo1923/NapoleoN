@@ -37,6 +37,7 @@ import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
@@ -48,6 +49,7 @@ import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -632,6 +634,23 @@ class Utils {
             tv.gravity = Gravity.CENTER
             tv.textSize = 14F
             vwToast.show()
+        }
+
+        fun validateNickname(
+            contact: Contact,
+            query: String
+        ): Boolean {
+            val data = if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
+            return validateSearch(data, query)
+        }
+
+        fun validateDisplayName(contact: Contact, query: String): Boolean {
+            val data = if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
+            return validateSearch(data, query)
+        }
+
+        private fun validateSearch(data: String, query: String): Boolean {
+            return data.toLowerCase(Locale.getDefault()).contains(query)
         }
     }
 }

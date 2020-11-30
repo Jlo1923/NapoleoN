@@ -872,41 +872,54 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchaseList ->
-            purchaseList?.let {
-                val freeTrial = viewModel.getFreeTrial()
-
-                if (System.currentTimeMillis() > freeTrial) {
-                    if (purchaseList.isEmpty()) {
-                        binding.inputPanel.isVisible = false
-                        binding.buttonCall.isVisible = false
-                        binding.buttonVideoCall.isVisible = false
-                    } else {
-                        try {
-                            val dateExpireSubscriptionMillis = getDataSubscription(purchaseList)
-                            if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
-                                binding.inputPanel.isVisible = false
-                                binding.buttonCall.isVisible = false
-                                binding.buttonVideoCall.isVisible = false
-                            }
-                        } catch (e: Exception) {
-                            Timber.e(e)
-                        }
-                    }
-                } else {
-                    binding.inputPanel.isVisible = true
-                    binding.buttonCall.isVisible = true
-                    binding.buttonVideoCall.isVisible = true
+        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+            purchasesList?.let {
+                for (purchase in purchasesList) {
+                    billingClientLifecycle.acknowledged(purchase)
                 }
+                Timber.d("Billing purchases $purchasesList")
+                billingClientLifecycle.queryPurchasesHistory()
             }
         })
+
+        billingClientLifecycle.purchasesHistory.observe(
+            viewLifecycleOwner,
+            Observer { purchasesHistory ->
+                purchasesHistory?.let {
+                    val freeTrial = viewModel.getFreeTrial()
+
+                    if (System.currentTimeMillis() > freeTrial) {
+                        if (purchasesHistory.isEmpty()) {
+                            binding.inputPanel.isVisible = false
+                            binding.buttonCall.isVisible = false
+                            binding.buttonVideoCall.isVisible = false
+                        } else {
+                            try {
+                                val dateExpireSubscriptionMillis =
+                                    getDataSubscription(purchasesHistory)
+                                if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
+                                    binding.inputPanel.isVisible = false
+                                    binding.buttonCall.isVisible = false
+                                    binding.buttonVideoCall.isVisible = false
+                                }
+                            } catch (e: Exception) {
+                                Timber.e(e)
+                            }
+                        }
+                    } else {
+                        binding.inputPanel.isVisible = true
+                        binding.buttonCall.isVisible = true
+                        binding.buttonVideoCall.isVisible = true
+                    }
+                }
+            })
     }
 
-    private fun getDataSubscription(purchaseList: List<Purchase>): Long {
+    private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = purchaseList.last().purchaseTime
+        calendar.timeInMillis = purchasesHistory[0].purchaseTime
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val lastPurchase = purchaseList.last()
+        val lastPurchase = purchasesHistory[0]
 
         when (lastPurchase.sku) {
             Constants.SkuSubscriptions.MONTHLY.sku -> calendar.add(
@@ -1091,6 +1104,16 @@ class ConversationFragment : BaseFragment(),
                 )
             }
 
+        val disposableStateFlag = RxBus.listen(RxEvent.StateFlag::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.StateFlag")
+                if (it.state == Constants.StateFlag.ON.state)
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                else
+                    requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+
         disposable.add(disposableContactBlockOrDelete)
         disposable.add(disposableIncomingCall)
         disposable.add(disposableNewMessageEvent)
@@ -1101,6 +1124,7 @@ class ConversationFragment : BaseFragment(),
         disposable.add(disposableUploadProgress)
         disposable.add(disposableCompressProgress)
         disposable.add(disposableIncomingCallSystem)
+        disposable.add(disposableStateFlag)
     }
 
     private fun validScroll(
@@ -1952,6 +1976,7 @@ class ConversationFragment : BaseFragment(),
     override fun onRecorderStarted() {
         MediaPlayerManager.resetMediaPlayer()
         startRecording()
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
     }
 
@@ -1965,6 +1990,7 @@ class ConversationFragment : BaseFragment(),
             saveAndSendRecordAudio()
         }
         binding.inputPanel.closeQuote()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onRecorderLocked() {

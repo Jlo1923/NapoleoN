@@ -34,7 +34,8 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
     var state: State = State.NOT_RUNNING
 
     private var bandera: Boolean = true
-    private val mHandler: Handler = Handler()
+
+    //    private val mHandler: Handler = Handler()
     private var runnable: Runnable? = null
 
     init {
@@ -80,7 +81,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
 
                         state = State.RUNNING_HELD
                         binding.imageButtonAudioToggle.isVisible = false
-                        floatingRecordButton.display(event.x, event.y)
+                        floatingRecordButton.display()
                         mListener?.onRecordPressed()
                     }
                 }
@@ -100,6 +101,7 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
                         this.state = State.NOT_RUNNING
                         hideUi()
                         mListener?.onRecordReleased()
+                        floatingRecordButton.clearAnimation()
                     }
                 }
             }
@@ -131,8 +133,8 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
         binding.containerLock.isVisible = false
     }
 
-    private class FloatingRecordButton internal constructor(
-        context: Context,
+    private class FloatingRecordButton(
+        private var context: Context,
         private val recordButtonFab: ImageView,
         private val containerLock: ConstraintLayout?
     ) {
@@ -140,12 +142,11 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
         private var startPositionY = 0f
         var lastOffsetX = 0f
         var lastOffsetY = 0f
-        private var context = context
 
         private val px12Y = Utils.dpToPx(context, 12f).toFloat()
         private val px15X = Utils.dpToPx(context, 15f).toFloat()
 
-        fun display(x: Float, y: Float) {
+        fun display() {
             startPositionX = 0f
             startPositionY = 0f
             recordButtonFab.visibility = View.VISIBLE
@@ -176,32 +177,38 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
             recordButtonFab.translationY = lastOffsetY
         }
 
+        fun clearAnimation() {
+            recordButtonFab.clearAnimation()
+        }
+
         fun hide() {
             if (recordButtonFab.visibility != View.VISIBLE) return
             recordButtonFab.translationX = px15X
             recordButtonFab.translationY = px12Y
-            val animation = AnimationSet(false)
-            val scaleAnimation: Animation = ScaleAnimation(
+//            val animation = AnimationSet(false)
+            /*val scaleAnimation: Animation = ScaleAnimation(
                 1f, 0.5f, 1f, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f
-            )
-            val translateAnimation: Animation = TranslateAnimation(
+            )*/
+            /*val translateAnimation: Animation = TranslateAnimation(
                 Animation.ABSOLUTE, lastOffsetX,
                 Animation.ABSOLUTE, px15X,
                 Animation.ABSOLUTE, lastOffsetY,
                 Animation.ABSOLUTE, px12Y
-            )
-            scaleAnimation.interpolator = AnticipateOvershootInterpolator(1.5f)
-            translateAnimation.interpolator = DecelerateInterpolator()
-            animation.addAnimation(scaleAnimation)
-            animation.addAnimation(translateAnimation)
-            animation.duration = 200L
-            animation.interpolator = AnticipateOvershootInterpolator(1.5f)
-            recordButtonFab.visibility = View.GONE
-            recordButtonFab.clearAnimation()
-            recordButtonFab.startAnimation(animation)
+            )*/
+//            scaleAnimation.interpolator = AnticipateOvershootInterpolator(1.5f)
+//            translateAnimation.interpolator = DecelerateInterpolator()
+//            animation.addAnimation(scaleAnimation)
+//            animation.addAnimation(translateAnimation)
+            /*animation.duration = 200L
+            animation.interpolator = AnticipateOvershootInterpolator(1.5f)*/
+
+            /*recordButtonFab.clearAnimation()
+            recordButtonFab.startAnimation(animation)*/
+
             containerLock?.isVisible = false
+            recordButtonFab.visibility = View.GONE
         }
 
         private fun getXOffset(x: Float): Float {
@@ -223,7 +230,9 @@ class MicrophoneRecorderView constructor(context: Context, attrs: AttributeSet) 
     override fun cancelAction() {
         if (state != State.NOT_RUNNING) {
             state = State.NOT_RUNNING
+//            floatingRecordButton.clearAnimation()
             hideUi()
+//            floatingRecordButton.hide()
             mListener?.onRecordCanceled()
         }
     }

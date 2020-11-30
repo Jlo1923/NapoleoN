@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.databinding.CustomInputPanelWidgetBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView
 import com.naposystems.napoleonchat.utility.Utils
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs),
@@ -28,6 +29,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     private var showMicrophone: Boolean = true
     private var showFabSend: Boolean = true
     private var mListener: Listener? = null
+    private lateinit var animationMove: Animation
 
     init {
         context.theme.obtainStyledAttributes(
@@ -209,8 +211,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         mListener?.onRecorderStarted()
         binding.containerInputPanel.startAnimation(
             AnimationUtils.loadAnimation(
-                context,
-                R.anim.slide_out_left
+                context, R.anim.slide_out_left
             )
         )
         binding.containerInputPanel.isVisible = false
@@ -218,22 +219,16 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         Utils.fadeOut(binding.containerInputPanel, 150, View.INVISIBLE)*/
         binding.containerSlideToCancel.startAnimation(
             AnimationUtils.loadAnimation(
-                context,
-                R.anim.slide_in_right
+                context, R.anim.slide_in_right_input
             )
         )
-        binding.containerSlideToCancel.isVisible = true
+        binding.imageViewMic.startAnimation(
+            AnimationUtils.loadAnimation(
+                context, R.anim.intermittent
+            )
+        )
 
-        /*if (binding.viewSwitcher.nextView.id == binding.containerSlideToCancel.id) {
-            binding.layoutQuote.visibility = View.GONE
-            binding.viewSwitcher.inAnimation =
-                AnimationUtils.loadAnimation(context, R.anim.slide_in_right)
-            binding.viewSwitcher.outAnimation =
-                AnimationUtils.loadAnimation(context, R.anim.slide_out_left)
-            binding.viewSwitcher.showNext()
-            objectAnimatorMic.target = binding.imageViewMic
-            objectAnimatorMic.start()
-        }*/
+        binding.containerSlideToCancel.isVisible = true
     }
 
     override fun onRecordReleased() {
@@ -242,7 +237,6 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
             .setDuration(150)
             .start()*/
         binding.imageButtonSend.isVisible = false
-
 
         binding.containerInputPanel.startAnimation(
             AnimationUtils.loadAnimation(
@@ -254,41 +248,10 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.containerSlideToCancel.startAnimation(
             AnimationUtils.loadAnimation(
                 context,
-                R.anim.slide_out_right
+                R.anim.slide_out_right_input
             )
         )
         binding.containerSlideToCancel.isVisible = false
-
-
-        /*val future: SettableFuture<Void> = SettableFuture()
-
-        val animation = AnimationSet(true)
-        animation.addAnimation(
-            TranslateAnimation(
-                Animation.ABSOLUTE, binding.containerSlideToCancel.translationX,
-                Animation.ABSOLUTE, 0f,
-                Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f
-            )
-        )
-        animation.addAnimation(AlphaAnimation(1f, 0f))
-
-        animation.duration = 150
-        animation.fillBefore = true
-        animation.fillAfter = false
-
-        binding.containerSlideToCancel.postDelayed(
-            Runnable { future.set(null) },
-            150
-        )
-        binding.containerSlideToCancel.visibility = View.GONE
-        binding.containerSlideToCancel.startAnimation(animation)
-
-        future.addListener(object : AssertedSuccessListener<Void>() {
-            override fun onSuccess(result: Void?) {
-                Utils.fadeIn(binding.containerInputPanel, 150)
-            }
-        })*/
 
         mListener?.onRecorderReleased()
     }
@@ -310,7 +273,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.containerSlideToCancel.startAnimation(
             AnimationUtils.loadAnimation(
                 context,
-                R.anim.slide_out_right
+                R.anim.slide_out_right_input
             )
         )
         binding.containerSlideToCancel.isVisible = false
@@ -320,6 +283,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
 
         mListener?.onRecorderCanceled()
 
+        animationMove.fillAfter = false
     }
 
     override fun onRecordLocked() {
@@ -333,21 +297,31 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
             .setDuration(150)
             .start()*/
         binding.imageButtonSend.isVisible = true
+        animationMove.fillAfter = false
     }
 
     override fun onRecordMoved(offsetX: Float, absoluteX: Float) {
-        val animation: Animation = TranslateAnimation(
+        Timber.d("*TestMove: $offsetX, $absoluteX")
+        val moveSetX = offsetX - 26f
+        /*val animation: Animation = TranslateAnimation(
             Animation.ABSOLUTE, offsetX,
             Animation.ABSOLUTE, offsetX,
             Animation.RELATIVE_TO_SELF, 0f,
             Animation.RELATIVE_TO_SELF, 0f
+        )*/
+
+        animationMove = TranslateAnimation(
+            Animation.ABSOLUTE, moveSetX,
+            Animation.ABSOLUTE, moveSetX,
+            Animation.RELATIVE_TO_SELF, 0f,
+            Animation.RELATIVE_TO_SELF, 0f
         )
 
-        animation.duration = 0
-//        animation.fillAfter = true
-//        animation.fillBefore = true
+        animationMove.duration = 0
+        animationMove.fillAfter = true
+//        animationMove.fillBefore = true
 
-        binding.containerTextSlide.startAnimation(animation)
+        binding.containerTextSlide.startAnimation(animationMove)
 
         val direction = ViewCompat.getLayoutDirection(this)
         val position: Float = absoluteX / binding.containerSlideToCancel.width

@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -272,6 +273,7 @@ class PreviewMediaFragment : Fragment() {
 
                             mHandler.postDelayed(mRunnable!!, 0)
                         }
+                        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
 
                     Player.STATE_ENDED -> {
@@ -288,6 +290,8 @@ class PreviewMediaFragment : Fragment() {
                         isEndFirstTime = true
 
                         sentMessageReaded(false)
+
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 }
             }
@@ -299,10 +303,14 @@ class PreviewMediaFragment : Fragment() {
                 if (isPlaying) {
                     binding.imageButtonPlay.playAnimation()
                     hideUI()
+//                    Timber.d("*TestPlay: Play")
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 } else {
                     binding.imageButtonPlay.apply {
                         reverseAnimation()
                         showUI()
+//                        Timber.d("*TestPlay: Pause")
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 }
             }
@@ -381,6 +389,7 @@ class PreviewMediaFragment : Fragment() {
             releasePlayer()
         }
         sentMessageReaded(false)
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onDestroy() {
@@ -390,6 +399,7 @@ class PreviewMediaFragment : Fragment() {
             tempFile?.delete()
         }
         sentMessageReaded(false)
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
 }

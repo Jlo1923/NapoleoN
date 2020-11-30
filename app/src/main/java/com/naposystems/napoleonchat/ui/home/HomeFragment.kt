@@ -19,11 +19,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchaseHistoryRecord
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
@@ -44,7 +43,6 @@ import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
-import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
@@ -63,6 +61,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
+
 
 class HomeFragment : Fragment() {
 
@@ -109,7 +108,7 @@ class HomeFragment : Fragment() {
 
     private var showCase: ShowCaseManager? = null
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
-    private lateinit var mFirebaseStorage: FirebaseStorage
+//    private lateinit var mFirebaseStorage: FirebaseStorage
     private var isShowingVersionDialog: Boolean = false
     private lateinit var popup: PopupMenu
 
@@ -451,15 +450,18 @@ class HomeFragment : Fragment() {
 
     private fun getRemoteConfig() {
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-        mFirebaseStorage = FirebaseStorage.getInstance()
-
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(3600)
+            .build()
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings)
         mFirebaseRemoteConfig.fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     getVersion()
-                } /*else {
-                    this.showToast("No se han podido obtener el remote config|!!")
-                }*/
+                } else {
+//                    this.showToast("No se han podido obtener el remote config|!!")
+                    Timber.e("*TestVersion: Not remoteConfig")
+                }
             }
     }
 
@@ -469,7 +471,7 @@ class HomeFragment : Fragment() {
             val versionCodeApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_CODE_KEY)
 
 //            Timber.d("*TestVersion: $versionCodeApp")
-            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
             
             if (BuildConfig.VERSION_CODE < versionCodeApp.toInt()) {
                 Utils.alertDialogInformative(
@@ -480,7 +482,7 @@ class HomeFragment : Fragment() {
                     clickTopButton = {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
                             data = Uri.parse(
-                                "https://play.google.com/store/apps/details?id=com.naposystems.pepito"
+                                "https://play.google.com/store/apps/details?id=com.naposystems.napoleonchat"
                             )
                             setPackage("com.android.vending")
                         }
