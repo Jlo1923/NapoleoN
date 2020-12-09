@@ -9,5 +9,7 @@ interface IContractNotificationUtils {
         fun getIsOnCallPref(): Boolean
         fun getContactSilenced(contactId: Int, silenced : (Boolean?) -> Unit)
         fun getContact(contactId: Int): Contact?
+        fun getNotificationMessageChannelId(): Int
+        fun setNotificationMessageChannelId(newId:Int)
     }
 }

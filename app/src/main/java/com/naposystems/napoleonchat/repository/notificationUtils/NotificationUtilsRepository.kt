@@ -48,4 +48,17 @@ class NotificationUtilsRepository @Inject constructor(
     override fun getContact(contactId: Int): Contact? {
         return contactLocalDataSource.getContactById(contactId)
     }
+
+    override fun getNotificationMessageChannelId(): Int {
+        return sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID
+        )
+    }
+
+    override fun setNotificationMessageChannelId(newId: Int) {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID,
+            newId
+        )
+    }
 }

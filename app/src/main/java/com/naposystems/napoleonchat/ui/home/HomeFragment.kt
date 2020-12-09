@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
@@ -698,7 +699,7 @@ class HomeFragment : Fragment() {
                 val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
 
                 val securitySettingMenuItem =
-                    drawerMenu.findItem(R.id.security_settings).actionView as ConstraintLayout
+                    drawerMenu.findItem(R.id.security_settings).actionView as LinearLayout
 
                 showCase = ShowCaseManager().apply {
                     setListener(object : ShowCaseManager.Listener {

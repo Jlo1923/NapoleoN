@@ -27,6 +27,7 @@ import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionDialog
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogFragment
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
+import com.naposystems.napoleonchat.ui.notifications.NotificationSettingFragment
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatFragment
 import com.naposystems.napoleonchat.ui.previewImage.PreviewImageFragment
 import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaFragment
@@ -209,4 +210,9 @@ abstract class FragmentBindingModule {
 
     @ContributesAndroidInjector
     abstract fun bindCancelSubscriptionDialogFragment(): CancelSubscriptionDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindNotificationFragment(): NotificationSettingFragment
+
+
 }

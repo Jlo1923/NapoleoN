@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="text_profile_title">Perfil</string>
-    <string name="text_security_settings_title">Ajustes de Seguridad</string>
-    <string name="text_appearance_settings_title">Ajustes de Apariencia</string>
+    <string name="text_security_settings_title">Seguridad</string>
+    <string name="text_appearance_settings_title">Apariencia</string>
     <string name="text_preview_background_chat_title">Vista previa fondo de chat</string>
     <string name="text_invite_someone_title">Invitar a Alguien</string>
     <string name="text_help_title">Ayuda</string>

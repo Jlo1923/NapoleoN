@@ -536,7 +536,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-            R.id.suscription -> navController.navigate(
+            R.id.subscription -> navController.navigate(
                 R.id.subscriptionFragment,
                 null,
                 options
@@ -551,6 +551,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 null,
                 options
             )
+            R.id.notification -> navController.navigate(R.id.notificationFragment, null, options)
             R.id.invite_someone -> navController.navigate(R.id.inviteSomeoneFragment, null, options)
             R.id.help -> navController.navigate(R.id.helpFragment, null, options)
         }

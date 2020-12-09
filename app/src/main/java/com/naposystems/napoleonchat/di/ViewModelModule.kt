@@ -28,6 +28,7 @@ import com.naposystems.napoleonchat.ui.logout.LogoutDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
+import com.naposystems.napoleonchat.ui.notifications.NotificationSettingViewModel
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.napoleonchat.ui.previewImage.PreviewImageViewModel
 import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaViewModel
@@ -367,4 +368,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(DefaultPreferencesViewModel::class)
     internal abstract fun bindDefaultPreferencesViewModel(viewModel: DefaultPreferencesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(NotificationSettingViewModel::class)
+    internal abstract fun bindNotificationSettingViewModel(viewModel: NotificationSettingViewModel): ViewModel
 }

@@ -12,4 +12,6 @@
     <string name="upload_channel_name" translatable="false">Upload channel</string>
     <string name="upload_channel_description" translatable="false">Upload channel description</string>
     <string name="calls_group_key" translatable="false">napoleon_calls</string>
+    <string name="category_channel_chat" translatable="false">Chat</string>
+    <string name="notification_message_channel_id" translatable="false">Notification Message %1$d</string>
 </resources>

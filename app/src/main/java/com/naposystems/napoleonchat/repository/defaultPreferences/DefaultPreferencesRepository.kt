@@ -86,6 +86,20 @@ class DefaultPreferencesRepository @Inject constructor(
         defaultPreferencesPutInt(Constants.SharedPreferences.PREF_ATTEMPTS_FOR_NEW_CODE, 0)
     }
 
+    override suspend fun setDefaultNotificationMessageChannelId() {
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID,
+            0
+        )
+    }
+
+    override suspend fun setDefaultNotificationGroupChannelId() {
+        defaultPreferencesPutInt(
+            Constants.SharedPreferences.PREF_NOTIFICATION_GROUP_CHANNEL_ID,
+            0
+        )
+    }
+
     private fun defaultPreferencesPutLong(preference: String, data: Long) {
         val default = sharedPreferencesManager.getLong(
             preference

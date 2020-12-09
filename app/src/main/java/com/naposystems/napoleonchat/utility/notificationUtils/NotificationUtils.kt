@@ -7,12 +7,12 @@ import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.*
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
@@ -21,7 +21,6 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.repository.notificationUtils.NotificationUtilsRepository
-import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -48,6 +47,7 @@ class NotificationUtils @Inject constructor(
         //        const val NOTIFICATION_NUMBER = 1
         const val SUMMARY_ID = 12345678
         const val GROUP_MESSAGE = "GROUP_MESSAGE"
+//        const val GROUP_CATEGORY = "my_group_01"
 
         val mediaPlayer: MediaPlayer = MediaPlayer()
     }
@@ -61,6 +61,9 @@ class NotificationUtils @Inject constructor(
     private val app: NapoleonApplication by lazy {
         applicationContext as NapoleonApplication
     }
+
+    private var defaultSoundUri: Uri? = null
+    private var channelId: Int = 0
 
     private fun playRingTone(context: Context) {
         try {
@@ -98,12 +101,53 @@ class NotificationUtils @Inject constructor(
         }
     }
 
+    fun changeChannel(context: Context, uri: Uri?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            defaultSoundUri = uri
+
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val id = repository.getNotificationMessageChannelId()
+            val notificationMessageChannelId =
+                context.getString(R.string.notification_message_channel_id, id)
+
+            notificationManager.deleteNotificationChannel(notificationMessageChannelId)
+
+//            Timber.d("*TestSong: deleteNotificationChannel $notificationMessageChannelId")
+
+            createMessageChannel(applicationContext)
+        }
+    }
+
+    fun getChannelSound(context: Context): Uri? {
+         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val id = repository.getNotificationMessageChannelId()
+            val notificationMessageChannelId =
+                context.getString(R.string.notification_message_channel_id, id)
+
+            val channel = notificationManager.getNotificationChannel(notificationMessageChannelId)
+            channel.sound
+        } else null
+    }
+
     init {
         (applicationContext as DaggerApplication).androidInjector().inject(this)
+        //region Chat Notification
+        createCategoryChannel(applicationContext)
+//        createMessageChannel(applicationContext)
+//        createGroupChannel(applicationContext)
+        //endregion
+
+        //region Others
         createNotificationChannel(applicationContext)
         createCallNotificationChannel(applicationContext)
         createAlertsNotificationChannel(applicationContext)
         createUploadNotificationChannel(applicationContext)
+        //endregion
     }
 
     fun createInformativeNotification(
@@ -216,13 +260,6 @@ class NotificationUtils @Inject constructor(
         when (notificationType) {
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                /*{message_id=ec45fe6f-0b7d-4255-9549-35ef9cedf2e6,
-                body=Has recibido un mensaje cifrado,
-                sound=default,
-                title=Mensaje Cifrado,
-                contact=194097,
-                type_notification=1,
-                silence=false}*/
 
                 val contact = Constants.NotificationKeys.CONTACT
                 repository.getContactSilenced(
@@ -346,6 +383,25 @@ class NotificationUtils @Inject constructor(
                     socketService.connectToSocketReadyForCall(channel)
                 }
             }
+        }
+    }
+
+    private fun createCategoryChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // The id of the group.
+            val groupId = context.getString(R.string.category_channel_chat)
+            // The user-visible name of the group.
+            val groupName = context.getString(R.string.category_channel_chat)
+
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannelGroup(
+                NotificationChannelGroup(
+                    groupId,
+                    groupName
+                )
+            )
         }
     }
 
@@ -558,13 +614,13 @@ class NotificationUtils @Inject constructor(
         mNotificationManager.notify(NOTIFICATION_UPLOADING, notification)
     }
 
-    fun getNotificationId(context: Context, type: Int): Int {
+    /*fun getNotificationId(context: Context, type: Int): Int {
         return if (callActivityRestricted(context) && type == Constants.NotificationType.INCOMING_CALL.type) {
             NOTIFICATION_RINGING
         } else {
             NOTIFICATION
         }
-    }
+    }*/
 
     private fun callActivityRestricted(context: Context): Boolean {
         return Build.VERSION.SDK_INT >= 29 && !(context as NapoleonApplication).isAppVisible()
@@ -674,13 +730,69 @@ class NotificationUtils @Inject constructor(
         }
     }
 
+    private fun createMessageChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.d("*NotificationTest: createMessageChannel")
+
+            val id = repository.getNotificationMessageChannelId().plus(1)
+            repository.setNotificationMessageChannelId(id)
+            val channelId = context.getString(R.string.notification_message_channel_id, id)
+            val name = "Notification Message"
+            val descriptionText = "Notification Message Description"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, name, importance).apply {
+                description = descriptionText
+
+                val audioAttribute = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+
+                setSound(defaultSoundUri, audioAttribute)
+                setShowBadge(true)
+                lockscreenVisibility = PRIORITY_MAX
+                group = context.getString(R.string.category_channel_chat)
+            }
+
+            Timber.d("*TestSong: defaultSoundUri=$defaultSoundUri")
+
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createGroupChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.d("*NotificationTest: createGroupChannel")
+
+            val channelId = "Notification Group"
+            val name = "Notification Group"
+            val descriptionText = "Notification Group Description"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, name, importance).apply {
+                description = descriptionText
+            }
+            channel.setShowBadge(true)
+            channel.lockscreenVisibility = PRIORITY_MAX
+            channel.group = context.getString(R.string.category_channel_chat)
+
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     private fun getServiceNotificationAction(
         context: Context,
         action: String,
         iconResId: Int,
         titleResId: Int,
         channel: String,
-         contactId: Int,
+        contactId: Int,
         isVideoCall: Boolean
     ): Action? {
 

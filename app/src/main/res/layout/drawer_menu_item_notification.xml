@@ -11,7 +11,7 @@
         android:id="@+id/imageView_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_settings_black"
+        android:src="@drawable/ic_notifications_icon"
         app:tint="?attr/attrIconAndTextColorDrawer" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/normal_margin"
         android:layout_weight="1"
-        android:text="@string/text_security_settings_title"
+        android:text="Notifications"
         android:textColor="?attr/attrIconAndTextColorDrawer" />
 
 </LinearLayout>
