@@ -171,5 +171,13 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
         repository.verifyMessagesToDelete()
     }
 
+    override fun getDialogSubscription(): Int {
+        return repository.getDialogSubscription()
+    }
+
+    override fun setDialogSubscription() {
+        repository.setDialogSubscription()
+    }
+
     //endregion
 }

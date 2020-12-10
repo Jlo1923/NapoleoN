@@ -27,6 +27,8 @@ interface IContractHome {
         fun resetConversations()
         fun cleanVariables()
         fun verifyMessagesToDelete()
+        fun getDialogSubscription(): Int
+        fun setDialogSubscription()
     }
 
     interface Repository {
@@ -44,5 +46,7 @@ interface IContractHome {
         suspend fun cleanJsonNotification()
         fun getMessagesForHome(): LiveData<List<MessageAndAttachment>>
         fun verifyMessagesToDelete()
+        fun getDialogSubscription(): Int
+        fun setDialogSubscription()
     }
 }
