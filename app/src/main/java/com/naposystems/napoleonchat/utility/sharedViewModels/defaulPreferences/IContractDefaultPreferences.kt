@@ -18,6 +18,7 @@ interface IContractDefaultPreferences {
         suspend fun setDefaultAttemptsForRetryCode()
         suspend fun setDefaultTimeForRetryCode()
         suspend fun setDefaultAttemptsForNewCode()
+        suspend fun setDefaultDialogSubscription()
     }
 
 }
