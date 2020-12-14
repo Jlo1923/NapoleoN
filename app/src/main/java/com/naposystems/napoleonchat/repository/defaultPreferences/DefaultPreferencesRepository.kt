@@ -100,6 +100,10 @@ class DefaultPreferencesRepository @Inject constructor(
         )
     }
 
+    override suspend fun setDefaultDialogSubscription() {
+        defaultPreferencesPutInt(Constants.SharedPreferences.PREF_DIALOG_SUBSCRIPTION, 0)
+    }
+
     private fun defaultPreferencesPutLong(preference: String, data: Long) {
         val default = sharedPreferencesManager.getLong(
             preference

@@ -20,6 +20,7 @@ interface IContractDefaultPreferences {
         suspend fun setDefaultAttemptsForNewCode()
         suspend fun setDefaultNotificationMessageChannelId()
         suspend fun setDefaultNotificationGroupChannelId()
+        suspend fun setDefaultDialogSubscription()
     }
 
 }

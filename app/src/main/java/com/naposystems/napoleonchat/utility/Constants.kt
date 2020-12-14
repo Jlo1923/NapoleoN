@@ -440,9 +440,14 @@ object Constants {
         UNPLUGGED(0)
     }
 
-    enum class StateFlag(val state: Int){
+    enum class StateFlag(val state: Int) {
         ON(1),
         OFF(0)
+    }
+
+    enum class ShowDialogSubscription(val option: Int) {
+        YES(0),
+        NO(1)
     }
 
     object SharedPreferences {
@@ -481,6 +486,7 @@ object Constants {
         //endregion
 
         //region Subscription
+        const val PREF_DIALOG_SUBSCRIPTION = "DIALOG_SUBSCRIPTION"
         const val PREF_FREE_TRIAL = "free_trial"
         const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
         const val PREF_SUBSCRIPTION_TIME = "subscription_time"

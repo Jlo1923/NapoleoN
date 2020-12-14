@@ -536,11 +536,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-            R.id.subscription -> navController.navigate(
+            //TODO:Subscription
+            /*R.id.subscription -> navController.navigate(
                 R.id.subscriptionFragment,
                 null,
                 options
-            )
+            )*/
             R.id.security_settings -> navController.navigate(
                 R.id.securitySettingsFragment,
                 null,

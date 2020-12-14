@@ -73,8 +73,9 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    @Inject
-    lateinit var billingClientLifecycle: BillingClientLifecycle
+    //TODO:Subscription
+    /*@Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
     @Inject
     lateinit var webRTCClient: IContractWebRTCClient
@@ -109,7 +110,8 @@ class HomeFragment : Fragment() {
 
     private var showCase: ShowCaseManager? = null
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
-//    private lateinit var mFirebaseStorage: FirebaseStorage
+
+    //    private lateinit var mFirebaseStorage: FirebaseStorage
     private var isShowingVersionDialog: Boolean = false
     private lateinit var popup: PopupMenu
 
@@ -120,7 +122,8 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(billingClientLifecycle)
+        //TODO:Subscription
+//        lifecycle.addObserver(billingClientLifecycle)
     }
 
     override fun onCreateView(
@@ -132,7 +135,8 @@ class HomeFragment : Fragment() {
 
         viewModel.verifyMessagesToDelete()
 
-        billingClientLifecycle.queryPurchases()
+        //TODO:Subscription
+//        billingClientLifecycle.queryPurchases()
 
         binding = DataBindingUtil.inflate(
             layoutInflater,
@@ -147,9 +151,10 @@ class HomeFragment : Fragment() {
             goToStatus()
         }
 
-        binding.containerSubscription.setOnClickListener {
+        //TODO:Subscription
+        /*binding.containerSubscription.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSubscriptionFragment())
-        }
+        }*/
 
         binding.imageButtonStatusEndIcon.setOnClickListener {
             goToStatus()
@@ -212,6 +217,20 @@ class HomeFragment : Fragment() {
 
         binding.textViewStatus.isSelected = true
 
+
+        /*if (showCase?.getStateShowCaseSixth() == true &&
+            viewModel.getDialogSubscription() == Constants.ShowDialogSubscription.YES.option
+        ) {
+            generalDialog(
+                "test",
+                "message",
+                false,
+                childFragmentManager
+            ) {
+                viewModel.setDialogSubscription()
+            }
+        }*/
+
         return binding.root
     }
 
@@ -266,7 +285,8 @@ class HomeFragment : Fragment() {
             }
         })
 
-        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+        //TODO:Subscription
+        /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
                 for (purchase in purchasesList) {
                     billingClientLifecycle.acknowledged(purchase)
@@ -303,7 +323,7 @@ class HomeFragment : Fragment() {
                         }
                     } else binding.containerSubscription.isVisible = false
                 }
-            })
+            })*/
 
         viewModel.user.observe(viewLifecycleOwner, Observer {
             binding.textViewStatus.text = it.status
@@ -345,7 +365,8 @@ class HomeFragment : Fragment() {
         (activity as MainActivity).getUser()
     }
 
-    private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
+    //TODO:Subscription
+    /*private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = purchasesHistory[0].purchaseTime
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -367,7 +388,7 @@ class HomeFragment : Fragment() {
 
         val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
         return dateExpireSubscription!!.time
-    }
+    }*/
 
     private fun validateViewSwitcher(existConversation: Boolean, existFriendShip: Boolean) {
         if (!existConversation && !existFriendShip && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
@@ -473,7 +494,7 @@ class HomeFragment : Fragment() {
 
 //            Timber.d("*TestVersion: $versionCodeApp")
 //            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
-            
+
             if (BuildConfig.VERSION_CODE < versionCodeApp.toInt()) {
                 Utils.alertDialogInformative(
                     title = getString(R.string.text_alert_failure),
@@ -494,12 +515,12 @@ class HomeFragment : Fragment() {
                 )
                 isShowingVersionDialog = true
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
     }
-
-    private fun validateSubscriptionTime(purchaseHistoryList: List<PurchaseHistoryRecord>) {
+    //TODO:Subscription
+    /*private fun validateSubscriptionTime(purchaseHistoryList: List<PurchaseHistoryRecord>) {
         val freeTrial = viewModel.getFreeTrial()
         Timber.d("freeTrial: $freeTrial")
 
@@ -518,7 +539,7 @@ class HomeFragment : Fragment() {
         } else {
             binding.containerSubscription.isVisible = false
         }
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

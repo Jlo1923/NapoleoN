@@ -116,8 +116,9 @@ class ConversationFragment : BaseFragment(),
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
-    @Inject
-    lateinit var billingClientLifecycle: BillingClientLifecycle
+    //TODO:Subscription
+    /*@Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
     @Inject
     lateinit var webRTCClient: IContractWebRTCClient
@@ -686,8 +687,8 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        lifecycle.addObserver(billingClientLifecycle)
+        //TODO:Subscription
+//        lifecycle.addObserver(billingClientLifecycle)
 
         binding.viewModel = viewModel
 
@@ -872,7 +873,8 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+        //TODO:Subscription
+        /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
                 for (purchase in purchasesList) {
                     billingClientLifecycle.acknowledged(purchase)
@@ -912,10 +914,10 @@ class ConversationFragment : BaseFragment(),
                         binding.buttonVideoCall.isVisible = true
                     }
                 }
-            })
+            })*/
     }
 
-    private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
+    /*private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = purchasesHistory[0].purchaseTime
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -937,7 +939,7 @@ class ConversationFragment : BaseFragment(),
 
         val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
         return dateExpireSubscription!!.time
-    }
+    }*/
 
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
