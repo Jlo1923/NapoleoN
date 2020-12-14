@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.databinding.NotificationFragmentBinding
+import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import dagger.android.support.AndroidSupportInjection
@@ -26,7 +26,7 @@ class NotificationSettingFragment : BaseFragment() {
     }
 
     private lateinit var viewModel: NotificationSettingViewModel
-    private lateinit var binding: NotificationFragmentBinding
+    private lateinit var binding: NotificationSettingFragmentBinding
     private lateinit var notificationUtils: NotificationUtils
     private var currentSoundNotificationMessage: Uri? = null
     private var soundTitle = ""
@@ -46,7 +46,7 @@ class NotificationSettingFragment : BaseFragment() {
     ): View {
 
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.notification_fragment, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.notification_setting_fragment, container, false)
 
         notificationUtils = activity?.let { NotificationUtils(it.applicationContext) }!!
 
