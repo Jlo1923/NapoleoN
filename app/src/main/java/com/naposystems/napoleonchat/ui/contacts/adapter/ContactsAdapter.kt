@@ -49,7 +49,7 @@ class ContactsAdapter constructor(
 
             binding.apply {
                 contact = item
-                viewModel = userDisplayFormatShareViewModel
+                userDisplayFormat = userDisplayFormatShareViewModel.getUserDisplayFormat()
 
                 buttonMore.setOnClickListener {
                     clickListener.onMoreClick(item, it)

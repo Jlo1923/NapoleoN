@@ -1558,7 +1558,7 @@ class ConversationFragment : BaseFragment(),
 
         actionBarCustomView.contact = args.contact
 
-        actionBarCustomView.viewModel = userDisplayFormatShareViewModel
+        actionBarCustomView.userDisplayFormat = userDisplayFormatShareViewModel.getUserDisplayFormat()
 
         actionBarCustomView.containerBack.setOnClickListener {
             findNavController().popBackStack()

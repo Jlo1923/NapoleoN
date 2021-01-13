@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="viewModel"
-            type="com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel" />
+            name="userDisplayFormat"
+            type="Integer" />
 
         <variable
             name="clickListener"
@@ -51,7 +51,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             app:name="@{contact}"
-            app:nameFormatContact="@{viewModel.userDisplayFormat}"
+            app:nameFormatContact="@{userDisplayFormat}"
             tools:text="@tools:sample/full_names" />
 
         <TextView
@@ -69,7 +69,7 @@
             app:layout_constraintEnd_toStartOf="@+id/button_more"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
-            app:nickNameFormat="@{viewModel.userDisplayFormat}"
+            app:nickNameFormat="@{userDisplayFormat}"
             app:nickname="@{contact}"
             tools:text="@tools:sample/first_names" />
 

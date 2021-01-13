@@ -6,12 +6,22 @@
     <data>
 
         <variable
-            name="viewModel"
-            type="com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsViewModel" />
+            name="allowDownloads"
+            type="Integer" />
 
         <variable
-            name="selfDestructViewModel"
-            type="com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel" />
+            name="timeRequestAccessPin"
+            type="Integer" />
+
+        <variable
+            name="selfDestructTimeGlobal"
+            type="Integer" />
+
+        <variable
+            name="messageSelfDestructTimeNotSent"
+            type="Integer" />
+
+
     </data>
 
     <ScrollView
@@ -74,7 +84,7 @@
                         style="@style/OptionValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:selfDestructTime="@{selfDestructViewModel.selfDestructTimeGlobal}"
+                        app:selfDestructTime="@{selfDestructTimeGlobal}"
                         tools:text="1 día" />
 
                 </LinearLayout>
@@ -111,7 +121,7 @@
                     android:id="@+id/switch_allow_download"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:allowDownload="@{viewModel.allowDownloads}"
+                    app:allowDownload="@{allowDownloads}"
                     app:layout_constraintBottom_toBottomOf="@+id/textView_title_allow_download"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/textView_title_allow_download"
@@ -172,7 +182,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="0dp"
                         android:layout_marginEnd="0dp"
-                        app:messageSelfDestructTimeNotSent="@{selfDestructViewModel.messageSelfDestructTimeNotSent}"
+                        app:messageSelfDestructTimeNotSent="@{messageSelfDestructTimeNotSent}"
                         tools:text="1 día" />
 
                 </LinearLayout>
@@ -294,7 +304,7 @@
                         android:layout_marginEnd="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:timeRequestAccessPin="@{viewModel.timeRequestAccessPin}"
+                        app:timeRequestAccessPin="@{timeRequestAccessPin}"
                         tools:text="10 min" />
 
                 </LinearLayout>
