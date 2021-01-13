@@ -261,16 +261,7 @@ class NotificationUtils @Inject constructor(
                             }
 
                             if (data.containsKey(message) && !app.isAppVisible()) {
-                                val moshi = Moshi.Builder().build()
-                                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
-                                    moshi.adapter(NewMessageEventMessageRes::class.java)
-                                val dataEvent = jsonAdapter.fromJson(data.getValue(message))
-
-                                dataEvent?.let {
-                                    repository.insertMessage(
-                                        it
-                                    )
-                                }
+                                repository.insertMessage(data.getValue(message))
                             }
 
                             if (data.containsKey(messageId) && !app.isAppVisible()) {

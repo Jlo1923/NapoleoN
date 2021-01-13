@@ -18,6 +18,8 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -34,6 +36,8 @@ class NotificationUtilsRepository @Inject constructor(
     private val attachmentLocalDataSource: AttachmentDataSource
 ) :
     IContractNotificationUtils.Repository {
+
+    private val cryptoMessage = CryptoMessage(context)
 
     private suspend fun getContacts() {
         try {
@@ -65,33 +69,52 @@ class NotificationUtilsRepository @Inject constructor(
         }
     }
 
-    override fun insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes) {
+    override fun insertMessage(messageString: String) {
         GlobalScope.launch(Dispatchers.IO) {
 
             getContacts()
 
-            val databaseMessage =
-                messageLocalDataSource.getMessageByWebId(newMessageEventMessageRes.id, false)
+            val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
+                cryptoMessage.decryptMessageBody(messageString)
+            } else {
+                messageString
+            }
 
-            if (databaseMessage == null) {
+            val moshi = Moshi.Builder().build()
+            val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
+                moshi.adapter(NewMessageEventMessageRes::class.java)
 
-                val message = newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+            jsonAdapter.fromJson(newMessageEventMessageResData)?.let { newMessageEventMessageRes ->
 
-                val messageId =
-                    messageLocalDataSource.insertMessage(message)
-                Timber.d("Conversation insertó mensajes")
+                val databaseMessage =
+                    messageLocalDataSource.getMessageByWebId(newMessageEventMessageRes.id, false)
 
-                if (newMessageEventMessageRes.quoted.isNotEmpty()) {
-                    insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
+                if (databaseMessage == null) {
+
+                    val message =
+                        newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+
+                    if (BuildConfig.ENCRYPT_API) {
+                        message.encryptBody(cryptoMessage)
+                    }
+
+                    val messageId =
+                        messageLocalDataSource.insertMessage(message)
+                    Timber.d("Conversation insertó mensajes")
+
+                    if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                        insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
+                    }
+
+                    val listAttachments =
+                        NewMessageEventAttachmentRes.toListConversationAttachment(
+                            messageId.toInt(),
+                            newMessageEventMessageRes.attachments
+                        )
+
+                    attachmentLocalDataSource.insertAttachments(listAttachments)
+                    Timber.d("Conversation insertó attachment")
                 }
-
-                val listAttachments =
-                    NewMessageEventAttachmentRes.toListConversationAttachment(
-                        messageId.toInt(),
-                        newMessageEventMessageRes.attachments
-                    )
-
-                attachmentLocalDataSource.insertAttachments(listAttachments)
             }
         }
     }

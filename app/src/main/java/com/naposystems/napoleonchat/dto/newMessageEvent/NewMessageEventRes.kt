@@ -1,7 +1,5 @@
 package com.naposystems.napoleonchat.dto.newMessageEvent
 
-import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.utility.Constants
@@ -17,7 +15,7 @@ data class NewMessageEventRes(
 data class NewMessageDataEventRes(
     @Json(name = "message_id") val messageId: String,
     @Json(name = "contact_id") val contactId: Int,
-    @Json(name = "message") val message: NewMessageEventMessageRes
+    @Json(name = "message") val message: String
 )
 
 @JsonClass(generateAdapter = true)

@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
+import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -24,6 +25,8 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -40,7 +43,7 @@ class SocketRepository @Inject constructor(
     private val contactLocalDataSource: ContactDataSource
 ) : IContractSocketService.Repository {
 
-    val cryptoMessage = CryptoMessage(context)
+    private val cryptoMessage = CryptoMessage(context)
 
     override suspend fun getContacts() {
         try {
@@ -134,6 +137,9 @@ class SocketRepository @Inject constructor(
 
     override fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes) {
         GlobalScope.launch {
+
+            getContacts()
+
             val databaseMessage =
                 messageLocalDataSource.getMessageByWebId(
                     newMessageDataEventRes.messageId,
@@ -142,37 +148,48 @@ class SocketRepository @Inject constructor(
 
             if (databaseMessage == null) {
 
-                val message =
-                    newMessageDataEventRes.message.toMessageEntity(
-                        Constants.IsMine.NO.value
-                    )
-
-                if (BuildConfig.ENCRYPT_API) {
-                    message.encryptBody(cryptoMessage)
+                val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
+                    cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
+                } else {
+                    newMessageDataEventRes.message
                 }
 
-                val messageId =
-                    messageLocalDataSource.insertMessage(message)
-                Timber.d("Conversation insertó mensajes")
+                val moshi = Moshi.Builder().build()
+                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
+                    moshi.adapter(NewMessageEventMessageRes::class.java)
 
-                notifyMessageReceived(newMessageDataEventRes.messageId)
+                jsonAdapter.fromJson(newMessageEventMessageResData)
+                    ?.let { newMessageEventMessageRes ->
+                        val message = newMessageEventMessageRes.toMessageEntity(
+                            Constants.IsMine.NO.value
+                        )
 
-                if (newMessageDataEventRes.message.quoted.isNotEmpty()) {
-                    insertQuote(newMessageDataEventRes.message.quoted, messageId.toInt())
-                }
+                        if (BuildConfig.ENCRYPT_API) {
+                            message.encryptBody(cryptoMessage)
+                        }
 
-                val listAttachments =
-                    NewMessageEventAttachmentRes.toListConversationAttachment(
-                        messageId.toInt(),
-                        newMessageDataEventRes.message.attachments
-                    )
+                        val messageId = messageLocalDataSource.insertMessage(message)
+                        Timber.d("Conversation insertó mensajes")
 
-                attachmentLocalDataSource.insertAttachments(listAttachments)
-                Timber.d("Conversation insertó attachment")
+                        notifyMessageReceived(newMessageDataEventRes.messageId)
 
-                RxBus.publish(
-                    RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-                )
+                        if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                            insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
+                        }
+
+                        val listAttachments =
+                            NewMessageEventAttachmentRes.toListConversationAttachment(
+                                messageId.toInt(),
+                                newMessageEventMessageRes.attachments
+                            )
+
+                        attachmentLocalDataSource.insertAttachments(listAttachments)
+                        Timber.d("Conversation insertó attachment")
+
+                        RxBus.publish(
+                            RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
+                        )
+                    }
             }
         }
     }
