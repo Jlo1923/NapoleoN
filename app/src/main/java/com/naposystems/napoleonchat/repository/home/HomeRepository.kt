@@ -223,4 +223,14 @@ class HomeRepository @Inject constructor(
     override fun verifyMessagesToDelete() {
         messageLocalDataSource.verifyMessagesToDelete()
     }
+
+    override fun getDialogSubscription(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_DIALOG_SUBSCRIPTION)
+    }
+
+    override fun setDialogSubscription() {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_DIALOG_SUBSCRIPTION, Constants.ShowDialogSubscription.NO.option
+        )
+    }
 }

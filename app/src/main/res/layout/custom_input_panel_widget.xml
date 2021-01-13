@@ -50,10 +50,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
+                    android:layout_marginEnd="@dimen/small_margin"
                     android:layout_toStartOf="@id/microphone_recorder_view"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:visibility="visible">
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -148,11 +150,10 @@
                 <!-- RECORD TOGGLE -->
                 <com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView
                     android:id="@+id/microphone_recorder_view"
-                    android:layout_width="32dp"
+                    android:layout_width="42dp"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/x_small_margin"
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     tools:visibility="visible" />
@@ -172,8 +173,8 @@
                         android:id="@+id/imageView_mic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tint="@color/red"
                         android:src="@drawable/ic_mic_black"
+                        app:tint="@color/red"
                         tools:ignore="ContentDescription" />
 
                     <TextView
@@ -190,13 +191,16 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="end"
-                        android:layout_weight="1">
+                        android:layout_marginStart="@dimen/x_small_margin"
+                        android:layout_weight="1"
+                        tools:visibility="visible">
 
                         <LinearLayout
                             android:id="@+id/container_text_slide"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center_horizontal"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="46dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -246,9 +250,9 @@
             android:layout_gravity="bottom"
             android:layout_marginStart="@dimen/x_small_margin"
             android:background="@drawable/bg_button_send"
+            android:src="@drawable/ic_send_black"
             android:tint="@color/white"
             android:visibility="gone"
-            android:src="@drawable/ic_send_black"
             tools:visibility="visible" />
 
     </LinearLayout>

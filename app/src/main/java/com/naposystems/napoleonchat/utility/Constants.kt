@@ -7,6 +7,7 @@ object Constants {
     const val DATA_CRYPT = "datacrypt"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
     const val REMOTE_CONFIG_VERSION_KEY = "version_android"
+    const val REMOTE_CONFIG_VERSION_CODE_KEY = "version_code_android"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 3
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
@@ -440,6 +441,16 @@ object Constants {
         UNPLUGGED(0)
     }
 
+    enum class StateFlag(val state: Int) {
+        ON(1),
+        OFF(0)
+    }
+
+    enum class ShowDialogSubscription(val option: Int) {
+        YES(0),
+        NO(1)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
@@ -472,6 +483,7 @@ object Constants {
         //endregion
 
         //region Subscription
+        const val PREF_DIALOG_SUBSCRIPTION = "DIALOG_SUBSCRIPTION"
         const val PREF_FREE_TRIAL = "free_trial"
         const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
         const val PREF_SUBSCRIPTION_TIME = "subscription_time"

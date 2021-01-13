@@ -2,8 +2,10 @@ package com.naposystems.napoleonchat.ui.contacts
 
 import androidx.lifecycle.*
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class ContactsViewModel @Inject constructor(private val repository: IContractContacts.Repository) :
@@ -25,7 +27,7 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
     val contactsLoaded: LiveData<Boolean>
         get() = _contactsLoaded
 
-    var textBarSearch : String = ""
+    var textBarSearch: String = ""
 
     init {
         _contactsLoaded.value = false
@@ -48,11 +50,7 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
         viewModelScope.launch {
             try {
                 _contactsForSearch.value = _contacts.value!!.filter {
-                    if (it.nicknameFake.isEmpty()) {
-                        it.nickname.contains(query)
-                    } else {
-                        it.nicknameFake.contains(query)
-                    }
+                    Utils.validateNickname(it, query) || Utils.validateDisplayName(it, query)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)

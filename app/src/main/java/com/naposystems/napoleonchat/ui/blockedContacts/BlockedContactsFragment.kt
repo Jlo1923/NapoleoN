@@ -99,14 +99,14 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         observeBlockedContacts()
 
         viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
-            SnackbarUtils(binding.coordinator, it).showSnackbar{}
+            SnackbarUtils(binding.coordinator, it).showSnackbar {}
         })
 
         observeListBlockedContacts()
     }
 
     override fun onPause() {
-        if (::popup.isInitialized){
+        if (::popup.isInitialized) {
             popup.dismiss()
         }
         super.onPause()
@@ -134,7 +134,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onQuery(text: String) {
         when (text.length) {
-            in 1..3 -> showNoResults()
+//            in 1..3 -> showNoResults()
             0 -> showRecycler()
             else -> viewModel.searchLocalBlockedContact(text.toLowerCase(Locale.getDefault()))
         }
@@ -147,15 +147,18 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     override fun onClosedCompleted() {}
     //endregion
 
-    private fun showNoResults() {
+    /*private fun showNoResults() {
         adapter.submitList(viewModel.blockedContacts.value)
         binding.viewFlipper.displayedChild = SEARCH_NO_RESULT
-    }
+    }*/
 
     private fun showRecycler() {
         val blockedContacts = viewModel.blockedContacts.value?.size ?: 0
-        binding.viewFlipper.displayedChild =
-            if (blockedContacts > 0) RECYCLER_VIEW else EMPTY_STATE
+
+        if (blockedContacts > 0) {
+            binding.viewFlipper.displayedChild = RECYCLER_VIEW
+            adapter.submitList(viewModel.blockedContacts.value)
+        } else binding.viewFlipper.displayedChild = EMPTY_STATE
     }
 
     private fun setAdapter() {

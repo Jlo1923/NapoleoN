@@ -261,6 +261,10 @@ object MediaPlayerManager :
                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                     mListener?.onPauseAudio(mWebId)
                     mHandler.removeCallbacks(mRunnable)
+                    Timber.d("*TestProximity: unregisterProximityListener")
+                    RxBus.publish(
+                        RxEvent.StateFlag(Constants.StateFlag.OFF.state)
+                    )
                 }
             }
         }
@@ -314,9 +318,18 @@ object MediaPlayerManager :
                         mAudioManager.isSpeakerphoneOn = false
                         mHandler.removeCallbacks(mRunnable)
                         mListener?.onPauseAudio(mWebId)
+
+//                        Timber.d("*TestAudio: pause")
+                        RxBus.publish(
+                            RxEvent.StateFlag(Constants.StateFlag.OFF.state)
+                        )
                     } else {
                         setupVoiceNoteSound(R.raw.tone_audio_message_start)
                         changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
+//                        Timber.d("*TestAudio: Play")
+                        RxBus.publish(
+                            RxEvent.StateFlag(Constants.StateFlag.ON.state)
+                        )
                         mRunnable = Runnable {
                             setSeekbarProgress()
 
@@ -429,6 +442,10 @@ object MediaPlayerManager :
                                     mHandler.postDelayed(mRunnable, 0)
                                     changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
                                     setupVoiceNoteSound(R.raw.tone_audio_message_start)
+                                    Timber.d("*TestAudio: Play Media Player")
+                                    RxBus.publish(
+                                        RxEvent.StateFlag(Constants.StateFlag.ON.state)
+                                    )
                                 }
 
                                 Player.STATE_ENDED -> {
@@ -443,6 +460,10 @@ object MediaPlayerManager :
                                     mHandler.removeCallbacks(mRunnable)
                                     mListener?.onCompleteAudio(currentAudioId, mWebId)
                                     setupVoiceNoteSound(R.raw.tone_audio_message_end)
+                                    Timber.d("*TestAudio: Pause Media Player")
+                                    RxBus.publish(
+                                        RxEvent.StateFlag(Constants.StateFlag.OFF.state)
+                                    )
                                 }
                             }
                         }
