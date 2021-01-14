@@ -320,6 +320,21 @@ class AppearanceSettingsFragment : BaseFragment() {
                 viewModel.resetConversationBackgroundLiveData()
             }
         })
+
+        viewModel.colorScheme.observe(viewLifecycleOwner) {
+            binding.colorScheme = it
+            binding.executePendingBindings()
+        }
+
+        viewModel.userDisplayFormat.observe(viewLifecycleOwner) {
+            binding.userDisplayFormat = it
+            binding.executePendingBindings()
+        }
+
+        viewModel.timeFormat.observe(viewLifecycleOwner) {
+            binding.timeFormat = it
+            binding.executePendingBindings()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

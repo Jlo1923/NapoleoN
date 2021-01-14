@@ -4,7 +4,6 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
@@ -12,16 +11,15 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.*
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.repository.notificationUtils.NotificationUtilsRepository
-import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -30,11 +28,12 @@ import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
-
 
 class NotificationUtils @Inject constructor(
     private val applicationContext: Context
@@ -216,13 +215,20 @@ class NotificationUtils @Inject constructor(
         when (notificationType) {
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                /*{message_id=ec45fe6f-0b7d-4255-9549-35ef9cedf2e6,
-                body=Has recibido un mensaje cifrado,
-                sound=default,
-                title=Mensaje Cifrado,
-                contact=194097,
-                type_notification=1,
-                silence=false}*/
+                /*{
+                    message_id=030c7bf3-a6fa-473d-b83b-db4b0fbfd0b7,
+                    body=You have received an encrypted message,
+                    badge=1,
+                    sound=default,
+                    title=Encrypted Message,
+                    contact=6,
+                    message={"read":"1","attachments":[],"destroy":"7","created_at":1605907714,
+                    "user_receiver":7,"body":"oe","user_sender":6,"quoted":"","type_message":"1",
+                    "download":false,"updated_at":1605907714,"id":"030c7bf3-a6fa-473d-b83b-db4b0fbfd0b7"
+                    ,"number_attachments":0},
+                    type_notification=1,
+                    silence=false
+                }*/
 
                 val contact = Constants.NotificationKeys.CONTACT
                 repository.getContactSilenced(
@@ -244,6 +250,7 @@ class NotificationUtils @Inject constructor(
                                 Constants.NotificationKeys.BODY
                             val messageId =
                                 Constants.NotificationKeys.MESSAGE_ID
+                            val message = Constants.NotificationKeys.MESSAGE
 
                             if (data.containsKey(titleKey)) {
                                 builder.setContentTitle(data.getValue(titleKey))
@@ -251,6 +258,10 @@ class NotificationUtils @Inject constructor(
 
                             if (data.containsKey(bodyKey)) {
                                 builder.setContentText(data.getValue(bodyKey))
+                            }
+
+                            if (data.containsKey(message) && !app.isAppVisible()) {
+                                repository.insertMessage(data.getValue(message))
                             }
 
                             if (data.containsKey(messageId) && !app.isAppVisible()) {
@@ -680,7 +691,7 @@ class NotificationUtils @Inject constructor(
         iconResId: Int,
         titleResId: Int,
         channel: String,
-         contactId: Int,
+        contactId: Int,
         isVideoCall: Boolean
     ): Action? {
 

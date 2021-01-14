@@ -38,7 +38,7 @@ object Constants {
         const val VERIFY_MESSAGES_RECEIVED = "messages/verifymessagesreceived"
         const val VERIFY_MESSAGES_READ = "messages/verifymessagesreaded"
         const val SEND_MESSAGES_READ = "messages/sendmessagesreaded"
-        const val NOTIFY_MESSAGE_RECEIVED = "messages/notifymessagereceivedunread"
+        const val NOTIFY_MESSAGE_RECEIVED = "messages/notifymessagereceived"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
         const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
@@ -83,6 +83,7 @@ object Constants {
         const val TITLE = "title"
         const val CONTACT = "contact"
         const val ATTACK = "attacker_id"
+        const val MESSAGE = "message"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
