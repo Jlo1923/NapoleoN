@@ -16,7 +16,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.repository.notificationUtils.NotificationUtilsRepository
@@ -28,8 +27,6 @@ import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import java.util.*
@@ -260,6 +257,8 @@ class NotificationUtils @Inject constructor(
                                 builder.setContentText(data.getValue(bodyKey))
                             }
 
+                            Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
+
                             if (data.containsKey(message) && !app.isAppVisible()) {
                                 repository.insertMessage(data.getValue(message))
                             }
@@ -269,7 +268,7 @@ class NotificationUtils @Inject constructor(
                             }
 
                             if (!app.isAppVisible()) {
-                                Timber.d("*NotificationTest: App not visible")
+                                Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
                                 with(NotificationManagerCompat.from(context)) {
                                     builder.setGroup(GROUP_MESSAGE)
                                     notify(data.getValue(contact).toInt(), builder.build())
