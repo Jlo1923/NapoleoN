@@ -58,6 +58,24 @@ class NotificationUtils @Inject constructor(
         applicationContext as NapoleonApplication
     }
 
+    init {
+        (applicationContext as DaggerApplication).androidInjector().inject(this)
+        val sharedPreferencesManager = SharedPreferencesManager(applicationContext)
+        val default =
+            sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_CHANNEL_CREATED)
+
+        if (default == Constants.ChannelCreated.FALSE.state) {
+            createNotificationChannel(applicationContext)
+            createCallNotificationChannel(applicationContext)
+            createAlertsNotificationChannel(applicationContext)
+            createUploadNotificationChannel(applicationContext)
+            sharedPreferencesManager.putInt(
+                Constants.SharedPreferences.PREF_CHANNEL_CREATED,
+                Constants.ChannelCreated.TRUE.state
+            )
+        }
+    }
+
     private fun playRingTone(context: Context) {
         try {
             Utils.getAudioManager(context).isSpeakerphoneOn = true
@@ -92,14 +110,6 @@ class NotificationUtils @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e)
         }
-    }
-
-    init {
-        (applicationContext as DaggerApplication).androidInjector().inject(this)
-        createNotificationChannel(applicationContext)
-        createCallNotificationChannel(applicationContext)
-        createAlertsNotificationChannel(applicationContext)
-        createUploadNotificationChannel(applicationContext)
     }
 
     fun createInformativeNotification(
