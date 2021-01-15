@@ -102,6 +102,11 @@ object Constants {
         FALSE(0)
     }
 
+    enum class ChannelCreated constructor(val state: Int) {
+        TRUE(1),
+        FALSE(0)
+    }
+
     enum class ChangeParams constructor(val option: Int) {
         NAME_FAKE(1),
         NICKNAME_FAKE(2),
@@ -473,7 +478,7 @@ object Constants {
         const val PREF_TIME_FOR_NEW_CODE = "time_for_new_code"
         const val PREF_ATTEMPTS_FOR_RETRY_CODE = "attempts_for_retry_code"
         const val PREF_TIME_FOR_RETRY_CODE = "time_for_retry_code"
-
+        const val PREF_CHANNEL_CREATED = "channel_created"
 
         //region RecoveryAccount
         const val PREF_ACCOUNT_RECOVERY_ATTEMPTS = "account_recovery_attempts"
