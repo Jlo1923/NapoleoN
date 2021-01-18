@@ -1,9 +1,11 @@
 package com.naposystems.napoleonchat.webService.socket
 
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReadedDTO
+import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventRes
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -34,9 +36,16 @@ class SocketService @Inject constructor(
     private val repository: IContractSocketService.Repository
 ) : IContractSocketService.SocketService {
 
+    private val app: NapoleonApplication by lazy {
+        context as NapoleonApplication
+    }
+
     private val firebaseId by lazy {
         sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
     }
+
+    private val cryptoMessage = CryptoMessage(context)
+    private val moshi = Moshi.Builder().build()
 
     private lateinit var generalChannel: PrivateChannel
     private var callChannel: PresenceChannel? = null
@@ -403,22 +412,22 @@ class SocketService @Inject constructor(
             "App\\Events\\NewMessageEvent",
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
-//                Timber.d("NewMessageEvent: ${event?.data}")
-                    try {
-                        event?.data?.let { dataEventRes ->
-                            val moshi = Moshi.Builder().build()
-                            val jsonAdapter: JsonAdapter<NewMessageEventRes> =
-                                moshi.adapter(NewMessageEventRes::class.java)
-                            val dataEvent = jsonAdapter.fromJson(dataEventRes)
+                    Timber.d("NewMessageEvent: ${event?.data}")
+                    if (app.isAppVisible()) {
+                        try {
+                            event?.data?.let { dataEventRes ->
+                                val jsonAdapter: JsonAdapter<NewMessageEventRes> =
+                                    moshi.adapter(NewMessageEventRes::class.java)
+                                val dataEvent = jsonAdapter.fromJson(dataEventRes)
 
-                            dataEvent?.data?.let { newMessageDataEventRes ->
-                                Timber.d("NewMessageEvent: ${newMessageDataEventRes.contactId}")
-                                repository.getMyMessages(newMessageDataEventRes.contactId)
+                                dataEvent?.data?.let { newMessageDataEventRes ->
+                                    repository.insertNewMessage(newMessageDataEventRes)
+                                }
                             }
-                        }
 
-                    } catch (e: Exception) {
-                        Timber.e(e)
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
                     }
                 }
 
@@ -441,7 +450,22 @@ class SocketService @Inject constructor(
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
                     Timber.d("NotifyMessagesReceived: ${event?.data}")
-                    repository.verifyMessagesReceived()
+                    event?.data?.let {
+                        val jsonAdapter: JsonAdapter<MessagesReceivedDTO> =
+                            moshi.adapter(MessagesReceivedDTO::class.java)
+
+                        val dataEvent = jsonAdapter.fromJson(it)
+
+                        dataEvent?.let { messagesReceivedDTO ->
+
+                            Timber.d(messagesReceivedDTO.data.messageIds.toString())
+
+                            repository.updateMessagesStatus(
+                                messagesReceivedDTO.data.messageIds,
+                                Constants.MessageStatus.UNREAD.status
+                            )
+                        }
+                    }
                 }
 
                 override fun onAuthenticationFailure(
@@ -482,6 +506,24 @@ class SocketService @Inject constructor(
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
                     Timber.d("NotifyMessageReaded: ${event?.data}")
+
+                    event?.data?.let {
+                        val jsonAdapter: JsonAdapter<MessagesReadedDTO> =
+                            moshi.adapter(MessagesReadedDTO::class.java)
+
+                        val dataEvent = jsonAdapter.fromJson(it)
+
+                        dataEvent?.let { messagesReadedDTO ->
+
+                            Timber.d(messagesReadedDTO.data.messageIds.toString())
+
+                            repository.updateMessagesStatus(
+                                messagesReadedDTO.data.messageIds,
+                                Constants.MessageStatus.READED.status
+                            )
+                        }
+                    }
+
                     repository.verifyMessagesRead()
                 }
 

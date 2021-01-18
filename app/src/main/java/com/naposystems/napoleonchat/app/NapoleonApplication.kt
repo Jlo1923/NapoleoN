@@ -63,19 +63,25 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
     }
 
     override fun onStart(owner: LifecycleOwner) {
-        Timber.d("onStart")
+        Timber.d("*NotificationTest: onStart")
         Data.isOnCall = false
+        isAppVisible = true
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        Timber.d("*NotificationTest: onResume")
         isAppVisible = true
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        Timber.d("onStart")
+        Timber.d("*NotificationTest: onPause")
         isAppVisible = false
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        Timber.d("onStop")
+        Timber.d("*NotificationTest: onStop")
         isAppVisible = false
     }
 

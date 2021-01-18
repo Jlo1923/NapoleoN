@@ -8,13 +8,11 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.Display
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -57,6 +55,7 @@ import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -322,6 +321,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
+
+        hideOptionMenuForAndroidVersion()
     }
 
     private fun openMenu() {
@@ -357,7 +358,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-            if (args.containsKey(Constants.NotificationKeys.ATTACK)){
+            if (args.containsKey(Constants.NotificationKeys.ATTACK)) {
                 val dialog = AccountAttackDialogFragment()
                 dialog.show(supportFragmentManager, "AttackDialog")
             }
@@ -552,7 +553,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 null,
                 options
             )
-            R.id.notification -> navController.navigate(R.id.notificationFragment, null, options)
+            R.id.notification_option_main_menu -> navController.navigate(
+                R.id.notificationFragment,
+                null,
+                options
+            )
             R.id.invite_someone -> navController.navigate(R.id.inviteSomeoneFragment, null, options)
             R.id.help -> navController.navigate(R.id.helpFragment, null, options)
         }
@@ -568,6 +573,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         super.applyOverrideConfiguration(overrideConfiguration)
     }*/
+
+    private fun hideOptionMenuForAndroidVersion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            binding.navView.menu.findItem(R.id.notification_option_main_menu).isVisible = false
+        }
+    }
 
     override fun onResume() {
         super.onResume()

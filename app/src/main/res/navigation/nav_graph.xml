@@ -799,6 +799,6 @@
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.naposystems.napoleonchat.ui.notifications.NotificationSettingFragment"
-        android:label="notification_fragment"
+        android:label="@string/text_notifications"
         tools:layout="@layout/notification_setting_fragment" />
 </navigation>

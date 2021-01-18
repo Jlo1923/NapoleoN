@@ -15,6 +15,7 @@ sealed class DownloadAttachmentResult {
     data class Error(
         val attachment: Attachment,
         val message: String,
+        val itemPosition: Int,
         val cause: Exception? = null
     ) : DownloadAttachmentResult()
 

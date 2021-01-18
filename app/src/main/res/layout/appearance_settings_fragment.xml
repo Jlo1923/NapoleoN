@@ -9,6 +9,17 @@
             name="viewModel"
             type="com.naposystems.napoleonchat.ui.appearanceSettings.AppearanceSettingsViewModel" />
 
+        <variable
+            name="colorScheme"
+            type="Integer" />
+
+        <variable
+            name="userDisplayFormat"
+            type="Integer" />
+
+        <variable
+            name="timeFormat"
+            type="Integer" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -72,7 +83,7 @@
                         android:enabled="true"
                         android:maxLength="@dimen/max_length_status"
                         android:singleLine="true"
-                        app:colorScheme="@{viewModel.colorScheme}"
+                        app:colorScheme="@{colorScheme}"
                         tools:text="Tema claro" />
 
                 </LinearLayout>
@@ -138,7 +149,7 @@
                         android:maxLength="@dimen/max_length_status"
                         android:padding="0dp"
                         android:singleLine="true"
-                        app:userDisplayFormat="@{viewModel.userDisplayFormat}"
+                        app:userDisplayFormat="@{userDisplayFormat}"
                         tools:text="Nombre y usuario" />
 
                 </LinearLayout>
@@ -269,7 +280,7 @@
                         android:maxLength="@dimen/max_length_status"
                         android:padding="0dp"
                         android:singleLine="true"
-                        app:timeFormat="@{viewModel.timeFormat}"
+                        app:timeFormat="@{timeFormat}"
                         tools:text="24 Hours" />
 
                 </LinearLayout>

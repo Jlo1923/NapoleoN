@@ -11,16 +11,26 @@ import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.dto.conversation.call.readyForCall.ReadyForCallReqDTO
 import com.naposystems.napoleonchat.dto.conversation.call.reject.RejectCallReqDTO
+import com.naposystems.napoleonchat.dto.conversation.message.MessageReceivedReqDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.dto.conversation.message.MessagesReadReqDTO
+import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageDataEventRes
+import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
+import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,7 +43,7 @@ class SocketRepository @Inject constructor(
     private val contactLocalDataSource: ContactDataSource
 ) : IContractSocketService.Repository {
 
-    val cryptoMessage = CryptoMessage(context)
+    private val cryptoMessage = CryptoMessage(context)
 
     override suspend fun getContacts() {
         try {
@@ -95,7 +105,7 @@ class SocketRepository @Inject constructor(
                                 Timber.d("Conversation insertó mensajes")
 
                                 if (messageRes.quoted.isNotEmpty()) {
-                                    insertQuote(messageRes, messageId.toInt())
+                                    insertQuote(messageRes.quoted, messageId.toInt())
                                 }
 
                                 val listAttachments = AttachmentResDTO.toListConversationAttachment(
@@ -105,6 +115,10 @@ class SocketRepository @Inject constructor(
 
                                 attachmentLocalDataSource.insertAttachments(listAttachments)
                                 Timber.d("Conversation insertó attachment")
+
+                                if (Data.contactId != 0) {
+                                    notifyMessagesReaded()
+                                }
 
                                 contactId?.let {
                                     RxBus.publish(
@@ -121,6 +135,65 @@ class SocketRepository @Inject constructor(
         }
     }
 
+    override fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes) {
+        GlobalScope.launch {
+
+            getContacts()
+
+            val databaseMessage =
+                messageLocalDataSource.getMessageByWebId(
+                    newMessageDataEventRes.messageId,
+                    false
+                )
+
+            if (databaseMessage == null) {
+
+                val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
+                    cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
+                } else {
+                    newMessageDataEventRes.message
+                }
+
+                val moshi = Moshi.Builder().build()
+                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
+                    moshi.adapter(NewMessageEventMessageRes::class.java)
+
+                jsonAdapter.fromJson(newMessageEventMessageResData)
+                    ?.let { newMessageEventMessageRes ->
+                        val message = newMessageEventMessageRes.toMessageEntity(
+                            Constants.IsMine.NO.value
+                        )
+
+                        if (BuildConfig.ENCRYPT_API) {
+                            message.encryptBody(cryptoMessage)
+                        }
+
+                        val messageId = messageLocalDataSource.insertMessage(message)
+                        Timber.d("Conversation insertó mensajes")
+
+                        notifyMessageReceived(newMessageDataEventRes.messageId)
+
+                        if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                            insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
+                        }
+
+                        val listAttachments =
+                            NewMessageEventAttachmentRes.toListConversationAttachment(
+                                messageId.toInt(),
+                                newMessageEventMessageRes.attachments
+                            )
+
+                        attachmentLocalDataSource.insertAttachments(listAttachments)
+                        Timber.d("Conversation insertó attachment")
+
+                        RxBus.publish(
+                            RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
+                        )
+                    }
+            }
+        }
+    }
+
     override fun deleteContact(contactId: Int?) {
         GlobalScope.launch {
             contactId?.let {
@@ -131,9 +204,9 @@ class SocketRepository @Inject constructor(
         }
     }
 
-    private suspend fun insertQuote(messageRes: MessageResDTO, messageId: Int) {
+    private suspend fun insertQuote(quoteWebId: String, messageId: Int) {
         val originalMessage =
-            messageLocalDataSource.getMessageByWebId(messageRes.quoted, false)
+            messageLocalDataSource.getMessageByWebId(quoteWebId, false)
 
         if (originalMessage != null) {
             var firstAttachment: Attachment? = null
@@ -154,6 +227,67 @@ class SocketRepository @Inject constructor(
             )
 
             quoteDataSource.insertQuote(quote)
+        }
+    }
+
+    private fun notifyMessageReceived(messageId: String) {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
+                    napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
+                    Timber.d("notifyMessageReceived")
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
+            }
+        }
+    }
+
+    private fun notifyMessagesReaded() {
+        Timber.d("*notifyMessageRead: Socket")
+        GlobalScope.launch(Dispatchers.IO) {
+            val messagesUnread =
+                messageLocalDataSource.getTextMessagesByStatus(
+                    Data.contactId,
+                    Constants.MessageStatus.UNREAD.status
+                )
+
+            val textMessagesUnread = messagesUnread.filter {
+                it.attachmentList.isEmpty() ||
+                        it.message.messageType == Constants.MessageType.MISSED_CALL.type ||
+                        it.message.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
+            }
+
+            val locationMessagesUnread = messagesUnread.filter {
+                it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type
+            }
+
+            val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
+            val locationMessagesUnreadIds = locationMessagesUnread.map { it.message.webId }
+
+            val listIds = mutableListOf<String>()
+            listIds.addAll(textMessagesUnreadIds)
+            listIds.addAll(locationMessagesUnreadIds)
+
+            if (listIds.isNotEmpty()) {
+                try {
+                    val response = napoleonApi.sendMessagesRead(
+                        MessagesReadReqDTO(
+                            listIds
+                        )
+                    )
+
+                    if (response.isSuccessful) {
+                        messageLocalDataSource.updateMessageStatus(
+                            listIds,
+                            Constants.MessageStatus.READED.status
+                        )
+                    }
+                } catch (ex: Exception) {
+                    Timber.e(ex)
+                }
+            }
         }
     }
 
@@ -220,6 +354,15 @@ class SocketRepository @Inject constructor(
             if (response.isSuccessful) {
                 Timber.d("Usuario llamado")
             }
+        }
+    }
+
+    override fun updateMessagesStatus(messagesWebIds: List<String>, state: Int) {
+        GlobalScope.launch(Dispatchers.IO) {
+            messageLocalDataSource.updateMessageStatus(
+                messagesWebIds,
+                state
+            )
         }
     }
 }

@@ -776,6 +776,7 @@ class ConversationFragment : BaseFragment(),
                             it.attachment
                         )
                         Timber.d("Error")
+                        conversationAdapter.setDownloadCancel(it.itemPosition)
                     }
                     is DownloadAttachmentResult.Cancel -> {
                         conversationAdapter.setDownloadCancel(it.itemPosition)
@@ -1327,6 +1328,7 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
+        Data.contactId = args.contact.id
         showCase?.setPaused(false)
         showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
@@ -1582,7 +1584,7 @@ class ConversationFragment : BaseFragment(),
 
         actionBarCustomView.contact = args.contact
 
-        actionBarCustomView.viewModel = userDisplayFormatShareViewModel
+        actionBarCustomView.userDisplayFormat = userDisplayFormatShareViewModel.getUserDisplayFormat()
 
         actionBarCustomView.containerBack.setOnClickListener {
             findNavController().popBackStack()

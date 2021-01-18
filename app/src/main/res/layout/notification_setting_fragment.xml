@@ -39,7 +39,7 @@
                 <TextView
                     android:id="@+id/textView_notification_tone"
                     style="@style/OptionTitle"
-                    android:text="notification tone|!!"
+                    android:text="@string/text_notification_tone"
                     app:layout_constraintBottom_toTopOf="@id/textView_sound_notification"
                     app:layout_constraintEnd_toStartOf="@+id/imageButton_notification_tone_end_icon"
                     app:layout_constraintStart_toEndOf="@id/imageView_notification_start_icon"

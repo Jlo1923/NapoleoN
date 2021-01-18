@@ -76,7 +76,7 @@ class NotificationSettingFragment : BaseFragment() {
         validateStateOutputControl()
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Seleccione tono de notificación|!!")
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.text_select_notification_tone))
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
         intent.putExtra(
             RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
@@ -91,7 +91,7 @@ class NotificationSettingFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            notificationUtils.changeChannel(requireContext(), uri)
+            notificationUtils.updateChannel(requireContext(), uri)
             Timber.d("*TestSong: onActivityResult=$uri")
 
             updateSoundChannelMessage()

@@ -38,7 +38,7 @@ class SecuritySettingsFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SecuritySettingsViewModel
     private lateinit var binding: SecuritySettingsFragmentBinding
-    private var showCase : ShowCaseManager? = null
+    private var showCase: ShowCaseManager? = null
 
     private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
         viewModelFactory
@@ -132,10 +132,6 @@ class SecuritySettingsFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SecuritySettingsViewModel::class.java)
 
-        binding.viewModel = viewModel
-        binding.selfDestructViewModel = selfDestructTimeViewModel
-
-
         selfDestructTimeViewModel.getSelfDestructTime()
         selfDestructTimeViewModel.getMessageSelfDestructTimeNotSent()
         viewModel.getTimeRequestAccessPin()
@@ -147,6 +143,27 @@ class SecuritySettingsFragment : Fragment() {
                 binding.optionBiometrics.visibility = View.GONE
             }
         })
+
+        viewModel.allowDownloads.observe(viewLifecycleOwner) {
+            binding.allowDownloads = it
+            binding.executePendingBindings()
+        }
+
+        viewModel.timeRequestAccessPin.observe(viewLifecycleOwner) {
+            binding.timeRequestAccessPin = it
+            binding.executePendingBindings()
+        }
+
+        selfDestructTimeViewModel.selfDestructTimeGlobal.observe(viewLifecycleOwner) {
+            binding.selfDestructTimeGlobal = it
+            binding.executePendingBindings()
+        }
+
+        selfDestructTimeViewModel.messageSelfDestructTimeNotSent.observe(viewLifecycleOwner) {
+            binding.messageSelfDestructTimeNotSent = it
+            binding.executePendingBindings()
+        }
+
     }
 
     private fun optionMessageClickListener() {

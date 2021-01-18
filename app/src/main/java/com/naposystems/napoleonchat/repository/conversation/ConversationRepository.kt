@@ -669,7 +669,8 @@ class ConversationRepository @Inject constructor(
                             offer(
                                 DownloadAttachmentResult.Error(
                                     attachment,
-                                    "File not downloaded"
+                                    "File not downloaded",
+                                    itemPosition
                                 )
                             )
                             close()
@@ -684,7 +685,8 @@ class ConversationRepository @Inject constructor(
                     offer(
                         DownloadAttachmentResult.Error(
                             attachment,
-                            "File not downloaded"
+                            "File not downloaded",
+                            itemPosition
                         )
                     )
                     close()

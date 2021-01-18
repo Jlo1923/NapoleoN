@@ -160,9 +160,9 @@ class ProfileFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        binding.viewModel = viewModel
-
-        viewModel.user.value?.let { user ->
+        viewModel.user.observe(viewLifecycleOwner) { user ->
+            binding.user = user
+            binding.executePendingBindings()
             if (user.imageUrl.isNotEmpty()) {
                 binding.imageViewProfileImage.background = null
             }
@@ -283,7 +283,7 @@ class ProfileFragment : BaseFragment() {
         userProfileShareViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
                 hideAvatarProgressBar()
             }
         })

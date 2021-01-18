@@ -38,7 +38,7 @@ object Constants {
         const val VERIFY_MESSAGES_RECEIVED = "messages/verifymessagesreceived"
         const val VERIFY_MESSAGES_READ = "messages/verifymessagesreaded"
         const val SEND_MESSAGES_READ = "messages/sendmessagesreaded"
-        const val NOTIFY_MESSAGE_RECEIVED = "messages/notifymessagereceivedunread"
+        const val NOTIFY_MESSAGE_RECEIVED = "messages/notifymessagereceived"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
         const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
@@ -83,6 +83,7 @@ object Constants {
         const val TITLE = "title"
         const val CONTACT = "contact"
         const val ATTACK = "attacker_id"
+        const val MESSAGE = "message"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
@@ -97,6 +98,11 @@ object Constants {
     }
 
     enum class OutputControl constructor(val state: Int) {
+        TRUE(1),
+        FALSE(0)
+    }
+
+    enum class ChannelCreated constructor(val state: Int) {
         TRUE(1),
         FALSE(0)
     }
@@ -472,7 +478,7 @@ object Constants {
         const val PREF_TIME_FOR_NEW_CODE = "time_for_new_code"
         const val PREF_ATTEMPTS_FOR_RETRY_CODE = "attempts_for_retry_code"
         const val PREF_TIME_FOR_RETRY_CODE = "time_for_retry_code"
-
+        const val PREF_CHANNEL_CREATED = "channel_created"
 
         const val PREF_NOTIFICATION_MESSAGE_CHANNEL_ID = "notification_message_channel_id"
         const val PREF_NOTIFICATION_GROUP_CHANNEL_ID = "notification_group_channel_id"
