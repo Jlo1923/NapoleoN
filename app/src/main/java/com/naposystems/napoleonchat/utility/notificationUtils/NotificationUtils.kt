@@ -208,7 +208,7 @@ class NotificationUtils @Inject constructor(
             .setBadgeIconType(BADGE_ICON_SMALL)
             .setAutoCancel(true)
 
-        if (notificationType == 1)
+        if (notificationType == Constants.NotificationType.ENCRYPTED_MESSAGE.type)
             builder.setNumber(notificationCount)
 
         handleNotificationType(
@@ -716,6 +716,11 @@ class NotificationUtils @Inject constructor(
 
             val channel = NotificationChannel(id, name, importance).apply {
                 description = descriptionText
+                val audioAttribute = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+
+                setSound(null, audioAttribute)
                 setShowBadge(false)
                 lockscreenVisibility = PRIORITY_MAX
             }
