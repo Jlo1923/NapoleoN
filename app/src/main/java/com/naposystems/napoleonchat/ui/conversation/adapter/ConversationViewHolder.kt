@@ -55,6 +55,7 @@ open class ConversationViewHolder constructor(
     var imageButtonSend: AppCompatImageButton? = null
     var textViewMessage: TextView? = null
     var imageButtonPlay: AppCompatImageButton? = null
+    var imageButtonShow: AppCompatImageButton? = null
 
     var progressVisibility = false
 
@@ -117,6 +118,7 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     imageButtonState?.visibility = View.INVISIBLE
                     imageButtonPlay?.visibility = View.VISIBLE
+                    imageButtonShow?.visibility = View.VISIBLE
                 }
             }
         } catch (e: Exception) {
@@ -218,6 +220,7 @@ open class ConversationViewHolder constructor(
             imageButtonState?.visibility = View.INVISIBLE
             imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
             imageButtonPlay?.visibility = View.VISIBLE
+            imageButtonShow?.visibility = View.VISIBLE
         }
     }
 
@@ -270,7 +273,7 @@ open class ConversationViewHolder constructor(
         }
     }
 
-    fun setStateMessage(state : Int) {
+    fun setStateMessage(state: Int) {
         imageButtonSend?.isEnabled =
             !(state == Constants.StateMessage.START.state || state == Constants.StateMessage.SUCCESS.state)
     }
@@ -372,6 +375,7 @@ open class ConversationViewHolder constructor(
                     }
 
                     imageButtonPlay?.visibility = View.VISIBLE
+                    imageButtonShow?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
                 Constants.AttachmentStatus.DOWNLOAD_ERROR.status -> {
@@ -404,6 +408,7 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
                     imageButtonPlay?.visibility = View.GONE
+                    imageButtonShow?.visibility = View.GONE
                 }
             }
 
@@ -421,10 +426,13 @@ open class ConversationViewHolder constructor(
             }
 
             imageViewAttachment?.setOnClickListener {
-                if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
-                    attachment.status == Constants.AttachmentStatus.SENT.status
-                ) {
-                    clickListener.onPreviewClick(item)
+                imageButtonShow?.let { button ->
+                    if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
+                        attachment.status == Constants.AttachmentStatus.SENT.status ||
+                        button.isVisible
+                    ) {
+                        clickListener.onPreviewClick(item)
+                    }
                 }
             }
 
@@ -438,6 +446,7 @@ open class ConversationViewHolder constructor(
             progressBar?.visibility = View.GONE
             progressBarIndeterminate?.visibility = View.GONE
             imageButtonPlay?.visibility = View.GONE
+            imageButtonShow?.visibility = View.GONE
         }
 
         imageButtonSend?.setSafeOnClickListener {

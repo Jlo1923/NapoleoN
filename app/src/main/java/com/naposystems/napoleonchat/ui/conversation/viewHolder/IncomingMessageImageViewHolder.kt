@@ -32,6 +32,7 @@ class IncomingMessageImageViewHolder constructor(
         super.quote = binding.quote
         super.imageViewAttachment = binding.imageViewAttachment
         super.textViewMessage = binding.textViewMessage
+        super.imageButtonShow = binding.imageViewIconShow
     }
 
     override fun bind(

@@ -13,7 +13,7 @@
         android:id="@+id/notification_option_main_menu"
         android:title="@null"
         app:actionLayout="@layout/drawer_menu_item_notification"
-        tools:title="notifications" />
+        tools:title="@string/text_notifications" />
 
     <item
         android:id="@+id/security_settings"
