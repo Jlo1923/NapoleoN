@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.squareup.moshi.JsonAdapter
@@ -33,13 +34,14 @@ class NotificationUtilsRepository @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource,
     private val messageLocalDataSource: MessageDataSource,
     private val quoteDataSource: QuoteDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource
+    private val attachmentLocalDataSource: AttachmentDataSource,
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractNotificationUtils.Repository {
 
     private val cryptoMessage = CryptoMessage(context)
 
-    private suspend fun getContacts() {
+    private suspend fun getRemoteContact() {
         try {
             val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
 
@@ -71,9 +73,6 @@ class NotificationUtilsRepository @Inject constructor(
 
     override fun insertMessage(messageString: String) {
         GlobalScope.launch(Dispatchers.IO) {
-
-            getContacts()
-
             val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
                 cryptoMessage.decryptMessageBody(messageString)
             } else {
@@ -85,6 +84,11 @@ class NotificationUtilsRepository @Inject constructor(
                 moshi.adapter(NewMessageEventMessageRes::class.java)
 
             jsonAdapter.fromJson(newMessageEventMessageResData)?.let { newMessageEventMessageRes ->
+                Timber.d("*MessageDataTest: $newMessageEventMessageRes")
+
+                if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                    getRemoteContact()
+                }
 
                 val databaseMessage =
                     messageLocalDataSource.getMessageByWebId(newMessageEventMessageRes.id, false)
@@ -144,6 +148,30 @@ class NotificationUtilsRepository @Inject constructor(
 
     override fun getContact(contactId: Int): Contact? {
         return contactLocalDataSource.getContactById(contactId)
+    }
+
+    override fun getNotificationChannelCreated(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_CHANNEL_CREATED)
+    }
+
+    override fun setNotificationChannelCreated() {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_CHANNEL_CREATED,
+            Constants.ChannelCreated.TRUE.state
+        )
+    }
+
+    override fun getNotificationMessageChannelId(): Int {
+        return sharedPreferencesManager.getInt(
+            Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID
+        )
+    }
+
+    override fun setNotificationMessageChannelId(newId: Int) {
+        sharedPreferencesManager.putInt(
+            Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID,
+            newId
+        )
     }
 
     private suspend fun insertQuote(quoteWebId: String, messageId: Int) {

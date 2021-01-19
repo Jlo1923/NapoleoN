@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <!--TODO:Subscription-->
     <!--<item
-        android:id="@+id/suscription"
+        android:id="@+id/subscription"
         android:title="@null"
-        app:actionLayout="@layout/drawer_menu_item_subscription" />-->
+        app:actionLayout="@layout/drawer_menu_item_subscription"
+        tools:title="@string/text_subscription_title" />-->
+
+    <item
+        android:id="@+id/notification_option_main_menu"
+        android:title="@null"
+        app:actionLayout="@layout/drawer_menu_item_notification"
+        tools:title="notifications" />
 
     <item
         android:id="@+id/security_settings"
         android:title="@null"
-        app:actionLayout="@layout/drawer_menu_item_security_settings" />
+        app:actionLayout="@layout/drawer_menu_item_security_settings"
+        tools:title="@string/text_security_settings_title" />
 
     <item
         android:id="@+id/appearance_settings"
         android:title="@null"
-        app:actionLayout="@layout/drawer_menu_item_appearance_settings" />
+        app:actionLayout="@layout/drawer_menu_item_appearance_settings"
+        tools:title="@string/text_appearance_settings_title" />
 
     <item
         android:id="@+id/invite_someone"
         android:title="@null"
-        app:actionLayout="@layout/drawer_menu_item_invite_some_one" />
+        app:actionLayout="@layout/drawer_menu_item_invite_some_one"
+        tools:title="@string/text_invite_someone_title" />
 
     <item
         android:id="@+id/help"
         android:title="@null"
-        app:actionLayout="@layout/drawer_menu_item_help" />
+        app:actionLayout="@layout/drawer_menu_item_help"
+        tools:title="@string/text_help_title" />
 </menu>

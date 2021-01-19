@@ -8,13 +8,11 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.Display
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -57,6 +55,7 @@ import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -322,6 +321,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
+
+        hideOptionMenuForAndroidVersion()
     }
 
     private fun openMenu() {
@@ -357,7 +358,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-            if (args.containsKey(Constants.NotificationKeys.ATTACK)){
+            if (args.containsKey(Constants.NotificationKeys.ATTACK)) {
                 val dialog = AccountAttackDialogFragment()
                 dialog.show(supportFragmentManager, "AttackDialog")
             }
@@ -537,7 +538,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (menuItem.itemId) {
             //TODO:Subscription
-            /*R.id.suscription -> navController.navigate(
+            /*R.id.subscription -> navController.navigate(
                 R.id.subscriptionFragment,
                 null,
                 options
@@ -549,6 +550,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             )
             R.id.appearance_settings -> navController.navigate(
                 R.id.appearanceSettingsFragment,
+                null,
+                options
+            )
+            R.id.notification_option_main_menu -> navController.navigate(
+                R.id.notificationFragment,
                 null,
                 options
             )
@@ -567,6 +573,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         super.applyOverrideConfiguration(overrideConfiguration)
     }*/
+
+    private fun hideOptionMenuForAndroidVersion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            binding.navView.menu.findItem(R.id.notification_option_main_menu).isVisible = false
+        }
+    }
 
     override fun onResume() {
         super.onResume()

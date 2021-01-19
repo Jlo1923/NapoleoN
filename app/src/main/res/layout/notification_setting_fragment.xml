@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.notifications.NotificationSettingFragment">
+
+    <data>
+
+    </data>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/attrBackgroundColorBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/option_notification_tone"
+                style="@style/Option"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- START ICON -->
+                <ImageView
+                    android:id="@+id/imageView_notification_start_icon"
+                    style="@style/OptionStartIcon"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_notifications_icon" />
+
+                <!-- OPTION TITLE -->
+                <TextView
+                    android:id="@+id/textView_notification_tone"
+                    style="@style/OptionTitle"
+                    android:text="@string/text_notification_tone"
+                    app:layout_constraintBottom_toTopOf="@id/textView_sound_notification"
+                    app:layout_constraintEnd_toStartOf="@+id/imageButton_notification_tone_end_icon"
+                    app:layout_constraintStart_toEndOf="@id/imageView_notification_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView_sound_notification"
+                    style="@style/OptionValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/textView_notification_tone"
+                    app:layout_constraintTop_toBottomOf="@id/textView_notification_tone"
+                    tools:text="Default" />
+
+                <!-- EDIT ICON -->
+                <ImageButton
+                    android:id="@+id/imageButton_notification_tone_end_icon"
+                    style="@style/OptionEndIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_edit_black" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+</layout>

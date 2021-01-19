@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_notifications">notifications</string>
+    <string name="text_notification_tone">Tonalité de notification</string>
+    <string name="text_select_notification_tone">Sélectionnez la tonalité de notification</string>
+</resources>

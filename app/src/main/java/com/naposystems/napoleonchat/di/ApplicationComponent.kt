@@ -34,7 +34,7 @@ import javax.inject.Singleton
         AttachmentLocationModule::class, ConversationCallModule::class, NotificationUtilsModule::class,
         WebRTCCallServiceModule::class, PreviewMediaModule::class, LogoutModule::class,
         CancelSubscriptionModule::class, FriendShipActionShareModule::class, DefaultPreferencesModule::class,
-        UploadServiceModule::class,
+        UploadServiceModule::class, NotificationSettingModule::class,
         RoomModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {

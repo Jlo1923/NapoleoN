@@ -6,6 +6,7 @@ import com.naposystems.napoleonchat.db.dao.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.repository.notificationUtils.NotificationUtilsRepository
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import dagger.Module
@@ -23,7 +24,8 @@ class NotificationUtilsModule {
         contactLocalDataSource: ContactLocalDataSource,
         messageLocalDataSource: MessageDataSource,
         quoteDataSource: QuoteDataSource,
-        attachmentLocalDataSource: AttachmentDataSource
+        attachmentLocalDataSource: AttachmentDataSource,
+        sharedPreferencesManager: SharedPreferencesManager
     ): IContractNotificationUtils.Repository {
         return NotificationUtilsRepository(
             context,
@@ -31,7 +33,8 @@ class NotificationUtilsModule {
             contactLocalDataSource,
             messageLocalDataSource,
             quoteDataSource,
-            attachmentLocalDataSource
+            attachmentLocalDataSource,
+            sharedPreferencesManager
         )
     }
 }

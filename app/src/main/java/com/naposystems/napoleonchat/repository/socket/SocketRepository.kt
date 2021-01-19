@@ -245,6 +245,7 @@ class SocketRepository @Inject constructor(
     }
 
     private fun notifyMessagesReaded() {
+        Timber.d("*notifyMessageRead: Socket")
         GlobalScope.launch(Dispatchers.IO) {
             val messagesUnread =
                 messageLocalDataSource.getTextMessagesByStatus(

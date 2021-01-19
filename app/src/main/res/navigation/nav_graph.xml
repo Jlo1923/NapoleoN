@@ -187,6 +187,9 @@
         <action
             android:id="@+id/action_homeFragment_to_subscriptionFragment"
             app:destination="@id/subscriptionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -793,4 +796,9 @@
             app:argType="com.naposystems.napoleonchat.entity.User"
             app:nullable="true" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.naposystems.napoleonchat.ui.notifications.NotificationSettingFragment"
+        android:label="@string/text_notifications"
+        tools:layout="@layout/notification_setting_fragment" />
 </navigation>

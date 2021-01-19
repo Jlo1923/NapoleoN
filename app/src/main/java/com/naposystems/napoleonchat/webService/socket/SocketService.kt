@@ -36,6 +36,10 @@ class SocketService @Inject constructor(
     private val repository: IContractSocketService.Repository
 ) : IContractSocketService.SocketService {
 
+    private val app: NapoleonApplication by lazy {
+        context as NapoleonApplication
+    }
+
     private val firebaseId by lazy {
         sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
     }
@@ -409,19 +413,21 @@ class SocketService @Inject constructor(
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
                     Timber.d("NewMessageEvent: ${event?.data}")
-                    try {
-                        event?.data?.let { dataEventRes ->
-                            val jsonAdapter: JsonAdapter<NewMessageEventRes> =
-                                moshi.adapter(NewMessageEventRes::class.java)
-                            val dataEvent = jsonAdapter.fromJson(dataEventRes)
+                    if (app.isAppVisible()) {
+                        try {
+                            event?.data?.let { dataEventRes ->
+                                val jsonAdapter: JsonAdapter<NewMessageEventRes> =
+                                    moshi.adapter(NewMessageEventRes::class.java)
+                                val dataEvent = jsonAdapter.fromJson(dataEventRes)
 
-                            dataEvent?.data?.let { newMessageDataEventRes ->
-                                repository.insertNewMessage(newMessageDataEventRes)
+                                dataEvent?.data?.let { newMessageDataEventRes ->
+                                    repository.insertNewMessage(newMessageDataEventRes)
+                                }
                             }
-                        }
 
-                    } catch (e: Exception) {
-                        Timber.e(e)
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
                     }
                 }
 
