@@ -10,11 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -64,8 +64,8 @@ class ContactProfileFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ContactProfileViewModel
-    private lateinit var shareContactViewModel: ShareContactViewModel
+    private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
+    private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
@@ -84,6 +84,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private var compressedFile: File? = null
+    private var stateCustomNotification: Boolean = false
     private var contactSilenced: Boolean = false
     private lateinit var subFolder: String
     private lateinit var fileName: String
@@ -124,17 +125,19 @@ class ContactProfileFragment : BaseFragment() {
 
         binding.lifecycleOwner = this
 
-        binding.imageViewProfileContact.setSafeOnClickListener {showPreviewImage()}
+        binding.imageViewProfileContact.setSafeOnClickListener { showPreviewImage() }
+
+        binding.optionCustomNotification.setOnClickListener { optionCustomNotification() }
 
         binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
 
-        binding.optionRestoreContactChat.setSafeOnClickListener {optionRestoreContactChatClickListener()}
+        binding.optionRestoreContactChat.setSafeOnClickListener { optionRestoreContactChatClickListener() }
 
-        binding.optionDeleteConversation.setSafeOnClickListener {optionDeleteConversationClickListener()}
+        binding.optionDeleteConversation.setSafeOnClickListener { optionDeleteConversationClickListener() }
 
-        binding.optionBlockContact.setSafeOnClickListener {optionBlockContactClickListener()}
+        binding.optionBlockContact.setSafeOnClickListener { optionBlockContactClickListener() }
 
-        binding.optionDeleteContact.setSafeOnClickListener {optionDeleteContactClickListener()}
+        binding.optionDeleteContact.setSafeOnClickListener { optionDeleteContactClickListener() }
 
         binding.imageButtonEditHeader.setSafeOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
@@ -258,7 +261,7 @@ class ContactProfileFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProvider(this, viewModelFactory)
+        /*viewModel = ViewModelProvider(this, viewModelFactory)
             .get(ContactProfileViewModel::class.java)
 
         try {
@@ -266,7 +269,7 @@ class ContactProfileFragment : BaseFragment() {
                 .get(ShareContactViewModel::class.java)
         } catch (e: Exception) {
             Timber.e(e)
-        }
+        }*/
 
         binding.viewModel = contactProfileShareViewModel
 
@@ -277,7 +280,7 @@ class ContactProfileFragment : BaseFragment() {
         viewModel.muteConversationWsError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
             }
         })
 
@@ -286,6 +289,7 @@ class ContactProfileFragment : BaseFragment() {
                 checkSilenceConversation(contact.silenced)
                 setTextToolbar(contact)
                 setTextBlockedContact(contact.statusBlocked)
+                setActiveCustomNotification(contact.stateNotification)
             }
         })
     }
@@ -302,6 +306,15 @@ class ContactProfileFragment : BaseFragment() {
                 requestCrop(resultCode)
             }
         }
+    }
+
+    private fun optionCustomNotification() {
+        findNavController().navigate(
+            ContactProfileFragmentDirections
+                .actionContactProfileFragmentToCustomUserNotificationFragment(
+                    contactId = args.contactId, activeCustomNotification = stateCustomNotification
+                )
+        )
     }
 
     private fun optionMessageClickListener() =
@@ -344,6 +357,11 @@ class ContactProfileFragment : BaseFragment() {
             contact.nickname
         }
         (activity as MainActivity).supportActionBar?.title = text
+    }
+
+    private fun setActiveCustomNotification(stateNotification: Boolean) {
+        stateCustomNotification = stateNotification
+        binding.editTextCustomNotification.isVisible = stateNotification
     }
 
     private fun verifyCameraAndMediaPermission() {

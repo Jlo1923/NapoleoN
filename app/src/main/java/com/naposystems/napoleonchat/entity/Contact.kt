@@ -22,7 +22,9 @@ data class Contact(
     @ColumnInfo(name = "last_seen") var lastSeen: String = "",
     @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false,
     @ColumnInfo(name = "silenced") val silenced: Boolean = false,
-    @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1
+    @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1,
+    @ColumnInfo(name = "state_notification") val stateNotification: Boolean = false,
+    @ColumnInfo(name = "notification_id") val notificationId: Int = 0
 ) : Parcelable, Serializable {
     @Ignore
     var haveFriendshipRequest: Boolean = false

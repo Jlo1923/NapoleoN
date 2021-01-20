@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.customUserNotification.CustomUserNotificationFragment">
+
+    <data />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView_active_custom_notification"
+                style="@style/OptionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_weight="1"
+                android:text="Notificaciones personalizadas" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:thumbTint="@color/thumb_color"
+                app:trackTint="@color/track_color" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView_conversation"
+            style="@style/SmallBodyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/attrBackgroundSectionColor"
+            android:padding="@dimen/small_padding"
+            android:text="Notificaciones de mensaje" />
+
+        <LinearLayout
+            android:id="@+id/option_notification_tone"
+            style="@style/Option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- START ICON -->
+            <ImageView
+                android:id="@+id/icon_option_notification_tone"
+                style="@style/OptionStartIcon"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_notifications_icon" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- OPTION TITLE -->
+                <TextView
+                    android:id="@+id/textView_message_title"
+                    style="@style/OptionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:enabled="false"
+                    android:text="Tono de notificación" />
+
+                <!-- OPTION VALUE -->
+                <TextView
+                    android:id="@+id/textView_message_self_destruct_time"
+                    style="@style/OptionValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    tools:text="default" />
+
+            </LinearLayout>
+
+            <!-- EDIT ICON -->
+            <ImageButton
+                android:id="@+id/imageButton_message_option_end_icon"
+                style="@style/OptionEndIcon"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_edit_black" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

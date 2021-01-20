@@ -794,7 +794,7 @@ class NotificationUtils @Inject constructor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Timber.d("*NotificationTest: createMessageChannel")
 
-            val id = repository.getNotificationMessageChannelId().plus(1)
+            val id = repository.getNotificationMessageChannelId()
             repository.setNotificationMessageChannelId(id)
             val channelId = context.getString(R.string.notification_message_channel_id, id)
             val name = "Notification Message"

@@ -603,6 +603,9 @@
         <action
             android:id="@+id/action_contactProfileFragment_to_conversationCameraFragment"
             app:destination="@id/conversationCameraFragment" />
+        <action
+            android:id="@+id/action_contactProfileFragment_to_customUserNotificationFragment"
+            app:destination="@id/customUserNotificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/attachmentAudioFragment"
@@ -801,4 +804,16 @@
         android:name="com.naposystems.napoleonchat.ui.notifications.NotificationSettingFragment"
         android:label="@string/text_notifications"
         tools:layout="@layout/notification_setting_fragment" />
+    <fragment
+        android:id="@+id/customUserNotificationFragment"
+        android:name="com.naposystems.napoleonchat.ui.customUserNotification.CustomUserNotificationFragment"
+        android:label="custom_user_notification_fragment"
+        tools:layout="@layout/custom_user_notification_fragment" >
+        <argument
+            android:name="contactId"
+            app:argType="integer" />
+        <argument
+            android:name="activeCustomNotification"
+            app:argType="boolean"/>
+    </fragment>
 </navigation>

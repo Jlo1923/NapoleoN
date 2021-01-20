@@ -640,17 +640,27 @@ class Utils {
             contact: Contact,
             query: String
         ): Boolean {
-            val data = if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
+            val data =
+                if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
             return validateSearch(data, query)
         }
 
         fun validateDisplayName(contact: Contact, query: String): Boolean {
-            val data = if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
+            val data =
+                if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
             return validateSearch(data, query)
         }
 
         private fun validateSearch(data: String, query: String): Boolean {
             return data.toLowerCase(Locale.getDefault()).contains(query)
+        }
+
+        /*fun deleteUserChannel(context: Context, ) {
+
+        }*/
+
+        fun updateUserChannel(context: Context, ) {
+
         }
     }
 }

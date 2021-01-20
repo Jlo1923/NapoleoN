@@ -38,6 +38,7 @@ class RoomModule {
     fun provideRoomDatabase(context: Context): NapoleonRoomDatabase {
         napoleonDB =
             Room.databaseBuilder(context, NapoleonRoomDatabase::class.java, "napoleon_database")
+//                .addMigrations(NapoleonRoomDatabase.MIGRATION_1_2)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
