@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
+import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.dto.conversation.call.CallContactReqDTO
@@ -22,6 +23,7 @@ import com.naposystems.napoleonchat.dto.conversation.socket.AuthReqDTO
 import com.naposystems.napoleonchat.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.napoleonchat.dto.conversation.socket.SocketReqDTO
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.entity.MessageNotSent
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -63,7 +65,8 @@ class ConversationRepository @Inject constructor(
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
-    private val quoteDataSource: QuoteDataSource
+    private val quoteDataSource: QuoteDataSource,
+    private val messageNotSentDataSource: MessageNotSentDataSource
 ) :
     IContractConversation.Repository {
 
@@ -841,5 +844,27 @@ class ConversationRepository @Inject constructor(
         return sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_FREE_TRIAL
         )
+    }
+
+    override fun getMessageNotSent(contactId: Int): MessageNotSent {
+        return messageNotSentDataSource.getMessageNotSetByContact(contactId)
+    }
+
+    override fun insertMessageNotSent(message: String, contactId: Int) {
+        if (message.isEmpty()) {
+            messageNotSentDataSource.deleteMessageNotSentByContact(contactId)
+        } else {
+            messageNotSentDataSource.insertMessageNotSent(
+                MessageNotSent(
+                    id = 0,
+                    message = message,
+                    contactId = contactId
+                )
+            )
+        }
+    }
+
+    override fun deleteMessageNotSent(contactId: Int) {
+        messageNotSentDataSource.deleteMessageNotSentByContact(contactId)
     }
 }

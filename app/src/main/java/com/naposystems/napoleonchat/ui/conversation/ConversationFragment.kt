@@ -704,6 +704,8 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.getMessagesSelected(args.contact.id)
 
+        viewModel.getMessageNotSent(args.contact.id)
+
         selfDestructTimeViewModel.getSelfDestructTimeByContact(args.contact.id)
 
         selfDestructTimeViewModel.getSelfDestructTime()
@@ -867,6 +869,12 @@ class ConversationFragment : BaseFragment(),
                 viewModel.resetNewMessage()
             }
         })
+
+        viewModel.messageNotSent.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.inputPanel.getEditText().setText(it.message)
+            }
+        }
 
         shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -1584,7 +1592,8 @@ class ConversationFragment : BaseFragment(),
 
         actionBarCustomView.contact = args.contact
 
-        actionBarCustomView.userDisplayFormat = userDisplayFormatShareViewModel.getUserDisplayFormat()
+        actionBarCustomView.userDisplayFormat =
+            userDisplayFormatShareViewModel.getUserDisplayFormat()
 
         actionBarCustomView.containerBack.setOnClickListener {
             findNavController().popBackStack()
@@ -1837,6 +1846,7 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onPause() {
+        viewModel.insertMessageNotSent(binding.inputPanel.getEditText().text.toString(), args.contact.id)
         super.onPause()
         MediaPlayerManager.unregisterProximityListener()
         //MediaPlayerManager.completeAudioPlaying()
