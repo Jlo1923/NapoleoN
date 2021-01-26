@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.di.modules
 import android.content.Context
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
+import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.repository.conversation.ConversationRepository
@@ -27,7 +28,8 @@ class ConversationModule {
         attachmentDataSource: AttachmentDataSource,
         sharedPreferencesManager: SharedPreferencesManager,
         napoleonApi: NapoleonApi,
-        quoteDataSource: QuoteDataSource
+        quoteDataSource: QuoteDataSource,
+        messageNotSent: MessageNotSentDataSource
     ): IContractConversation.Repository {
         return ConversationRepository(
             context,
@@ -37,7 +39,8 @@ class ConversationModule {
             attachmentDataSource,
             sharedPreferencesManager,
             napoleonApi,
-            quoteDataSource
+            quoteDataSource,
+            messageNotSent
         )
     }
 }

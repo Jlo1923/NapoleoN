@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessag
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.entity.MessageNotSent
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -99,6 +100,10 @@ class ConversationViewModel @Inject constructor(
     private val _newMessageSend = MutableLiveData<Boolean>()
     val newMessageSend: LiveData<Boolean>
         get() = _newMessageSend
+
+    private val _messageNotSent = MutableLiveData<MessageNotSent>()
+    val messageNotSent: LiveData<MessageNotSent>
+        get() = _messageNotSent
 
     private var countOldMessages: Int = 0
 
@@ -192,6 +197,8 @@ class ConversationViewModel @Inject constructor(
                 _newMessageSend.value = true
 
                 message.id = messageId
+
+                repository.deleteMessageNotSent(contact.id)
 
                 attachment?.let {
                     attachment.messageId = messageId
@@ -700,6 +707,16 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun getFreeTrial() = repository.getFreeTrial()
+
+    override fun getMessageNotSent(contactId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _messageNotSent.postValue(repository.getMessageNotSent(contactId))
+        }
+    }
+
+    override fun insertMessageNotSent(message: String, contactId: Int) {
+        repository.insertMessageNotSent(message, contactId)
+    }
 
     //endregion
 }
