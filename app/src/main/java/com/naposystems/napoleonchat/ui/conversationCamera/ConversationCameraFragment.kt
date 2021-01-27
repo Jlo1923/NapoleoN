@@ -129,7 +129,6 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
 
         disposable.add(disposableContactBlockOrDelete)
 
-
 //        flashMode = ImageCapture.FLASH_MODE_OFF
 
 //        binding.verticalSlider.setListener(this)

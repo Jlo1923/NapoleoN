@@ -15,6 +15,9 @@ import com.naposystems.napoleonchat.db.dao.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDao
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDao
+import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDataSource
+import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentLocalDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDao
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteLocalDataSource
@@ -38,7 +41,10 @@ class RoomModule {
     fun provideRoomDatabase(context: Context): NapoleonRoomDatabase {
         napoleonDB =
             Room.databaseBuilder(context, NapoleonRoomDatabase::class.java, "napoleon_database")
-                .addMigrations(NapoleonRoomDatabase.MIGRATION_1_2)
+                .addMigrations(
+                    NapoleonRoomDatabase.MIGRATION_1_2,
+                    NapoleonRoomDatabase.MIGRATION_2_3
+                )
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
@@ -136,6 +142,18 @@ class RoomModule {
     @Singleton
     fun provideContactLocalDataSource(contactDao: ContactDao): ContactDataSource {
         return ContactLocalDataSource(contactDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessageNotSentDao(napoleonRoomDatabase: NapoleonRoomDatabase): MessageNotSentDao {
+        return napoleonRoomDatabase.messageNotSentDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessageNotSentLocalDataSource(dao: MessageNotSentDao): MessageNotSentDataSource {
+        return MessageNotSentLocalDataSource(dao)
     }
 
 }

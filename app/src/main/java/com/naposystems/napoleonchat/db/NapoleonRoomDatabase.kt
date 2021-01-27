@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.napoleonchat.db.dao.contact.ContactDao
 import com.naposystems.napoleonchat.db.dao.message.MessageDao
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDao
+import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDao
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDao
 import com.naposystems.napoleonchat.db.dao.status.StatusDao
 import com.naposystems.napoleonchat.db.dao.user.UserDao
@@ -20,9 +21,9 @@ import java.util.*
     entities = [
         User::class, Status::class, Message::class,
         Attachment::class, Contact::class,
-        Quote::class
+        Quote::class, MessageNotSent::class
     ],
-    version = 2
+    version = 3
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
@@ -38,8 +39,25 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
 
     abstract fun contactDao(): ContactDao
 
+    abstract fun messageNotSentDao(): MessageNotSentDao
+
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE `message_not_sent` (
+                        `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        `message` TEXT NOT NULL,
+                        `contact_id` INTEGER NOT NULL,
+                        FOREIGN KEY(contact_id) REFERENCES contact(id) ON UPDATE CASCADE ON DELETE CASCADE
+                        )""".trimIndent()
+                )
+
+                database.execSQL("CREATE UNIQUE INDEX `index_message_not_sent_contact_id` ON `message_not_sent` (`contact_id`)")
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "ALTER TABLE contact ADD 'state_notification' INTEGER NOT NULL DEFAULT 0"
@@ -50,4 +68,5 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
             }
         }
     }
+
 }
