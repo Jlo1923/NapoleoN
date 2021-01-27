@@ -41,10 +41,7 @@ class RoomModule {
     fun provideRoomDatabase(context: Context): NapoleonRoomDatabase {
         napoleonDB =
             Room.databaseBuilder(context, NapoleonRoomDatabase::class.java, "napoleon_database")
-                .addMigrations(
-                    NapoleonRoomDatabase.MIGRATION_1_2,
-                    NapoleonRoomDatabase.MIGRATION_2_3
-                )
+                .addMigrations(NapoleonRoomDatabase.MIGRATION_1_2)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
@@ -116,7 +113,11 @@ class RoomModule {
 
     @Provides
     @Singleton
-    fun provideMessageLocalDataSource(context: Context, contactDao: ContactDao, messageDao: MessageDao): MessageDataSource {
+    fun provideMessageLocalDataSource(
+        context: Context,
+        contactDao: ContactDao,
+        messageDao: MessageDao
+    ): MessageDataSource {
         return MessageLocalDataSource(context, contactDao, messageDao)
     }
 

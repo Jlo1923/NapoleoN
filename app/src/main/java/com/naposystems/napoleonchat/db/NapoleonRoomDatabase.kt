@@ -23,7 +23,7 @@ import java.util.*
         Attachment::class, Contact::class,
         Quote::class, MessageNotSent::class
     ],
-    version = 3
+    version = 2
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
@@ -54,11 +54,7 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                 )
 
                 database.execSQL("CREATE UNIQUE INDEX `index_message_not_sent_contact_id` ON `message_not_sent` (`contact_id`)")
-            }
-        }
 
-        val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "ALTER TABLE contact ADD 'state_notification' INTEGER NOT NULL DEFAULT 0"
                 )
