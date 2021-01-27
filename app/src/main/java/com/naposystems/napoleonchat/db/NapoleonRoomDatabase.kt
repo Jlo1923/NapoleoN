@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.entity.*
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import java.util.*
 
 @Database(
     entities = [
@@ -21,7 +22,7 @@ import com.naposystems.napoleonchat.entity.message.attachments.Attachment
         Attachment::class, Contact::class,
         Quote::class
     ],
-    version = 1
+    version = 2
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
@@ -41,10 +42,10 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    "ALTER TABLE contact ADD state_notification BOOLEAN NOT NULL DEFAULT 0"
+                    "ALTER TABLE contact ADD 'state_notification' INTEGER NOT NULL DEFAULT 0"
                 )
                 database.execSQL(
-                    "ALTER TABLE contact ADD notification_id INTEGER NOT NULL DEFAULT 0"
+                    "ALTER TABLE contact ADD 'notification_id' STRING NOT NULL DEFAULT ''"
                 )
             }
         }

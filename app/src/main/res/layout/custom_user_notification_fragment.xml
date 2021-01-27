@@ -12,21 +12,23 @@
         android:orientation="vertical">
 
         <LinearLayout
-            style="@style/Option"
+            android:id="@+id/option_activate_custom_notification"
+            style="@style/Option.WithOutLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/textView_active_custom_notification"
                 style="@style/OptionTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_weight="1"
-                android:text="Notificaciones personalizadas" />
+                android:text="@string/text_custom_notifications" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_activate_custom_notification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:thumbTint="@color/thumb_color"
@@ -35,25 +37,26 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView_conversation"
             style="@style/SmallBodyTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/attrBackgroundSectionColor"
             android:padding="@dimen/small_padding"
-            android:text="Notificaciones de mensaje" />
+            android:text="@string/text_notification_message" />
 
         <LinearLayout
             android:id="@+id/option_notification_tone"
             style="@style/Option"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clickable="false">
 
             <!-- START ICON -->
             <ImageView
                 android:id="@+id/icon_option_notification_tone"
                 style="@style/OptionStartIcon"
                 android:layout_gravity="center"
+                android:clickable="false"
                 app:srcCompat="@drawable/ic_notifications_icon" />
 
             <LinearLayout
@@ -62,26 +65,31 @@
                 android:layout_marginStart="@dimen/normal_margin"
                 android:layout_marginEnd="@dimen/normal_margin"
                 android:layout_weight="1"
+                android:clickable="false"
                 android:orientation="vertical">
 
                 <!-- OPTION TITLE -->
                 <TextView
-                    android:id="@+id/textView_message_title"
+                    android:id="@+id/textView_notification_tone_title"
                     style="@style/OptionTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="0dp"
                     android:layout_marginEnd="0dp"
+                    android:clickable="false"
                     android:enabled="false"
-                    android:text="Tono de notificación" />
+                    android:text="@string/text_notification_tone"
+                    android:textColor="@color/text_view_state_text_color" />
 
                 <!-- OPTION VALUE -->
                 <TextView
-                    android:id="@+id/textView_message_self_destruct_time"
+                    android:id="@+id/textView_current_tone"
                     style="@style/OptionValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
                     android:enabled="false"
+                    android:textColor="@color/text_view_state_tint"
                     tools:text="default" />
 
             </LinearLayout>
@@ -91,6 +99,7 @@
                 android:id="@+id/imageButton_message_option_end_icon"
                 style="@style/OptionEndIcon"
                 android:layout_gravity="center"
+                android:clickable="false"
                 app:srcCompat="@drawable/ic_edit_black" />
 
         </LinearLayout>

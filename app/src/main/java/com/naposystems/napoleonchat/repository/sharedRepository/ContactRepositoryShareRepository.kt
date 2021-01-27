@@ -3,6 +3,8 @@ package com.naposystems.napoleonchat.repository.sharedRepository
 import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.IContractContactRepositoryShare
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -38,7 +40,12 @@ class ContactRepositoryShareRepository @Inject constructor(
                             contact.id,
                             Constants.MessageType.NEW_CONTACT.type
                         )
+
+                        RxBus.publish(RxEvent.DeleteChannel(contact))
+
                         contactLocalDataSource.deleteContact(contact)
+                        Timber.d("*TestDelete: ContactDelete ${contact.getNickName()}")
+
                     }
                 }
                 true

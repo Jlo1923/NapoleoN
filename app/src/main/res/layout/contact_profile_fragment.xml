@@ -191,6 +191,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="false"
                         android:padding="@dimen/x_small_padding"
                         android:scaleType="center"
                         android:tint="?attr/attrTintColorSecondaryDark"
@@ -224,6 +225,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/normal_margin"
+                        android:layout_marginTop="@dimen/small_margin"
                         android:layout_marginEnd="@dimen/normal_margin"
                         android:layout_weight="1"
                         android:orientation="vertical">
@@ -234,7 +236,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="0dp"
-                            android:text="Personalizar notificaciones|!!" />
+                            android:text="@string/text_customize_notification" />
 
                         <TextView
                             android:id="@+id/editText_custom_notification"
@@ -243,11 +245,12 @@
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
                             android:maxLength="@integer/max_length_nickname"
-                            android:text="activado|!!"
                             android:padding="0dp"
                             android:singleLine="true"
+                            android:text="@string/text_activated"
                             android:textColor="?attr/attrColorButtonTint"
-                            tools:text="Activado" />
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
                     </LinearLayout>
 
@@ -291,11 +294,13 @@
                     <ImageView
                         android:id="@+id/imageView_delete_chat_start_icon"
                         style="@style/OptionStartIcon"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_delete_black" />
 
                     <TextView
                         android:id="@+id/textView_label_delete_chat"
                         style="@style/OptionTitle"
+                        android:layout_marginTop="@dimen/small_margin"
                         android:layout_weight="1"
                         android:text="@string/text_title_delete_conversation" />
 
@@ -319,11 +324,13 @@
                     <ImageView
                         android:id="@+id/imageView_block_contact_start_icon"
                         style="@style/OptionStartIcon"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_block_white" />
 
                     <TextView
                         android:id="@+id/textView_label_block_contact"
                         style="@style/OptionTitle"
+                        android:layout_marginTop="@dimen/small_margin"
                         android:layout_weight="1"
                         android:text="@string/text_block_contact" />
 
@@ -338,11 +345,13 @@
                     <ImageView
                         android:id="@+id/imageView_delete_contact_start_icon"
                         style="@style/OptionStartIcon"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_delete_contact" />
 
                     <TextView
                         android:id="@+id/textView_label_delete_contact"
                         style="@style/OptionTitle"
+                        android:layout_marginTop="@dimen/small_margin"
                         android:layout_weight="1"
                         android:text="@string/text_delete_contact" />
 
@@ -357,11 +366,13 @@
                     <ImageView
                         android:id="@+id/imageView_restore_contact_start_icon"
                         style="@style/OptionStartIcon"
+                        android:layout_gravity="center"
                         app:srcCompat="@drawable/ic_restore" />
 
                     <TextView
                         android:id="@+id/textView_label_restore_contact_chat"
                         style="@style/OptionTitle"
+                        android:layout_marginTop="@dimen/small_margin"
                         android:layout_weight="1"
                         android:text="@string/text_reset_contact" />
 

@@ -102,4 +102,12 @@ class ContactLocalDataSource @Inject constructor(private val contactDao: Contact
     override suspend fun restoreImageByContact(contactId: Int) {
         contactDao.restoreImageByContact(contactId)
     }
+
+    override suspend fun updateChannelId(contactId: Int, channelId: String) {
+        contactDao.updateChannelId(contactId, channelId)
+    }
+
+    override suspend fun updateStateChannel(contactId: Int, state: Boolean) {
+        contactDao.updateStateChannel(contactId, state)
+    }
 }

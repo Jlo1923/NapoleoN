@@ -3,4 +3,7 @@
     <string name="text_notifications">Notificaciones</string>
     <string name="text_notification_tone">Tono de notificación</string>
     <string name="text_select_notification_tone">Seleccionar tono de notificación</string>
+    <string name="text_custom_notifications">Notificaciones personalizadas</string>
+    <string name="text_notification_message">Notificaciones de mensaje</string>
+    <string name="text_customize_notification">Personalizar notificaciones</string>
 </resources>

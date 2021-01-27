@@ -44,4 +44,8 @@ interface ContactDataSource {
     suspend fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int>
 
     suspend fun restoreImageByContact(contactId: Int)
+
+    suspend fun updateChannelId(contactId: Int, channelId: String)
+
+    suspend fun updateStateChannel(contactId: Int, state:Boolean)
 }

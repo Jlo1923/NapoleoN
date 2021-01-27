@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
+import java.util.*
 
 @Parcelize
 @Entity(tableName = "contact")
@@ -23,8 +24,8 @@ data class Contact(
     @ColumnInfo(name = "status_blocked") var statusBlocked: Boolean = false,
     @ColumnInfo(name = "silenced") val silenced: Boolean = false,
     @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1,
-    @ColumnInfo(name = "state_notification") val stateNotification: Boolean = false,
-    @ColumnInfo(name = "notification_id") val notificationId: Int = 0
+    @ColumnInfo(name = "state_notification") var stateNotification: Boolean = false,
+    @ColumnInfo(name = "notification_id") val notificationId: String = ""
 ) : Parcelable, Serializable {
     @Ignore
     var haveFriendshipRequest: Boolean = false
@@ -47,23 +48,9 @@ data class Contact(
         return result
     }
 
-    fun getNickName(): String = when {
-        nicknameFake.isNotEmpty() -> {
-            nicknameFake
-        }
-        else -> {
-            nickname
-        }
-    }
+    fun getNickName(): String = if (nicknameFake.isNotEmpty()) nicknameFake else nickname
 
-    fun getName(): String = when {
-        displayNameFake.isNotEmpty() -> {
-            displayNameFake
-        }
-        else -> {
-            displayName
-        }
-    }
+    fun getName(): String = if (displayNameFake.isNotEmpty()) displayNameFake else displayName
 
     fun getImage(): String = when {
         imageUrlFake.isNotEmpty() -> imageUrlFake

@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.reactive
 
+import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
@@ -34,6 +35,7 @@ class RxEvent {
     data class EnableButtonPlayAudio(val state: Boolean)
     data class ContactCancelCall(val channel: String)
     data class ContactBlockOrDelete(val contactId: Int)
+    data class DeleteChannel(val contact: Contact)
     data class HangupByNotification(val channel: String)
     data class ContactCantChangeToVideoCall(val channel: String)
     data class RejectCallByNotification(val channel: String)
