@@ -25,7 +25,7 @@ data class Contact(
     @ColumnInfo(name = "silenced") val silenced: Boolean = false,
     @ColumnInfo(name = "self_destruct_time") val selfDestructTime: Int = -1,
     @ColumnInfo(name = "state_notification") var stateNotification: Boolean = false,
-    @ColumnInfo(name = "notification_id") val notificationId: String = ""
+    @ColumnInfo(name = "notification_id") val notificationId: String? = null
 ) : Parcelable, Serializable {
     @Ignore
     var haveFriendshipRequest: Boolean = false

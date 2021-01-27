@@ -56,10 +56,10 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                 database.execSQL("CREATE UNIQUE INDEX `index_message_not_sent_contact_id` ON `message_not_sent` (`contact_id`)")
 
                 database.execSQL(
-                    "ALTER TABLE contact ADD 'state_notification' INTEGER NOT NULL DEFAULT 0"
+                    "ALTER TABLE contact ADD COLUMN 'state_notification' INTEGER NOT NULL DEFAULT 0"
                 )
                 database.execSQL(
-                    "ALTER TABLE contact ADD 'notification_id' STRING NOT NULL DEFAULT ''"
+                    "ALTER TABLE contact ADD COLUMN 'notification_id' TEXT DEFAULT NULL"
                 )
             }
         }
