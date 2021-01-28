@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -169,6 +170,8 @@ class ContactProfileFragment : BaseFragment() {
                 }
 
         disposable.add(disposableContactBlockOrDelete)
+
+        hideOptionForAndroidVersion()
 
         return binding.root
     }
@@ -503,6 +506,12 @@ class ContactProfileFragment : BaseFragment() {
                     child.delete()
                 }
             }
+        }
+    }
+
+    private fun hideOptionForAndroidVersion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            binding.optionCustomNotification.isVisible = false
         }
     }
 }
