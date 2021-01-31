@@ -1200,6 +1200,10 @@ class ConversationFragment : BaseFragment(),
                     it.message.status == Constants.MessageStatus.ERROR.status
                 }.toList().count()
 
+                val quantitySystemMessage = listMessageAndAttachment.filter {
+                    it.message.messageType == Constants.MessageType.NEW_CONTACT.type
+                }.toList().count()
+
                 actionMode.hideCopyButton = false
 
                 setupWidgets(0, View.GONE)
@@ -1219,12 +1223,14 @@ class ConversationFragment : BaseFragment(),
                         }
                         actionMode.quantityMessageOtherUser = quantityMessagesOtherUser
                         actionMode.quantityMessagesFailed = quantityMessagesFailed
+                        actionMode.quantitySystemMessage = quantitySystemMessage
                     }
 
                     else -> {
                         actionMode.hideCopyButton = true
                         actionMode.quantityMessageOtherUser = quantityMessagesOtherUser
                         actionMode.quantityMessagesFailed = quantityMessagesFailed
+                        actionMode.quantitySystemMessage = quantitySystemMessage
                     }
                 }
                 actionMode.mode?.invalidate()
