@@ -161,10 +161,12 @@ class ProfileFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.user.observe(viewLifecycleOwner) { user ->
-            binding.user = user
-            binding.executePendingBindings()
-            if (user.imageUrl.isNotEmpty()) {
-                binding.imageViewProfileImage.background = null
+            if (user != null) {
+                binding.user = user
+                binding.executePendingBindings()
+                if (user.imageUrl.isNotEmpty()) {
+                    binding.imageViewProfileImage.background = null
+                }
             }
         }
 
