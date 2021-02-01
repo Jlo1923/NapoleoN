@@ -10,6 +10,7 @@ import com.naposystems.napoleonchat.repository.home.HomeRepository
 import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.naposystems.napoleonchat.webService.socket.SocketService
 import dagger.Module
 import dagger.Provides
@@ -25,7 +26,7 @@ class HomeModule {
         napoleonApi: NapoleonApi,
         userLocalDataSource: UserLocalDataSource,
         sharedPreferencesManager: SharedPreferencesManager,
-        socketService: SocketService,
+        socketService: IContractSocketService.SocketService,
         messageLocalDataSource: MessageDataSource,
         contactLocalDataSource: ContactDataSource,
         attachmentLocalDataSource: AttachmentDataSource,

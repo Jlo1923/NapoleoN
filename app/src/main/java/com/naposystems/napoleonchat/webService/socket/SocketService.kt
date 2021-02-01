@@ -7,6 +7,8 @@ import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReadedDTO
 import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventRes
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
@@ -48,6 +50,7 @@ class SocketService @Inject constructor(
     private val moshi = Moshi.Builder().build()
 
     private lateinit var generalChannel: PrivateChannel
+    private lateinit var globalChannel: PrivateChannel
     private var callChannel: PresenceChannel? = null
 
     companion object {
@@ -64,6 +67,8 @@ class SocketService @Inject constructor(
         const val ICE_CANDIDATE = "candidate"
         const val OFFER = "offer"
         const val ANSWER = "answer"
+
+        const val CLIENT_CONVERSATION_NN = "client-conversationNN"
     }
 
     override fun initSocket() {
@@ -74,6 +79,16 @@ class SocketService @Inject constructor(
 
         } catch (e: Exception) {
             Timber.e(e)
+        }
+    }
+
+    override fun validatePusher() {
+        val channelName = "private-global"
+
+        if (pusher.getPrivateChannel(channelName) == null) {
+            connectToSocket()
+        } else {
+            RxBus.publish(RxEvent.CreateNotification())
         }
     }
 
@@ -279,6 +294,9 @@ class SocketService @Inject constructor(
                                 Timber.d("Conectó al socket ${pusher.connection.socketId}")
 
                                 subscribeToGeneralChannel()
+
+                                subscribeToPrivateGlobal()
+
                             } catch (e: Exception) {
                                 Timber.e(e)
                             }
@@ -407,6 +425,106 @@ class SocketService @Inject constructor(
         }
     }
 
+    private fun subscribeToPrivateGlobal() {
+        Timber.d("*Test: Global $this")
+        try {
+
+            val userId =
+                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+            if (userId != 0) {
+                val channelName = "private-global"
+
+                if (pusher.getPrivateChannel(channelName) == null) {
+                    globalChannel = pusher.subscribePrivate(
+                        channelName,
+                        object : PrivateChannelEventListener {
+                            override fun onEvent(event: PusherEvent?) {
+                                Timber.d("Subscribe private-global")
+                            }
+
+                            override fun onAuthenticationFailure(
+                                message: String?,
+                                e: java.lang.Exception?
+                            ) {
+                                Timber.d("$message, $e")
+                            }
+
+                            override fun onSubscriptionSucceeded(channelName: String?) {
+                                Timber.d("onSubscriptionSucceeded: $channelName")
+                                listenValidateConversationEvent()
+
+                                RxBus.publish(RxEvent.CreateNotification())
+                            }
+                        }
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    private fun listenValidateConversationEvent() {
+        globalChannel.bind(
+            CLIENT_CONVERSATION_NN,
+            object : PrivateChannelEventListener {
+                override fun onEvent(event: PusherEvent?) {
+                    try {
+                        event?.data?.let { dataEventRes ->
+                            val jsonAdapter: JsonAdapter<ValidateMessageEventDTO> =
+                                moshi.adapter(ValidateMessageEventDTO::class.java)
+                            val dataEvent = jsonAdapter.fromJson(dataEventRes)
+                            val userId =
+                                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+                            val messages = dataEvent?.messages?.filter {
+                                it.user == userId
+                            }?.filter { repository.existIdMessage(it.id) }
+
+                            val unread = messages?.filter {
+                                it.status == Constants.MessageEventType.UNREAD.status
+                            }?.map { it.id }
+
+                            unread?.let {
+                                repository.updateMessagesStatus(
+                                    it,
+                                    Constants.MessageStatus.UNREAD.status
+                                )
+                            }
+
+                            val read = messages?.filter {
+                                it.status == Constants.MessageEventType.READ.status
+                            }?.map { it.id }
+
+                            read?.let {
+                                repository.updateMessagesStatus(
+                                    it,
+                                    Constants.MessageStatus.READED.status
+                                )
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
+                }
+
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
+
+                override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) =
+                    Unit
+            }
+        )
+    }
+
+    override fun emitToClientConversation(jsonObject: String) {
+        try {
+            globalChannel.trigger(CLIENT_CONVERSATION_NN, jsonObject)
+        } catch (e: Exception){
+            Timber.e(e)
+        }
+    }
+
     private fun listenNewMessageEvent(privateChannel: PrivateChannel) {
         privateChannel.bind(
             "App\\Events\\NewMessageEvent",
@@ -421,6 +539,24 @@ class SocketService @Inject constructor(
                                 val dataEvent = jsonAdapter.fromJson(dataEventRes)
 
                                 dataEvent?.data?.let { newMessageDataEventRes ->
+
+                                    val messages = arrayListOf(
+                                        ValidateMessage(
+                                            id = newMessageDataEventRes.messageId,
+                                            user = newMessageDataEventRes.contactId,
+                                            status = Constants.MessageEventType.UNREAD.status
+                                        )
+                                    )
+
+                                    val validateMessage = ValidateMessageEventDTO(messages)
+
+                                    val moshi = Moshi.Builder().build()
+                                    val jsonAdapterValidate =
+                                        moshi.adapter(ValidateMessageEventDTO::class.java)
+
+                                    val json = jsonAdapterValidate.toJson(validateMessage)
+                                    globalChannel.trigger(CLIENT_CONVERSATION_NN, json.toString())
+
                                     repository.insertNewMessage(newMessageDataEventRes)
                                 }
                             }

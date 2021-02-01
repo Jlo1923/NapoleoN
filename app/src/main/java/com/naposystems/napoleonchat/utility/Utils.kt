@@ -376,11 +376,11 @@ class Utils {
 
 
         fun convertBooleanToInvertedInt(boolean: Boolean): Int {
-            return if (boolean) {
-                0
-            } else {
-                1
-            }
+            return if (boolean) 0 else 1
+        }
+
+        fun convertIntToInvertedBoolean(int: Int): Boolean {
+            return int == 1
         }
 
         fun convertAttrToColorResource(context: Context, attr: Int): Int {
@@ -640,12 +640,14 @@ class Utils {
             contact: Contact,
             query: String
         ): Boolean {
-            val data = if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
+            val data =
+                if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
             return validateSearch(data, query)
         }
 
         fun validateDisplayName(contact: Contact, query: String): Boolean {
-            val data = if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
+            val data =
+                if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
             return validateSearch(data, query)
         }
 

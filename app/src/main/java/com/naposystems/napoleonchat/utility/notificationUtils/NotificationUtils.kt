@@ -31,6 +31,8 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import dagger.android.support.DaggerApplication
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -62,6 +64,10 @@ class NotificationUtils @Inject constructor(
         applicationContext as NapoleonApplication
     }
 
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
+
     //    private var defaultSoundUri: Uri? = null
     private var notificationCount: Int = 0
 //    private var channelId: Int = 0
@@ -88,6 +94,22 @@ class NotificationUtils @Inject constructor(
         createUploadNotificationChannel(applicationContext)
         //endregion
         repository.setNotificationChannelCreated()
+    }
+
+    private fun listenEncryptMessage(
+        data: Map<String, String>,
+        builder: Builder,
+        context: Context
+    ) {
+        val disposableNotification = RxBus.listen(RxEvent.CreateNotification::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                createEncryptMessage(data, builder, context)
+            }
+
+        disposable.add(disposableNotification)
+
+
     }
 
     private fun getDefaultSoundUri() =
@@ -208,8 +230,11 @@ class NotificationUtils @Inject constructor(
             .setBadgeIconType(BADGE_ICON_SMALL)
             .setAutoCancel(true)
 
-        if (notificationType == Constants.NotificationType.ENCRYPTED_MESSAGE.type)
+        if (notificationType == Constants.NotificationType.ENCRYPTED_MESSAGE.type) {
             builder.setNumber(notificationCount)
+            listenEncryptMessage(data, builder, context)
+        }
+
 
         handleNotificationType(
             notificationType,
@@ -308,57 +333,7 @@ class NotificationUtils @Inject constructor(
                     silence=false
                 }*/
 
-                val contact = Constants.NotificationKeys.CONTACT
-                repository.getContactSilenced(
-                    data.getValue(contact).toInt(),
-                    silenced = { silenced ->
-                        if (silenced != null && silenced == true) {
-                            Timber.d("--- Esta silenciada la mka esa xd")
-                        } else {
-                            if (Data.contactId != data.getValue(contact).toInt()) {
-                                Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
-                                }, 200)
-                            }
-
-                            val titleKey =
-                                Constants.NotificationKeys.TITLE
-                            val bodyKey =
-                                Constants.NotificationKeys.BODY
-                            val messageId =
-                                Constants.NotificationKeys.MESSAGE_ID
-                            val message = Constants.NotificationKeys.MESSAGE
-
-                            if (data.containsKey(titleKey)) {
-                                builder.setContentTitle(data.getValue(titleKey))
-                            }
-
-                            if (data.containsKey(bodyKey)) {
-                                builder.setContentText(data.getValue(bodyKey))
-                            }
-
-                            Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
-
-                            if (data.containsKey(message) && !app.isAppVisible()) {
-                                repository.insertMessage(data.getValue(message))
-                            }
-
-                            if (data.containsKey(messageId) && !app.isAppVisible()) {
-                                repository.notifyMessageReceived(data.getValue(messageId))
-                            }
-
-                            if (!app.isAppVisible()) {
-                                Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
-                                with(NotificationManagerCompat.from(context)) {
-                                    //builder.setGroup(GROUP_MESSAGE)
-//                                    notify(data.getValue(contact).toInt(), builder.build())
-//                                    notify(SUMMARY_ID, createSummaryNotification(context))
-                                    notify(123456, builder.build())
-                                }
-                            }
-                        }
-                    })
+                socketService.validatePusher()
             }
 
             Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
@@ -439,6 +414,66 @@ class NotificationUtils @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun createEncryptMessage(
+        data: Map<String, String>,
+        builder: Builder,
+        context: Context
+    ) {
+        val contact = Constants.NotificationKeys.CONTACT
+        repository.getContactSilenced(
+            data.getValue(contact).toInt(),
+            silenced = { silenced ->
+                if (silenced != null && silenced == true) {
+                    Timber.d("--- Esta silenciada la mka esa xd")
+                } else {
+                    if (Data.contactId != data.getValue(contact).toInt()) {
+                        Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
+                        }, 200)
+                    }
+
+                    val titleKey =
+                        Constants.NotificationKeys.TITLE
+                    val bodyKey =
+                        Constants.NotificationKeys.BODY
+                    val messageId =
+                        Constants.NotificationKeys.MESSAGE_ID
+                    val message = Constants.NotificationKeys.MESSAGE
+
+                    if (data.containsKey(titleKey)) {
+                        builder.setContentTitle(data.getValue(titleKey))
+                    }
+
+                    if (data.containsKey(bodyKey)) {
+                        builder.setContentText(data.getValue(bodyKey))
+                    }
+
+                    Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
+
+                    if (data.containsKey(message) && !app.isAppVisible()) {
+                        repository.insertMessage(data.getValue(message))
+                    }
+
+                    if (data.containsKey(messageId) && !app.isAppVisible()) {
+                        repository.notifyMessageReceived(data.getValue(messageId))
+                    }
+
+                    if (!app.isAppVisible()) {
+                        Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
+                        with(NotificationManagerCompat.from(context)) {
+                            //builder.setGroup(GROUP_MESSAGE)
+//                                    notify(data.getValue(contact).toInt(), builder.build())
+//                                    notify(SUMMARY_ID, createSummaryNotification(context))
+                            notify(123456, builder.build())
+
+                            disposable.clear()
+                        }
+                    }
+                }
+            })
     }
 
     private fun createCategoryChannel(context: Context) {

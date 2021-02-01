@@ -15,6 +15,8 @@ interface IContractSocketService {
 
         fun disconnectSocket()
 
+        fun validatePusher()
+
         fun subscribe(jsonObject: String)
 
         fun subscribeToCallChannel(channel: String, isActionAnswer: Boolean, isVideoCall: Boolean)
@@ -30,6 +32,8 @@ interface IContractSocketService {
         fun emitToCall(channel: String, eventType: Int)
 
         fun getPusherChannel(channel: String): PresenceChannel?
+
+        fun emitToClientConversation(jsonObject: String)
     }
 
     interface Repository {
@@ -45,6 +49,8 @@ interface IContractSocketService {
         fun verifyMessagesRead()
 
         fun getDeletedMessages()
+
+        fun existIdMessage(id: String): Boolean
 
         fun rejectCall(contactId: Int, channel: String)
 

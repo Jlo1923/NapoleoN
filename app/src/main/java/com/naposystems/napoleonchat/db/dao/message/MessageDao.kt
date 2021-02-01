@@ -69,6 +69,9 @@ interface MessageDao {
         status: Int
     )
 
+    @Query("SELECT id FROM message WHERE web_id =:id")
+    fun existMessage(id: String): Int?
+
     @Query("SELECT DISTINCT * FROM message WHERE contact_id=:contactId AND status=:status AND is_mine=0")
     suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment>
 
@@ -88,7 +91,7 @@ interface MessageDao {
     suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
 
     @Query("UPDATE message SET self_destruction_at=:selfDestructTime, total_self_destruction_at = 0, status=:status WHERE web_id =:webId")
-    suspend fun updateSelfDestructTimeByMessages(selfDestructTime: Int, webId: String, status : Int)
+    suspend fun updateSelfDestructTimeByMessages(selfDestructTime: Int, webId: String, status: Int)
 
     @Query("SELECT self_destruction_at FROM message WHERE web_id =:webId")
     fun getSelfDestructTimeByMessage(webId: String): Int

@@ -17,6 +17,9 @@ import com.naposystems.napoleonchat.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
+import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -324,6 +327,11 @@ class SocketRepository @Inject constructor(
                 messageLocalDataSource.deletedMessages(response.body()!!)
             }
         }
+    }
+
+    override fun existIdMessage(id: String): Boolean {
+
+        return messageLocalDataSource.existMessage(id)
     }
 
     override fun rejectCall(contactId: Int, channel: String) {
