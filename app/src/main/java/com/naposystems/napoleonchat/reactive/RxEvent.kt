@@ -15,6 +15,7 @@ class RxEvent {
     class FriendshipRequestAccepted
     class NoInternetConnection
     class AccountAttack
+    class HideOptionMenuRecoveryAccount
     data class IncomingCall(val channel: String, val contactId: Int, val isVideoCall: Boolean)
     data class ContactHasJoinToCall(val channel: String)
     data class IceCandidateReceived(val channel: String, val iceCandidate: IceCandidate)

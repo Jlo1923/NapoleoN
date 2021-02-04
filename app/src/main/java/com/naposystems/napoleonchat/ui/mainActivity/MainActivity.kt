@@ -217,6 +217,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
         disposable.add(disposableFriendRequestAccepted)
 
+        val disposableHideOptionMenuRecoveryAccount =
+            RxBus.listen(RxEvent.HideOptionMenuRecoveryAccount::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    hideOptionMenuRecoveryAccount()
+                }
+
+        disposable.add(disposableHideOptionMenuRecoveryAccount)
+
         setSupportActionBar(binding.toolbar)
 
         navController = findNavController(R.id.nav_host_fragment)
@@ -323,6 +332,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setMarginToNavigationView()
 
         hideOptionMenuForAndroidVersion()
+
+        hideOptionMenuRecoveryAccount()
     }
 
     private fun openMenu() {
@@ -548,7 +559,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 null,
                 options
             )
-            R.id.notification_option_main_menu -> navController.navigate(
+            R.id.recovery_account_option_main_menu -> navController.navigate(
                 R.id.registerRecoveryAccountFragment,
                 null,
                 options
@@ -583,7 +594,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             binding.navView.menu.findItem(R.id.notification_option_main_menu).isVisible = false
         }
+    }
 
+    private fun hideOptionMenuRecoveryAccount() {
         if (viewModel.getRecoveryQuestionsPref() == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
             binding.navView.menu.findItem(R.id.recovery_account_option_main_menu).isVisible = false
         }

@@ -14,6 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.RegisterRecoveryAccountBinding
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -67,6 +69,7 @@ class RegisterRecoveryAccountFragment : Fragment() {
             if (recoveryQuestionsPref == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
                 binding.textViewDescription.setText(R.string.text_recovery_account_ok)
                 binding.buttonRegister.setText(R.string.text_edit)
+                RxBus.publish(RxEvent.HideOptionMenuRecoveryAccount())
             }
         })
     }
