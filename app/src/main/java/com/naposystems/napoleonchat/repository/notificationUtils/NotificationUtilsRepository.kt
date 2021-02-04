@@ -11,6 +11,8 @@ import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReceivedReqDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
@@ -21,6 +23,7 @@ import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +36,7 @@ import javax.inject.Inject
 class NotificationUtilsRepository @Inject constructor(
     private val context: Context,
     private val napoleonApi: NapoleonApi,
+    private val socketService: IContractSocketService.SocketService,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val messageLocalDataSource: MessageDataSource,
     private val quoteDataSource: QuoteDataSource,
@@ -95,6 +99,8 @@ class NotificationUtilsRepository @Inject constructor(
                     getRemoteContact()
                 }
 
+                validateMessageEvent(newMessageEventMessageRes)
+
                 val databaseMessage =
                     messageLocalDataSource.getMessageByWebId(newMessageEventMessageRes.id, false)
 
@@ -125,6 +131,30 @@ class NotificationUtilsRepository @Inject constructor(
                     Timber.d("Conversation insertó attachment")
                 }
             }
+        }
+    }
+
+    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
+        try {
+            val messages = arrayListOf(
+                ValidateMessage(
+                    id = newMessageDataEventRes.id,
+                    user = newMessageDataEventRes.userAddressee,
+                    status = Constants.MessageEventType.UNREAD.status
+                )
+            )
+
+            val validateMessage = ValidateMessageEventDTO(messages)
+
+            val moshi = Moshi.Builder().build()
+            val jsonAdapterValidate =
+                moshi.adapter(ValidateMessageEventDTO::class.java)
+
+            val json = jsonAdapterValidate.toJson(validateMessage)
+
+            socketService.emitToClientConversation(json.toString())
+        } catch (e: Exception){
+            Timber.e(e)
         }
     }
 

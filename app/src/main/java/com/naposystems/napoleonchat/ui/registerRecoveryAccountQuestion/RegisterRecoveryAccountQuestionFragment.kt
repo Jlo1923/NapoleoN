@@ -139,12 +139,12 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
 
         viewModel.recoveryAnswerCreatingErrors.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar{}
+            snackbarUtils.showSnackbar {}
         })
 
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar{}
+            snackbarUtils.showSnackbar {}
         })
     }
 
@@ -180,7 +180,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
             if (selectedQuestion is Questions) {
                 val recoveryAnswer = RecoveryAnswer(
                     selectedQuestion.id,
-                    binding.textInputEditTextAnswers.text.toString().toLowerCase(Locale.ROOT)
+                    binding.textInputEditTextAnswers.text.toString().trim().toLowerCase(Locale.ROOT)
                 )
                 if (flag == 0) {
                     if (countAnswer >= 3) {

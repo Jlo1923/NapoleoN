@@ -299,6 +299,11 @@ object Constants {
         ERROR(5)
     }
 
+    enum class MessageEventType(val status: Int) {
+        UNREAD(1),
+        READ(2)
+    }
+
     enum class AttachmentStatus(val status: Int) {
         SENDING(1),
         SENT(2),

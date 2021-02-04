@@ -22,6 +22,8 @@ import com.naposystems.napoleonchat.dto.conversation.message.*
 import com.naposystems.napoleonchat.dto.conversation.socket.AuthReqDTO
 import com.naposystems.napoleonchat.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.napoleonchat.dto.conversation.socket.SocketReqDTO
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.MessageNotSent
 import com.naposystems.napoleonchat.entity.User
@@ -340,6 +342,24 @@ class ConversationRepository @Inject constructor(
         val listIds = mutableListOf<String>()
         listIds.addAll(textMessagesUnreadIds)
         listIds.addAll(locationMessagesUnreadIds)
+
+        val messagesRead = messagesUnread.map {
+            ValidateMessage(
+                id = it.message.webId,
+                user = contactId,
+                status = Constants.MessageEventType.READ.status
+            )
+        }
+
+        val validateMessage = ValidateMessageEventDTO(messagesRead)
+
+        val moshi = Moshi.Builder().build()
+        val jsonAdapterValidate =
+            moshi.adapter(ValidateMessageEventDTO::class.java)
+
+        val json = jsonAdapterValidate.toJson(validateMessage)
+
+        socketService.emitToClientConversation(json.toString())
 
         if (listIds.isNotEmpty()) {
             try {

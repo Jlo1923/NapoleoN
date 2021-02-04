@@ -377,11 +377,11 @@ class Utils {
 
 
         fun convertBooleanToInvertedInt(boolean: Boolean): Int {
-            return if (boolean) {
-                0
-            } else {
-                1
-            }
+            return if (boolean) 0 else 1
+        }
+
+        fun convertIntToInvertedBoolean(int: Int): Boolean {
+            return int == 1
         }
 
         fun convertAttrToColorResource(context: Context, attr: Int): Int {

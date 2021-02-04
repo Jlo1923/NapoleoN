@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.repository.notificationUtils.NotificationUti
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -21,6 +22,7 @@ class NotificationUtilsModule {
     fun provideRepository(
         context: Context,
         napoleonApi: NapoleonApi,
+        socketService: IContractSocketService.SocketService,
         contactLocalDataSource: ContactLocalDataSource,
         messageLocalDataSource: MessageDataSource,
         quoteDataSource: QuoteDataSource,
@@ -30,11 +32,12 @@ class NotificationUtilsModule {
         return NotificationUtilsRepository(
             context,
             napoleonApi,
+            socketService,
             contactLocalDataSource,
             messageLocalDataSource,
             quoteDataSource,
             attachmentLocalDataSource,
-            sharedPreferencesManager
+            sharedPreferencesManager,
         )
     }
 }
