@@ -41,6 +41,7 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
+import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -640,17 +641,82 @@ class Utils {
             contact: Contact,
             query: String
         ): Boolean {
-            val data = if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
+            val data =
+                if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
             return validateSearch(data, query)
         }
 
         fun validateDisplayName(contact: Contact, query: String): Boolean {
-            val data = if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
+            val data =
+                if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
             return validateSearch(data, query)
         }
 
         private fun validateSearch(data: String, query: String): Boolean {
             return data.toLowerCase(Locale.getDefault()).contains(query)
+        }
+
+        fun updateNickNameChannel(
+            context: Context,
+            contactId: Int,
+            oldNick: String,
+            newNick: String
+        ) {
+            val notificationUtils = NotificationUtils(context.applicationContext)
+            val uri = notificationUtils.getChannelSound(
+                context,
+                Constants.ChannelType.CUSTOM.type,
+                contactId,
+                oldNick
+            )
+
+            deleteUserChannel(context, contactId, oldNick)
+
+            updateContactChannel(
+                context,
+                uri,
+                Constants.ChannelType.CUSTOM.type,
+                contactId,
+                newNick
+            )
+        }
+
+        fun updateContactChannel(
+            context: Context,
+            uri: Uri?,
+            channelType: Int,
+            contactId: Int? = null,
+            contactNick: String? = null
+        ) {
+            val notificationUtils = NotificationUtils(context.applicationContext)
+
+            notificationUtils.updateChannel(context, uri, channelType, contactId, contactNick)
+        }
+
+        fun deleteUserChannel(
+            context: Context,
+            contactId: Int,
+            oldNick: String,
+            notificationId: String? = null
+        ) {
+            Timber.d("*TestDelete: id $contactId, nick $oldNick")
+            val notificationUtils = NotificationUtils(context.applicationContext)
+            val channelId = if (notificationId != null) {
+                Timber.d("*TestDelete: exist Channel $notificationId")
+                context.getString(R.string.notification_custom_channel_id, oldNick, notificationId)
+            } else {
+                Timber.d("*TestDelete: no exist Channel")
+                notificationUtils.getChannelId(
+                    context,
+                    Constants.ChannelType.CUSTOM.type,
+                    contactId,
+                    oldNick
+                )
+            }
+
+            Timber.d("*TestDelete: ChannelId $channelId")
+
+            notificationUtils.deleteChannel(context, channelId, contactId)
         }
     }
 }

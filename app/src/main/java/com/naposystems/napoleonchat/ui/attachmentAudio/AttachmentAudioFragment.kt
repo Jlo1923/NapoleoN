@@ -92,8 +92,16 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (args.contact.id == it.contactId)
+                    if (args.contact.id == it.contactId) {
+                        if (args.contact.stateNotification) {
+                            Utils.deleteUserChannel(
+                                requireContext(),
+                                args.contact.id,
+                                args.contact.getNickName()
+                            )
+                        }
                         findNavController().popBackStack(R.id.homeFragment, false)
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)

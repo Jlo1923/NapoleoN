@@ -213,9 +213,19 @@ class PreviewMediaFragment : Fragment() {
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.messageAndAttachment.contact?.id == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    args.messageAndAttachment.contact?.let { noNullContact ->
+                        if (noNullContact.id == eventContact.contactId) {
+                            if (noNullContact.stateNotification) {
+                                Utils.deleteUserChannel(
+                                    requireContext(),
+                                    noNullContact.id,
+                                    noNullContact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)

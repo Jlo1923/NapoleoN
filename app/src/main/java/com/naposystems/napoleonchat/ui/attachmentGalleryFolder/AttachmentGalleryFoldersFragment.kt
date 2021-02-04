@@ -20,6 +20,7 @@ import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -70,9 +71,19 @@ class AttachmentGalleryFoldersFragment : Fragment() {
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.contact?.id == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    args.contact?.let { noNullContact ->
+                        if (noNullContact.id == eventContact.contactId) {
+                            if (noNullContact.stateNotification) {
+                                Utils.deleteUserChannel(
+                                    requireContext(),
+                                    noNullContact.id,
+                                    noNullContact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)

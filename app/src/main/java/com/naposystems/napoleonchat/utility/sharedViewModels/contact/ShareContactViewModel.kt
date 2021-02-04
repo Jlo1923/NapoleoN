@@ -35,6 +35,7 @@ class ShareContactViewModel @Inject constructor(
 
                 if (response.isSuccessful) {
                     contact.statusBlocked = true
+                    contact.stateNotification = false
                     repository.blockContactLocal(contact)
                 } else {
                     _webServiceErrors.value = repository.getDefaultBlockedError(response)

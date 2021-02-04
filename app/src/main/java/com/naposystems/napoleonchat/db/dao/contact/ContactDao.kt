@@ -34,11 +34,17 @@ interface ContactDao {
     @Query("UPDATE contact SET nickname_fake = :nickNameFake WHERE id = :contactId ")
     suspend fun updateNickNameFakeContact(contactId: Int, nickNameFake: String)
 
-    @Query("UPDATE contact SET display_name_fake = '', nickname_fake = '', image_url_fake = ''  WHERE id = :contactId ")
+    @Query("UPDATE contact SET display_name_fake = '', nickname_fake = '', image_url_fake = '', state_notification = 0  WHERE id = :contactId ")
     suspend fun restoreContact(contactId: Int)
 
     @Query("UPDATE contact SET image_url = '', image_url_fake = '' WHERE id = :contactId ")
     suspend fun restoreImageByContact(contactId: Int)
+
+    @Query("UPDATE contact SET notification_id = :channelId WHERE id =:contactId")
+    suspend fun updateChannelId(contactId: Int, channelId: String)
+
+    @Query("UPDATE contact SET state_notification =:state WHERE id =:contactId")
+    suspend fun updateStateChannel(contactId: Int, state: Boolean)
 
     @Insert
     suspend fun insertContact(contact: Contact)

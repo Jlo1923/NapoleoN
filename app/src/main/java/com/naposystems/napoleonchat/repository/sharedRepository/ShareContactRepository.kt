@@ -11,6 +11,8 @@ import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationErrorDT
 import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.IContractShareContact
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.squareup.moshi.Moshi
@@ -49,6 +51,7 @@ class ShareContactRepository @Inject constructor(
     }
 
     override suspend fun deleteContactLocal(contact: Contact) {
+        RxBus.publish(RxEvent.DeleteChannel(contact))
         contactLocalDataSource.deleteContact(contact)
     }
 

@@ -14,4 +14,6 @@
     <string name="calls_group_key" translatable="false">napoleon_calls</string>
     <string name="category_channel_chat" translatable="false">Chat</string>
     <string name="notification_message_channel_id" translatable="false">Notification Message %1$d</string>
+    <string name="notification_custom_channel_id" translatable="false">Notification %1$s %2$s</string>
+    <string name="notification_custom_channel_name" translatable="false">Notification %1$s</string>
 </resources>

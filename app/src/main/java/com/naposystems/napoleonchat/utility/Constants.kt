@@ -107,6 +107,11 @@ object Constants {
         FALSE(0)
     }
 
+    enum class ChannelType constructor(val type: Int) {
+        DEFAULT(1),
+        CUSTOM(2)
+    }
+
     enum class ChangeParams constructor(val option: Int) {
         NAME_FAKE(1),
         NICKNAME_FAKE(2),

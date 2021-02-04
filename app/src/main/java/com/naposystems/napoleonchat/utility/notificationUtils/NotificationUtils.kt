@@ -129,33 +129,133 @@ class NotificationUtils @Inject constructor(
         }
     }
 
-    fun updateChannel(context: Context, uri: Uri?) {
+    fun updateChannel(
+        context: Context,
+        uri: Uri?,
+        channelType: Int,
+        contactId: Int? = null,
+        contactNick: String? = null
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            defaultSoundUri = uri
+            val notificationChannelId = getChannelId(context, channelType, contactId, contactNick)
 
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            deleteChannel(context, notificationChannelId, null)
 
-            val id = repository.getNotificationMessageChannelId()
-            val notificationMessageChannelId =
-                context.getString(R.string.notification_message_channel_id, id)
-
-            notificationManager.deleteNotificationChannel(notificationMessageChannelId)
-            createMessageChannel(applicationContext, uri)
+            if (channelType == Constants.ChannelType.DEFAULT.type) {
+                createMessageChannel(applicationContext, uri)
+            } else {
+                contactId?.let { id ->
+                    contactNick?.let { nick ->
+                        createCustomChannel(applicationContext, uri, id, nick)
+                    }
+                }
+            }
         }
     }
 
-    fun getChannelSound(context: Context): Uri? {
+    fun deleteChannel(context: Context, channelId: String, contactId: Int?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val currentChannel = getChannel(context, channelId)
+
+            Timber.d("*TestChannel: currentChannel $currentChannel")
+
+            currentChannel?.let {
+                notificationManager.deleteNotificationChannel(channelId)
+                Timber.d("*TestChannel: Eliminado")
+            }
+
+            contactId?.let {
+                repository.updateStateChannel(contactId, false)
+            }
+        }
+    }
+
+    fun getChannelId(
+        context: Context,
+        channelType: Int,
+        contactId: Int?,
+        contactNick: String?
+    ): String {
+        var channelId = ""
+        when (channelType) {
+            Constants.ChannelType.DEFAULT.type -> {
+                channelId = context.getString(
+                    R.string.notification_message_channel_id,
+                    repository.getNotificationMessageChannelId()
+                )
+            }
+            Constants.ChannelType.CUSTOM.type -> {
+                contactId?.let { userContactId ->
+                    Timber.d("*TestChannel: contactId $userContactId")
+                    val userChannelId = repository.getCustomNotificationChannelId(contactId)
+                    userChannelId?.let { id ->
+                        Timber.d("*TestChannel: channelId $id")
+                        contactNick?.let { nick ->
+                            channelId =
+                                context.getString(R.string.notification_custom_channel_id, nick, id)
+                        }
+                    }
+                }
+            }
+        }
+        return channelId
+    }
+
+    fun getChannel(context: Context, channelId: String): NotificationChannel? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            val id = repository.getNotificationMessageChannelId()
-            val notificationMessageChannelId =
-                context.getString(R.string.notification_message_channel_id, id)
+            notificationManager.getNotificationChannel(channelId)
+        } else null
+    }
 
-            val channel = notificationManager.getNotificationChannel(notificationMessageChannelId)
-            channel.sound
+    fun getChannelSound(
+        context: Context,
+        channelType: Int,
+        contactId: Int?,
+        contactNick: String?
+    ): Uri? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                var notificationChannelId = ""
+                when (channelType) {
+                    Constants.ChannelType.DEFAULT.type -> {
+                        notificationChannelId = context.getString(
+                            R.string.notification_message_channel_id,
+                            repository.getNotificationMessageChannelId()
+                        )
+                    }
+                    Constants.ChannelType.CUSTOM.type -> {
+                        contactId?.let {
+                            val channelId = repository.getCustomNotificationChannelId(contactId)
+                            Timber.d("*TestChannelSound: ChannelId $channelId")
+                            channelId?.let { chId ->
+                                contactNick?.let { nick ->
+                                    notificationChannelId =
+                                        context.getString(
+                                            R.string.notification_custom_channel_id,
+                                            nick,
+                                            chId
+                                        )
+                                    Timber.d("*TestChannelSound: notificationChannelId $notificationChannelId")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                val channel = notificationManager.getNotificationChannel(notificationChannelId)
+                channel.sound
+            } catch (e: Exception) {
+                null
+            }
         } else null
     }
 
@@ -187,8 +287,13 @@ class NotificationUtils @Inject constructor(
         val pendingIntent = pair.first
         notificationType = pair.second
 
-        Timber.d("*Notification: Type $notificationType")
-        val channelId = getChannelType(context, notificationType)
+        Timber.d("*TestNotification: Data -> $data")
+//        val channelId = getChannelType(context, notificationType, data.getValue("contact").toInt())
+        val channelId = if (data.containsKey("contact")){
+            getChannelType(context, notificationType, data.getValue("contact").toInt())
+        } else {
+            getChannelType(context, notificationType)
+        }
 
         Timber.d(channelId)
 
@@ -220,13 +325,31 @@ class NotificationUtils @Inject constructor(
         )
     }
 
-    private fun getChannelType(context: Context, notificationType: Int): String {
+    private fun getChannelType(context: Context, notificationType: Int, contactId: Int?=null): String {
         return when (notificationType) {
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                context.getString(
-                    R.string.notification_message_channel_id,
-                    repository.getNotificationMessageChannelId()
-                )
+                val contact = contactId?.let {
+                    repository.getContactById(it)
+                }
+                contact?.let {
+                    if (it.stateNotification) {
+                        context.getString(
+                            R.string.notification_custom_channel_id,
+                            it.getNickName(),
+                            it.notificationId
+                        )
+                    } else {
+                        context.getString(
+                            R.string.notification_message_channel_id,
+                            repository.getNotificationMessageChannelId()
+                        )
+                    }
+                } ?: kotlin.run {
+                    context.getString(
+                        R.string.notification_message_channel_id,
+                        repository.getNotificationMessageChannelId()
+                    )
+                }
             }
             else -> {
                 context.getString(R.string.default_notification_channel_id)
@@ -802,6 +925,45 @@ class NotificationUtils @Inject constructor(
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText
+
+                val audioAttribute = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+
+                setSound(uri, audioAttribute)
+                setShowBadge(true)
+                lockscreenVisibility = PRIORITY_MAX
+                group = context.getString(R.string.category_channel_chat)
+            }
+
+//            Timber.d("*TestSong: defaultSoundUri=$defaultSoundUri")
+
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createCustomChannel(
+        context: Context,
+        uri: Uri?,
+        contactId: Int,
+        contactNick: String
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Timber.d("*NotificationTest: createMessageChannel")
+            repository.updateStateChannel(contactId, true)
+            val id = UUID.randomUUID().toString()
+            repository.setCustomNotificationChannelId(contactId, id)
+            val channelId =
+                context.getString(R.string.notification_custom_channel_id, contactNick, id)
+            Timber.d("*TestDelete: created $channelId")
+            val name = context.getString(R.string.notification_custom_channel_name, contactNick)
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, name, importance).apply {
+//                        description = descriptionText
 
                 val audioAttribute = AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
