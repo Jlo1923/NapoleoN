@@ -217,6 +217,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
         disposable.add(disposableFriendRequestAccepted)
 
+        val disposableDeleteChannel =
+            RxBus.listen(RxEvent.DeleteChannel::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Timber.d("*TestDelete: State ${it.contact.stateNotification}")
+                    if (it.contact.stateNotification) {
+                        Timber.d("*TestDelete: Contact ${it.contact.id}")
+                        Timber.d("*TestDelete: Contact ${it.contact.getNickName()}")
+                        Utils.deleteUserChannel(
+                            this,
+                            it.contact.id,
+                            it.contact.getNickName(),
+                            it.contact.notificationId
+                        )
+                    }
+                }
+
+        disposable.add(disposableDeleteChannel)
+
         setSupportActionBar(binding.toolbar)
 
         navController = findNavController(R.id.nav_host_fragment)

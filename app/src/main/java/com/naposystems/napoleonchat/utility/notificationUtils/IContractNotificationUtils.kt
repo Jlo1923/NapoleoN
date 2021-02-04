@@ -14,5 +14,9 @@ interface IContractNotificationUtils {
         fun setNotificationChannelCreated()
         fun getNotificationMessageChannelId(): Int
         fun setNotificationMessageChannelId(newId:Int)
+        fun getCustomNotificationChannelId(contactId: Int): String?
+        fun setCustomNotificationChannelId(contactId: Int, newId: String)
+        fun getContactById(contactId: Int): Contact?
+        fun updateStateChannel(contactId: Int, state:Boolean)
     }
 }

@@ -1,7 +1,5 @@
-package com.naposystems.napoleonchat.ui.notifications
+package com.naposystems.napoleonchat.ui.notificationSetting
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 

@@ -44,7 +44,9 @@ import com.naposystems.napoleonchat.ui.custom.attachmentLocationBottomSheet.Atta
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.showToast
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.toBounds
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -55,7 +57,8 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, AttachmentLocationAdapter.AttachmentLocationListener {
+class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
+    AttachmentLocationAdapter.AttachmentLocationListener {
 
     companion object {
         private const val URL = "https://maps.google.com/maps"
@@ -68,6 +71,9 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
+    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+        viewModelFactory
+    }
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: AttachmentLocationFragmentBinding
@@ -78,9 +84,9 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     private val overshootInterpolator = OvershootInterpolator()
     private lateinit var searchView: SearchView
     private lateinit var mainActivity: MainActivity
-    private lateinit var snapReadyCallback : GoogleMap.SnapshotReadyCallback
-    private lateinit var mapLoadedCallback : OnMapLoadedCallback
-    private val args : AttachmentLocationFragmentArgs by navArgs()
+    private lateinit var snapReadyCallback: GoogleMap.SnapshotReadyCallback
+    private lateinit var mapLoadedCallback: OnMapLoadedCallback
+    private val args: AttachmentLocationFragmentArgs by navArgs()
 
     private val adapter: AttachmentLocationAdapter by lazy {
         AttachmentLocationAdapter(this)
@@ -153,9 +159,19 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.contactId == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    contactProfileShareViewModel.contact.value?.let { contact ->
+                        if (contact.id == eventContact.contactId) {
+                            if (contact.stateNotification) {
+                                Utils.deleteUserChannel(
+                                    requireContext(),
+                                    contact.id,
+                                    contact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)

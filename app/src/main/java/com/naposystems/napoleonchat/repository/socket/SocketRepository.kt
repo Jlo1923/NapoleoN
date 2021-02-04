@@ -67,6 +67,9 @@ class SocketRepository @Inject constructor(
                             contact.id,
                             Constants.MessageType.NEW_CONTACT.type
                         )
+
+                        RxBus.publish(RxEvent.DeleteChannel(contact))
+
                         contactLocalDataSource.deleteContact(contact)
                     }
                 }
@@ -201,6 +204,7 @@ class SocketRepository @Inject constructor(
         GlobalScope.launch {
             contactId?.let {
                 contactLocalDataSource.getContactById(contactId)?.let { contact ->
+                    RxBus.publish(RxEvent.DeleteChannel(contact))
                     contactLocalDataSource.deleteContact(contact)
                 }
             }

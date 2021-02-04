@@ -16,6 +16,8 @@ import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEven
 import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -64,6 +66,9 @@ class NotificationUtilsRepository @Inject constructor(
                             contact.id,
                             Constants.MessageType.NEW_CONTACT.type
                         )
+
+                        RxBus.publish(RxEvent.DeleteChannel(contact))
+
                         contactLocalDataSource.deleteContact(contact)
                     }
                 }
@@ -202,6 +207,27 @@ class NotificationUtilsRepository @Inject constructor(
             Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID,
             newId
         )
+    }
+
+    override fun getCustomNotificationChannelId(contactId: Int): String? {
+        val contact = contactLocalDataSource.getContactById(contactId)
+        return contact?.notificationId
+    }
+
+    override fun setCustomNotificationChannelId(contactId: Int, newId: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            contactLocalDataSource.updateChannelId(contactId, newId)
+        }
+    }
+
+    override fun getContactById(contactId: Int): Contact? {
+        return contactLocalDataSource.getContactById(contactId)
+    }
+
+    override fun updateStateChannel(contactId: Int, state:Boolean) {
+        GlobalScope.launch(Dispatchers.IO) {
+            contactLocalDataSource.updateStateChannel(contactId, state)
+        }
     }
 
     private suspend fun insertQuote(quoteWebId: String, messageId: Int) {

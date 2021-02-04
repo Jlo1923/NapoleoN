@@ -15,7 +15,7 @@
     <string name="text_napoleon_secret_chat" translatable="false">NapoleoN Chat</string>
     <string name="text_duration_and_size" translatable="false">%1$s - %2$s</string>
     <string name="transition_name_gallery_thumbnail" translatable="false">gallery_item_thumbnail_%1$d</string>
-    <string name="com.crashlytics.useFirebaseAppId" tools:ignore="ExtraTranslation">true</string>
+    <string name="com.crashlytics.useFirebaseAppId" translatable="false" tools:ignore="ExtraTranslation">true</string>
     <string name="text_accept">Accept</string>
     <string name="text_cancel">Cancel</string>
     <string name="text_continue">Continue</string>
@@ -103,4 +103,5 @@
     <string name="text_reject">Reject</string>
     <string name="text_count_messages">Messages</string>
     <string name="text_sending_file">Sending file</string>
+    <string name="text_activated">activated</string>
 </resources>

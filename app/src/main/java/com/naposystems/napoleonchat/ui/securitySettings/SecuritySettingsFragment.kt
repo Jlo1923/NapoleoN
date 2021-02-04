@@ -15,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.napoleonchat.ui.activateBiometrics.ActivateBiometricsDialogFragment
-import com.naposystems.napoleonchat.ui.contacts.ContactsFragmentDirections
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -65,12 +64,12 @@ class SecuritySettingsFragment : Fragment() {
         binding.optionMessageSelfDestruct.setSafeOnClickListener { optionMessageClickListener() }
         binding.imageButtonMessageOptionEndIcon.setSafeOnClickListener { optionMessageClickListener() }
 
-        binding.optionAllowDownload.setOnClickListener {
+        /*binding.optionAllowDownload.setOnClickListener {
             binding.switchAllowDownload.isChecked = !binding.switchAllowDownload.isChecked
         }
         binding.switchAllowDownload.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateAllowDownload(isChecked)
-        }
+        }*/
 
         binding.optionMessageSelfDestructTimeNotSent.setSafeOnClickListener {
             optionMessageSelfDestructTimeNotSentClickListener()

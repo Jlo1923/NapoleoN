@@ -4,17 +4,17 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -41,8 +41,8 @@ import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
@@ -64,8 +64,8 @@ class ContactProfileFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ContactProfileViewModel
-    private lateinit var shareContactViewModel: ShareContactViewModel
+    private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
+    private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
@@ -84,6 +84,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private var compressedFile: File? = null
+    private lateinit var contact: Contact
     private var contactSilenced: Boolean = false
     private lateinit var subFolder: String
     private lateinit var fileName: String
@@ -101,12 +102,12 @@ class ContactProfileFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
-            galleryShareViewModel.uriImageSelected.observe(activity, Observer { uri ->
+            galleryShareViewModel.uriImageSelected.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }
             })
-            cameraShareViewModel.uriImageTaken.observe(activity, Observer { uri ->
+            cameraShareViewModel.uriImageTaken.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }
@@ -117,24 +118,26 @@ class ContactProfileFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.contact_profile_fragment, container, false
         )
 
         binding.lifecycleOwner = this
 
-        binding.imageViewProfileContact.setSafeOnClickListener {showPreviewImage()}
+        binding.imageViewProfileContact.setSafeOnClickListener { showPreviewImage() }
+
+        binding.optionCustomNotification.setOnClickListener { optionCustomNotification() }
 
         binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
 
-        binding.optionRestoreContactChat.setSafeOnClickListener {optionRestoreContactChatClickListener()}
+        binding.optionRestoreContactChat.setSafeOnClickListener { optionRestoreContactChatClickListener() }
 
-        binding.optionDeleteConversation.setSafeOnClickListener {optionDeleteConversationClickListener()}
+        binding.optionDeleteConversation.setSafeOnClickListener { optionDeleteConversationClickListener() }
 
-        binding.optionBlockContact.setSafeOnClickListener {optionBlockContactClickListener()}
+        binding.optionBlockContact.setSafeOnClickListener { optionBlockContactClickListener() }
 
-        binding.optionDeleteContact.setSafeOnClickListener {optionDeleteContactClickListener()}
+        binding.optionDeleteContact.setSafeOnClickListener { optionDeleteContactClickListener() }
 
         binding.imageButtonEditHeader.setSafeOnClickListener {
             subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
@@ -148,24 +151,36 @@ class ContactProfileFragment : BaseFragment() {
             dialog.show(childFragmentManager, "ChangeFakesDialog")
         }
 
-        binding.imageButtonChangeNicknameEndIcon.setSafeOnClickListener {
-            val dialog = ChangeFakeParamsDialogFragment.newInstance(
-                args.contactId
-            )
-            dialog.show(childFragmentManager, "ChangeNickNameFakeDialog")
-        }
+        binding.optionChangeNickname.setSafeOnClickListener { openDialogNickFake() }
 
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (args.contactId == it.contactId)
+                    if (args.contactId == it.contactId) {
+                        if (contact.stateNotification) {
+                            Utils.deleteUserChannel(
+                                requireContext(),
+                                contact.id,
+                                contact.getNickName()
+                            )
+                        }
                         findNavController().popBackStack(R.id.homeFragment, false)
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)
 
+        hideOptionForAndroidVersion()
+
         return binding.root
+    }
+
+    private fun openDialogNickFake() {
+        val dialog = ChangeFakeParamsDialogFragment.newInstance(
+            contact.id, contact.getNickName(), contact.stateNotification
+        )
+        dialog.show(childFragmentManager, "ChangeNickNameFakeDialog")
     }
 
     private fun showPreviewImage() {
@@ -173,11 +188,7 @@ class ContactProfileFragment : BaseFragment() {
             val extra = FragmentNavigatorExtras(
                 binding.imageViewProfileContact to "transition_image_preview"
             )
-            val titleToolbar = if (contact.nicknameFake.isNotEmpty()) {
-                contact.nicknameFake
-            } else {
-                contact.nickname
-            }
+            val titleToolbar = contact.getNickName()
             findNavController().navigate(
                 ContactProfileFragmentDirections
                     .actionContactProfileFragmentToPreviewImageFragment(
@@ -190,10 +201,7 @@ class ContactProfileFragment : BaseFragment() {
     private fun optionBlockContactClickListener() {
         Utils.generalDialog(
             getString(R.string.text_block_contact),
-            getString(
-                R.string.text_wish_block_contact,
-                contactProfileShareViewModel.contact.value?.getName()
-            ),
+            getString(R.string.text_wish_block_contact),
             true,
             childFragmentManager
         ) {
@@ -201,6 +209,13 @@ class ContactProfileFragment : BaseFragment() {
                 if (contact.statusBlocked) {
                     shareContactViewModel.unblockContact(contact.id)
                 } else {
+                    if (contact.stateNotification) {
+                        Utils.deleteUserChannel(
+                            requireContext(),
+                            contact.id,
+                            contact.getNickName()
+                        )
+                    }
                     shareContactViewModel.sendBlockedContact(contact)
                     findNavController().popBackStack(R.id.homeFragment, false)
                 }
@@ -218,14 +233,17 @@ class ContactProfileFragment : BaseFragment() {
         getContact?.let { contact ->
             Utils.generalDialog(
                 getString(R.string.text_delete_contact),
-                getString(
-                    R.string.text_wish_delete_contact,
-                    if (contact.displayNameFake.isEmpty()) contact.displayName
-                    else contact.displayNameFake
-                ),
+                getString(R.string.text_wish_delete_contact),
                 true,
                 childFragmentManager
             ) {
+                if (contact.stateNotification) {
+                    Utils.deleteUserChannel(
+                        requireContext(),
+                        contact.id,
+                        contact.getNickName()
+                    )
+                }
                 shareContactViewModel.sendDeleteContact(contact)
                 findNavController().popBackStack(R.id.homeFragment, false)
             }
@@ -251,6 +269,8 @@ class ContactProfileFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
+            Utils.deleteUserChannel(requireContext(), contact.id, contact.getNickName())
+
             viewModel.restoreContact(args.contactId)
         }
     }
@@ -258,34 +278,25 @@ class ContactProfileFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(ContactProfileViewModel::class.java)
-
-        try {
-            shareContactViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
-                .get(ShareContactViewModel::class.java)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-
         binding.viewModel = contactProfileShareViewModel
 
         baseViewModel.getOutputControl()
 
         contactProfileShareViewModel.getLocalContact(args.contactId)
 
-        viewModel.muteConversationWsError.observe(viewLifecycleOwner, Observer {
+        viewModel.muteConversationWsError.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
             }
         })
 
-        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
+        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, { contact ->
             contact?.let {
                 checkSilenceConversation(contact.silenced)
                 setTextToolbar(contact)
                 setTextBlockedContact(contact.statusBlocked)
+                setActiveCustomNotification(contact)
             }
         })
     }
@@ -302,6 +313,13 @@ class ContactProfileFragment : BaseFragment() {
                 requestCrop(resultCode)
             }
         }
+    }
+
+    private fun optionCustomNotification() {
+        findNavController().navigate(
+            ContactProfileFragmentDirections
+                .actionContactProfileFragmentToCustomUserNotificationFragment(contact)
+        )
     }
 
     private fun optionMessageClickListener() =
@@ -344,6 +362,11 @@ class ContactProfileFragment : BaseFragment() {
             contact.nickname
         }
         (activity as MainActivity).supportActionBar?.title = text
+    }
+
+    private fun setActiveCustomNotification(contactProfile: Contact) {
+        contact = contactProfile
+        binding.editTextCustomNotification.isVisible = contactProfile.stateNotification
     }
 
     private fun verifyCameraAndMediaPermission() {
@@ -483,6 +506,12 @@ class ContactProfileFragment : BaseFragment() {
                     child.delete()
                 }
             }
+        }
+    }
+
+    private fun hideOptionForAndroidVersion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            binding.optionCustomNotification.isVisible = false
         }
     }
 }
