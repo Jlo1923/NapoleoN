@@ -548,6 +548,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 null,
                 options
             )
+            R.id.notification_option_main_menu -> navController.navigate(
+                R.id.registerRecoveryAccountFragment,
+                null,
+                options
+            )
             R.id.appearance_settings -> navController.navigate(
                 R.id.appearanceSettingsFragment,
                 null,
@@ -577,6 +582,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun hideOptionMenuForAndroidVersion() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             binding.navView.menu.findItem(R.id.notification_option_main_menu).isVisible = false
+        }
+
+        if (viewModel.getRecoveryQuestionsPref() == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
+            binding.navView.menu.findItem(R.id.recovery_account_option_main_menu).isVisible = false
         }
     }
 

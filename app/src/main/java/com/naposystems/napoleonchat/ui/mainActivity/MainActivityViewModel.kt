@@ -133,4 +133,8 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     override fun resetIsOnCallPref() {
         repository.resetIsOnCallPref()
     }
+
+    override fun getRecoveryQuestionsPref(): Int {
+        return repository.getRecoveryQuestionsPref()
+    }
 }

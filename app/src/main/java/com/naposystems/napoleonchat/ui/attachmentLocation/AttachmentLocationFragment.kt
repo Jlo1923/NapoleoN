@@ -1,23 +1,34 @@
 package com.naposystems.napoleonchat.ui.attachmentLocation
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Address
+import android.location.Geocoder
 import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
+import com.google.android.gms.common.api.PendingResult
+import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback
@@ -55,7 +66,9 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, AttachmentLocationAdapter.AttachmentLocationListener {
+
+class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
+    AttachmentLocationAdapter.AttachmentLocationListener {
 
     companion object {
         private const val URL = "https://maps.google.com/maps"
@@ -63,6 +76,8 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
         private const val ZOOM_OUT = 15.0f
         private const val ANIMATION_DURATION: Long = 250
         private const val DISTANCE_SEARCH_PLACE = (100 * 1000).toDouble() // 100 Km
+
+        private const val REQUEST_LOCATION = 999
     }
 
     @Inject
@@ -78,9 +93,9 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     private val overshootInterpolator = OvershootInterpolator()
     private lateinit var searchView: SearchView
     private lateinit var mainActivity: MainActivity
-    private lateinit var snapReadyCallback : GoogleMap.SnapshotReadyCallback
-    private lateinit var mapLoadedCallback : OnMapLoadedCallback
-    private val args : AttachmentLocationFragmentArgs by navArgs()
+    private lateinit var snapReadyCallback: GoogleMap.SnapshotReadyCallback
+    private lateinit var mapLoadedCallback: OnMapLoadedCallback
+    private val args: AttachmentLocationFragmentArgs by navArgs()
 
     private val adapter: AttachmentLocationAdapter by lazy {
         AttachmentLocationAdapter(this)
@@ -94,6 +109,8 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
     }
+
+    private var googleApiClient: GoogleApiClient? = null
 
     private val callback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
@@ -121,6 +138,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
                 .start()
 
             setCurrentLocation(googleMap.cameraPosition.target)
+            Timber.d("*TestLocation: googleMap ${googleMap.cameraPosition.target}")
         }
     }
 
@@ -133,7 +151,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         setHasOptionsMenu(true)
 
@@ -160,6 +178,8 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
 
         disposable.add(disposableContactBlockOrDelete)
 
+        validateGpsEnable()
+
         return binding.root
     }
 
@@ -172,7 +192,8 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.address.observe(viewLifecycleOwner, Observer { address ->
+        viewModel.address.observe(viewLifecycleOwner, { address ->
+            Timber.d("*TestLocation: address $address")
             if (address != null) {
                 currentAddress = address
                 binding.bottomSheet.showResult(
@@ -181,6 +202,8 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
                     addressToShortString = addressToShortString(address),
                     addressToString = addressToString(address)
                 )
+            } else {
+                initializeFusedLocationClient()
             }
         })
     }
@@ -202,9 +225,11 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
     }
 
     private fun setCurrentLocation(location: LatLng) {
+        Timber.d("*TestLocation: setCurrentLocation $location")
         currentLocation = location
         binding.bottomSheet.showLoading()
         if (currentPlace != null) {
+            Timber.d("*TestLocation: currentPlace not null")
             binding.bottomSheet.showResult(
                 latitude = location.latitude,
                 longitude = location.longitude,
@@ -212,26 +237,190 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
                 addressToString = currentPlace?.address ?: ""
             )
         } else {
+            Timber.d("*TestLocation: currentPlace null")
             viewModel.getAddress(location)
+        }
+    }
+
+    private fun testAddresses(location: LatLng) {
+        val geoCoder = Geocoder(requireContext(), Locale.getDefault())
+        val addresses = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
+
+        Timber.d("*TestLocation: addresses $addresses latitude ${location.latitude} longitude ${location.longitude}")
+
+        addresses?.let {
+            currentAddress = if (it.isNotEmpty()) it[0] else null
+
+            Timber.d("*TestLocation: currentAddress $currentAddress")
+
+            currentAddress?.let { address ->
+                binding.bottomSheet.showResult(
+                    latitude = address.latitude,
+                    longitude = address.longitude,
+                    addressToShortString = addressToShortString(address),
+                    addressToString = addressToString(address)
+                )
+            }
+        }
+    }
+
+    private fun validateGpsEnable() {
+        val manager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+
+        manager?.let {
+            if (it.isProviderEnabled(LocationManager.GPS_PROVIDER) && hasGPSDevice(requireContext())) {
+                Toast.makeText(requireContext(), "Gps already enabled", Toast.LENGTH_SHORT).show()
+
+            }
+
+            if (!hasGPSDevice(requireContext())) {
+                Toast.makeText(context, "Gps not Supported", Toast.LENGTH_SHORT).show()
+            }
+
+            if (!it.isProviderEnabled(LocationManager.GPS_PROVIDER) && hasGPSDevice(requireContext())) {
+                Timber.d("Gps already enabled")
+                Toast.makeText(requireContext(), "Gps not enabled", Toast.LENGTH_SHORT).show()
+                enableLocation()
+            } else {
+                Timber.d("Gps already enabled")
+                Toast.makeText(context, "Gps already enabled", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun hasGPSDevice(context: Context): Boolean {
+        val mgr = context
+            .getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val providers = mgr.allProviders
+        return providers.contains(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun enableLocation() {
+        if (googleApiClient == null) {
+            googleApiClient = GoogleApiClient.Builder(requireContext())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(object : ConnectionCallbacks {
+                    override fun onConnected(bundle: Bundle?) {}
+                    override fun onConnectionSuspended(i: Int) {
+                        googleApiClient?.connect()
+                    }
+                })
+                .addOnConnectionFailedListener { connectionResult ->
+                    Timber.d("Location error ${connectionResult.errorCode}")
+                }.build()
+            googleApiClient?.connect()
+        }
+
+        val locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = (30 * 1000).toLong()
+        locationRequest.fastestInterval = (5 * 1000).toLong()
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+        builder.setAlwaysShow(true)
+        val result: PendingResult<LocationSettingsResult> =
+            LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build())
+        result.setResultCallback {
+            val status: Status = it.status
+
+            when (status.statusCode) {
+                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                    try {
+                        startIntentSenderForResult(
+                            status.resolution.intentSender,
+                            REQUEST_LOCATION,
+                            null,
+                            0,
+                            0,
+                            0,
+                            null
+                        )
+                    } catch (e: IntentSender.SendIntentException) {
+                        Timber.e(e)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Timber.d("onActivityResult $requestCode")
+        when (requestCode) {
+            REQUEST_LOCATION -> when (resultCode) {
+                Activity.RESULT_OK -> {
+                    Toast.makeText(activity, "Location enabled by user!", Toast.LENGTH_LONG).show()
+                    initializeFusedLocationClient()
+                }
+                Activity.RESULT_CANCELED -> {
+                    Toast.makeText(activity, "Location cancel by user!", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
     private fun initializeFusedLocationClient() {
         fusedLocationClient =
-            LocationServices.getFusedLocationProviderClient(context as MainActivity)
+            LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    moveMapToPosition(LatLng(it.latitude, it.longitude))
+        val request = LocationRequest()
+        request.interval = 10000
+        request.fastestInterval = 5000
+        request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        val permission = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        //TODO: validar cuando el address sea nulo para hacer uno u otro
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            /*fusedLocationClient.requestLocationUpdates(request, object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    val location: Location? = locationResult.lastLocation
+                    if (location != null) {
+                        Timber.d("*TestLocation: initializeFusedLocationClient ${location.latitude} ${location.longitude}")
+                        moveMapToPosition(LatLng(location.latitude, location.longitude))
+                    }
                 }
-            }
-            .addOnFailureListener { error ->
-                Timber.e(error)
-            }
+            }, null)*/
+
+            /*fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        Timber.d("*TestLocation: lastLocation ${it.latitude}, ${it.longitude}")
+                        moveMapToPosition(LatLng(it.latitude, it.longitude))
+                    }
+                }
+                .addOnFailureListener { error ->
+                    Timber.d("*TestLocation: lastLocation error")
+                    Timber.e(error)
+                }*/
+        }
+
+        /*if (ContextCompat.checkSelfPermission(
+                requireContext().applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(context, "full Permisos", Toast.LENGTH_SHORT).show()
+
+
+
+            *//*fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        Timber.d("*TestLocation: lastLocation ${it.latitude}, ${it.longitude}")
+                        moveMapToPosition(LatLng(it.latitude, it.longitude))
+                    }
+                }
+                .addOnFailureListener { error ->
+                    Timber.d("*TestLocation: lastLocation error")
+                    Timber.e(error)
+                }*//*
+        }*/
     }
 
     private fun moveMapToPosition(latLng: LatLng) {
+        Timber.d("*TestLocation: moveMapToPosition $latLng")
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM))
         setCurrentLocation(latLng)
     }
@@ -422,6 +611,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView, Attachme
                     response.place
                 googlePlace.latLng?.let { latLng ->
                     this.currentPlace = place
+                    Timber.d("*TestLocation: onPlaceSelected $latLng")
                     moveMapToPosition(latLng)
                     searchView.showSearchView()
                 }

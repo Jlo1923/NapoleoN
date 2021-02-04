@@ -98,7 +98,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/textView_date"
                 custom:messageStatus="@{conversation.message.status}"
-                tools:srcCompat="@drawable/ic_message_unread" />
+                tools:srcCompat="@drawable/ic_message_sent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

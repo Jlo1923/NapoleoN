@@ -54,7 +54,7 @@ class NapoleonKeyboard constructor(
     init {
         try {
             popupWindowEmoji.apply {
-                isFocusable = true
+//                isFocusable = true
                 contentView = NapoleonKeyboardView(mainActivity)
                 (contentView as NapoleonKeyboardView).apply {
                     setListeners(this@NapoleonKeyboard, this@NapoleonKeyboard)
@@ -63,6 +63,7 @@ class NapoleonKeyboard constructor(
                 }
 
                 inputMethodMode = PopupWindow.INPUT_METHOD_NOT_NEEDED
+                isOutsideTouchable = false
                 setBackgroundDrawable(null)
             }
 

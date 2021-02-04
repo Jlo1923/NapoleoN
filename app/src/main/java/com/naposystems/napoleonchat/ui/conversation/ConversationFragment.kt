@@ -473,6 +473,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun inputPanelAttachmentButtonClickListener() {
         binding.inputPanel.getImageButtonAttachment().setSafeOnClickListener {
+            Utils.hideKeyboard(binding.inputPanel.getImageButtonAttachment())
             validateStateOutputControl()
             val attachmentDialog = AttachmentDialogFragment()
             attachmentDialog.setListener(object :

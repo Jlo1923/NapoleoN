@@ -80,4 +80,8 @@ class MainActivityRepository @Inject constructor(
     override fun resetIsOnCallPref() {
         Data.isOnCall = false
     }
+
+    override fun getRecoveryQuestionsPref(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED)
+    }
 }
