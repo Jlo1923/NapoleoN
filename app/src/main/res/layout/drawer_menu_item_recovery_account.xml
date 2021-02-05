@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="48dp"
@@ -12,15 +12,30 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_info_black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:tint="?attr/attrIconAndTextColorDrawer" />
+
+    <ImageView
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:src="@drawable/circle_alpha"
+        app:tint="@color/red"
+        app:layout_constraintTop_toTopOf="@id/imageView_icon"
+
+        app:layout_constraintEnd_toEndOf="@id/imageView_icon"/>
 
     <TextView
         style="@style/BodyTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/normal_margin"
-        android:layout_weight="1"
         android:text="@string/text_account_recovery_information"
-        android:textColor="?attr/attrIconAndTextColorDrawer" />
+        android:textColor="?attr/attrIconAndTextColorDrawer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView_icon"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
