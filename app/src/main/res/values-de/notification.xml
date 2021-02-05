@@ -3,4 +3,7 @@
     <string name="text_notifications">Benachrichtigungen</string>
     <string name="text_notification_tone">Benachrichtigungston</string>
     <string name="text_select_notification_tone">Benachrichtigungston auswählen</string>
+    <string name="text_custom_notifications">Benutzerdefinierte Benachrichtigungen</string>
+    <string name="text_notification_message">Nachrichtenbenachrichtigungen</string>
+    <string name="text_customize_notification">Passen Sie Benachrichtigungen an</string>
 </resources>

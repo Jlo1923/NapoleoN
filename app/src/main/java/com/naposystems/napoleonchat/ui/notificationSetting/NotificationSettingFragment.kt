@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.notifications
+package com.naposystems.napoleonchat.ui.notificationSetting
 
 import android.app.Activity
 import android.content.Context
@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
@@ -29,7 +30,6 @@ class NotificationSettingFragment : BaseFragment() {
     private lateinit var binding: NotificationSettingFragmentBinding
     private lateinit var notificationUtils: NotificationUtils
     private var currentSoundNotificationMessage: Uri? = null
-    private var soundTitle = ""
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -46,13 +46,14 @@ class NotificationSettingFragment : BaseFragment() {
     ): View {
 
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.notification_setting_fragment, container, false)
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.notification_setting_fragment,
+                container,
+                false
+            )
 
-        notificationUtils = activity?.let { NotificationUtils(it.applicationContext) }!!
-
-        binding.optionNotificationTone.setOnClickListener {
-            openNotificationTone()
-        }
+        binding.optionNotificationTone.setOnClickListener { openNotificationTone() }
 
         return binding.root
     }
@@ -63,9 +64,15 @@ class NotificationSettingFragment : BaseFragment() {
     }
 
     private fun updateSoundChannelMessage() {
-        currentSoundNotificationMessage = notificationUtils.getChannelSound(requireContext())
+        notificationUtils = NotificationUtils(requireContext().applicationContext)
+        currentSoundNotificationMessage = notificationUtils.getChannelSound(
+            requireContext(),
+            Constants.ChannelType.DEFAULT.type,
+            null,
+            null
+        )
 
-        soundTitle =
+        val soundTitle =
             RingtoneManager.getRingtone(context, currentSoundNotificationMessage)
                 .getTitle(requireContext())
 
@@ -76,7 +83,10 @@ class NotificationSettingFragment : BaseFragment() {
         validateStateOutputControl()
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.text_select_notification_tone))
+        intent.putExtra(
+            RingtoneManager.EXTRA_RINGTONE_TITLE,
+            getString(R.string.text_select_notification_tone)
+        )
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
         intent.putExtra(
             RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
@@ -91,7 +101,11 @@ class NotificationSettingFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            notificationUtils.updateChannel(requireContext(), uri)
+            notificationUtils.updateChannel(
+                requireContext(),
+                uri,
+                Constants.ChannelType.DEFAULT.type
+            )
             Timber.d("*TestSong: onActivityResult=$uri")
 
             updateSoundChannelMessage()

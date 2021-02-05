@@ -147,6 +147,10 @@ class MessageLocalDataSource @Inject constructor(
         messageDao.updateMessage(message)
     }
 
+    override fun existMessage(id: String): Boolean {
+        return messageDao.existMessage(id) != null
+    }
+
     override suspend fun updateStateSelectionMessage(
         contactId: Int,
         idMessage: Int,

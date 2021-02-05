@@ -107,6 +107,11 @@ object Constants {
         FALSE(0)
     }
 
+    enum class ChannelType constructor(val type: Int) {
+        DEFAULT(1),
+        CUSTOM(2)
+    }
+
     enum class ChangeParams constructor(val option: Int) {
         NAME_FAKE(1),
         NICKNAME_FAKE(2),
@@ -292,6 +297,11 @@ object Constants {
         UNREAD(3),
         READED(4),
         ERROR(5)
+    }
+
+    enum class MessageEventType(val status: Int) {
+        UNREAD(1),
+        READ(2)
     }
 
     enum class AttachmentStatus(val status: Int) {

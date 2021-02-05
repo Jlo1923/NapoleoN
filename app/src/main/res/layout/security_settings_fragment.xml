@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.securitySettings.SecuritySettingsFragment">
 
     <data>
 
@@ -28,8 +29,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/attrBackgroundColorBackground"
-        tools:context=".ui.securitySettings.SecuritySettingsFragment">
+        android:background="?attr/attrBackgroundColorBackground">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,20 +63,20 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginStart="@dimen/normal_margin"
                     android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <!-- OPTION TITLE -->
                     <TextView
                         android:id="@+id/textView_message_title"
                         style="@style/OptionTitle"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginEnd="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/text_default_message_self_destruct_time"/>
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:text="@string/text_default_message_self_destruct_time" />
 
                     <!-- OPTION VALUE -->
                     <TextView
@@ -99,7 +99,7 @@
             </LinearLayout>
 
             <!-- OPTION ALLOW DOWNLOAD ATTACHMENTS -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!--<androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/option_allow_download"
                 style="@style/Option"
                 android:visibility="gone"
@@ -107,7 +107,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/option_message_self_destruct">
 
-                <!-- START ICON -->
+                &lt;!&ndash; START ICON &ndash;&gt;
                 <ImageView
                     android:id="@+id/imageView_allow_download_option_start_icon"
                     style="@style/OptionStartIcon"
@@ -116,7 +116,7 @@
                     app:layout_constraintTop_toTopOf="@+id/textView_title_allow_download"
                     app:srcCompat="@drawable/ic_cloud_download_black" />
 
-                <!-- SWITCH -->
+                &lt;!&ndash; SWITCH &ndash;&gt;
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_allow_download"
                     android:layout_width="wrap_content"
@@ -129,7 +129,7 @@
                     app:thumbTint="@color/thumb_color"
                     app:trackTint="@color/track_color" />
 
-                <!-- OPTION TITLE -->
+                &lt;!&ndash; OPTION TITLE &ndash;&gt;
                 <TextView
                     android:id="@+id/textView_title_allow_download"
                     style="@style/OptionTitle"
@@ -139,7 +139,7 @@
                     app:layout_constraintStart_toEndOf="@id/imageView_allow_download_option_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
             <!-- OPTION MESSAGE SELF DESTRUCT TIME NOT SEND -->
             <LinearLayout
@@ -159,10 +159,10 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginStart="@dimen/normal_margin"
                     android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <!-- OPTION TITLE -->
                     <TextView
@@ -204,7 +204,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/attrBackgroundSectionColor"
                 android:padding="@dimen/small_padding"
-                android:text="@string/text_access"/>
+                android:text="@string/text_access" />
 
             <!-- OPTION EDIT ACCESS PIN -->
             <LinearLayout
@@ -224,8 +224,8 @@
                 <TextView
                     android:id="@+id/textView_label_edit_access_pin"
                     style="@style/OptionTitle"
-                    android:text="@string/text_access_pin"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:text="@string/text_access_pin" />
 
                 <!-- EDIT ICON -->
                 <ImageButton
@@ -281,29 +281,29 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginStart="@dimen/normal_margin"
                     android:layout_marginEnd="@dimen/normal_margin"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <!-- OPTION TITLE -->
                     <TextView
                         android:id="@+id/textView_time_title"
                         style="@style/OptionTitle"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginEnd="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
                         android:text="@string/text_time_to_request_access_pin" />
 
                     <!-- OPTION VALUE -->
                     <TextView
                         android:id="@+id/textView_time_request_access_pin"
                         style="@style/OptionValue"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginEnd="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
                         app:timeRequestAccessPin="@{timeRequestAccessPin}"
                         tools:text="10 min" />
 
@@ -329,7 +329,7 @@
                 android:text="@string/text_general" />
 
             <!-- OPTION MASK APP -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!--<androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/option_mask_app"
                 style="@style/Option"
                 android:visibility="gone"
@@ -337,7 +337,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_general">
 
-                <!-- START ICON -->
+                &lt;!&ndash; START ICON &ndash;&gt;
                 <ImageView
                     android:id="@+id/imageView_mask_app_start_icon"
                     style="@style/OptionStartIcon"
@@ -346,7 +346,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/anim_cancel_edit" />
 
-                <!-- EDIT ICON -->
+                &lt;!&ndash; EDIT ICON &ndash;&gt;
                 <ImageButton
                     android:id="@+id/imageButton_mask_app_end_icon"
                     style="@style/OptionEndIcon"
@@ -355,7 +355,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_arrow_right_primary" />
 
-                <!-- OPTION TITLE -->
+                &lt;!&ndash; OPTION TITLE &ndash;&gt;
                 <TextView
                     android:id="@+id/textView_mask_app_title"
                     style="@style/OptionTitle"
@@ -364,7 +364,7 @@
                     app:layout_constraintStart_toEndOf="@id/imageView_mask_app_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
             <!-- OPTION ACCOUNT RECOVERY INFORMATION -->
             <LinearLayout
@@ -383,8 +383,8 @@
                 <TextView
                     android:id="@+id/textView_title_recovery"
                     style="@style/OptionTitle"
-                    android:text="@string/text_account_recovery_information"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:text="@string/text_account_recovery_information" />
 
                 <!-- EDIT ICON -->
                 <ImageButton

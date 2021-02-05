@@ -52,8 +52,12 @@ import com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLoca
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.custom.attachmentLocationBottomSheet.AttachmentLocationBottomSheet
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.FileManager
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.adapters.showToast
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -62,7 +66,6 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
-
 
 class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     AttachmentLocationAdapter.AttachmentLocationListener {
@@ -82,6 +85,9 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
+    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+        viewModelFactory
+    }
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private lateinit var binding: AttachmentLocationFragmentBinding
@@ -172,9 +178,19 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.contactId == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    contactProfileShareViewModel.contact.value?.let { contact ->
+                        if (contact.id == eventContact.contactId) {
+                            if (contact.stateNotification) {
+                                Utils.deleteUserChannel(
+                                    requireContext(),
+                                    contact.id,
+                                    contact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)
@@ -619,7 +635,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                 if (exception is ApiException) {
                     val statusCode = exception.statusCode
                     // Handle error with given status code.
-                    Timber.e("Place not found: " + exception.message)
+                    Timber.e("Place not found: ${exception.message}")
                     this.showToast(getString(R.string.text_site_not_found))
                 }
             }

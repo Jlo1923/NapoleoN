@@ -1039,7 +1039,16 @@ class ConversationFragment : BaseFragment(),
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    findNavController().popBackStack()
+                    if (args.contact.id == it.contactId) {
+                        if (args.contact.stateNotification) {
+                            Utils.deleteUserChannel(
+                                requireContext(),
+                                args.contact.id,
+                                args.contact.getNickName()
+                            )
+                        }
+                        findNavController().popBackStack()
+                    }
                 }
 
         val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)

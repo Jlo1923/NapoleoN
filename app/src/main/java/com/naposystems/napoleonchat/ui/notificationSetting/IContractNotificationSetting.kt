@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.notifications
+package com.naposystems.napoleonchat.ui.notificationSetting
 
 interface IContractNotificationSetting {
     interface  ViewModel{
