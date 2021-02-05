@@ -35,7 +35,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.Task
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place.Field
@@ -43,7 +42,6 @@ import com.google.android.libraries.places.api.model.Place.Field.LAT_LNG
 import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.*
-import com.google.android.material.snackbar.Snackbar
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentLocationFragmentBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
@@ -181,7 +179,16 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
 
         disposable.add(disposableContactBlockOrDelete)
 
-        validateGpsEnable()
+        if (Utils.isInternetAvailable(requireContext()) && Utils.isOnline()) {
+            validateGpsEnable()
+        } else {
+            Utils.generalDialog(
+                getString(R.string.text_location),
+                getString(R.string.text_location_not_found_without_connection),
+                false,
+                childFragmentManager
+            ) { findNavController().popBackStack() }
+        }
 
         return binding.root
     }
@@ -206,6 +213,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                 )
             } else {
                 Timber.d("*TestLocation: address observer null")
+                getLocation()
                 initializeFusedLocationClient()
             }
         })
@@ -340,9 +348,9 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                 Activity.RESULT_CANCELED -> {
                     moveMapToPosition(LatLng(LAT, LNG), 0f)
                     Utils.generalDialog(
-                        "Ubicación",
-                        "No se ha podido encontrar tu ubicación. Por favor posicionala manualmente",
-                        true,
+                        getString(R.string.text_location),
+                        getString(R.string.text_location_not_found),
+                        false,
                         childFragmentManager
                     ) {}
                 }
@@ -609,8 +617,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                 }
             }.addOnFailureListener { exception: java.lang.Exception ->
                 if (exception is ApiException) {
-                    val apiException = exception as ApiException
-                    val statusCode = apiException.statusCode
+                    val statusCode = exception.statusCode
                     // Handle error with given status code.
                     Timber.e("Place not found: " + exception.message)
                     this.showToast(getString(R.string.text_site_not_found))
