@@ -83,6 +83,7 @@ class FriendShipActionShareViewModel @Inject constructor(
                         val message = Message(
                             id = 0,
                             webId = "",
+                            uuid = null,
                             body = body,
                             quoted = "",
                             contactId = friendShipRequest.contact.id,

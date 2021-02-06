@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.entity.Contact
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
 @Entity(
@@ -26,6 +27,7 @@ data class Message(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") var id: Int,
     @ColumnInfo(name = "web_id") val webId: String,
+    @ColumnInfo(name = "uuid") val uuid: String?,
     @ColumnInfo(name = "body") var body: String,
     @ColumnInfo(name = "quoted") val quoted: String,
     @ColumnInfo(name = "contact_id") val contactId: Int,
