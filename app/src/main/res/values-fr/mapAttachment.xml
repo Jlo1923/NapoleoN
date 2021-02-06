@@ -2,4 +2,6 @@
 <resources>
     <string name="text_error_map">Une erreur s\'est produite lors de la capture de la carte</string>
     <string name="text_site_not_found">Le site est introuvable</string>
+    <string name="text_location_not_found">L\'emplacement n\'a pas pu être défini. Veuillez sélectionner manuellement.</string>
+    <string name="text_location_not_found_without_connection">Il n\'a pas été possible d\'établir l\'emplacement, vérifiez la connexion Internet.</string>
 </resources>

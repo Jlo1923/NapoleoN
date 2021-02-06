@@ -24,6 +24,7 @@ interface IContractMainActivity {
         fun isVideoCall(): Boolean?
         fun resetIsVideoCall()
         fun resetIsOnCallPref()
+        fun getRecoveryQuestionsPref(): Int
     }
 
     interface Repository {
@@ -38,5 +39,6 @@ interface IContractMainActivity {
         fun setJsonNotification(json: String)
         suspend fun getContactById(contactId: Int): Contact?
         fun resetIsOnCallPref()
+        fun getRecoveryQuestionsPref(): Int
     }
 }

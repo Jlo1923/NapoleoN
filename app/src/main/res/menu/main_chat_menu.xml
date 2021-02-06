@@ -16,6 +16,12 @@
         tools:title="@string/text_security_settings_title" />
 
     <item
+        android:id="@+id/recovery_account_option_main_menu"
+        android:title="@null"
+        app:actionLayout="@layout/drawer_menu_item_recovery_account"
+        tools:title="@string/text_account_recovery_information" />
+
+    <item
         android:id="@+id/notification_option_main_menu"
         android:title="@null"
         app:actionLayout="@layout/drawer_menu_item_notification"
