@@ -34,8 +34,10 @@ import kotlinx.coroutines.flow.onStart
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class ConversationViewModel @Inject constructor(
     private val context: Context,
@@ -176,6 +178,7 @@ class ConversationViewModel @Inject constructor(
                 val message = Message(
                     id = 0,
                     webId = "",
+                    uuid = UUID.randomUUID().toString(),
                     body = messageString,
                     quoted = quote,
                     contactId = contact.id,
@@ -279,7 +282,8 @@ class ConversationViewModel @Inject constructor(
                 body = message.getBody(cryptoMessage),
                 numberAttachments = numberAttachments,
                 destroy = selfDestructTime,
-                messageType = Constants.MessageType.MESSAGE.type
+                messageType = Constants.MessageType.MESSAGE.type,
+                uuidSender = message.uuid
             )
 
             val messageResponse = repository.sendMessage(messageReqDTO)
@@ -525,7 +529,8 @@ class ConversationViewModel @Inject constructor(
                         body = message.getBody(cryptoMessage),
                         numberAttachments = 1,
                         destroy = selfAutoDestruction,
-                        messageType = Constants.MessageType.MESSAGE.type
+                        messageType = Constants.MessageType.MESSAGE.type,
+                        uuidSender = message.uuid
                     )
 
                     val messageResponse = repository.sendMessage(messageReqDTO)
@@ -659,7 +664,8 @@ class ConversationViewModel @Inject constructor(
                     body = message.body,
                     numberAttachments = 0,
                     destroy = selfDestructTime,
-                    messageType = Constants.MessageType.MESSAGE.type
+                    messageType = Constants.MessageType.MESSAGE.type,
+                    uuidSender = message.uuid
                 )
 
                 _stateMessage.value = StateMessage.Start(message.id)

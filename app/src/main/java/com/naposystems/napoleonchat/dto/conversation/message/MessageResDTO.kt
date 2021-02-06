@@ -10,6 +10,7 @@ import com.squareup.moshi.JsonClass
 data class
 MessageResDTO(
     @Json(name = "id") val id: String,
+    @Json(name = "uuid_sender") val webUuid: String?,
     @Json(name = "body") val body: String,
     @Json(name = "quoted") val quoted: String,
     @Json(name = "user_receiver") val userDestination: Int,
@@ -31,6 +32,7 @@ MessageResDTO(
             return Message(
                 id = message?.id ?: 0,
                 webId = messageResDTO.id,
+                uuid = messageResDTO.webUuid,
                 body = message?.body ?: messageResDTO.body,
                 quoted = messageResDTO.quoted,
                 contactId = if (isMine == Constants.IsMine.NO.value) messageResDTO.userAddressee else messageResDTO.userDestination,

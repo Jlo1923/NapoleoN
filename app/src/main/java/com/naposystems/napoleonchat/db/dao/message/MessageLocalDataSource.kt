@@ -76,6 +76,7 @@ class MessageLocalDataSource @Inject constructor(
                             Message(
                                 id = -1,
                                 webId = "",
+                                uuid = null,
                                 body = dayMessage,
                                 quoted = "",
                                 contactId = messageAndAttachment.message.contactId,

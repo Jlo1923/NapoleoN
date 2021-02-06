@@ -1862,7 +1862,10 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onPause() {
-        viewModel.insertMessageNotSent(binding.inputPanel.getEditText().text.toString(), args.contact.id)
+        viewModel.insertMessageNotSent(
+            binding.inputPanel.getEditText().text.toString(),
+            args.contact.id
+        )
         super.onPause()
         MediaPlayerManager.unregisterProximityListener()
         //MediaPlayerManager.completeAudioPlaying()
