@@ -53,6 +53,29 @@ data class NewMessageEventMessageRes(
             messageType = this.messageType
         )
     }
+
+    fun toMessageEntity(
+        isMine: Int,
+        cypher: Boolean
+    ): Message {
+
+        return Message(
+            id = 0,
+            webId = this.id,
+            uuid = this.webUuid,
+            body = this.body,
+            quoted = this.quoted,
+            contactId = if (isMine == Constants.IsMine.NO.value) this.userAddressee else this.userDestination,
+            updatedAt = this.updatedAt,
+            createdAt = this.createdAt,
+            isMine = isMine,
+            status = if (isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status else Constants.MessageStatus.SENDING.status,
+            numberAttachments = this.numberAttachments,
+            selfDestructionAt = this.destroy,
+            messageType = this.messageType,
+            cypher = cypher
+        )
+    }
 }
 
 @JsonClass(generateAdapter = true)

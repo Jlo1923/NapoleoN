@@ -103,9 +103,9 @@ class SocketRepository @Inject constructor(
                                     null, messageRes, Constants.IsMine.NO.value
                                 )
 
-                                if (BuildConfig.ENCRYPT_API) {
-                                    message.encryptBody(cryptoMessage)
-                                }
+//                                if (BuildConfig.ENCRYPT_API) {
+//                                    message.encryptBody(cryptoMessage)
+//                                }
 
                                 val messageId = messageLocalDataSource.insertMessage(message)
                                 Timber.d("Conversation insertó mensajes")
@@ -170,9 +170,9 @@ class SocketRepository @Inject constructor(
                             Constants.IsMine.NO.value
                         )
 
-                        if (BuildConfig.ENCRYPT_API) {
-                            message.encryptBody(cryptoMessage)
-                        }
+//                        if (BuildConfig.ENCRYPT_API) {
+//                            message.encryptBody(cryptoMessage)
+//                        }
 
                         val messageId = messageLocalDataSource.insertMessage(message)
                         Timber.d("Conversation insertó mensajes")

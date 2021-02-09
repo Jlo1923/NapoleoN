@@ -4,24 +4,30 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDao
 import com.naposystems.napoleonchat.db.dao.contact.ContactDao
 import com.naposystems.napoleonchat.db.dao.message.MessageDao
-import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDao
 import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDao
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDao
 import com.naposystems.napoleonchat.db.dao.status.StatusDao
 import com.naposystems.napoleonchat.db.dao.user.UserDao
-import com.naposystems.napoleonchat.entity.*
+import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.entity.MessageNotSent
+import com.naposystems.napoleonchat.entity.Status
+import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
-import java.util.*
 
 @Database(
     entities = [
-        User::class, Status::class, Message::class,
-        Attachment::class, Contact::class,
-        Quote::class, MessageNotSent::class
+        User::class,
+        Status::class,
+        Message::class,
+        Attachment::class,
+        Contact::class,
+        Quote::class,
+        MessageNotSent::class
     ],
     version = 2
 )
@@ -60,6 +66,8 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE contact ADD COLUMN 'notification_id' TEXT DEFAULT NULL")
 
                 database.execSQL("ALTER TABLE message ADD COLUMN 'uuid' TEXT DEFAULT NULL")
+
+                database.execSQL("ALTER TABLE 'message' ADD COLUMN 'cypher' INTEGER NOT NULL DEFAULT 1")
             }
         }
     }

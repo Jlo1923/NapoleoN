@@ -94,9 +94,9 @@ class HomeRepository @Inject constructor(
                             null, messageRes, Constants.IsMine.NO.value
                         )
 
-                        if (BuildConfig.ENCRYPT_API) {
-                            message.encryptBody(cryptoMessage)
-                        }
+//                        if (BuildConfig.ENCRYPT_API) {
+//                            message.encryptBody(cryptoMessage)
+//                        }
 
                         val messageId = messageLocalDataSource.insertMessage(message)
 
