@@ -67,11 +67,13 @@ fun determineImageRotation(imageFile: File, bitmap: Bitmap): Bitmap {
     val matrix = Matrix()
     when (orientation) {
         ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
-//        ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
-//        ExifInterface.ORIENTATION_TRANSVERSE,
-//        ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+        ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        ExifInterface.ORIENTATION_TRANSVERSE -> {
+            matrix.postRotate(270f)
+            matrix.postScale(-1.0f, 1.0f)
+        }
     }
-    Timber.e("ORIENTATION: $orientation")
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
 
