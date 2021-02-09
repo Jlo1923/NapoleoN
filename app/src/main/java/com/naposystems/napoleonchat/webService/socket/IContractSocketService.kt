@@ -58,6 +58,8 @@ interface IContractSocketService {
 
         fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes)
 
+        fun validateMessageType(messagesWebIds: List<String>, state: Int)
+
         fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
     }
 

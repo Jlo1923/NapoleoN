@@ -17,9 +17,7 @@ import com.naposystems.napoleonchat.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
-import com.naposystems.napoleonchat.entity.message.Message
+import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.Quote
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -365,6 +363,42 @@ class SocketRepository @Inject constructor(
 
             if (response.isSuccessful) {
                 Timber.d("Usuario llamado")
+            }
+        }
+    }
+
+    override fun validateMessageType(messagesWebIds: List<String>, state: Int) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val listWebId = mutableListOf<String>()
+            for (webId in messagesWebIds) {
+                val localMessage = messageLocalDataSource.getMessageByWebId(webId, false)
+
+                localMessage?.let {
+                    if (it.attachmentList.count() == 0) {
+                        Timber.d("*TestMessageEvent: empty attachment")
+                        listWebId.add(it.message.webId)
+                    } else {
+                        validateAttachmentType(it, listWebId)
+                    }
+                }
+            }
+
+            updateMessagesStatus(listWebId, state)
+        }
+    }
+
+    private fun validateAttachmentType(
+        it: MessageAndAttachment,
+        listWebId: MutableList<String>
+    ) {
+        for (attachment in it.attachmentList) {
+            when (attachment.type) {
+                Constants.AttachmentType.GIF.type,
+                Constants.AttachmentType.GIF_NN.type,
+                Constants.AttachmentType.LOCATION.type,
+                Constants.AttachmentType.DOCUMENT.type -> {
+                    listWebId.add(it.message.webId)
+                }
             }
         }
     }

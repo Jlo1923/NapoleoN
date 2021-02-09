@@ -231,6 +231,8 @@ class HomeFragment : Fragment() {
             }
         }*/
 
+        RxBus.publish(RxEvent.HideOptionMenuRecoveryAccount())
+
         return binding.root
     }
 

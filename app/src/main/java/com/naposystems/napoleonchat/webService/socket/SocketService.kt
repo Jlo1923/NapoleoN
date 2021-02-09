@@ -498,7 +498,7 @@ class SocketService @Inject constructor(
                             }?.map { it.id }
 
                             read?.let {
-                                repository.updateMessagesStatus(
+                                repository.validateMessageType(
                                     it,
                                     Constants.MessageStatus.READED.status
                                 )
