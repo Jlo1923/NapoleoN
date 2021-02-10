@@ -109,9 +109,9 @@ class NotificationUtilsRepository @Inject constructor(
                     val message =
                         newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
 
-                    if (BuildConfig.ENCRYPT_API) {
-                        message.encryptBody(cryptoMessage)
-                    }
+//                    if (BuildConfig.ENCRYPT_API) {
+//                        message.encryptBody(cryptoMessage)
+//                    }
 
                     val messageId =
                         messageLocalDataSource.insertMessage(message)

@@ -13,7 +13,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file('C:\\Users\\Android1\\Documents\\pepito.jks')
+            storeFile file('D:\\Proyectos_NN\\Desarrollo\\Llaves JKS Android\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
@@ -298,7 +298,7 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:$glide_version"
 
     //Image Compressor
-    implementation "id.zelory:compressor:$image_compressor_version"
+//    implementation "id.zelory:compressor:$image_compressor_version"
 
     //Socket-io
     implementation("io.socket:socket.io-client:$io_socket_version") {

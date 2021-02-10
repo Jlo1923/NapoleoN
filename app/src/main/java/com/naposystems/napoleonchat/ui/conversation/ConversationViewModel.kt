@@ -191,9 +191,9 @@ class ConversationViewModel @Inject constructor(
                     selfDestructionAt = selfAutoDestruction
                 )
 
-                if (BuildConfig.ENCRYPT_API) {
-                    message.encryptBody(cryptoMessage)
-                }
+//                if (BuildConfig.ENCRYPT_API) {
+//                    message.encryptBody(cryptoMessage)
+//                }
 
                 val messageId = repository.insertMessage(message).toInt()
                 Timber.d("insertMessage")
