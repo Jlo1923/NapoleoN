@@ -9,7 +9,6 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.entity.Contact
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
 @Entity(
@@ -39,7 +38,8 @@ data class Message(
     @ColumnInfo(name = "number_attachments") val numberAttachments: Int,
     @ColumnInfo(name = "self_destruction_at") var selfDestructionAt: Int = -1,
     @ColumnInfo(name = "total_self_destruction_at") var totalSelfDestructionAt: Int = 0,
-    @ColumnInfo(name = "type_message") val messageType: Int
+    @ColumnInfo(name = "type_message") val messageType: Int,
+    @ColumnInfo(name = "cypher") val cypher: Boolean = false
 ) : Parcelable {
 
     override fun equals(other: Any?): Boolean {
@@ -67,7 +67,7 @@ data class Message(
     }
 
     fun getBody(cryptoMessage: CryptoMessage) =
-        if (BuildConfig.ENCRYPT_API) {
+        if (BuildConfig.ENCRYPT_API && this.cypher) {
             cryptoMessage.decryptMessageBody(this.body)
         } else {
             this.body

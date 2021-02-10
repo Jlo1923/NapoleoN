@@ -100,9 +100,9 @@ class FriendShipActionShareViewModel @Inject constructor(
                             )
                         )
 
-                        if (BuildConfig.ENCRYPT_API) {
-                            message.encryptBody(cryptoMessage)
-                        }
+//                        if (BuildConfig.ENCRYPT_API) {
+//                            message.encryptBody(cryptoMessage)
+//                        }
 
                         repository.insertMessage(message).toInt()
                     }

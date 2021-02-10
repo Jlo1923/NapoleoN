@@ -285,7 +285,7 @@ class MessageLocalDataSource @Inject constructor(
                     listMessages.forEach { messageAndAttachment: MessageAndAttachment ->
                         with(messageAndAttachment.message) {
                             this.let {
-                                it.body = it.getBody(cryptoMessage)
+                                it.getBody(cryptoMessage)
                             }
                         }
                     }
