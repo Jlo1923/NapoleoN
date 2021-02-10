@@ -3,6 +3,9 @@ package com.naposystems.napoleonchat.ui.conversationCamera
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
@@ -43,6 +46,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
+
 
 @SuppressLint("RestrictedApi")
 class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
@@ -255,9 +259,12 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                         when (location) {
                             Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
                                 lifecycleScope.launch {
+
                                     photoFileCompress =
-//                                        FileManager.compressImageFromFile(requireContext(), photoFile)
-                                        photoFile
+                                        FileManager.compressImageFromFile(
+                                            requireContext(),
+                                            photoFile
+                                        )
 
                                     val attachment = Attachment(
                                         id = 0,
