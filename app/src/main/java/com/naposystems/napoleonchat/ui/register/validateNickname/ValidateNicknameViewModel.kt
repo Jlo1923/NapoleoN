@@ -4,16 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.napoleonchat.dto.sendCode.SendCodeErrorDTO
+import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class ValidateNicknameViewModel @Inject constructor(private val repository: ValidateNicknameRepository) :
-    ViewModel(), IContractValidateNickname.ViewModel {
+class ValidateNicknameViewModel
+@Inject constructor(
+    private val moshi: Moshi,
+    private val repository: ValidateNicknameRepository
+) : ViewModel(), IContractValidateNickname.ViewModel {
 
     val nickName = MutableLiveData<String>()
     val displayName = MutableLiveData<String>()
@@ -59,7 +62,6 @@ class ValidateNicknameViewModel @Inject constructor(private val repository: Vali
                 } else {
                     when (response.code()) {
                         422 -> {
-                            val moshi = Moshi.Builder().build()
 
                             val adapter = moshi.adapter(SendCodeErrorDTO::class.java)
 

@@ -3,7 +3,6 @@ package com.naposystems.napoleonchat.webService.socket
 import android.content.Context
 import android.content.Intent
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReadedDTO
 import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventRes
@@ -32,6 +31,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SocketService @Inject constructor(
+    private val moshi: Moshi,
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
@@ -45,9 +45,6 @@ class SocketService @Inject constructor(
     private val firebaseId by lazy {
         sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
     }
-
-    private val cryptoMessage = CryptoMessage(context)
-    private val moshi = Moshi.Builder().build()
 
     private lateinit var generalChannel: PrivateChannel
     private lateinit var globalChannel: PrivateChannel
@@ -520,7 +517,7 @@ class SocketService @Inject constructor(
     override fun emitToClientConversation(jsonObject: String) {
         try {
             globalChannel.trigger(CLIENT_CONVERSATION_NN, jsonObject)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
     }
@@ -550,7 +547,6 @@ class SocketService @Inject constructor(
 
                                     val validateMessage = ValidateMessageEventDTO(messages)
 
-                                    val moshi = Moshi.Builder().build()
                                     val jsonAdapterValidate =
                                         moshi.adapter(ValidateMessageEventDTO::class.java)
 
@@ -824,7 +820,6 @@ class SocketService @Inject constructor(
                 override fun onEvent(event: PusherEvent) {
                     Timber.d("CallFriendEvent SocketData: ${event.data}")
                     try {
-                        val moshi = Moshi.Builder().build()
 
                         val adapter: JsonAdapter<IncomingCall> =
                             moshi.adapter(IncomingCall::class.java)

@@ -25,6 +25,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import org.json.JSONException
 import timber.log.Timber
+import javax.inject.Inject
 
 class NapoleonKeyboardStickerFragment : Fragment() {
 
@@ -44,6 +45,9 @@ class NapoleonKeyboardStickerFragment : Fragment() {
     interface NapoleonKeyboardStickerListener {
         fun onStickerSelected()
     }
+
+    @Inject
+    lateinit var moshi: Moshi
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +80,6 @@ class NapoleonKeyboardStickerFragment : Fragment() {
         val jsonString = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_EMOJIS_KEY)
 
         try {
-            val moshi = Moshi.Builder().build()
 
             val listType =
                 Types.newParameterizedType(List::class.java, NapoleonEmojiRemoteConfig::class.java)
@@ -117,7 +120,7 @@ class NapoleonKeyboardStickerFragment : Fragment() {
     private fun inflateHeader(
         storageRef: StorageReference,
         napoleonEmojiRemoteConfigList: List<NapoleonEmojiRemoteConfig>
-    ){
+    ) {
         try {
             val emojisRef = storageRef.child("emojis")
 

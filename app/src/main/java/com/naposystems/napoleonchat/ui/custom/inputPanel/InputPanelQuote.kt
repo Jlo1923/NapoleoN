@@ -12,7 +12,6 @@ import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.databinding.CustomInputPanelQuoteBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.utility.BlurTransformation
@@ -140,22 +139,37 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                     when {
                         quote.isMine == Constants.IsMine.YES.value
                                 && messageAndAttachment.message.isMine == 1 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyMyQuote
+                            )
                         }
                         quote.isMine == Constants.IsMine.YES.value
                                 && messageAndAttachment.message.isMine == 0 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyMyQuote
+                            )
                         }
                         quote.isMine == Constants.IsMine.NO.value
                                 && messageAndAttachment.message.isMine == 1 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyYourQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyYourQuote
+                            )
                         }
                         quote.isMine == Constants.IsMine.NO.value
                                 && messageAndAttachment.message.isMine == 0 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyYourQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyYourQuote
+                            )
                         }
                         else -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyMyQuote
+                            )
                         }
                     }
                 )
@@ -204,7 +218,6 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     ) {
         val context = binding.textViewMessageQuote.context
 
-        val cryptoMessage = CryptoMessage(context)
         val body = if (isFromInputPanel) {
             val messageNull = messageAndAttachment.message
 
@@ -214,7 +227,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
             val quoteBody = messageAndAttachment.quote?.body ?: ""
 
             if (quoteBody.isNotEmpty()) {
-                cryptoMessage.decryptMessageBody(quoteBody)
+                quoteBody
             } else {
                 ""
             }

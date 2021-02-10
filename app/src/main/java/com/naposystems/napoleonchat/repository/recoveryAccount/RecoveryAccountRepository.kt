@@ -12,6 +12,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class RecoveryAccountRepository @Inject constructor(
+    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractRecoveryAccount.Repository {
@@ -25,7 +26,7 @@ class RecoveryAccountRepository @Inject constructor(
     }
 
     override fun getError(response: ResponseBody): ArrayList<String> {
-        val moshi = Moshi.Builder().build()
+
         val adapter = moshi.adapter(RecoveryAccountErrorDTO::class.java)
         val errorJson = adapter.fromJson(response.string())
         val errorList = ArrayList<String>()

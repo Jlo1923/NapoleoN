@@ -41,6 +41,7 @@ class RetrofitModule {
     @Provides
     @Singleton
     fun provideHttpClient(
+        crypto: Crypto,
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ): OkHttpClient {
@@ -74,6 +75,7 @@ class RetrofitModule {
 
                 if (BuildConfig.ENCRYPT_API) {
                     encryptRequest(
+                        crypto,
                         original,
                         context,
                         firebaseInstanceId,
@@ -121,6 +123,7 @@ class RetrofitModule {
     }
 
     private fun encryptRequest(
+        crypto: Crypto,
         original: Request,
         context: Context,
         firebaseInstanceId: String,
@@ -131,8 +134,6 @@ class RetrofitModule {
         val body = original.body()
 
         val rawBodyRequest = bodyToString(body)
-
-        val cripto = Crypto()
 
         val request: Request.Builder = original.newBuilder()
             .header("languageIso", LocaleHelper.getLanguagePreference(context))
@@ -171,7 +172,7 @@ class RetrofitModule {
                     val jsonObject = JSONObject()
                     jsonObject.put(
                         Constants.DATA_CRYPT,
-                        cripto.encryptPlainTextWithRandomIV(rawBodyRequest!!, secretKey)
+                        crypto.encryptPlainTextWithRandomIV(rawBodyRequest!!, secretKey)
                     )
 
                     val newRequestBody: RequestBody =
@@ -199,7 +200,7 @@ class RetrofitModule {
                 .uri().toString()
         ) {
             try {
-                decryptResponse(chain, request, cripto, secretKey)
+                decryptResponse(chain, request, crypto, secretKey)
             } catch (e: Exception) {
                 Timber.e(e)
                 chain.proceed(request.build())

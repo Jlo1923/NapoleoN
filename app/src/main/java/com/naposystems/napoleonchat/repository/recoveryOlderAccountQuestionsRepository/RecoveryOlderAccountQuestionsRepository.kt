@@ -20,16 +20,14 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class RecoveryOlderAccountQuestionsRepository @Inject constructor(
+    private val moshi: Moshi,
+    private val crypto: Crypto,
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val userLocalDataSource: UserLocalDataSource
 ) : IContractRecoveryOlderAccountQuestions.Repository {
 
     private lateinit var firebaseId: String
-
-    private val moshi by lazy {
-        Moshi.Builder().build()
-    }
 
     override suspend fun getOlderQuestions(nickname: String): Response<RecoveryOlderAccountQuestionsResDTO> {
         return napoleonApi.getRecoveryOlderQuestions(nickname)
@@ -105,8 +103,6 @@ class RecoveryOlderAccountQuestionsRepository @Inject constructor(
     }
 
     override fun saveSecretKey(secretKey: String) {
-
-        val crypto = Crypto()
 
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_SECRET_KEY,

@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.repository.socket
 
 import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
 import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
@@ -36,15 +37,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SocketRepository @Inject constructor(
-    private val context: Context,
+    private val moshi: Moshi,
+    private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
     private val messageLocalDataSource: MessageDataSource,
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val quoteDataSource: QuoteDataSource,
     private val contactLocalDataSource: ContactDataSource
 ) : IContractSocketService.Repository {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     override suspend fun getContacts() {
         try {
@@ -158,7 +158,6 @@ class SocketRepository @Inject constructor(
                     newMessageDataEventRes.message
                 }
 
-                val moshi = Moshi.Builder().build()
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
 

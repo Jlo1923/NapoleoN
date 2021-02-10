@@ -14,13 +14,10 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class SendCodeRepository @Inject constructor(
+    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractSendCode.Repository {
-
-    private val moshi by lazy {
-        Moshi.Builder().build()
-    }
 
     override suspend fun requestCode(): Response<SendCodeResDTO> {
         val firebase = sharedPreferencesManager.getString(

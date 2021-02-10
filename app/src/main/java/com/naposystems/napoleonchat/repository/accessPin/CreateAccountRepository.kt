@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.repository.accessPin
 
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.dto.accessPin.CreateAccount422DTO
 import com.naposystems.napoleonchat.dto.accessPin.CreateAccountErrorDTO
@@ -9,7 +10,6 @@ import com.naposystems.napoleonchat.dto.accessPin.CreateAccountResDTO
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.ui.register.accessPin.IContractAccessPin
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -21,6 +21,8 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class CreateAccountRepository @Inject constructor(
+    private val moshi: Moshi,
+    private val crypto: Crypto,
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
@@ -86,8 +88,6 @@ class CreateAccountRepository @Inject constructor(
 
     override fun saveSecretKey(secretKey: String) {
 
-        val crypto = Crypto()
-
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_SECRET_KEY,
             crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
@@ -96,7 +96,6 @@ class CreateAccountRepository @Inject constructor(
 
 
     fun get422Error(response: Response<CreateAccountResDTO>): ArrayList<String> {
-        val moshi = Moshi.Builder().build()
 
         val adapter = moshi.adapter(CreateAccount422DTO::class.java)
 
@@ -106,7 +105,6 @@ class CreateAccountRepository @Inject constructor(
     }
 
     fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {
-        val moshi = Moshi.Builder().build()
 
         val adapter = moshi.adapter(CreateAccountErrorDTO::class.java)
 

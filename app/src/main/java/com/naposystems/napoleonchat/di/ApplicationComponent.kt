@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.di
 
 import android.app.Application
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.di.module.*
 import com.naposystems.napoleonchat.di.module.general.*
 import com.naposystems.napoleonchat.di.module.missnamed.CreateAccountModule
 import com.naposystems.napoleonchat.di.module.sections.RepositoryModule
@@ -31,7 +30,8 @@ import javax.inject.Singleton
         SharedPreferencesModule::class,
         SocketModule::class,
         WebRTCClientModule::class,
-
+        CryptoModule::class,
+        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,
 

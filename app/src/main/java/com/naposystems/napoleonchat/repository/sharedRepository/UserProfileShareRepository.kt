@@ -16,14 +16,11 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class UserProfileShareRepository @Inject constructor(
+    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractUserProfileShare.Repository {
-
-    private val moshi by lazy {
-        Moshi.Builder().build()
-    }
 
     override suspend fun getUser(): LiveData<User> {
         val firebaseId = sharedPreferencesManager.getString(

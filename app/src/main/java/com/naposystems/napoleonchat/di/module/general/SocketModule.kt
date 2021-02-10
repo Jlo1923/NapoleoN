@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.webService.socket.SocketService
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
 import com.pusher.client.util.HttpAuthorizer
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import io.socket.client.IO
@@ -46,12 +47,14 @@ class SocketModule {
     @Provides
     @Singleton
     fun provideSocketClient(
+        moshi: Moshi,
         context: Context,
         socket: Pusher,
         sharedPreferencesManager: SharedPreferencesManager,
         socketRepository: IContractSocketService.Repository
     ): IContractSocketService.SocketService {
         return SocketService(
+            moshi,
             context,
             socket,
             sharedPreferencesManager,

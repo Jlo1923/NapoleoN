@@ -11,13 +11,10 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class ContactProfileRepository@Inject constructor(
+    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val contactDataSource: ContactDataSource
 ) : IContractContactProfile.Repository {
-
-    private val moshi: Moshi by lazy {
-        Moshi.Builder().build()
-    }
 
     override suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
         contactDataSource.updateAvatarFakeContact(contactId, avatarFake)

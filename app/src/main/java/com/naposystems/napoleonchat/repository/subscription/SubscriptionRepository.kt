@@ -12,14 +12,12 @@ import retrofit2.Response
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SubscriptionRepository @Inject constructor(
+class SubscriptionRepository
+@Inject constructor(
+    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractSubscription.Repository {
-
-    private val moshi: Moshi by lazy {
-        Moshi.Builder().build()
-    }
 
     override fun getFreeTrial(): Long {
         return sharedPreferencesManager.getLong(

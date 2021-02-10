@@ -16,15 +16,12 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class StatusRepository @Inject constructor(
+    private val moshi: Moshi,
     private val statusLocalDataSource: StatusLocalDataSource,
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSource: UserLocalDataSource
 ) :
     IContractStatus.Repository {
-
-    private val moshi by lazy {
-        Moshi.Builder().build()
-    }
 
     override suspend fun getStatus(): LiveData<MutableList<Status>> {
         return statusLocalDataSource.getStatus()
