@@ -11,7 +11,8 @@ import com.naposystems.napoleonchat.webService.NapoleonApi
 import timber.log.Timber
 import javax.inject.Inject
 
-class ContactRepositoryShareRepository @Inject constructor(
+class ContactRepositoryShareRepository
+@Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val contactLocalDataSource: ContactDataSource,
     private val messageLocalDataSource: MessageDataSource
