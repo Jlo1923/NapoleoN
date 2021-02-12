@@ -132,6 +132,13 @@ class PreviewMediaFragment : Fragment() {
                 }
                 Constants.AttachmentType.VIDEO.type -> {
                     try {
+
+                        binding.imageViewPreview.apply {
+                            visibility = View.GONE
+                            isClickable = false
+                            isFocusable = false
+                        }
+
                         binding.containerSeekbar.visibility = View.VISIBLE
                         binding.containerVideoView.visibility = View.VISIBLE
 
@@ -170,11 +177,7 @@ class PreviewMediaFragment : Fragment() {
         }
 
         binding.container.setOnClickListener {
-            if (isUIVisible) {
-                hideUI()
-            } else {
-                showUI()
-            }
+            validateUI()
         }
 
         binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -230,9 +233,17 @@ class PreviewMediaFragment : Fragment() {
 
         disposable.add(disposableContactBlockOrDelete)
 
+        binding.imageViewPreview.setOnClickListener {
+            validateUI()
+        }
+
         binding.executePendingBindings()
 
         return binding.root
+    }
+
+    private fun validateUI() {
+        if (isUIVisible) hideUI() else showUI()
     }
 
     private fun sentMessageReaded(isPlaying: Boolean) {
