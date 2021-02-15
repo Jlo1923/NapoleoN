@@ -1,9 +1,6 @@
 package com.naposystems.napoleonchat.webRTC
 
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.pusher.client.channel.PrivateChannel
 import org.webrtc.SurfaceViewRenderer
 

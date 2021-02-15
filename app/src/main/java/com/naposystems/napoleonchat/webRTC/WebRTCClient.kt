@@ -24,7 +24,6 @@ import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.naposystems.napoleonchat.webService.socket.SocketService
 import com.pusher.client.channel.PresenceChannel
-import com.pusher.client.channel.PrivateChannel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.webrtc.*
@@ -153,7 +152,7 @@ class WebRTCClient @Inject constructor(
             .createIceServer()
     )
 
-    private val rootEglBase: EglBase by lazy {
+    private val eglBase: EglBase by lazy {
         EglBase.create()
     }
 
@@ -166,11 +165,11 @@ class WebRTCClient @Inject constructor(
         //Create a new PeerConnectionFactory instance - using Hardware encoder and decoder.
         val options = PeerConnectionFactory.Options()
         val defaultVideoEncoderFactory = DefaultVideoEncoderFactory(
-            rootEglBase.eglBaseContext,
+            eglBase.eglBaseContext,
             /* enableIntelVp8Encoder */true,
             /* enableH264HighProfile */true
         )
-        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(rootEglBase.eglBaseContext)
+        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(eglBase.eglBaseContext)
 
         PeerConnectionFactory.builder()
             .setOptions(options)
@@ -369,7 +368,6 @@ class WebRTCClient @Inject constructor(
                     }
                 }
             }
-
 
         val disposableContactCancelCall = RxBus.listen(RxEvent.ContactCancelCall::class.java)
             .observeOn(AndroidSchedulers.mainThread())
@@ -632,7 +630,7 @@ class WebRTCClient @Inject constructor(
         videoCapturerAndroid?.let { videoCapturer ->
 
             val surfaceTextureHelper: SurfaceTextureHelper =
-                SurfaceTextureHelper.create("SurfaceTextureHelper", rootEglBase.eglBaseContext)
+                SurfaceTextureHelper.create("SurfaceTextureHelper", eglBase.eglBaseContext)
 
             videoSource = peerConnectionFactory.createVideoSource(videoCapturer.isScreencast)
 
@@ -880,10 +878,10 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun initSurfaceRenders() {
-        localVideoView?.init(rootEglBase.eglBaseContext, null)
+        localVideoView?.init(eglBase.eglBaseContext, null)
         localVideoView?.setZOrderMediaOverlay(true)
 
-        remoteVideoView?.init(rootEglBase.eglBaseContext, null)
+        remoteVideoView?.init(eglBase.eglBaseContext, null)
         remoteVideoView?.setZOrderMediaOverlay(true)
     }
 
@@ -1103,6 +1101,7 @@ class WebRTCClient @Inject constructor(
 
     //region Implementation BluetoothStateManager.BluetoothStateListener
     override fun onBluetoothStateChanged(isAvailable: Boolean) {
+
         Timber.d("onBluetoothStateChanged: $isAvailable")
 
         //handleBluetooth(isAvailable)
