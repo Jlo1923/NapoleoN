@@ -866,7 +866,9 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.newMessageSend.observe(viewLifecycleOwner, Observer { newMessage ->
             if (newMessage == true) {
-                binding.inputPanel.clearTextEditText()
+                binding.inputPanel.post {
+                    binding.inputPanel.clearTextEditText()
+                }
                 viewModel.resetNewMessage()
             }
         })
