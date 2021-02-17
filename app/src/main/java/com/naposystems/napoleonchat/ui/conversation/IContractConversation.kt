@@ -79,6 +79,7 @@ interface IContractConversation {
         fun getFreeTrial(): Long
         fun getMessageNotSent(contactId: Int)
         fun insertMessageNotSent(message: String, contactId: Int)
+        fun deleteMessageNotSent(contactId: Int)
     }
 
     interface Repository {
@@ -116,7 +117,6 @@ interface IContractConversation {
             messageAndAttachment: MessageAndAttachment,
             itemPosition: Int
         ): Flow<DownloadAttachmentResult>
-
         fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int)
         suspend fun copyFile(fileUri: Uri): File?
         fun verifyMessagesToDelete()
@@ -129,6 +129,7 @@ interface IContractConversation {
             destFile: File,
             job: ProducerScope<*>
         ): Flow<VideoCompressResult>
+
         fun getFreeTrial(): Long
         fun getMessageNotSent(contactId: Int): MessageNotSent
         fun insertMessageNotSent(message: String, contactId: Int)

@@ -45,8 +45,6 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.PurchaseHistoryRecord
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
@@ -57,7 +55,6 @@ import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
@@ -75,7 +72,6 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewMode
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
-import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -97,7 +93,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -1864,10 +1859,15 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onPause() {
-        viewModel.insertMessageNotSent(
-            binding.inputPanel.getEditText().text.toString(),
-            args.contact.id
-        )
+        if (binding.inputPanel.getEditText().text.toString().trim() != "") {
+            viewModel.insertMessageNotSent(
+                binding.inputPanel.getEditText().text.toString(),
+                args.contact.id
+            )
+        } else {
+            viewModel.deleteMessageNotSent(args.contact.id)
+        }
+
         super.onPause()
         MediaPlayerManager.unregisterProximityListener()
         //MediaPlayerManager.completeAudioPlaying()
