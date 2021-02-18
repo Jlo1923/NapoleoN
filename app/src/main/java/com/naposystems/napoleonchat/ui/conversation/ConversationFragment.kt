@@ -664,11 +664,12 @@ class ConversationFragment : BaseFragment(),
                 if (gifAttachment != null) {
                     val quote = binding.inputPanel.getQuote()
                     shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
-                    findNavController().navigate(
+                    this.findNavController().navigate(
                         ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                             gifAttachment,
                             0,
                             shareViewModel.getQuoteWebId() ?: "",
+                            message = binding.inputPanel.getEditText().text.toString(),
                             contactId = args.contact.id
                         )
                     )
