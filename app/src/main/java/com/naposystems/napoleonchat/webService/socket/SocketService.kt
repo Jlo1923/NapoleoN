@@ -519,8 +519,9 @@ class SocketService @Inject constructor(
 
     override fun emitToClientConversation(jsonObject: String) {
         try {
-            globalChannel.trigger(CLIENT_CONVERSATION_NN, jsonObject)
-        } catch (e: Exception){
+            if (jsonObject.isNotEmpty())
+                globalChannel.trigger(CLIENT_CONVERSATION_NN, jsonObject)
+        } catch (e: Exception) {
             Timber.e(e)
         }
     }
@@ -555,6 +556,7 @@ class SocketService @Inject constructor(
                                         moshi.adapter(ValidateMessageEventDTO::class.java)
 
                                     val json = jsonAdapterValidate.toJson(validateMessage)
+
                                     globalChannel.trigger(CLIENT_CONVERSATION_NN, json.toString())
 
                                     repository.insertNewMessage(newMessageDataEventRes)

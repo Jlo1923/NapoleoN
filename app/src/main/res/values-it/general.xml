@@ -65,7 +65,7 @@
     <string name="text_hang_up_call">Appendere</string>
     <string name="text_answer_call">Risposta</string>
     <string name="text_update_title">Una nuova versione di Napoleone è disponibile</string>
-    <string name="text_update_message">Version (%1$s) è ora disponibile su App Store</string>
+    <string name="text_update_message">Version (%1$s) è ora disponibile su Play Store</string>
     <string name="text_update">Aggiornare</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN ha bisogno di accedere alla videocamera e microfono per effettuare e ricevere chiamate</string>
     <string name="text_twentyfour_hours">24 ore</string>
