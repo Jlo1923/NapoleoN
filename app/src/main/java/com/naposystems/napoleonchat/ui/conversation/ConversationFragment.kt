@@ -97,8 +97,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : BaseFragment(),
-    MediaPlayerManager.Listener, ConversationAdapter.ClickListener, InputPanelWidget.Listener {
+class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -110,6 +109,9 @@ class ConversationFragment : BaseFragment(),
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
+
+    @Inject
+    lateinit var mediaPlayerManager: MediaPlayerManager
 
     //TODO:Subscription
     /*@Inject
@@ -444,8 +446,6 @@ class ConversationFragment : BaseFragment(),
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
         binding.textViewUserStatus.isSelected = true
-        MediaPlayerManager.setContext(requireContext())
-        MediaPlayerManager.initializeBluetoothManager()
 
         return binding.root
     }
@@ -1376,8 +1376,8 @@ class ConversationFragment : BaseFragment(),
         Timber.d("onDestroy")
         Data.contactId = 0
         resetConversationBackground()
-        MediaPlayerManager.unregisterProximityListener()
-        MediaPlayerManager.resetMediaPlayer()
+        mediaPlayerManager.unregisterProximityListener()
+        mediaPlayerManager.resetMediaPlayer()
         emojiKeyboard?.dispose()
         disposable.dispose()
         if (mRecordingAudioRunnable != null) {
@@ -1708,7 +1708,7 @@ class ConversationFragment : BaseFragment(),
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(
             this,
-            MediaPlayerManager,
+            mediaPlayerManager,
             timeFormatShareViewModel.getValTimeFormat()
         )
 
@@ -1859,6 +1859,7 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onPause() {
+        viewModel.sendMessageRead(mediaPlayerManager.getMessageId(), "")
         if (binding.inputPanel.getEditText().text.toString().trim() != "") {
             viewModel.insertMessageNotSent(
                 binding.inputPanel.getEditText().text.toString(),
@@ -1867,10 +1868,9 @@ class ConversationFragment : BaseFragment(),
         } else {
             viewModel.deleteMessageNotSent(args.contact.id)
         }
-
         super.onPause()
-        MediaPlayerManager.unregisterProximityListener()
-        //MediaPlayerManager.completeAudioPlaying()
+        mediaPlayerManager.unregisterProximityListener()
+        mediaPlayerManager.resetMediaPlayer()
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
@@ -1880,7 +1880,6 @@ class ConversationFragment : BaseFragment(),
         showCase?.dismiss()
         showShowCase = false
         resetAudioRecording()
-        MediaPlayerManager.pauseAudio()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
@@ -2009,7 +2008,7 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onRecorderStarted() {
-        MediaPlayerManager.resetMediaPlayer()
+        mediaPlayerManager.resetMediaPlayer()
         startRecording()
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
@@ -2065,25 +2064,6 @@ class ConversationFragment : BaseFragment(),
             }
         }
 
-    }
-
-    //endregion
-
-    //region Implementation MediaPlayerManager.Listener
-    override fun onErrorPlayingAudio() {
-        Utils.showSimpleSnackbar(
-            binding.coordinator,
-            getString(R.string.text_error_playing_audio),
-            3
-        )
-    }
-
-    override fun onPauseAudio(messageWebId: String?) {
-        // Intentionally empty
-    }
-
-    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
-        // Intentionally empty
     }
 
     //endregion
@@ -2177,13 +2157,12 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun sendMessageRead(
-        messageId: String,
-        messageWebId: String,
+        messageId: Int,
+        webId: String,
         isComplete: Boolean,
         position: Int
     ) {
-        Timber.d("sendMessageRead: $messageWebId")
-        viewModel.sendMessageRead(messageWebId)
+        viewModel.sendMessageRead(messageId, webId)
 
         if (isComplete) {
             conversationAdapter.checkIfNextIsAudio(messageId)

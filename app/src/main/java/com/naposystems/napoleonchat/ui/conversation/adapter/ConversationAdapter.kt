@@ -137,7 +137,7 @@ class ConversationAdapter constructor(
     fun setStateMessage(messageId: Int, stateMessage : Int) {
         try {
             notifyItemChanged(
-                getPositionByMessageId(messageId.toString()),
+                getPositionByMessageId(messageId),
                 Bundle().apply { putInt(STATE_MESSAGE, stateMessage) }
             )
         } catch (e: Exception) {
@@ -196,7 +196,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun checkIfNextIsAudio(messageId: String) {
+    fun checkIfNextIsAudio(messageId: Int) {
         val positionActualAudio = getPositionByMessageId(messageId)
         if (positionActualAudio >= 0) {
             val actualMessageAndAttachment = getItem(positionActualAudio)
@@ -237,9 +237,9 @@ class ConversationAdapter constructor(
         )
     }
 
-    private fun getPositionByMessageId(id: String) =
+    private fun getPositionByMessageId(id: Int) =
         currentList.indexOfFirst { messageAndAttachment ->
-            messageAndAttachment.message.id.toString() == id
+            messageAndAttachment.message.id == id
         }
 
     private fun getPositionByItem(attachment: Attachment) =
@@ -532,8 +532,8 @@ class ConversationAdapter constructor(
         fun updateAttachmentState(messageAndAttachment: Attachment)
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
         fun sendMessageRead(
-            messageId: String,
-            messageWebId: String,
+            messageId: Int,
+            webId: String,
             isComplete: Boolean,
             position: Int = -1
         )

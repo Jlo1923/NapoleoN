@@ -41,14 +41,12 @@ import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
 import com.vincent.videocompressor.VideoCompressK
 import com.vincent.videocompressor.VideoCompressResult
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.yield
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -800,36 +798,32 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override suspend fun setMessageRead(messageWebId: String) {
+    override suspend fun setMessageRead(messageId: Int, webId: String) {
         try {
-            Timber.d("setMessageRead: $messageWebId")
-            val messageAndAttachment = messageLocalDataSource.getMessageByWebId(messageWebId, false)
 
-            if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status &&
-                messageAndAttachment.message.isMine == Constants.IsMine.NO.value
-            ) {
-                val response = napoleonApi.sendMessagesRead(
-                    MessagesReadReqDTO(
-                        arrayListOf(messageWebId)
-                    )
-                )
+            val messageAndAttachment = messageLocalDataSource.getMessageById(messageId, false)
 
-                if (response.isSuccessful) {
-                    Timber.d("Success: ${response.body()}")
-                    messageLocalDataSource.updateMessageStatus(
-                        response.body()!!,
-                        Constants.MessageStatus.READED.status
-                    )
-                }
-            } else if (messageAndAttachment == null) {
-                val response = napoleonApi.sendMessagesRead(
-                    MessagesReadReqDTO(
-                        arrayListOf(messageWebId)
-                    )
-                )
+            val webIdMessage = if (webId.isNotEmpty()) {
+                webId
+            } else {
+                messageAndAttachment?.message?.webId
+            }
 
-                if (response.isSuccessful) {
-                    Timber.d("Success: ${response.body()}")
+            if ((messageAndAttachment?.message?.isMine == Constants.IsMine.NO.value) || webId.isNotEmpty()) {
+                webIdMessage?.let {
+                    val response = napoleonApi.sendMessagesRead(
+                        MessagesReadReqDTO(
+                            arrayListOf(webIdMessage)
+                        )
+                    )
+
+                    if (response.isSuccessful) {
+                        Timber.d("Success: ${response.body()}")
+                        messageLocalDataSource.updateMessageStatus(
+                            response.body()!!,
+                            Constants.MessageStatus.READED.status
+                        )
+                    }
                 }
             }
         } catch (ex: Exception) {

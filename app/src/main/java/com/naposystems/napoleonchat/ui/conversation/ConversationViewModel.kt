@@ -652,9 +652,9 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun sendMessageRead(messageWebId: String) {
-        viewModelScope.launch {
-            repository.setMessageRead(messageWebId)
+    override fun sendMessageRead(messageId: Int, webId: String) {
+        GlobalScope.launch {
+            repository.setMessageRead(messageId, webId)
         }
     }
 

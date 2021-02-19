@@ -13,6 +13,9 @@ interface MessageDao {
     @Query("SELECT * FROM message WHERE web_id=:webId")
     suspend fun getMessageByWebId(webId: String): MessageAndAttachment?
 
+    @Query("SELECT * FROM message WHERE id=:id")
+    suspend fun getMessageById(id: Int): MessageAndAttachment?
+
     @Query("SELECT * FROM message WHERE contact_id=:contact AND (total_self_destruction_at > strftime('%s','now') OR total_self_destruction_at >= 0) ORDER BY id ASC")
     fun getMessagesAndAttachments(contact: Int): Flow<List<MessageAndAttachment>>
 

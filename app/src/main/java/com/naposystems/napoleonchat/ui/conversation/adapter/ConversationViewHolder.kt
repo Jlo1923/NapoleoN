@@ -484,11 +484,9 @@ open class ConversationViewHolder constructor(
         item: MessageAndAttachment,
         clickListener: ConversationAdapter.ClickListener
     ) {
-        Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
-//        mediaPlayerManager.resetMediaPlayer()
+        Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getMessageId()}")
         with(audioPlayer!!) {
-            setAudioId(item.message.id.toString())
-            setWebId(item.message.webId)
+            setMessageId(item.message.id)
             setMediaPlayerManager(mediaPlayerManager)
             setDuration(attachment.duration)
 
@@ -535,18 +533,12 @@ open class ConversationViewHolder constructor(
                     clickListener.errorPlayingAudio()
                 }
 
-                override fun onPause(audioId: String?) {
-                    Timber.d("--onPause $audioId")
-                    audioId?.let {
-                        clickListener.sendMessageRead("", audioId, false, adapterPosition)
-                    }
+                override fun onPause(messageId: Int, webId: String) {
+                    clickListener.sendMessageRead(messageId, webId, false, adapterPosition)
                 }
 
-                override fun onComplete(messageId: String, audioId: String?) {
-                    Timber.d("--onComplete $audioId")
-                    audioId?.let {
-                        clickListener.sendMessageRead(messageId, audioId, true, adapterPosition)
-                    }
+                override fun onComplete(messageId: Int) {
+                    clickListener.sendMessageRead(messageId, "", true, adapterPosition)
                 }
             })
         }

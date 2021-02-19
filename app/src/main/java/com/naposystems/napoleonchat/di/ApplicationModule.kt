@@ -20,6 +20,9 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_ANSWE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_PASSWORD_OLD_ACCOUNT
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.utility.mediaPlayer.IContractMediaPlayer
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
 import com.naposystems.napoleonchat.webRTC.WebRTCClient
 import com.naposystems.napoleonchat.webService.NapoleonApi
@@ -339,4 +342,26 @@ class ApplicationModule {
     ): IContractWebRTCClient {
         return WebRTCClient(context, socketService, sharedPreferencesManager)
     }
+
+    @Provides
+    @Singleton
+    fun provideMediaPlayerGalleryManager(
+        context: Context,
+    ) : MediaPlayerGalleryManager {
+        return MediaPlayerGalleryManager(
+            context
+        )
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideMediaPlayerManager(
+        context: Context,
+    ) : IContractMediaPlayer {
+        return MediaPlayerManager(
+            context
+        )
+    }
+
 }

@@ -9,6 +9,8 @@ import com.naposystems.napoleonchat.db.dao.contact.ContactDao
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -30,6 +32,19 @@ class MessageLocalDataSource @Inject constructor(
 
     override suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment? {
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
+        if (BuildConfig.ENCRYPT_API && decrypt) {
+            with(messageAndAttachment?.message) {
+                this?.let {
+                    it.body = it.getBody(cryptoMessage)
+                }
+            }
+        }
+
+        return messageAndAttachment
+    }
+
+    override suspend fun getMessageById(id: Int, decrypt: Boolean): MessageAndAttachment? {
+        val messageAndAttachment = messageDao.getMessageById(id)
         if (BuildConfig.ENCRYPT_API && decrypt) {
             with(messageAndAttachment?.message) {
                 this?.let {
@@ -331,9 +346,6 @@ class MessageLocalDataSource @Inject constructor(
                 if (messageAndAttachment.attachmentList.isNotEmpty()) {
                     messageAndAttachment.attachmentList.forEach { attachment: Attachment ->
                         attachment.deleteFile(context)
-                        withContext(Dispatchers.Main) {
-                            MediaPlayerManager.resetMediaPlayer(messageAndAttachment.message.id.toString())
-                        }
                     }
                 }
             }

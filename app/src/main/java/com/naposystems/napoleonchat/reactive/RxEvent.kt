@@ -32,7 +32,7 @@ class RxEvent {
     class CallEnd
     data class EmojiSelected(val emoji: Emoji)
     data class HeadsetState(val state: Int)
-    data class MessagesToEliminate(val id: List<MessageAndAttachment>)
+    data class MessagesToEliminate(val id: List<MessageAndAttachment>?)
     data class EnableButtonPlayAudio(val state: Boolean)
     data class ContactCancelCall(val channel: String)
     data class ContactBlockOrDelete(val contactId: Int)

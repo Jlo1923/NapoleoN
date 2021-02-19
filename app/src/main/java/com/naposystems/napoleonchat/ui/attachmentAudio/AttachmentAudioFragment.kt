@@ -40,6 +40,9 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var mediaPlayerGalleryManager: MediaPlayerGalleryManager
+
     private lateinit var viewModel: AttachmentAudioViewModel
     private lateinit var conversationShareViewModel: ConversationShareViewModel
     private lateinit var binding: AttachmentAudioFragmentBinding
@@ -106,8 +109,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
 
         disposable.add(disposableContactBlockOrDelete)
 
-        MediaPlayerGalleryManager.setContext(requireContext())
-        MediaPlayerGalleryManager.setListener(this)
+        mediaPlayerGalleryManager.setListener(this)
 
         setupAdapter()
 
@@ -169,7 +171,6 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
     }
 
     private fun setupAdapter() {
-
         adapter = AttachmentAudioAdapter(object : AttachmentAudioAdapter.ClickListener {
             override fun onClick(mediaStoreAudio: MediaStoreAudio) {
                 viewModel.setSelected(mediaStoreAudio)
@@ -179,22 +180,21 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
                 mediaStoreAudio: MediaStoreAudio,
                 imageButtonPlay: ImageView
             ) {
-                MediaPlayerGalleryManager.apply {
+                mediaPlayerGalleryManager.apply {
                     setAudioId(mediaStoreAudio.id.toString())
                     setImageButtonPlay(imageButtonPlay)
-                    setContext(requireContext())
                     setAudioUri(mediaStoreAudio.contentUri)
                     playAudio()
                 }
             }
-        })
+        }, mediaPlayerGalleryManager)
 
         binding.recyclerViewAudios.adapter = adapter
         binding.recyclerViewAudios.itemAnimator = ItemAnimator()
     }
 
     override fun onDestroy() {
-        MediaPlayerGalleryManager.resetMediaPlayer()
+        mediaPlayerGalleryManager.resetMediaPlayer()
         disposable.dispose()
         super.onDestroy()
     }

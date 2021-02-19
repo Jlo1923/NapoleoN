@@ -73,7 +73,7 @@ interface IContractConversation {
         fun resetDocumentCopied()
         fun resetUploadProgress()
         fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
-        fun sendMessageRead(messageWebId: String)
+        fun sendMessageRead(messageId: Int, webId: String)
         fun reSendMessage(message: Message, selfDestructTime: Int)
         fun resetNewMessage()
         fun getFreeTrial(): Long
@@ -121,7 +121,7 @@ interface IContractConversation {
         suspend fun copyFile(fileUri: Uri): File?
         fun verifyMessagesToDelete()
         suspend fun setMessageRead(messageAndAttachment: MessageAndAttachment)
-        suspend fun setMessageRead(messageWebId: String)
+        suspend fun setMessageRead(messageId: Int, webId: String)
         suspend fun reSendMessage(messageAndAttachment: MessageAndAttachment)
         suspend fun compressVideo(
             attachment: Attachment,

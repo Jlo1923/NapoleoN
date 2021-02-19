@@ -8,6 +8,8 @@ interface MessageDataSource {
 
     suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment?
 
+    suspend fun getMessageById(id: Int, decrypt: Boolean): MessageAndAttachment?
+
     fun getMessages(contactId: Int): LiveData<List<MessageAndAttachment>>
 
     fun getQuoteId(quoteWebId: String): Int
