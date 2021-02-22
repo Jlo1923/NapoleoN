@@ -582,7 +582,6 @@ class ConversationRepository @Inject constructor(
 
             try {
                 val response = napoleonApi.downloadFileByUrl(attachment.body)
-//                val response = napoleonApi.downloadFileByUrl("https://video-lga3-1.xx.fbcdn.net/v/t39.24130-2/10000000_252314952661745_7854699925195670435_n.mp4?_nc_cat=101&_nc_sid=985c63&efg=eyJ2ZW5jb2RlX3RhZyI6Im9lcF9oZCJ9&_nc_ohc=yZMEbG8J9AsAX91wp5i&_nc_ht=video-lga3-1.xx&oh=d84d0cad44e97099db93202661c50217&oe=5F0F53B3")
 
                 if (response.isSuccessful) {
                     response.body()?.let { body ->

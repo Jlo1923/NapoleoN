@@ -34,12 +34,7 @@ import javax.inject.Inject
 class WebRTCClient @Inject constructor(
     private val context: Context,
     private val socketService: IContractSocketService.SocketService,
-    private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
-
-    private val firebaseId by lazy {
-        sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-    }
 
     private val vibrator: Vibrator? by lazy {
         context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -63,9 +58,7 @@ class WebRTCClient @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long) {
-                // Intentionally empty
-            }
+            override fun onTick(millisUntilFinished: Long)  = Unit
         }
 
     private var countDownEndCallBusy: CountDownTimer =
@@ -76,9 +69,7 @@ class WebRTCClient @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long) {
-                // Intentionally empty
-            }
+            override fun onTick(millisUntilFinished: Long)  = Unit
         }
 
     private var countDownIncomingCall: CountDownTimer =
@@ -91,9 +82,7 @@ class WebRTCClient @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long) {
-                // Intentionally empty
-            }
+            override fun onTick(millisUntilFinished: Long) = Unit
         }
 
     private val mediaPlayer: MediaPlayer = MediaPlayer().apply {
