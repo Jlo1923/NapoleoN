@@ -65,7 +65,7 @@
     <string name="text_hang_up_call">Raccrocher</string>
     <string name="text_answer_call">Réponse</string>
     <string name="text_update_title">Une nouvelle version de Napoléon est disponible</string>
-    <string name="text_update_message">Version %1$s est maintenant disponible sur l\'App Store</string>
+    <string name="text_update_message">Version %1$s est maintenant disponible sur l\'Play Store</string>
     <string name="text_update">Mettre à jour</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN a besoin d\'accéder à la caméra et d\'un microphone pour faire et recevoir des appels</string>
     <string name="text_twentyfour_hours">24 heures</string>

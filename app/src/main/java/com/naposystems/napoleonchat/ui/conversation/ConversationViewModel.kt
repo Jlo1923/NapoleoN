@@ -198,7 +198,7 @@ class ConversationViewModel @Inject constructor(
 
                 message.id = messageId
 
-                repository.deleteMessageNotSent(contact.id)
+                deleteMessageNotSent(contact.id)
 
                 attachment?.let {
                     attachment.messageId = messageId
@@ -435,6 +435,10 @@ class ConversationViewModel @Inject constructor(
             repository.sendTextMessagesRead(contact.id)
             repository.sendMissedCallRead(contact.id)
         }
+    }
+
+    override fun deleteMessageNotSent(contactId: Int){
+        repository.deleteMessageNotSent(contactId)
     }
 
     private fun buildObjectDeleteMessages(

@@ -355,10 +355,12 @@ class ConversationRepository @Inject constructor(
 
         val json = jsonAdapterValidate.toJson(validateMessage)
 
-        socketService.emitToClientConversation(json.toString())
-
         if (listIds.isNotEmpty()) {
+
             try {
+
+                socketService.emitToClientConversation(json.toString())
+
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
                         listIds
