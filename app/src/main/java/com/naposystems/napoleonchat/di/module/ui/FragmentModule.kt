@@ -35,7 +35,6 @@ import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaFragment
 import com.naposystems.napoleonchat.ui.profile.ProfileFragment
 import com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountFragment
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsFragment
-import com.naposystems.napoleonchat.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment
 import com.naposystems.napoleonchat.ui.register.accessPin.AccessPinFragment
 import com.naposystems.napoleonchat.ui.register.enterCode.EnterCodeFragment
 import com.naposystems.napoleonchat.ui.register.sendCode.SendCodeFragment
@@ -52,7 +51,6 @@ import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.napoleonchat.ui.timeFormat.TimeFormatDialogFragment
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeFragment
 import com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment
-import com.naposystems.napoleonchat.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -181,12 +179,6 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeAttachmentGalleryFragment(): AttachmentGalleryFragment
-
-    @ContributesAndroidInjector
-    abstract fun contributeValidatePasswordPreviousRecoveryAccountFragment(): ValidatePasswordPreviousRecoveryAccountFragment
-
-    @ContributesAndroidInjector
-    abstract fun contributeRecoveryOlderAccountQuestionsFragment(): RecoveryOlderAccountQuestionsFragment
 
     @ContributesAndroidInjector
     abstract fun contributeAccountAttackDialogFragment(): AccountAttackDialogFragment

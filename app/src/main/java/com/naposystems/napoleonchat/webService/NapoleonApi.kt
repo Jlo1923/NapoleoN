@@ -45,8 +45,6 @@ import com.naposystems.napoleonchat.dto.subscription.*
 import com.naposystems.napoleonchat.dto.user.LogoutResDTO
 import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameResDTO
-import com.naposystems.napoleonchat.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountReqDTO
-import com.naposystems.napoleonchat.dto.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountResDTO
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.BLOCK_ATTACKER
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CALL_CONTACT
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CANCEL_CALL
@@ -227,9 +225,6 @@ interface NapoleonApi {
 
     @GET(DELETE_MESSAGES_FOR_ALL)
     suspend fun getDeletedMessages(): Response<List<String>>
-
-    @POST(VALIDATE_PASSWORD_OLD_ACCOUNT)
-    suspend fun sendPasswordOlderAccount(@Body validatePasswordPreviousRecoveryAccountReqDTO: ValidatePasswordPreviousRecoveryAccountReqDTO): Response<ValidatePasswordPreviousRecoveryAccountResDTO>
 
     @GET(GET_QUESTIONS_OLD_USER)
     suspend fun getRecoveryOlderQuestions(@Path("nick") nickname: String): Response<RecoveryOlderAccountQuestionsResDTO>

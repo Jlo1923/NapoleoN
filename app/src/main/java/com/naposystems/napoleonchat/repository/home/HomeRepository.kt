@@ -54,7 +54,8 @@ class HomeRepository @Inject constructor(
         var user: User? = null
 
         coroutineScope {
-            user = userLocalDataSource.getUser(firebaseId)
+//            user = userLocalDataSource.getUserLiveData(firebaseId)
+            user = userLocalDataSource.getMyUser()
         }
 
         val channelName =

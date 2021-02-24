@@ -47,11 +47,14 @@ class AddContactRepository @Inject constructor(
     }
 
     override suspend fun getUser(): User {
-        return userLocalDataSource.getUser(
-            sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_FIREBASE_ID,
-                ""
-            )
-        )
+
+        return userLocalDataSource.getMyUser()
+//
+//        return userLocalDataSource.getUser(
+//            sharedPreferencesManager.getString(
+//                Constants.SharedPreferences.PREF_FIREBASE_ID,
+//                ""
+//            )
+//        )
     }
 }

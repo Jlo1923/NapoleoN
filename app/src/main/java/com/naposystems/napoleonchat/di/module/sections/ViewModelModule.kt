@@ -35,7 +35,6 @@ import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaViewModel
 import com.naposystems.napoleonchat.ui.profile.ProfileViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
-import com.naposystems.napoleonchat.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsViewModel
 import com.naposystems.napoleonchat.ui.register.accessPin.AccessPinViewModel
 import com.naposystems.napoleonchat.ui.register.enterCode.EnterCodeViewModel
 import com.naposystems.napoleonchat.ui.register.sendCode.SendCodeViewModel
@@ -50,7 +49,6 @@ import com.naposystems.napoleonchat.ui.status.StatusViewModel
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel
 import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeViewModel
-import com.naposystems.napoleonchat.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -97,7 +95,7 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(SplashViewModel::class)
-    internal abstract fun binSplashViewModel(viewModel: SplashViewModel): ViewModel
+    internal abstract fun bindSplashViewModel(viewModel: SplashViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -207,42 +205,42 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(RecoveryAccountViewModel::class)
-    internal abstract fun binRecoveryAccountViewModel(viewModel: RecoveryAccountViewModel): ViewModel
+    internal abstract fun bindRecoveryAccountViewModel(viewModel: RecoveryAccountViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(RecoveryAccountQuestionsViewModel::class)
-    internal abstract fun binRecoveryAccountQuestionsViewModel(viewModel: RecoveryAccountQuestionsViewModel): ViewModel
+    internal abstract fun bindRecoveryAccountQuestionsViewModel(viewModel: RecoveryAccountQuestionsViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(AddContactViewModel::class)
-    internal abstract fun binAddContactViewModel(viewModel: AddContactViewModel): ViewModel
+    internal abstract fun bindAddContactViewModel(viewModel: AddContactViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
-    internal abstract fun binHomeViewModel(viewModel: HomeViewModel): ViewModel
+    internal abstract fun bindHomeViewModel(viewModel: HomeViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(ActivateBiometricsViewModel::class)
-    internal abstract fun binActivateBiometricsViewModel(viewModel: ActivateBiometricsViewModel): ViewModel
-
+    internal abstract fun bindActivateBiometricsViewModel(viewModel: ActivateBiometricsViewModel): ViewModel
+    
     @Binds
     @IntoMap
     @ViewModelKey(EnterPinViewModel::class)
-    internal abstract fun binEnterPinViewModel(viewModel: EnterPinViewModel): ViewModel
+    internal abstract fun bindEnterPinViewModel(viewModel: EnterPinViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(UnlockAppTimeViewModel::class)
-    internal abstract fun binUnlockAppTimeViewModel(viewModel: UnlockAppTimeViewModel): ViewModel
+    internal abstract fun bindUnlockAppTimeViewModel(viewModel: UnlockAppTimeViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(BaseViewModel::class)
-    internal abstract fun binBaseViewModel(viewModel: BaseViewModel): ViewModel
+    internal abstract fun bindBaseViewModel(viewModel: BaseViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -308,16 +306,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AttachmentGalleryViewModel::class)
     internal abstract fun bindAttachmentGalleryViewModel(viewModel: AttachmentGalleryViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ValidatePasswordPreviousRecoveryAccountViewModel::class)
-    internal abstract fun bindValidatePasswordPreviousRecoveryAccountViewModel(viewModel: ValidatePasswordPreviousRecoveryAccountViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(RecoveryOlderAccountQuestionsViewModel::class)
-    internal abstract fun bindRecoveryOlderAccountQuestionsViewModel(viewModel: RecoveryOlderAccountQuestionsViewModel): ViewModel
 
     @Binds
     @IntoMap

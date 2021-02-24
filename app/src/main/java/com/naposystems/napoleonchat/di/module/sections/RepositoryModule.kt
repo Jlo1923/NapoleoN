@@ -34,7 +34,6 @@ import com.naposystems.napoleonchat.repository.previewMedia.PreviewMediaReposito
 import com.naposystems.napoleonchat.repository.profile.ProfileRepository
 import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepository
 import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepository
-import com.naposystems.napoleonchat.repository.recoveryOlderAccountQuestionsRepository.RecoveryOlderAccountQuestionsRepository
 import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepository
 import com.naposystems.napoleonchat.repository.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionRepository
 import com.naposystems.napoleonchat.repository.securitySettings.SecuritySettingsRepository
@@ -51,7 +50,6 @@ import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeReposi
 import com.naposystems.napoleonchat.repository.uploadService.UploadServiceRepository
 import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
-import com.naposystems.napoleonchat.repository.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountRepository
 import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServiceRepository
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.service.webRTCCall.IContractWebRTCCallService
@@ -86,7 +84,6 @@ import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
-import com.naposystems.napoleonchat.ui.recoveryOlderAccountQuestions.IContractRecoveryOlderAccountQuestions
 import com.naposystems.napoleonchat.ui.register.enterCode.IContractEnterCode
 import com.naposystems.napoleonchat.ui.register.sendCode.IContractSendCode
 import com.naposystems.napoleonchat.ui.register.validateNickname.IContractValidateNickname
@@ -102,7 +99,6 @@ import com.naposystems.napoleonchat.ui.timeAccessPin.IContractTimeAccessPin
 import com.naposystems.napoleonchat.ui.timeFormat.IContractTimeFormat
 import com.naposystems.napoleonchat.ui.unlockAppTime.IContractUnlockAppTime
 import com.naposystems.napoleonchat.ui.userDisplayFormat.IContractUserDisplayFormat
-import com.naposystems.napoleonchat.ui.validatePasswordPreviousRecoveryAccount.IContractValidatePasswordPreviousRecoveryAccount
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.IContractDefaultPreferences
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
@@ -253,10 +249,6 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindRecoveryOlderAccountQuestionsRepository(repository: RecoveryOlderAccountQuestionsRepository): IContractRecoveryOlderAccountQuestions.Repository
-
-    @Binds
-    @Singleton
     abstract fun bindRegisterRecoveryAccountRepository(repository: RegisterRecoveryAccountRepository): IContractRegisterRecoveryAccount.Repository
 
     @Binds
@@ -314,10 +306,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindValidateNicknameRepository(repository: ValidateNicknameRepository): IContractValidateNickname.Repository
-
-    @Binds
-    @Singleton
-    abstract fun bindValidatePasswordPreviousRecoveryAccountRepository(repository: ValidatePasswordPreviousRecoveryAccountRepository): IContractValidatePasswordPreviousRecoveryAccount.Repository
 
     @Binds
     @Singleton

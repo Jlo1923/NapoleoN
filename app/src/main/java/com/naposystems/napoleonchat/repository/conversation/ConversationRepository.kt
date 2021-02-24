@@ -291,7 +291,7 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun getLocalUser(): User {
-        return userLocalDataSource.getUser(firebaseId)
+        return userLocalDataSource.getMyUser()
     }
 
     override fun insertMessage(message: Message): Long {

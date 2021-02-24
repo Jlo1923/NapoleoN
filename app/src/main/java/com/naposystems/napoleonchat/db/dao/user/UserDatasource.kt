@@ -5,9 +5,11 @@ import com.naposystems.napoleonchat.entity.User
 
 interface UserDataSource {
 
+    fun getMyUser():User
+
     suspend fun insertUser(user: User)
 
-    suspend fun getUser(firebaseId: String): User
+//    suspend fun getUser(firebaseId: String): User
 
     suspend fun getUserLiveData(firebaseId: String): LiveData<User>
 

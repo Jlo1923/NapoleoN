@@ -15,6 +15,7 @@ import com.naposystems.napoleonchat.utility.WebServiceUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -49,7 +50,7 @@ class CreateAccountRepository @Inject constructor(
 
     override suspend fun createUser(user: User) {
         userLocalDataSource.insertUser(user)
-        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
+//        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 
     override suspend fun updateAccessPin(newAccessPin: String, firebaseId: String) {
@@ -57,6 +58,9 @@ class CreateAccountRepository @Inject constructor(
     }
 
     override fun createdUserPref() {
+
+        Timber.d("AccountStatus createdUserPref ${Constants.AccountStatus.ACCOUNT_CREATED.id}")
+
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             Constants.AccountStatus.ACCOUNT_CREATED.id
@@ -73,7 +77,7 @@ class CreateAccountRepository @Inject constructor(
                 Constants.SharedPreferences.PREF_FIREBASE_ID, ""
             )
             val createAtMilliseconds = TimeUnit.SECONDS.toMillis(
-                userLocalDataSource.getUser(firebaseId).createAt
+                userLocalDataSource.getMyUser().createAt
             )
 
             val calendar = Calendar.getInstance()

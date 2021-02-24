@@ -9,13 +9,17 @@ class UserLocalDataSource @Inject constructor(
     private val napoleonDatabase: NapoleonRoomDatabase,
     private val userDao: UserDao) : UserDataSource {
 
+    override fun getMyUser(): User {
+        return userDao.getMyUser()
+    }
+
     override suspend fun insertUser(user: User) {
         userDao.insertUser(user)
     }
 
-    override suspend fun getUser(firebaseId: String): User {
-        return userDao.getUser(firebaseId)
-    }
+//    override suspend fun getUser(firebaseId: String): User {
+//        return userDao.getUser(firebaseId)
+//    }
 
     override suspend fun getUserLiveData(firebaseId: String): LiveData<User> {
         return userDao.getUserLiveData(firebaseId)

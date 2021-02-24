@@ -1,13 +1,12 @@
 package com.naposystems.napoleonchat.repository.socket
 
-import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
 import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
+import com.naposystems.napoleonchat.db.dao.user.UserDataSource
 import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.dto.conversation.call.readyForCall.ReadyForCallReqDTO
@@ -43,7 +42,8 @@ class SocketRepository @Inject constructor(
     private val messageLocalDataSource: MessageDataSource,
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val quoteDataSource: QuoteDataSource,
-    private val contactLocalDataSource: ContactDataSource
+    private val contactLocalDataSource: ContactDataSource,
+    private val userDataSource: UserDataSource
 ) : IContractSocketService.Repository {
 
     override suspend fun getContacts() {
@@ -77,6 +77,11 @@ class SocketRepository @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e)
         }
+    }
+
+    override fun getUser(): Int {
+        return userDataSource.getMyUser().id
+
     }
 
     override fun getMyMessages(contactId: Int?) {

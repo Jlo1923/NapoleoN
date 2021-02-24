@@ -13,10 +13,10 @@ class EditAccessPinRepository @Inject constructor(
 ) : IContractEditAccessPin.Repository {
 
     override suspend fun getLocalUser(): User {
-        val firebaseId = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
-        )
-        return userLocalDataSource.getUser(firebaseId)
+//        val firebaseId = sharedPreferencesManager.getString(
+//            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+//        )
+        return userLocalDataSource.getMyUser()
     }
 
     override suspend fun updateAccessPin(newAccessPin: String, firebaseId: String) {

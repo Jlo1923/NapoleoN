@@ -287,6 +287,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.frameLayout.elevation = 0f
                 }
                 R.id.accessPinFragment -> {
+
+                    Timber.d("AccountStatus Destination Listener {$accountStatus}")
+
                     if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {
                         hideToolbar()
                         disableDrawer()
@@ -650,6 +653,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
             when (accountStatus) {
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+
+                    Timber.d("AccountStatus validLockTime {$accountStatus}")
+
                     val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
                     if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
                         val currentTime = System.currentTimeMillis()

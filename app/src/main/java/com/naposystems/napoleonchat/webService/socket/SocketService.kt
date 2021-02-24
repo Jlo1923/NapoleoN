@@ -340,8 +340,12 @@ class SocketService @Inject constructor(
 
     private fun subscribeToGeneralChannel() {
         try {
-            val userId =
-                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+
+            val userId = repository.getUser()
+
+//            val userId = repository.getUser
+//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
             if (userId != 0) {
 
@@ -412,8 +416,11 @@ class SocketService @Inject constructor(
         Timber.d("*Test: Global $this")
         try {
 
-            val userId =
-                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+            val userId = repository.getUser()
+
+//            val userId = repository.getUser
+//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
             if (userId != 0) {
                 val channelName = "private-global"
@@ -458,8 +465,11 @@ class SocketService @Inject constructor(
                             val jsonAdapter: JsonAdapter<ValidateMessageEventDTO> =
                                 moshi.adapter(ValidateMessageEventDTO::class.java)
                             val dataEvent = jsonAdapter.fromJson(dataEventRes)
-                            val userId =
-                                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+                            val userId = repository.getUser()
+
+//            val userId = repository.getUser
+//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
                             val messages = dataEvent?.messages?.filter {
                                 it.user == userId

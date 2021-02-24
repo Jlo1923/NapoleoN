@@ -25,10 +25,10 @@ class AppearanceSettingsRepository @Inject constructor(
     }
 
     override suspend fun getConversationBackground(): String {
-        val firebaseId = sharedPreferencesManager
-            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
+//        val firebaseId = sharedPreferencesManager
+//            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
 
-        val user = userLocalDataSource.getUser(firebaseId)
+        val user = userLocalDataSource.getMyUser()
 
         return user.chatBackground
     }
