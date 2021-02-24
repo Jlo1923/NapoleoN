@@ -11,10 +11,13 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class ConversationMuteRepository @Inject constructor(
-    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val contactDao: ContactDao
 ) : IMuteConversation.Repository {
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override suspend fun saveTimeMuteConversation(idContact: Int, time: MuteConversationReqDTO) : Response<MuteConversationResDTO> {
         return napoleonApi.updateMuteConversation(idContact, time)

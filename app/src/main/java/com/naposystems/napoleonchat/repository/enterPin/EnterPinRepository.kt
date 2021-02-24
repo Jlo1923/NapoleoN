@@ -16,7 +16,8 @@ class EnterPinRepository @Inject constructor(
 //            Constants.SharedPreferences.PREF_FIREBASE_ID,
 //            ""
 //        )
-        return userLocalDataSource.getMyUser()
+        val user = userLocalDataSource.getMyUser()
+        return user
     }
 
     override suspend fun getAttempts(): Int {

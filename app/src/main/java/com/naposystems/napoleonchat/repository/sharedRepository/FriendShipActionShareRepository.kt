@@ -17,11 +17,14 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class FriendShipActionShareRepository @Inject constructor(
-    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val contactLocalDataSource: ContactDataSource,
     private val messageLocalDataSource: MessageDataSource
 ) : IContractFriendShipAction.Repository {
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override suspend fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO> {
         val request = FriendshipRequestPutReqDTO(Constants.FriendshipRequestPutAction.REFUSE.action)

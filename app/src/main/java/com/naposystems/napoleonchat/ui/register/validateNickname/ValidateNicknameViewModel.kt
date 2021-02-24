@@ -14,7 +14,6 @@ import javax.inject.Inject
 
 class ValidateNicknameViewModel
 @Inject constructor(
-    private val moshi: Moshi,
     private val repository: ValidateNicknameRepository
 ) : ViewModel(), IContractValidateNickname.ViewModel {
 
@@ -62,6 +61,8 @@ class ValidateNicknameViewModel
                 } else {
                     when (response.code()) {
                         422 -> {
+
+                            val moshi = Moshi.Builder().build()
 
                             val adapter = moshi.adapter(SendCodeErrorDTO::class.java)
 

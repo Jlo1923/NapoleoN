@@ -106,7 +106,7 @@ class SharedPreferencesManager
         editor.remove(SharedPreferences.PREF_LANGUAGE_SELECTED)
         editor.remove(SharedPreferences.PREF_ACCOUNT_STATUS)
         editor.remove(SharedPreferences.PREF_FIREBASE_ID)
-        editor.remove(SharedPreferences.PREF_USER_ID)
+//        editor.remove(SharedPreferences.PREF_USER_ID)
         editor.remove(SharedPreferences.PREF_COLOR_SCHEME)
         editor.remove(SharedPreferences.PREF_USER_DISPLAY_FORMAT)
         editor.remove(SharedPreferences.PREF_TIME_FORMAT)

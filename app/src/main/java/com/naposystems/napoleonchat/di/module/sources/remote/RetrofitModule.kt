@@ -41,7 +41,6 @@ class RetrofitModule {
     @Provides
     @Singleton
     fun provideHttpClient(
-        crypto: Crypto,
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ): OkHttpClient {
@@ -75,7 +74,6 @@ class RetrofitModule {
 
                 if (BuildConfig.ENCRYPT_API) {
                     encryptRequest(
-                        crypto,
                         original,
                         context,
                         firebaseInstanceId,
@@ -123,7 +121,6 @@ class RetrofitModule {
     }
 
     private fun encryptRequest(
-        crypto: Crypto,
         original: Request,
         context: Context,
         firebaseInstanceId: String,
@@ -134,6 +131,8 @@ class RetrofitModule {
         val body = original.body()
 
         val rawBodyRequest = bodyToString(body)
+
+        val crypto = Crypto()
 
         val request: Request.Builder = original.newBuilder()
             .header("languageIso", LocaleHelper.getLanguagePreference(context))

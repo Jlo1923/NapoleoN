@@ -22,13 +22,15 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class CreateAccountRepository @Inject constructor(
-    private val moshi: Moshi,
-    private val crypto: Crypto,
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
 ) :
     IContractAccessPin.Repository {
+
+    private val moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override fun getFirebaseId(): String {
         return sharedPreferencesManager.getString(
@@ -91,6 +93,8 @@ class CreateAccountRepository @Inject constructor(
     }
 
     override fun saveSecretKey(secretKey: String) {
+
+        val crypto = Crypto()
 
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.PREF_SECRET_KEY,

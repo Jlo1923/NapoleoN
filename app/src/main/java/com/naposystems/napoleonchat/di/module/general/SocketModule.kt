@@ -47,14 +47,12 @@ class SocketModule {
     @Provides
     @Singleton
     fun provideSocketClient(
-        moshi: Moshi,
         context: Context,
         socket: Pusher,
         sharedPreferencesManager: SharedPreferencesManager,
         socketRepository: IContractSocketService.Repository
     ): IContractSocketService.SocketService {
         return SocketService(
-            moshi,
             context,
             socket,
             sharedPreferencesManager,

@@ -36,7 +36,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SocketRepository @Inject constructor(
-    private val moshi: Moshi,
     private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
     private val messageLocalDataSource: MessageDataSource,
@@ -162,7 +161,7 @@ class SocketRepository @Inject constructor(
                 } else {
                     newMessageDataEventRes.message
                 }
-
+                val moshi = Moshi.Builder().build()
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
 

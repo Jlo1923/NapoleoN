@@ -9,9 +9,10 @@ import javax.inject.Inject
 
 class CryptoMessage
 @Inject constructor(
-    private val crypto: Crypto,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractCryptoMessage {
+
+    val crypto = Crypto()
 
     //region Implementation IContractCryptoMessage
     override fun decryptMessageBody(body: String): String {

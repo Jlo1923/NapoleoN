@@ -33,7 +33,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class NotificationUtilsRepository @Inject constructor(
-    private val moshi: Moshi,
     private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
     private val socketService: IContractSocketService.SocketService,
@@ -44,6 +43,10 @@ class NotificationUtilsRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractNotificationUtils.Repository {
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     private suspend fun getRemoteContact() {
         try {

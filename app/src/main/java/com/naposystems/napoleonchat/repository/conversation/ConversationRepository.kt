@@ -61,7 +61,6 @@ import javax.inject.Inject
 
 class ConversationRepository @Inject constructor(
     private val context: Context,
-    private val moshi: Moshi,
     private val socketService: IContractSocketService.SocketService,
     private val userLocalDataSource: UserLocalDataSource,
     private val messageLocalDataSource: MessageDataSource,
@@ -72,6 +71,10 @@ class ConversationRepository @Inject constructor(
     private val messageNotSentDataSource: MessageNotSentDataSource
 ) :
     IContractConversation.Repository {
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     private val firebaseId: String by lazy {
         sharedPreferencesManager

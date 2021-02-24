@@ -19,12 +19,14 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class RecoveryAccountQuestionsRepository @Inject constructor(
-    private val moshi: Moshi,
-    private val crypto: Crypto,
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val userLocalDataSource: UserLocalDataSource
 ) : IContractRecoveryAccountQuestions.Repository {
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     private lateinit var firebaseId: String
 
@@ -51,6 +53,8 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
     }
 
     override fun saveSecretKey(secretKey: String) {
+
+        val crypto = Crypto()
 
         val secretKey = crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
 

@@ -13,9 +13,12 @@ import javax.inject.Inject
 
 class ContactUsRepository
 @Inject constructor(
-    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi
     ) :    IContractContactUs.Repository {
+
+    private val moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override suspend fun sendPqrs(contactUsReqDTO: ContactUsReqDTO): Response<ContactUsResDTO> {
         return napoleonApi.sendPqrs(contactUsReqDTO)

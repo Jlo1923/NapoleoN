@@ -9,7 +9,7 @@ interface UserDataSource {
 
     suspend fun insertUser(user: User)
 
-//    suspend fun getUser(firebaseId: String): User
+    suspend fun getUser(firebaseId: String): User
 
     suspend fun getUserLiveData(firebaseId: String): LiveData<User>
 

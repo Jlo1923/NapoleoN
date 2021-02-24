@@ -21,11 +21,14 @@ import javax.inject.Inject
 
 class ShareContactRepository
 @Inject constructor(
-    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val contactLocalDataSource: ContactDataSource,
     private val messageLocalDataSource: MessageLocalDataSource
 ) : IContractShareContact.Repository {
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override suspend fun sendBlockedContact(contact: Contact): Response<BlockedContactResDTO> {
         return napoleonApi.putBlockContact(contact.id.toString())

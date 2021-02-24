@@ -15,10 +15,13 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class RegisterRecoveryAccountQuestionRepository @Inject constructor(
-    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractRegisterRecoveryAccountQuestion.Repository {
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override suspend fun getQuestions(): Response<List<RegisterRecoveryAccountQuestionResDTO>> {
         return napoleonApi.getQuestions()

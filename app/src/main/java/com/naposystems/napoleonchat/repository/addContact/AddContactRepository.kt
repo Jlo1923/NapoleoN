@@ -14,7 +14,6 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class AddContactRepository @Inject constructor(
-    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
@@ -38,6 +37,8 @@ class AddContactRepository @Inject constructor(
     }
 
     override fun getError(response: Response<FriendshipRequestPutResDTO>): String {
+
+        val moshi = Moshi.Builder().build()
 
         val adapter = moshi.adapter(FriendshipRequestPutErrorDTO::class.java)
 

@@ -13,17 +13,10 @@ class CryptoModule {
 
     @Provides
     @Singleton
-    fun provideCrypto(): Crypto {
-        return Crypto()
-    }
-
-    @Provides
-    @Singleton
     fun provideCryptoMessage(
-        crypto: Crypto,
         sharedPreferencesManager: SharedPreferencesManager
     ): CryptoMessage {
-        return CryptoMessage(crypto, sharedPreferencesManager)
+        return CryptoMessage( sharedPreferencesManager)
     }
 
 }

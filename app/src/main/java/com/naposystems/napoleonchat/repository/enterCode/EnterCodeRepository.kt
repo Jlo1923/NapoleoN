@@ -19,10 +19,13 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class EnterCodeRepository @Inject constructor(
-    private val moshi: Moshi,
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractEnterCode.Repository {
+
+    private val moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override suspend fun sendCodeToWs(code: String): Response<EnterCodeResDTO> {
         val firebase = sharedPreferencesManager.getString(

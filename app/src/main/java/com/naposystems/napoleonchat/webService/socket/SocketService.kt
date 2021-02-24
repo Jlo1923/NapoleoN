@@ -31,12 +31,16 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SocketService @Inject constructor(
-    private val moshi: Moshi,
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val repository: IContractSocketService.Repository
 ) : IContractSocketService.SocketService {
+
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     private val app: NapoleonApplication by lazy {
         context as NapoleonApplication

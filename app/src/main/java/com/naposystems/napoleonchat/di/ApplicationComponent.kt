@@ -31,7 +31,7 @@ import javax.inject.Singleton
         SocketModule::class,
         WebRTCClientModule::class,
         CryptoModule::class,
-        MoshiModule::class,
+//        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,
 
