@@ -91,11 +91,12 @@ class SplashFragment : Fragment() {
             when (accountStatus) {
                 Constants.AccountStatus.NO_ACCOUNT.id -> {
 
-
                     Timber.d("AccountStatus ToLanding")
 
                     binding.viewWhite.visibility = View.GONE
-                    findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLandingFragment())
+                    findNavController().navigate(
+                        R.id.action_splashFragment_to_landingFragment
+                    )
                     viewModel.doneNavigateToLanding()
                 }
                 Constants.AccountStatus.CODE_VALIDATED.id -> {
@@ -103,7 +104,7 @@ class SplashFragment : Fragment() {
                     Timber.d("AccountStatus ToRegister")
 
                     findNavController().navigate(
-                        SplashFragmentDirections.actionSplashFragmentToRegisterFragment()
+                        R.id.action_splashFragment_to_registerFragment
                     )
                     viewModel.doneNavigateToLanding()
                 }
@@ -129,7 +130,7 @@ class SplashFragment : Fragment() {
                             Timber.d("lockTypeApp FOREVER_UNLOCK")
 
                             findNavController().navigate(
-                                SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                                R.id.action_splashFragment_to_homeFragment
                             )
                             viewModel.doneNavigateToLanding()
                         }
@@ -166,11 +167,11 @@ class SplashFragment : Fragment() {
     private fun validateTimeForUnlockApp() {
         if (System.currentTimeMillis() >= timeUnlockApp) {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToEnterPinFragment()
+                R.id.action_splashFragment_to_enterPinFragment
             )
         } else {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToUnlockAppTimeFragment()
+                R.id.action_splashFragment_to_unlockAppTimeFragment
             )
         }
     }
@@ -181,11 +182,11 @@ class SplashFragment : Fragment() {
 
         if (currentTime < lockTime && lockStatus == Constants.LockStatus.UNLOCK.state) {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                R.id.action_splashFragment_to_homeFragment
             )
         } else {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToEnterPinFragment()
+                R.id.action_splashFragment_to_enterPinFragment
             )
         }
 
