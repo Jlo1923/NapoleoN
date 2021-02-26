@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.webService.socket
 
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageDataEventRes
+import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.pusher.client.channel.PresenceChannel
 import org.json.JSONObject
@@ -63,6 +64,8 @@ interface IContractSocketService {
         fun validateMessageType(messagesWebIds: List<String>, state: Int)
 
         fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
+
+        fun notifyMessageReceived(messageId: String)
     }
 
 }
