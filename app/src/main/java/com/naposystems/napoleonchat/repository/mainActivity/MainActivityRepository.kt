@@ -19,9 +19,9 @@ class MainActivityRepository @Inject constructor(
     IContractMainActivity.Repository {
 
     override suspend fun getUser(): User {
-        val firebaseId = sharedPreferencesManager
-            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-        return userLocalDataSource.getUser(firebaseId)
+//        val firebaseId = sharedPreferencesManager
+//            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
+        return userLocalDataSource.getMyUser()
     }
 
     override suspend fun getAccountStatus(): Int {

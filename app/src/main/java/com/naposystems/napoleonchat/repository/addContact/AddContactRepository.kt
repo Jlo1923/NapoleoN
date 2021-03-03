@@ -37,7 +37,9 @@ class AddContactRepository @Inject constructor(
     }
 
     override fun getError(response: Response<FriendshipRequestPutResDTO>): String {
+
         val moshi = Moshi.Builder().build()
+
         val adapter = moshi.adapter(FriendshipRequestPutErrorDTO::class.java)
 
         val updateUserInfoError = adapter.fromJson(response.errorBody()!!.string())
@@ -46,11 +48,14 @@ class AddContactRepository @Inject constructor(
     }
 
     override suspend fun getUser(): User {
-        return userLocalDataSource.getUser(
-            sharedPreferencesManager.getString(
-                Constants.SharedPreferences.PREF_FIREBASE_ID,
-                ""
-            )
-        )
+
+        return userLocalDataSource.getMyUser()
+//
+//        return userLocalDataSource.getUser(
+//            sharedPreferencesManager.getString(
+//                Constants.SharedPreferences.PREF_FIREBASE_ID,
+//                ""
+//            )
+//        )
     }
 }

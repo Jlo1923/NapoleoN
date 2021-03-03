@@ -12,6 +12,7 @@ import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -23,11 +24,11 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
     private val userLocalDataSource: UserLocalDataSource
 ) : IContractRecoveryAccountQuestions.Repository {
 
-    private lateinit var firebaseId: String
-
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
     }
+
+    private lateinit var firebaseId: String
 
     override suspend fun sendRecoveryAnswers(
         nickname: String,
@@ -42,6 +43,9 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
     }
 
     override fun setRecoveredAccountPref() {
+
+        Timber.d("AccountStatus setRecoveredAccountPref ${Constants.AccountStatus.ACCOUNT_RECOVERED.id}")
+
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             Constants.AccountStatus.ACCOUNT_RECOVERED.id
@@ -49,6 +53,7 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
     }
 
     override fun saveSecretKey(secretKey: String) {
+
         val crypto = Crypto()
 
         val secretKey = crypto.decryptCipherTextWithRandomIV(secretKey, BuildConfig.KEY_OF_KEYS)
@@ -87,7 +92,7 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
                 Constants.SharedPreferences.PREF_FIREBASE_ID, ""
             )
             val createAtMilliseconds = TimeUnit.SECONDS.toMillis(
-                userLocalDataSource.getUser(firebaseId).createAt
+                userLocalDataSource.getMyUser().createAt
             )
 
             val calendar = Calendar.getInstance()
@@ -109,7 +114,6 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
 
     override fun getError(response: ResponseBody): ArrayList<String> {
 
-        val moshi = Moshi.Builder().build()
         val adapter = moshi.adapter(RecoveryAccountQuestionsErrorDTO::class.java)
         val error = adapter.fromJson(response.string())
         val errorList = ArrayList<String>()
@@ -121,6 +125,6 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
     override suspend fun insertUser(recoveryAccountUserDTO: RecoveryAccountUserDTO) {
         val user = RecoveryAccountUserDTO.toUserModel(recoveryAccountUserDTO, firebaseId)
         userLocalDataSource.insertUser(user)
-        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
+//        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 }

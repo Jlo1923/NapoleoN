@@ -12,11 +12,12 @@ class EnterPinRepository @Inject constructor(
     private val userLocalDataSource: UserLocalDataSource
 ) : IContractEnterPin.Repository {
     override suspend fun getAccessPin(): User {
-        val firebaseId = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_FIREBASE_ID,
-            ""
-        )
-        return userLocalDataSource.getUser(firebaseId)
+//        val firebaseId = sharedPreferencesManager.getString(
+//            Constants.SharedPreferences.PREF_FIREBASE_ID,
+//            ""
+//        )
+        val user = userLocalDataSource.getMyUser()
+        return user
     }
 
     override suspend fun getAttempts(): Int {

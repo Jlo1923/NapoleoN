@@ -3,7 +3,6 @@ package com.naposystems.napoleonchat.webService.socket
 import android.content.Context
 import android.content.Intent
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReadedDTO
 import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventRes
@@ -38,16 +37,14 @@ class SocketService @Inject constructor(
     private val repository: IContractSocketService.Repository
 ) : IContractSocketService.SocketService {
 
+
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
+
     private val app: NapoleonApplication by lazy {
         context as NapoleonApplication
     }
-
-    private val firebaseId by lazy {
-        sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-    }
-
-    private val cryptoMessage = CryptoMessage(context)
-    private val moshi = Moshi.Builder().build()
 
     private lateinit var generalChannel: PrivateChannel
     private lateinit var globalChannel: PrivateChannel
@@ -118,9 +115,7 @@ class SocketService @Inject constructor(
                     Timber.d("event: ${event.data}")
                 }
 
-                override fun onAuthenticationFailure(message: String, e: java.lang.Exception) {
-
-                }
+                override fun onAuthenticationFailure(message: String, e: java.lang.Exception) = Unit
 
                 override fun onSubscriptionSucceeded(channelName: String) {
                     listenCallEvents(callChannel!!)
@@ -166,9 +161,7 @@ class SocketService @Inject constructor(
                 Timber.d("event: ${event.data}")
             }
 
-            override fun onAuthenticationFailure(message: String, e: java.lang.Exception) {
-
-            }
+            override fun onAuthenticationFailure(message: String, e: java.lang.Exception) = Unit
 
             override fun onSubscriptionSucceeded(channelName: String) {
                 listenCallEvents(callChannel!!)
@@ -208,9 +201,7 @@ class SocketService @Inject constructor(
                     override fun onAuthenticationFailure(
                         message: String,
                         e: java.lang.Exception
-                    ) {
-
-                    }
+                    ) = Unit
 
                     override fun onSubscriptionSucceeded(channelName: String) {
                         Timber.d("onSubscriptionSucceeded: $channelName")
@@ -269,13 +260,9 @@ class SocketService @Inject constructor(
                 pusher.connect()
             }
 
-            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) = Unit
 
-            }
-
-            override fun onSubscriptionSucceeded(channelName: String?) {
-
-            }
+            override fun onSubscriptionSucceeded(channelName: String?) = Unit
         })
     }
 
@@ -357,8 +344,12 @@ class SocketService @Inject constructor(
 
     private fun subscribeToGeneralChannel() {
         try {
-            val userId =
-                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+
+            val userId = repository.getUser()
+
+//            val userId = repository.getUser
+//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
             if (userId != 0) {
 
@@ -429,8 +420,11 @@ class SocketService @Inject constructor(
         Timber.d("*Test: Global $this")
         try {
 
-            val userId =
-                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+            val userId = repository.getUser()
+
+//            val userId = repository.getUser
+//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
             if (userId != 0) {
                 val channelName = "private-global"
@@ -475,8 +469,11 @@ class SocketService @Inject constructor(
                             val jsonAdapter: JsonAdapter<ValidateMessageEventDTO> =
                                 moshi.adapter(ValidateMessageEventDTO::class.java)
                             val dataEvent = jsonAdapter.fromJson(dataEventRes)
-                            val userId =
-                                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
+
+                            val userId = repository.getUser()
+
+//            val userId = repository.getUser
+//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
                             val messages = dataEvent?.messages?.filter {
                                 it.user == userId
@@ -551,7 +548,6 @@ class SocketService @Inject constructor(
 
                                     val validateMessage = ValidateMessageEventDTO(messages)
 
-                                    val moshi = Moshi.Builder().build()
                                     val jsonAdapterValidate =
                                         moshi.adapter(ValidateMessageEventDTO::class.java)
 
@@ -572,13 +568,9 @@ class SocketService @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String?,
                     e: java.lang.Exception?
-                ) {
+                ) = Unit
 
-                }
-
-                override fun onSubscriptionSucceeded(channelName: String?) {
-
-                }
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
 
@@ -609,13 +601,9 @@ class SocketService @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String?,
                     e: java.lang.Exception?
-                ) {
+                ) = Unit
 
-                }
-
-                override fun onSubscriptionSucceeded(channelName: String?) {
-
-                }
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
 
@@ -668,13 +656,9 @@ class SocketService @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String?,
                     e: java.lang.Exception?
-                ) {
+                ) = Unit
 
-                }
-
-                override fun onSubscriptionSucceeded(channelName: String?) {
-
-                }
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
 
@@ -690,13 +674,9 @@ class SocketService @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String?,
                     e: java.lang.Exception?
-                ) {
+                ) = Unit
 
-                }
-
-                override fun onSubscriptionSucceeded(channelName: String?) {
-
-                }
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
 
@@ -826,7 +806,6 @@ class SocketService @Inject constructor(
                 override fun onEvent(event: PusherEvent) {
                     Timber.d("CallFriendEvent SocketData: ${event.data}")
                     try {
-                        val moshi = Moshi.Builder().build()
 
                         val adapter: JsonAdapter<IncomingCall> =
                             moshi.adapter(IncomingCall::class.java)
@@ -870,13 +849,9 @@ class SocketService @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String?,
                     e: java.lang.Exception?
-                ) {
+                ) = Unit
 
-                }
-
-                override fun onSubscriptionSucceeded(channelName: String?) {
-
-                }
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
 
@@ -892,13 +867,9 @@ class SocketService @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String?,
                     e: java.lang.Exception?
-                ) {
+                ) = Unit
 
-                }
-
-                override fun onSubscriptionSucceeded(channelName: String?) {
-
-                }
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
 
@@ -924,10 +895,9 @@ class SocketService @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String?,
                     e: java.lang.Exception?
-                ) {
-                }
+                ) = Unit
 
-                override fun onSubscriptionSucceeded(channelName: String?) {}
+                override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
 

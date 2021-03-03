@@ -22,6 +22,10 @@ class FriendShipActionShareRepository @Inject constructor(
     private val messageLocalDataSource: MessageDataSource
 ) : IContractFriendShipAction.Repository {
 
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
+
     override suspend fun refuseFriendshipRequest(friendShipRequest: FriendShipRequest): Response<FriendshipRequestPutResDTO> {
         val request = FriendshipRequestPutReqDTO(Constants.FriendshipRequestPutAction.REFUSE.action)
         return napoleonApi.putFriendshipRequest(friendShipRequest.id.toString(), request)
@@ -38,7 +42,7 @@ class FriendShipActionShareRepository @Inject constructor(
     }
 
     override fun getError(response: Response<FriendshipRequestPutResDTO>): String {
-        val moshi = Moshi.Builder().build()
+
         val adapter = moshi.adapter(FriendshipRequestPutErrorDTO::class.java)
 
         val updateUserInfoError = adapter.fromJson(response.errorBody()!!.string())

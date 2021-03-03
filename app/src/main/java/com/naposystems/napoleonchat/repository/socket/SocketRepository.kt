@@ -1,12 +1,12 @@
 package com.naposystems.napoleonchat.repository.socket
 
-import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
 import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
+import com.naposystems.napoleonchat.db.dao.user.UserDataSource
 import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.dto.conversation.call.readyForCall.ReadyForCallReqDTO
@@ -36,15 +36,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SocketRepository @Inject constructor(
-    private val context: Context,
+    private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
     private val messageLocalDataSource: MessageDataSource,
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val quoteDataSource: QuoteDataSource,
-    private val contactLocalDataSource: ContactDataSource
+    private val contactLocalDataSource: ContactDataSource,
+    private val userDataSource: UserDataSource
 ) : IContractSocketService.Repository {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     override suspend fun getContacts() {
         try {
@@ -77,6 +76,11 @@ class SocketRepository @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e)
         }
+    }
+
+    override fun getUser(): Int {
+        return userDataSource.getMyUser().id
+
     }
 
     override fun getMyMessages(contactId: Int?) {
@@ -157,7 +161,6 @@ class SocketRepository @Inject constructor(
                 } else {
                     newMessageDataEventRes.message
                 }
-
                 val moshi = Moshi.Builder().build()
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)

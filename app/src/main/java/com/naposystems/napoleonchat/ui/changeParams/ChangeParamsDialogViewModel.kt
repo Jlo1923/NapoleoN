@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ChangeParamsDialogViewModel @Inject constructor(
-    private val repository: IContractChangeParams.Repository
-) : ViewModel(), IContractChangeParams.ViewModel {
+    private val repository: IContractChangeDialogParams.Repository
+) : ViewModel(), IContractChangeDialogParams.ViewModel {
 
     private val _responseEditFake = MutableLiveData<Boolean>()
     val responseEditFake: LiveData<Boolean>

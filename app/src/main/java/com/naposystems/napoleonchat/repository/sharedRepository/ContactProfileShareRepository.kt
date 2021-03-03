@@ -6,7 +6,8 @@ import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.IContractContactProfileShare
 import javax.inject.Inject
 
-class ContactProfileShareRepository @Inject constructor(
+class ContactProfileShareRepository
+@Inject constructor(
     private val contactLocalDataSource: ContactDataSource
 ) : IContractContactProfileShare.Repository {
 

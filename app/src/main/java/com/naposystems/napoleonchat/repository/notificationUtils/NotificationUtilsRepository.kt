@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.repository.notificationUtils
 
-import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
@@ -34,7 +33,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class NotificationUtilsRepository @Inject constructor(
-    private val context: Context,
+    private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
     private val socketService: IContractSocketService.SocketService,
     private val contactLocalDataSource: ContactLocalDataSource,
@@ -45,7 +44,9 @@ class NotificationUtilsRepository @Inject constructor(
 ) :
     IContractNotificationUtils.Repository {
 
-    private val cryptoMessage = CryptoMessage(context)
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     private suspend fun getRemoteContact() {
         try {
@@ -88,7 +89,6 @@ class NotificationUtilsRepository @Inject constructor(
                 messageString
             }
 
-            val moshi = Moshi.Builder().build()
             val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                 moshi.adapter(NewMessageEventMessageRes::class.java)
 
@@ -146,14 +146,13 @@ class NotificationUtilsRepository @Inject constructor(
 
             val validateMessage = ValidateMessageEventDTO(messages)
 
-            val moshi = Moshi.Builder().build()
             val jsonAdapterValidate =
                 moshi.adapter(ValidateMessageEventDTO::class.java)
 
             val json = jsonAdapterValidate.toJson(validateMessage)
 
             socketService.emitToClientConversation(json.toString())
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
     }
@@ -224,7 +223,7 @@ class NotificationUtilsRepository @Inject constructor(
         return contactLocalDataSource.getContactById(contactId)
     }
 
-    override fun updateStateChannel(contactId: Int, state:Boolean) {
+    override fun updateStateChannel(contactId: Int, state: Boolean) {
         GlobalScope.launch(Dispatchers.IO) {
             contactLocalDataSource.updateStateChannel(contactId, state)
         }

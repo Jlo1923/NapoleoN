@@ -40,6 +40,8 @@ interface IContractSocketService {
 
         suspend fun getContacts()
 
+        fun getUser(): Int
+
         fun getMyMessages(contactId: Int?)
 
         fun deleteContact(contactId: Int?)

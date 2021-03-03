@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.repository.accessPin
 
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.dto.accessPin.CreateAccount422DTO
 import com.naposystems.napoleonchat.dto.accessPin.CreateAccountErrorDTO
@@ -9,12 +10,12 @@ import com.naposystems.napoleonchat.dto.accessPin.CreateAccountResDTO
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.ui.register.accessPin.IContractAccessPin
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -26,6 +27,10 @@ class CreateAccountRepository @Inject constructor(
     private val napoleonApi: NapoleonApi
 ) :
     IContractAccessPin.Repository {
+
+    private val moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     override fun getFirebaseId(): String {
         return sharedPreferencesManager.getString(
@@ -47,7 +52,7 @@ class CreateAccountRepository @Inject constructor(
 
     override suspend fun createUser(user: User) {
         userLocalDataSource.insertUser(user)
-        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
+//        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 
     override suspend fun updateAccessPin(newAccessPin: String, firebaseId: String) {
@@ -55,6 +60,9 @@ class CreateAccountRepository @Inject constructor(
     }
 
     override fun createdUserPref() {
+
+        Timber.d("AccountStatus createdUserPref ${Constants.AccountStatus.ACCOUNT_CREATED.id}")
+
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             Constants.AccountStatus.ACCOUNT_CREATED.id
@@ -71,7 +79,7 @@ class CreateAccountRepository @Inject constructor(
                 Constants.SharedPreferences.PREF_FIREBASE_ID, ""
             )
             val createAtMilliseconds = TimeUnit.SECONDS.toMillis(
-                userLocalDataSource.getUser(firebaseId).createAt
+                userLocalDataSource.getMyUser().createAt
             )
 
             val calendar = Calendar.getInstance()
@@ -96,7 +104,6 @@ class CreateAccountRepository @Inject constructor(
 
 
     fun get422Error(response: Response<CreateAccountResDTO>): ArrayList<String> {
-        val moshi = Moshi.Builder().build()
 
         val adapter = moshi.adapter(CreateAccount422DTO::class.java)
 
@@ -106,7 +113,6 @@ class CreateAccountRepository @Inject constructor(
     }
 
     fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {
-        val moshi = Moshi.Builder().build()
 
         val adapter = moshi.adapter(CreateAccountErrorDTO::class.java)
 

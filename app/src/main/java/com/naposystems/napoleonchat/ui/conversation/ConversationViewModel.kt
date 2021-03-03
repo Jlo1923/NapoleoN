@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesReqDTO
@@ -25,7 +24,6 @@ import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
 import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
-import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -40,11 +38,10 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class ConversationViewModel @Inject constructor(
+    private val cryptoMessage: CryptoMessage,
     private val context: Context,
     private val repository: IContractConversation.Repository
 ) : ViewModel(), IContractConversation.ViewModel {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     private lateinit var user: User
     private lateinit var contact: Contact

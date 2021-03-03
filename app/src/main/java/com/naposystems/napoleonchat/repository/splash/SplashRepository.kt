@@ -14,10 +14,10 @@ class SplashRepository @Inject constructor(
 ) : IContractSplash.Repository {
 
     override suspend fun getUser(): User {
-        val firebaseId = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
-        )
-        return userDatasource.getUser(firebaseId)
+//        val firebaseId = sharedPreferencesManager.getString(
+//            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+//        )
+        return userDatasource.getMyUser()
     }
 
     override suspend fun getTimeRequestAccessPin(): Int {

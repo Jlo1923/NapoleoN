@@ -19,13 +19,14 @@ import com.squareup.moshi.Moshi
 import retrofit2.Response
 import javax.inject.Inject
 
-class ShareContactRepository @Inject constructor(
+class ShareContactRepository
+@Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val contactLocalDataSource: ContactDataSource,
     private val messageLocalDataSource: MessageLocalDataSource
 ) : IContractShareContact.Repository {
 
-    private val moshi by lazy {
+    private val moshi: Moshi by lazy {
         Moshi.Builder().build()
     }
 

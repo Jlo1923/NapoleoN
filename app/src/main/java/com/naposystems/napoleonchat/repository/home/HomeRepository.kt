@@ -1,9 +1,6 @@
 package com.naposystems.napoleonchat.repository.home
 
-import android.content.Context
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
 import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
@@ -30,7 +27,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(
-    private val context: Context,
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSource: UserLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
@@ -41,8 +37,6 @@ class HomeRepository @Inject constructor(
     private val quoteDataSource: QuoteDataSource
 ) :
     IContractHome.Repository {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     private val firebaseId by lazy {
         sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
@@ -60,7 +54,8 @@ class HomeRepository @Inject constructor(
         var user: User? = null
 
         coroutineScope {
-            user = userLocalDataSource.getUser(firebaseId)
+//            user = userLocalDataSource.getUserLiveData(firebaseId)
+            user = userLocalDataSource.getMyUser()
         }
 
         val channelName =
@@ -230,7 +225,8 @@ class HomeRepository @Inject constructor(
 
     override fun setDialogSubscription() {
         sharedPreferencesManager.putInt(
-            Constants.SharedPreferences.PREF_DIALOG_SUBSCRIPTION, Constants.ShowDialogSubscription.NO.option
+            Constants.SharedPreferences.PREF_DIALOG_SUBSCRIPTION,
+            Constants.ShowDialogSubscription.NO.option
         )
     }
 }

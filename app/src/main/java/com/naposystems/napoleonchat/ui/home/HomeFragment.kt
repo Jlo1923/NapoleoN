@@ -710,38 +710,42 @@ class HomeFragment : Fragment() {
     }
 
     private fun showCase() {
-        Handler().postDelayed({
-            if (menuCreated && !showShowCase) {
-                val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
+        try {
+            Handler().postDelayed({
+                if (menuCreated && !showShowCase) {
+                    val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
 
-                val securitySettingMenuItem =
-                    drawerMenu.findItem(R.id.security_settings).actionView as LinearLayout
+                    val securitySettingMenuItem =
+                        drawerMenu.findItem(R.id.security_settings).actionView as LinearLayout
 
-                showCase = ShowCaseManager().apply {
-                    setListener(object : ShowCaseManager.Listener {
-                        override fun openSecuritySettings() {
-                            findNavController().navigate(
-                                HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
-                                    showShowCase = true
+                    showCase = ShowCaseManager().apply {
+                        setListener(object : ShowCaseManager.Listener {
+                            override fun openSecuritySettings() {
+                                findNavController().navigate(
+                                    HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
+                                        showShowCase = true
+                                    )
                                 )
-                            )
+                            }
+                        })
+
+                        setActivity(requireContext() as FragmentActivity)
+                        addContactsMenuItem?.actionView?.let { view ->
+                            setFirstView(view)
                         }
-                    })
+                        setSecondView(binding.fabContacts)
+                        setThirdView(binding.viewShowCaseStatus)
+                        setFourthView(homeMenuItem!!)
+                        setFifthView(securitySettingMenuItem.getChildAt(0))
 
-                    setActivity(requireContext() as FragmentActivity)
-                    addContactsMenuItem?.actionView?.let { view ->
-                        setFirstView(view)
+                        showFromFirst()
                     }
-                    setSecondView(binding.fabContacts)
-                    setThirdView(binding.viewShowCaseStatus)
-                    setFourthView(homeMenuItem!!)
-                    setFifthView(securitySettingMenuItem.getChildAt(0))
 
-                    showFromFirst()
+                    showShowCase = true
                 }
-
-                showShowCase = true
-            }
-        }, 800)
+            }, 500)
+        } catch (e: Exception) {
+            Timber.d(e.localizedMessage)
+        }
     }
 }
