@@ -2,7 +2,7 @@ package com.naposystems.napoleonchat.repository.registerRecoveryAccountQuestion
 
 import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionErrorDTO
 import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
-import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccount422DTO
+import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountUnprocessableEntityDTO
 import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.IContractRegisterRecoveryAccountQuestion
 import com.naposystems.napoleonchat.utility.Constants
@@ -27,12 +27,12 @@ class RegisterRecoveryAccountQuestionRepository @Inject constructor(
         return napoleonApi.getQuestions()
     }
 
-    override fun get422Error(response: ResponseBody): ArrayList<String> {
-        val adapter = moshi.adapter(RegisterRecoveryAccount422DTO::class.java)
+    override fun getUnprocessableEntityError(response: ResponseBody): ArrayList<String> {
+        val adapter = moshi.adapter(RegisterRecoveryAccountUnprocessableEntityDTO::class.java)
 
         val error = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(error!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(error!!)
     }
 
     override fun getError(response: ResponseBody): ArrayList<String> {

@@ -3,9 +3,6 @@ package com.naposystems.napoleonchat.ui.conversationCamera
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
@@ -296,7 +293,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                                     val uri = Utils.getFileUri(
                                         context = context,
                                         fileName = photoFile.name,
-                                        subFolder = Constants.NapoleonCacheDirectories.IMAGES.folder
+                                        subFolder = Constants.CacheDirectories.IMAGES.folder
                                     )
 
                                     with(cameraShareViewModel) {
@@ -472,8 +469,8 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
         val timeStamp: String = System.currentTimeMillis().toString()
 
         val subFolder = when (extension) {
-            PHOTO_EXTENSION -> Constants.NapoleonCacheDirectories.IMAGES.folder
-            else -> Constants.NapoleonCacheDirectories.VIDEOS.folder
+            PHOTO_EXTENSION -> Constants.CacheDirectories.IMAGES.folder
+            else -> Constants.CacheDirectories.VIDEOS.folder
         }
 
         fileName = "${timeStamp}.$extension"

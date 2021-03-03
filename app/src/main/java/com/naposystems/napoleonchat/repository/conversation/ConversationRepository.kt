@@ -14,7 +14,7 @@ import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.dto.conversation.call.CallContactResDTO
-import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessage422DTO
+import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessageUnprocessableEntityDTO
 import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
 import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesResDTO
@@ -537,12 +537,12 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.deleteMessagesByStatusForMe(contactId, status)
     }
 
-    override fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
-        val adapter = moshi.adapter(Message422DTO::class.java)
+    override fun getUnprocessableEntityErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
+        val adapter = moshi.adapter(MessageUnprocessableEntityDTO::class.java)
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(conversationError!!)
     }
 
     override fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
@@ -558,12 +558,12 @@ class ConversationRepository @Inject constructor(
         return errorList
     }
 
-    override fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
-        val adapter = moshi.adapter(DeleteMessage422DTO::class.java)
+    override fun getUnprocessableEntityErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
+        val adapter = moshi.adapter(DeleteMessageUnprocessableEntityDTO::class.java)
 
         val conversationError = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(conversationError!!)
     }
 
     override fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
@@ -632,25 +632,25 @@ class ConversationRepository @Inject constructor(
                             Constants.AttachmentType.IMAGE.type,
                             Constants.AttachmentType.LOCATION.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.IMAGES.folder
+                                    Constants.CacheDirectories.IMAGES.folder
                             }
                             Constants.AttachmentType.AUDIO.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.AUDIOS.folder
+                                    Constants.CacheDirectories.AUDIOS.folder
                             }
                             Constants.AttachmentType.VIDEO.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                                    Constants.CacheDirectories.VIDEOS.folder
                             }
                             Constants.AttachmentType.DOCUMENT.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                                    Constants.CacheDirectories.DOCUMENTOS.folder
                             }
                             Constants.AttachmentType.GIF.type -> {
-                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                                folder = Constants.CacheDirectories.GIFS.folder
                             }
                             Constants.AttachmentType.GIF_NN.type -> {
-                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                                folder = Constants.CacheDirectories.GIFS.folder
                             }
                         }
 
@@ -792,7 +792,7 @@ class ConversationRepository @Inject constructor(
                             FileManager.copyFile(
                                 context,
                                 inputStream,
-                                Constants.NapoleonCacheDirectories.DOCUMENTOS.folder,
+                                Constants.CacheDirectories.DOCUMENTOS.folder,
                                 "${System.currentTimeMillis()}.$extension"
                             )
                         } else {

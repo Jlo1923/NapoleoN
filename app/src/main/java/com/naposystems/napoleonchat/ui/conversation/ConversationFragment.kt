@@ -1549,7 +1549,7 @@ class ConversationFragment : BaseFragment(),
                 val uri = Utils.getFileUri(
                     context = context,
                     fileName = chatBackgroundFileName,
-                    subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                    subFolder = Constants.CacheDirectories.CHAT_BACKGROUND.folder
                 )
                 val inputStream: InputStream = context.contentResolver.openInputStream(uri)!!
                 val backgroundDrawable = Drawable.createFromStream(inputStream, uri.toString())
@@ -1783,7 +1783,7 @@ class ConversationFragment : BaseFragment(),
                 Utils.getFileUri(
                     requireContext(),
                     attachment.fileName,
-                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                    Constants.CacheDirectories.DOCUMENTOS.folder
                 )
             }
 
@@ -1927,7 +1927,7 @@ class ConversationFragment : BaseFragment(),
             recordFile = FileManager.createFile(
                 requireContext(),
                 "${System.currentTimeMillis()}.mp3",
-                Constants.NapoleonCacheDirectories.AUDIOS.folder
+                Constants.CacheDirectories.AUDIOS.folder
             )
 
             recorder = MediaRecorder().apply {

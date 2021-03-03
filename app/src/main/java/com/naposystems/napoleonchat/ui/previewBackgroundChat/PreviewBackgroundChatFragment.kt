@@ -63,7 +63,7 @@ class PreviewBackgroundChatFragment : Fragment() {
                 val fileUri = Utils.getFileUri(
                     context = context,
                     fileName = args.uri,
-                    subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                    subFolder = Constants.CacheDirectories.CHAT_BACKGROUND.folder
                 )
 
                 val nullableInputStream = context.contentResolver.openInputStream(fileUri)
@@ -74,7 +74,7 @@ class PreviewBackgroundChatFragment : Fragment() {
                         val file = FileManager.copyFile(
                             context,
                             inputStream,
-                            Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder,
+                            Constants.CacheDirectories.CHAT_BACKGROUND.folder,
                             fileName
                         )
 
@@ -126,7 +126,7 @@ class PreviewBackgroundChatFragment : Fragment() {
                     val uri = Utils.getFileUri(
                         context = context,
                         fileName = args.uri,
-                        subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                        subFolder = Constants.CacheDirectories.CHAT_BACKGROUND.folder
                     )
                     Glide.with(binding.imageViewBackground)
                         .load(uri)
@@ -144,7 +144,7 @@ class PreviewBackgroundChatFragment : Fragment() {
     }
 
     private fun clearCache(context: Context) {
-        val path = File(context.cacheDir!!.absolutePath, Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder)
+        val path = File(context.cacheDir!!.absolutePath, Constants.CacheDirectories.CHAT_BACKGROUND.folder)
         if (path.exists() && path.isDirectory) {
             for (child in path.listFiles()!!) {
                 if (child.name != fileName) {

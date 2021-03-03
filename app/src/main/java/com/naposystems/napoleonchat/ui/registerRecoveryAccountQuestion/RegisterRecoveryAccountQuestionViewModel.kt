@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.getQuest
 import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.napoleonchat.entity.Questions
 import com.naposystems.napoleonchat.entity.RecoveryAnswer
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -108,10 +109,10 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
                     repository.registeredQuestionsPref()
                 } else {
                     when (response.code()) {
-                        422 -> {
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
                             _recoveryQuestionsSavedSuccessfully.value = false
                             _recoveryAnswerCreatingErrors.value =
-                                repository.get422Error(response.errorBody()!!)
+                                repository.getUnprocessableEntityError(response.errorBody()!!)
                         }
                         else -> {
                             _recoveryQuestionsSavedSuccessfully.value = false

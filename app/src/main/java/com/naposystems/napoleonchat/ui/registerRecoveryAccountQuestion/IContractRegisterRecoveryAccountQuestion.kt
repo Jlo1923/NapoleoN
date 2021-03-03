@@ -17,7 +17,7 @@ interface IContractRegisterRecoveryAccountQuestion {
         suspend fun getQuestions(): Response<List<RegisterRecoveryAccountQuestionResDTO>>
         suspend fun sendRecoveryAnswers(registerRecoveryAccountReqDTO: RegisterRecoveryAccountReqDTO): Response<Any>
         fun registeredQuestionsPref()
-        fun get422Error(response:ResponseBody) :ArrayList<String>
+        fun getUnprocessableEntityError(response:ResponseBody) :ArrayList<String>
         fun getError(response: ResponseBody): ArrayList<String>
     }
 }

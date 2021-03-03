@@ -140,7 +140,7 @@ class ContactProfileFragment : BaseFragment() {
         binding.optionDeleteContact.setSafeOnClickListener { optionDeleteContactClickListener() }
 
         binding.imageButtonEditHeader.setSafeOnClickListener {
-            subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+            subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
             verifyCameraAndMediaPermission()
         }
 
@@ -413,7 +413,7 @@ class ContactProfileFragment : BaseFragment() {
         var title = ""
 
         when (subFolder) {
-            Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder -> title =
+            Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder -> title =
                 requireContext().resources.getString(R.string.text_change_cover_photo)
         }
 

@@ -153,7 +153,7 @@ fun bindAvatar(
                 Utils.getFileUri(
                     context = context!!,
                     fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                    subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
                 )
             }
             contact.imageUrl.isNotEmpty() -> {
@@ -416,13 +416,13 @@ private fun loadAttachment(
                 Utils.getFileUri(
                     imageView.context,
                     firstAttachment.fileName,
-                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                    Constants.CacheDirectories.VIDEOS.folder
                 )
             } else {
                 Utils.getFileUri(
                     imageView.context,
                     "${firstAttachment.webId}.${firstAttachment.extension}",
-                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                    Constants.CacheDirectories.VIDEOS.folder
                 )
             }
             Glide.with(imageView)

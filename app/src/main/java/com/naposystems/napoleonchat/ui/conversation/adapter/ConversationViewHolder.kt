@@ -508,7 +508,7 @@ open class ConversationViewHolder constructor(
                             Utils.getFileUri(
                                 context = context,
                                 fileName = attachment.fileName,
-                                subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                                subFolder = Constants.CacheDirectories.AUDIOS.folder
                             )
                         )
                     }
@@ -518,7 +518,7 @@ open class ConversationViewHolder constructor(
                         Utils.getFileUri(
                             context = context,
                             fileName = attachment.fileName,
-                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            subFolder = Constants.CacheDirectories.AUDIOS.folder
                         )
                     )
                 }
@@ -531,7 +531,7 @@ open class ConversationViewHolder constructor(
                         Utils.getFileUri(
                             context = context,
                             fileName = attachment.fileName,
-                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            subFolder = Constants.CacheDirectories.AUDIOS.folder
                         )
                     )
                 }

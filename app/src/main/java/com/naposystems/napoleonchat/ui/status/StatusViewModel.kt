@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.dto.status.UserStatusReqDTO
 import com.naposystems.napoleonchat.entity.Status
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.repository.status.StatusRepository
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -66,7 +67,8 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
                         _statusUpdatedSuccessfully.value = true
                     } else {
                         when (response.code()) {
-                            422 -> _errorUpdatingStatus.value = repository.get422Error(response)
+                            Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _errorUpdatingStatus.value =
+                                repository.getUnprocessableEntityError(response)
                             else -> _errorUpdatingStatus.value =
                                 repository.getDefaultError(response)
                         }
