@@ -2194,23 +2194,23 @@ class ConversationFragment : BaseFragment(),
         viewModel.reSendMessage(message, obtainTimeSelfDestruct())
     }
 
-    override fun scrollToNextAudio(position: Int) {
-        binding.recyclerViewConversation.smoothScrollToPosition(position)
+    override fun scrollToNextAudio(nextPosition: Int) {
+        binding.recyclerViewConversation.smoothScrollToPosition(nextPosition)
 
         binding.recyclerViewConversation.apply {
             removeOnScrollListener(onScrollPLayNextAudioListener)
-            mNextAudioPosition = position
+            mNextAudioPosition = nextPosition
             addOnScrollListener(onScrollPLayNextAudioListener)
 
             val lastItemVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition()
 
-            Timber.d("lastItemVisible: $lastItemVisible, position: $position")
+            Timber.d("lastItemVisible: $lastItemVisible, position: $nextPosition")
 
-            if (lastItemVisible < position) {
-                Timber.d("scrollTo $position")
-                binding.recyclerViewConversation.smoothScrollToPosition(position)
+            if (lastItemVisible < nextPosition) {
+                Timber.d("scrollTo $nextPosition")
+                binding.recyclerViewConversation.smoothScrollToPosition(nextPosition)
             } else {
-                conversationAdapter.notifyPlayAudio(position)
+                conversationAdapter.notifyPlayAudio(nextPosition)
             }
         }
     }

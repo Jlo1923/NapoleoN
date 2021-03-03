@@ -72,6 +72,7 @@ class ConversationRepository @Inject constructor(
 ) :
     IContractConversation.Repository {
 
+    private var envioEnProceso: Boolean = true
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
     }
@@ -327,59 +328,96 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun sendTextMessagesRead(contactId: Int) {
-        val messagesUnread =
-            messageLocalDataSource.getTextMessagesByStatus(
-                contactId,
-                Constants.MessageStatus.UNREAD.status
-            )
 
-        val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
-        val locationMessagesUnread =
-            messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
-        val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
-        val locationMessagesUnreadIds = locationMessagesUnread.map { it.message.webId }
+        Timber.d("Envio en proceso Inicio $envioEnProceso")
 
-        val listIds = mutableListOf<String>()
-        listIds.addAll(textMessagesUnreadIds)
-        listIds.addAll(locationMessagesUnreadIds)
+        if (envioEnProceso) {
 
-        val messagesRead = messagesUnread.map {
-            ValidateMessage(
-                id = it.message.webId,
-                user = contactId,
-                status = Constants.MessageEventType.READ.status
-            )
-        }
+            envioEnProceso = false
 
-        val validateMessage = ValidateMessageEventDTO(messagesRead)
+            Timber.d("Envio en proceso dentro del IF $envioEnProceso")
 
-        val jsonAdapterValidate =
-            moshi.adapter(ValidateMessageEventDTO::class.java)
-
-        val json = jsonAdapterValidate.toJson(validateMessage)
-
-        if (listIds.isNotEmpty()) {
-
-            try {
-
-                socketService.emitToClientConversation(json.toString())
-
-                val response = napoleonApi.sendMessagesRead(
-                    MessagesReadReqDTO(
-                        listIds
-                    )
+            val messagesUnread =
+                messageLocalDataSource.getTextMessagesByStatus(
+                    contactId,
+                    Constants.MessageStatus.UNREAD.status
                 )
 
-                if (response.isSuccessful) {
-                    messageLocalDataSource.updateMessageStatus(
-                        listIds,
-                        Constants.MessageStatus.READED.status
-                    )
-                }
-            } catch (ex: Exception) {
-                Timber.e(ex)
+            val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
+
+            val locationMessagesUnread =
+                messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
+
+            val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
+
+            val locationMessagesUnreadIds = locationMessagesUnread.map { it.message.webId }
+
+            val listIds = mutableListOf<String>()
+
+            listIds.addAll(textMessagesUnreadIds)
+
+            listIds.addAll(locationMessagesUnreadIds)
+
+            val messagesRead = messagesUnread.map {
+                ValidateMessage(
+                    id = it.message.webId,
+                    user = contactId,
+                    status = Constants.MessageEventType.READ.status
+                )
             }
+
+            val validateMessage = ValidateMessageEventDTO(messagesRead)
+
+            val jsonAdapterValidate =
+                moshi.adapter(ValidateMessageEventDTO::class.java)
+
+            val json = jsonAdapterValidate.toJson(validateMessage)
+
+            if (listIds.isNotEmpty()) {
+
+                try {
+
+                    socketService.emitToClientConversation(json.toString())
+
+                    val response = napoleonApi.sendMessagesRead(
+                        MessagesReadReqDTO(
+                            listIds
+                        )
+                    )
+
+                    if (response.isSuccessful) {
+
+                        envioEnProceso = true
+
+                        Timber.d("Envio en proceso Successful $envioEnProceso")
+
+                        messageLocalDataSource.updateMessageStatus(
+                            listIds,
+                            Constants.MessageStatus.READED.status
+                        )
+                    }
+
+                } catch (ex: Exception) {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Catch $envioEnProceso")
+
+                    Timber.e(ex)
+                } finally {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Finally $envioEnProceso")
+
+                }
+
+            } else {
+                envioEnProceso = true
+            }
+
         }
+
     }
 
     override suspend fun sendMissedCallRead(contactId: Int) {

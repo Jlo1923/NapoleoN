@@ -110,209 +110,158 @@ import javax.inject.Singleton
 abstract class RepositoryModule {
 
     @Binds
-    @Singleton
     abstract fun bindBaseRepository(repository: BaseRepository): IContractBase.Repository
 
     @Binds
-    @Singleton
     abstract fun bindAccountAttackDialogRepository(repository: AccountAttackDialogRepository): IContractAccountAttackDialog.Repository
 
     @Binds
-    @Singleton
     abstract fun bindActivateBiometricsRepository(repository: ActivateBiometricsRepository): IContractActivateBiometrics.Repository
 
     @Binds
-    @Singleton
     abstract fun bindAddContactRepository(repository: AddContactRepository): IContractAddContact.Repository
 
     @Binds
-    @Singleton
     abstract fun bindAppearanceSettingsRepository(repository: AppearanceSettingsRepository): IContractAppearanceSettings.Repository
 
     @Binds
-    @Singleton
     abstract fun bindAttachmentGalleryFolderRepository(repository: AttachmentGalleryFolderRepository): IContractAttachmentGalleryFolders.Repository
 
     @Binds
-    @Singleton
     abstract fun bindAttachmentGalleryRepository(repository: AttachmentGalleryRepository): IContractAttachmentGallery.Repository
 
     @Binds
-    @Singleton
     abstract fun bindAttachmentLocationRepository(repository: AttachmentLocationRepository): IContractAttachmentLocation.Repository
 
     @Binds
-    @Singleton
     abstract fun bindBlockedContactRepository(repository: BlockedContactRepository): IContractBlockedContact.Repository
 
     @Binds
-    @Singleton
     abstract fun bindCancelSubscriptionRepository(repository: CancelSubscriptionRepository): IContractCancelSubscription.Repository
 
     @Binds
-    @Singleton
     abstract fun bindChangeParamsDialogRepository(repository: ChangeParamsDialogRepository): IContractChangeDialogParams.Repository
 
     @Binds
-    @Singleton
     abstract fun bindColorSchemeRepository(repository: ColorSchemeRepository): IContractColorScheme.Repository
 
     @Binds
-    @Singleton
     abstract fun bindContactProfileRepository(repository: ContactProfileRepository): IContractContactProfile.Repository
 
     @Binds
-    @Singleton
     abstract fun bindContactsRepository(repository: ContactsRepository): IContractContacts.Repository
 
     @Binds
-    @Singleton
     abstract fun bindContactUsRepository(repository: ContactUsRepository): IContractContactUs.Repository
 
     @Binds
-    @Singleton
     abstract fun bindConversationCallRepository(repository: ConversationCallRepository): IContractConversationCall.Repository
 
     @Binds
-    @Singleton
     abstract fun bindConversationRepository(repository: ConversationRepository): IContractConversation.Repository
 
     //CreateAccountRepository
 
     @Binds
-    @Singleton
     abstract fun bindDefaultPreferencesRepository(repository: DefaultPreferencesRepository): IContractDefaultPreferences.Repository
 
     @Binds
-    @Singleton
     abstract fun bindEditAccessPinRepository(repository: EditAccessPinRepository): IContractEditAccessPin.Repository
 
     @Binds
-    @Singleton
     abstract fun bindEnterCodeRepository(repository: EnterCodeRepository): IContractEnterCode.Repository
 
     @Binds
-    @Singleton
     abstract fun bindEnterPinRepository(repository: EnterPinRepository): IContractEnterPin.Repository
 
     @Binds
-    @Singleton
     abstract fun bindHomeRepository(repository: HomeRepository): IContractHome.Repository
 
     @Binds
-    @Singleton
     abstract fun bindLanguageSelectionRepository(repository: LanguageSelectionRepository): IContractLanguageSelection.Repository
 
     @Binds
-    @Singleton
     abstract fun bindLogoutRepository(repository: LogoutRepository): IContractLogout.Repository
 
     @Binds
-    @Singleton
     abstract fun bindMainActivityRepository(repository: MainActivityRepository): IContractMainActivity.Repository
 
     @Binds
-    @Singleton
     abstract fun bindConversationMuteRepository(repository: ConversationMuteRepository): IMuteConversation.Repository
 
     @Binds
-    @Singleton
     abstract fun bindNapoleonKeyboardGifRepository(repository: NapoleonKeyboardGifRepository): IContractNapoleonKeyboardGif.Repository
 
     @Binds
-    @Singleton
     abstract fun bindNotificationSettingRepository(repository: NotificationSettingRepository): IContractNotificationSetting.Repository
 
     @Binds
-    @Singleton
     abstract fun bindNotificationUtilsRepository(repository: NotificationUtilsRepository): IContractNotificationUtils.Repository
 
     @Binds
-    @Singleton
     abstract fun bindPreviewBackgroundChatRepository(repository: PreviewBackgroundChatRepository): IContractPreviewBackgroundChat.Repository
 
     @Binds
-    @Singleton
     abstract fun bindPreviewMediaRepository(repository: PreviewMediaRepository): IContractPreviewMedia.Repository
 
     @Binds
-    @Singleton
     abstract fun bindProfileRepository(repository: ProfileRepository): IContractProfile.Repository
 
     @Binds
-    @Singleton
     abstract fun bindRecoveryAccountRepository(repository: RecoveryAccountRepository): IContractRecoveryAccount.Repository
 
     @Binds
-    @Singleton
     abstract fun bindRecoveryAccountQuestionsRepository(repository: RecoveryAccountQuestionsRepository): IContractRecoveryAccountQuestions.Repository
 
     @Binds
-    @Singleton
     abstract fun bindRegisterRecoveryAccountRepository(repository: RegisterRecoveryAccountRepository): IContractRegisterRecoveryAccount.Repository
 
     @Binds
-    @Singleton
     abstract fun bindRegisterRecoveryAccountQuestionRepository(repository: RegisterRecoveryAccountQuestionRepository): IContractRegisterRecoveryAccountQuestion.Repository
 
     @Binds
-    @Singleton
     abstract fun bindSecuritySettingsRepository(repository: SecuritySettingsRepository): IContractSecuritySettings.Repository
 
     @Binds
-    @Singleton
     abstract fun bindSelfDestructTimeRepository(repository: SelfDestructTimeRepository): IContractSelfDestructTime.Repository
 
     @Binds
-    @Singleton
     abstract fun bindSelfDestructTimeMessageNotSentRepository(repository: SelfDestructTimeMessageNotSentRepository): IContractSelfDestructTimeMessageNotSent.Repository
 
     @Binds
-    @Singleton
     abstract fun bindSendCodeRepository(repository: SendCodeRepository): IContractSendCode.Repository
 
     @Binds
-    @Singleton
     abstract fun bindSocketRepository(repository: SocketRepository): IContractSocketService.Repository
 
     @Binds
-    @Singleton
     abstract fun bindSplashRepository(repository: SplashRepository): IContractSplash.Repository
 
     @Binds
-    @Singleton
     abstract fun bindStatusRepository(repository: StatusRepository): IContractStatus.Repository
 
     @Binds
-    @Singleton
     abstract fun bindSubscriptionRepository(repository: SubscriptionRepository): IContractSubscription.Repository
 
     @Binds
-    @Singleton
     abstract fun bindTimeAccessPinRepository(repository: TimeAccessPinRepository): IContractTimeAccessPin.Repository
 
     @Binds
-    @Singleton
     abstract fun bindTimeFormatRepository(repository: TimeFormatRepository): IContractTimeFormat.Repository
 
     @Binds
-    @Singleton
     abstract fun bindUnlockAppTimeRepository(repository: UnlockAppTimeRepository): IContractUnlockAppTime.Repository
 
     @Binds
-    @Singleton
     abstract fun bindUserDisplayFormatRepository(repository: UserDisplayFormatRepository): IContractUserDisplayFormat.Repository
 
     @Binds
-    @Singleton
     abstract fun bindValidateNicknameRepository(repository: ValidateNicknameRepository): IContractValidateNickname.Repository
 
     @Binds
-    @Singleton
     abstract fun bindWebRTCCallServiceRepository(repository: WebRTCCallServiceRepository): IContractWebRTCCallService.Repository
 
     @Binds
-    @Singleton
     abstract fun provideUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository
 
 }

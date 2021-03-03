@@ -563,8 +563,11 @@ class SocketService @Inject constructor(
 
                                     jsonAdapterMessage.fromJson(data)
                                         ?.let { newMessageEventMessageRes ->
+
                                             if (newMessageEventMessageRes.numberAttachments > 0) {
-                                                if (availableToReceived(newMessageEventMessageRes.attachments) && Data.contactId == newMessageEventMessageRes.userAddressee) {
+                                                if ((availableToReceived(newMessageEventMessageRes.attachments) && Data.contactId == newMessageEventMessageRes.userAddressee) ||
+                                                    Data.contactId == 0
+                                                ) {
                                                     repository.notifyMessageReceived(message.id)
                                                     emmitReceived(message)
                                                 }
@@ -593,9 +596,7 @@ class SocketService @Inject constructor(
 
     private fun availableToReceived(attachments: List<NewMessageEventAttachmentRes>): Boolean {
 
-        var attachment: NewMessageEventAttachmentRes?
-
-        attachment = attachments.first {
+        var attachment: NewMessageEventAttachmentRes? = attachments.firstOrNull() {
             it.type == Constants.AttachmentType.IMAGE.type ||
                     it.type == Constants.AttachmentType.AUDIO.type ||
                     it.type == Constants.AttachmentType.VIDEO.type ||
@@ -738,6 +739,7 @@ class SocketService @Inject constructor(
                         val eventType = event.data.toIntOrNull()
 
                         if (eventType != null) {
+
                             Timber.d("LLegó $CALL_NN $eventType")
 
                             when (eventType) {
