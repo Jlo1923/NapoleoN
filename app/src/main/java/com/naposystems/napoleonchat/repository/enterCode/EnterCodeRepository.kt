@@ -15,6 +15,7 @@ import com.naposystems.napoleonchat.utility.WebServiceUtils
 import com.naposystems.napoleonchat.webService.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 class EnterCodeRepository @Inject constructor(
@@ -124,6 +125,9 @@ class EnterCodeRepository @Inject constructor(
     }
 
     override fun saveAccountStatus(id: Int) {
+
+        Timber.d("AccountStatus saveAccountStatus $id")
+
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             id

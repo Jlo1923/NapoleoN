@@ -2,7 +2,17 @@ package com.naposystems.napoleonchat.di
 
 import android.app.Application
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.di.modules.*
+import com.naposystems.napoleonchat.di.module.general.*
+import com.naposystems.napoleonchat.di.module.missnamed.CreateAccountModule
+import com.naposystems.napoleonchat.di.module.sections.RepositoryModule
+import com.naposystems.napoleonchat.di.module.sections.ViewModelModule
+import com.naposystems.napoleonchat.di.module.share.*
+import com.naposystems.napoleonchat.di.module.sources.local.DaoModule
+import com.naposystems.napoleonchat.di.module.sources.local.LocalDataSourceModule
+import com.naposystems.napoleonchat.di.module.sources.local.RoomModule
+import com.naposystems.napoleonchat.di.module.sources.remote.RetrofitModule
+import com.naposystems.napoleonchat.di.module.ui.ActivityModule
+import com.naposystems.napoleonchat.di.module.ui.FragmentModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -12,30 +22,41 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        AndroidSupportInjectionModule::class, ApplicationModule::class, ViewModelModule::class,
-        FragmentBindingModule::class, ActivityBindingModule::class, ServiceBindingModule::class, SplashModule::class,
-        SendCodeModule::class, EnterCodeModule::class, LanguageSelectionModule::class,
-        ValidateNicknameModule::class, CreateAccountModule::class, ProfileModule::class,
-        StatusModule::class, BlockedContactsModule::class, AppearanceSettingsModule::class,
-        ColorSchemeModule::class, UserDisplayFormatModule::class, TimeFormatModule::class, SelfDestructTime::class,
-        SecuritySettingsModule::class, EditAccessPinModule::class, TimeAccessPinModule::class,
-        ContactsModule::class, ContactUsModule::class, ConversationModule::class,
-        RegisterRecoveryAccountModule::class, RecoveryAccountModule::class,
-        RecoveryAccountQuestionsModule::class, RegisterRecoveryAccountQuestionModule::class,
-        AddContactModule::class, HomeModule::class, SocketModule::class, UserProfileShareModule::class,
-        ActivateBiometricsModule::class, EnterPinModule::class, UnlockAppTimeModule::class,
-        ContactProfileModule::class, MuteConversationModule::class, ChangeParamsModule::class,
-        ShareContactModule::class, ContactProfileShareModule::class,
-        ContactRepositoryShareModule::class, BaseModule::class,
-        SelfDestructTimeMessageNotSentModule::class, AttachmentGalleryFolderModule::class,
-        AttachmentGalleryModule::class, ValidatePasswordPreviousRecoveryAccountModule::class,
-        RecoveryOlderAccountQuestionsModule::class, AccountAttackDialogModule::class,
-        SubscriptionModule::class, NapoleonKeyboardGifModule::class,
-        AttachmentLocationModule::class, ConversationCallModule::class, NotificationUtilsModule::class,
-        WebRTCCallServiceModule::class, PreviewMediaModule::class, LogoutModule::class,
-        CancelSubscriptionModule::class, FriendShipActionShareModule::class, DefaultPreferencesModule::class,
-        UploadServiceModule::class,
-        RoomModule::class]
+        //General
+        AndroidSupportInjectionModule::class,
+        BillingModule::class,
+        ContextModule::class,
+        ServiceModule::class,
+        SharedPreferencesModule::class,
+        SocketModule::class,
+        WebRTCClientModule::class,
+        CryptoModule::class,
+//        MoshiModule::class,
+        //Sources Remote
+        RetrofitModule::class,
+
+        //Sources Local
+        RoomModule::class,
+        DaoModule::class,
+        LocalDataSourceModule::class,
+
+        //UI
+        ActivityModule::class,
+        FragmentModule::class,
+
+        //Sections
+        ViewModelModule::class,
+        RepositoryModule::class,
+
+        //Shared
+        ContactProfileShareModule::class,
+        ContactRepositoryShareModule::class,
+        FriendShipActionShareModule::class,
+        ShareContactModule::class,
+        UserProfileShareModule::class,
+
+        //missnamed
+        CreateAccountModule::class]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
 

@@ -2,4 +2,6 @@
 <resources>
     <string name="text_error_map">Beim Erfassen der Karte ist ein Fehler aufgetreten</string>
     <string name="text_site_not_found">Site konnte nicht gefunden werden</string>
+    <string name="text_location_not_found">Standort konnte nicht eingestellt werden, bitte manuell auswählen.</string>
+    <string name="text_location_not_found_without_connection">Es war nicht möglich, den Standort zu ermitteln und die Internetverbindung zu überprüfen.</string>
 </resources>

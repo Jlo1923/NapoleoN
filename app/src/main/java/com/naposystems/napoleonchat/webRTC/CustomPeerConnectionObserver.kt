@@ -3,10 +3,12 @@ package com.naposystems.napoleonchat.webRTC
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
-import org.webrtc.PeerConnection.*
+import org.webrtc.PeerConnection.Observer
+import org.webrtc.PeerConnection.SignalingState
+import org.webrtc.PeerConnection.IceConnectionState
+import org.webrtc.PeerConnection.IceGatheringState
 import org.webrtc.RtpReceiver
 import timber.log.Timber
-
 
 open class CustomPeerConnectionObserver : Observer {
 

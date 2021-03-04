@@ -8,13 +8,11 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.Display
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -57,6 +55,7 @@ import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -218,6 +217,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
         disposable.add(disposableFriendRequestAccepted)
 
+        val disposableDeleteChannel =
+            RxBus.listen(RxEvent.DeleteChannel::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Timber.d("*TestDelete: State ${it.contact.stateNotification}")
+                    if (it.contact.stateNotification) {
+                        Timber.d("*TestDelete: Contact ${it.contact.id}")
+                        Timber.d("*TestDelete: Contact ${it.contact.getNickName()}")
+                        Utils.deleteUserChannel(
+                            this,
+                            it.contact.id,
+                            it.contact.getNickName(),
+                            it.contact.notificationId
+                        )
+                    }
+                }
+
+        disposable.add(disposableDeleteChannel)
+
+        val disposableHideOptionMenuRecoveryAccount =
+            RxBus.listen(RxEvent.HideOptionMenuRecoveryAccount::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    hideOptionMenuRecoveryAccount()
+                }
+
+        disposable.add(disposableHideOptionMenuRecoveryAccount)
+
+
         setSupportActionBar(binding.toolbar)
 
         navController = findNavController(R.id.nav_host_fragment)
@@ -259,6 +287,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.frameLayout.elevation = 0f
                 }
                 R.id.accessPinFragment -> {
+
+                    Timber.d("AccountStatus Destination Listener {$accountStatus}")
+
                     if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {
                         hideToolbar()
                         disableDrawer()
@@ -322,6 +353,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
+
+        hideOptionMenuForAndroidVersion()
+
+        hideOptionMenuRecoveryAccount()
     }
 
     private fun openMenu() {
@@ -357,7 +392,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-            if (args.containsKey(Constants.NotificationKeys.ATTACK)){
+            if (args.containsKey(Constants.NotificationKeys.ATTACK)) {
                 val dialog = AccountAttackDialogFragment()
                 dialog.show(supportFragmentManager, "AttackDialog")
             }
@@ -536,18 +571,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-            R.id.suscription -> navController.navigate(
+            //TODO:Subscription
+            /*R.id.subscription -> navController.navigate(
                 R.id.subscriptionFragment,
                 null,
                 options
-            )
+            )*/
             R.id.security_settings -> navController.navigate(
                 R.id.securitySettingsFragment,
                 null,
                 options
             )
+            R.id.recovery_account_option_main_menu -> navController.navigate(
+                R.id.registerRecoveryAccountFragment,
+                null,
+                options
+            )
             R.id.appearance_settings -> navController.navigate(
                 R.id.appearanceSettingsFragment,
+                null,
+                options
+            )
+            R.id.notification_option_main_menu -> navController.navigate(
+                R.id.notificationFragment,
                 null,
                 options
             )
@@ -566,6 +612,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         super.applyOverrideConfiguration(overrideConfiguration)
     }*/
+
+    private fun hideOptionMenuForAndroidVersion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            binding.navView.menu.findItem(R.id.notification_option_main_menu).isVisible = false
+        }
+    }
+
+    private fun hideOptionMenuRecoveryAccount() {
+        if (viewModel.getRecoveryQuestionsPref() == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
+            binding.navView.menu.findItem(R.id.recovery_account_option_main_menu).isVisible = false
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -595,6 +653,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
             when (accountStatus) {
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+
+                    Timber.d("AccountStatus validLockTime {$accountStatus}")
+
                     val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
                     if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
                         val currentTime = System.currentTimeMillis()

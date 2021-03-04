@@ -19,9 +19,9 @@ class MainActivityRepository @Inject constructor(
     IContractMainActivity.Repository {
 
     override suspend fun getUser(): User {
-        val firebaseId = sharedPreferencesManager
-            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-        return userLocalDataSource.getUser(firebaseId)
+//        val firebaseId = sharedPreferencesManager
+//            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
+        return userLocalDataSource.getMyUser()
     }
 
     override suspend fun getAccountStatus(): Int {
@@ -79,5 +79,9 @@ class MainActivityRepository @Inject constructor(
 
     override fun resetIsOnCallPref() {
         Data.isOnCall = false
+    }
+
+    override fun getRecoveryQuestionsPref(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED)
     }
 }

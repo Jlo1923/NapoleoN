@@ -25,9 +25,12 @@ import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
 class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
@@ -37,6 +40,11 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+        viewModelFactory
+    }
     private lateinit var binding: AttachmentPreviewFragmentBinding
     private var isPlayingVideo: Boolean = false
     private var hasSentAttachment: Boolean = false
@@ -188,9 +196,19 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.contactId == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    contactProfileShareViewModel.contact.value?.let { contact ->
+                        if (contact.id == eventContact.contactId) {
+                            if (contact.stateNotification) {
+                                Utils.deleteUserChannel(
+                                    requireContext(),
+                                    contact.id,
+                                    contact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)

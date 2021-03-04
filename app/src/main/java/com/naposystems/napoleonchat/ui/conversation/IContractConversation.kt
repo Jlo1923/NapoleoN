@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessag
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.entity.MessageNotSent
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -76,6 +77,9 @@ interface IContractConversation {
         fun reSendMessage(message: Message, selfDestructTime: Int)
         fun resetNewMessage()
         fun getFreeTrial(): Long
+        fun getMessageNotSent(contactId: Int)
+        fun insertMessageNotSent(message: String, contactId: Int)
+        fun deleteMessageNotSent(contactId: Int)
     }
 
     interface Repository {
@@ -113,7 +117,6 @@ interface IContractConversation {
             messageAndAttachment: MessageAndAttachment,
             itemPosition: Int
         ): Flow<DownloadAttachmentResult>
-
         fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int)
         suspend fun copyFile(fileUri: Uri): File?
         fun verifyMessagesToDelete()
@@ -126,6 +129,10 @@ interface IContractConversation {
             destFile: File,
             job: ProducerScope<*>
         ): Flow<VideoCompressResult>
+
         fun getFreeTrial(): Long
+        fun getMessageNotSent(contactId: Int): MessageNotSent
+        fun insertMessageNotSent(message: String, contactId: Int)
+        fun deleteMessageNotSent(contactId: Int)
     }
 }

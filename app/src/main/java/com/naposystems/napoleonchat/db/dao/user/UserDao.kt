@@ -10,6 +10,9 @@ import com.naposystems.napoleonchat.entity.User
 @Dao
 interface UserDao {
 
+    @Query("SELECT * FROM user ORDER BY create_at ASC LIMIT 1")
+    fun getMyUser(): User
+
     @Query("SELECT * FROM user WHERE firebase_id=:firebaseId")
     fun getUser(firebaseId: String): User
 

@@ -17,20 +17,21 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class LanguageSelectionRepository @Inject constructor(
-    private val userLocalDataSource: UserLocalDataSource,
     private val context: Context,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
 ) :
     IContractLanguageSelection.Repository {
 
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
+
     override fun getLanguages(): List<Language> {
         val languages = context.resources
             .openRawResource(R.raw.languages)
             .bufferedReader()
             .use { it.readLine() }
-
-        val moshi = Moshi.Builder().build()
 
         val listType = Types.newParameterizedType(List::class.java, Language::class.java)
         val adapter: JsonAdapter<List<Language>> = moshi.adapter(listType)

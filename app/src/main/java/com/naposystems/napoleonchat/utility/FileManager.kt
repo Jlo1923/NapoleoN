@@ -11,9 +11,9 @@ import androidx.security.crypto.MasterKeys
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.utility.Constants.AttachmentType.*
 import com.naposystems.napoleonchat.utility.Constants.NapoleonCacheDirectories.*
-import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.quality
-import id.zelory.compressor.constraint.resolution
+import com.naposystems.napoleonchat.utils.imageCompressor.Compressor
+import com.naposystems.napoleonchat.utils.imageCompressor.constraint.quality
+import com.naposystems.napoleonchat.utils.imageCompressor.constraint.resolution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody

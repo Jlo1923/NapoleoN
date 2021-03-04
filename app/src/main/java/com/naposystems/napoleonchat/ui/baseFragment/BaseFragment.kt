@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -18,7 +19,7 @@ open class BaseFragment : Fragment() {
 
     @Inject
     open lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: BaseViewModel
+    private val viewModel: BaseViewModel by viewModels { viewModelFactory }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -28,12 +29,6 @@ open class BaseFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         viewModel.outputControl(Constants.OutputControl.TRUE.state)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(BaseViewModel::class.java)
     }
 
     open fun validateStateOutputControl() {

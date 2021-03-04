@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.reactive
 
+import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
@@ -15,6 +16,7 @@ class RxEvent {
     class FriendshipRequestAccepted
     class NoInternetConnection
     class AccountAttack
+    class HideOptionMenuRecoveryAccount
     data class IncomingCall(val channel: String, val contactId: Int, val isVideoCall: Boolean)
     data class ContactHasJoinToCall(val channel: String)
     data class IceCandidateReceived(val channel: String, val iceCandidate: IceCandidate)
@@ -34,9 +36,11 @@ class RxEvent {
     data class EnableButtonPlayAudio(val state: Boolean)
     data class ContactCancelCall(val channel: String)
     data class ContactBlockOrDelete(val contactId: Int)
+    data class DeleteChannel(val contact: Contact)
     data class HangupByNotification(val channel: String)
     data class ContactCantChangeToVideoCall(val channel: String)
     data class RejectCallByNotification(val channel: String)
+    class CreateNotification
     class IncomingCallSystem
 
     data class UploadStart(val attachment: Attachment)
@@ -54,4 +58,6 @@ class RxEvent {
         val attachment: Attachment,
         val progress: Float
     )
+
+    data class StateFlag(val state: Int)
 }

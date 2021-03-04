@@ -1,11 +1,9 @@
 package com.naposystems.napoleonchat.ui.changeParams
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +15,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ChangeFakeParamsDialogFragmentBinding
-import com.naposystems.napoleonchat.databinding.ChangeFakesDialogFragmentBinding
-import com.naposystems.napoleonchat.dto.user.DisplayNameReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FieldsValidator
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -29,14 +26,20 @@ import java.util.*
 import javax.inject.Inject
 
 private const val CONTACT_ID = "contactId"
+private const val CONTACT_NICK = "contactNick"
+private const val STATE_NOTIFICATION = "stateNotification"
+
 class ChangeFakeParamsDialogFragment : DialogFragment() {
 
     companion object {
-        fun newInstance(contactId: Int) = ChangeFakeParamsDialogFragment().apply {
-            arguments = Bundle().apply {
-                putInt(CONTACT_ID, contactId)
+        fun newInstance(contactId: Int, contactNick: String, stateNotification: Boolean) =
+            ChangeFakeParamsDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(CONTACT_ID, contactId)
+                    putString(CONTACT_NICK, contactNick)
+                    putBoolean(STATE_NOTIFICATION, stateNotification)
+                }
             }
-        }
     }
 
     @Inject
@@ -74,6 +77,17 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
                         Locale.getDefault()
                     )
                 )
+
+                if (args.getBoolean(STATE_NOTIFICATION)) {
+                    Utils.updateNickNameChannel(
+                        requireContext(),
+                        args.getInt(CONTACT_ID),
+                        args.getString(CONTACT_NICK, ""),
+                        binding.editTextDisplay.text.toString().toLowerCase(
+                            Locale.getDefault()
+                        )
+                    )
+                }
             }
         }
 

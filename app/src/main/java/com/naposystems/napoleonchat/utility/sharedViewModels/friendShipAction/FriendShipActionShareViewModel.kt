@@ -5,9 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
 import com.naposystems.napoleonchat.entity.message.Message
@@ -18,12 +16,11 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FriendShipActionShareViewModel @Inject constructor(
+class FriendShipActionShareViewModel
+@Inject constructor(
     private val repository: IContractFriendShipAction.Repository,
     private val context: Context
 ) : ViewModel(), IContractFriendShipAction.ViewModel {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     private val _friendshipRequestAcceptedSuccessfully = MutableLiveData<Boolean>()
     val friendshipRequestAcceptedSuccessfully: LiveData<Boolean>
@@ -83,6 +80,7 @@ class FriendShipActionShareViewModel @Inject constructor(
                         val message = Message(
                             id = 0,
                             webId = "",
+                            uuid = null,
                             body = body,
                             quoted = "",
                             contactId = friendShipRequest.contact.id,
@@ -99,9 +97,9 @@ class FriendShipActionShareViewModel @Inject constructor(
                             )
                         )
 
-                        if (BuildConfig.ENCRYPT_API) {
-                            message.encryptBody(cryptoMessage)
-                        }
+//                        if (BuildConfig.ENCRYPT_API) {
+//                            message.encryptBody(cryptoMessage)
+//                        }
 
                         repository.insertMessage(message).toInt()
                     }

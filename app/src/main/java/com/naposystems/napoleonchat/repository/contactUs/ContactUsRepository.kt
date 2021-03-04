@@ -11,8 +11,10 @@ import com.squareup.moshi.Moshi
 import retrofit2.Response
 import javax.inject.Inject
 
-class ContactUsRepository @Inject constructor(private val napoleonApi: NapoleonApi) :
-    IContractContactUs.Repository {
+class ContactUsRepository
+@Inject constructor(
+    private val napoleonApi: NapoleonApi
+    ) :    IContractContactUs.Repository {
 
     private val moshi by lazy {
         Moshi.Builder().build()

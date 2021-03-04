@@ -7,6 +7,7 @@ object Constants {
     const val DATA_CRYPT = "datacrypt"
     const val REMOTE_CONFIG_EMOJIS_KEY = "Emojis"
     const val REMOTE_CONFIG_VERSION_KEY = "version_android"
+    const val REMOTE_CONFIG_VERSION_CODE_KEY = "version_code_android"
     const val QUANTITY_TO_SHOW_FAB_CONVERSATION = 3
     const val QUANTITY_MIN_TO_SHOW_ACTIONMODE = 1
     const val QUANTITY_TO_HIDE_ACTIONMODE = 0
@@ -37,7 +38,7 @@ object Constants {
         const val VERIFY_MESSAGES_RECEIVED = "messages/verifymessagesreceived"
         const val VERIFY_MESSAGES_READ = "messages/verifymessagesreaded"
         const val SEND_MESSAGES_READ = "messages/sendmessagesreaded"
-        const val NOTIFY_MESSAGE_RECEIVED = "messages/notifymessagereceivedunread"
+        const val NOTIFY_MESSAGE_RECEIVED = "messages/notifymessagereceived"
         const val GET_QUESTIONS = "questions"
         const val SEND_QUESTIONS = "inforecovery"
         const val GET_RECOVERY_QUESTIONS = "inforecovery/getanswersinforecovery/{nick}"
@@ -82,6 +83,7 @@ object Constants {
         const val TITLE = "title"
         const val CONTACT = "contact"
         const val ATTACK = "attacker_id"
+        const val MESSAGE = "message"
     }
 
     enum class ColorScheme constructor(val scheme: Int) {
@@ -98,6 +100,16 @@ object Constants {
     enum class OutputControl constructor(val state: Int) {
         TRUE(1),
         FALSE(0)
+    }
+
+    enum class ChannelCreated constructor(val state: Int) {
+        TRUE(1),
+        FALSE(0)
+    }
+
+    enum class ChannelType constructor(val type: Int) {
+        DEFAULT(1),
+        CUSTOM(2)
     }
 
     enum class ChangeParams constructor(val option: Int) {
@@ -287,6 +299,11 @@ object Constants {
         ERROR(5)
     }
 
+    enum class MessageEventType(val status: Int) {
+        UNREAD(1),
+        READ(2)
+    }
+
     enum class AttachmentStatus(val status: Int) {
         SENDING(1),
         SENT(2),
@@ -439,6 +456,16 @@ object Constants {
         UNPLUGGED(0)
     }
 
+    enum class StateFlag(val state: Int) {
+        ON(1),
+        OFF(0)
+    }
+
+    enum class ShowDialogSubscription(val option: Int) {
+        YES(0),
+        NO(1)
+    }
+
     object SharedPreferences {
         const val PREF_NAME = "napoleon_preferences"
         const val PREF_LANGUAGE_SELECTED = "language_selected"
@@ -461,6 +488,10 @@ object Constants {
         const val PREF_TIME_FOR_NEW_CODE = "time_for_new_code"
         const val PREF_ATTEMPTS_FOR_RETRY_CODE = "attempts_for_retry_code"
         const val PREF_TIME_FOR_RETRY_CODE = "time_for_retry_code"
+        const val PREF_CHANNEL_CREATED = "channel_created"
+
+        const val PREF_NOTIFICATION_MESSAGE_CHANNEL_ID = "notification_message_channel_id"
+        const val PREF_NOTIFICATION_GROUP_CHANNEL_ID = "notification_group_channel_id"
 
 
         //region RecoveryAccount
@@ -471,6 +502,7 @@ object Constants {
         //endregion
 
         //region Subscription
+        const val PREF_DIALOG_SUBSCRIPTION = "DIALOG_SUBSCRIPTION"
         const val PREF_FREE_TRIAL = "free_trial"
         const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
         const val PREF_SUBSCRIPTION_TIME = "subscription_time"

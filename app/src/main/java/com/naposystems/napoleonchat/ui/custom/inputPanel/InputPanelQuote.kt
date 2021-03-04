@@ -1,18 +1,20 @@
 package com.naposystems.napoleonchat.ui.custom.inputPanel
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.databinding.CustomInputPanelQuoteBinding
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 
@@ -137,22 +139,37 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                     when {
                         quote.isMine == Constants.IsMine.YES.value
                                 && messageAndAttachment.message.isMine == 1 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyMyQuote
+                            )
                         }
                         quote.isMine == Constants.IsMine.YES.value
                                 && messageAndAttachment.message.isMine == 0 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyMyQuote
+                            )
                         }
                         quote.isMine == Constants.IsMine.NO.value
                                 && messageAndAttachment.message.isMine == 1 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyYourQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyYourQuote
+                            )
                         }
                         quote.isMine == Constants.IsMine.NO.value
                                 && messageAndAttachment.message.isMine == 0 -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyYourQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyYourQuote
+                            )
                         }
                         else -> {
-                            Utils.convertAttrToColorResource(context, R.attr.attrTextColorBodyMyQuote)
+                            Utils.convertAttrToColorResource(
+                                context,
+                                R.attr.attrTextColorBodyMyQuote
+                            )
                         }
                     }
                 )
@@ -201,7 +218,6 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     ) {
         val context = binding.textViewMessageQuote.context
 
-        val cryptoMessage = CryptoMessage(context)
         val body = if (isFromInputPanel) {
             val messageNull = messageAndAttachment.message
 
@@ -211,7 +227,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
             val quoteBody = messageAndAttachment.quote?.body ?: ""
 
             if (quoteBody.isNotEmpty()) {
-                cryptoMessage.decryptMessageBody(quoteBody)
+                quoteBody
             } else {
                 ""
             }
@@ -225,15 +241,25 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     private fun bindImageQuote(
         messageAndAttachment: MessageAndAttachment
     ) {
+        val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
+
+        transformationList.add(CenterCrop())
+        transformationList.add(BlurTransformation(context))
+        transformationList.add(RoundedCorners(4))
 
         if (isFromInputPanel) {
             val firstAttachmentNull = messageAndAttachment.getFirstAttachment()
 
             firstAttachmentNull?.let { attachment ->
+
+
                 if (attachment.type == Constants.AttachmentType.IMAGE.type) {
                     Glide.with(binding.imageViewQuote)
                         .load(attachment)
-                        .transform(CenterCrop(), RoundedCorners(4))
+                        .thumbnail(0.1f)
+                        .transform(
+                            *transformationList.toTypedArray()
+                        )
                         .into(binding.imageViewQuote)
                 } else if (attachment.type == Constants.AttachmentType.VIDEO.type) {
                     val uri = Utils.getFileUri(
@@ -244,7 +270,9 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                     Glide.with(binding.imageViewQuote)
                         .load(uri)
                         .thumbnail(0.1f)
-                        .transform(CenterCrop(), RoundedCorners(4))
+                        .transform(
+                            *transformationList.toTypedArray()
+                        )
                         .into(binding.imageViewQuote)
                 }
                 binding.imageViewQuote.visibility = View.VISIBLE
@@ -265,7 +293,9 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
 
                         Glide.with(binding.imageViewQuote)
                             .load(uri)
-                            .transform(CenterCrop(), RoundedCorners(4))
+                            .transform(
+                                *transformationList.toTypedArray()
+                            )
                             .into(binding.imageViewQuote)
 
                         binding.imageViewQuote.visibility = View.VISIBLE
@@ -281,7 +311,9 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                         Glide.with(binding.imageViewQuote)
                             .load(uri)
                             .thumbnail(0.1f)
-                            .transform(CenterCrop(), RoundedCorners(4))
+                            .transform(
+                                *transformationList.toTypedArray()
+                            )
                             .into(binding.imageViewQuote)
 
                         binding.imageViewQuote.visibility = View.VISIBLE

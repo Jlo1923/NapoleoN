@@ -21,12 +21,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MessageLocalDataSource @Inject constructor(
+    private val cryptoMessage: CryptoMessage,
     private val context: Context,
     private val contactDao: ContactDao,
     private val messageDao: MessageDao
 ) : MessageDataSource {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     override suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAndAttachment? {
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
@@ -76,6 +75,7 @@ class MessageLocalDataSource @Inject constructor(
                             Message(
                                 id = -1,
                                 webId = "",
+                                uuid = null,
                                 body = dayMessage,
                                 quoted = "",
                                 contactId = messageAndAttachment.message.contactId,
@@ -145,6 +145,10 @@ class MessageLocalDataSource @Inject constructor(
             message.encryptBody(cryptoMessage)
         }*/
         messageDao.updateMessage(message)
+    }
+
+    override fun existMessage(id: String): Boolean {
+        return messageDao.existMessage(id) != null
     }
 
     override suspend fun updateStateSelectionMessage(

@@ -15,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.napoleonchat.ui.activateBiometrics.ActivateBiometricsDialogFragment
-import com.naposystems.napoleonchat.ui.contacts.ContactsFragmentDirections
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -38,7 +37,7 @@ class SecuritySettingsFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SecuritySettingsViewModel
     private lateinit var binding: SecuritySettingsFragmentBinding
-    private var showCase : ShowCaseManager? = null
+    private var showCase: ShowCaseManager? = null
 
     private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
         viewModelFactory
@@ -65,12 +64,12 @@ class SecuritySettingsFragment : Fragment() {
         binding.optionMessageSelfDestruct.setSafeOnClickListener { optionMessageClickListener() }
         binding.imageButtonMessageOptionEndIcon.setSafeOnClickListener { optionMessageClickListener() }
 
-        binding.optionAllowDownload.setOnClickListener {
+        /*binding.optionAllowDownload.setOnClickListener {
             binding.switchAllowDownload.isChecked = !binding.switchAllowDownload.isChecked
         }
         binding.switchAllowDownload.setOnCheckedChangeListener { _, isChecked ->
             viewModel.updateAllowDownload(isChecked)
-        }
+        }*/
 
         binding.optionMessageSelfDestructTimeNotSent.setSafeOnClickListener {
             optionMessageSelfDestructTimeNotSentClickListener()
@@ -132,10 +131,6 @@ class SecuritySettingsFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(SecuritySettingsViewModel::class.java)
 
-        binding.viewModel = viewModel
-        binding.selfDestructViewModel = selfDestructTimeViewModel
-
-
         selfDestructTimeViewModel.getSelfDestructTime()
         selfDestructTimeViewModel.getMessageSelfDestructTimeNotSent()
         viewModel.getTimeRequestAccessPin()
@@ -147,6 +142,27 @@ class SecuritySettingsFragment : Fragment() {
                 binding.optionBiometrics.visibility = View.GONE
             }
         })
+
+        viewModel.allowDownloads.observe(viewLifecycleOwner) {
+            binding.allowDownloads = it
+            binding.executePendingBindings()
+        }
+
+        viewModel.timeRequestAccessPin.observe(viewLifecycleOwner) {
+            binding.timeRequestAccessPin = it
+            binding.executePendingBindings()
+        }
+
+        selfDestructTimeViewModel.selfDestructTimeGlobal.observe(viewLifecycleOwner) {
+            binding.selfDestructTimeGlobal = it
+            binding.executePendingBindings()
+        }
+
+        selfDestructTimeViewModel.messageSelfDestructTimeNotSent.observe(viewLifecycleOwner) {
+            binding.messageSelfDestructTimeNotSent = it
+            binding.executePendingBindings()
+        }
+
     }
 
     private fun optionMessageClickListener() {

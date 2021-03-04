@@ -46,7 +46,7 @@
             android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.7">
+            app:layout_constraintWidth_percent="0.8">
 
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"

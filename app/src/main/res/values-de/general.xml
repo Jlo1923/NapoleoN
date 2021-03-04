@@ -65,7 +65,7 @@
     <string name="text_hang_up_call">Auflegen</string>
     <string name="text_answer_call">Antworten</string>
     <string name="text_update_title">Eine neue Version von NapoleoN ist verfügbar</string>
-    <string name="text_update_message">Version %1$s ist jetzt im App Store erhältlich</string>
+    <string name="text_update_message">Version %1$s ist jetzt im Play Store erhältlich</string>
     <string name="text_update">Aktualisieren</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN muss Zugriff auf die Kamera und das Mikrofon um Anrufe tätigen und empfangen</string>
     <string name="text_twentyfour_hours">24 Stunden</string>
@@ -83,4 +83,5 @@
     <string name="text_reject">Ablehnen</string>
     <string name="text_count_messages">Beiträge</string>
     <string name="text_sending_file">Senden Datei</string>
+    <string name="text_activated">aktiviert</string>
 </resources>

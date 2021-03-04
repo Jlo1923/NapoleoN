@@ -26,6 +26,7 @@ data class Message(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") var id: Int,
     @ColumnInfo(name = "web_id") val webId: String,
+    @ColumnInfo(name = "uuid") val uuid: String?,
     @ColumnInfo(name = "body") var body: String,
     @ColumnInfo(name = "quoted") val quoted: String,
     @ColumnInfo(name = "contact_id") val contactId: Int,
@@ -37,7 +38,8 @@ data class Message(
     @ColumnInfo(name = "number_attachments") val numberAttachments: Int,
     @ColumnInfo(name = "self_destruction_at") var selfDestructionAt: Int = -1,
     @ColumnInfo(name = "total_self_destruction_at") var totalSelfDestructionAt: Int = 0,
-    @ColumnInfo(name = "type_message") val messageType: Int
+    @ColumnInfo(name = "type_message") val messageType: Int,
+    @ColumnInfo(name = "cypher") val cypher: Boolean = false
 ) : Parcelable {
 
     override fun equals(other: Any?): Boolean {
@@ -65,7 +67,7 @@ data class Message(
     }
 
     fun getBody(cryptoMessage: CryptoMessage) =
-        if (BuildConfig.ENCRYPT_API) {
+        if (BuildConfig.ENCRYPT_API && this.cypher) {
             cryptoMessage.decryptMessageBody(this.body)
         } else {
             this.body

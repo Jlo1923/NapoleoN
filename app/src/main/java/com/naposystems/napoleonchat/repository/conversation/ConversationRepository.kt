@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
 import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
+import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDataSource
 import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import com.naposystems.napoleonchat.dto.conversation.call.CallContactReqDTO
@@ -21,7 +22,10 @@ import com.naposystems.napoleonchat.dto.conversation.message.*
 import com.naposystems.napoleonchat.dto.conversation.socket.AuthReqDTO
 import com.naposystems.napoleonchat.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.napoleonchat.dto.conversation.socket.SocketReqDTO
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.entity.MessageNotSent
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -63,7 +67,8 @@ class ConversationRepository @Inject constructor(
     private val attachmentLocalDataSource: AttachmentDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
-    private val quoteDataSource: QuoteDataSource
+    private val quoteDataSource: QuoteDataSource,
+    private val messageNotSentDataSource: MessageNotSentDataSource
 ) :
     IContractConversation.Repository {
 
@@ -289,7 +294,7 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun getLocalUser(): User {
-        return userLocalDataSource.getUser(firebaseId)
+        return userLocalDataSource.getMyUser()
     }
 
     override fun insertMessage(message: Message): Long {
@@ -338,8 +343,27 @@ class ConversationRepository @Inject constructor(
         listIds.addAll(textMessagesUnreadIds)
         listIds.addAll(locationMessagesUnreadIds)
 
+        val messagesRead = messagesUnread.map {
+            ValidateMessage(
+                id = it.message.webId,
+                user = contactId,
+                status = Constants.MessageEventType.READ.status
+            )
+        }
+
+        val validateMessage = ValidateMessageEventDTO(messagesRead)
+
+        val jsonAdapterValidate =
+            moshi.adapter(ValidateMessageEventDTO::class.java)
+
+        val json = jsonAdapterValidate.toJson(validateMessage)
+
         if (listIds.isNotEmpty()) {
+
             try {
+
+                socketService.emitToClientConversation(json.toString())
+
                 val response = napoleonApi.sendMessagesRead(
                     MessagesReadReqDTO(
                         listIds
@@ -561,7 +585,6 @@ class ConversationRepository @Inject constructor(
 
             try {
                 val response = napoleonApi.downloadFileByUrl(attachment.body)
-//                val response = napoleonApi.downloadFileByUrl("https://video-lga3-1.xx.fbcdn.net/v/t39.24130-2/10000000_252314952661745_7854699925195670435_n.mp4?_nc_cat=101&_nc_sid=985c63&efg=eyJ2ZW5jb2RlX3RhZyI6Im9lcF9oZCJ9&_nc_ohc=yZMEbG8J9AsAX91wp5i&_nc_ht=video-lga3-1.xx&oh=d84d0cad44e97099db93202661c50217&oe=5F0F53B3")
 
                 if (response.isSuccessful) {
                     response.body()?.let { body ->
@@ -669,7 +692,8 @@ class ConversationRepository @Inject constructor(
                             offer(
                                 DownloadAttachmentResult.Error(
                                     attachment,
-                                    "File not downloaded"
+                                    "File not downloaded",
+                                    itemPosition
                                 )
                             )
                             close()
@@ -684,7 +708,8 @@ class ConversationRepository @Inject constructor(
                     offer(
                         DownloadAttachmentResult.Error(
                             attachment,
-                            "File not downloaded"
+                            "File not downloaded",
+                            itemPosition
                         )
                     )
                     close()
@@ -839,5 +864,27 @@ class ConversationRepository @Inject constructor(
         return sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_FREE_TRIAL
         )
+    }
+
+    override fun getMessageNotSent(contactId: Int): MessageNotSent {
+        return messageNotSentDataSource.getMessageNotSetByContact(contactId)
+    }
+
+    override fun insertMessageNotSent(message: String, contactId: Int) {
+        if (message.isEmpty()) {
+            messageNotSentDataSource.deleteMessageNotSentByContact(contactId)
+        } else {
+            messageNotSentDataSource.insertMessageNotSent(
+                MessageNotSent(
+                    id = 0,
+                    message = message,
+                    contactId = contactId
+                )
+            )
+        }
+    }
+
+    override fun deleteMessageNotSent(contactId: Int) {
+        messageNotSentDataSource.deleteMessageNotSentByContact(contactId)
     }
 }

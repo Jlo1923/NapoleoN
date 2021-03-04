@@ -20,6 +20,8 @@ interface MessageDataSource {
 
     fun updateMessage(message: Message)
 
+    fun existMessage(id: String): Boolean
+
     suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
 
     suspend fun cleanSelectionMessages(contactId: Int)

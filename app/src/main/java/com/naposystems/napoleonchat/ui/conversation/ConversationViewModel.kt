@@ -9,13 +9,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.entity.MessageNotSent
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.entity.message.Message
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
@@ -24,7 +24,6 @@ import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
 import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
-import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -33,15 +32,16 @@ import kotlinx.coroutines.flow.onStart
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class ConversationViewModel @Inject constructor(
+    private val cryptoMessage: CryptoMessage,
     private val context: Context,
     private val repository: IContractConversation.Repository
 ) : ViewModel(), IContractConversation.ViewModel {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     private lateinit var user: User
     private lateinit var contact: Contact
@@ -99,6 +99,10 @@ class ConversationViewModel @Inject constructor(
     private val _newMessageSend = MutableLiveData<Boolean>()
     val newMessageSend: LiveData<Boolean>
         get() = _newMessageSend
+
+    private val _messageNotSent = MutableLiveData<MessageNotSent>()
+    val messageNotSent: LiveData<MessageNotSent>
+        get() = _messageNotSent
 
     private var countOldMessages: Int = 0
 
@@ -171,6 +175,7 @@ class ConversationViewModel @Inject constructor(
                 val message = Message(
                     id = 0,
                     webId = "",
+                    uuid = UUID.randomUUID().toString(),
                     body = messageString,
                     quoted = quote,
                     contactId = contact.id,
@@ -183,15 +188,17 @@ class ConversationViewModel @Inject constructor(
                     selfDestructionAt = selfAutoDestruction
                 )
 
-                if (BuildConfig.ENCRYPT_API) {
-                    message.encryptBody(cryptoMessage)
-                }
+//                if (BuildConfig.ENCRYPT_API) {
+//                    message.encryptBody(cryptoMessage)
+//                }
 
                 val messageId = repository.insertMessage(message).toInt()
                 Timber.d("insertMessage")
                 _newMessageSend.value = true
 
                 message.id = messageId
+
+                deleteMessageNotSent(contact.id)
 
                 attachment?.let {
                     attachment.messageId = messageId
@@ -272,7 +279,8 @@ class ConversationViewModel @Inject constructor(
                 body = message.getBody(cryptoMessage),
                 numberAttachments = numberAttachments,
                 destroy = selfDestructTime,
-                messageType = Constants.MessageType.MESSAGE.type
+                messageType = Constants.MessageType.MESSAGE.type,
+                uuidSender = message.uuid
             )
 
             val messageResponse = repository.sendMessage(messageReqDTO)
@@ -429,6 +437,10 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    override fun deleteMessageNotSent(contactId: Int){
+        repository.deleteMessageNotSent(contactId)
+    }
+
     private fun buildObjectDeleteMessages(
         contactId: Int,
         listMessages: List<MessageAndAttachment>
@@ -518,7 +530,8 @@ class ConversationViewModel @Inject constructor(
                         body = message.getBody(cryptoMessage),
                         numberAttachments = 1,
                         destroy = selfAutoDestruction,
-                        messageType = Constants.MessageType.MESSAGE.type
+                        messageType = Constants.MessageType.MESSAGE.type,
+                        uuidSender = message.uuid
                     )
 
                     val messageResponse = repository.sendMessage(messageReqDTO)
@@ -652,7 +665,8 @@ class ConversationViewModel @Inject constructor(
                     body = message.body,
                     numberAttachments = 0,
                     destroy = selfDestructTime,
-                    messageType = Constants.MessageType.MESSAGE.type
+                    messageType = Constants.MessageType.MESSAGE.type,
+                    uuidSender = message.uuid
                 )
 
                 _stateMessage.value = StateMessage.Start(message.id)
@@ -700,6 +714,16 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun getFreeTrial() = repository.getFreeTrial()
+
+    override fun getMessageNotSent(contactId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _messageNotSent.postValue(repository.getMessageNotSent(contactId))
+        }
+    }
+
+    override fun insertMessageNotSent(message: String, contactId: Int) {
+        repository.insertMessageNotSent(message, contactId)
+    }
 
     //endregion
 }

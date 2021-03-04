@@ -7,10 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,11 +18,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.PurchaseHistoryRecord
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
@@ -32,18 +29,17 @@ import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
 import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
-import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
@@ -58,10 +54,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
+
 
 class HomeFragment : Fragment() {
 
@@ -72,8 +66,9 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    @Inject
-    lateinit var billingClientLifecycle: BillingClientLifecycle
+    //TODO:Subscription
+    /*@Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
     @Inject
     lateinit var webRTCClient: IContractWebRTCClient
@@ -108,7 +103,8 @@ class HomeFragment : Fragment() {
 
     private var showCase: ShowCaseManager? = null
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
-    private lateinit var mFirebaseStorage: FirebaseStorage
+
+    //    private lateinit var mFirebaseStorage: FirebaseStorage
     private var isShowingVersionDialog: Boolean = false
     private lateinit var popup: PopupMenu
 
@@ -119,7 +115,8 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(billingClientLifecycle)
+        //TODO:Subscription
+//        lifecycle.addObserver(billingClientLifecycle)
     }
 
     override fun onCreateView(
@@ -131,7 +128,8 @@ class HomeFragment : Fragment() {
 
         viewModel.verifyMessagesToDelete()
 
-        billingClientLifecycle.queryPurchases()
+        //TODO:Subscription
+//        billingClientLifecycle.queryPurchases()
 
         binding = DataBindingUtil.inflate(
             layoutInflater,
@@ -146,9 +144,10 @@ class HomeFragment : Fragment() {
             goToStatus()
         }
 
-        binding.containerSubscription.setOnClickListener {
+        //TODO:Subscription
+        /*binding.containerSubscription.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSubscriptionFragment())
-        }
+        }*/
 
         binding.imageButtonStatusEndIcon.setOnClickListener {
             goToStatus()
@@ -211,6 +210,22 @@ class HomeFragment : Fragment() {
 
         binding.textViewStatus.isSelected = true
 
+
+        /*if (showCase?.getStateShowCaseSixth() == true &&
+            viewModel.getDialogSubscription() == Constants.ShowDialogSubscription.YES.option
+        ) {
+            generalDialog(
+                "test",
+                "message",
+                false,
+                childFragmentManager
+            ) {
+                viewModel.setDialogSubscription()
+            }
+        }*/
+
+        RxBus.publish(RxEvent.HideOptionMenuRecoveryAccount())
+
         return binding.root
     }
 
@@ -229,8 +244,6 @@ class HomeFragment : Fragment() {
         viewModel.getMessages()
 
         viewModel.getDeletedMessages()
-
-//        viewModel.getFriendshipQuantity()
 
         viewModel.getFriendshipRequestHome()
 
@@ -267,7 +280,8 @@ class HomeFragment : Fragment() {
             }
         })
 
-        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+        //TODO:Subscription
+        /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
                 for (purchase in purchasesList) {
                     billingClientLifecycle.acknowledged(purchase)
@@ -304,7 +318,7 @@ class HomeFragment : Fragment() {
                         }
                     } else binding.containerSubscription.isVisible = false
                 }
-            })
+            })*/
 
         viewModel.user.observe(viewLifecycleOwner, Observer {
             binding.textViewStatus.text = it.status
@@ -346,7 +360,8 @@ class HomeFragment : Fragment() {
         (activity as MainActivity).getUser()
     }
 
-    private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
+    //TODO:Subscription
+    /*private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = purchasesHistory[0].purchaseTime
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -368,7 +383,7 @@ class HomeFragment : Fragment() {
 
         val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
         return dateExpireSubscription!!.time
-    }
+    }*/
 
     private fun validateViewSwitcher(existConversation: Boolean, existFriendShip: Boolean) {
         if (!existConversation && !existFriendShip && binding.viewSwitcherChats.nextView.id == binding.emptyState.id) {
@@ -443,50 +458,64 @@ class HomeFragment : Fragment() {
         viewModel.getJsonNotification()
         showCase()
         binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall()
-        /*if (!isShowingVersionDialog && !BuildConfig.DEBUG)
-            getRemoteConfig()*/
+
+        if (!isShowingVersionDialog && !BuildConfig.DEBUG) {
+            Timber.d("*TestVersion: get remote")
+            getRemoteConfig()
+        }
     }
 
-    /*private fun getRemoteConfig() {
+    private fun getRemoteConfig() {
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-        mFirebaseStorage = FirebaseStorage.getInstance()
-
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(3600)
+            .build()
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings)
         mFirebaseRemoteConfig.fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     getVersion()
                 } else {
-                    this.showToast("No se han podido obtener el remote config|!!")
+//                    this.showToast("No se han podido obtener el remote config|!!")
+                    Timber.e("*TestVersion: Not remoteConfig")
                 }
             }
-    }*/
-
-    private fun getVersion() {
-        val versionApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
-
-        if (versionApp != BuildConfig.VERSION_NAME) {
-            Utils.alertDialogInformative(
-                title = getString(R.string.text_alert_failure),
-                message = getString(R.string.text_update_message, versionApp),
-                titleButton = R.string.text_update,
-                childFragmentManager = requireContext(),
-                clickTopButton = {
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse(
-                            "https://play.google.com/store/apps/details?id=com.naposystems.pepito"
-                        )
-                        setPackage("com.android.vending")
-                    }
-                    startActivity(intent)
-                    isShowingVersionDialog = false
-                },
-                isCancelable = false
-            )
-            isShowingVersionDialog = true
-        }
     }
 
-    private fun validateSubscriptionTime(purchaseHistoryList: List<PurchaseHistoryRecord>) {
+    private fun getVersion() {
+        try {
+            val versionApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
+            val versionCodeApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_CODE_KEY)
+
+//            Timber.d("*TestVersion: $versionCodeApp")
+//            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
+
+            if (BuildConfig.VERSION_CODE < versionCodeApp.toInt()) {
+                Utils.alertDialogInformative(
+                    title = getString(R.string.text_alert_failure),
+                    message = getString(R.string.text_update_message, versionApp),
+                    titleButton = R.string.text_update,
+                    childFragmentManager = requireContext(),
+                    clickTopButton = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse(
+                                "https://play.google.com/store/apps/details?id=com.naposystems.napoleonchat"
+                            )
+                            setPackage("com.android.vending")
+                        }
+                        startActivity(intent)
+                        isShowingVersionDialog = false
+                    },
+                    isCancelable = false
+                )
+                isShowingVersionDialog = true
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+    //TODO:Subscription
+    /*private fun validateSubscriptionTime(purchaseHistoryList: List<PurchaseHistoryRecord>) {
         val freeTrial = viewModel.getFreeTrial()
         Timber.d("freeTrial: $freeTrial")
 
@@ -505,7 +534,7 @@ class HomeFragment : Fragment() {
         } else {
             binding.containerSubscription.isVisible = false
         }
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -681,38 +710,42 @@ class HomeFragment : Fragment() {
     }
 
     private fun showCase() {
-        Handler().postDelayed({
-            if (menuCreated && !showShowCase) {
-                val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
+        try {
+            Handler().postDelayed({
+                if (menuCreated && !showShowCase) {
+                    val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
 
-                val securitySettingMenuItem =
-                    drawerMenu.findItem(R.id.security_settings).actionView as ConstraintLayout
+                    val securitySettingMenuItem =
+                        drawerMenu.findItem(R.id.security_settings).actionView as LinearLayout
 
-                showCase = ShowCaseManager().apply {
-                    setListener(object : ShowCaseManager.Listener {
-                        override fun openSecuritySettings() {
-                            findNavController().navigate(
-                                HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
-                                    showShowCase = true
+                    showCase = ShowCaseManager().apply {
+                        setListener(object : ShowCaseManager.Listener {
+                            override fun openSecuritySettings() {
+                                findNavController().navigate(
+                                    HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
+                                        showShowCase = true
+                                    )
                                 )
-                            )
+                            }
+                        })
+
+                        setActivity(requireContext() as FragmentActivity)
+                        addContactsMenuItem?.actionView?.let { view ->
+                            setFirstView(view)
                         }
-                    })
+                        setSecondView(binding.fabContacts)
+                        setThirdView(binding.viewShowCaseStatus)
+                        setFourthView(homeMenuItem!!)
+                        setFifthView(securitySettingMenuItem.getChildAt(0))
 
-                    setActivity(requireContext() as FragmentActivity)
-                    addContactsMenuItem?.actionView?.let { view ->
-                        setFirstView(view)
+                        showFromFirst()
                     }
-                    setSecondView(binding.fabContacts)
-                    setThirdView(binding.viewShowCaseStatus)
-                    setFourthView(homeMenuItem!!)
-                    setFifthView(securitySettingMenuItem.getChildAt(0))
 
-                    showFromFirst()
+                    showShowCase = true
                 }
-
-                showShowCase = true
-            }
-        }, 800)
+            }, 500)
+        } catch (e: Exception) {
+            Timber.d(e.localizedMessage)
+        }
     }
 }

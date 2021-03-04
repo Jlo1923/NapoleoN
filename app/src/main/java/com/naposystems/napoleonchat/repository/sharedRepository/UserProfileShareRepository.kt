@@ -21,7 +21,7 @@ class UserProfileShareRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractUserProfileShare.Repository {
 
-    private val moshi by lazy {
+    private val moshi: Moshi by lazy {
         Moshi.Builder().build()
     }
 

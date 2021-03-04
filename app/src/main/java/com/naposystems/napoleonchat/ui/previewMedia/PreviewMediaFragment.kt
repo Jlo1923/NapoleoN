@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -131,6 +132,13 @@ class PreviewMediaFragment : Fragment() {
                 }
                 Constants.AttachmentType.VIDEO.type -> {
                     try {
+
+                        binding.imageViewPreview.apply {
+                            visibility = View.GONE
+                            isClickable = false
+                            isFocusable = false
+                        }
+
                         binding.containerSeekbar.visibility = View.VISIBLE
                         binding.containerVideoView.visibility = View.VISIBLE
 
@@ -169,11 +177,7 @@ class PreviewMediaFragment : Fragment() {
         }
 
         binding.container.setOnClickListener {
-            if (isUIVisible) {
-                hideUI()
-            } else {
-                showUI()
-            }
+            validateUI()
         }
 
         binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -212,16 +216,34 @@ class PreviewMediaFragment : Fragment() {
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.messageAndAttachment.contact?.id == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    args.messageAndAttachment.contact?.let { noNullContact ->
+                        if (noNullContact.id == eventContact.contactId) {
+                            if (noNullContact.stateNotification) {
+                                Utils.deleteUserChannel(
+                                    requireContext(),
+                                    noNullContact.id,
+                                    noNullContact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)
 
+        binding.imageViewPreview.setOnClickListener {
+            validateUI()
+        }
+
         binding.executePendingBindings()
 
         return binding.root
+    }
+
+    private fun validateUI() {
+        if (isUIVisible) hideUI() else showUI()
     }
 
     private fun sentMessageReaded(isPlaying: Boolean) {
@@ -272,6 +294,7 @@ class PreviewMediaFragment : Fragment() {
 
                             mHandler.postDelayed(mRunnable!!, 0)
                         }
+                        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
 
                     Player.STATE_ENDED -> {
@@ -288,6 +311,8 @@ class PreviewMediaFragment : Fragment() {
                         isEndFirstTime = true
 
                         sentMessageReaded(false)
+
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 }
             }
@@ -299,10 +324,14 @@ class PreviewMediaFragment : Fragment() {
                 if (isPlaying) {
                     binding.imageButtonPlay.playAnimation()
                     hideUI()
+//                    Timber.d("*TestPlay: Play")
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 } else {
                     binding.imageButtonPlay.apply {
                         reverseAnimation()
                         showUI()
+//                        Timber.d("*TestPlay: Pause")
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 }
             }
@@ -381,6 +410,7 @@ class PreviewMediaFragment : Fragment() {
             releasePlayer()
         }
         sentMessageReaded(false)
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onDestroy() {
@@ -390,6 +420,7 @@ class PreviewMediaFragment : Fragment() {
             tempFile?.delete()
         }
         sentMessageReaded(false)
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
 }
