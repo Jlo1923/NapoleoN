@@ -16,8 +16,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.RegisterRecoveryAccountQuestionFragmentBinding
-import com.naposystems.napoleonchat.entity.Questions
-import com.naposystems.napoleonchat.entity.RecoveryAnswer
+import com.naposystems.napoleonchat.model.Questions
+import com.naposystems.napoleonchat.model.RecoveryAnswer
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog

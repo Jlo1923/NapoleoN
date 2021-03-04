@@ -1,22 +1,21 @@
 package com.naposystems.napoleonchat.ui.contacts
 
 import androidx.lifecycle.*
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 class ContactsViewModel @Inject constructor(private val repository: IContractContacts.Repository) :
     ViewModel(), IContractContacts.ViewModel {
 
-    private lateinit var _contacts: LiveData<MutableList<Contact>>
-    val contacts: LiveData<MutableList<Contact>>
+    private lateinit var _contacts: LiveData<MutableList<ContactEntity>>
+    val contacts: LiveData<MutableList<ContactEntity>>
         get() = _contacts
 
-    private val _contactsForSearch = MutableLiveData<List<Contact>>()
-    val contactsForSearch: LiveData<List<Contact>>
+    private val _contactsForSearch = MutableLiveData<List<ContactEntity>>()
+    val contactsForSearch: LiveData<List<ContactEntity>>
         get() = _contactsForSearch
 
     private val _webServiceErrors = MutableLiveData<List<String>>()

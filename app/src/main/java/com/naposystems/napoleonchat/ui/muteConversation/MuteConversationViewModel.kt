@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch

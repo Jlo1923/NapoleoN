@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.ui.blockedContacts
 
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 
 interface IContractBlockedContact {
 
@@ -11,6 +11,6 @@ interface IContractBlockedContact {
     }
 
     interface Repository {
-        suspend fun getBlockedContactsLocal(): LiveData<List<Contact>>
+        suspend fun getBlockedContactsLocal(): LiveData<List<ContactEntity>>
     }
 }

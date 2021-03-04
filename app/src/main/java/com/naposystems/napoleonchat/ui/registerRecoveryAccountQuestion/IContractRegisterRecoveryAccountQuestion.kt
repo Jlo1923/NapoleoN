@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion
 
-import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
-import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
-import com.naposystems.napoleonchat.entity.RecoveryAnswer
+import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
+import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
+import com.naposystems.napoleonchat.model.RecoveryAnswer
 import okhttp3.ResponseBody
 import retrofit2.Response
 

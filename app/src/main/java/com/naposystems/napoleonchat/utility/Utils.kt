@@ -39,7 +39,7 @@ import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
@@ -664,7 +664,7 @@ class Utils {
         }
 
         fun validateNickname(
-            contact: Contact,
+            contact: ContactEntity,
             query: String
         ): Boolean {
             val data =
@@ -672,7 +672,7 @@ class Utils {
             return validateSearch(data, query)
         }
 
-        fun validateDisplayName(contact: Contact, query: String): Boolean {
+        fun validateDisplayName(contact: ContactEntity, query: String): Boolean {
             val data =
                 if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
             return validateSearch(data, query)

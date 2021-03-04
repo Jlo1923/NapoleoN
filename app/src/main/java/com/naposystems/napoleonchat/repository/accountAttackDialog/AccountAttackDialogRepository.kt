@@ -1,11 +1,11 @@
 package com.naposystems.napoleonchat.repository.accountAttackDialog
 
-import com.naposystems.napoleonchat.dto.accountAttackDialog.AccountAttackDialogReqDTO
-import com.naposystems.napoleonchat.dto.accountAttackDialog.AccountAttackDialogResDTO
+import com.naposystems.napoleonchat.source.remote.dto.accountAttackDialog.AccountAttackDialogReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.accountAttackDialog.AccountAttackDialogResDTO
 import com.naposystems.napoleonchat.ui.accountAttack.IContractAccountAttackDialog
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import retrofit2.Response
 import javax.inject.Inject
 

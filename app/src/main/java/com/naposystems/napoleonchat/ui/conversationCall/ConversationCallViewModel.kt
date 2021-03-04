@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.cancelCall.CancelCallReqDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -16,8 +16,8 @@ class ConversationCallViewModel @Inject constructor(
     private val repository: IContractConversationCall.Repository
 ) : ViewModel(), IContractConversationCall.ViewModel {
 
-    private val _contact = MutableLiveData<Contact>()
-    val contact: LiveData<Contact>
+    private val _contact = MutableLiveData<ContactEntity>()
+    val contact: LiveData<ContactEntity>
         get() = _contact
 
     private val _userDisplayFormat = MutableLiveData<Int>()

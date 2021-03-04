@@ -22,7 +22,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentGalleryFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryItem
 import com.naposystems.napoleonchat.ui.attachmentGallery.adapter.AttachmentGalleryAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -136,7 +136,7 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                                     )
                                 }
 
-                                val attachment = Attachment(
+                                val attachment = AttachmentEntity(
                                     id = 0,
                                     messageId = 0,
                                     webId = "",

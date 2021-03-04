@@ -4,7 +4,7 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.button.MaterialButton
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.addContact.FriendshipRequestTitle
+import com.naposystems.napoleonchat.model.FriendshipRequestTitle
 
 @BindingAdapter("haveFriendshipRequest")
 fun haveFriendShipRequest(button: MaterialButton, haveFriendShipRequest: Boolean) {

@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ValidateNicknameFragmentBinding
-import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import dagger.android.support.AndroidSupportInjection

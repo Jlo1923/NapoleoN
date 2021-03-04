@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.accountAttack
 
-import com.naposystems.napoleonchat.dto.accountAttackDialog.AccountAttackDialogResDTO
+import com.naposystems.napoleonchat.source.remote.dto.accountAttackDialog.AccountAttackDialogResDTO
 import retrofit2.Response
 
 interface IContractAccountAttackDialog {

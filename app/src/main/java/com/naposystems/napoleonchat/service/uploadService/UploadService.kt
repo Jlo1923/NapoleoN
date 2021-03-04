@@ -4,8 +4,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
@@ -53,16 +53,16 @@ class UploadService : Service(), IContractUploadService {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand")
 
-        var message: Message? = null
-        var attachment: Attachment? = null
+        var messageEntity: MessageEntity? = null
+        var attachmentEntity: AttachmentEntity? = null
 
         intent.extras?.let { bundle ->
-            message = bundle.getParcelable(MESSAGE_KEY) as Message?
-            attachment = bundle.getParcelable(ATTACHMENT_KEY) as Attachment?
+            messageEntity = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
+            attachmentEntity = bundle.getParcelable(ATTACHMENT_KEY) as AttachmentEntity?
         }
 
-        if (message != null && attachment != null) {
-            repository.uploadAttachment(attachment!!, message!!)
+        if (messageEntity != null && attachmentEntity != null) {
+            repository.uploadAttachment(attachmentEntity!!, messageEntity!!)
             showNotification()
         }
 

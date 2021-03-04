@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
@@ -14,12 +14,12 @@ import javax.inject.Inject
 class BlockedContactsViewModel @Inject constructor(private val repository: BlockedContactRepository) :
     ViewModel(), IContractBlockedContact.ViewModel {
 
-    private lateinit var _blockedContacts: LiveData<List<Contact>>
-    val blockedContacts: LiveData<List<Contact>>
+    private lateinit var _blockedContacts: LiveData<List<ContactEntity>>
+    val blockedContacts: LiveData<List<ContactEntity>>
         get() = _blockedContacts
 
-    private val _listBlockedContacts = MutableLiveData<List<Contact>>()
-    val listBlockedContacts: LiveData<List<Contact>>
+    private val _listBlockedContacts = MutableLiveData<List<ContactEntity>>()
+    val listBlockedContacts: LiveData<List<ContactEntity>>
         get() = _listBlockedContacts
 
     private val _webServiceErrors = MutableLiveData<List<String>>()

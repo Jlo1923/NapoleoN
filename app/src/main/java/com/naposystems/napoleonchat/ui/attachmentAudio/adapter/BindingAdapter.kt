@@ -14,7 +14,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.utility.Utils
 import javax.annotation.Nullable
 

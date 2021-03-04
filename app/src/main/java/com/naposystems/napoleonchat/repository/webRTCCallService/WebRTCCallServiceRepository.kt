@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.repository.webRTCCallService
 
-import com.naposystems.napoleonchat.dto.conversation.call.reject.RejectCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.service.webRTCCall.IContractWebRTCCallService
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber

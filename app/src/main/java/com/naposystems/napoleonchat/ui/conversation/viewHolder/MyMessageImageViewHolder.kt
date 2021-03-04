@@ -11,7 +11,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithImageBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.BlurTransformation
@@ -34,7 +34,7 @@ class MyMessageImageViewHolder constructor(
     }
 
     override fun bind(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean,
         timeFormat: Int?,
@@ -56,11 +56,11 @@ class MyMessageImageViewHolder constructor(
     }
 
     private fun bindImageAttachment(
-        messageAndAttachment: MessageAndAttachment
+        messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         try {
             val context = binding.imageViewAttachment.context
-            messageAndAttachment.getFirstAttachment()?.let { attachment ->
+            messageAndAttachmentRelation.getFirstAttachment()?.let { attachment ->
 
                 binding.imageViewAttachment.visibility = View.VISIBLE
 

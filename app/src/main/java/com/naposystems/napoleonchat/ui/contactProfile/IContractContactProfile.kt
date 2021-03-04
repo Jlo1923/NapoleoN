@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.ui.contactProfile
 
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationReqDTO
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationResDTO
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationResDTO
 import retrofit2.Response
 
 interface IContractContactProfile {

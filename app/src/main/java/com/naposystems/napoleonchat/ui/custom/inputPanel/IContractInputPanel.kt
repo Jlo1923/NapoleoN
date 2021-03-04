@@ -2,9 +2,8 @@ package com.naposystems.napoleonchat.ui.custom.inputPanel
 
 import android.text.TextWatcher
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.emoji.widget.EmojiAppCompatEditText
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 
 interface IContractInputPanel {
     fun setListener(listener: InputPanelWidget.Listener)
@@ -21,13 +20,13 @@ interface IContractInputPanel {
     fun showImageButtonSend()
     fun hideButtonRecord()
     fun showButtonRecord()
-    fun openQuote(messageAndAttachment: MessageAndAttachment)
+    fun openQuote(messageAndAttachmentRelation: MessageAttachmentRelation)
     fun containerWrap()
     fun containerNoWrap()
     fun getWebIdQuote(): String
     fun closeQuote()
     fun resetImage()
-    fun getQuote(): MessageAndAttachment?
+    fun getQuote(): MessageAttachmentRelation?
     fun setRecordingTime(time: Long)
     fun clearTextEditText()
     fun cancelRecording()

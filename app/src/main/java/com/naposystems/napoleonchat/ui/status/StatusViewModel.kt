@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.status.UserStatusReqDTO
-import com.naposystems.napoleonchat.entity.Status
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.remote.dto.status.UserStatusReqDTO
+import com.naposystems.napoleonchat.source.local.entity.StatusEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.repository.status.StatusRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -16,11 +16,11 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     ViewModel(),
     IContractStatus.ViewModel {
 
-    val user = MutableLiveData<User>()
+    val user = MutableLiveData<UserEntity>()
 
-    private lateinit var _status: LiveData<MutableList<Status>>
-    val status: LiveData<MutableList<Status>>
-        get() = _status
+    private lateinit var _statusEntity: LiveData<MutableList<StatusEntity>>
+    val statusEntity: LiveData<MutableList<StatusEntity>>
+        get() = _statusEntity
 
     private val _statusUpdatedSuccessfully = MutableLiveData<Boolean>()
     val statusUpdatedSuccessfully: LiveData<Boolean>
@@ -44,7 +44,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     override fun getStatus() {
         viewModelScope.launch {
             try {
-                _status = repository.getStatus()
+                _statusEntity = repository.getStatus()
             } catch (ex: Exception) {
                 _errorGettingStatus.value = true
                 Timber.d(ex)
@@ -79,17 +79,17 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         }
     }
 
-    override fun insertStatus(listStatus: List<Status>) {
+    override fun insertStatus(listStatusEntities: List<StatusEntity>) {
         viewModelScope.launch {
-            repository.insertNewStatus(listStatus)
+            repository.insertNewStatus(listStatusEntities)
         }
     }
 
     private suspend fun handleUpdateRemoteStatusSuccessful(
         textStatus: String,
-        user: User
+        userEntity: UserEntity
     ) {
-        status.value?.let { listStatus ->
+        statusEntity.value?.let { listStatus ->
             if (listStatus.count() < 10) {
                 val status = listStatus.find {
                     (it.status.isNotEmpty()) && (it.status
@@ -98,8 +98,8 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
                 }
 
                 if (status == null) {
-                    val list = arrayListOf<Status>()
-                    list.add(Status(0, customStatus = textStatus))
+                    val list = arrayListOf<StatusEntity>()
+                    list.add(StatusEntity(0, customStatus = textStatus))
                     repository.insertNewStatus(list)
                 }
             }
@@ -107,14 +107,14 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
 
         repository.updateLocalStatus(
             textStatus,
-            user.firebaseId
+            userEntity.firebaseId
         )
-        user.status = textStatus
+        userEntity.status = textStatus
     }
 
-    override fun deleteStatus(status: Status) {
+    override fun deleteStatus(statusEntity: StatusEntity) {
         viewModelScope.launch {
-            repository.deleteStatus(status)
+            repository.deleteStatus(statusEntity)
         }
     }
 

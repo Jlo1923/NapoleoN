@@ -1,20 +1,20 @@
 package com.naposystems.napoleonchat.ui.profile
 
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 
 interface IContractProfile {
 
     interface ViewModel {
         fun getLocalUser()
-        fun updateLocalUser(newUser: User)
-        fun getUser(): User?
+        fun updateLocalUser(newUserEntity: UserEntity)
+        fun getUser(): UserEntity?
         fun disconnectSocket()
     }
 
     interface Repository {
-        suspend fun getUser(): LiveData<User>
-        suspend fun updateLocalUser(user: User)
+        suspend fun getUser(): LiveData<UserEntity>
+        suspend fun updateLocalUser(userEntity: UserEntity)
         fun disconnectSocket()
     }
 }

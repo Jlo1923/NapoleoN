@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.attachmentAudio
 
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 
 interface IContractAttachmentAudio {
 

@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemSystemMessageBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.Constants
@@ -27,12 +27,12 @@ class SystemMessageViewHolder constructor(
     private var countDownTimer: CountDownTimer? = null
 
     override fun countDown(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         textView: TextView?,
-        itemToEliminate: (MessageAndAttachment) -> Unit
+        itemToEliminate: (MessageAttachmentRelation) -> Unit
     ) {
         countDownTimer?.cancel()
-        val endTime = item.message.totalSelfDestructionAt.toLong()
+        val endTime = item.messageEntity.totalSelfDestructionAt.toLong()
         if (endTime > 0) {
             val remainingTime =
                 (endTime - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
@@ -64,8 +64,8 @@ class SystemMessageViewHolder constructor(
         }
     }
 
-    private fun showDestructionTime(messageAndAttachment: MessageAndAttachment) {
-        val message = messageAndAttachment.message
+    private fun showDestructionTime(messageAndAttachmentRelation: MessageAttachmentRelation) {
+        val message = messageAndAttachmentRelation.messageEntity
         val stringId = when (message.selfDestructionAt) {
             Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time -> R.string.text_every_five_seconds
             Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time -> R.string.text_every_fifteen_seconds
@@ -87,7 +87,7 @@ class SystemMessageViewHolder constructor(
     }
 
     override fun bind(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean,
         timeFormat: Int?,

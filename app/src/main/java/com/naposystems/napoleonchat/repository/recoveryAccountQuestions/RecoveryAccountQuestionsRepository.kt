@@ -2,13 +2,13 @@ package com.naposystems.napoleonchat.repository.recoveryAccountQuestions
 
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.Crypto
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.dto.recoveryAccountQuestions.*
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccountQuestions.*
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -21,7 +21,7 @@ import kotlin.collections.ArrayList
 class RecoveryAccountQuestionsRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val userLocalDataSource: UserLocalDataSource
+    private val userLocalDataSourceImp: UserLocalDataSourceImp
 ) : IContractRecoveryAccountQuestions.Repository {
 
     private val moshi: Moshi by lazy {
@@ -92,7 +92,7 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
                 Constants.SharedPreferences.PREF_FIREBASE_ID, ""
             )
             val createAtMilliseconds = TimeUnit.SECONDS.toMillis(
-                userLocalDataSource.getMyUser().createAt
+                userLocalDataSourceImp.getMyUser().createAt
             )
 
             val calendar = Calendar.getInstance()
@@ -124,7 +124,7 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
 
     override suspend fun insertUser(recoveryAccountUserDTO: RecoveryAccountUserDTO) {
         val user = RecoveryAccountUserDTO.toUserModel(recoveryAccountUserDTO, firebaseId)
-        userLocalDataSource.insertUser(user)
+        userLocalDataSourceImp.insertUser(user)
 //        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 }

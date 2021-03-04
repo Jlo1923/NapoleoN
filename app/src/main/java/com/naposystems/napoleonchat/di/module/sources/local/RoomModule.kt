@@ -5,8 +5,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.db.NapoleonRoomDatabase
-import com.naposystems.napoleonchat.entity.Status
+import com.naposystems.napoleonchat.source.local.db.NapoleonRoomDatabase
+import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.Executors
@@ -28,12 +28,12 @@ class RoomModule {
                         super.onCreate(db)
 
                         val prepopulateData = listOf(
-                            Status(1, context.getString(R.string.text_status_available)),
-                            Status(2, context.getString(R.string.text_status_busy)),
-                            Status(3, context.getString(R.string.text_status_in_meeting)),
-                            Status(4, context.getString(R.string.text_status_only_messages)),
-                            Status(5, context.getString(R.string.text_status_sleeping)),
-                            Status(6, context.getString(R.string.text_status_only_emergency))
+                            StatusEntity(1, context.getString(R.string.text_status_available)),
+                            StatusEntity(2, context.getString(R.string.text_status_busy)),
+                            StatusEntity(3, context.getString(R.string.text_status_in_meeting)),
+                            StatusEntity(4, context.getString(R.string.text_status_only_messages)),
+                            StatusEntity(5, context.getString(R.string.text_status_sleeping)),
+                            StatusEntity(6, context.getString(R.string.text_status_only_emergency))
                         )
 
                         Executors.newSingleThreadExecutor().execute {

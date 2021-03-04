@@ -145,7 +145,7 @@ class SplashFragment : Fragment() {
             }
         })
 
-        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
+        viewModel.userEntity.observe(viewLifecycleOwner, Observer { user ->
             findNavController().navigate(
                 SplashFragmentDirections.actionSplashFragmentToAccessPinFragment(
                     user.nickname,

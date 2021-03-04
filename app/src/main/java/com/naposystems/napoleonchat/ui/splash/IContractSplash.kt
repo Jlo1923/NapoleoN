@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.splash
 
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 
 interface IContractSplash {
     interface ViewModel {
@@ -16,7 +16,7 @@ interface IContractSplash {
     }
 
     interface Repository {
-        suspend fun getUser(): User
+        suspend fun getUser(): UserEntity
         suspend fun getTimeRequestAccessPin(): Int
         suspend fun getLockTime(): Long
         suspend fun getLockStatus(): Int

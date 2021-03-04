@@ -1,10 +1,10 @@
 package com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction
 
-import com.naposystems.napoleonchat.dto.addContact.FriendshipRequestPutResDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
-import com.naposystems.napoleonchat.entity.message.Message
+import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestPutResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import retrofit2.Response
 
 interface IContractFriendShipAction {
@@ -22,6 +22,6 @@ interface IContractFriendShipAction {
         fun getError(response: Response<FriendshipRequestPutResDTO>): String
         suspend fun addContact(friendShipRequest: FriendShipRequest)
         suspend fun sendNewContactMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
-        fun insertMessage(message: Message): Long
+        fun insertMessage(messageEntity: MessageEntity): Long
     }
 }

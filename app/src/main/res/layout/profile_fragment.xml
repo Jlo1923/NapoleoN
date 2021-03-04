@@ -8,7 +8,7 @@
 
         <variable
             name="user"
-            type="com.naposystems.napoleonchat.entity.User" />
+            type="com.naposystems.napoleonchat.source.local.entity.UserEntity" />
     </data>
 
     <ScrollView

@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.AddContactFriendshipRequestOfferBinding
 import com.naposystems.napoleonchat.databinding.AddContactFriendshipRequestReceivedBinding
 import com.naposystems.napoleonchat.databinding.AddContactFriendshipRequestTitleBinding
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequestAdapterType
-import com.naposystems.napoleonchat.entity.addContact.FriendshipRequestTitle
+import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.model.FriendShipRequestAdapterType
+import com.naposystems.napoleonchat.model.FriendshipRequestTitle
 import com.naposystems.napoleonchat.utility.Constants
 
 class FriendshipRequestAdapter constructor(private val clickListener: ClickListener) :

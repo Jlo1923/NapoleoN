@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountReqDTO
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountResDTO
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.repository.accessPin.CreateAccountRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,8 +32,8 @@ class AccessPinViewModel @Inject constructor(
     val userCreationError: LiveData<String>
         get() = _userCreationError
 
-    private val _userCreatedSuccessfully = MutableLiveData<User>()
-    val userCreatedSuccessfully: LiveData<User>
+    private val _userCreatedSuccessfully = MutableLiveData<UserEntity>()
+    val userEntityCreatedSuccessfully: LiveData<UserEntity>
         get() = _userCreatedSuccessfully
 
     private val _userCreatedLocallySuccessfully = MutableLiveData<Boolean>()
@@ -109,10 +109,10 @@ class AccessPinViewModel @Inject constructor(
         }
     }
 
-    override fun createUser(user: User) {
+    override fun createUser(userEntity: UserEntity) {
         viewModelScope.launch {
             try {
-                repository.createUser(user)
+                repository.createUser(userEntity)
                 _userCreatedLocallySuccessfully.value = true
             } catch (ex: Exception) {
                 Timber.d(ex)

@@ -18,7 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
@@ -49,7 +49,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
     private var isPlayingVideo: Boolean = false
     private var hasSentAttachment: Boolean = false
     private val args: AttachmentPreviewFragmentArgs by navArgs()
-    private val attachment: Attachment by lazy {
+    private val attachmentEntity: AttachmentEntity by lazy {
         args.attachment
     }
     private val animationFadeIn: Animation by lazy {
@@ -91,9 +91,9 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         binding.galleryItemId = args.galleryItemId
         binding.inputPanel.setListener(this)
 
-        conversationShareViewModel.setAttachmentTaken(attachment)
+        conversationShareViewModel.setAttachmentTaken(attachmentEntity)
 
-        when (attachment.type) {
+        when (attachmentEntity.type) {
             Constants.AttachmentType.IMAGE.type,
             Constants.AttachmentType.GIF.type,
             Constants.AttachmentType.GIF_NN.type -> {
@@ -113,7 +113,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
                     val fileUri = Utils.getFileUri(
                         context = requireContext(),
                         subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                        fileName = attachment.fileName
+                        fileName = attachmentEntity.fileName
                     )
 
                     setVideoURI(fileUri)
@@ -250,7 +250,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
     private fun deleteFile() {
         if (!hasSentAttachment) {
-            FileManager.deleteAttachmentFile(requireContext(), attachment)
+            FileManager.deleteAttachmentFile(requireContext(), attachmentEntity)
         }
     }
 

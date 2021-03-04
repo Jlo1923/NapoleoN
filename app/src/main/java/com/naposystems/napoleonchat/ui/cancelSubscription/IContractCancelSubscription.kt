@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.cancelSubscription
 
-import com.naposystems.napoleonchat.dto.subscription.CancelSubscriptionResDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.CancelSubscriptionResDTO
 import retrofit2.Response
 
 interface IContractCancelSubscription {

@@ -8,21 +8,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactsItemBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 
 class ContactsAdapter constructor(
         private val clickListener: ContactClickListener,
         private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
     ) :
-    ListAdapter<Contact, ContactsAdapter.ContactsViewHolder>(DiffCallback) {
+    ListAdapter<ContactEntity, ContactsAdapter.ContactsViewHolder>(DiffCallback) {
 
-    object DiffCallback : DiffUtil.ItemCallback<Contact>() {
-        override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+    object DiffCallback : DiffUtil.ItemCallback<ContactEntity>() {
+        override fun areItemsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
             return oldItem.nickname == newItem.nickname && oldItem.displayName == newItem.displayName
         }
 
-        override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+        override fun areContentsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
             return oldItem == newItem
         }
     }
@@ -41,7 +41,7 @@ class ContactsAdapter constructor(
 
     class ContactsViewHolder constructor(private val binding: ContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Contact,
+        fun bind(item: ContactEntity,
                  clickListener: ContactClickListener,
                  userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
         ) {
@@ -87,7 +87,7 @@ class ContactsAdapter constructor(
     }
 
     interface ContactClickListener {
-        fun onClick(item: Contact)
-        fun onMoreClick(item: Contact, view: View)
+        fun onClick(item: ContactEntity)
+        fun onMoreClick(item: ContactEntity, view: View)
     }
 }
