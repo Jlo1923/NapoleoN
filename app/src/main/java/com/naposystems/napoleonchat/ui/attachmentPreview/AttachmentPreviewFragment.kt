@@ -112,7 +112,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
                     val fileUri = Utils.getFileUri(
                         context = requireContext(),
-                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                        subFolder = Constants.CacheDirectories.VIDEOS.folder,
                         fileName = attachment.fileName
                     )
 

@@ -16,43 +16,36 @@ import javax.inject.Singleton
 class DaoModule {
 
     @Provides
-    @Singleton
     fun provideUserDao(napoleonRoomDatabase: NapoleonRoomDatabase): UserDao {
         return napoleonRoomDatabase.userDao()
     }
 
     @Provides
-    @Singleton
     fun provideStatusDao(napoleonRoomDatabase: NapoleonRoomDatabase): StatusDao {
         return napoleonRoomDatabase.statusDao()
     }
 
     @Provides
-    @Singleton
     fun provideMessageDao(napoleonRoomDatabase: NapoleonRoomDatabase): MessageDao {
         return napoleonRoomDatabase.messageDao()
     }
 
     @Provides
-    @Singleton
     fun provideQuoteDao(napoleonRoomDatabase: NapoleonRoomDatabase): QuoteDao {
         return napoleonRoomDatabase.quoteDao()
     }
 
     @Provides
-    @Singleton
     fun provideAttachmentDao(napoleonRoomDatabase: NapoleonRoomDatabase): AttachmentDao {
         return napoleonRoomDatabase.attachmentDao()
     }
 
     @Provides
-    @Singleton
     fun provideContactDao(napoleonRoomDatabase: NapoleonRoomDatabase): ContactDao {
         return napoleonRoomDatabase.contactDao()
     }
 
     @Provides
-    @Singleton
     fun provideMessageNotSentDao(napoleonRoomDatabase: NapoleonRoomDatabase): MessageNotSentDao {
         return napoleonRoomDatabase.messageNotSentDao()
     }

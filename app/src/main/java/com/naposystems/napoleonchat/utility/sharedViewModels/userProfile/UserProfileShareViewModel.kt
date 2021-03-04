@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.entity.User
 import com.naposystems.napoleonchat.repository.sharedRepository.UserProfileShareRepository
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class UserProfileShareViewModel @Inject constructor(
     val userUpdated: LiveData<Boolean>
         get() = _userUpdated
 
-    private lateinit var _user : LiveData<User>
+    private lateinit var _user: LiveData<User>
     val user: LiveData<User>
         get() = _user
 
@@ -37,13 +38,13 @@ class UserProfileShareViewModel @Inject constructor(
         }
     }
 
-    override fun updateUserInfo(user : User, updateUserInfoReqDTO: Any) {
+    override fun updateUserInfo(user: User, updateUserInfoReqDTO: Any) {
         viewModelScope.launch {
             try {
                 val response = repository.updateUserInfo(updateUserInfoReqDTO)
 
                 if (response.isSuccessful) {
-                    response.body()?.let { updatedUser->
+                    response.body()?.let { updatedUser ->
                         user.let { userLocal ->
                             val userNew = User(
                                 firebaseId = userLocal.firebaseId,
@@ -64,8 +65,11 @@ class UserProfileShareViewModel @Inject constructor(
                     _userUpdated.value = true
                 } else {
                     when (response.code()) {
-                        401, 500 -> _errorUpdatingUser.value = repository.getDefaultError(response)
-                        422 -> _errorUpdatingUser.value = repository.get422Error(response)
+                        Constants.CodeHttp.UNAUTHORIZED.code,
+                        Constants.CodeHttp.INTERNAL_SERVER_ERROR.code -> _errorUpdatingUser.value =
+                            repository.getDefaultError(response)
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _errorUpdatingUser.value =
+                            repository.getUnprocessableEntityError(response)
                         else -> _errorUpdatingUser.value = repository.getDefaultError(response)
                     }
                 }

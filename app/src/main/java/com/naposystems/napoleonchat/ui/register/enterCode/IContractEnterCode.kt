@@ -31,9 +31,9 @@ interface IContractEnterCode {
         fun setTimeForRetryCode(time: Long)
         fun resetAttemptsEnterCode()
         fun resetAttemptsNewCode()
-        fun get422Error(response: Response<EnterCodeResDTO>): ArrayList<String>
+        fun getUnprocessableEntityError(response: Response<EnterCodeResDTO>): ArrayList<String>
         fun getDefaultError(response: Response<EnterCodeResDTO>): ArrayList<String>
-        fun get422ErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>
+        fun getUnprocessableEntityErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>
         fun getDefaultErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String>
         fun saveAccountStatus(id: Int)
     }

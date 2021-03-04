@@ -265,7 +265,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                     val uri = Utils.getFileUri(
                         binding.imageViewQuote.context,
                         attachment.fileName,
-                        Constants.NapoleonCacheDirectories.VIDEOS.folder
+                        Constants.CacheDirectories.VIDEOS.folder
                     )
                     Glide.with(binding.imageViewQuote)
                         .load(uri)
@@ -288,7 +288,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                         val uri = Utils.getFileUri(
                             binding.imageViewQuote.context,
                             quote.thumbnailUri,
-                            Constants.NapoleonCacheDirectories.IMAGES.folder
+                            Constants.CacheDirectories.IMAGES.folder
                         )
 
                         Glide.with(binding.imageViewQuote)
@@ -305,7 +305,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                         val uri = Utils.getFileUri(
                             binding.imageViewQuote.context,
                             quote.thumbnailUri,
-                            Constants.NapoleonCacheDirectories.VIDEOS.folder
+                            Constants.CacheDirectories.VIDEOS.folder
                         )
 
                         Glide.with(binding.imageViewQuote)

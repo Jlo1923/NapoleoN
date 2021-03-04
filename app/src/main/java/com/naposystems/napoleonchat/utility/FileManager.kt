@@ -10,7 +10,7 @@ import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.utility.Constants.AttachmentType.*
-import com.naposystems.napoleonchat.utility.Constants.NapoleonCacheDirectories.*
+import com.naposystems.napoleonchat.utility.Constants.CacheDirectories.*
 import com.naposystems.napoleonchat.utils.imageCompressor.Compressor
 import com.naposystems.napoleonchat.utils.imageCompressor.constraint.quality
 import com.naposystems.napoleonchat.utils.imageCompressor.constraint.resolution
@@ -242,7 +242,7 @@ class FileManager {
                 //this is the file going to use temporally to save the bytes.
                 // This file will not be a image, it will store the raw image data.
                 val path =
-                    File(context.cacheDir!!, Constants.NapoleonCacheDirectories.IMAGES.folder)
+                    File(context.cacheDir!!, Constants.CacheDirectories.IMAGES.folder)
                 if (!path.exists())
                     path.mkdirs()
 

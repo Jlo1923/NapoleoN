@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-class DeleteMessage422DTO(
+class DeleteMessageUnprocessableEntityDTO(
     @Json(name = "user_receiver") val userReceiver: List<String> = ArrayList(),
     @Json(name = "messages_id") val messagesId: List<String> = ArrayList()
 )

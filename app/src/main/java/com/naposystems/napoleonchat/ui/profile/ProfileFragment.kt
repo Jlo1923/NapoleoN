@@ -94,12 +94,12 @@ class ProfileFragment : BaseFragment() {
         binding.lifecycleOwner = this
 
         binding.floatingButtonProfileImage.setSafeOnClickListener {
-            subFolder = Constants.NapoleonCacheDirectories.AVATAR.folder
+            subFolder = Constants.CacheDirectories.AVATAR.folder
             verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
         }
 
         binding.imageViewProfileImage.setSafeOnClickListener {
-            subFolder = Constants.NapoleonCacheDirectories.AVATAR.folder
+            subFolder = Constants.CacheDirectories.AVATAR.folder
             verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.PROFILE.location)
         }
 
@@ -120,7 +120,7 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.imageButtonEditHeader.setSafeOnClickListener {
-            subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+            subFolder = Constants.CacheDirectories.HEADER.folder
             verifyCameraAndMediaPermission(Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location)
         }
 
@@ -203,10 +203,10 @@ class ProfileFragment : BaseFragment() {
                 }
 
                 when (subFolder) {
-                    Constants.NapoleonCacheDirectories.AVATAR.folder -> {
+                    Constants.CacheDirectories.AVATAR.folder -> {
                         updateImageProfile(Utils.convertBitmapToBase64(bitmap!!))
                     }
-                    Constants.NapoleonCacheDirectories.HEADER.folder -> {
+                    Constants.CacheDirectories.HEADER.folder -> {
                         viewModel.getUser()?.let { user ->
                             user.headerUri = compressedFile?.name ?: ""
 
@@ -334,7 +334,7 @@ class ProfileFragment : BaseFragment() {
     private fun openImageSelectorBottomSheet(location: Int) {
 
         val (title: String, showDefault: Boolean) = when (subFolder) {
-            Constants.NapoleonCacheDirectories.AVATAR.folder ->
+            Constants.CacheDirectories.AVATAR.folder ->
                 getString(R.string.text_change_profile_photo) to
                         (viewModel.getUser()?.imageUrl?.isNotEmpty() ?: false)
             else -> getString(R.string.text_change_cover_photo) to
@@ -398,12 +398,12 @@ class ProfileFragment : BaseFragment() {
             var title = ""
 
             when (subFolder) {
-                Constants.NapoleonCacheDirectories.AVATAR.folder -> {
+                Constants.CacheDirectories.AVATAR.folder -> {
                     title = context.resources.getString(R.string.label_edit_photo)
                     aspectRatioX = 1.0f
                     aspectRatioY = 1.0f
                 }
-                Constants.NapoleonCacheDirectories.HEADER.folder -> {
+                Constants.CacheDirectories.HEADER.folder -> {
                     title = context.resources.getString(R.string.label_edit_cover)
                     aspectRatioX = 3.0f
                     aspectRatioY = 2.0f

@@ -1550,7 +1550,7 @@ class ConversationFragment : BaseFragment(),
                 val uri = Utils.getFileUri(
                     context = context,
                     fileName = chatBackgroundFileName,
-                    subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                    subFolder = Constants.CacheDirectories.CHAT_BACKGROUND.folder
                 )
                 val inputStream: InputStream = context.contentResolver.openInputStream(uri)!!
                 val backgroundDrawable = Drawable.createFromStream(inputStream, uri.toString())
@@ -1784,7 +1784,7 @@ class ConversationFragment : BaseFragment(),
                 Utils.getFileUri(
                     requireContext(),
                     attachment.fileName,
-                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                    Constants.CacheDirectories.DOCUMENTOS.folder
                 )
             }
 
@@ -1928,7 +1928,7 @@ class ConversationFragment : BaseFragment(),
             recordFile = FileManager.createFile(
                 requireContext(),
                 "${System.currentTimeMillis()}.mp3",
-                Constants.NapoleonCacheDirectories.AUDIOS.folder
+                Constants.CacheDirectories.AUDIOS.folder
             )
 
             recorder = MediaRecorder().apply {
@@ -2195,23 +2195,23 @@ class ConversationFragment : BaseFragment(),
         viewModel.reSendMessage(message, obtainTimeSelfDestruct())
     }
 
-    override fun scrollToNextAudio(position: Int) {
-        binding.recyclerViewConversation.smoothScrollToPosition(position)
+    override fun scrollToNextAudio(nextPosition: Int) {
+        binding.recyclerViewConversation.smoothScrollToPosition(nextPosition)
 
         binding.recyclerViewConversation.apply {
             removeOnScrollListener(onScrollPLayNextAudioListener)
-            mNextAudioPosition = position
+            mNextAudioPosition = nextPosition
             addOnScrollListener(onScrollPLayNextAudioListener)
 
             val lastItemVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition()
 
-            Timber.d("lastItemVisible: $lastItemVisible, position: $position")
+            Timber.d("lastItemVisible: $lastItemVisible, position: $nextPosition")
 
-            if (lastItemVisible < position) {
-                Timber.d("scrollTo $position")
-                binding.recyclerViewConversation.smoothScrollToPosition(position)
+            if (lastItemVisible < nextPosition) {
+                Timber.d("scrollTo $nextPosition")
+                binding.recyclerViewConversation.smoothScrollToPosition(nextPosition)
             } else {
-                conversationAdapter.notifyPlayAudio(position)
+                conversationAdapter.notifyPlayAudio(nextPosition)
             }
         }
     }

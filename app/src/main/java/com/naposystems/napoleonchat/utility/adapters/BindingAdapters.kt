@@ -233,7 +233,7 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
                 Utils.getFileUri(
                     context = context,
                     fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                    subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
                 )
             }
             contact.imageUrl.isNotEmpty() -> {
@@ -281,7 +281,7 @@ fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: Contact?) {
                 Utils.getFileUri(
                     context = context,
                     fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                    subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
                 )
             }
             contact.imageUrl.isNotEmpty() -> {

@@ -10,9 +10,7 @@ class UserLocalDataSource @Inject constructor(
     private val userDao: UserDao) : UserDataSource {
 
     override fun getMyUser(): User {
-        val user = userDao.getMyUser()
-
-        return user
+        return userDao.getMyUser()
     }
 
     override suspend fun insertUser(user: User) {

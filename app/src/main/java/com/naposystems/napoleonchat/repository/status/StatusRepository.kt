@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.repository.status
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.db.dao.status.StatusLocalDataSource
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.dto.profile.UpdateUserInfo422DTO
+import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoUnprocessableEntityDTO
 import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoErrorDTO
 import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.napoleonchat.dto.status.UserStatusReqDTO
@@ -46,13 +46,13 @@ class StatusRepository @Inject constructor(
         statusLocalDataSource.deleteStatus(status)
     }
 
-    fun get422Error(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
+    fun getUnprocessableEntityError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
 
-        val adapter = moshi.adapter(UpdateUserInfo422DTO::class.java)
+        val adapter = moshi.adapter(UpdateUserInfoUnprocessableEntityDTO::class.java)
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(enterCodeError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(enterCodeError!!)
     }
 
     fun getDefaultError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {

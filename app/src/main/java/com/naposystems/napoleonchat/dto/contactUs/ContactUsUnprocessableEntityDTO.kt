@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class ContactUs422DTO (
+data class ContactUsUnprocessableEntityDTO (
     @Json(name = "category_pqrs_id") val categoryPqrsId: List<String> = ArrayList(),
     @Json(name = "description") val description: List<String> = ArrayList(),
     @Json(name = "maker") val maker: List<String> = ArrayList(),

@@ -16,37 +16,29 @@ import com.naposystems.napoleonchat.db.dao.user.UserDataSource
 import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
 import dagger.Binds
 import dagger.Module
-import javax.inject.Singleton
 
 @Module
 abstract class LocalDataSourceModule {
 
     @Binds
-    @Singleton
     abstract fun bindUserLocalDataSource(dataSource: UserLocalDataSource): UserDataSource
 
     @Binds
-    @Singleton
     abstract fun bindStatusLocalDataSource(dataSource: StatusLocalDataSource): StatusDataSource
 
     @Binds
-    @Singleton
     abstract fun bindQuoteLocalDataSource(dataSource: QuoteLocalDataSource): QuoteDataSource
 
     @Binds
-    @Singleton
     abstract fun bindMessageLocalDataSource(dataSource: MessageLocalDataSource): MessageDataSource
 
     @Binds
-    @Singleton
     abstract fun bindContactLocalDataSource(dataSource: ContactLocalDataSource): ContactDataSource
 
     @Binds
-    @Singleton
     abstract fun bindAttachmentLocalDataSource(dataSource: AttachmentLocalDataSource): AttachmentDataSource
 
     @Binds
-    @Singleton
     abstract fun bindMessageNotSentLocalDataSource(dataSource: MessageNotSentLocalDataSource): MessageNotSentDataSource
 
 }

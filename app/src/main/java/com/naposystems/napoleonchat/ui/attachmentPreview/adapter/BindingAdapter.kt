@@ -12,7 +12,7 @@ fun bindGalleryImage(imageView: ImageView, attachment: Attachment?) {
     when (attachment?.type) {
         Constants.AttachmentType.IMAGE.type -> {
             val uri = Utils.getFileUri(
-                imageView.context, attachment.fileName, Constants.NapoleonCacheDirectories.IMAGES.folder
+                imageView.context, attachment.fileName, Constants.CacheDirectories.IMAGES.folder
             )
             Glide.with(imageView)
                 .load(uri)

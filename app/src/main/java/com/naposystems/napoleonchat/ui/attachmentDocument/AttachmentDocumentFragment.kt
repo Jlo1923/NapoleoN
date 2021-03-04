@@ -16,7 +16,6 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.databinding.AttachmentDocumentFragmentBinding
 import com.naposystems.napoleonchat.databinding.AttachmentDocumentItemBinding
 import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.ui.attachmentDocument.adapter.AttachmentDocumentAdapter
@@ -77,7 +76,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                     val fileSelected = FileManager.copyFile(
                         requireContext(),
                         fileInputStream,
-                        Constants.NapoleonCacheDirectories.DOCUMENTOS.folder,
+                        Constants.CacheDirectories.DOCUMENTOS.folder,
                         "${System.currentTimeMillis()}.$extension"
                     )
 
