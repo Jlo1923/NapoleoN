@@ -6,10 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.dto.addContact.FriendshipRequestsResDTO
-import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequestAdapterType
+import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestsResDTO
+import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.model.FriendShipRequestAdapterType
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,10 +19,10 @@ class AddContactViewModel @Inject constructor(
 ) :
     ViewModel(), IContractAddContact.ViewModel {
 
-    lateinit var lastFriendshipRequest: Contact
+    lateinit var lastFriendshipRequest: ContactEntity
 
-    private val _users = MutableLiveData<List<Contact>>()
-    val users: LiveData<List<Contact>>
+    private val _users = MutableLiveData<List<ContactEntity>>()
+    val users: LiveData<List<ContactEntity>>
         get() = _users
 
     private val _opened = MutableLiveData<Boolean>()
@@ -83,7 +83,7 @@ class AddContactViewModel @Inject constructor(
         _users.value = emptyList()
     }
 
-    override fun getUsers(): List<Contact>? {
+    override fun getUsers(): List<ContactEntity>? {
         return _users.value
     }
 
@@ -99,7 +99,7 @@ class AddContactViewModel @Inject constructor(
         return _friendshipRequests.value
     }
 
-    override fun sendFriendshipRequest(contact: Contact) {
+    override fun sendFriendshipRequest(contact: ContactEntity) {
         viewModelScope.launch {
             try {
                 lastFriendshipRequest = contact

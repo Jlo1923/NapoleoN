@@ -1,26 +1,26 @@
 package com.naposystems.napoleonchat.repository.conversationCall
 
-import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
-import com.naposystems.napoleonchat.dto.cancelCall.CancelCallReqDTO
-import com.naposystems.napoleonchat.dto.cancelCall.CancelCallResDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
+import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import retrofit2.Response
 import javax.inject.Inject
 
 class ConversationCallRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
-    private val contactLocalDataSource: ContactDataSource,
+    private val contactLocalDataSource: ContactLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractConversationCall.Repository {
 
-    override suspend fun getContactById(contactId: Int): Contact? {
+    override suspend fun getContactById(contactId: Int): ContactEntity? {
         return contactLocalDataSource.getContactById(contactId)
     }
 

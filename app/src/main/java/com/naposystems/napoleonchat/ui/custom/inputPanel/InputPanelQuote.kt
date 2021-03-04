@@ -13,7 +13,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomInputPanelQuoteBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
@@ -24,7 +24,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     private var binding: CustomInputPanelQuoteBinding
     private var isCancelable: Boolean = false
     private var isFromInputPanel: Boolean = false
-    private var messageAndAttachment: MessageAndAttachment? = null
+    private var messageAndAttachmentRelation: MessageAttachmentRelation? = null
 
     init {
         context.theme.obtainStyledAttributes(
@@ -58,9 +58,9 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         }
     }
 
-    override fun setupMessageAndAttachment(messageAndAttachment: MessageAndAttachment) {
-        with(messageAndAttachment) {
-            this@InputPanelQuote.messageAndAttachment = this
+    override fun setupMessageAndAttachment(messageAndAttachmentRelation: MessageAttachmentRelation) {
+        with(messageAndAttachmentRelation) {
+            this@InputPanelQuote.messageAndAttachmentRelation = this
             bindUserBackground(this)
             bindUserQuote(this)
             bindBodyQuote(this)
@@ -79,7 +79,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         }
         binding.textViewTitleQuote.text = null
         binding.textViewMessageQuote.text = null
-        this.messageAndAttachment = null
+        this.messageAndAttachmentRelation = null
     }
 
     override fun resetImage() {
@@ -89,13 +89,13 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         }
     }
 
-    override fun getMessageAndAttachment() = this.messageAndAttachment
+    override fun getMessageAndAttachment() = this.messageAndAttachmentRelation
 
-    private fun bindUserBackground(messageAndAttachment: MessageAndAttachment) {
-        val quoteNull = messageAndAttachment.quote
+    private fun bindUserBackground(messageAndAttachmentRelation: MessageAttachmentRelation) {
+        val quoteNull = messageAndAttachmentRelation.quoteEntity
 
         if (isFromInputPanel) {
-            messageAndAttachment.message.let { message ->
+            messageAndAttachmentRelation.messageEntity.let { message ->
                 binding.container.background = if (message.isMine == Constants.IsMine.YES.value) {
                     context.getDrawable(R.drawable.bg_my_quote_my_message)
                 } else {
@@ -115,19 +115,19 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
             quoteNull?.let { quote ->
                 binding.container.background = when {
                     quote.isMine == Constants.IsMine.YES.value
-                            && messageAndAttachment.message.isMine == 1 -> {
+                            && messageAndAttachmentRelation.messageEntity.isMine == 1 -> {
                         context.getDrawable(R.drawable.bg_my_quote_my_message)
                     }
                     quote.isMine == Constants.IsMine.YES.value
-                            && messageAndAttachment.message.isMine == 0 -> {
+                            && messageAndAttachmentRelation.messageEntity.isMine == 0 -> {
                         context.getDrawable(R.drawable.bg_my_quote_incoming_message)
                     }
                     quote.isMine == Constants.IsMine.NO.value
-                            && messageAndAttachment.message.isMine == 1 -> {
+                            && messageAndAttachmentRelation.messageEntity.isMine == 1 -> {
                         context.getDrawable(R.drawable.bg_your_quote_my_message)
                     }
                     quote.isMine == Constants.IsMine.NO.value
-                            && messageAndAttachment.message.isMine == 0 -> {
+                            && messageAndAttachmentRelation.messageEntity.isMine == 0 -> {
                         context.getDrawable(R.drawable.bg_your_quote_incoming_message)
                     }
                     else -> {
@@ -138,28 +138,28 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                 binding.textViewMessageQuote.setTextColor(
                     when {
                         quote.isMine == Constants.IsMine.YES.value
-                                && messageAndAttachment.message.isMine == 1 -> {
+                                && messageAndAttachmentRelation.messageEntity.isMine == 1 -> {
                             Utils.convertAttrToColorResource(
                                 context,
                                 R.attr.attrTextColorBodyMyQuote
                             )
                         }
                         quote.isMine == Constants.IsMine.YES.value
-                                && messageAndAttachment.message.isMine == 0 -> {
+                                && messageAndAttachmentRelation.messageEntity.isMine == 0 -> {
                             Utils.convertAttrToColorResource(
                                 context,
                                 R.attr.attrTextColorBodyMyQuote
                             )
                         }
                         quote.isMine == Constants.IsMine.NO.value
-                                && messageAndAttachment.message.isMine == 1 -> {
+                                && messageAndAttachmentRelation.messageEntity.isMine == 1 -> {
                             Utils.convertAttrToColorResource(
                                 context,
                                 R.attr.attrTextColorBodyYourQuote
                             )
                         }
                         quote.isMine == Constants.IsMine.NO.value
-                                && messageAndAttachment.message.isMine == 0 -> {
+                                && messageAndAttachmentRelation.messageEntity.isMine == 0 -> {
                             Utils.convertAttrToColorResource(
                                 context,
                                 R.attr.attrTextColorBodyYourQuote
@@ -177,17 +177,17 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         }
     }
 
-    private fun bindUserQuote(messageAndAttachment: MessageAndAttachment) {
+    private fun bindUserQuote(messageAndAttachmentRelation: MessageAttachmentRelation) {
         var isMineNull: Int? = null
 
-        messageAndAttachment.quote?.let { quote ->
+        messageAndAttachmentRelation.quoteEntity?.let { quote ->
             isMineNull = if (isFromInputPanel) {
-                messageAndAttachment.message.isMine
+                messageAndAttachmentRelation.messageEntity.isMine
             } else {
                 quote.isMine
             }
         } ?: run {
-            messageAndAttachment.message.let { message ->
+            messageAndAttachmentRelation.messageEntity.let { message ->
                 isMineNull = message.isMine
             }
         }
@@ -201,7 +201,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
             binding.textViewTitleQuote.setTextColor(textColorMyName)
             binding.textViewTitleQuote.text = context.getString(R.string.text_you_quote)
         } else {
-            val contact = messageAndAttachment.contact
+            val contact = messageAndAttachmentRelation.contact
             binding.textViewTitleQuote.setTextColor(textColorYourName)
             binding.textViewTitleQuote.text = contact?.let {
                 if (contact.nicknameFake.isNotEmpty()) {
@@ -214,17 +214,17 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     }
 
     private fun bindBodyQuote(
-        messageAndAttachment: MessageAndAttachment
+        messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         val context = binding.textViewMessageQuote.context
 
         val body = if (isFromInputPanel) {
-            val messageNull = messageAndAttachment.message
+            val messageNull = messageAndAttachmentRelation.messageEntity
 
             messageNull.body
         } else {
 
-            val quoteBody = messageAndAttachment.quote?.body ?: ""
+            val quoteBody = messageAndAttachmentRelation.quoteEntity?.body ?: ""
 
             if (quoteBody.isNotEmpty()) {
                 quoteBody
@@ -239,7 +239,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     }
 
     private fun bindImageQuote(
-        messageAndAttachment: MessageAndAttachment
+        messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
 
@@ -248,7 +248,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
         transformationList.add(RoundedCorners(4))
 
         if (isFromInputPanel) {
-            val firstAttachmentNull = messageAndAttachment.getFirstAttachment()
+            val firstAttachmentNull = messageAndAttachmentRelation.getFirstAttachment()
 
             firstAttachmentNull?.let { attachment ->
 
@@ -280,7 +280,7 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
                 binding.imageViewQuote.visibility = View.GONE
             }
         } else {
-            messageAndAttachment.quote?.let { quote ->
+            messageAndAttachmentRelation.quoteEntity?.let { quote ->
 
                 when (quote.attachmentType) {
                     Constants.AttachmentType.IMAGE.type -> {
@@ -327,9 +327,9 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     }
 
     private fun bindAttachmentTypeQuote(
-        messageAndAttachment: MessageAndAttachment
+        messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
-        val resourceId: Int? = when (getAttachmentType(messageAndAttachment, isFromInputPanel)) {
+        val resourceId: Int? = when (getAttachmentType(messageAndAttachmentRelation, isFromInputPanel)) {
             Constants.AttachmentType.IMAGE.type -> {
                 setText(resources.getString(R.string.text_photo_quote))
                 R.drawable.ic_image
@@ -370,22 +370,22 @@ class InputPanelQuote(context: Context, attrs: AttributeSet) : ConstraintLayout(
     }
 
     private fun getAttachmentType(
-        messageAndAttachment: MessageAndAttachment,
+        messageAndAttachmentRelation: MessageAttachmentRelation,
         isFromInputPanel: Boolean
     ): String {
         var attachmentType = ""
 
-        messageAndAttachment.quote?.let { quote ->
+        messageAndAttachmentRelation.quoteEntity?.let { quote ->
             attachmentType =
-                if (messageAndAttachment.attachmentList.count() == 0 && isFromInputPanel)
+                if (messageAndAttachmentRelation.attachmentEntityList.count() == 0 && isFromInputPanel)
                     ""
-                else if (messageAndAttachment.attachmentList.count() > 0 && isFromInputPanel)
-                    messageAndAttachment.attachmentList.first().type
+                else if (messageAndAttachmentRelation.attachmentEntityList.count() > 0 && isFromInputPanel)
+                    messageAndAttachmentRelation.attachmentEntityList.first().type
                 else
                     quote.attachmentType
 
         } ?: run {
-            val firstAttachment = messageAndAttachment.getFirstAttachment()
+            val firstAttachment = messageAndAttachmentRelation.getFirstAttachment()
             firstAttachment?.let { attachment ->
                 attachmentType = attachment.type
             }

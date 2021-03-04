@@ -72,7 +72,7 @@ class PreviewImageFragment : Fragment() {
                 viewModel.setContact(context, contact)
             }
 
-            args.user?.let {user ->
+            args.user?.let { user ->
                 viewModel.setUser(context, user)
             }
 

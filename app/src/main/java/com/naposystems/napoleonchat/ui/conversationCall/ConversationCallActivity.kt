@@ -19,7 +19,7 @@ import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityConversationCallBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.service.HeadsetBroadcastReceiver
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.Constants
@@ -56,7 +56,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
     private val viewModel: ConversationCallViewModel by viewModels { viewModelFactory }
 
-    private var contact: Contact? = null
+    private var contact: ContactEntity? = null
 
     private var isVideoCall: Boolean = false
     private var contactId: Int = 0

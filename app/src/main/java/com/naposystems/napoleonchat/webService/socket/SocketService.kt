@@ -3,11 +3,11 @@ package com.naposystems.napoleonchat.webService.socket
 import android.content.Context
 import android.content.Intent
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReadedDTO
-import com.naposystems.napoleonchat.dto.messagesReceived.MessagesReceivedDTO
-import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventRes
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent

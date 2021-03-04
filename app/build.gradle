@@ -27,7 +27,7 @@ android {
         targetSdkVersion 30
         versionCode 33
 
-        versionName "1.1.33.FIX-SESSION"
+        versionName "1.1.33.IMPROVEMENT-PACKAGES"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -122,6 +122,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
 
     kotlinOptions {

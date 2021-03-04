@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.ui.contacts
 
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 
 interface IContractContacts {
 
@@ -15,7 +15,7 @@ interface IContractContacts {
     }
 
     interface Repository {
-        suspend fun getLocalContacts(): LiveData<MutableList<Contact>>
-        suspend fun getLocalContactsForSearch(): LiveData<MutableList<Contact>>
+        suspend fun getLocalContacts(): LiveData<MutableList<ContactEntity>>
+        suspend fun getLocalContactsForSearch(): LiveData<MutableList<ContactEntity>>
     }
 }

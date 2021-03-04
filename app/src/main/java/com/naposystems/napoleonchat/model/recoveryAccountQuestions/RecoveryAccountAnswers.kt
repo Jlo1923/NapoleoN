@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.model.recoveryAccountQuestions
 
-import com.naposystems.napoleonchat.dto.recoveryAccountQuestions.RecoveryAccountAnswersDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccountQuestions.RecoveryAccountAnswersDTO
 
 data class RecoveryAccountAnswers(
     val questionId: Int,

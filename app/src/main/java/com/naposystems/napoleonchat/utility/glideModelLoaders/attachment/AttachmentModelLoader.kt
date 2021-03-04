@@ -5,28 +5,28 @@ import com.bumptech.glide.load.Key
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.signature.ObjectKey
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import java.io.InputStream
 
 class AttachmentModelLoader constructor(private val context: Context) :
-    ModelLoader<Attachment, InputStream> {
+    ModelLoader<AttachmentEntity, InputStream> {
 
     override fun buildLoadData(
-        model: Attachment,
+        attachmentEntity: AttachmentEntity,
         width: Int,
         height: Int,
         options: Options
     ): ModelLoader.LoadData<InputStream>? {
-        val diskCacheKey: Key = ObjectKey(model)
+        val diskCacheKey: Key = ObjectKey(attachmentEntity)
 
         return ModelLoader.LoadData(
             diskCacheKey,
             AttachmentDataFetcher(
                 context = context,
-                attachment = model
+                attachmentEntity = attachmentEntity
             )
         )
     }
 
-    override fun handles(model: Attachment) = true
+    override fun handles(model: AttachmentEntity) = true
 }

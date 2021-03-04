@@ -18,7 +18,7 @@ import com.giphy.sdk.ui.pagination.GPHContent
 import com.giphy.sdk.ui.views.GPHGridCallback
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NapoleonKeyboardGifFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.DownloadFileResult
 import com.naposystems.napoleonchat.utility.adapters.showToast
@@ -92,7 +92,7 @@ class NapoleonKeyboardGifFragment : Fragment() {
                     if (binding.viewSwitcher.nextView.id == binding.containerGiphy.id) {
                         binding.viewSwitcher.showNext()
                     }
-                    val attachment = Attachment(
+                    val attachment = AttachmentEntity(
                         id = 0,
                         messageId = 0,
                         webId = "",

@@ -10,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import com.google.firebase.storage.FirebaseStorage
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NapoleonKeyboardStickerPageFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.napoleonEmoji.NapoleonEmojiRemoteConfig
 import com.naposystems.napoleonchat.ui.napoleonKeyboardSticker.NapoleonKeyboardStickerFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboardStickerPage.adapter.NapoleonKeyboardStickerPageAdapter
@@ -68,7 +68,7 @@ class NapoleonKeyboardStickerPageFragment : Fragment() {
                     val adapter = NapoleonKeyboardStickerPageAdapter(object :
                         NapoleonKeyboardStickerPageAdapter.NapoleonKeyboardStickerPageListener {
                         override fun onGifSelected(file: File) {
-                            val attachment = Attachment(
+                            val attachment = AttachmentEntity(
                                 id = 0,
                                 messageId = 0,
                                 webId = "",

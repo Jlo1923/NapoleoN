@@ -1,9 +1,8 @@
 package com.naposystems.napoleonchat.ui.subscription
 
-import com.naposystems.napoleonchat.dto.subscription.StateSubscriptionResDTO
-import com.naposystems.napoleonchat.dto.subscription.SubscriptionUrlResDTO
-import com.naposystems.napoleonchat.dto.subscription.SubscriptionsResDTO
-import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
+import com.naposystems.napoleonchat.source.remote.dto.subscription.StateSubscriptionResDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionUrlResDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionsResDTO
 import okhttp3.ResponseBody
 import retrofit2.Response
 

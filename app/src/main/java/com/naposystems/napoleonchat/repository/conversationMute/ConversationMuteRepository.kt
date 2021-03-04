@@ -1,11 +1,11 @@
 package com.naposystems.napoleonchat.repository.conversationMute
 
-import com.naposystems.napoleonchat.db.dao.contact.ContactDao
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationErrorDTO
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationReqDTO
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationResDTO
+import com.naposystems.napoleonchat.source.local.dao.ContactDao
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.napoleonchat.ui.muteConversation.IMuteConversation
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
 import javax.inject.Inject

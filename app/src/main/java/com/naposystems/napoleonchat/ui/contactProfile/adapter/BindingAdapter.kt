@@ -4,15 +4,15 @@ import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.databinding.BindingAdapter
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 
 @BindingAdapter("nicknameContact")
-fun bindNickNameContact(textView: TextView, @Nullable contact: Contact?) {
+fun bindNickNameContact(textView: TextView, @Nullable contact: ContactEntity?) {
     textView.text = contact?.getNickName()
 }
 
 @BindingAdapter("nameContact")
-fun bindNameContact(textView: TextView, @Nullable contact: Contact?) {
+fun bindNameContact(textView: TextView, @Nullable contact: ContactEntity?) {
     val context = textView.context
     if (contact != null) {
         when {

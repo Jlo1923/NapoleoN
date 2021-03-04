@@ -6,17 +6,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.AddContactItemBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 
 class AddContactAdapter constructor(private val clickListener: ClickListener) :
-    ListAdapter<Contact, AddContactAdapter.AddContactViewHolder>(DiffCallback) {
+    ListAdapter<ContactEntity, AddContactAdapter.AddContactViewHolder>(DiffCallback) {
 
-    object DiffCallback : DiffUtil.ItemCallback<Contact>() {
-        override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+    object DiffCallback : DiffUtil.ItemCallback<ContactEntity>() {
+        override fun areItemsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
             return oldItem.nickname == newItem.nickname && oldItem.haveFriendshipRequest == newItem.haveFriendshipRequest
         }
 
-        override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+        override fun areContentsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
             return oldItem == newItem
         }
     }
@@ -36,7 +36,7 @@ class AddContactAdapter constructor(private val clickListener: ClickListener) :
     class AddContactViewHolder constructor(private val binding: AddContactItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Contact, clickListener: ClickListener) {
+        fun bind(item: ContactEntity, clickListener: ClickListener) {
 
             binding.contact = item
             binding.clickListener = clickListener
@@ -73,6 +73,6 @@ class AddContactAdapter constructor(private val clickListener: ClickListener) :
     }
 
     interface ClickListener {
-        fun onAddClick(contact: Contact)
+        fun onAddClick(contact: ContactEntity)
     }
 }

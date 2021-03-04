@@ -11,7 +11,7 @@
 
         <variable
             name="friendshipRequest"
-            type="com.naposystems.napoleonchat.entity.addContact.FriendShipRequest" />
+            type="com.naposystems.napoleonchat.model.FriendShipRequest" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

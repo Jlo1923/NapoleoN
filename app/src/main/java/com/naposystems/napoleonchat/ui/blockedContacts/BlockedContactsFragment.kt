@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.BlockedContactsFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.blockedContacts.adapter.BlockedContactsAdapter
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -164,9 +164,9 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     private fun setAdapter() {
         adapter =
             BlockedContactsAdapter(object : BlockedContactsAdapter.BlockedContactsClickListener {
-                override fun onClick(item: Contact) {}
+                override fun onClick(item: ContactEntity) {}
 
-                override fun onMoreClick(item: Contact, view: View) {
+                override fun onMoreClick(item: ContactEntity, view: View) {
                     showPopupMenu(view, item)
                 }
             })
@@ -175,7 +175,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         binding.recyclerViewBlockedContacts.itemAnimator = ItemAnimator()
     }
 
-    private fun showPopupMenu(view: View, item: Contact) {
+    private fun showPopupMenu(view: View, item: ContactEntity) {
         popup = PopupMenu(requireContext(), view)
         popup.menuInflater.inflate(R.menu.menu_block_contact, popup.menu)
 
@@ -193,14 +193,14 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
         popup.show()
     }
 
-    private fun seeProfile(contact: Contact) {
+    private fun seeProfile(contact: ContactEntity) {
         findNavController().navigate(
             BlockedContactsFragmentDirections
                 .actionBlockedContactsFragmentToContactProfileFragment(contact.id)
         )
     }
 
-    private fun unblockContact(contact: Contact) {
+    private fun unblockContact(contact: ContactEntity) {
         Utils.generalDialog(
             getString(R.string.text_unblock_contact),
             getString(R.string.text_wish_unblock_contact),

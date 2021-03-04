@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.logout
 
-import com.naposystems.napoleonchat.dto.user.LogoutResDTO
+import com.naposystems.napoleonchat.source.remote.dto.user.LogoutResDTO
 import retrofit2.Response
 
 interface IContractLogout {

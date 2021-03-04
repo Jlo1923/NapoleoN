@@ -3,22 +3,21 @@ package com.naposystems.napoleonchat.repository.uploadService
 import android.content.Context
 import android.webkit.MimeTypeMap
 import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
-import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.utility.*
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
 import com.vincent.videocompressor.VideoCompressK
 import com.vincent.videocompressor.VideoCompressResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -33,8 +32,8 @@ import javax.inject.Inject
 
 class UploadServiceRepository @Inject constructor(
     private val context: Context,
-    private val messageLocalDataSource: MessageDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource,
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
 ) : IContractUploadService.Repository {
@@ -44,36 +43,36 @@ class UploadServiceRepository @Inject constructor(
     private var uploadJob: Job? = null
 
     override fun uploadAttachment(
-        attachment: Attachment,
-        message: Message
+        attachmentEntity: AttachmentEntity,
+        messageEntity: MessageEntity
     ) {
         uploadJob = coroutineScope.launch {
             try {
-                updateAttachment(attachment)
-                message.status = Constants.MessageStatus.SENDING.status
-                updateMessage(message)
+                updateAttachment(attachmentEntity)
+                messageEntity.status = Constants.MessageStatus.SENDING.status
+                updateMessage(messageEntity)
                 //offer(UploadResult.Start(attachment, this))
-                RxBus.publish(RxEvent.UploadStart(attachment))
+                RxBus.publish(RxEvent.UploadStart(attachmentEntity))
                 Timber.d("UploadResult.Start(attachment, this)")
 
                 val path =
                     File(
                         context.cacheDir!!,
-                        FileManager.getSubfolderByAttachmentType(attachment.type)
+                        FileManager.getSubfolderByAttachmentType(attachmentEntity.type)
                     )
                 if (!path.exists())
                     path.mkdirs()
-                val sourceFile = File(path, attachment.fileName)
+                val sourceFile = File(path, attachmentEntity.fileName)
                 val destFile =
                     File(
                         path, "${
-                            attachment.fileName
+                            attachmentEntity.fileName
                                 .replace("_compress", "")
                                 .split('.')[0]
-                        }_compress.${attachment.extension}"
+                        }_compress.${attachmentEntity.extension}"
                     )
 
-                compressVideo(attachment, sourceFile, destFile, this)
+                compressVideo(attachmentEntity, sourceFile, destFile, this)
                     .collect {
                         when (it) {
                             is VideoCompressResult.Start -> {
@@ -81,28 +80,28 @@ class UploadServiceRepository @Inject constructor(
                             }
                             is VideoCompressResult.Success -> {
                                 Timber.d("*Test: tmessages VideoCompressResult.Success")
-                                if (it.srcFile.isFile && it.srcFile.exists() && !attachment.isCompressed && attachment.type == Constants.AttachmentType.VIDEO.type)
+                                if (it.srcFile.isFile && it.srcFile.exists() && !attachmentEntity.isCompressed && attachmentEntity.type == Constants.AttachmentType.VIDEO.type)
                                     it.srcFile.delete()
-                                attachment.fileName =
-                                    if (attachment.type == Constants.AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
-                                attachment.isCompressed = true
-                                updateAttachment(attachment)
+                                attachmentEntity.fileName =
+                                    if (attachmentEntity.type == Constants.AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
+                                attachmentEntity.isCompressed = true
+                                updateAttachment(attachmentEntity)
 
                                 val requestBodyMessageId =
-                                    createPartFromString(attachment.messageWebId)
-                                val requestBodyType = createPartFromString(attachment.type)
+                                    createPartFromString(attachmentEntity.messageWebId)
+                                val requestBodyType = createPartFromString(attachmentEntity.type)
                                 val requestBodyDuration =
-                                    createPartFromString(attachment.duration.toString())
+                                    createPartFromString(attachmentEntity.duration.toString())
 
                                 val requestBodyFilePart =
                                     createPartFromFile(
-                                        attachment,
+                                        attachmentEntity,
                                         this as Job,
                                         progress = { progress ->
                                             //offer(UploadResult.Progress(attachment, progress, this))
                                             RxBus.publish(
                                                 RxEvent.UploadProgress(
-                                                    attachment,
+                                                    attachmentEntity,
                                                     progress
                                                 )
                                             )
@@ -119,13 +118,13 @@ class UploadServiceRepository @Inject constructor(
 
                                 if (response.isSuccessful) {
 
-                                    message.status =
-                                        if (message.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
+                                    messageEntity.status =
+                                        if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
                                         else Constants.MessageStatus.SENT.status
-                                    updateMessage(message)
+                                    updateMessage(messageEntity)
 
                                     response.body()?.let { attachmentResDTO ->
-                                        attachment.apply {
+                                        attachmentEntity.apply {
                                             webId = attachmentResDTO.id
                                             messageWebId = attachmentResDTO.messageId
                                             body = attachmentResDTO.body
@@ -133,19 +132,19 @@ class UploadServiceRepository @Inject constructor(
                                         }
                                     }
 
-                                    updateAttachment(attachment)
-                                    if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
-                                        saveEncryptedFile(attachment)
+                                    updateAttachment(attachmentEntity)
+                                    if (BuildConfig.ENCRYPT_API && attachmentEntity.type != Constants.AttachmentType.GIF_NN.type) {
+                                        saveEncryptedFile(attachmentEntity)
                                     }
                                     //offer(UploadResult.Success(attachment))
-                                    RxBus.publish(RxEvent.UploadSuccess(attachment))
+                                    RxBus.publish(RxEvent.UploadSuccess(attachmentEntity))
                                     Timber.d("offer(UploadResult.Success(attachment))")
                                 } else {
-                                    setStatusErrorMessageAndAttachment(message, attachment)
+                                    setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
                                     //offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
                                     RxBus.publish(
                                         RxEvent.UploadError(
-                                            attachment,
+                                            attachmentEntity,
                                             "Algo ha salido mal",
                                             null
                                         )
@@ -156,14 +155,14 @@ class UploadServiceRepository @Inject constructor(
                             is VideoCompressResult.Progress -> {
                                 Timber.d("VideoCompressResult.Progress ${it.progress}")
                                 //offer(UploadResult.CompressProgress(attachment, it.progress, this))
-                                RxBus.publish(RxEvent.CompressProgress(attachment, it.progress))
+                                RxBus.publish(RxEvent.CompressProgress(attachmentEntity, it.progress))
                             }
                             is VideoCompressResult.Fail -> {
-                                setStatusErrorMessageAndAttachment(message, attachment)
+                                setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
                                 //offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
                                 RxBus.publish(
                                     RxEvent.UploadError(
-                                        attachment,
+                                        attachmentEntity,
                                         "Algo ha salido mal",
                                         null
                                     )
@@ -174,15 +173,15 @@ class UploadServiceRepository @Inject constructor(
                     }
             } catch (e: Exception) {
                 Timber.e("ClosedSendChannelException, $e")
-                attachment.status =
+                attachmentEntity.status =
                     Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                updateAttachment(attachment)
+                updateAttachment(attachmentEntity)
 
-                message.status = Constants.MessageStatus.ERROR.status
-                updateMessage(message)
+                messageEntity.status = Constants.MessageStatus.ERROR.status
+                updateMessage(messageEntity)
                 RxBus.publish(
                     RxEvent.UploadError(
-                        attachment,
+                        attachmentEntity,
                         "Algo ha salido mal",
                         null
                     )
@@ -197,40 +196,40 @@ class UploadServiceRepository @Inject constructor(
         }
     }
 
-    override fun updateAttachment(attachment: Attachment) {
+    override fun updateAttachment(attachmentEntity: AttachmentEntity) {
         Timber.d("update attachment")
-        attachmentLocalDataSource.updateAttachment(attachment)
+        attachmentLocalDataSource.updateAttachment(attachmentEntity)
     }
 
-    override fun updateMessage(message: Message) {
+    override fun updateMessage(messageEntity: MessageEntity) {
         Timber.d("updateMessage")
-        when (message.status) {
+        when (messageEntity.status) {
             Constants.MessageStatus.ERROR.status -> {
                 val selfDestructTime = sharedPreferencesManager.getInt(
                     Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
                 )
                 val currentTime =
                     TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
-                message.updatedAt = currentTime
-                message.selfDestructionAt = selfDestructTime
-                message.totalSelfDestructionAt =
+                messageEntity.updatedAt = currentTime
+                messageEntity.selfDestructionAt = selfDestructTime
+                messageEntity.totalSelfDestructionAt =
                     currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
-                messageLocalDataSource.updateMessage(message)
+                messageLocalDataSource.updateMessage(messageEntity)
             }
             else -> {
-                messageLocalDataSource.updateMessage(message)
+                messageLocalDataSource.updateMessage(messageEntity)
             }
         }
     }
 
     override suspend fun compressVideo(
-        attachment: Attachment,
+        attachmentEntity: AttachmentEntity,
         srcFile: File,
         destFile: File,
         job: CoroutineScope
     ) = flow {
 
-        if (attachment.type == Constants.AttachmentType.VIDEO.type && !attachment.isCompressed) {
+        if (attachmentEntity.type == Constants.AttachmentType.VIDEO.type && !attachmentEntity.isCompressed) {
             if (destFile.exists())
                 destFile.delete()
 
@@ -249,16 +248,16 @@ class UploadServiceRepository @Inject constructor(
     }
 
     private fun createPartFromFile(
-        attachment: Attachment,
+        attachmentEntity: AttachmentEntity,
         job: Job,
         progress: (Float) -> Unit
     ): MultipartBody.Part {
         Timber.d("createPartFromFile")
         val subfolder =
-            FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
+            FileManager.getSubfolderByAttachmentType(attachmentType = attachmentEntity.type)
 
         val fileUri = Utils.getFileUri(
-            context = context, fileName = attachment.fileName, subFolder = subfolder
+            context = context, fileName = attachmentEntity.fileName, subFolder = subfolder
         )
 
         val file = File(fileUri.path!!)
@@ -298,16 +297,16 @@ class UploadServiceRepository @Inject constructor(
         )
     }
 
-    private fun saveEncryptedFile(attachment: Attachment) {
-        FileManager.copyEncryptedFile(context, attachment)
+    private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
+        FileManager.copyEncryptedFile(context, attachmentEntity)
     }
 
-    private fun setStatusErrorMessageAndAttachment(message: Message, attachment: Attachment?) {
-        message.status = Constants.MessageStatus.ERROR.status
-        updateMessage(message)
-        attachment?.let {
-            attachment.status = Constants.AttachmentStatus.ERROR.status
-            updateAttachment(attachment)
+    private fun setStatusErrorMessageAndAttachment(messageEntity: MessageEntity, attachmentEntity: AttachmentEntity?) {
+        messageEntity.status = Constants.MessageStatus.ERROR.status
+        updateMessage(messageEntity)
+        attachmentEntity?.let {
+            attachmentEntity.status = Constants.AttachmentStatus.ERROR.status
+            updateAttachment(attachmentEntity)
         }
     }
 }

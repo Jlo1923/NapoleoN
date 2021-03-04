@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,16 +21,16 @@ class PreviewMediaViewModel @Inject constructor(private val repository: IContrac
         get() = _tempFile
 
     //region Implementation IContractPreviewMedia.ViewModel
-    override fun createTempFile(attachment: Attachment) {
+    override fun createTempFile(attachmentEntity: AttachmentEntity) {
         viewModelScope.launch {
-            _tempFile.value = repository.createTempFile(attachment)
+            _tempFile.value = repository.createTempFile(attachmentEntity)
         }
     }
 
-    override fun sentMessageReaded(messageAndAttachment: MessageAndAttachment) {
+    override fun sentMessageReaded(messageAndAttachmentRelation: MessageAttachmentRelation) {
         CoroutineScope(Dispatchers.IO).launch {
-            if (messageAndAttachment.message.isMine == Constants.IsMine.NO.value) {
-                repository.sentMessageReaded(messageAndAttachment)
+            if (messageAndAttachmentRelation.messageEntity.isMine == Constants.IsMine.NO.value) {
+                repository.sentMessageReaded(messageAndAttachmentRelation)
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.recoveryAccount
 
-import com.naposystems.napoleonchat.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import okhttp3.ResponseBody
 import retrofit2.Response
 

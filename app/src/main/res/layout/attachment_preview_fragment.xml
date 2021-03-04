@@ -42,7 +42,7 @@
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:background="@color/black"
                     android:transitionName="@{@string/transition_name_gallery_thumbnail(galleryItemId)}"
-                    app:attachmentImage="@{viewModel.attachmentTaken}"
+                    app:attachmentImage="@{viewModel.attachmentEntityTaken}"
                     tools:src="@drawable/vertical_photo" />
             </com.naposystems.napoleonchat.ui.custom.noScrollView.NoScrollView>
 

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.repository.sharedRepository.UserProfileShareRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -18,9 +18,9 @@ class UserProfileShareViewModel @Inject constructor(
     val userUpdated: LiveData<Boolean>
         get() = _userUpdated
 
-    private lateinit var _user : LiveData<User>
-    val user: LiveData<User>
-        get() = _user
+    private lateinit var _userEntity : LiveData<UserEntity>
+    val userEntity: LiveData<UserEntity>
+        get() = _userEntity
 
     private val _errorUpdatingUser = MutableLiveData<List<String>>()
     val errorUpdatingUser: LiveData<List<String>>
@@ -33,19 +33,19 @@ class UserProfileShareViewModel @Inject constructor(
 
     override fun getUser() {
         viewModelScope.launch {
-            _user = repository.getUser()
+            _userEntity = repository.getUser()
         }
     }
 
-    override fun updateUserInfo(user : User, updateUserInfoReqDTO: Any) {
+    override fun updateUserInfo(userEntity : UserEntity, updateUserInfoReqDTO: Any) {
         viewModelScope.launch {
             try {
                 val response = repository.updateUserInfo(updateUserInfoReqDTO)
 
                 if (response.isSuccessful) {
                     response.body()?.let { updatedUser->
-                        user.let { userLocal ->
-                            val userNew = User(
+                        userEntity.let { userLocal ->
+                            val userNew = UserEntity(
                                 firebaseId = userLocal.firebaseId,
                                 id = userLocal.id,
                                 nickname = updatedUser.nickname,
@@ -76,9 +76,9 @@ class UserProfileShareViewModel @Inject constructor(
         }
     }
 
-    override fun updateUserLocal(user: User) {
+    override fun updateUserLocal(userEntity: UserEntity) {
         viewModelScope.launch {
-            repository.updateUserLocal(user)
+            repository.updateUserLocal(userEntity)
         }
     }
 

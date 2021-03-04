@@ -1,11 +1,11 @@
 package com.naposystems.napoleonchat.repository.recoveryAccount
 
-import com.naposystems.napoleonchat.dto.recoveryAccount.RecoveryAccountErrorDTO
-import com.naposystems.napoleonchat.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response

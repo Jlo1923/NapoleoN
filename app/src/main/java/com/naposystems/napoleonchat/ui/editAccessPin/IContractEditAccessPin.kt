@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.editAccessPin
 
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 
 interface IContractEditAccessPin {
 
@@ -11,7 +11,7 @@ interface IContractEditAccessPin {
     }
 
     interface Repository {
-        suspend fun getLocalUser(): User
+        suspend fun getLocalUser(): UserEntity
         suspend fun updateAccessPin(newAccessPin: String, firebaseId: String)
     }
 }

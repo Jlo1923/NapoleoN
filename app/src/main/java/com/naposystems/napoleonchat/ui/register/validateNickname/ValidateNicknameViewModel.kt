@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeErrorDTO
-import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.launch

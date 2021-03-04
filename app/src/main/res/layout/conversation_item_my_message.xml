@@ -16,7 +16,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
         <variable
             name="timeFormat"
@@ -69,8 +69,8 @@
                 style="@style/MyMessageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{conversation.message.body}"
-                android:visibility="@{conversation.message.body.empty ? View.GONE : View.VISIBLE}"
+                android:text="@{conversation.messageEntity.body}"
+                android:visibility="@{conversation.messageEntity.body.empty ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toTopOf="@id/textView_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -87,7 +87,7 @@
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toBottomOf="@+id/textView_message"
                 custom:formatTime="@{timeFormat}"
-                custom:messageDateSend="@{conversation.message.createdAt}"
+                custom:messageDateSend="@{conversation.messageEntity.createdAt}"
                 tools:text="10:34 "
                 tools:visibility="visible" />
 
@@ -97,7 +97,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/textView_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/textView_date"
-                custom:messageStatus="@{conversation.message.status}"
+                custom:messageStatus="@{conversation.messageEntity.status}"
                 tools:srcCompat="@drawable/ic_message_sent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -115,7 +115,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_file_upload_black"
             android:tint="@color/white"
-            android:visibility="@{conversation.message.status == MessageStatus.ERROR.status ? View.VISIBLE : View.GONE}"
+            android:visibility="@{conversation.messageEntity.status == MessageStatus.ERROR.status ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/container_message"
             app:layout_constraintEnd_toStartOf="@id/container_message"
             app:layout_constraintHorizontal_bias="1.0"

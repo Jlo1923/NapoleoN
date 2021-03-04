@@ -2,13 +2,10 @@ package com.naposystems.napoleonchat.ui.status
 
 import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,14 +14,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.StatusFragmentBinding
-import com.naposystems.napoleonchat.entity.Status
+import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import com.naposystems.napoleonchat.ui.status.adapter.StatusAdapter
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -99,23 +95,23 @@ class StatusFragment : Fragment() {
     }
 
     private fun observeStatus() {
-        viewModel.status.observe(viewLifecycleOwner, Observer { statusList ->
+        viewModel.statusEntity.observe(viewLifecycleOwner, Observer { statusList ->
             if (statusList != null) {
                 context?.let {
                     if (statusList.count() <= 0) {
-                        statusList.add(Status(1, getString(R.string.text_status_available)))
-                        statusList.add(Status(2, getString(R.string.text_status_busy)))
-                        statusList.add(Status(3, getString(R.string.text_status_in_meeting)))
-                        statusList.add(Status(4, getString(R.string.text_status_only_messages)))
-                        statusList.add(Status(5, getString(R.string.text_status_sleeping)))
-                        statusList.add(Status(6, getString(R.string.text_status_only_emergency)))
+                        statusList.add(StatusEntity(1, getString(R.string.text_status_available)))
+                        statusList.add(StatusEntity(2, getString(R.string.text_status_busy)))
+                        statusList.add(StatusEntity(3, getString(R.string.text_status_in_meeting)))
+                        statusList.add(StatusEntity(4, getString(R.string.text_status_only_messages)))
+                        statusList.add(StatusEntity(5, getString(R.string.text_status_sleeping)))
+                        statusList.add(StatusEntity(6, getString(R.string.text_status_only_emergency)))
                         if (args.user.status != getString(R.string.text_status_available) &&
                             args.user.status != getString(R.string.text_status_busy) &&
                             args.user.status != getString(R.string.text_status_in_meeting) &&
                             args.user.status != getString(R.string.text_status_only_messages) &&
                             args.user.status != getString(R.string.text_status_sleeping) &&
                             args.user.status != getString(R.string.text_status_only_emergency)) {
-                            statusList.add(Status(7, customStatus = args.user.status))
+                            statusList.add(StatusEntity(7, customStatus = args.user.status))
                         }
                         viewModel.insertStatus(statusList)
                     }
@@ -180,7 +176,7 @@ class StatusFragment : Fragment() {
     private fun createStatus() {
         binding.textInputEditTextStatus.text?.toString()?.let { textStatus ->
             if (textStatus.trim().isNotEmpty()) {
-                viewModel.status.value?.let { listStatus ->
+                viewModel.statusEntity.value?.let { listStatus ->
                     if (listStatus.count() < 10) {
                         viewModel.updateStatus(textStatus)
                         binding.textInputEditTextStatus.clearFocus()
@@ -201,15 +197,15 @@ class StatusFragment : Fragment() {
         }
     }
 
-    private fun selectStatus(listStatus: List<Status>) {
+    private fun selectStatus(listStatusEntities: List<StatusEntity>) {
         viewModel.user.value?.let { user ->
-            val statusOld = listStatus.find {
+            val statusOld = listStatusEntities.find {
                 (it.status.isNotEmpty()) && (it.status.trim() == user.status.trim()) ||
                         (it.status.isEmpty()) && (it.customStatus.trim() == user.status.trim())
             }
 
             if (statusOld == null) {
-                val statusByDefect = listStatus[0].status
+                val statusByDefect = listStatusEntities[0].status
                 viewModel.updateStatus(statusByDefect)
                 binding.textInputEditTextStatus.setText(statusByDefect)
             }

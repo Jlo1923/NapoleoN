@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationReqDTO
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.repository.sharedRepository.ShareContactRepository
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class ShareContactViewModel @Inject constructor(
     val conversationDeleted: LiveData<Boolean>
         get() = _conversationDeleted
 
-    override fun sendBlockedContact(contact: Contact) {
+    override fun sendBlockedContact(contact: ContactEntity) {
         viewModelScope.launch {
             try {
                 val response = repository.sendBlockedContact(contact)
@@ -62,7 +62,7 @@ class ShareContactViewModel @Inject constructor(
         }
     }
 
-    override fun sendDeleteContact(contact: Contact) {
+    override fun sendDeleteContact(contact: ContactEntity) {
         viewModelScope.launch {
             try {
                 val response = repository.sendDeleteContact(contact)
