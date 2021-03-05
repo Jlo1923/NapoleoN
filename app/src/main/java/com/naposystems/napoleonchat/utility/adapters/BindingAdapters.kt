@@ -27,7 +27,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.model.conversationCall.ConversationCall
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.GlideManager
@@ -219,7 +219,7 @@ fun bindBackground(imageView: ImageView, imageUrl: String) {
 }
 
 @BindingAdapter("avatar")
-fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
+fun bindAvatar(imageView: ImageView, @Nullable contact: ContactEntity?) {
     val context = imageView.context
     if (contact != null && contact.id != 0) {
 
@@ -266,7 +266,7 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
 }
 
 @BindingAdapter("avatarWithoutCircle")
-fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: Contact?) {
+fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = imageView.context
 
@@ -299,14 +299,14 @@ fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: Contact?) {
 }
 
 @BindingAdapter("nickname")
-fun bindNickname(textView: TextView, @Nullable contact: Contact?) {
+fun bindNickname(textView: TextView, @Nullable contact: ContactEntity?) {
     textView.context.let { context ->
         textView.text = context.getString(R.string.label_nickname, contact?.getNickName())
     }
 }
 
 @BindingAdapter("name")
-fun bindName(textView: TextView, @Nullable contact: Contact?) {
+fun bindName(textView: TextView, @Nullable contact: ContactEntity?) {
     textView.text = contact?.getName()
 }
 

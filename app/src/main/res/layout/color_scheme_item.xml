@@ -11,7 +11,7 @@
 
         <variable
             name="theme"
-            type="com.naposystems.napoleonchat.entity.Theme" />
+            type="com.naposystems.napoleonchat.model.Theme" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

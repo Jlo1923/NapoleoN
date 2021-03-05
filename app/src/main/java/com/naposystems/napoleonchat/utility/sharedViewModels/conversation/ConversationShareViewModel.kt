@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.IContractConversationShareViewModel.AudioAttachment
 import kotlinx.coroutines.launch
@@ -16,12 +16,12 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
 
     private var _listMediaStoreAudio = mutableListOf<MediaStoreAudio>()
 
-    private val _attachmentSelected = MutableLiveData<Attachment>()
-    val attachmentSelected: LiveData<Attachment>
+    private val _attachmentSelected = MutableLiveData<AttachmentEntity>()
+    val attachmentEntitySelected: LiveData<AttachmentEntity>
         get() = _attachmentSelected
 
-    private val _attachmentTaken = MutableLiveData<Attachment>()
-    val attachmentTaken: LiveData<Attachment>
+    private val _attachmentTaken = MutableLiveData<AttachmentEntity>()
+    val attachmentEntityTaken: LiveData<AttachmentEntity>
         get() = _attachmentTaken
 
     private val _emojiSelected = MutableLiveData<Emoji>()
@@ -32,8 +32,8 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
     val hasAudioSendClicked: LiveData<Boolean>
         get() = _hasAudioSendClicked
 
-    private val _gifSelected = MutableLiveData<Attachment>()
-    val gifSelected: LiveData<Attachment>
+    private val _gifSelected = MutableLiveData<AttachmentEntity>()
+    val gifSelected: LiveData<AttachmentEntity>
         get() = _gifSelected
 
     private val _message = MutableLiveData<String>()
@@ -59,20 +59,20 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
         _message.value = ""
     }
 
-    override fun setAttachmentSelected(attachment: Attachment) {
-        _attachmentSelected.value = attachment
+    override fun setAttachmentSelected(attachmentEntity: AttachmentEntity) {
+        _attachmentSelected.value = attachmentEntity
     }
 
-    override fun setAttachmentTaken(attachment: Attachment) {
-        _attachmentTaken.value = attachment
+    override fun setAttachmentTaken(attachmentEntity: AttachmentEntity) {
+        _attachmentTaken.value = attachmentEntity
     }
 
     override fun resetAttachmentSelected() {
         _attachmentSelected.value = null
     }
 
-    override fun setGifSelected(attachment: Attachment) {
-        this._gifSelected.value = attachment
+    override fun setGifSelected(attachmentEntity: AttachmentEntity) {
+        this._gifSelected.value = attachmentEntity
     }
 
     override fun resetGifSelected() {

@@ -2,14 +2,13 @@ package com.naposystems.napoleonchat.repository.languageSelection
 
 import android.content.Context
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.dto.language.UserLanguageReqDTO
-import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoResDTO
+import com.naposystems.napoleonchat.source.remote.dto.language.UserLanguageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoResDTO
 import com.naposystems.napoleonchat.model.languageSelection.Language
 import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types

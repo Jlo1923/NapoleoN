@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.enterPin
 
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 
 interface IContractEnterPin {
     interface ViewModel {
@@ -13,7 +13,7 @@ interface IContractEnterPin {
         fun setBiometricPreference(option: Int)
     }
     interface Repository {
-        suspend fun getAccessPin(): User
+        suspend fun getAccessPin(): UserEntity
         suspend fun getAttempts(): Int
         suspend fun getTotalAttempts(): Int
         suspend fun setAttempts(attempts: Int)

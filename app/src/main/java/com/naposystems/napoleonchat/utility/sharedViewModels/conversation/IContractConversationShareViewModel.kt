@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.utility.sharedViewModels.conversation
 
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 
 interface IContractConversationShareViewModel {
@@ -9,10 +9,10 @@ interface IContractConversationShareViewModel {
     fun setMessage(message: String)
     fun getMessage(): String?
     fun resetMessage()
-    fun setAttachmentSelected(attachment: Attachment)
-    fun setAttachmentTaken(attachment: Attachment)
+    fun setAttachmentSelected(attachmentEntity: AttachmentEntity)
+    fun setAttachmentTaken(attachmentEntity: AttachmentEntity)
     fun resetAttachmentSelected()
-    fun setGifSelected(attachment: Attachment)
+    fun setGifSelected(attachmentEntity: AttachmentEntity)
     fun resetGifSelected()
     fun resetAttachmentTaken()
     fun getQuoteWebId(): String?

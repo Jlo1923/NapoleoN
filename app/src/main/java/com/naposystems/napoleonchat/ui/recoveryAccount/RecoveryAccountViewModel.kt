@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.napoleonchat.model.recoveryAccount.RecoveryAccountUserType
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch

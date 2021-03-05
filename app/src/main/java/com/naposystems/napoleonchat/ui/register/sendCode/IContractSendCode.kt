@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.register.sendCode
 
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeResDTO
 import retrofit2.Response
 
 interface IContractSendCode {

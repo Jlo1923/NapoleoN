@@ -23,7 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationCameraFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.custom.cameraButton.CameraButton
@@ -263,7 +263,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                                             photoFile
                                         )
 
-                                    val attachment = Attachment(
+                                    val attachment = AttachmentEntity(
                                         id = 0,
                                         messageId = 0,
                                         webId = "",
@@ -381,7 +381,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
 
                 override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
                     if (!isBackPressed) {
-                        val attachment = Attachment(
+                        val attachment = AttachmentEntity(
                             id = 0,
                             messageId = 0,
                             webId = "",

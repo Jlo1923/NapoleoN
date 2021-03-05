@@ -28,7 +28,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ProfileFragmentBinding
-import com.naposystems.napoleonchat.dto.user.UserAvatarReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.user.UserAvatarReqDTO
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.changeParams.ChangeParamsDialogFragment
@@ -160,7 +160,7 @@ class ProfileFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.user.observe(viewLifecycleOwner) { user ->
+        viewModel.userEntity.observe(viewLifecycleOwner) { user ->
             if (user != null) {
                 binding.user = user
                 binding.executePendingBindings()

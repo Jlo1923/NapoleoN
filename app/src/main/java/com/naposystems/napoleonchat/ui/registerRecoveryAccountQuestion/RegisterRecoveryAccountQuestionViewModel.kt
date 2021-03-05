@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
-import com.naposystems.napoleonchat.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
-import com.naposystems.napoleonchat.entity.Questions
-import com.naposystems.napoleonchat.entity.RecoveryAnswer
+import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
+import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
+import com.naposystems.napoleonchat.model.Questions
+import com.naposystems.napoleonchat.model.RecoveryAnswer
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber

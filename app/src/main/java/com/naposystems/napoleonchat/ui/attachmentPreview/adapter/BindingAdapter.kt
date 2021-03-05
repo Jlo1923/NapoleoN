@@ -3,16 +3,16 @@ package com.naposystems.napoleonchat.ui.attachmentPreview.adapter
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 
 @BindingAdapter("attachmentImage")
-fun bindGalleryImage(imageView: ImageView, attachment: Attachment?) {
-    when (attachment?.type) {
+fun bindGalleryImage(imageView: ImageView, attachmentEntity: AttachmentEntity?) {
+    when (attachmentEntity?.type) {
         Constants.AttachmentType.IMAGE.type -> {
             val uri = Utils.getFileUri(
-                imageView.context, attachment.fileName, Constants.CacheDirectories.IMAGES.folder
+                imageView.context, attachmentEntity.fileName, Constants.CacheDirectories.IMAGES.folder
             )
             Glide.with(imageView)
                 .load(uri)
@@ -22,7 +22,7 @@ fun bindGalleryImage(imageView: ImageView, attachment: Attachment?) {
         Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
             Glide.with(imageView)
                 .asGif()
-                .load(attachment)
+                .load(attachmentEntity)
                 .into(imageView)
         }
     }

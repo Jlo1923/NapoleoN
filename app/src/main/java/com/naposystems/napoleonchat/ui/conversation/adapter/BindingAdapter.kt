@@ -14,9 +14,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
@@ -101,7 +101,7 @@ fun bindMessageDateIncoming(
 @BindingAdapter("nicknameActionBar")
 fun bindNickname(
     textView: TextView,
-    @Nullable contact: Contact?
+    @Nullable contact: ContactEntity?
 ) {
     if (contact != null) {
         val context = textView.context
@@ -120,7 +120,7 @@ fun bindNickname(
 @BindingAdapter("nameActionBar")
 fun bindName(
     textView: TextView,
-    @Nullable contact: Contact?
+    @Nullable contact: ContactEntity?
 ) {
     if (contact != null) {
         when {
@@ -137,7 +137,7 @@ fun bindName(
 @BindingAdapter("avatarActionBar")
 fun bindAvatar(
     imageView: ImageView,
-    @Nullable contact: Contact?
+    @Nullable contact: ContactEntity?
 ) {
     if (contact != null) {
         val context = imageView.context
@@ -179,14 +179,14 @@ fun bindAvatar(
 @BindingAdapter("countDown")
 fun bindCountDown(
     textView: TextView,
-    @Nullable messageAndAttachmentParam: MessageAndAttachment?
+    @Nullable messageAndAttachmentRelationParam: MessageAttachmentRelation?
 ) {
     val animationScaleUp: Animation by lazy {
         AnimationUtils.loadAnimation(textView.context, R.anim.scale_up)
     }
 
-    messageAndAttachmentParam?.let { messageAndAttachment ->
-        if (messageAndAttachment.message.status == Constants.MessageStatus.READED.status) {
+    messageAndAttachmentRelationParam?.let { messageAndAttachment ->
+        if (messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status) {
             textView.startAnimation(animationScaleUp)
             textView.visibility = View.VISIBLE
         } else {
@@ -198,10 +198,10 @@ fun bindCountDown(
 @BindingAdapter("imageAttachment")
 fun bindImageAttachment(
     imageView: ImageView,
-    @Nullable messageAndAttachmentParam: MessageAndAttachment?
+    @Nullable messageAndAttachmentRelationParam: MessageAttachmentRelation?
 ) {
     try {
-        messageAndAttachmentParam?.let { messageAndAttachment ->
+        messageAndAttachmentRelationParam?.let { messageAndAttachment ->
 
             val context = imageView.context
             messageAndAttachment.getFirstAttachment()?.let { attachment ->
@@ -209,7 +209,7 @@ fun bindImageAttachment(
 
                 imageView.visibility = View.VISIBLE
 
-                if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
+                if (messageAndAttachment.messageEntity.isMine == Constants.IsMine.YES.value) {
                     loadAttachment(attachment, imageView, true)
                 } else {
                     when (attachment.status) {
@@ -238,12 +238,12 @@ fun bindImageAttachment(
 @BindingAdapter("attachmentDocumentName")
 fun bindAttachmentDocumentName(
     textView: TextView,
-    messageAndAttachment: MessageAndAttachment
+    messageAndAttachmentRelation: MessageAttachmentRelation
 ) {
 
-    if (messageAndAttachment.attachmentList.isNotEmpty()) {
+    if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
         val context = textView.context
-        val firstAttachment = messageAndAttachment.attachmentList[0]
+        val firstAttachment = messageAndAttachmentRelation.attachmentEntityList[0]
 
         textView.text =
             context.getString(R.string.text_attachment_document_name, firstAttachment.extension)
@@ -253,11 +253,11 @@ fun bindAttachmentDocumentName(
 @BindingAdapter("attachmentDocumentIcon")
 fun bindAttachmentDocumentIcon(
     imageView: ImageView,
-    messageAndAttachment: MessageAndAttachment
+    messageAndAttachmentRelation: MessageAttachmentRelation
 ) {
 
-    if (messageAndAttachment.attachmentList.isNotEmpty()) {
-        val firstAttachment = messageAndAttachment.attachmentList[0]
+    if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
+        val firstAttachment = messageAndAttachmentRelation.attachmentEntityList[0]
 
         val drawableId = when (firstAttachment.extension) {
             "doc" -> R.drawable.ic_attachment_doc
@@ -279,9 +279,9 @@ fun bindAttachmentDocumentIcon(
 @BindingAdapter("iconForState")
 fun bindIconForState(
     imageButton: AppCompatImageButton,
-    messageAndAttachment: MessageAndAttachment
+    messageAndAttachmentRelation: MessageAttachmentRelation
 ) {
-    val firstAttachment = messageAndAttachment.getFirstAttachment()
+    val firstAttachment = messageAndAttachmentRelation.getFirstAttachment()
 
     firstAttachment?.let { attachment ->
 
@@ -289,9 +289,9 @@ fun bindIconForState(
 
         val drawableId = when (attachment.status) {
             Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
-                if (messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
-                    messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
-                    messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status
+                if (messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.SENT.status ||
+                    messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.READED.status ||
+                    messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.UNREAD.status
                 ) {
                     imageButton.visibility = View.GONE
                 } else {
@@ -324,7 +324,7 @@ fun bindIconForState(
             }
             Constants.AttachmentStatus.ERROR.status -> {
                 imageButton.visibility = View.VISIBLE
-                if (messageAndAttachment.message.isMine == Constants.IsMine.YES.value) {
+                if (messageAndAttachmentRelation.messageEntity.isMine == Constants.IsMine.YES.value) {
                     R.drawable.ic_file_upload_black
                 } else {
                     R.drawable.ic_file_download_black
@@ -344,13 +344,13 @@ fun bindIconForState(
 @BindingAdapter("showCheck")
 fun bindShowCheck(
     imageView: ImageView,
-    messageAndAttachment: MessageAndAttachment
+    messageAndAttachmentRelation: MessageAttachmentRelation
 ) {
-    if (messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type ||
-        messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.IMAGE.type ||
-        messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.VIDEO.type
+    if (messageAndAttachmentRelation.attachmentEntityList[0].type == Constants.AttachmentType.AUDIO.type ||
+        messageAndAttachmentRelation.attachmentEntityList[0].type == Constants.AttachmentType.IMAGE.type ||
+        messageAndAttachmentRelation.attachmentEntityList[0].type == Constants.AttachmentType.VIDEO.type
     ) {
-        if (messageAndAttachment.message.status == Constants.MessageStatus.READED.status) {
+        if (messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.READED.status) {
             imageView.visibility = View.VISIBLE
         } else {
             imageView.visibility = View.INVISIBLE
@@ -359,8 +359,9 @@ fun bindShowCheck(
 
 }
 
+
 private fun loadBlurAttachment(
-    firstAttachment: Attachment,
+    firstAttachment: AttachmentEntity,
     imageView: ImageView,
     context: Context?
 ) {
@@ -391,7 +392,7 @@ private fun loadBlurAttachment(
 }
 
 private fun loadAttachment(
-    firstAttachment: Attachment,
+    firstAttachment: AttachmentEntity,
     imageView: ImageView,
     isMine: Boolean
 ) {
@@ -442,3 +443,4 @@ private fun loadAttachment(
         }
     }
 }
+

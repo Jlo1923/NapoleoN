@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.HomeFragmentItemBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.utility.Constants
 
 class ConversationAdapter(
@@ -16,20 +16,20 @@ class ConversationAdapter(
     private val displayFormat: Int?,
     private val timeFormat: Int?
 ) :
-    ListAdapter<MessageAndAttachment,
+    ListAdapter<MessageAttachmentRelation,
             ConversationAdapter.ConversationAndContactViewHolder>(DiffCallback) {
 
-    object DiffCallback : DiffUtil.ItemCallback<MessageAndAttachment>() {
+    object DiffCallback : DiffUtil.ItemCallback<MessageAttachmentRelation>() {
         override fun areItemsTheSame(
-            oldItem: MessageAndAttachment,
-            newItem: MessageAndAttachment
+            oldItem: MessageAttachmentRelation,
+            newItem: MessageAttachmentRelation
         ): Boolean {
             return oldItem === newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: MessageAndAttachment,
-            newItem: MessageAndAttachment
+            oldItem: MessageAttachmentRelation,
+            newItem: MessageAttachmentRelation
         ): Boolean {
             return oldItem == newItem
         }
@@ -52,7 +52,7 @@ class ConversationAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            conversation: MessageAndAttachment, clickListener: ClickListener,
+            conversation: MessageAttachmentRelation, clickListener: ClickListener,
             displayFormat: Int?,
             timeFormat: Int?
         ) {
@@ -74,7 +74,7 @@ class ConversationAdapter(
 
             binding.executePendingBindings()
 
-            if (conversation.message.isMine == Constants.IsMine.YES.value) {
+            if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
                 binding.textViewUnreadMessages.visibility = View.GONE
             }
         }
@@ -94,8 +94,8 @@ class ConversationAdapter(
     }
 
     interface ClickListener {
-        fun onClick(item: MessageAndAttachment)
-        fun onClickAvatar(item: MessageAndAttachment)
-        fun onLongClick(item: MessageAndAttachment, view: View)
+        fun onClick(item: MessageAttachmentRelation)
+        fun onClickAvatar(item: MessageAttachmentRelation)
+        fun onLongClick(item: MessageAttachmentRelation, view: View)
     }
 }

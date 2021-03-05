@@ -7,7 +7,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
         <variable
             name="clickListener"

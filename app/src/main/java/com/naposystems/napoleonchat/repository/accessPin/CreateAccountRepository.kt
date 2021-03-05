@@ -2,17 +2,17 @@ package com.naposystems.napoleonchat.repository.accessPin
 
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.Crypto
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountUnprocessableEntityDTO
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountErrorDTO
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountReqDTO
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountResDTO
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.register.accessPin.IContractAccessPin
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
 import timber.log.Timber
@@ -22,7 +22,7 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class CreateAccountRepository @Inject constructor(
-    private val userLocalDataSource: UserLocalDataSource,
+    private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
 ) :
@@ -50,13 +50,13 @@ class CreateAccountRepository @Inject constructor(
         return napoleonApi.createAccount(createAccountReqDTO)
     }
 
-    override suspend fun createUser(user: User) {
-        userLocalDataSource.insertUser(user)
+    override suspend fun createUser(userEntity: UserEntity) {
+        userLocalDataSourceImp.insertUser(userEntity)
 //        sharedPreferencesManager.putInt(Constants.SharedPreferences.PREF_USER_ID, user.id)
     }
 
     override suspend fun updateAccessPin(newAccessPin: String, firebaseId: String) {
-        userLocalDataSource.updateAccessPin(newAccessPin, firebaseId)
+        userLocalDataSourceImp.updateAccessPin(newAccessPin, firebaseId)
     }
 
     override fun createdUserPref() {
@@ -79,7 +79,7 @@ class CreateAccountRepository @Inject constructor(
                 Constants.SharedPreferences.PREF_FIREBASE_ID, ""
             )
             val createAtMilliseconds = TimeUnit.SECONDS.toMillis(
-                userLocalDataSource.getMyUser().createAt
+                userLocalDataSourceImp.getMyUser().createAt
             )
 
             val calendar = Calendar.getInstance()

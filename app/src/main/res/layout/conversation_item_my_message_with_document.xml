@@ -8,7 +8,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
         <variable
             name="itemPosition"
@@ -97,7 +97,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toBottomOf="@id/imageView_document_type"
-                app:messageDateSend="@{conversation.message.createdAt}"
+                app:messageDateSend="@{conversation.messageEntity.createdAt}"
                 tools:text="10:34 "
                 tools:visibility="visible" />
 
@@ -107,7 +107,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/textView_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/textView_date"
-                app:messageStatus="@{conversation.message.status}"
+                app:messageStatus="@{conversation.messageEntity.status}"
                 tools:srcCompat="@drawable/ic_message_sent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

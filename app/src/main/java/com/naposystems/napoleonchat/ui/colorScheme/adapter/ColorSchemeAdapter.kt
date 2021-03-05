@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.ColorSchemeItemBinding
-import com.naposystems.napoleonchat.entity.Theme
+import com.naposystems.napoleonchat.model.Theme
 
 class ColorSchemeAdapter constructor(
     private val items: List<Theme>,

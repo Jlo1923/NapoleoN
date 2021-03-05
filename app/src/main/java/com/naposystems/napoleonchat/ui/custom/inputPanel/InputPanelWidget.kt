@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomInputPanelWidgetBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView
 import com.naposystems.napoleonchat.utility.Utils
 import timber.log.Timber
@@ -149,9 +149,9 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
         binding.microphoneRecorderView.isVisible = true
     }
 
-    override fun openQuote(messageAndAttachment: MessageAndAttachment) {
+    override fun openQuote(messageAndAttachmentRelation: MessageAttachmentRelation) {
         binding.textInputEditTextInput.requestFocus()
-        binding.layoutQuote.setupMessageAndAttachment(messageAndAttachment)
+        binding.layoutQuote.setupMessageAndAttachment(messageAndAttachmentRelation)
         binding.layoutQuote.visibility = View.VISIBLE
         Utils.openKeyboard(binding.textInputEditTextInput)
     }
@@ -169,7 +169,7 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun getWebIdQuote() =
-        binding.layoutQuote.getMessageAndAttachment()?.message?.webId ?: ""
+        binding.layoutQuote.getMessageAndAttachment()?.messageEntity?.webId ?: ""
 
     override fun closeQuote() {
         binding.layoutQuote.closeQuote()

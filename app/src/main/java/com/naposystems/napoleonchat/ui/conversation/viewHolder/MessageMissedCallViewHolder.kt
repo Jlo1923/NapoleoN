@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemMissedCallBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.Constants
@@ -30,12 +30,12 @@ class MessageMissedCallViewHolder constructor(
     private var countDownTimer: CountDownTimer? = null
 
     override fun countDown(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         textView: TextView?,
-        itemToEliminate: (MessageAndAttachment) -> Unit
+        itemToEliminate: (MessageAttachmentRelation) -> Unit
     ) {
         countDownTimer?.cancel()
-        val endTime = item.message.totalSelfDestructionAt.toLong()
+        val endTime = item.messageEntity.totalSelfDestructionAt.toLong()
         if (endTime > 0) {
             countDownTimer = object : CountDownTimer(
                 TimeUnit.SECONDS.toMillis(endTime) - System.currentTimeMillis(),
@@ -61,8 +61,8 @@ class MessageMissedCallViewHolder constructor(
         }
     }
 
-    private fun showDestructionTime(messageAndAttachment: MessageAndAttachment) {
-        val message = messageAndAttachment.message
+    private fun showDestructionTime(messageAndAttachmentRelation: MessageAttachmentRelation) {
+        val message = messageAndAttachmentRelation.messageEntity
         val stringId = when (message.selfDestructionAt) {
             Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time -> R.string.text_every_five_seconds
             Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time -> R.string.text_every_fifteen_seconds
@@ -149,7 +149,7 @@ class MessageMissedCallViewHolder constructor(
     }*/
 
     override fun bind(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean,
         timeFormat: Int?,
@@ -168,7 +168,7 @@ class MessageMissedCallViewHolder constructor(
         )
 
         try {
-            val messageTime = item.message.createdAt.toLong() * 1000
+            val messageTime = item.messageEntity.createdAt.toLong() * 1000
             val netDate = Date(messageTime)
             val sdfCompare = SimpleDateFormat("dd", Locale.getDefault())
             val compareDate = Date(System.currentTimeMillis())
@@ -189,7 +189,7 @@ class MessageMissedCallViewHolder constructor(
             val iconId: Int
             val stringId: Int
 
-            when (item.message.messageType) {
+            when (item.messageEntity.messageType) {
                 Constants.MessageType.MISSED_CALL.type -> {
                     iconId = R.drawable.ic_call_missed_red
                     stringId = R.string.text_missed_voice_call_at

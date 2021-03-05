@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.ui.register.enterCode
 
-import com.naposystems.napoleonchat.dto.enterCode.EnterCodeResDTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeResDTO
 import retrofit2.Response
 
 interface IContractEnterCode {

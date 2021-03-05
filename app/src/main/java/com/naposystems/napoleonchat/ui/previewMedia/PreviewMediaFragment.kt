@@ -29,7 +29,7 @@ import com.google.android.exoplayer2.util.Util
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.PreviewMediaFragmentBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
@@ -67,7 +67,7 @@ class PreviewMediaFragment : Fragment() {
     private val exoplayer: SimpleExoPlayer by lazy {
         ExoPlayerFactory.newSimpleInstance(context)
     }
-    private val messageAndAttachment: MessageAndAttachment by lazy {
+    private val messageAndAttachmentRelation: MessageAttachmentRelation by lazy {
         args.messageAndAttachment
     }
     private val animationFadeIn: Animation by lazy {
@@ -110,11 +110,11 @@ class PreviewMediaFragment : Fragment() {
 
         binding.message = args.messageAndAttachment
 
-        if (args.messageAndAttachment.message.body.isEmpty()) {
+        if (args.messageAndAttachment.messageEntity.body.isEmpty()) {
             binding.containerMessageAndSeekbar.visibility = View.GONE
         }
 
-        val firstAttachment = messageAndAttachment.getFirstAttachment()
+        val firstAttachment = messageAndAttachmentRelation.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
             when (attachment.type) {
@@ -122,8 +122,8 @@ class PreviewMediaFragment : Fragment() {
                 Constants.AttachmentType.GIF.type,
                 Constants.AttachmentType.LOCATION.type -> {
                     binding.imageViewPreview.visibility = View.VISIBLE
-                    if (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
-                        viewModel.sentMessageReaded(messageAndAttachment)
+                    if (messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.UNREAD.status) {
+                        viewModel.sentMessageReaded(messageAndAttachmentRelation)
                     }
                 }
                 Constants.AttachmentType.VIDEO.type -> {
@@ -243,11 +243,11 @@ class PreviewMediaFragment : Fragment() {
     }
 
     private fun sentMessageReaded(isPlaying: Boolean) {
-        if (!isFirstPause && !isPlaying && messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+        if (!isFirstPause && !isPlaying && messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.UNREAD.status) {
             isFirstPause = true
-            messageAndAttachment.message.status = Constants.MessageStatus.READED.status
+            messageAndAttachmentRelation.messageEntity.status = Constants.MessageStatus.READED.status
             Timber.d("isFirstPause: $isFirstPause")
-            viewModel.sentMessageReaded(messageAndAttachment)
+            viewModel.sentMessageReaded(messageAndAttachmentRelation)
         }
     }
 

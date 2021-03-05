@@ -332,7 +332,7 @@
         tools:layout="@layout/status_fragment">
         <argument
             android:name="user"
-            app:argType="com.naposystems.napoleonchat.entity.User" />
+            app:argType="com.naposystems.napoleonchat.source.local.entity.UserEntity" />
     </fragment>
     <fragment
         android:id="@+id/blockedContactsFragment"
@@ -424,7 +424,7 @@
         tools:layout="@layout/conversation_fragment">
         <argument
             android:name="contact"
-            app:argType="com.naposystems.napoleonchat.entity.Contact" />
+            app:argType="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
         <action
             android:id="@+id/action_conversationFragment_to_conversationCameraFragment"
             app:destination="@id/conversationCameraFragment"
@@ -475,13 +475,6 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_recoveryAccountFragment_to_validatePasswordPreviousRecoveryAccountFragment"
-            app:destination="@id/validatePasswordPreviousRecoveryAccountFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/recoveryAccountQuestionsFragment"
@@ -617,7 +610,7 @@
         tools:layout="@layout/attachment_audio_fragment">
         <argument
             android:name="contact"
-            app:argType="com.naposystems.napoleonchat.entity.Contact" />
+            app:argType="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
     </fragment>
     <fragment
         android:id="@+id/attachmentGalleryFoldersFragment"
@@ -627,7 +620,7 @@
         <argument
             android:name="contact"
             android:defaultValue="@null"
-            app:argType="com.naposystems.napoleonchat.entity.Contact"
+            app:argType="com.naposystems.napoleonchat.source.local.entity.ContactEntity"
             app:nullable="true" />
         <action
             android:id="@+id/action_attachmentGalleryFragment_to_attachmentGalleryFragment"
@@ -653,7 +646,7 @@
         <argument
             android:name="contact"
             android:defaultValue="@null"
-            app:argType="com.naposystems.napoleonchat.entity.Contact"
+            app:argType="com.naposystems.napoleonchat.source.local.entity.ContactEntity"
             app:nullable="true" />
         <argument
             android:name="galleryFolder"
@@ -682,7 +675,7 @@
         tools:layout="@layout/attachment_preview_fragment">
         <argument
             android:name="attachment"
-            app:argType="com.naposystems.napoleonchat.entity.message.attachments.Attachment" />
+            app:argType="com.naposystems.napoleonchat.source.local.entity.AttachmentEntity" />
         <action
             android:id="@+id/action_attachmentPreviewFragment_to_conversationFragment"
             app:destination="@id/conversationFragment" />
@@ -704,38 +697,6 @@
         <action
             android:id="@+id/action_attachmentPreviewFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/validatePasswordPreviousRecoveryAccountFragment"
-        android:name="com.naposystems.napoleonchat.ui.validatePasswordPreviousRecoveryAccount.ValidatePasswordPreviousRecoveryAccountFragment"
-        android:label="@string/text_recovery_account"
-        tools:layout="@layout/validate_password_previous_recovery_account_fragment">
-        <action
-            android:id="@+id/action_validatePasswordPreviousRecoveryAccountFragment_to_recoveryOlderAccountQuestionsFragment"
-            app:destination="@id/recoveryOlderAccountQuestionsFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <argument
-            android:name="nickname"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/recoveryOlderAccountQuestionsFragment"
-        android:name="com.naposystems.napoleonchat.ui.recoveryOlderAccountQuestions.RecoveryOlderAccountQuestionsFragment"
-        android:label="@string/text_recovery_account"
-        tools:layout="@layout/recovery_older_account_questions_fragment">
-        <action
-            android:id="@+id/action_recoveryOlderAccountQuestionsFragment_to_accessPinFragment"
-            app:destination="@id/accessPinFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <argument
-            android:name="nickname"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/subscriptionFragment"
@@ -766,7 +727,7 @@
         tools:layout="@layout/preview_media_fragment">
         <argument
             android:name="messageAndAttachment"
-            app:argType="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            app:argType="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
     </fragment>
     <fragment
         android:id="@+id/attachmentDocumentFragment"
@@ -791,7 +752,7 @@
         <argument
             android:name="contact"
             android:defaultValue="@null"
-            app:argType="com.naposystems.napoleonchat.entity.Contact"
+            app:argType="com.naposystems.napoleonchat.source.local.entity.ContactEntity"
             app:nullable="true" />
         <argument
             android:name="titleToolbar"
@@ -800,7 +761,7 @@
         <argument
             android:name="user"
             android:defaultValue="@null"
-            app:argType="com.naposystems.napoleonchat.entity.User"
+            app:argType="com.naposystems.napoleonchat.source.local.entity.UserEntity"
             app:nullable="true" />
     </fragment>
     <fragment
@@ -815,6 +776,6 @@
         tools:layout="@layout/custom_user_notification_fragment" >
         <argument
             android:name="contact"
-            app:argType="com.naposystems.napoleonchat.entity.Contact" />
+            app:argType="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
     </fragment>
 </navigation>

@@ -15,7 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ChangeFakesDialogFragmentBinding
-import com.naposystems.napoleonchat.dto.user.DisplayNameReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.user.DisplayNameReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -77,7 +77,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
                         )
                     }
                     else -> {
-                        userProfileShareViewModel.user.value?.let { user ->
+                        userProfileShareViewModel.userEntity.value?.let { user ->
                             userProfileShareViewModel.updateUserInfo(
                                 user,
                                 DisplayNameReqDTO(
@@ -130,7 +130,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
                         dismiss()
                     }
                 })
-                userProfileShareViewModel.user.observe(viewLifecycleOwner, Observer { user ->
+                userProfileShareViewModel.userEntity.observe(viewLifecycleOwner, Observer { user ->
                     if (user != null) {
                         binding.editTextDisplay.setText(user.displayName)
                     }

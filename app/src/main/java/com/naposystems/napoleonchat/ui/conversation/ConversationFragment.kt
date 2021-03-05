@@ -49,10 +49,10 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
@@ -247,10 +247,10 @@ class ConversationFragment : BaseFragment(),
             if (viewHolder.adapterPosition >= 0) {
                 conversationAdapter.getMessageAndAttachment(viewHolder.adapterPosition)
                     ?.let { messageAndAttachment ->
-                        if (messageAndAttachment.message.messageType == Constants.MessageType.MESSAGE.type &&
-                            (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status ||
-                                    messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
-                                    messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
+                        if (messageAndAttachment.messageEntity.messageType == Constants.MessageType.MESSAGE.type &&
+                            (messageAndAttachment.messageEntity.status == Constants.MessageStatus.UNREAD.status ||
+                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
+                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
                                     messageAndAttachment.getFirstAttachment()?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status)
                         ) {
                             actionSwipeQuote(
@@ -637,10 +637,10 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        shareViewModel.attachmentSelected.observe(requireActivity(), Observer { attachment ->
+        shareViewModel.attachmentEntitySelected.observe(requireActivity(), Observer { attachment ->
             if (attachment != null) {
                 val quote = binding.inputPanel.getQuote()
-                shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
+                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 viewModel.saveMessageAndAttachment(
                     shareViewModel.getMessage() ?: "",
                     attachment,
@@ -663,7 +663,7 @@ class ConversationFragment : BaseFragment(),
             try {
                 if (gifAttachment != null) {
                     val quote = binding.inputPanel.getQuote()
-                    shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
+                    shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                     this.findNavController().navigate(
                         ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                             gifAttachment,
@@ -769,10 +769,10 @@ class ConversationFragment : BaseFragment(),
                         )
                     }
                     is DownloadAttachmentResult.Error -> {
-                        it.attachment.status =
+                        it.attachmentEntity.status =
                             Constants.AttachmentStatus.DOWNLOAD_ERROR.status
                         viewModel.updateAttachment(
-                            it.attachment
+                            it.attachmentEntity
                         )
                         Timber.d("Error")
                         conversationAdapter.setDownloadCancel(it.itemPosition)
@@ -816,8 +816,8 @@ class ConversationFragment : BaseFragment(),
         viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 val quote = binding.inputPanel.getQuote()
-                shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
-                val attachment = Attachment(
+                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                val attachment = AttachmentEntity(
                     id = 0,
                     messageId = 0,
                     webId = "",
@@ -833,7 +833,7 @@ class ConversationFragment : BaseFragment(),
 
                 viewModel.saveMessageAndAttachment(
                     messageString = "",
-                    attachment = attachment,
+                    attachmentEntity = attachment,
                     numberAttachments = 1,
                     selfDestructTime = obtainTimeSelfDestruct(),
                     quote = shareViewModel.getQuoteWebId() ?: ""
@@ -869,7 +869,7 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        viewModel.messageNotSent.observe(viewLifecycleOwner) {
+        viewModel.messageNotSentEntity.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.inputPanel.getEditText().setText(it.message)
             }
@@ -954,9 +954,9 @@ class ConversationFragment : BaseFragment(),
     private fun saveAndSendRecordAudio() {
         recordFile?.let { file ->
             val quote = binding.inputPanel.getQuote()
-            shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
+            shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
 
-            val attachment = Attachment(
+            val attachment = AttachmentEntity(
                 id = 0,
                 messageId = 0,
                 webId = "",
@@ -1014,7 +1014,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun observeMessageMessages() {
-        viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
+        viewModel.messageMessagesRelation.observe(viewLifecycleOwner, Observer { conversationList ->
             if (conversationList.isNotEmpty()) {
                 conversationAdapter.submitList(conversationList) {
                     if (enterConversation) {
@@ -1086,7 +1086,7 @@ class ConversationFragment : BaseFragment(),
             .subscribe {
                 Timber.d("RxEvent.UploadStart")
                 conversationAdapter.setUploadStart(
-                    it.attachment
+                    it.attachmentEntity
                 )
             }
 
@@ -1094,7 +1094,7 @@ class ConversationFragment : BaseFragment(),
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Timber.d("RxEvent.UploadSuccess")
-                conversationAdapter.setUploadComplete(it.attachment)
+                conversationAdapter.setUploadComplete(it.attachmentEntity)
             }
 
         val disposableUploadError = RxBus.listen(RxEvent.UploadError::class.java)
@@ -1108,7 +1108,7 @@ class ConversationFragment : BaseFragment(),
             .subscribe {
                 Timber.d("RxEvent.UploadProgress: ${it.progress}")
                 conversationAdapter.setUploadProgress(
-                    it.attachment,
+                    it.attachmentEntity,
                     it.progress
                 )
             }
@@ -1118,7 +1118,7 @@ class ConversationFragment : BaseFragment(),
             .subscribe {
                 Timber.d("RxEvent.CompressProgress")
                 conversationAdapter.setCompressProgress(
-                    it.attachment,
+                    it.attachmentEntity,
                     it.progress
                 )
             }
@@ -1147,11 +1147,11 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun validScroll(
-        conversationList: List<MessageAndAttachment>,
+        conversationList: List<MessageAttachmentRelation>,
         friendlyMessageCount: Int
     ) {
-        if (conversationList.last().message.isMine == Constants.IsMine.YES.value &&
-            conversationList.last().message.status == Constants.MessageStatus.SENDING.status
+        if (conversationList.last().messageEntity.isMine == Constants.IsMine.YES.value &&
+            conversationList.last().messageEntity.status == Constants.MessageStatus.SENDING.status
         ) {
             counterNotification = 0
             showCounterNotification()
@@ -1201,15 +1201,15 @@ class ConversationFragment : BaseFragment(),
             viewLifecycleOwner, Observer { listMessageAndAttachment ->
 
                 val quantityMessagesOtherUser = listMessageAndAttachment.filter {
-                    it.message.isMine == 0
+                    it.messageEntity.isMine == 0
                 }.toList().count()
 
                 val quantityMessagesFailed = listMessageAndAttachment.filter {
-                    it.message.status == Constants.MessageStatus.ERROR.status
+                    it.messageEntity.status == Constants.MessageStatus.ERROR.status
                 }.toList().count()
 
                 val quantitySystemMessage = listMessageAndAttachment.filter {
-                    it.message.messageType == Constants.MessageType.NEW_CONTACT.type
+                    it.messageEntity.messageType == Constants.MessageType.NEW_CONTACT.type
                 }.toList().count()
 
                 actionMode.hideCopyButton = false
@@ -1225,7 +1225,7 @@ class ConversationFragment : BaseFragment(),
 
                     Constants.QUANTITY_MIN_TO_SHOW_ACTIONMODE -> {
                         listMessageAndAttachment.forEach { messageAndAttachment ->
-                            if (messageAndAttachment.attachmentList.count() > Constants.QUANTITY_ATTACHMENTS) {
+                            if (messageAndAttachment.attachmentEntityList.count() > Constants.QUANTITY_ATTACHMENTS) {
                                 actionMode.hideCopyButton = true
                             }
                         }
@@ -1336,7 +1336,7 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun setTextSilenceOfMenu(contact: Contact) {
+    private fun setTextSilenceOfMenu(contact: ContactEntity) {
         menuOptionsContact?.let { menuOptions ->
             if (contact.silenced) {
                 menuOptions.findItem(R.id.menu_item_mute_conversation).title =
@@ -1742,9 +1742,9 @@ class ConversationFragment : BaseFragment(),
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewConversation)
     }
 
-    private fun conversationAdapterOnClickEvent(item: MessageAndAttachment) {
+    private fun conversationAdapterOnClickEvent(item: MessageAttachmentRelation) {
         if (actionMode.mode != null) {
-            updateStateSelectionMessage(item.message)
+            updateStateSelectionMessage(item.messageEntity)
         }
     }
 
@@ -1755,7 +1755,7 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun updateStateSelectionMessage(item: Message) {
+    private fun updateStateSelectionMessage(item: MessageEntity) {
         viewModel.updateStateSelectionMessage(args.contact.id, item.id, item.isSelected)
     }
 
@@ -1763,7 +1763,7 @@ class ConversationFragment : BaseFragment(),
         viewModel.cleanSelectionMessages(args.contact.id)
     }
 
-    private fun openAttachmentDocument(attachment: Attachment) {
+    private fun openAttachmentDocument(attachmentEntity: AttachmentEntity) {
 
         try {
             var tempFile: File? = null
@@ -1771,9 +1771,9 @@ class ConversationFragment : BaseFragment(),
             val uri: Uri = if (BuildConfig.ENCRYPT_API) {
                 tempFile = FileManager.createTempFileFromEncryptedFile(
                     requireContext(),
-                    attachment.type,
-                    "${attachment.webId}.${attachment.extension}",
-                    attachment.extension
+                    attachmentEntity.type,
+                    "${attachmentEntity.webId}.${attachmentEntity.extension}",
+                    attachmentEntity.extension
                 )!!
                 FileProvider.getUriForFile(
                     requireContext(),
@@ -1783,7 +1783,7 @@ class ConversationFragment : BaseFragment(),
             } else {
                 Utils.getFileUri(
                     requireContext(),
-                    attachment.fileName,
+                    attachmentEntity.fileName,
                     Constants.CacheDirectories.DOCUMENTOS.folder
                 )
             }
@@ -1816,7 +1816,7 @@ class ConversationFragment : BaseFragment(),
         dX: Float,
         viewHolder: RecyclerView.ViewHolder,
         c: Canvas,
-        messageAndAttachment: MessageAndAttachment
+        messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         val icon = resources.getDrawable(R.drawable.ic_quote_new, null)
 
@@ -1826,8 +1826,8 @@ class ConversationFragment : BaseFragment(),
                         event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
                     binding.inputPanel.resetImage()
-                    if (messageAndAttachment.message.status != Constants.MessageStatus.ERROR.status) {
-                        binding.inputPanel.openQuote(messageAndAttachment)
+                    if (messageAndAttachmentRelation.messageEntity.status != Constants.MessageStatus.ERROR.status) {
+                        binding.inputPanel.openQuote(messageAndAttachmentRelation)
                     }
                 }
                 false
@@ -2053,7 +2053,7 @@ class ConversationFragment : BaseFragment(),
                 viewModel.saveMessageLocally(
                     binding.inputPanel.getEditText().text.toString().trim(),
                     obtainTimeSelfDestruct(),
-                    quote?.message?.webId ?: ""
+                    quote?.messageEntity?.webId ?: ""
                 )
 
                 with(binding.inputPanel.getEditText()) {
@@ -2090,19 +2090,19 @@ class ConversationFragment : BaseFragment(),
     //endregion
 
     //region Implementation ConversationAdapter.ClickListener
-    override fun onClick(item: MessageAndAttachment) {
+    override fun onClick(item: MessageAttachmentRelation) {
         conversationAdapterOnClickEvent(item)
     }
 
-    override fun onLongClick(item: Message) {
+    override fun onLongClick(item: MessageEntity) {
         if (actionMode.mode == null) {
             actionMode.startActionMode(view, R.menu.menu_selection_message)
             updateStateSelectionMessage(item)
         }
     }
 
-    override fun messageToEliminate(item: MessageAndAttachment) {
-        val messages = arrayListOf<MessageAndAttachment>()
+    override fun messageToEliminate(item: MessageAttachmentRelation) {
+        val messages = arrayListOf<MessageAttachmentRelation>()
         messages.add(item)
         viewModel.deleteMessagesSelected(args.contact.id, messages)
     }
@@ -2115,12 +2115,12 @@ class ConversationFragment : BaseFragment(),
         )
     }
 
-    override fun onPreviewClick(item: MessageAndAttachment) {
-        if (item.attachmentList.isNotEmpty()) {
-            val firstAttachment = item.attachmentList.first()
+    override fun onPreviewClick(item: MessageAttachmentRelation) {
+        if (item.attachmentEntityList.isNotEmpty()) {
+            val firstAttachment = item.attachmentEntityList.first()
 
             if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
-                if (item.message.status == Constants.MessageStatus.UNREAD.status && item.message.isMine == Constants.IsMine.NO.value) {
+                if (item.messageEntity.status == Constants.MessageStatus.UNREAD.status && item.messageEntity.isMine == Constants.IsMine.NO.value) {
                     viewModel.sendMessageRead(item)
                 }
                 openAttachmentDocument(firstAttachment)
@@ -2133,8 +2133,8 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun goToQuote(messageAndAttachment: MessageAndAttachment, itemPosition: Int?) {
-        val position = viewModel.getMessagePosition(messageAndAttachment)
+    override fun goToQuote(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?) {
+        val position = viewModel.getMessagePosition(messageAndAttachmentRelation)
 
         if (position != -1) {
             binding.recyclerViewConversation.apply {
@@ -2155,26 +2155,26 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun downloadAttachment(
-        messageAndAttachment: MessageAndAttachment,
+        messageAndAttachmentRelation: MessageAttachmentRelation,
         itemPosition: Int?
     ) {
         Timber.d("downloadAttachment")
-        if (itemPosition != null && messageAndAttachment.getFirstAttachment() != null) {
-            viewModel.downloadAttachment(messageAndAttachment, itemPosition)
+        if (itemPosition != null && messageAndAttachmentRelation.getFirstAttachment() != null) {
+            viewModel.downloadAttachment(messageAndAttachmentRelation, itemPosition)
         }
     }
 
-    override fun uploadAttachment(attachment: Attachment, message: Message) {
-        viewModel.uploadAttachment(attachment, message, obtainTimeSelfDestruct())
+    override fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity) {
+        viewModel.uploadAttachment(attachmentEntity, messageEntity, obtainTimeSelfDestruct())
     }
 
-    override fun updateAttachmentState(attachment: Attachment) {
-        viewModel.updateAttachment(attachment)
+    override fun updateAttachmentState(attachmentEntity: AttachmentEntity) {
+        viewModel.updateAttachment(attachmentEntity)
     }
 
-    override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
+    override fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation) {
         Timber.d("sendMessageRead")
-        viewModel.sendMessageRead(messageAndAttachment)
+        viewModel.sendMessageRead(messageAndAttachmentRelation)
     }
 
     override fun sendMessageRead(
@@ -2191,8 +2191,8 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun reSendMessage(message: Message) {
-        viewModel.reSendMessage(message, obtainTimeSelfDestruct())
+    override fun reSendMessage(messageEntity: MessageEntity) {
+        viewModel.reSendMessage(messageEntity, obtainTimeSelfDestruct())
     }
 
     override fun scrollToNextAudio(nextPosition: Int) {
@@ -2216,8 +2216,8 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun updateMessageState(message: Message) {
-        viewModel.updateMessage(message)
+    override fun updateMessageState(messageEntity: MessageEntity) {
+        viewModel.updateMessage(messageEntity)
     }
 
     private fun showCase() {

@@ -135,8 +135,8 @@ object MediaPlayerManager :
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { params ->
                 params.id.forEach { message ->
-                    if(currentAudioId == message.message.id.toString()) {
-                        mListener?.onPauseAudio(message.message.webId)
+                    if(currentAudioId == message.messageEntity.id.toString()) {
+                        mListener?.onPauseAudio(message.messageEntity.webId)
                         resetMediaPlayer()
                     }
                 }

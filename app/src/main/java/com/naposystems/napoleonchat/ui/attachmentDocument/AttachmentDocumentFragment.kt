@@ -17,7 +17,7 @@ import androidx.loader.content.Loader
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentDocumentItemBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.attachmentDocument.adapter.AttachmentDocumentAdapter
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
@@ -80,7 +80,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                         "${System.currentTimeMillis()}.$extension"
                     )
 
-                    val attachment = Attachment(
+                    val attachment = AttachmentEntity(
                         id = 0,
                         messageId = 0,
                         webId = "",

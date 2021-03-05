@@ -14,7 +14,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
         <variable
             name="timeFormat"
@@ -98,7 +98,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/audio_player"
-                app:messageDateIncoming="@{conversation.message.createdAt}"
+                app:messageDateIncoming="@{conversation.messageEntity.createdAt}"
                 tools:text="10:34 "
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>

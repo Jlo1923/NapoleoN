@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
-import com.naposystems.napoleonchat.entity.message.Message
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
@@ -77,7 +77,7 @@ class FriendShipActionShareViewModel
                         val currentTime =
                             TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
 
-                        val message = Message(
+                        val message = MessageEntity(
                             id = 0,
                             webId = "",
                             uuid = null,

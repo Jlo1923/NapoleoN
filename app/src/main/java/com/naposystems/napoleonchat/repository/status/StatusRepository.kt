@@ -1,24 +1,24 @@
 package com.naposystems.napoleonchat.repository.status
 
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.db.dao.status.StatusLocalDataSource
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoUnprocessableEntityDTO
-import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoErrorDTO
-import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoResDTO
-import com.naposystems.napoleonchat.dto.status.UserStatusReqDTO
-import com.naposystems.napoleonchat.entity.Status
+import com.naposystems.napoleonchat.source.local.datasource.status.StatusLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoResDTO
+import com.naposystems.napoleonchat.source.remote.dto.status.UserStatusReqDTO
+import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import com.naposystems.napoleonchat.ui.status.IContractStatus
 import com.naposystems.napoleonchat.utility.WebServiceUtils
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
 import javax.inject.Inject
 
 class StatusRepository @Inject constructor(
-    private val statusLocalDataSource: StatusLocalDataSource,
+    private val statusLocalDataSourceImp: StatusLocalDataSourceImp,
     private val napoleonApi: NapoleonApi,
-    private val userLocalDataSource: UserLocalDataSource
+    private val userLocalDataSourceImp: UserLocalDataSourceImp
 ) :
     IContractStatus.Repository {
 
@@ -26,8 +26,8 @@ class StatusRepository @Inject constructor(
         Moshi.Builder().build()
     }
 
-    override suspend fun getStatus(): LiveData<MutableList<Status>> {
-        return statusLocalDataSource.getStatus()
+    override suspend fun getStatus(): LiveData<MutableList<StatusEntity>> {
+        return statusLocalDataSourceImp.getStatus()
     }
 
     override suspend fun updateRemoteStatus(userStatus: UserStatusReqDTO): Response<UpdateUserInfoResDTO> {
@@ -35,15 +35,15 @@ class StatusRepository @Inject constructor(
     }
 
     override suspend fun updateLocalStatus(newStatus: String, firebaseId: String) {
-        userLocalDataSource.updateStatus(newStatus, firebaseId)
+        userLocalDataSourceImp.updateStatus(newStatus, firebaseId)
     }
 
-    override suspend fun insertNewStatus(listStatus: List<Status>) {
-        statusLocalDataSource.insertNewStatus(listStatus)
+    override suspend fun insertNewStatus(listStatusEntities: List<StatusEntity>) {
+        statusLocalDataSourceImp.insertNewStatus(listStatusEntities)
     }
 
-    override suspend fun deleteStatus(status: Status) {
-        statusLocalDataSource.deleteStatus(status)
+    override suspend fun deleteStatus(statusEntity: StatusEntity) {
+        statusLocalDataSourceImp.deleteStatus(statusEntity)
     }
 
     fun getUnprocessableEntityError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {

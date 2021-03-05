@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentAudioItemBinding
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
 
 class AttachmentAudioAdapter constructor(private val clickListener: ClickListener) :

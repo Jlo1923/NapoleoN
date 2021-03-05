@@ -25,7 +25,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
@@ -84,7 +84,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private var compressedFile: File? = null
-    private lateinit var contact: Contact
+    private lateinit var contact: ContactEntity
     private var contactSilenced: Boolean = false
     private lateinit var subFolder: String
     private lateinit var fileName: String
@@ -355,7 +355,7 @@ class ContactProfileFragment : BaseFragment() {
         contactSilenced = silenced
     }
 
-    private fun setTextToolbar(contact: Contact) {
+    private fun setTextToolbar(contact: ContactEntity) {
         val text = if (contact.nicknameFake.isNotEmpty()) {
             contact.nicknameFake
         } else {
@@ -364,7 +364,7 @@ class ContactProfileFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = text
     }
 
-    private fun setActiveCustomNotification(contactProfile: Contact) {
+    private fun setActiveCustomNotification(contactProfile: ContactEntity) {
         contact = contactProfile
         binding.editTextCustomNotification.isVisible = contactProfile.stateNotification
     }

@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import javax.inject.Inject
@@ -20,7 +20,7 @@ class PreviewImageViewModel@Inject constructor() : ViewModel(), IContractPreview
         _image.value = null
     }
 
-    override fun setContact(context : Context,contact: Contact) {
+    override fun setContact(context : Context,contact: ContactEntity) {
         when {
             contact.imageUrlFake.isNotEmpty() -> {
                 val imageUri = Utils.getFileUri(
@@ -39,10 +39,10 @@ class PreviewImageViewModel@Inject constructor() : ViewModel(), IContractPreview
         }
     }
 
-    override fun setUser(context: Context, user: User) {
+    override fun setUser(context: Context, userEntity: UserEntity) {
         when {
-            user.imageUrl.isNotEmpty() -> {
-                _image.value = user.imageUrl
+            userEntity.imageUrl.isNotEmpty() -> {
+                _image.value = userEntity.imageUrl
             }
             else -> {
                 _image.value = null

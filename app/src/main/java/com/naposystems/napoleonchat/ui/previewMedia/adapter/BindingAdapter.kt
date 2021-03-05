@@ -8,16 +8,16 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.utility.Constants
 import timber.log.Timber
 
 @BindingAdapter("previewImage")
-fun bindPreviewImage(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+fun bindPreviewImage(imageView: ImageView, messageAndAttachmentRelation: MessageAttachmentRelation) {
     try {
-        if (messageAndAttachment.attachmentList.isNotEmpty()) {
+        if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
             imageView.visibility = View.VISIBLE
-            val firstAttachment = messageAndAttachment.attachmentList[0]
+            val firstAttachment = messageAndAttachmentRelation.attachmentEntityList[0]
 
             when (firstAttachment.type) {
                 Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
