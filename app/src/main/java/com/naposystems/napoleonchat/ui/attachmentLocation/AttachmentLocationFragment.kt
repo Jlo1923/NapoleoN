@@ -49,6 +49,7 @@ import com.naposystems.napoleonchat.model.attachment.location.Place
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.custom.attachmentLocationBottomSheet.AttachmentLocationBottomSheet
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -67,7 +68,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
+class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
     AttachmentLocationAdapter.AttachmentLocationListener {
 
     companion object {
@@ -83,7 +84,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
@@ -147,11 +148,6 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
             setCurrentLocation(googleMap.cameraPosition.target)
             Timber.d("*TestLocation: googleMap ${googleMap.cameraPosition.target}")
         }
-    }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
     }
 
     override fun onCreateView(

@@ -34,6 +34,7 @@ class CustomUserNotificationFragment : BaseFragment() {
         const val RINGTONE_NOTIFICATION_CODE = 9
     }
 
+    //TODO: Revisar funcionamiento este viewModel
     private lateinit var viewModel: CustomUserNotificationViewModel
     private lateinit var binding: CustomUserNotificationFragmentBinding
     private lateinit var notificationUtils: NotificationUtils
@@ -42,11 +43,6 @@ class CustomUserNotificationFragment : BaseFragment() {
 
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
-    }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
     }
 
     override fun onCreateView(

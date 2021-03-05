@@ -19,11 +19,12 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class EnterCodeFragment :
-    Fragment(), EnterCodeWidget.OnEventListener,
+    DaggerFragment(), EnterCodeWidget.OnEventListener,
     NumericKeyboardCustomView.OnEventListener {
 
     companion object {
@@ -41,11 +42,6 @@ class EnterCodeFragment :
     private var attemptsForNewCode: Int = 0
     private var timerEnterCode: CountDownTimer? = null
     private var timerNewCode: CountDownTimer? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

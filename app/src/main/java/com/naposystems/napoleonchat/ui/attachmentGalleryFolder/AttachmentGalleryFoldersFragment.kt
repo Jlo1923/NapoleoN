@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.model.attachment.gallery.GalleryResult
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
@@ -29,14 +30,14 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class AttachmentGalleryFoldersFragment : Fragment() {
+class AttachmentGalleryFoldersFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = AttachmentGalleryFoldersFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel: AttachmentGalleryFoldersViewModel by viewModels {
         viewModelFactory
@@ -47,11 +48,6 @@ class AttachmentGalleryFoldersFragment : Fragment() {
 
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        AndroidSupportInjection.inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

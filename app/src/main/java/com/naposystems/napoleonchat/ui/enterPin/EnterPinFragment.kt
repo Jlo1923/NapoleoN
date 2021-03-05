@@ -21,9 +21,10 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class EnterPinFragment : Fragment(),
+class EnterPinFragment : DaggerFragment(),
     EnterCodeWidget.OnEventListener,
     NumericKeyboardCustomView.OnEventListener {
 
@@ -40,11 +41,6 @@ class EnterPinFragment : Fragment(),
     private var biometricsOption = 0
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

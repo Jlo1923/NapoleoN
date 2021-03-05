@@ -309,11 +309,6 @@ class ConversationFragment : BaseFragment(),
         CompositeDisposable()
     }
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun onCreateView(

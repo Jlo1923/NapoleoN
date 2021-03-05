@@ -12,8 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SubscriptionPaymentFragmentBinding
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
+import dagger.android.support.DaggerFragment
 
-class SubscriptionPaymentFragment : Fragment() {
+class SubscriptionPaymentFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = SubscriptionPaymentFragment()

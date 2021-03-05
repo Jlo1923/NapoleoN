@@ -32,6 +32,7 @@ import com.naposystems.napoleonchat.databinding.PreviewMediaFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -42,14 +43,14 @@ import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
-class PreviewMediaFragment : Fragment() {
+class PreviewMediaFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = PreviewMediaFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel: PreviewMediaViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewMediaFragmentBinding
@@ -91,11 +92,6 @@ class PreviewMediaFragment : Fragment() {
         Handler()
     }
     private var mRunnable: Runnable? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

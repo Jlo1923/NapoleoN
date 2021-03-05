@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.napoleonchat.ui.activateBiometrics.ActivateBiometricsDialogFragment
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -27,14 +28,14 @@ import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class SecuritySettingsFragment : Fragment() {
+class SecuritySettingsFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = SecuritySettingsFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SecuritySettingsViewModel
     private lateinit var binding: SecuritySettingsFragmentBinding
     private var showCase: ShowCaseManager? = null
@@ -44,11 +45,6 @@ class SecuritySettingsFragment : Fragment() {
     }
 
     private val args: SecuritySettingsFragmentArgs by navArgs()
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

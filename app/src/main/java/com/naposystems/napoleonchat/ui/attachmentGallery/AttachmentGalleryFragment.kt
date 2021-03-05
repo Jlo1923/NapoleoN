@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.databinding.AttachmentGalleryFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryItem
 import com.naposystems.napoleonchat.ui.attachmentGallery.adapter.AttachmentGalleryAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MAX_IMAGE_VIDEO_FILE_SIZE
@@ -37,7 +38,7 @@ import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
 
-class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
+class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<Cursor>,
     AttachmentGalleryAdapter.ClickListener {
 
     companion object {
@@ -45,8 +46,9 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
+    //TODO: Revisar este ViewModel
     private val viewModel: AttachmentGalleryViewModel by viewModels {
         viewModelFactory
     }
@@ -58,11 +60,6 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
     private lateinit var attachmentSelected: File
     private var attachmentGallerySelected = false
     private val args: AttachmentGalleryFragmentArgs by navArgs()
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        AndroidSupportInjection.inject(this)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

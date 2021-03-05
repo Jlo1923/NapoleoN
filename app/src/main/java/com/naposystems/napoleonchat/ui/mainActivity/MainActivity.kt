@@ -11,8 +11,11 @@ import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.*
+import android.view.Display
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -36,9 +39,9 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
@@ -641,11 +644,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPause() {
         super.onPause()
         viewModel.setLockTimeApp()
+        viewModel.disconnectSocket()
     }
 
     override fun onDestroy() {
         disposable.clear()
         viewModel.resetIsOnCallPref()
+        viewModel.disconnectSocket()
         super.onDestroy()
     }
 

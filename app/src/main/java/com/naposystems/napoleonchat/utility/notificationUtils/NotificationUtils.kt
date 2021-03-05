@@ -311,7 +311,7 @@ class NotificationUtils @Inject constructor(
 
         Timber.d("*TestNotification: Data -> $data")
 //        val channelId = getChannelType(context, notificationType, data.getValue("contact").toInt())
-        val channelId = if (data.containsKey("contact")){
+        val channelId = if (data.containsKey("contact")) {
             getChannelType(context, notificationType, data.getValue("contact").toInt())
         } else {
             getChannelType(context, notificationType)
@@ -340,7 +340,6 @@ class NotificationUtils @Inject constructor(
             listenEncryptMessage(data, builder, context)
         }
 
-
         handleNotificationType(
             notificationType,
             data,
@@ -350,7 +349,11 @@ class NotificationUtils @Inject constructor(
         )
     }
 
-    private fun getChannelType(context: Context, notificationType: Int, contactId: Int?=null): String {
+    private fun getChannelType(
+        context: Context,
+        notificationType: Int,
+        contactId: Int? = null
+    ): String {
         return when (notificationType) {
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
                 val contact = contactId?.let {
@@ -441,22 +444,7 @@ class NotificationUtils @Inject constructor(
         when (notificationType) {
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                /*{
-                    message_id=030c7bf3-a6fa-473d-b83b-db4b0fbfd0b7,
-                    body=You have received an encrypted message,
-                    badge=1,
-                    sound=default,
-                    title=Encrypted Message,
-                    contact=6,
-                    message={"read":"1","attachments":[],"destroy":"7","created_at":1605907714,
-                    "user_receiver":7,"body":"oe","user_sender":6,"quoted":"","type_message":"1",
-                    "download":false,"updated_at":1605907714,"id":"030c7bf3-a6fa-473d-b83b-db4b0fbfd0b7"
-                    ,"number_attachments":0},
-                    type_notification=1,
-                    silence=false
-                }*/
-
-                socketService.validatePusher()
+                socketService.connectSocket()
             }
 
             Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
@@ -494,7 +482,7 @@ class NotificationUtils @Inject constructor(
             Constants.NotificationType.INCOMING_CALL.type -> {
                 Timber.d("Incoming call, ${repository.getIsOnCallPref()}")
                 if (!repository.getIsOnCallPref()) {
-                    socketService.initSocket()
+                    socketService.connectSocket()
                     Timber.d("Incoming call 2")
                     var channel = ""
                     var contactId = 0

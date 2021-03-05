@@ -50,20 +50,6 @@ class HomeRepository @Inject constructor(
         return napoleonApi.getFriendShipRequestReceivedHome()
     }
 
-    override suspend fun subscribeToGeneralSocketChannel() {
-        var userEntity: UserEntity? = null
-
-        coroutineScope {
-//            user = userLocalDataSource.getUserLiveData(firebaseId)
-            userEntity = userLocalDataSourceImp.getMyUser()
-        }
-
-        val channelName =
-            "private-general.${userEntity!!.id}"
-
-        socketService.subscribe(channelName)
-    }
-
     override suspend fun getUserLiveData(): LiveData<UserEntity> {
         val firebaseId = sharedPreferencesManager.getString(
             Constants.SharedPreferences.PREF_FIREBASE_ID, ""

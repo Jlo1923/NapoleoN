@@ -79,11 +79,6 @@ class ProfileFragment : BaseFragment() {
     private val bitmapMaxHeight = 1000
     private val imageCompression = 80
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

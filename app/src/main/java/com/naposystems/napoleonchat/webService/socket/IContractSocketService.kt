@@ -8,15 +8,11 @@ interface IContractSocketService {
 
     interface SocketService {
 
-        fun initSocket()
-
-        fun connectToSocketReadyForCall(channel: String)
+        fun connectSocket()
 
         fun disconnectSocket()
 
-        fun validatePusher()
-
-        fun subscribe(jsonObject: String)
+        fun connectToSocketReadyForCall(channel: String)
 
         fun subscribeToCallChannel(channel: String, isActionAnswer: Boolean, isVideoCall: Boolean)
 

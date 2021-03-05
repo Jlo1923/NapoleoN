@@ -18,27 +18,23 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactUsFragmentBinding
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsReqDTO
 import com.naposystems.napoleonchat.model.CategoryPqrs
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class ContactUsFragment : Fragment() {
+class ContactUsFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = ContactUsFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: ContactUsViewModel by viewModels { viewModelFactory }
     private lateinit var binding: ContactUsFragmentBinding
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

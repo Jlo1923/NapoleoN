@@ -9,14 +9,15 @@ import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSO
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.webService.socket.SocketService
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
-    private val sharedPreferencesManager: SharedPreferencesManager
-) :
-    IContractMainActivity.Repository {
+    private val sharedPreferencesManager: SharedPreferencesManager,
+    private val socketService: SocketService
+) :    IContractMainActivity.Repository {
 
     override suspend fun getUser(): UserEntity {
 //        val firebaseId = sharedPreferencesManager
@@ -83,5 +84,9 @@ class MainActivityRepository @Inject constructor(
 
     override fun getRecoveryQuestionsPref(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED)
+    }
+
+    override fun disconnectSocket() {
+        socketService.disconnectSocket()
     }
 }

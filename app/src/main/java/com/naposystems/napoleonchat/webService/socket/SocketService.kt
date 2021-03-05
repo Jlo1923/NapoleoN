@@ -5,17 +5,17 @@ import android.content.Intent
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
-import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -41,7 +41,6 @@ class SocketService @Inject constructor(
     private val repository: IContractSocketService.Repository,
     private val cryptoMessage: CryptoMessage
 ) : IContractSocketService.SocketService {
-
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -73,39 +72,57 @@ class SocketService @Inject constructor(
         const val CLIENT_CONVERSATION_NN = "client-conversationNN"
     }
 
-    override fun initSocket() {
-        try {
-            Timber.d("init")
+    override fun connectSocket() {
 
-            connectToSocket()
+        Timber.d("Pusher Connection: State:${pusher.connection.state}")
 
-        } catch (e: Exception) {
-            Timber.e(e)
+        if (pusher.connection.state == ConnectionState.DISCONNECTED ||
+            pusher.connection.state == ConnectionState.DISCONNECTING
+        ) {
+            pusher.connect(object : ConnectionEventListener {
+                override fun onConnectionStateChange(change: ConnectionStateChange?) {
+                    when (change?.currentState) {
+                        ConnectionState.CONNECTED -> {
+                            try {
+                                sharedPreferencesManager.putString(
+                                    Constants.SharedPreferences.PREF_SOCKET_ID,
+                                    pusher.connection.socketId
+                                )
+
+                                Timber.d("Pusher Connection: State:${pusher.connection.state}, SocketId: ${pusher.connection.socketId}")
+
+                                subscribeToGeneralChannel()
+
+                                subscribeToPrivateGlobal()
+
+                            } catch (e: Exception) {
+                                Timber.e(e)
+                            }
+                        }
+                        else -> Timber.e("Pusher Connection: State:${pusher.connection.state}")
+                    }
+                }
+
+                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+                    Timber.e("Pusher onError $message, code: $code")
+                    pusher.connect()
+                }
+            })
         }
     }
 
-    override fun validatePusher() {
-        val channelName = "private-global"
-
-        if (pusher.getPrivateChannel(channelName) == null) {
-            connectToSocket()
-        } else {
-            RxBus.publish(RxEvent.CreateNotification())
-        }
-    }
 
     override fun disconnectSocket() {
         try {
-            pusher.disconnect()
-            Timber.d("Socket disconnected")
+            if (pusher.connection.state == ConnectionState.CONNECTED ||
+                pusher.connection.state == ConnectionState.CONNECTING
+            ) {
+                pusher.disconnect()
+                Timber.d("Socket disconnected")
+            }
         } catch (e: Exception) {
             Timber.e(e)
         }
-    }
-
-    override fun subscribe(jsonObject: String) {
-        connectToSocket()
-        Timber.d("Subscribe to $jsonObject")
     }
 
     override fun subscribeToCallChannel(
@@ -271,43 +288,6 @@ class SocketService @Inject constructor(
         })
     }
 
-    private fun connectToSocket() {
-        Timber.d("connectToSocket: ${pusher.connection.state}")
-        if (pusher.connection.state != ConnectionState.CONNECTED) {
-            pusher.connect(object : ConnectionEventListener {
-                override fun onConnectionStateChange(change: ConnectionStateChange?) {
-                    when (change?.currentState) {
-                        ConnectionState.CONNECTED -> {
-                            try {
-                                sharedPreferencesManager.putString(
-                                    Constants.SharedPreferences.PREF_SOCKET_ID,
-                                    pusher.connection.socketId
-                                )
-                                Timber.d("Conectó al socket ${pusher.connection.socketId}")
-
-                                subscribeToGeneralChannel()
-
-                                subscribeToPrivateGlobal()
-
-                            } catch (e: Exception) {
-                                Timber.e(e)
-                            }
-                        }
-                        ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
-                        ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
-                        ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
-                        ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
-                        else -> Timber.d("Socket Error")
-                    }
-                }
-
-                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-                    Timber.e("Pusher onError $message, code: $code")
-                    pusher.connect()
-                }
-            })
-        }
-    }
 
     /**
      * El channel debe tener como prefijo presence-
@@ -350,16 +330,11 @@ class SocketService @Inject constructor(
     private fun subscribeToGeneralChannel() {
         try {
 
-
             val userId = repository.getUser()
-
-//            val userId = repository.getUser
-//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
             if (userId != 0) {
 
-                val channelName =
-                    "private-general.${userId}"
+                val channelName = "private-general.${userId}"
 
                 if (pusher.getPrivateChannel(channelName) == null) {
                     generalChannel =
@@ -413,7 +388,8 @@ class SocketService @Inject constructor(
                                     repository.verifyMessagesReceived()
                                     repository.verifyMessagesRead()
                                 }
-                            })
+                            }
+                        )
                 }
             }
         } catch (e: Exception) {
@@ -425,11 +401,7 @@ class SocketService @Inject constructor(
         Timber.d("*Test: Global $this")
         try {
 
-
             val userId = repository.getUser()
-
-//            val userId = repository.getUser
-//                sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_USER_ID)
 
             if (userId != 0) {
                 val channelName = "private-global"

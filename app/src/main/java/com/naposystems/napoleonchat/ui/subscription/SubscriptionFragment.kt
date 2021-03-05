@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SubscriptionFragmentBinding
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.cancelSubscription.CancelSubscriptionDialogFragment
 import com.naposystems.napoleonchat.ui.subscription.adapter.SkuDetailsAdapter
 import com.naposystems.napoleonchat.utility.Constants
@@ -27,14 +28,14 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SubscriptionFragment : Fragment() {
+class SubscriptionFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = SubscriptionFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle
@@ -52,11 +53,6 @@ class SubscriptionFragment : Fragment() {
         PurchasesUpdatedListener { billingResult, purchases ->
             // To be implemented in a later section.
         }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

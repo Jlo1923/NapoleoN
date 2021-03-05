@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.utility.dialog
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.ImageView
@@ -10,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.button.MaterialButton
 
 import com.naposystems.napoleonchat.R
+import dagger.android.support.AndroidSupportInjection
 
 private const val ICON_DRAWABLE = "ICON_DRAWABLE"
 private const val MESSAGE = "MESSAGE"
@@ -18,6 +20,11 @@ class PermissionDialogFragment : DialogFragment() {
     private var iconDrawable: Int? = null
     private var message: String? = null
     private var listener: OnDialogListener? = null
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

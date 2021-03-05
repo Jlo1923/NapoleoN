@@ -31,15 +31,6 @@ class NotificationSettingFragment : BaseFragment() {
     private lateinit var notificationUtils: NotificationUtils
     private var currentSoundNotificationMessage: Uri? = null
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

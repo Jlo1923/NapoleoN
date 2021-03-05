@@ -20,6 +20,7 @@ import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.Utils
@@ -31,14 +32,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
+class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listener {
 
     companion object {
         fun newInstance() = AttachmentAudioFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: AttachmentAudioViewModel
     private lateinit var conversationShareViewModel: ConversationShareViewModel
@@ -64,11 +65,6 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
             requireContext(),
             R.anim.scale_down
         )
-    }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
     }
 
     override fun onCreateView(

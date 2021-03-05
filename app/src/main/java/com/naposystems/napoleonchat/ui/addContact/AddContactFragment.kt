@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.addContact.adapter.AddContactAdapter
 import com.naposystems.napoleonchat.ui.addContact.adapter.FriendshipRequestAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
@@ -30,14 +31,14 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class AddContactFragment : Fragment(), SearchView.OnSearchView {
+class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
 
     companion object {
         fun newInstance() = AddContactFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
     private val shareViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
     private lateinit var binding: AddContactFragmentBinding
@@ -48,11 +49,6 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     private lateinit var friendshipRequestsAdapter: FriendshipRequestAdapter
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
-    }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
     }
 
     override fun onCreateView(
