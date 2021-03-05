@@ -119,7 +119,7 @@ class ConversationViewModel @Inject constructor(
         return FileManager.copyFile(
             context,
             fileInputStream,
-            Constants.NapoleonCacheDirectories.AUDIOS.folder,
+            Constants.CacheDirectories.AUDIOS.folder,
             "${System.currentTimeMillis()}.mp3"
         )
     }
@@ -309,8 +309,8 @@ class ConversationViewModel @Inject constructor(
                 setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
 
                 when (messageResponse.code()) {
-                    422 -> _webServiceError.value =
-                        repository.get422ErrorMessage(messageResponse)
+                    Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _webServiceError.value =
+                        repository.getUnprocessableEntityErrorMessage(messageResponse)
                     else -> _webServiceError.value = repository.getErrorMessage(messageResponse)
                 }
             }
@@ -361,9 +361,9 @@ class ConversationViewModel @Inject constructor(
                     _responseDeleteLocalMessages.value = true
                 } else {
                     when (response.code()) {
-                        422 -> {
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
                             _deleteMessagesForAllWsError.value =
-                                repository.get422ErrorDeleteMessagesForAll(response.errorBody()!!)
+                                repository.getUnprocessableEntityErrorDeleteMessagesForAll(response.errorBody()!!)
                         }
                         else -> {
                             _deleteMessagesForAllWsError.value =
@@ -549,8 +549,8 @@ class ConversationViewModel @Inject constructor(
                         setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
 
                         when (messageResponse.code()) {
-                            422 -> _webServiceError.value =
-                                repository.get422ErrorMessage(messageResponse)
+                            Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _webServiceError.value =
+                                repository.getUnprocessableEntityErrorMessage(messageResponse)
                             else -> _webServiceError.value =
                                 repository.getErrorMessage(messageResponse)
                         }
@@ -695,8 +695,8 @@ class ConversationViewModel @Inject constructor(
                     setStatusErrorMessageAndAttachment(messageEntity, null)
 
                     when (messageResponse.code()) {
-                        422 -> _webServiceError.value =
-                            repository.get422ErrorMessage(messageResponse)
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _webServiceError.value =
+                            repository.getUnprocessableEntityErrorMessage(messageResponse)
                         else -> _webServiceError.value = repository.getErrorMessage(messageResponse)
                     }
                 }

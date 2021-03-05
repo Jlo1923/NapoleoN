@@ -178,8 +178,6 @@ class SocketRepository @Inject constructor(
                         val messageId = messageLocalDataSource.insertMessage(message)
                         Timber.d("Conversation insertó mensajes")
 
-                        notifyMessageReceived(newMessageDataEventRes.messageId)
-
                         if (newMessageEventMessageRes.quoted.isNotEmpty()) {
                             insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
                         }
@@ -238,7 +236,7 @@ class SocketRepository @Inject constructor(
         }
     }
 
-    private fun notifyMessageReceived(messageId: String) {
+    override fun notifyMessageReceived(messageId: String) {
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
                 try {

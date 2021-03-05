@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class UpdateUserInfo422DTO(
+data class UpdateUserInfoUnprocessableEntityDTO(
     @Json(name = "names") val displayName: List<String> = emptyList(),
     @Json(name = "language_iso") val languageIso: List<String> = emptyList(),
     @Json(name = "firebase_id") val firebaseId: List<String> = emptyList(),

@@ -48,15 +48,15 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
                     repository.saveAccountStatus(Constants.AccountStatus.CODE_VALIDATED.id)
                 } else {
                     when (response.code()) {
-                        400 -> {
+                        Constants.CodeHttp.BAD_REQUEST.code -> {
                             _attemptsEnterCode.value = repository.getAttemptsForRetryCode()
                             _attemptsEnterCode.value = _attemptsEnterCode.value!!.inc()
                             repository.setAttemptsForRetryCode(_attemptsEnterCode.value!!)
                             _invalidCode.value = true
                         }
-                        422 -> {
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
                             _isValidCode.value = false
-                            _responseErrors.value = repository.get422Error(response)
+                            _responseErrors.value = repository.getUnprocessableEntityError(response)
                         }
                         else -> {
                             _isValidCode.value = false
@@ -84,8 +84,8 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
                     _forwardedCode.value = true
                 } else {
                     when (response.code()) {
-                        422 -> {
-                            _responseErrors.value = repository.get422ErrorSendCode(response)
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
+                            _responseErrors.value = repository.getUnprocessableEntityErrorSendCode(response)
                             _forwardedCode.value = false
                         }
                         else -> {

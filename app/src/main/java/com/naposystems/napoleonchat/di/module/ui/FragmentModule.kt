@@ -148,13 +148,13 @@ abstract class FragmentModule {
     abstract fun contributeEnterPinFragment(): EnterPinFragment
 
     @ContributesAndroidInjector
-    abstract fun binUnlockAppTimeFragment(): UnlockAppTimeFragment
+    abstract fun contributeUnlockAppTimeFragment(): UnlockAppTimeFragment
 
     @ContributesAndroidInjector
-    abstract fun binConversationCameraFragment(): ConversationCameraFragment
+    abstract fun contributeConversationCameraFragment(): ConversationCameraFragment
 
     @ContributesAndroidInjector
-    abstract fun binBaseFragment(): BaseFragment
+    abstract fun contributeBaseFragment(): BaseFragment
 
     @ContributesAndroidInjector
     abstract fun contributeContactProfileFragment(): ContactProfileFragment

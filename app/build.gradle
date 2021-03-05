@@ -27,7 +27,7 @@ android {
         targetSdkVersion 30
         versionCode 33
 
-        versionName "1.1.33.IMPROVEMENT-PACKAGES"
+        versionName "1.1.33.FIX-CONN"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
