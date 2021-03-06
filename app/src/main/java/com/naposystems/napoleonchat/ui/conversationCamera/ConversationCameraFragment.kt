@@ -3,9 +3,6 @@ package com.naposystems.napoleonchat.ui.conversationCamera
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
@@ -26,7 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationCameraFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.custom.cameraButton.CameraButton
@@ -266,7 +263,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                                             photoFile
                                         )
 
-                                    val attachment = Attachment(
+                                    val attachment = AttachmentEntity(
                                         id = 0,
                                         messageId = 0,
                                         webId = "",
@@ -296,7 +293,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                                     val uri = Utils.getFileUri(
                                         context = context,
                                         fileName = photoFile.name,
-                                        subFolder = Constants.NapoleonCacheDirectories.IMAGES.folder
+                                        subFolder = Constants.CacheDirectories.IMAGES.folder
                                     )
 
                                     with(cameraShareViewModel) {
@@ -384,7 +381,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
 
                 override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
                     if (!isBackPressed) {
-                        val attachment = Attachment(
+                        val attachment = AttachmentEntity(
                             id = 0,
                             messageId = 0,
                             webId = "",
@@ -472,8 +469,8 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
         val timeStamp: String = System.currentTimeMillis().toString()
 
         val subFolder = when (extension) {
-            PHOTO_EXTENSION -> Constants.NapoleonCacheDirectories.IMAGES.folder
-            else -> Constants.NapoleonCacheDirectories.VIDEOS.folder
+            PHOTO_EXTENSION -> Constants.CacheDirectories.IMAGES.folder
+            else -> Constants.CacheDirectories.VIDEOS.folder
         }
 
         fileName = "${timeStamp}.$extension"

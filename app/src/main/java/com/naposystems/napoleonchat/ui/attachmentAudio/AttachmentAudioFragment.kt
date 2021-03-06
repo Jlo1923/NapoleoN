@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentAudioFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter

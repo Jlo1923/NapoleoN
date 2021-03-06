@@ -11,7 +11,7 @@
 
         <variable
             name="contact"
-            type="com.naposystems.napoleonchat.entity.Contact" />
+            type="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

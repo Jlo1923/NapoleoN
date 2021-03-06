@@ -7,17 +7,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.BlockedContactsItemBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 
 class BlockedContactsAdapter constructor(private val clickListener: BlockedContactsClickListener) :
-    ListAdapter<Contact, BlockedContactsAdapter.BlockedContactsViewHolder>(DiffCallback) {
+    ListAdapter<ContactEntity, BlockedContactsAdapter.BlockedContactsViewHolder>(DiffCallback) {
 
-    object DiffCallback : DiffUtil.ItemCallback<Contact>() {
-        override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+    object DiffCallback : DiffUtil.ItemCallback<ContactEntity>() {
+        override fun areItemsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
             return oldItem.nickname == newItem.nickname
         }
 
-        override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+        override fun areContentsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
             return oldItem == newItem
         }
     }
@@ -37,7 +37,7 @@ class BlockedContactsAdapter constructor(private val clickListener: BlockedConta
     class BlockedContactsViewHolder constructor(private val binding: BlockedContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Contact, clickListener: BlockedContactsClickListener) {
+        fun bind(item: ContactEntity, clickListener: BlockedContactsClickListener) {
             binding.contact = item
             binding.clickListener = clickListener
 
@@ -63,7 +63,7 @@ class BlockedContactsAdapter constructor(private val clickListener: BlockedConta
     }
 
     interface BlockedContactsClickListener {
-        fun onClick(item: Contact)
-        fun onMoreClick(item: Contact, view: View)
+        fun onClick(item: ContactEntity)
+        fun onMoreClick(item: ContactEntity, view: View)
     }
 }

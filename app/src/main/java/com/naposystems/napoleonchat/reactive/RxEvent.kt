@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.reactive
 
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 import org.json.JSONObject
 import org.webrtc.IceCandidate
@@ -32,30 +32,30 @@ class RxEvent {
     class CallEnd
     data class EmojiSelected(val emoji: Emoji)
     data class HeadsetState(val state: Int)
-    data class MessagesToEliminate(val id: List<MessageAndAttachment>?)
+    data class MessagesToEliminate(val id: List<MessageAttachmentRelation>)
     data class EnableButtonPlayAudio(val state: Boolean)
     data class ContactCancelCall(val channel: String)
     data class ContactBlockOrDelete(val contactId: Int)
-    data class DeleteChannel(val contact: Contact)
+    data class DeleteChannel(val contact: ContactEntity)
     data class HangupByNotification(val channel: String)
     data class ContactCantChangeToVideoCall(val channel: String)
     data class RejectCallByNotification(val channel: String)
     class CreateNotification
     class IncomingCallSystem
 
-    data class UploadStart(val attachment: Attachment)
-    data class UploadSuccess(val attachment: Attachment)
+    data class UploadStart(val attachmentEntity: AttachmentEntity)
+    data class UploadSuccess(val attachmentEntity: AttachmentEntity)
     data class UploadError(
-        val attachment: Attachment,
+        val attachmentEntity: AttachmentEntity,
         val message: String,
         val cause: Exception? = null
     )
     data class CompressProgress(
-        val attachment: Attachment,
+        val attachmentEntity: AttachmentEntity,
         val progress: Float
     )
     data class UploadProgress(
-        val attachment: Attachment,
+        val attachmentEntity: AttachmentEntity,
         val progress: Float
     )
 

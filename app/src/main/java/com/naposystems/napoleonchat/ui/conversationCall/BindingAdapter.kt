@@ -10,13 +10,13 @@ import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 
 @BindingAdapter("callBackground")
-fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact?) {
+fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: ContactEntity?) {
 
     val context = imageView.context
 
@@ -32,7 +32,7 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
                 Utils.getFileUri(
                     context = context,
                     fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                    subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
                 )
             }
             contact.imageUrl.isNotEmpty() -> {
@@ -65,7 +65,7 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
 }
 
 @BindingAdapter("callTitle")
-fun bindCallTitle(textView: TextView, @Nullable contact: Contact?) {
+fun bindCallTitle(textView: TextView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = textView.context
 
@@ -74,7 +74,7 @@ fun bindCallTitle(textView: TextView, @Nullable contact: Contact?) {
 }
 
 @BindingAdapter("callName")
-fun bindCallName(textView: TextView, @Nullable contact: Contact?) {
+fun bindCallName(textView: TextView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = textView.context
 
@@ -83,7 +83,7 @@ fun bindCallName(textView: TextView, @Nullable contact: Contact?) {
 }
 
 @BindingAdapter("callMessage")
-fun bindCallMessage(textView: TextView, @Nullable contact: Contact?) {
+fun bindCallMessage(textView: TextView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = textView.context
 

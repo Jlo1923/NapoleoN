@@ -36,7 +36,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
@@ -287,6 +287,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.frameLayout.elevation = 0f
                 }
                 R.id.accessPinFragment -> {
+
+                    Timber.d("AccountStatus Destination Listener {$accountStatus}")
+
                     if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {
                         hideToolbar()
                         disableDrawer()
@@ -310,7 +313,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        viewModel.user.observe(this, Observer {
+        viewModel.userEntity.observe(this, Observer {
             if (it != null) {
                 updateHeaderDrawer(it)
             }
@@ -420,7 +423,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel.getUser()
     }
 
-    private fun updateHeaderDrawer(user: User) {
+    private fun updateHeaderDrawer(userEntity: UserEntity) {
         val headerView = binding.navView.getHeaderView(0)
 
         val imageViewBackground = headerView.findViewById<ImageView>(R.id.imageView_background)
@@ -438,7 +441,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             this.theme
         )
 
-        val imageUrl = user.imageUrl
+        val imageUrl = userEntity.imageUrl
 
         Glide.with(this)
             .load(
@@ -449,27 +452,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         Glide.with(this)
             .load(
-                if (user.headerUri.isEmpty()) {
+                if (userEntity.headerUri.isEmpty()) {
                     defaultHeaderBackground
                 } else {
                     Utils.getFileUri(
                         context = this,
-                        fileName = user.headerUri,
-                        subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+                        fileName = userEntity.headerUri,
+                        subFolder = Constants.CacheDirectories.HEADER.folder
                     )
                 }
             )
             .into(imageViewBackground)
 
-        if (user.displayName != "") {
+        if (userEntity.displayName != "") {
             textViewDisplayName.visibility = View.VISIBLE
         } else {
             textViewDisplayName.visibility = View.GONE
         }
 
-        textViewDisplayName.text = user.displayName
+        textViewDisplayName.text = userEntity.displayName
 
-        val nickname = getString(R.string.label_nickname, user.nickname)
+        val nickname = getString(R.string.label_nickname, userEntity.nickname)
 
         textViewNickname.text = nickname
 
@@ -650,6 +653,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
             when (accountStatus) {
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+
+                    Timber.d("AccountStatus validLockTime {$accountStatus}")
+
                     val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
                     if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
                         val currentTime = System.currentTimeMillis()

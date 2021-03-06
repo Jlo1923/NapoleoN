@@ -5,7 +5,7 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
 import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
@@ -14,7 +14,7 @@ import java.io.InputStream
 
 class AttachmentDataFetcher constructor(
     private val context: Context,
-    private val attachment: Attachment
+    private val attachmentEntity: AttachmentEntity
 ) :
     DataFetcher<InputStream> {
 
@@ -33,24 +33,24 @@ class AttachmentDataFetcher constructor(
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
         try {
             val subFolder =
-                FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
+                FileManager.getSubfolderByAttachmentType(attachmentType = attachmentEntity.type)
 
             val fileUri = Utils.getFileUri(
                 context = context,
-                fileName = attachment.fileName,
+                fileName = attachmentEntity.fileName,
                 subFolder = subFolder
             )
 
-            when (attachment.type) {
+            when (attachmentEntity.type) {
                 Constants.AttachmentType.IMAGE.type,
                 Constants.AttachmentType.GIF.type,
                 Constants.AttachmentType.GIF_NN.type,
                 Constants.AttachmentType.LOCATION.type -> {
 
-                    if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
-                        val extension = attachment.extension
-                        if (attachment.webId.isNotEmpty()) {
-                            val fileName = "${attachment.webId}.$extension"
+                    if (BuildConfig.ENCRYPT_API && attachmentEntity.type != Constants.AttachmentType.GIF_NN.type) {
+                        val extension = attachmentEntity.extension
+                        if (attachmentEntity.webId.isNotEmpty()) {
+                            val fileName = "${attachmentEntity.webId}.$extension"
                             callback.onDataReady(
                                 FileManager.getFileInputStreamFromEncryptedFile(
                                     context,

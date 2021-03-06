@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.subscription.SubscriptionUrlResDTO
-import com.naposystems.napoleonchat.dto.subscription.SubscriptionsResDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionUrlResDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionsResDTO
 import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUrl
 import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription

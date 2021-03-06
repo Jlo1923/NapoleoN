@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
-import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
@@ -12,16 +12,16 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
-    private val contactLocalDataSource: ContactDataSource,
-    private val userLocalDataSource: UserLocalDataSource,
+    private val contactLocalDataSource: ContactLocalDataSource,
+    private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractMainActivity.Repository {
 
-    override suspend fun getUser(): User {
-        val firebaseId = sharedPreferencesManager
-            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-        return userLocalDataSource.getUser(firebaseId)
+    override suspend fun getUser(): UserEntity {
+//        val firebaseId = sharedPreferencesManager
+//            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
+        return userLocalDataSourceImp.getMyUser()
     }
 
     override suspend fun getAccountStatus(): Int {

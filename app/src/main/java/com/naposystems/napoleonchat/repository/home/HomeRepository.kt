@@ -1,27 +1,24 @@
 package com.naposystems.napoleonchat.repository.home
 
-import android.content.Context
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
-import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
-import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
-import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.dto.addContact.FriendshipRequestReceivedDTO
-import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.dto.home.FriendshipRequestQuantityResDTO
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.User
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.Quote
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.source.remote.dto.home.FriendshipRequestQuantityResDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import kotlinx.coroutines.coroutineScope
 import retrofit2.Response
@@ -30,19 +27,16 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(
-    private val context: Context,
     private val napoleonApi: NapoleonApi,
-    private val userLocalDataSource: UserLocalDataSource,
+    private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val socketService: IContractSocketService.SocketService,
-    private val messageLocalDataSource: MessageDataSource,
-    private val contactLocalDataSource: ContactDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource,
-    private val quoteDataSource: QuoteDataSource
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val contactLocalDataSource: ContactLocalDataSource,
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
+    private val quoteLocalDataSource: QuoteLocalDataSource
 ) :
     IContractHome.Repository {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     private val firebaseId by lazy {
         sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
@@ -57,23 +51,24 @@ class HomeRepository @Inject constructor(
     }
 
     override suspend fun subscribeToGeneralSocketChannel() {
-        var user: User? = null
+        var userEntity: UserEntity? = null
 
         coroutineScope {
-            user = userLocalDataSource.getUser(firebaseId)
+//            user = userLocalDataSource.getUserLiveData(firebaseId)
+            userEntity = userLocalDataSourceImp.getMyUser()
         }
 
         val channelName =
-            "private-general.${user!!.id}"
+            "private-general.${userEntity!!.id}"
 
         socketService.subscribe(channelName)
     }
 
-    override suspend fun getUserLiveData(): LiveData<User> {
+    override suspend fun getUserLiveData(): LiveData<UserEntity> {
         val firebaseId = sharedPreferencesManager.getString(
             Constants.SharedPreferences.PREF_FIREBASE_ID, ""
         )
-        return userLocalDataSource.getUserLiveData(firebaseId)
+        return userLocalDataSourceImp.getUserLiveData(firebaseId)
     }
 
     override suspend fun getRemoteMessages() {
@@ -121,24 +116,24 @@ class HomeRepository @Inject constructor(
             messageLocalDataSource.getMessageByWebId(messageRes.quoted, false)
 
         if (originalMessage != null) {
-            var firstAttachment: Attachment? = null
+            var firstAttachmentEntity: AttachmentEntity? = null
 
-            if (originalMessage.attachmentList.isNotEmpty()) {
-                firstAttachment = originalMessage.attachmentList.first()
+            if (originalMessage.attachmentEntityList.isNotEmpty()) {
+                firstAttachmentEntity = originalMessage.attachmentEntityList.first()
             }
 
-            val quote = Quote(
+            val quote = QuoteEntity(
                 id = 0,
                 messageId = messageId,
-                contactId = originalMessage.message.contactId,
-                body = originalMessage.message.body,
-                attachmentType = firstAttachment?.type ?: "",
-                thumbnailUri = firstAttachment?.fileName ?: "",
-                messageParentId = originalMessage.message.id,
-                isMine = originalMessage.message.isMine
+                contactId = originalMessage.messageEntity.contactId,
+                body = originalMessage.messageEntity.body,
+                attachmentType = firstAttachmentEntity?.type ?: "",
+                thumbnailUri = firstAttachmentEntity?.fileName ?: "",
+                messageParentId = originalMessage.messageEntity.id,
+                isMine = originalMessage.messageEntity.isMine
             )
 
-            quoteDataSource.insertQuote(quote)
+            quoteLocalDataSource.insertQuote(quote)
         }
     }
 
@@ -206,7 +201,7 @@ class HomeRepository @Inject constructor(
         )
     }
 
-    override fun getContact(contactId: Int): Contact? {
+    override fun getContact(contactId: Int): ContactEntity? {
         return contactLocalDataSource.getContactById(contactId)
     }
 
@@ -216,7 +211,7 @@ class HomeRepository @Inject constructor(
         )
     }
 
-    override fun getMessagesForHome(): LiveData<List<MessageAndAttachment>> {
+    override fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>> {
         return messageLocalDataSource.getMessagesForHome()
     }
 
@@ -230,7 +225,8 @@ class HomeRepository @Inject constructor(
 
     override fun setDialogSubscription() {
         sharedPreferencesManager.putInt(
-            Constants.SharedPreferences.PREF_DIALOG_SUBSCRIPTION, Constants.ShowDialogSubscription.NO.option
+            Constants.SharedPreferences.PREF_DIALOG_SUBSCRIPTION,
+            Constants.ShowDialogSubscription.NO.option
         )
     }
 }

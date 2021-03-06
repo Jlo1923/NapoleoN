@@ -16,8 +16,8 @@ import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactUsFragmentBinding
-import com.naposystems.napoleonchat.dto.contactUs.ContactUsReqDTO
-import com.naposystems.napoleonchat.entity.CategoryPqrs
+import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsReqDTO
+import com.naposystems.napoleonchat.model.CategoryPqrs
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory

@@ -1,30 +1,30 @@
 package com.naposystems.napoleonchat.repository.socket
 
-import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
-import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
-import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
-import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
-import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
-import com.naposystems.napoleonchat.dto.conversation.attachment.AttachmentResDTO
-import com.naposystems.napoleonchat.dto.conversation.call.readyForCall.ReadyForCallReqDTO
-import com.naposystems.napoleonchat.dto.conversation.call.reject.RejectCallReqDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageReceivedReqDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessagesReadReqDTO
-import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageDataEventRes
-import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
-import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.Quote
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSource
+import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.readyForCall.ReadyForCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReceivedReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessagesReadReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -36,15 +36,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SocketRepository @Inject constructor(
-    private val context: Context,
+    private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
-    private val messageLocalDataSource: MessageDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource,
-    private val quoteDataSource: QuoteDataSource,
-    private val contactLocalDataSource: ContactDataSource
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
+    private val quoteLocalDataSource: QuoteLocalDataSource,
+    private val contactLocalDataSource: ContactLocalDataSource,
+    private val userLocalDataSource: UserLocalDataSource
 ) : IContractSocketService.Repository {
-
-    private val cryptoMessage = CryptoMessage(context)
 
     override suspend fun getContacts() {
         try {
@@ -77,6 +76,11 @@ class SocketRepository @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e)
         }
+    }
+
+    override fun getUser(): Int {
+        return userLocalDataSource.getMyUser().id
+
     }
 
     override fun getMyMessages(contactId: Int?) {
@@ -157,7 +161,6 @@ class SocketRepository @Inject constructor(
                 } else {
                     newMessageDataEventRes.message
                 }
-
                 val moshi = Moshi.Builder().build()
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
@@ -174,8 +177,6 @@ class SocketRepository @Inject constructor(
 
                         val messageId = messageLocalDataSource.insertMessage(message)
                         Timber.d("Conversation insertó mensajes")
-
-                        notifyMessageReceived(newMessageDataEventRes.messageId)
 
                         if (newMessageEventMessageRes.quoted.isNotEmpty()) {
                             insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
@@ -214,28 +215,28 @@ class SocketRepository @Inject constructor(
             messageLocalDataSource.getMessageByWebId(quoteWebId, false)
 
         if (originalMessage != null) {
-            var firstAttachment: Attachment? = null
+            var firstAttachmentEntity: AttachmentEntity? = null
 
-            if (originalMessage.attachmentList.isNotEmpty()) {
-                firstAttachment = originalMessage.attachmentList.first()
+            if (originalMessage.attachmentEntityList.isNotEmpty()) {
+                firstAttachmentEntity = originalMessage.attachmentEntityList.first()
             }
 
-            val quote = Quote(
+            val quote = QuoteEntity(
                 id = 0,
                 messageId = messageId,
-                contactId = originalMessage.message.contactId,
-                body = originalMessage.message.body,
-                attachmentType = firstAttachment?.type ?: "",
-                thumbnailUri = firstAttachment?.fileName ?: "",
-                messageParentId = originalMessage.message.id,
-                isMine = originalMessage.message.isMine
+                contactId = originalMessage.messageEntity.contactId,
+                body = originalMessage.messageEntity.body,
+                attachmentType = firstAttachmentEntity?.type ?: "",
+                thumbnailUri = firstAttachmentEntity?.fileName ?: "",
+                messageParentId = originalMessage.messageEntity.id,
+                isMine = originalMessage.messageEntity.isMine
             )
 
-            quoteDataSource.insertQuote(quote)
+            quoteLocalDataSource.insertQuote(quote)
         }
     }
 
-    private fun notifyMessageReceived(messageId: String) {
+    override fun notifyMessageReceived(messageId: String) {
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
                 try {
@@ -259,17 +260,17 @@ class SocketRepository @Inject constructor(
                 )
 
             val textMessagesUnread = messagesUnread.filter {
-                it.attachmentList.isEmpty() ||
-                        it.message.messageType == Constants.MessageType.MISSED_CALL.type ||
-                        it.message.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
+                it.attachmentEntityList.isEmpty() ||
+                        it.messageEntity.messageType == Constants.MessageType.MISSED_CALL.type ||
+                        it.messageEntity.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
             }
 
             val locationMessagesUnread = messagesUnread.filter {
                 it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type
             }
 
-            val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
-            val locationMessagesUnreadIds = locationMessagesUnread.map { it.message.webId }
+            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
+            val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
 
             val listIds = mutableListOf<String>()
             listIds.addAll(textMessagesUnreadIds)
@@ -374,9 +375,9 @@ class SocketRepository @Inject constructor(
                 val localMessage = messageLocalDataSource.getMessageByWebId(webId, false)
 
                 localMessage?.let {
-                    if (it.attachmentList.count() == 0) {
+                    if (it.attachmentEntityList.count() == 0) {
                         Timber.d("*TestMessageEvent: empty attachment")
-                        listWebId.add(it.message.webId)
+                        listWebId.add(it.messageEntity.webId)
                     } else {
                         validateAttachmentType(it, listWebId)
                     }
@@ -388,16 +389,16 @@ class SocketRepository @Inject constructor(
     }
 
     private fun validateAttachmentType(
-        it: MessageAndAttachment,
+        it: MessageAttachmentRelation,
         listWebId: MutableList<String>
     ) {
-        for (attachment in it.attachmentList) {
+        for (attachment in it.attachmentEntityList) {
             when (attachment.type) {
                 Constants.AttachmentType.GIF.type,
                 Constants.AttachmentType.GIF_NN.type,
                 Constants.AttachmentType.LOCATION.type,
                 Constants.AttachmentType.DOCUMENT.type -> {
-                    listWebId.add(it.message.webId)
+                    listWebId.add(it.messageEntity.webId)
                 }
             }
         }

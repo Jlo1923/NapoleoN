@@ -1,10 +1,10 @@
 package com.naposystems.napoleonchat.ui.custom.inputPanel
 
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 
 interface IContractInputPanelQuote {
-    fun setupMessageAndAttachment(messageAndAttachment: MessageAndAttachment)
+    fun setupMessageAndAttachment(messageAndAttachmentRelation: MessageAttachmentRelation)
     fun closeQuote()
     fun resetImage()
-    fun getMessageAndAttachment(): MessageAndAttachment?
+    fun getMessageAndAttachment(): MessageAttachmentRelation?
 }

@@ -1,28 +1,27 @@
 package com.naposystems.napoleonchat.repository.notificationUtils
 
-import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
-import com.naposystems.napoleonchat.db.dao.contact.ContactLocalDataSource
-import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
-import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
-import com.naposystems.napoleonchat.dto.contacts.ContactResDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageReceivedReqDTO
-import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventAttachmentRes
-import com.naposystems.napoleonchat.dto.newMessageEvent.NewMessageEventMessageRes
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.message.Quote
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLocalDataSource
+import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReceivedReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -34,18 +33,20 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class NotificationUtilsRepository @Inject constructor(
-    private val context: Context,
+    private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
     private val socketService: IContractSocketService.SocketService,
-    private val contactLocalDataSource: ContactLocalDataSource,
-    private val messageLocalDataSource: MessageDataSource,
-    private val quoteDataSource: QuoteDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource,
+    private val contactLocalDataSourceImp: ContactLocalDataSourceImp,
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val quoteLocalDataSource: QuoteLocalDataSource,
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractNotificationUtils.Repository {
 
-    private val cryptoMessage = CryptoMessage(context)
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     private suspend fun getRemoteContact() {
         try {
@@ -57,7 +58,7 @@ class NotificationUtilsRepository @Inject constructor(
 
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
+                val contactsToDelete = contactLocalDataSourceImp.insertOrUpdateContactList(contacts)
 
                 if (contactsToDelete.isNotEmpty()) {
 
@@ -69,7 +70,7 @@ class NotificationUtilsRepository @Inject constructor(
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))
 
-                        contactLocalDataSource.deleteContact(contact)
+                        contactLocalDataSourceImp.deleteContact(contact)
                     }
                 }
             } else {
@@ -88,7 +89,6 @@ class NotificationUtilsRepository @Inject constructor(
                 messageString
             }
 
-            val moshi = Moshi.Builder().build()
             val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                 moshi.adapter(NewMessageEventMessageRes::class.java)
 
@@ -146,14 +146,13 @@ class NotificationUtilsRepository @Inject constructor(
 
             val validateMessage = ValidateMessageEventDTO(messages)
 
-            val moshi = Moshi.Builder().build()
             val jsonAdapterValidate =
                 moshi.adapter(ValidateMessageEventDTO::class.java)
 
             val json = jsonAdapterValidate.toJson(validateMessage)
 
             socketService.emitToClientConversation(json.toString())
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Timber.e(e)
         }
     }
@@ -176,13 +175,13 @@ class NotificationUtilsRepository @Inject constructor(
     override fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit) {
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
-                silenced(contactLocalDataSource.getContactSilenced(contactId))
+                silenced(contactLocalDataSourceImp.getContactSilenced(contactId))
             }
         }
     }
 
-    override fun getContact(contactId: Int): Contact? {
-        return contactLocalDataSource.getContactById(contactId)
+    override fun getContact(contactId: Int): ContactEntity? {
+        return contactLocalDataSourceImp.getContactById(contactId)
     }
 
     override fun getNotificationChannelCreated(): Int {
@@ -210,23 +209,23 @@ class NotificationUtilsRepository @Inject constructor(
     }
 
     override fun getCustomNotificationChannelId(contactId: Int): String? {
-        val contact = contactLocalDataSource.getContactById(contactId)
+        val contact = contactLocalDataSourceImp.getContactById(contactId)
         return contact?.notificationId
     }
 
     override fun setCustomNotificationChannelId(contactId: Int, newId: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            contactLocalDataSource.updateChannelId(contactId, newId)
+            contactLocalDataSourceImp.updateChannelId(contactId, newId)
         }
     }
 
-    override fun getContactById(contactId: Int): Contact? {
-        return contactLocalDataSource.getContactById(contactId)
+    override fun getContactById(contactId: Int): ContactEntity? {
+        return contactLocalDataSourceImp.getContactById(contactId)
     }
 
-    override fun updateStateChannel(contactId: Int, state:Boolean) {
+    override fun updateStateChannel(contactId: Int, state: Boolean) {
         GlobalScope.launch(Dispatchers.IO) {
-            contactLocalDataSource.updateStateChannel(contactId, state)
+            contactLocalDataSourceImp.updateStateChannel(contactId, state)
         }
     }
 
@@ -235,24 +234,24 @@ class NotificationUtilsRepository @Inject constructor(
             messageLocalDataSource.getMessageByWebId(quoteWebId, false)
 
         if (originalMessage != null) {
-            var firstAttachment: Attachment? = null
+            var firstAttachmentEntity: AttachmentEntity? = null
 
-            if (originalMessage.attachmentList.isNotEmpty()) {
-                firstAttachment = originalMessage.attachmentList.first()
+            if (originalMessage.attachmentEntityList.isNotEmpty()) {
+                firstAttachmentEntity = originalMessage.attachmentEntityList.first()
             }
 
-            val quote = Quote(
+            val quote = QuoteEntity(
                 id = 0,
                 messageId = messageId,
-                contactId = originalMessage.message.contactId,
-                body = originalMessage.message.body,
-                attachmentType = firstAttachment?.type ?: "",
-                thumbnailUri = firstAttachment?.fileName ?: "",
-                messageParentId = originalMessage.message.id,
-                isMine = originalMessage.message.isMine
+                contactId = originalMessage.messageEntity.contactId,
+                body = originalMessage.messageEntity.body,
+                attachmentType = firstAttachmentEntity?.type ?: "",
+                thumbnailUri = firstAttachmentEntity?.fileName ?: "",
+                messageParentId = originalMessage.messageEntity.id,
+                isMine = originalMessage.messageEntity.isMine
             )
 
-            quoteDataSource.insertQuote(quote)
+            quoteLocalDataSource.insertQuote(quote)
         }
     }
 }

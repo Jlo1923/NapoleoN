@@ -14,7 +14,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
         <variable
             name="timeFormat"
@@ -100,8 +100,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/x_small_margin"
-                android:text="@{conversation.message.body}"
-                android:visibility="@{conversation.message.body.empty ? View.GONE : View.VISIBLE}"
+                android:text="@{conversation.messageEntity.body}"
+                android:visibility="@{conversation.messageEntity.body.empty ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toTopOf="@id/textView_date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_attachment"
@@ -131,7 +131,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/imageView_check"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_message"
-                app:messageDateIncoming="@{conversation.message.createdAt}"
+                app:messageDateIncoming="@{conversation.messageEntity.createdAt}"
                 tools:text="10:34"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>

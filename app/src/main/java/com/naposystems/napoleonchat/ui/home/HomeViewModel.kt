@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.dto.addContact.FriendshipRequestReceivedDTO
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.User
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
+import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,12 +16,12 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val repository: IContractHome.Repository) :
     ViewModel(), IContractHome.ViewModel {
 
-    private lateinit var _user: LiveData<User>
-    val user: LiveData<User>
-        get() = _user
+    private lateinit var _userEntity: LiveData<UserEntity>
+    val userEntity: LiveData<UserEntity>
+        get() = _userEntity
 
-    private var _conversations: LiveData<List<MessageAndAttachment>>?
-    val conversations: LiveData<List<MessageAndAttachment>>?
+    private var _conversations: LiveData<List<MessageAttachmentRelation>>?
+    val conversations: LiveData<List<MessageAttachmentRelation>>?
         get() = _conversations
 
     private val _quantityFriendshipRequest = MutableLiveData<Int>()
@@ -40,8 +40,8 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     val jsonNotification: LiveData<String>
         get() = _jsonNotification
 
-    private val _contact = MutableLiveData<Contact>()
-    val contact: LiveData<Contact>
+    private val _contact = MutableLiveData<ContactEntity>()
+    val contact: LiveData<ContactEntity>
         get() = _contact
 
     init {
@@ -96,7 +96,7 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
 
     override fun getUserLiveData() {
         viewModelScope.launch {
-            _user = repository.getUserLiveData()
+            _userEntity = repository.getUserLiveData()
         }
     }
 

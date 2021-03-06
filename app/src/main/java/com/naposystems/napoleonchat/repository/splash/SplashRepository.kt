@@ -1,23 +1,22 @@
 package com.naposystems.napoleonchat.repository.splash
 
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.splash.IContractSplash
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import java.util.*
 import javax.inject.Inject
 
 class SplashRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val userDatasource: UserLocalDataSource
+    private val userDatasourceImp: UserLocalDataSourceImp
 ) : IContractSplash.Repository {
 
-    override suspend fun getUser(): User {
-        val firebaseId = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
-        )
-        return userDatasource.getUser(firebaseId)
+    override suspend fun getUser(): UserEntity {
+//        val firebaseId = sharedPreferencesManager.getString(
+//            Constants.SharedPreferences.PREF_FIREBASE_ID, ""
+//        )
+        return userDatasourceImp.getMyUser()
     }
 
     override suspend fun getTimeRequestAccessPin(): Int {

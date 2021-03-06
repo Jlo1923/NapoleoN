@@ -44,7 +44,7 @@ import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.*
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentLocationFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.attachment.location.Place
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
@@ -534,13 +534,13 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                 val file = FileManager.createFileFromBitmap(
                     context = context,
                     fileName = "${System.currentTimeMillis()}.jpg",
-                    folder = Constants.NapoleonCacheDirectories.IMAGES.folder,
+                    folder = Constants.CacheDirectories.IMAGES.folder,
                     bitmap = bitmap
                 )
 
                 if (file != null) {
 
-                    val attachment = Attachment(
+                    val attachment = AttachmentEntity(
                         id = 0,
                         messageId = 0,
                         webId = "",

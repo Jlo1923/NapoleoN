@@ -4,7 +4,7 @@ import android.content.Context
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyboardGif
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.DownloadFileResult
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
@@ -32,7 +32,7 @@ class NapoleonKeyboardGifRepository @Inject constructor(
             if (responseDownloadFile.isSuccessful) {
                 try {
                     val body = responseDownloadFile.body()!!
-                    val folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                    val folder = Constants.CacheDirectories.GIFS.folder
                     val fileName = "${System.currentTimeMillis()}.gif"
 
                     val path = File(context.cacheDir!!, folder)

@@ -7,35 +7,35 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.db.dao.attachment.AttachmentDataSource
-import com.naposystems.napoleonchat.db.dao.message.MessageDataSource
-import com.naposystems.napoleonchat.db.dao.messageNotSent.MessageNotSentDataSource
-import com.naposystems.napoleonchat.db.dao.quoteMessage.QuoteDataSource
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.dto.conversation.call.CallContactReqDTO
-import com.naposystems.napoleonchat.dto.conversation.call.CallContactResDTO
-import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessage422DTO
-import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
-import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesReqDTO
-import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.napoleonchat.dto.conversation.message.*
-import com.naposystems.napoleonchat.dto.conversation.socket.AuthReqDTO
-import com.naposystems.napoleonchat.dto.conversation.socket.HeadersReqDTO
-import com.naposystems.napoleonchat.dto.conversation.socket.SocketReqDTO
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.dto.validateMessageEvent.ValidateMessageEventDTO
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.MessageNotSent
-import com.naposystems.napoleonchat.entity.User
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.Quote
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.messageNotSent.MessageNotSentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessageUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.*
+import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.AuthReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.HeadersReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.SocketReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageNotSentEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
@@ -60,15 +60,17 @@ import javax.inject.Inject
 class ConversationRepository @Inject constructor(
     private val context: Context,
     private val socketService: IContractSocketService.SocketService,
-    private val userLocalDataSource: UserLocalDataSource,
-    private val messageLocalDataSource: MessageDataSource,
-    private val attachmentLocalDataSource: AttachmentDataSource,
+    private val userLocalDataSourceImp: UserLocalDataSourceImp,
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi,
-    private val quoteDataSource: QuoteDataSource,
-    private val messageNotSentDataSource: MessageNotSentDataSource
+    private val quoteLocalDataSource: QuoteLocalDataSource,
+    private val messageNotSentLocalDataSource: MessageNotSentLocalDataSource
 ) :
     IContractConversation.Repository {
+
+    private var envioEnProceso: Boolean = true
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -79,7 +81,7 @@ class ConversationRepository @Inject constructor(
             .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
     }
 
-    override fun unSubscribeToChannel(userToChat: Contact, channelName: String) {
+    override fun unSubscribeToChannel(userToChat: ContactEntity, channelName: String) {
         val headersReqDTO = HeadersReqDTO(
             firebaseId
         )
@@ -96,7 +98,7 @@ class ConversationRepository @Inject constructor(
         socketService.unSubscribeCallChannel(channelName)
     }
 
-    override fun getLocalMessages(contactId: Int): LiveData<List<MessageAndAttachment>> {
+    override fun getLocalMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>> {
         return messageLocalDataSource.getMessages(contactId)
     }
 
@@ -104,7 +106,7 @@ class ConversationRepository @Inject constructor(
         return messageLocalDataSource.getQuoteId(quoteWebId)
     }
 
-    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAndAttachment> {
+    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation> {
         return messageLocalDataSource.getLocalMessagesByStatus(contactId, status)
     }
 
@@ -113,30 +115,30 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun uploadAttachment(
-        attachment: Attachment,
-        message: Message
+        attachmentEntity: AttachmentEntity,
+        messageEntity: MessageEntity
     ) = channelFlow {
         try {
-            updateAttachment(attachment)
-            message.status = Constants.MessageStatus.SENDING.status
-            updateMessage(message)
-            offer(UploadResult.Start(attachment, this))
+            updateAttachment(attachmentEntity)
+            messageEntity.status = Constants.MessageStatus.SENDING.status
+            updateMessage(messageEntity)
+            offer(UploadResult.Start(attachmentEntity, this))
 
             val path =
-                File(context.cacheDir!!, FileManager.getSubfolderByAttachmentType(attachment.type))
+                File(context.cacheDir!!, FileManager.getSubfolderByAttachmentType(attachmentEntity.type))
             if (!path.exists())
                 path.mkdirs()
-            val sourceFile = File(path, attachment.fileName)
+            val sourceFile = File(path, attachmentEntity.fileName)
             val destFile =
                 File(
                     path, "${
-                        attachment.fileName
+                        attachmentEntity.fileName
                             .replace("_compress", "")
                             .split('.')[0]
-                    }_compress.${attachment.extension}"
+                    }_compress.${attachmentEntity.extension}"
                 )
 
-            compressVideo(attachment, sourceFile, destFile, this)
+            compressVideo(attachmentEntity, sourceFile, destFile, this)
                 .collect {
                     when (it) {
                         is VideoCompressResult.Start -> {
@@ -144,24 +146,24 @@ class ConversationRepository @Inject constructor(
                         }
                         is VideoCompressResult.Success -> {
                             Timber.d("*Test: tmessages VideoCompressResult.Success")
-                            if (it.srcFile.isFile && it.srcFile.exists() && !attachment.isCompressed && attachment.type == Constants.AttachmentType.VIDEO.type)
+                            if (it.srcFile.isFile && it.srcFile.exists() && !attachmentEntity.isCompressed && attachmentEntity.type == Constants.AttachmentType.VIDEO.type)
                                 it.srcFile.delete()
-                            attachment.fileName =
-                                if (attachment.type == Constants.AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
-                            attachment.isCompressed = true
-                            updateAttachment(attachment)
+                            attachmentEntity.fileName =
+                                if (attachmentEntity.type == Constants.AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
+                            attachmentEntity.isCompressed = true
+                            updateAttachment(attachmentEntity)
 
-                            val requestBodyMessageId = createPartFromString(attachment.messageWebId)
-                            val requestBodyType = createPartFromString(attachment.type)
+                            val requestBodyMessageId = createPartFromString(attachmentEntity.messageWebId)
+                            val requestBodyType = createPartFromString(attachmentEntity.type)
                             val requestBodyDuration =
-                                createPartFromString(attachment.duration.toString())
+                                createPartFromString(attachmentEntity.duration.toString())
 
                             val requestBodyFilePart =
                                 createPartFromFile(
-                                    attachment,
+                                    attachmentEntity,
                                     this as Job,
                                     progress = { progress ->
-                                        offer(UploadResult.Progress(attachment, progress, this))
+                                        offer(UploadResult.Progress(attachmentEntity, progress, this))
                                     }
                                 )
 
@@ -174,13 +176,13 @@ class ConversationRepository @Inject constructor(
 
                             if (response.isSuccessful) {
 
-                                message.status =
-                                    if (message.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
+                                messageEntity.status =
+                                    if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
                                     else Constants.MessageStatus.SENT.status
-                                updateMessage(message)
+                                updateMessage(messageEntity)
 
                                 response.body()?.let { attachmentResDTO ->
-                                    attachment.apply {
+                                    attachmentEntity.apply {
                                         webId = attachmentResDTO.id
                                         messageWebId = attachmentResDTO.messageId
                                         body = attachmentResDTO.body
@@ -188,53 +190,53 @@ class ConversationRepository @Inject constructor(
                                     }
                                 }
 
-                                updateAttachment(attachment)
-                                if (BuildConfig.ENCRYPT_API && attachment.type != Constants.AttachmentType.GIF_NN.type) {
-                                    saveEncryptedFile(attachment)
+                                updateAttachment(attachmentEntity)
+                                if (BuildConfig.ENCRYPT_API && attachmentEntity.type != Constants.AttachmentType.GIF_NN.type) {
+                                    saveEncryptedFile(attachmentEntity)
                                 }
-                                offer(UploadResult.Success(attachment))
+                                offer(UploadResult.Success(attachmentEntity))
                             } else {
-                                setStatusErrorMessageAndAttachment(message, attachment)
-                                offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
+                                setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
+                                offer(UploadResult.Error(attachmentEntity, "Algo ha salido mal", null))
                             }
                         }
                         is VideoCompressResult.Progress -> {
                             Timber.d("tmessages VideoCompressResult.Progress ${it.progress}")
                             offer(
                                 UploadResult.CompressProgress(
-                                    attachment,
+                                    attachmentEntity,
                                     it.progress,
                                     this
                                 )
                             )
                         }
                         is VideoCompressResult.Fail -> {
-                            setStatusErrorMessageAndAttachment(message, attachment)
-                            offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
+                            setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
+                            offer(UploadResult.Error(attachmentEntity, "Algo ha salido mal", null))
                         }
                     }
                 }
         } catch (e: Exception) {
             Timber.e("ClosedSendChannelException, $e")
-            attachment.status =
+            attachmentEntity.status =
                 Constants.AttachmentStatus.UPLOAD_CANCEL.status
-            updateAttachment(attachment)
+            updateAttachment(attachmentEntity)
 
-            message.status = Constants.MessageStatus.ERROR.status
-            updateMessage(message)
+            messageEntity.status = Constants.MessageStatus.ERROR.status
+            updateMessage(messageEntity)
         }
     }
 
-    private fun saveEncryptedFile(attachment: Attachment) {
-        FileManager.copyEncryptedFile(context, attachment)
+    private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
+        FileManager.copyEncryptedFile(context, attachmentEntity)
     }
 
-    private fun setStatusErrorMessageAndAttachment(message: Message, attachment: Attachment?) {
-        message.status = Constants.MessageStatus.ERROR.status
-        updateMessage(message)
-        attachment?.let {
-            attachment.status = Constants.AttachmentStatus.ERROR.status
-            updateAttachment(attachment)
+    private fun setStatusErrorMessageAndAttachment(messageEntity: MessageEntity, attachmentEntity: AttachmentEntity?) {
+        messageEntity.status = Constants.MessageStatus.ERROR.status
+        updateMessage(messageEntity)
+        attachmentEntity?.let {
+            attachmentEntity.status = Constants.AttachmentStatus.ERROR.status
+            updateAttachment(attachmentEntity)
         }
     }
 
@@ -243,15 +245,15 @@ class ConversationRepository @Inject constructor(
     }
 
     private fun createPartFromFile(
-        attachment: Attachment,
+        attachmentEntity: AttachmentEntity,
         job: Job,
         progress: (Float) -> Unit
     ): MultipartBody.Part {
         val subfolder =
-            FileManager.getSubfolderByAttachmentType(attachmentType = attachment.type)
+            FileManager.getSubfolderByAttachmentType(attachmentType = attachmentEntity.type)
 
         val fileUri = Utils.getFileUri(
-            context = context, fileName = attachment.fileName, subFolder = subfolder
+            context = context, fileName = attachmentEntity.fileName, subFolder = subfolder
         )
 
         val file = File(fileUri.path!!)
@@ -291,94 +293,130 @@ class ConversationRepository @Inject constructor(
         )
     }
 
-    override suspend fun getLocalUser(): User {
-        return userLocalDataSource.getUser(firebaseId)
+    override suspend fun getLocalUser(): UserEntity {
+        return userLocalDataSourceImp.getMyUser()
     }
 
-    override fun insertMessage(message: Message): Long {
-        return messageLocalDataSource.insertMessage(message)
+    override fun insertMessage(messageEntity: MessageEntity): Long {
+        return messageLocalDataSource.insertMessage(messageEntity)
     }
 
-    override fun insertListMessage(messageList: List<Message>) {
-        messageLocalDataSource.insertListMessage(messageList)
+    override fun insertListMessage(messageEntityList: List<MessageEntity>) {
+        messageLocalDataSource.insertListMessage(messageEntityList)
     }
 
-    override fun updateMessage(message: Message) {
+    override fun updateMessage(messageEntity: MessageEntity) {
         Timber.d("updateMessage")
-        when (message.status) {
+        when (messageEntity.status) {
             Constants.MessageStatus.ERROR.status -> {
                 val selfDestructTime = sharedPreferencesManager.getInt(
                     Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
                 )
                 val currentTime =
                     TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
-                message.updatedAt = currentTime
-                message.selfDestructionAt = selfDestructTime
-                message.totalSelfDestructionAt =
+                messageEntity.updatedAt = currentTime
+                messageEntity.selfDestructionAt = selfDestructTime
+                messageEntity.totalSelfDestructionAt =
                     currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
-                messageLocalDataSource.updateMessage(message)
+                messageLocalDataSource.updateMessage(messageEntity)
             }
             else -> {
-                messageLocalDataSource.updateMessage(message)
+                messageLocalDataSource.updateMessage(messageEntity)
             }
         }
     }
 
     override suspend fun sendTextMessagesRead(contactId: Int) {
-        val messagesUnread =
-            messageLocalDataSource.getTextMessagesByStatus(
-                contactId,
-                Constants.MessageStatus.UNREAD.status
-            )
 
-        val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
-        val locationMessagesUnread =
-            messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
-        val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
-        val locationMessagesUnreadIds = locationMessagesUnread.map { it.message.webId }
+        Timber.d("Envio en proceso Inicio $envioEnProceso")
 
-        val listIds = mutableListOf<String>()
-        listIds.addAll(textMessagesUnreadIds)
-        listIds.addAll(locationMessagesUnreadIds)
+        if (envioEnProceso) {
 
-        val messagesRead = messagesUnread.map {
-            ValidateMessage(
-                id = it.message.webId,
-                user = contactId,
-                status = Constants.MessageEventType.READ.status
-            )
-        }
+            envioEnProceso = false
 
-        val validateMessage = ValidateMessageEventDTO(messagesRead)
+            Timber.d("Envio en proceso dentro del IF $envioEnProceso")
 
-        val moshi = Moshi.Builder().build()
-        val jsonAdapterValidate =
-            moshi.adapter(ValidateMessageEventDTO::class.java)
-
-        val json = jsonAdapterValidate.toJson(validateMessage)
-
-        if (listIds.isNotEmpty()) {
-
-            try {
-
-                socketService.emitToClientConversation(json.toString())
-
-                val response = napoleonApi.sendMessagesRead(
-                    MessagesReadReqDTO(
-                        listIds
-                    )
+            val messagesUnread =
+                messageLocalDataSource.getTextMessagesByStatus(
+                    contactId,
+                    Constants.MessageStatus.UNREAD.status
                 )
 
-                if (response.isSuccessful) {
-                    messageLocalDataSource.updateMessageStatus(
-                        listIds,
-                        Constants.MessageStatus.READED.status
-                    )
-                }
-            } catch (ex: Exception) {
-                Timber.e(ex)
+            val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
+
+            val locationMessagesUnread =
+                messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
+
+            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
+
+            val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
+
+            val listIds = mutableListOf<String>()
+
+            listIds.addAll(textMessagesUnreadIds)
+
+            listIds.addAll(locationMessagesUnreadIds)
+
+            val messagesRead = messagesUnread.map {
+                ValidateMessage(
+                    id = it.messageEntity.webId,
+                    user = contactId,
+                    status = Constants.MessageEventType.READ.status
+                )
             }
+
+            val validateMessage = ValidateMessageEventDTO(messagesRead)
+
+            val jsonAdapterValidate =
+                moshi.adapter(ValidateMessageEventDTO::class.java)
+
+            val json = jsonAdapterValidate.toJson(validateMessage)
+
+            if (listIds.isNotEmpty()) {
+
+                try {
+
+                    socketService.emitToClientConversation(json.toString())
+
+                    val response = napoleonApi.sendMessagesRead(
+                        MessagesReadReqDTO(
+                            listIds
+                        )
+                    )
+
+                    if (response.isSuccessful) {
+
+                        envioEnProceso = true
+
+                        Timber.d("Envio en proceso Successful $envioEnProceso")
+
+                        messageLocalDataSource.updateMessageStatus(
+                            listIds,
+                            Constants.MessageStatus.READED.status
+                        )
+                    }
+
+                } catch (ex: Exception) {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Catch $envioEnProceso")
+
+                    Timber.e(ex)
+                } finally {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Finally $envioEnProceso")
+
+                }
+
+            } else {
+                envioEnProceso = true
+            }
+
         }
+
     }
 
     override suspend fun sendMissedCallRead(contactId: Int) {
@@ -388,8 +426,8 @@ class ConversationRepository @Inject constructor(
                 Constants.MessageStatus.UNREAD.status
             )
 
-        val textMessagesUnread = messagesUnread.filter { it.attachmentList.isEmpty() }
-        val textMessagesUnreadIds = textMessagesUnread.map { it.message.webId }
+        val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
+        val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
 
         if (textMessagesUnreadIds.isNotEmpty()) {
             try {
@@ -411,47 +449,47 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override fun insertAttachment(attachment: Attachment): Long {
-        return attachmentLocalDataSource.insertAttachment(attachment)
+    override fun insertAttachment(attachmentEntity: AttachmentEntity): Long {
+        return attachmentLocalDataSource.insertAttachment(attachmentEntity)
     }
 
-    override fun insertAttachments(listAttachment: List<Attachment>): List<Long> {
-        return attachmentLocalDataSource.insertAttachments(listAttachment)
+    override fun insertAttachments(listAttachmentEntity: List<AttachmentEntity>): List<Long> {
+        return attachmentLocalDataSource.insertAttachments(listAttachmentEntity)
     }
 
-    override fun updateAttachment(attachment: Attachment) {
+    override fun updateAttachment(attachmentEntity: AttachmentEntity) {
         Timber.d("update attachment")
-        attachmentLocalDataSource.updateAttachment(attachment)
+        attachmentLocalDataSource.updateAttachment(attachmentEntity)
     }
 
-    override suspend fun suspendUpdateAttachment(attachment: Attachment) {
-        attachmentLocalDataSource.suspendUpdateAttachment(attachment)
+    override suspend fun suspendUpdateAttachment(attachmentEntity: AttachmentEntity) {
+        attachmentLocalDataSource.suspendUpdateAttachment(attachmentEntity)
     }
 
-    override suspend fun insertQuote(quoteWebId: String, message: Message) {
+    override suspend fun insertQuote(quoteWebId: String, messageEntity: MessageEntity) {
 
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(quoteWebId, false)
 
         if (originalMessage != null) {
-            var firstAttachment: Attachment? = null
+            var firstAttachmentEntity: AttachmentEntity? = null
 
-            if (originalMessage.attachmentList.isNotEmpty()) {
-                firstAttachment = originalMessage.attachmentList.first()
+            if (originalMessage.attachmentEntityList.isNotEmpty()) {
+                firstAttachmentEntity = originalMessage.attachmentEntityList.first()
             }
 
-            val quote = Quote(
+            val quote = QuoteEntity(
                 id = 0,
-                messageId = message.id,
-                contactId = originalMessage.message.contactId,
-                body = originalMessage.message.body,
-                attachmentType = firstAttachment?.type ?: "",
-                thumbnailUri = firstAttachment?.fileName ?: "",
-                messageParentId = originalMessage.message.id,
-                isMine = originalMessage.message.isMine
+                messageId = messageEntity.id,
+                contactId = originalMessage.messageEntity.contactId,
+                body = originalMessage.messageEntity.body,
+                attachmentType = firstAttachmentEntity?.type ?: "",
+                thumbnailUri = firstAttachmentEntity?.fileName ?: "",
+                messageParentId = originalMessage.messageEntity.id,
+                isMine = originalMessage.messageEntity.isMine
             )
 
-            quoteDataSource.insertQuote(quote)
+            quoteLocalDataSource.insertQuote(quote)
         }
     }
 
@@ -469,17 +507,17 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun deleteMessagesSelected(
         contactId: Int,
-        listMessages: List<MessageAndAttachment>
+        listMessageRelations: List<MessageAttachmentRelation>
     ) {
-        listMessages.filter { messageAndAttachment ->
-            messageAndAttachment.attachmentList.count() > 0 &&
-                    messageAndAttachment.attachmentList[0].type == Constants.AttachmentType.AUDIO.type
+        listMessageRelations.filter { messageAndAttachment ->
+            messageAndAttachment.attachmentEntityList.count() > 0 &&
+                    messageAndAttachment.attachmentEntityList[0].type == Constants.AttachmentType.AUDIO.type
         }.let { listMessagesFiltered ->
             if (listMessagesFiltered.count() > 0) {
                 RxBus.publish(RxEvent.MessagesToEliminate(listMessagesFiltered))
             }
         }
-        messageLocalDataSource.deleteMessagesSelected(contactId, listMessages)
+        messageLocalDataSource.deleteMessagesSelected(contactId, listMessageRelations)
     }
 
     override suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO> {
@@ -490,7 +528,7 @@ class ConversationRepository @Inject constructor(
         return messageLocalDataSource.copyMessagesSelected(contactId)
     }
 
-    override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAndAttachment>> {
+    override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>> {
         return messageLocalDataSource.getMessagesSelected(contactId)
     }
 
@@ -498,12 +536,12 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.deleteMessagesByStatusForMe(contactId, status)
     }
 
-    override fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
-        val adapter = moshi.adapter(Message422DTO::class.java)
+    override fun getUnprocessableEntityErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
+        val adapter = moshi.adapter(MessageUnprocessableEntityDTO::class.java)
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(conversationError!!)
     }
 
     override fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
@@ -519,12 +557,12 @@ class ConversationRepository @Inject constructor(
         return errorList
     }
 
-    override fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
-        val adapter = moshi.adapter(DeleteMessage422DTO::class.java)
+    override fun getUnprocessableEntityErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
+        val adapter = moshi.adapter(DeleteMessageUnprocessableEntityDTO::class.java)
 
         val conversationError = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(conversationError!!)
     }
 
     override fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
@@ -540,7 +578,7 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun callContact(
-        contact: Contact,
+        contact: ContactEntity,
         isVideoCall: Boolean
     ): Response<CallContactResDTO> {
         val callContactReqDTO = CallContactReqDTO(
@@ -570,10 +608,10 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun downloadAttachment(
-        messageAndAttachment: MessageAndAttachment,
+        messageAndAttachmentRelation: MessageAttachmentRelation,
         itemPosition: Int
     ): Flow<DownloadAttachmentResult> = channelFlow<DownloadAttachmentResult> {
-        messageAndAttachment.getFirstAttachment()?.let { attachment ->
+        messageAndAttachmentRelation.getFirstAttachment()?.let { attachment ->
             val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
             /*val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
             attachment.status = Constants.AttachmentStatus.DOWNLOADING.status
@@ -584,7 +622,6 @@ class ConversationRepository @Inject constructor(
 
             try {
                 val response = napoleonApi.downloadFileByUrl(attachment.body)
-//                val response = napoleonApi.downloadFileByUrl("https://video-lga3-1.xx.fbcdn.net/v/t39.24130-2/10000000_252314952661745_7854699925195670435_n.mp4?_nc_cat=101&_nc_sid=985c63&efg=eyJ2ZW5jb2RlX3RhZyI6Im9lcF9oZCJ9&_nc_ohc=yZMEbG8J9AsAX91wp5i&_nc_ht=video-lga3-1.xx&oh=d84d0cad44e97099db93202661c50217&oe=5F0F53B3")
 
                 if (response.isSuccessful) {
                     response.body()?.let { body ->
@@ -594,25 +631,25 @@ class ConversationRepository @Inject constructor(
                             Constants.AttachmentType.IMAGE.type,
                             Constants.AttachmentType.LOCATION.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.IMAGES.folder
+                                    Constants.CacheDirectories.IMAGES.folder
                             }
                             Constants.AttachmentType.AUDIO.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.AUDIOS.folder
+                                    Constants.CacheDirectories.AUDIOS.folder
                             }
                             Constants.AttachmentType.VIDEO.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                                    Constants.CacheDirectories.VIDEOS.folder
                             }
                             Constants.AttachmentType.DOCUMENT.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                                    Constants.CacheDirectories.DOCUMENTOS.folder
                             }
                             Constants.AttachmentType.GIF.type -> {
-                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                                folder = Constants.CacheDirectories.GIFS.folder
                             }
                             Constants.AttachmentType.GIF_NN.type -> {
-                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                                folder = Constants.CacheDirectories.GIFS.folder
                             }
                         }
 
@@ -671,7 +708,7 @@ class ConversationRepository @Inject constructor(
 
                             offer(
                                 DownloadAttachmentResult.Success(
-                                    messageAndAttachment,
+                                    messageAndAttachmentRelation,
                                     itemPosition
                                 )
                             )
@@ -683,7 +720,7 @@ class ConversationRepository @Inject constructor(
                             updateAttachment(attachment)
                             offer(
                                 DownloadAttachmentResult.Cancel(
-                                    messageAndAttachment, itemPosition
+                                    messageAndAttachmentRelation, itemPosition
                                 )
                             )
                             close()
@@ -722,9 +759,9 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override fun updateAttachmentState(messageAndAttachment: MessageAndAttachment, state: Int) {
-        if (messageAndAttachment.attachmentList.isNotEmpty()) {
-            val firstAttachment = messageAndAttachment.attachmentList.first()
+    override fun updateAttachmentState(messageAndAttachmentRelation: MessageAttachmentRelation, state: Int) {
+        if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
+            val firstAttachment = messageAndAttachmentRelation.attachmentEntityList.first()
             attachmentLocalDataSource.updateAttachmentState(firstAttachment.webId, state)
         }
     }
@@ -754,7 +791,7 @@ class ConversationRepository @Inject constructor(
                             FileManager.copyFile(
                                 context,
                                 inputStream,
-                                Constants.NapoleonCacheDirectories.DOCUMENTOS.folder,
+                                Constants.CacheDirectories.DOCUMENTOS.folder,
                                 "${System.currentTimeMillis()}.$extension"
                             )
                         } else {
@@ -777,12 +814,12 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.verifyMessagesToDelete()
     }
 
-    override suspend fun setMessageRead(messageAndAttachment: MessageAndAttachment) {
+    override suspend fun setMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation) {
         try {
-            Timber.d("setMessageRead: ${messageAndAttachment.message.webId}")
+            Timber.d("setMessageRead: ${messageAndAttachmentRelation.messageEntity.webId}")
             val response = napoleonApi.sendMessagesRead(
                 MessagesReadReqDTO(
-                    arrayListOf(messageAndAttachment.message.webId)
+                    arrayListOf(messageAndAttachmentRelation.messageEntity.webId)
                 )
             )
 
@@ -806,10 +843,10 @@ class ConversationRepository @Inject constructor(
             val webIdMessage = if (webId.isNotEmpty()) {
                 webId
             } else {
-                messageAndAttachment?.message?.webId
+                messageAndAttachment?.messageEntity?.webId
             }
 
-            if ((messageAndAttachment?.message?.isMine == Constants.IsMine.NO.value) || webId.isNotEmpty()) {
+            if ((messageAndAttachment?.messageEntity?.isMine == Constants.IsMine.NO.value) || webId.isNotEmpty()) {
                 webIdMessage?.let {
                     val response = napoleonApi.sendMessagesRead(
                         MessagesReadReqDTO(
@@ -831,18 +868,18 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override suspend fun reSendMessage(messageAndAttachment: MessageAndAttachment) {
+    override suspend fun reSendMessage(messageAndAttachmentRelation: MessageAttachmentRelation) {
 
     }
 
     override suspend fun compressVideo(
-        attachment: Attachment,
+        attachmentEntity: AttachmentEntity,
         srcFile: File,
         destFile: File,
         job: ProducerScope<*>
     ) = flow {
 
-        if (attachment.type == Constants.AttachmentType.VIDEO.type && !attachment.isCompressed) {
+        if (attachmentEntity.type == Constants.AttachmentType.VIDEO.type && !attachmentEntity.isCompressed) {
             if (destFile.exists())
                 destFile.delete()
 
@@ -862,16 +899,16 @@ class ConversationRepository @Inject constructor(
         )
     }
 
-    override fun getMessageNotSent(contactId: Int): MessageNotSent {
-        return messageNotSentDataSource.getMessageNotSetByContact(contactId)
+    override fun getMessageNotSent(contactId: Int): MessageNotSentEntity {
+        return messageNotSentLocalDataSource.getMessageNotSetByContact(contactId)
     }
 
     override fun insertMessageNotSent(message: String, contactId: Int) {
         if (message.isEmpty()) {
-            messageNotSentDataSource.deleteMessageNotSentByContact(contactId)
+            messageNotSentLocalDataSource.deleteMessageNotSentByContact(contactId)
         } else {
-            messageNotSentDataSource.insertMessageNotSent(
-                MessageNotSent(
+            messageNotSentLocalDataSource.insertMessageNotSent(
+                MessageNotSentEntity(
                     id = 0,
                     message = message,
                     contactId = contactId
@@ -881,6 +918,6 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun deleteMessageNotSent(contactId: Int) {
-        messageNotSentDataSource.deleteMessageNotSentByContact(contactId)
+        messageNotSentLocalDataSource.deleteMessageNotSentByContact(contactId)
     }
 }

@@ -7,13 +7,13 @@ import androidx.annotation.Nullable
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 
 @BindingAdapter("avatarUser")
-fun bindAvatar(imageView: ImageView, @Nullable user: User?) {
-    if (user != null) {
+fun bindAvatar(imageView: ImageView, @Nullable userEntity: UserEntity?) {
+    if (userEntity != null) {
         val context = imageView.context
 
         val defaultAvatar = context.resources.getDrawable(
@@ -22,8 +22,8 @@ fun bindAvatar(imageView: ImageView, @Nullable user: User?) {
         )
 
         @Suppress("IMPLICIT_CAST_TO_ANY")
-        val loadImage = if (user.imageUrl.isNotEmpty()) {
-            user.imageUrl
+        val loadImage = if (userEntity.imageUrl.isNotEmpty()) {
+            userEntity.imageUrl
         } else {
             defaultAvatar
         }
@@ -36,8 +36,8 @@ fun bindAvatar(imageView: ImageView, @Nullable user: User?) {
 }
 
 @BindingAdapter("bannerUser")
-fun bindBannerUser(imageView: ImageView, @Nullable user: User?) {
-    if (user != null) {
+fun bindBannerUser(imageView: ImageView, @Nullable userEntity: UserEntity?) {
+    if (userEntity != null) {
         val context = imageView.context
 
         val defaultHeader = context.resources.getDrawable(
@@ -46,11 +46,11 @@ fun bindBannerUser(imageView: ImageView, @Nullable user: User?) {
         )
 
         @Suppress("IMPLICIT_CAST_TO_ANY")
-        val loadImage = if (user.headerUri.isNotEmpty()) {
+        val loadImage = if (userEntity.headerUri.isNotEmpty()) {
              Utils.getFileUri(
                 context = context,
-                fileName = user.headerUri,
-                subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+                fileName = userEntity.headerUri,
+                subFolder = Constants.CacheDirectories.HEADER.folder
             )
         } else {
             defaultHeader
@@ -64,30 +64,30 @@ fun bindBannerUser(imageView: ImageView, @Nullable user: User?) {
 }
 
 @BindingAdapter("nicknameUser")
-fun bindNickname(textView: TextView, @Nullable user: User?) {
-    if (user != null) {
+fun bindNickname(textView: TextView, @Nullable userEntity: UserEntity?) {
+    if (userEntity != null) {
         val context = textView.context
-        val formattedNickname = context.getString(R.string.label_nickname, user.nickname)
+        val formattedNickname = context.getString(R.string.label_nickname, userEntity.nickname)
         textView.text = formattedNickname
     }
 }
 
 @BindingAdapter("nameUser")
-fun bindName(textView: TextView, @Nullable user: User?) {
-    if (user != null) {
-        textView.text = user.displayName
+fun bindName(textView: TextView, @Nullable userEntity: UserEntity?) {
+    if (userEntity != null) {
+        textView.text = userEntity.displayName
     }
 }
 
 @BindingAdapter("nameUserCover")
-fun bindNameUserCover(textView: TextView, @Nullable user: User?) {
-    if (user != null) {
-        if (user.displayName != ""){
+fun bindNameUserCover(textView: TextView, @Nullable userEntity: UserEntity?) {
+    if (userEntity != null) {
+        if (userEntity.displayName != ""){
             textView.visibility = View.VISIBLE
         } else {
             textView.visibility = View.GONE
         }
 
-        textView.text = user.displayName
+        textView.text = userEntity.displayName
     }
 }

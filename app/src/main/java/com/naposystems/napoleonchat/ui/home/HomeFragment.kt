@@ -24,9 +24,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
@@ -320,7 +320,7 @@ class HomeFragment : Fragment() {
                 }
             })*/
 
-        viewModel.user.observe(viewLifecycleOwner, Observer {
+        viewModel.userEntity.observe(viewLifecycleOwner, Observer {
             binding.textViewStatus.text = it.status
         })
 
@@ -558,7 +558,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun goToStatus() {
-        viewModel.user.value?.let { user ->
+        viewModel.userEntity.value?.let { user ->
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToStatusFragment(user)
             )
@@ -568,7 +568,7 @@ class HomeFragment : Fragment() {
     private fun setAdapter() {
         conversationAdapter = ConversationAdapter(
             object : ConversationAdapter.ClickListener {
-                override fun onClick(item: MessageAndAttachment) {
+                override fun onClick(item: MessageAttachmentRelation) {
                     item.contact?.let { contact ->
                         findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_conversationFragment)
                             ?.let {
@@ -581,14 +581,14 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                override fun onClickAvatar(item: MessageAndAttachment) {
+                override fun onClickAvatar(item: MessageAttachmentRelation) {
                     item.contact?.let { contact ->
                         seeProfile(contact)
                     }
 
                 }
 
-                override fun onLongClick(item: MessageAndAttachment, view: View) {
+                override fun onLongClick(item: MessageAttachmentRelation, view: View) {
                     item.contact?.let { contact ->
                         popup = PopupMenu(context!!, view)
                         popup.menuInflater.inflate(R.menu.menu_inbox_conversation, popup.menu)
@@ -620,13 +620,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun startConversation(contact: Contact) {
+    private fun startConversation(contact: ContactEntity) {
         findNavController().navigate(
             HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
         )
     }
 
-    private fun seeProfile(contact: Contact) {
+    private fun seeProfile(contact: ContactEntity) {
         findNavController().currentDestination?.getAction(R.id.action_homeFragment_to_contactProfileFragment)
             ?.let {
                 findNavController().navigate(
@@ -687,7 +687,7 @@ class HomeFragment : Fragment() {
         binding.recyclerViewFriendshipRequest.adapter = friendShipRequestReceivedAdapter
     }
 
-    private fun deleteChat(contact: Contact) {
+    private fun deleteChat(contact: ContactEntity) {
         generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
@@ -698,7 +698,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun blockContact(contact: Contact) {
+    private fun blockContact(contact: ContactEntity) {
         generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
@@ -710,38 +710,42 @@ class HomeFragment : Fragment() {
     }
 
     private fun showCase() {
-        Handler().postDelayed({
-            if (menuCreated && !showShowCase) {
-                val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
+        try {
+            Handler().postDelayed({
+                if (menuCreated && !showShowCase) {
+                    val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
 
-                val securitySettingMenuItem =
-                    drawerMenu.findItem(R.id.security_settings).actionView as LinearLayout
+                    val securitySettingMenuItem =
+                        drawerMenu.findItem(R.id.security_settings).actionView as LinearLayout
 
-                showCase = ShowCaseManager().apply {
-                    setListener(object : ShowCaseManager.Listener {
-                        override fun openSecuritySettings() {
-                            findNavController().navigate(
-                                HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
-                                    showShowCase = true
+                    showCase = ShowCaseManager().apply {
+                        setListener(object : ShowCaseManager.Listener {
+                            override fun openSecuritySettings() {
+                                findNavController().navigate(
+                                    HomeFragmentDirections.actionHomeFragmentToSecuritySettingsFragment(
+                                        showShowCase = true
+                                    )
                                 )
-                            )
+                            }
+                        })
+
+                        setActivity(requireContext() as FragmentActivity)
+                        addContactsMenuItem?.actionView?.let { view ->
+                            setFirstView(view)
                         }
-                    })
+                        setSecondView(binding.fabContacts)
+                        setThirdView(binding.viewShowCaseStatus)
+                        setFourthView(homeMenuItem!!)
+                        setFifthView(securitySettingMenuItem.getChildAt(0))
 
-                    setActivity(requireContext() as FragmentActivity)
-                    addContactsMenuItem?.actionView?.let { view ->
-                        setFirstView(view)
+                        showFromFirst()
                     }
-                    setSecondView(binding.fabContacts)
-                    setThirdView(binding.viewShowCaseStatus)
-                    setFourthView(homeMenuItem!!)
-                    setFifthView(securitySettingMenuItem.getChildAt(0))
 
-                    showFromFirst()
+                    showShowCase = true
                 }
-
-                showShowCase = true
-            }
-        }, 800)
+            }, 500)
+        } catch (e: Exception) {
+            Timber.d(e.localizedMessage)
+        }
     }
 }

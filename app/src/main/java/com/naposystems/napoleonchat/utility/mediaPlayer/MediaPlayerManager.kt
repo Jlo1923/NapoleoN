@@ -135,8 +135,8 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { params ->
                 params?.id?.forEach { message ->
-                    if(currentMessageId == message.message.id) {
-                        mListener?.onPauseAudio(message.message.id, message.message.webId)
+                    if(currentMessageId == message.messageEntity.id) {
+                        mListener?.onPauseAudio(message.messageEntity.id, message.messageEntity.webId)
                     }
                 } ?: kotlin.run {
                     mListener?.onPauseAudio(currentMessageId)

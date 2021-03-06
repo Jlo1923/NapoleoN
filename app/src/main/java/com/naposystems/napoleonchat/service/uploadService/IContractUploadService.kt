@@ -1,8 +1,7 @@
 package com.naposystems.napoleonchat.service.uploadService
 
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
-import com.naposystems.napoleonchat.utility.UploadResult
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.vincent.videocompressor.VideoCompressResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -12,14 +11,14 @@ interface IContractUploadService {
 
     interface Repository {
         fun uploadAttachment(
-            attachment: Attachment,
-            message: Message
+            attachmentEntity: AttachmentEntity,
+            messageEntity: MessageEntity
         )
         fun cancelUpload()
-        fun updateAttachment(attachment: Attachment)
-        fun updateMessage(message: Message)
+        fun updateAttachment(attachmentEntity: AttachmentEntity)
+        fun updateMessage(messageEntity: MessageEntity)
         suspend fun compressVideo(
-            attachment: Attachment,
+            attachmentEntity: AttachmentEntity,
             srcFile: File,
             destFile: File,
             job: CoroutineScope

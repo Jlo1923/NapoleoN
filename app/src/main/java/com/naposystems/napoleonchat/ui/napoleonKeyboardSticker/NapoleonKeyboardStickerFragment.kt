@@ -76,6 +76,7 @@ class NapoleonKeyboardStickerFragment : Fragment() {
         val jsonString = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_EMOJIS_KEY)
 
         try {
+
             val moshi = Moshi.Builder().build()
 
             val listType =
@@ -117,7 +118,7 @@ class NapoleonKeyboardStickerFragment : Fragment() {
     private fun inflateHeader(
         storageRef: StorageReference,
         napoleonEmojiRemoteConfigList: List<NapoleonEmojiRemoteConfig>
-    ){
+    ) {
         try {
             val emojisRef = storageRef.child("emojis")
 
@@ -125,14 +126,14 @@ class NapoleonKeyboardStickerFragment : Fragment() {
                 context?.let {
                     val itemStorageRef = emojisRef.child("${napoleonEmoji.type}.png")
 
-                    val layoutInflater = LayoutInflater.from(context!!)
+                    val layoutInflater = LayoutInflater.from(requireContext())
                     val bindingHeaderItem =
                         NapoleonKeyboardStickerHeaderItemBinding.inflate(layoutInflater)
 
                     val file = FileManager.createFile(
                         it,
                         itemStorageRef.name,
-                        Constants.NapoleonCacheDirectories.IMAGES.folder
+                        Constants.CacheDirectories.IMAGES.folder
                     )
 
                     if (!file.exists()) {
@@ -148,7 +149,7 @@ class NapoleonKeyboardStickerFragment : Fragment() {
 
                     val layoutParams = bindingHeaderItem.imageViewProgress.layoutParams
                     layoutParams.apply {
-                        val dp80 = Utils.dpToPx(context!!, 60f)
+                        val dp80 = Utils.dpToPx(requireContext(), 60f)
                         width = dp80
                         height = dp80
                     }

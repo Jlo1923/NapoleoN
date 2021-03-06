@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
 import javax.inject.Inject
 
 class SplashFragment : Fragment() {
@@ -25,7 +26,7 @@ class SplashFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: SplashViewModel by viewModels { viewModelFactory }
-    private val viewModelDefaultPreferences : DefaultPreferencesViewModel by viewModels { viewModelFactory }
+    private val viewModelDefaultPreferences: DefaultPreferencesViewModel by viewModels { viewModelFactory }
     private lateinit var binding: SplashFragmentBinding
 
     //region Variables Access Pin
@@ -84,41 +85,67 @@ class SplashFragment : Fragment() {
         //endregion
 
         viewModel.accountStatus.observe(viewLifecycleOwner, Observer { accountStatus ->
+
+            Timber.d("AccountStatus {$accountStatus}")
+
             when (accountStatus) {
                 Constants.AccountStatus.NO_ACCOUNT.id -> {
+
+                    Timber.d("AccountStatus ToLanding")
+
                     binding.viewWhite.visibility = View.GONE
-                    findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLandingFragment())
+                    findNavController().navigate(
+                        R.id.action_splashFragment_to_landingFragment
+                    )
                     viewModel.doneNavigateToLanding()
                 }
                 Constants.AccountStatus.CODE_VALIDATED.id -> {
+
+                    Timber.d("AccountStatus ToRegister")
+
                     findNavController().navigate(
-                        SplashFragmentDirections.actionSplashFragmentToRegisterFragment()
+                        R.id.action_splashFragment_to_registerFragment
                     )
                     viewModel.doneNavigateToLanding()
                 }
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+
+                    Timber.d("AccountStatus Created")
+
                     when (lockTypeApp) {
                         Constants.LockTypeApp.LOCK_FOR_TIME_REQUEST_PIN.type -> {
+
+                            Timber.d("lockTypeApp LOCK_FOR_TIME_REQUEST_PIN")
+
                             validateTimeLock()
                         }
                         Constants.LockTypeApp.LOCK_APP_FOR_ATTEMPTS.type -> {
+
+                            Timber.d("lockTypeApp LOCK_APP_FOR_ATTEMPTS")
+
                             validateTimeForUnlockApp()
                         }
                         Constants.LockTypeApp.FOREVER_UNLOCK.type -> {
+
+                            Timber.d("lockTypeApp FOREVER_UNLOCK")
+
                             findNavController().navigate(
-                                SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                                R.id.action_splashFragment_to_homeFragment
                             )
                             viewModel.doneNavigateToLanding()
                         }
                     }
                 }
                 Constants.AccountStatus.ACCOUNT_RECOVERED.id -> {
+
+                    Timber.d("lockTypeApp ACCOUNT_RECOVERED")
+
                     viewModel.getUser()
                 }
             }
         })
 
-        viewModel.user.observe(viewLifecycleOwner, Observer { user ->
+        viewModel.userEntity.observe(viewLifecycleOwner, Observer { user ->
             findNavController().navigate(
                 SplashFragmentDirections.actionSplashFragmentToAccessPinFragment(
                     user.nickname,
@@ -140,27 +167,29 @@ class SplashFragment : Fragment() {
     private fun validateTimeForUnlockApp() {
         if (System.currentTimeMillis() >= timeUnlockApp) {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToEnterPinFragment()
+                R.id.action_splashFragment_to_enterPinFragment
             )
         } else {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToUnlockAppTimeFragment()
+                R.id.action_splashFragment_to_unlockAppTimeFragment
             )
         }
     }
 
     private fun validateTimeLock() {
+
         val currentTime = System.currentTimeMillis()
 
         if (currentTime < lockTime && lockStatus == Constants.LockStatus.UNLOCK.state) {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToHomeFragment()
+                R.id.action_splashFragment_to_homeFragment
             )
         } else {
             findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToEnterPinFragment()
+                R.id.action_splashFragment_to_enterPinFragment
             )
         }
+
     }
 
 

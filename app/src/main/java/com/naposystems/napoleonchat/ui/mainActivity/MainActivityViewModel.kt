@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -17,8 +17,8 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     private var callChannel = ""
     private var isVideoCall: Boolean? = null
 
-    private val _user = MutableLiveData<User>()
-    val user: LiveData<User>
+    private val _user = MutableLiveData<UserEntity>()
+    val userEntity: LiveData<UserEntity>
         get() = _user
 
     private val _errorGettingUser = MutableLiveData<Boolean>()
@@ -29,8 +29,8 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
     val accountStatus: LiveData<Int>
         get() = _accountStatus
 
-    private val _contact = MutableLiveData<Contact>()
-    val contact: LiveData<Contact>
+    private val _contact = MutableLiveData<ContactEntity>()
+    val contact: LiveData<ContactEntity>
         get() = _contact
 
     init {

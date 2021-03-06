@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,8 +16,8 @@ class SplashViewModel @Inject constructor(
     val navigateToLanding: LiveData<Boolean>
         get() = _navigateToLanding
 
-    private val _user = MutableLiveData<User>()
-    val user: LiveData<User>
+    private val _user = MutableLiveData<UserEntity>()
+    val userEntity: LiveData<UserEntity>
         get() = _user
 
     private val _typeLock = MutableLiveData<Int>()

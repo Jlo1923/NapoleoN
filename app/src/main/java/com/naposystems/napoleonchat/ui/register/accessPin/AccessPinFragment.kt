@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AccessPinFragmentBinding
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -107,7 +107,7 @@ class AccessPinFragment : Fragment() {
             }
         })
 
-        viewModel.userCreatedSuccessfully.observe(viewLifecycleOwner, Observer {
+        viewModel.userEntityCreatedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 viewModel.createUser(it)
             }

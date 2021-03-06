@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -19,7 +19,7 @@ class ConversationAdapter constructor(
     private val mediaPlayerManager: MediaPlayerManager,
     private var timeFormat: Int?
 ) :
-    ListAdapter<MessageAndAttachment, RecyclerView.ViewHolder>(DiffCallback) {
+    ListAdapter<MessageAttachmentRelation, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         const val IS_UPLOAD = "is_upload"
@@ -55,37 +55,37 @@ class ConversationAdapter constructor(
 
     private var isFirst = false
 
-    object DiffCallback : DiffUtil.ItemCallback<MessageAndAttachment>() {
+    object DiffCallback : DiffUtil.ItemCallback<MessageAttachmentRelation>() {
         override fun areItemsTheSame(
-            oldItem: MessageAndAttachment,
-            newItem: MessageAndAttachment
+            oldItem: MessageAttachmentRelation,
+            newItem: MessageAttachmentRelation
         ): Boolean {
             val hasAttachments: Boolean
-            var oldFirstAttachment: Attachment? = null
-            var newFirstAttachment: Attachment? = null
-            if (oldItem.attachmentList.isNotEmpty() && newItem.attachmentList.isNotEmpty()) {
-                oldFirstAttachment = oldItem.attachmentList.first()
-                newFirstAttachment = newItem.attachmentList.first()
+            var oldFirstAttachmentEntity: AttachmentEntity? = null
+            var newFirstAttachmentEntity: AttachmentEntity? = null
+            if (oldItem.attachmentEntityList.isNotEmpty() && newItem.attachmentEntityList.isNotEmpty()) {
+                oldFirstAttachmentEntity = oldItem.attachmentEntityList.first()
+                newFirstAttachmentEntity = newItem.attachmentEntityList.first()
                 hasAttachments = true
             } else {
                 hasAttachments = false
             }
 
             return if (!hasAttachments) {
-                oldItem.message.id == newItem.message.id &&
-                        oldItem.message.status == newItem.message.status &&
-                        oldItem.message.isSelected == newItem.message.isSelected
+                oldItem.messageEntity.id == newItem.messageEntity.id &&
+                        oldItem.messageEntity.status == newItem.messageEntity.status &&
+                        oldItem.messageEntity.isSelected == newItem.messageEntity.isSelected
             } else {
-                oldItem.message.id == newItem.message.id &&
-                        oldItem.message.status == newItem.message.status &&
-                        oldItem.message.isSelected == newItem.message.isSelected &&
-                        oldFirstAttachment?.status == newFirstAttachment?.status
+                oldItem.messageEntity.id == newItem.messageEntity.id &&
+                        oldItem.messageEntity.status == newItem.messageEntity.status &&
+                        oldItem.messageEntity.isSelected == newItem.messageEntity.isSelected &&
+                        oldFirstAttachmentEntity?.status == newFirstAttachmentEntity?.status
             }
         }
 
         override fun areContentsTheSame(
-            oldItem: MessageAndAttachment,
-            newItem: MessageAndAttachment
+            oldItem: MessageAttachmentRelation,
+            newItem: MessageAttachmentRelation
         ): Boolean {
             return oldItem == newItem
         }
@@ -124,10 +124,10 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setUploadStart(attachment: Attachment) {
+    fun setUploadStart(attachmentEntity: AttachmentEntity) {
         try {
             notifyItemChanged(
-                getPositionByItem(attachment),
+                getPositionByItem(attachmentEntity),
                 Bundle().apply { putBoolean(IS_UPLOAD, true) })
         } catch (e: Exception) {
             Timber.e(e)
@@ -146,12 +146,12 @@ class ConversationAdapter constructor(
     }
 
     fun setCompressProgress(
-        attachment: Attachment,
+        attachmentEntity: AttachmentEntity,
         progress: Float
     ) {
         try {
             notifyItemChanged(
-                getPositionByItem(attachment),
+                getPositionByItem(attachmentEntity),
                 listOf(Bundle().apply { putFloat(COMPRESS_PROGRESS, progress) })
             )
         } catch (e: Exception) {
@@ -160,12 +160,12 @@ class ConversationAdapter constructor(
     }
 
     fun setUploadProgress(
-        attachment: Attachment,
+        attachmentEntity: AttachmentEntity,
         progress: Float
     ) {
         try {
             notifyItemChanged(
-                getPositionByItem(attachment),
+                getPositionByItem(attachmentEntity),
                 Bundle().apply {
                     putFloat(PROGRESS, progress)
                     putBoolean(IS_UPLOAD, true)
@@ -176,10 +176,10 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setUploadComplete(attachment: Attachment) {
+    fun setUploadComplete(attachmentEntity: AttachmentEntity) {
         try {
             notifyItemChanged(
-                getPositionByItem(attachment),
+                getPositionByItem(attachmentEntity),
                 Bundle().apply { putBoolean(UPLOAD_COMPLETE, true) }
             )
         } catch (e: Exception) {
@@ -207,9 +207,9 @@ class ConversationAdapter constructor(
 
                 nextItem.getFirstAttachment()?.let { attachment ->
                     if (attachment.type == Constants.AttachmentType.AUDIO.type &&
-                        nextItem.message.isMine == actualMessageAndAttachment.message.isMine
+                        nextItem.messageEntity.isMine == actualMessageAndAttachment.messageEntity.isMine
                     ) {
-                        if (nextItem.message.isMine == Constants.IsMine.NO.value) {
+                        if (nextItem.messageEntity.isMine == Constants.IsMine.NO.value) {
                             if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status) {
                                 clickListener.scrollToNextAudio(nextPosition)
                             } else {
@@ -239,83 +239,83 @@ class ConversationAdapter constructor(
 
     private fun getPositionByMessageId(id: Int) =
         currentList.indexOfFirst { messageAndAttachment ->
-            messageAndAttachment.message.id == id
+            messageAndAttachment.messageEntity.id == id
         }
 
-    private fun getPositionByItem(attachment: Attachment) =
+    private fun getPositionByItem(attachmentEntity: AttachmentEntity) =
         currentList.indexOfFirst { messageAndAttachment ->
-            if (messageAndAttachment.attachmentList.isNotEmpty()) {
-                messageAndAttachment.attachmentList.first().id == attachment.id
+            if (messageAndAttachment.attachmentEntityList.isNotEmpty()) {
+                messageAndAttachment.attachmentEntityList.first().id == attachmentEntity.id
             } else {
                 false
             }
         }
 
-    fun getMessageAndAttachment(position: Int): MessageAndAttachment? {
+    fun getMessageAndAttachment(position: Int): MessageAttachmentRelation? {
         return getItem(position)
     }
 
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
         conversation?.let {
-            return when (conversation.message.messageType) {
+            return when (conversation.messageEntity.messageType) {
                 Constants.MessageType.MESSAGE.type -> {
-                    if (conversation.attachmentList.isNotEmpty()) {
-                        when (conversation.attachmentList[0].type) {
+                    if (conversation.attachmentEntityList.isNotEmpty()) {
+                        when (conversation.attachmentEntityList[0].type) {
                             Constants.AttachmentType.IMAGE.type -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
                                     TYPE_MY_MESSAGE_IMAGE
                                 else
                                     TYPE_INCOMING_MESSAGE_IMAGE
                             }
                             Constants.AttachmentType.AUDIO.type -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
                                     TYPE_MY_MESSAGE_AUDIO
                                 else
                                     TYPE_INCOMING_MESSAGE_AUDIO
                             }
                             Constants.AttachmentType.VIDEO.type -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
                                     TYPE_MY_MESSAGE_VIDEO
                                 else
                                     TYPE_INCOMING_MESSAGE_VIDEO
                             }
                             Constants.AttachmentType.DOCUMENT.type -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
                                     TYPE_MY_MESSAGE_DOCUMENT
                                 else
                                     TYPE_INCOMING_MESSAGE_DOCUMENT
                             }
                             Constants.AttachmentType.GIF.type -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
                                     TYPE_MY_MESSAGE_GIF
                                 } else {
                                     TYPE_INCOMING_MESSAGE_GIF
                                 }
                             }
                             Constants.AttachmentType.GIF_NN.type -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
                                     TYPE_MY_MESSAGE_GIF_NN
                                 } else {
                                     TYPE_INCOMING_MESSAGE_GIF_NN
                                 }
                             }
                             Constants.AttachmentType.LOCATION.type -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
                                     TYPE_MY_MESSAGE_LOCATION
                                 } else {
                                     TYPE_INCOMING_MESSAGE_LOCATION
                                 }
                             }
                             else -> {
-                                if (conversation.message.isMine == Constants.IsMine.YES.value)
+                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
                                     TYPE_MY_MESSAGE
                                 else
                                     TYPE_INCOMING_MESSAGE
                             }
                         }
                     } else {
-                        if (conversation.message.isMine == Constants.IsMine.YES.value)
+                        if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
                             TYPE_MY_MESSAGE
                         else
                             TYPE_INCOMING_MESSAGE
@@ -326,7 +326,7 @@ class ConversationAdapter constructor(
                 Constants.MessageType.NEW_CONTACT.type -> TYPE_SYSTEM_MESSAGE
                 Constants.MessageType.MESSAGES_GROUP_DATE.type -> TYPE_GROUP_DATE_MESSAGES
                 else -> {
-                    if (conversation.message.isMine == Constants.IsMine.YES.value) {
+                    if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
                         TYPE_MY_MESSAGE
                     } else {
                         TYPE_INCOMING_MESSAGE
@@ -375,7 +375,7 @@ class ConversationAdapter constructor(
                 true
             } else {
                 (position - 1 == itemCount ||
-                        (position - 1 < itemCount && item?.message?.isMine != getItem(position - 1)?.message?.isMine))
+                        (position - 1 < itemCount && item?.messageEntity?.isMine != getItem(position - 1)?.messageEntity?.isMine))
             }
         } catch (e: Exception) {
             Timber.e(e)
@@ -521,16 +521,16 @@ class ConversationAdapter constructor(
     }
 
     interface ClickListener {
-        fun onClick(item: MessageAndAttachment)
-        fun onLongClick(item: Message)
-        fun messageToEliminate(item: MessageAndAttachment)
+        fun onClick(item: MessageAttachmentRelation)
+        fun onLongClick(item: MessageEntity)
+        fun messageToEliminate(item: MessageAttachmentRelation)
         fun errorPlayingAudio()
-        fun onPreviewClick(item: MessageAndAttachment)
-        fun goToQuote(messageAndAttachment: MessageAndAttachment, itemPosition: Int?)
-        fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int?)
-        fun uploadAttachment(attachment: Attachment, message: Message)
-        fun updateAttachmentState(messageAndAttachment: Attachment)
-        fun sendMessageRead(messageAndAttachment: MessageAndAttachment)
+        fun onPreviewClick(item: MessageAttachmentRelation)
+        fun goToQuote(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?)
+        fun downloadAttachment(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?)
+        fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity)
+        fun updateAttachmentState(messageAndAttachmentEntity: AttachmentEntity)
+        fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)
         fun sendMessageRead(
             messageId: Int,
             webId: String,
@@ -538,8 +538,8 @@ class ConversationAdapter constructor(
             position: Int = -1
         )
 
-        fun reSendMessage(message: Message)
+        fun reSendMessage(messageEntity: MessageEntity)
         fun scrollToNextAudio(nextPosition: Int)
-        fun updateMessageState(message: Message)
+        fun updateMessageState(messageEntity: MessageEntity)
     }
 }

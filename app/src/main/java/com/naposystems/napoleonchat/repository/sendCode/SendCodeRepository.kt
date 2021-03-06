@@ -1,14 +1,14 @@
 package com.naposystems.napoleonchat.repository.sendCode
 
-import com.naposystems.napoleonchat.dto.sendCode.SendCode422DTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeErrorDTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeReqDTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeResDTO
 import com.naposystems.napoleonchat.ui.register.sendCode.IContractSendCode
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
 import javax.inject.Inject
@@ -79,11 +79,11 @@ class SendCodeRepository @Inject constructor(
         )
     }
 
-    override fun get422Error(response: Response<SendCodeResDTO>): ArrayList<String> {
-        val adapter = moshi.adapter(SendCode422DTO::class.java)
+    override fun getUnprocessableEntityError(response: Response<SendCodeResDTO>): ArrayList<String> {
+        val adapter = moshi.adapter(SendCodeUnprocessableEntityDTO::class.java)
         val error = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(error!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(error!!)
     }
 
     override fun getDefaultError(response: Response<SendCodeResDTO>): ArrayList<String> {

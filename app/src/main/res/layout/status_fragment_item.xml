@@ -11,7 +11,7 @@
 
         <variable
             name="status"
-            type="com.naposystems.napoleonchat.entity.Status" />
+            type="com.naposystems.napoleonchat.source.local.entity.StatusEntity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

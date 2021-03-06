@@ -1,9 +1,9 @@
 package com.naposystems.napoleonchat.ui.status
 
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.dto.profile.UpdateUserInfoResDTO
-import com.naposystems.napoleonchat.dto.status.UserStatusReqDTO
-import com.naposystems.napoleonchat.entity.Status
+import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoResDTO
+import com.naposystems.napoleonchat.source.remote.dto.status.UserStatusReqDTO
+import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import retrofit2.Response
 
 interface IContractStatus {
@@ -11,15 +11,15 @@ interface IContractStatus {
     interface ViewModel {
         fun getStatus()
         fun updateStatus(textStatus: String)
-        fun insertStatus(listStatus: List<Status>)
-        fun deleteStatus(status : Status)
+        fun insertStatus(listStatusEntities: List<StatusEntity>)
+        fun deleteStatus(statusEntity : StatusEntity)
     }
 
     interface Repository {
-        suspend fun getStatus(): LiveData<MutableList<Status>>
+        suspend fun getStatus(): LiveData<MutableList<StatusEntity>>
         suspend fun updateRemoteStatus(userStatus: UserStatusReqDTO): Response<UpdateUserInfoResDTO>
         suspend fun updateLocalStatus(newStatus: String, firebaseId: String)
-        suspend fun insertNewStatus(listStatus: List<Status>)
-        suspend fun deleteStatus(status : Status)
+        suspend fun insertNewStatus(listStatusEntities: List<StatusEntity>)
+        suspend fun deleteStatus(statusEntity : StatusEntity)
     }
 }

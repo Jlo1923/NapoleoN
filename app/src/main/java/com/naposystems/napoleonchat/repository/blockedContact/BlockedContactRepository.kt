@@ -1,15 +1,17 @@
 package com.naposystems.napoleonchat.repository.blockedContact
 
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.blockedContacts.IContractBlockedContact
+import javax.inject.Inject
 
-class BlockedContactRepository constructor(
-    private val contactLocalDataSource: ContactDataSource
+class BlockedContactRepository
+@Inject constructor(
+    private val contactLocalDataSource: ContactLocalDataSource
 ) : IContractBlockedContact.Repository {
 
-    override suspend fun getBlockedContactsLocal(): LiveData<List<Contact>> {
+    override suspend fun getBlockedContactsLocal(): LiveData<List<ContactEntity>> {
         return contactLocalDataSource.getBlockedContacts()
     }
 

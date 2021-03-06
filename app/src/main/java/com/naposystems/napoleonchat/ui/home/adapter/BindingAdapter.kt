@@ -6,8 +6,8 @@ import android.widget.TextView
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.BindingAdapter
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import timber.log.Timber
@@ -77,13 +77,13 @@ private fun returnHour(format: Int) : SimpleDateFormat {
 }
 
 @BindingAdapter("iconByConversation")
-fun bindIconByConversation(imageView: ImageView, messageAndAttachment: MessageAndAttachment?) {
+fun bindIconByConversation(imageView: ImageView, messageAndAttachmentRelation: MessageAttachmentRelation?) {
     var resourceId: Int?
-    messageAndAttachment?.let { messageAndAttach ->
-        resourceId = when (messageAndAttach.message.messageType) {
+    messageAndAttachmentRelation?.let { messageAndAttach ->
+        resourceId = when (messageAndAttach.messageEntity.messageType) {
             Constants.MessageType.MESSAGE.type -> {
-                if (messageAndAttach.attachmentList.count() > 0) {
-                    when (messageAndAttach.attachmentList.last().type) {
+                if (messageAndAttach.attachmentEntityList.count() > 0) {
+                    when (messageAndAttach.attachmentEntityList.last().type) {
                         Constants.AttachmentType.IMAGE.type -> R.drawable.ic_image
                         Constants.AttachmentType.AUDIO.type -> R.drawable.ic_headset
                         Constants.AttachmentType.VIDEO.type -> R.drawable.ic_video
@@ -113,17 +113,17 @@ fun bindIconByConversation(imageView: ImageView, messageAndAttachment: MessageAn
 }
 
 @BindingAdapter("bodyConversation")
-fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAttachment?) {
+fun bindBodyConversation(textView: TextView, messageAndAttachmentRelation: MessageAttachmentRelation?) {
     val context = textView.context
     var text = ""
-    messageAndAttachment?.let { messageAndAttach ->
-        text = when (messageAndAttach.message.messageType) {
+    messageAndAttachmentRelation?.let { messageAndAttach ->
+        text = when (messageAndAttach.messageEntity.messageType) {
             Constants.MessageType.MESSAGE.type -> {
-                if (messageAndAttach.message.body.count() > 0) {
-                    messageAndAttach.message.body
+                if (messageAndAttach.messageEntity.body.count() > 0) {
+                    messageAndAttach.messageEntity.body
                 } else {
-                    if (messageAndAttach.attachmentList.count() > 0) {
-                        val stringId: Int? = when (messageAndAttach.attachmentList.last().type) {
+                    if (messageAndAttach.attachmentEntityList.count() > 0) {
+                        val stringId: Int? = when (messageAndAttach.attachmentEntityList.last().type) {
                             Constants.AttachmentType.IMAGE.type -> R.string.text_photo
                             Constants.AttachmentType.AUDIO.type -> R.string.text_audio
                             Constants.AttachmentType.VIDEO.type -> R.string.text_video
@@ -153,7 +153,7 @@ fun bindBodyConversation(textView: TextView, messageAndAttachment: MessageAndAtt
         }
 
         textView.text = text
-        when (messageAndAttach.message.messageType) {
+        when (messageAndAttach.messageEntity.messageType) {
             Constants.MessageType.MISSED_CALL.type,
             Constants.MessageType.MISSED_VIDEO_CALL.type,
             Constants.MessageType.NEW_CONTACT.type -> {
@@ -189,14 +189,14 @@ fun bindUnreadMessages(textView: TextView, unreadMessages: Int, typeMessage : In
 }
 
 @BindingAdapter("statusMessage")
-fun bindStatusMessage(imageView: ImageView, message: Message) {
+fun bindStatusMessage(imageView: ImageView, messageEntity: MessageEntity) {
     val context = imageView.context
-    when (message.isMine) {
+    when (messageEntity.isMine) {
         Constants.IsMine.YES.value -> {
-            if (message.messageType != Constants.MessageType.NEW_CONTACT.type) {
+            if (messageEntity.messageType != Constants.MessageType.NEW_CONTACT.type) {
                 imageView.visibility = View.VISIBLE
                 val drawable =
-                    context.resources.getDrawable(drawableId(message.status), context.theme)
+                    context.resources.getDrawable(drawableId(messageEntity.status), context.theme)
                 imageView.setImageDrawable(drawable)
             } else {
                 imageView.visibility = View.GONE

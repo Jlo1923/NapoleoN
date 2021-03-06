@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,7 +15,7 @@ class EditAccessPinViewModel @Inject constructor(
     val oldAccessPin = MutableLiveData<String>()
     val newAccessPin = MutableLiveData<String>()
     val confirmAccessPin = MutableLiveData<String>()
-    private lateinit var user: User
+    private lateinit var userEntity: UserEntity
 
     private val _accessPinUpdatedSuccessfully = MutableLiveData<Boolean>()
     val accessPinUpdatedSuccessfully: LiveData<Boolean>
@@ -32,17 +32,17 @@ class EditAccessPinViewModel @Inject constructor(
     //region Implementation IContractEditAccessPin.ViewModel
     override fun getLocalUser() {
         viewModelScope.launch {
-            user = repository.getLocalUser()
+            userEntity = repository.getLocalUser()
         }
     }
 
     override fun validateAccessPin(newAccessPin: String) =
-        user.accessPin == newAccessPin
+        userEntity.accessPin == newAccessPin
 
     override fun updateAccessPin(newAccessPin: String) {
         viewModelScope.launch {
-            repository.updateAccessPin(newAccessPin, user.firebaseId)
-            user = repository.getLocalUser()
+            repository.updateAccessPin(newAccessPin, userEntity.firebaseId)
+            userEntity = repository.getLocalUser()
             _accessPinUpdatedSuccessfully.value = true
         }
     }

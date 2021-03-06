@@ -16,7 +16,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.RecoveryAccountFragmentBinding
-import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
@@ -71,8 +70,10 @@ class RecoveryAccountFragment : Fragment() {
 
         binding.buttonRecoveryAccount.setOnClickListener {
             Utils.hideKeyboard(binding.textInputEditTextNickname)
-            viewModel.sendNickname(binding.textInputEditTextNickname.text.toString()
-                .toLowerCase(Locale.ROOT))
+            viewModel.sendNickname(
+                binding.textInputEditTextNickname.text.toString()
+                    .toLowerCase(Locale.ROOT)
+            )
             binding.viewSwitcherRecoveryAccount.showNext()
         }
 
@@ -105,25 +106,15 @@ class RecoveryAccountFragment : Fragment() {
 
         viewModel.userType.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                if (it.userType == Constants.UserType.NEW_USER.type) {
+                findNavController().navigate(
+                    RecoveryAccountFragmentDirections
+                        .actionRecoveryAccountFragmentToRecoveryAccountQuestionsFragment(
+                            it,
+                            binding.textInputEditTextNickname.text.toString()
+                                .toLowerCase(Locale.ROOT)
+                        )
+                )
 
-                    findNavController().navigate(
-                        RecoveryAccountFragmentDirections
-                            .actionRecoveryAccountFragmentToRecoveryAccountQuestionsFragment(
-                                it,
-                                binding.textInputEditTextNickname.text.toString()
-                                    .toLowerCase(Locale.ROOT)
-                            )
-                    )
-
-                } else if (it.userType == Constants.UserType.OLD_USER.type) {
-                    findNavController().navigate(
-                        RecoveryAccountFragmentDirections
-                            .actionRecoveryAccountFragmentToValidatePasswordPreviousRecoveryAccountFragment(
-                                binding.textInputEditTextNickname.text.toString()
-                            )
-                    )
-                }
                 viewModel.resetRecoveryQuestions()
             }
         })
@@ -143,7 +134,7 @@ class RecoveryAccountFragment : Fragment() {
 
         viewModel.recoveryQuestionsCreatingError.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar{}
+            snackbarUtils.showSnackbar {}
             binding.viewSwitcherRecoveryAccount.showPrevious()
         })
 

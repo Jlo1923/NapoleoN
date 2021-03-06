@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.repository.enterPin
 
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -9,14 +9,15 @@ import javax.inject.Inject
 
 class EnterPinRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val userLocalDataSource: UserLocalDataSource
+    private val userLocalDataSourceImp: UserLocalDataSourceImp
 ) : IContractEnterPin.Repository {
-    override suspend fun getAccessPin(): User {
-        val firebaseId = sharedPreferencesManager.getString(
-            Constants.SharedPreferences.PREF_FIREBASE_ID,
-            ""
-        )
-        return userLocalDataSource.getUser(firebaseId)
+    override suspend fun getAccessPin(): UserEntity {
+//        val firebaseId = sharedPreferencesManager.getString(
+//            Constants.SharedPreferences.PREF_FIREBASE_ID,
+//            ""
+//        )
+        val user = userLocalDataSourceImp.getMyUser()
+        return user
     }
 
     override suspend fun getAttempts(): Int {

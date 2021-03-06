@@ -1,18 +1,17 @@
 package com.naposystems.napoleonchat.repository.subscription
 
-import com.naposystems.napoleonchat.dto.subscription.*
-import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
+import com.naposystems.napoleonchat.source.remote.dto.subscription.*
 import com.naposystems.napoleonchat.ui.subscription.IContractSubscription
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SubscriptionRepository @Inject constructor(
+class SubscriptionRepository
+@Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) : IContractSubscription.Repository {

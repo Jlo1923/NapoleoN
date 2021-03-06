@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.ui.register.validateNickname
 
-import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameReqDTO
-import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameResDTO
+import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameResDTO
 import retrofit2.Response
 
 interface IContractValidateNickname {

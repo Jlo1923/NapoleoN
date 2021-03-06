@@ -10,8 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AddContactFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.model.FriendShipRequest
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.addContact.adapter.AddContactAdapter
@@ -239,7 +239,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
     private fun setupSearchContactAdapter() {
         adapter = AddContactAdapter(object : AddContactAdapter.ClickListener {
-            override fun onAddClick(contact: Contact) {
+            override fun onAddClick(contact: ContactEntity) {
                 viewModel.sendFriendshipRequest(contact)
             }
         })
