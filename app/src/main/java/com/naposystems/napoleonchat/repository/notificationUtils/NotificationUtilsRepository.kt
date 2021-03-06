@@ -152,6 +152,7 @@ class NotificationUtilsRepository @Inject constructor(
             val json = jsonAdapterValidate.toJson(validateMessage)
 
             socketService.emitToClientConversation(json.toString())
+
         } catch (e: Exception) {
             Timber.e(e)
         }

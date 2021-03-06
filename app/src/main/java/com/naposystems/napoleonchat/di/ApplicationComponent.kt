@@ -28,6 +28,7 @@ import javax.inject.Singleton
         ContextModule::class,
         ServiceModule::class,
         SharedPreferencesModule::class,
+        PusherModule::class,
         SocketModule::class,
         WebRTCClientModule::class,
         CryptoModule::class,

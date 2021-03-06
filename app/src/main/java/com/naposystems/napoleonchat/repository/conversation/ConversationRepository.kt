@@ -7,11 +7,15 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.messageNotSent.MessageNotSentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLocalDataSource
-import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSource
+import com.naposystems.napoleonchat.source.local.entity.*
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessageUnprocessableEntityDTO
@@ -24,18 +28,8 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.Header
 import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.SocketReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageNotSentEntity
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.reactive.RxBus
-import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
-import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.Moshi
@@ -62,7 +56,7 @@ import javax.inject.Inject
 class ConversationRepository @Inject constructor(
     private val context: Context,
     private val socketService: IContractSocketService.SocketService,
-    private val userLocalDataSourceImp: UserLocalDataSourceImp,
+    private val userLocalDataSource: UserLocalDataSource,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val sharedPreferencesManager: SharedPreferencesManager,
@@ -108,7 +102,10 @@ class ConversationRepository @Inject constructor(
         return messageLocalDataSource.getQuoteId(quoteWebId)
     }
 
-    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation> {
+    override fun getLocalMessagesByStatus(
+        contactId: Int,
+        status: Int
+    ): List<MessageAttachmentRelation> {
         return messageLocalDataSource.getLocalMessagesByStatus(contactId, status)
     }
 
@@ -127,7 +124,10 @@ class ConversationRepository @Inject constructor(
             offer(UploadResult.Start(attachmentEntity, this))
 
             val path =
-                File(context.cacheDir!!, FileManager.getSubfolderByAttachmentType(attachmentEntity.type))
+                File(
+                    context.cacheDir!!,
+                    FileManager.getSubfolderByAttachmentType(attachmentEntity.type)
+                )
             if (!path.exists())
                 path.mkdirs()
             val sourceFile = File(path, attachmentEntity.fileName)
@@ -155,7 +155,8 @@ class ConversationRepository @Inject constructor(
                             attachmentEntity.isCompressed = true
                             updateAttachment(attachmentEntity)
 
-                            val requestBodyMessageId = createPartFromString(attachmentEntity.messageWebId)
+                            val requestBodyMessageId =
+                                createPartFromString(attachmentEntity.messageWebId)
                             val requestBodyType = createPartFromString(attachmentEntity.type)
                             val requestBodyDuration =
                                 createPartFromString(attachmentEntity.duration.toString())
@@ -165,7 +166,13 @@ class ConversationRepository @Inject constructor(
                                     attachmentEntity,
                                     this as Job,
                                     progress = { progress ->
-                                        offer(UploadResult.Progress(attachmentEntity, progress, this))
+                                        offer(
+                                            UploadResult.Progress(
+                                                attachmentEntity,
+                                                progress,
+                                                this
+                                            )
+                                        )
                                     }
                                 )
 
@@ -199,7 +206,13 @@ class ConversationRepository @Inject constructor(
                                 offer(UploadResult.Success(attachmentEntity))
                             } else {
                                 setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
-                                offer(UploadResult.Error(attachmentEntity, "Algo ha salido mal", null))
+                                offer(
+                                    UploadResult.Error(
+                                        attachmentEntity,
+                                        "Algo ha salido mal",
+                                        null
+                                    )
+                                )
                             }
                         }
                         is VideoCompressResult.Progress -> {
@@ -233,7 +246,10 @@ class ConversationRepository @Inject constructor(
         FileManager.copyEncryptedFile(context, attachmentEntity)
     }
 
-    private fun setStatusErrorMessageAndAttachment(messageEntity: MessageEntity, attachmentEntity: AttachmentEntity?) {
+    private fun setStatusErrorMessageAndAttachment(
+        messageEntity: MessageEntity,
+        attachmentEntity: AttachmentEntity?
+    ) {
         messageEntity.status = Constants.MessageStatus.ERROR.status
         updateMessage(messageEntity)
         attachmentEntity?.let {
@@ -296,7 +312,7 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun getLocalUser(): UserEntity {
-        return userLocalDataSourceImp.getMyUser()
+        return userLocalDataSource.getMyUser()
     }
 
     override fun insertMessage(messageEntity: MessageEntity): Long {
@@ -377,6 +393,8 @@ class ConversationRepository @Inject constructor(
             if (listIds.isNotEmpty()) {
 
                 try {
+
+                    Timber.d("SocketService: $socketService")
 
                     socketService.emitToClientConversation(json.toString())
 
@@ -761,7 +779,10 @@ class ConversationRepository @Inject constructor(
         }
     }
 
-    override fun updateAttachmentState(messageAndAttachmentRelation: MessageAttachmentRelation, state: Int) {
+    override fun updateAttachmentState(
+        messageAndAttachmentRelation: MessageAttachmentRelation,
+        state: Int
+    ) {
         if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
             val firstAttachment = messageAndAttachmentRelation.attachmentEntityList.first()
             attachmentLocalDataSource.updateAttachmentState(firstAttachment.webId, state)

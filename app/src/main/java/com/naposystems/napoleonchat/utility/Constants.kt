@@ -295,6 +295,21 @@ object Constants {
         NOT_EXISTING(1),
         EXISTING(2)
     }
+
+    enum class EventsSocket(val channel: String) {
+        DISCONNECT("disconnect"),
+        NEW_MESSAGE("App\\Events\\NewMessageEvent"),
+        NOTIFY_MESSAGES_RECEIVED("App\\Events\\NotifyMessagesReceived"),
+        CANCEL_OR_REJECT_FRIENDSHIP_REQUEST("App\\Events\\CancelOrRejectFriendshipRequestEvent"),
+        NOTIFY_MESSAGE_READED("App\\Events\\NotifyMessageReaded"),
+        SEND_MESSAGES_DESTROY("App\\Events\\SendMessagesDestroyEvent"),
+        CALL_FRIEND("App\\Events\\CallFriendEvent"),
+        REJECTED_CALL("App\\Events\\RejectedCallEvent"),
+        CANCEL_CALL("App\\Events\\CancelCallEvent"),
+        BLOCK_OR_DELETE_FRIENDSHIP("App\\Events\\BlockOrDeleteFrienshipEvent"),
+        USER_AVAILABLE_FOR_CALL("App\\Events\\UserAvailableForCallEvent")
+    }
+
     //endregion
 
     //region F
