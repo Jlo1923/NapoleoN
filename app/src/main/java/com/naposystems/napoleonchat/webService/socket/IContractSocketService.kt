@@ -1,5 +1,7 @@
 package com.naposystems.napoleonchat.webService.socket
 
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.pusher.client.channel.PresenceChannel
 import org.json.JSONObject
 
@@ -7,16 +9,14 @@ interface IContractSocketService {
 
     interface SocketService {
 
-        fun connectSocket()
+        fun connectSocket(locationConnectSocket: Boolean)
 
         fun disconnectSocket()
 
         fun connectToSocketReadyForCall(channel: String)
 
         fun subscribeToCallChannel(channel: String, isActionAnswer: Boolean, isVideoCall: Boolean)
-//
-//        fun subscribeToCallChannelFromBackground(channel: String)
-//
+
         fun joinToCall(channel: String)
 
         fun unSubscribeCallChannel(channelName: String)
@@ -26,40 +26,42 @@ interface IContractSocketService {
         fun emitToCall(channel: String, eventType: Int)
 
         fun getPusherChannel(channel: String): PresenceChannel?
-//
+
         fun emitToClientConversation(jsonObject: String)
+
+//        fun subscribeToCallChannelFromBackground(channel: String)
+
+
     }
 
     interface Repository {
 
-        fun getUser(): Int
+        fun getUserId(): Int
 
-//
-//        suspend fun getContacts()
-//
-//        fun getMyMessages(contactId: Int?)
-//
-//        fun deleteContact(contactId: Int?)
-//
-//        fun verifyMessagesReceived()
-//
-//        fun verifyMessagesRead()
-//
-//        fun getDeletedMessages()
-//
-//        fun existIdMessage(id: String): Boolean
-//
-//        fun rejectCall(contactId: Int, channel: String)
-//
+        fun getMyMessages(contactId: Int?)
+
+        fun verifyMessagesReceived()
+
+        fun verifyMessagesRead()
+
+        fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes)
+
+        fun notifyMessageReceived(messageId: String)
+
+        fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
+
+        fun getDeletedMessages()
+
+        fun deleteContact(contactId: Int?)
+
+        fun rejectCall(contactId: Int, channel: String)
+
+        fun existIdMessage(id: String): Boolean
+
+        fun validateMessageType(messagesWebIds: List<String>, state: Int)
+
 //        fun readyForCall(contactId: Int, isVideoCall: Boolean, channelPrivate: String)
-//
-//        fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes)
-//
-//        fun validateMessageType(messagesWebIds: List<String>, state: Int)
-//
-//        fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
-//
-//        fun notifyMessageReceived(messageId: String)
+
     }
 
 }

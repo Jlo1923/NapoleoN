@@ -22,6 +22,7 @@ class PusherModule {
     @Provides
     @Singleton
     fun providePusher(sharedPreferencesManager: SharedPreferencesManager): Pusher {
+
         val pusherOptions = PusherOptions()
 
         val authorizer = HttpAuthorizer(BuildConfig.SOCKET_BASE_URL)

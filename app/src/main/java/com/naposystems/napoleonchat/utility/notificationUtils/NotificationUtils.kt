@@ -440,11 +440,15 @@ class NotificationUtils @Inject constructor(
         context: Context,
         sharedPreferencesManager: SharedPreferencesManager
     ) {
-        Timber.d("handleNotificationType: $notificationType, $data")
+
         when (notificationType) {
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                socketService.connectSocket()
+
+                Timber.d(" Paso 1: handleNotificationType: $notificationType, $data")
+
+                socketService.connectSocket(Constants.LocationConnectSocket.FROM_NOTIFICATION.location)
+
             }
 
             Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
@@ -482,7 +486,7 @@ class NotificationUtils @Inject constructor(
             Constants.NotificationType.INCOMING_CALL.type -> {
                 Timber.d("Incoming call, ${repository.getIsOnCallPref()}")
                 if (!repository.getIsOnCallPref()) {
-                    socketService.connectSocket()
+                    socketService.connectSocket(Constants.LocationConnectSocket.FROM_APP.location)
                     Timber.d("Incoming call 2")
                     var channel = ""
                     var contactId = 0
@@ -532,6 +536,9 @@ class NotificationUtils @Inject constructor(
         builder: Builder,
         context: Context
     ) {
+
+        Timber.d("Paso 2: se va a crear la notifiacion data: $data")
+
         val contact = Constants.NotificationKeys.CONTACT
         repository.getContactSilenced(
             data.getValue(contact).toInt(),
@@ -565,21 +572,23 @@ class NotificationUtils @Inject constructor(
                     Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
 
                     if (data.containsKey(message) && !app.isAppVisible()) {
+
+                        Timber.d("Paso 3: insercion mensaje $data")
+
                         repository.insertMessage(data.getValue(message))
                     }
 
                     if (data.containsKey(messageId) && !app.isAppVisible()) {
+
+                        Timber.d("Paso 9: Notifica recibido $data")
+
                         repository.notifyMessageReceived(data.getValue(messageId))
                     }
 
                     if (!app.isAppVisible()) {
-                        Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
+                        Timber.d("Paso 10: Muestra notificacion")
                         with(NotificationManagerCompat.from(context)) {
-                            //builder.setGroup(GROUP_MESSAGE)
-//                                    notify(data.getValue(contact).toInt(), builder.build())
-//                                    notify(SUMMARY_ID, createSummaryNotification(context))
                             notify(123456, builder.build())
-
                             disposable.clear()
                         }
                     }

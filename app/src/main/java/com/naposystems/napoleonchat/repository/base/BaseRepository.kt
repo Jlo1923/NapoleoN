@@ -25,6 +25,6 @@ class BaseRepository @Inject constructor(
     }
 
     override fun connectSocket() {
-        socketService.connectSocket()
+        socketService.connectSocket(Constants.LocationConnectSocket.FROM_APP.location)
     }
 }

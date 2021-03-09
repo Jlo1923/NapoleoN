@@ -1,27 +1,28 @@
 package com.naposystems.napoleonchat.repository.notificationUtils
 
+//import timber.log.Timber
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSourceImp
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLocalDataSource
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReceivedReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.reactive.RxBus
-import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
-import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -74,14 +75,19 @@ class NotificationUtilsRepository @Inject constructor(
                     }
                 }
             } else {
-                Timber.e(response.errorBody()!!.string())
+//                Timber.e(response.errorBody()!!.string())
             }
         } catch (e: Exception) {
-            Timber.e(e)
+//            Timber.e(e)
         }
     }
 
     override fun insertMessage(messageString: String) {
+
+        Timber.d(
+            "Paso 4: voy a insertar el mensaje $messageString"
+        )
+
         GlobalScope.launch(Dispatchers.IO) {
             val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
                 cryptoMessage.decryptMessageBody(messageString)
@@ -89,48 +95,60 @@ class NotificationUtilsRepository @Inject constructor(
                 messageString
             }
 
+
+            Timber.d("Paso 5: Desencriptar mensaje $messageString")
+
+
             val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                 moshi.adapter(NewMessageEventMessageRes::class.java)
 
-            jsonAdapter.fromJson(newMessageEventMessageResData)?.let { newMessageEventMessageRes ->
-                Timber.d("*MessageDataTest: $newMessageEventMessageRes")
+            jsonAdapter.fromJson(newMessageEventMessageResData)
+                ?.let { newMessageEventMessageRes ->
 
-                if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
-                    getRemoteContact()
-                }
+                    if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                        getRemoteContact()
+                    }
 
-                validateMessageEvent(newMessageEventMessageRes)
+                    validateMessageEvent(newMessageEventMessageRes)
 
-                val databaseMessage =
-                    messageLocalDataSource.getMessageByWebId(newMessageEventMessageRes.id, false)
+                    val databaseMessage =
+                        messageLocalDataSource.getMessageByWebId(
+                            newMessageEventMessageRes.id,
+                            false
+                        )
 
-                if (databaseMessage == null) {
 
-                    val message =
-                        newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+                    Timber.d("Paso 6: Validar WebId ${newMessageEventMessageRes.id}")
+
+                    if (databaseMessage == null) {
+
+                        val message =
+                            newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
 
 //                    if (BuildConfig.ENCRYPT_API) {
 //                        message.encryptBody(cryptoMessage)
 //                    }
 
-                    val messageId =
-                        messageLocalDataSource.insertMessage(message)
-                    Timber.d("Conversation insertó mensajes")
+                        Timber.d("Paso 7: Mensaje No Existia $databaseMessage")
 
-                    if (newMessageEventMessageRes.quoted.isNotEmpty()) {
-                        insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
+                        val messageId =
+                            messageLocalDataSource.insertMessage(message)
+
+                        Timber.d("Paso 8: Aqui inserto eso  $messageId")
+
+                        if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                            insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
+                        }
+
+                        val listAttachments =
+                            NewMessageEventAttachmentRes.toListConversationAttachment(
+                                messageId.toInt(),
+                                newMessageEventMessageRes.attachments
+                            )
+
+                        attachmentLocalDataSource.insertAttachments(listAttachments)
                     }
-
-                    val listAttachments =
-                        NewMessageEventAttachmentRes.toListConversationAttachment(
-                            messageId.toInt(),
-                            newMessageEventMessageRes.attachments
-                        )
-
-                    attachmentLocalDataSource.insertAttachments(listAttachments)
-                    Timber.d("Conversation insertó attachment")
                 }
-            }
         }
     }
 
@@ -154,7 +172,7 @@ class NotificationUtilsRepository @Inject constructor(
             socketService.emitToClientConversation(json.toString())
 
         } catch (e: Exception) {
-            Timber.e(e)
+//            Timber.e(e)
         }
     }
 
@@ -165,7 +183,7 @@ class NotificationUtilsRepository @Inject constructor(
                     val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
                     napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
                 } catch (e: Exception) {
-                    Timber.e(e)
+//                    Timber.e(e)
                 }
             }
         }

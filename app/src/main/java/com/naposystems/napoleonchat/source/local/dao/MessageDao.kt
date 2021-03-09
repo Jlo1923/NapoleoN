@@ -124,7 +124,7 @@ interface MessageDao {
     fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>>
 
     @Insert
-    fun insertMessage(messageEntity: MessageEntity): Long
+    suspend fun insertMessage(messageEntity: MessageEntity): Long
 
     @Insert
     fun insertMessageList(messageEntityList: List<MessageEntity>)

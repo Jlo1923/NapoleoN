@@ -361,6 +361,11 @@ object Constants {
         CALL_ACTIVITY(2)
     }
 
+    enum class LocationConnectSocket(val location: Boolean) {
+        FROM_APP(false),
+        FROM_NOTIFICATION(true)
+    }
+
     enum class LocationEmptyState(val location: Int) {
         WITHOUT_LOCATION(0),
         ADD_CONTACT_FRIENDSHIP_REQUEST(1),
@@ -586,6 +591,10 @@ object Constants {
     //endregion
 
     //region U
+    enum class UserNotExist constructor(val user: Int) {
+        USER_NO_EXIST(-1)
+    }
+
     enum class UserDisplayFormat constructor(val format: Int) {
         NAME_AND_NICKNAME(1),
         ONLY_NAME(2),

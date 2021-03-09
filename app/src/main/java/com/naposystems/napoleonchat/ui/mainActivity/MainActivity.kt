@@ -148,6 +148,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
 
         viewModel.getAccountStatus()
+
         viewModel.accountStatus.observe(this, Observer {
             accountStatus = it
         })

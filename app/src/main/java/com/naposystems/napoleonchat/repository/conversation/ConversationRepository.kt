@@ -315,7 +315,7 @@ class ConversationRepository @Inject constructor(
         return userLocalDataSource.getMyUser()
     }
 
-    override fun insertMessage(messageEntity: MessageEntity): Long {
+    override suspend fun insertMessage(messageEntity: MessageEntity): Long {
         return messageLocalDataSource.insertMessage(messageEntity)
     }
 
