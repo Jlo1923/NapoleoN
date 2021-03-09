@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.naposystems.napoleonchat">
-
-    <!--<uses-feature
+    <!--
+        <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />-->
+        android:required="true" />
+    -->
     <uses-feature
         android:name="android.hardware.camera.any"
         android:required="true" />
@@ -42,9 +43,10 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup"
         tools:targetApi="n">
+        <activity android:name=".ui.multi.MultipleAttachmentsPreviewActivity"></activity>
+        <activity android:name=".ui.multi.MultipleAttachmentActivity" />
 
         <service android:name=".service.webRTCCall.WebRTCCallService" />
-
         <service android:name=".service.uploadService.UploadService" />
 
         <meta-data
@@ -60,7 +62,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.conversationCall.ConversationCallActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -71,14 +72,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.mainActivity.MainActivity" />
-        </activity>
-
-        <!-- uCrop cropping activity -->
+        </activity> <!-- uCrop cropping activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" /> <!-- FIREBASE -->
-        <service android:name=".firebase.NapoleonFirebaseMessagingService"
+        <service
+            android:name=".firebase.NapoleonFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
