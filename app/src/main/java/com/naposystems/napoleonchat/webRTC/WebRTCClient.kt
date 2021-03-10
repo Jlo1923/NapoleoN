@@ -17,12 +17,15 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
-import com.naposystems.napoleonchat.utility.*
-import com.naposystems.napoleonchat.utility.adapters.toJSONObject
 import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.service.socket.SocketService
 import com.naposystems.napoleonchat.service.socket.SocketServiceImp
+import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
+import com.naposystems.napoleonchat.utility.BluetoothStateManager
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
+import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.adapters.toJSONObject
 import com.pusher.client.channel.PresenceChannel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -58,7 +61,7 @@ class WebRTCClient @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long)  = Unit
+            override fun onTick(millisUntilFinished: Long) = Unit
         }
 
     private var countDownEndCallBusy: CountDownTimer =
@@ -69,7 +72,7 @@ class WebRTCClient @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long)  = Unit
+            override fun onTick(millisUntilFinished: Long) = Unit
         }
 
     private var countDownIncomingCall: CountDownTimer =
@@ -533,10 +536,8 @@ class WebRTCClient @Inject constructor(
                             TimeUnit.SECONDS.toMillis(1)
                         )
 
-                        val notificationService = NotificationService(
-                            context.applicationContext,
-                            null
-                        )
+//                        val notificationService = NotificationService()
+                        val notificationService = NotificationService(context.applicationContext)
                         notificationService.updateCallInProgress(channel, contactId, isVideoCall)
 
                         if (!isVideoCall && incomingCall) {

@@ -6,8 +6,7 @@ import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_FIREBASE_ID
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 
-class NapoleonFirebaseMessagingService :
-    FirebaseMessagingService() {
+class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(newToken: String) {
         val sharedPreferencesManager = SharedPreferencesManager(applicationContext)
@@ -15,8 +14,7 @@ class NapoleonFirebaseMessagingService :
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-
-        val notificationService = NotificationService(applicationContext, null)
+        val notificationService = NotificationService(applicationContext)
 
         notificationService.createInformativeNotification(
             applicationContext,

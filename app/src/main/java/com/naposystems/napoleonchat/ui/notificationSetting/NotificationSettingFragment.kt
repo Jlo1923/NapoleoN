@@ -56,7 +56,8 @@ class NotificationSettingFragment : BaseFragment() {
     }
 
     private fun updateSoundChannelMessage() {
-        notificationService = NotificationService(requireContext().applicationContext, null)
+//        notificationService = NotificationService()
+        notificationService = NotificationService(requireContext().applicationContext)
         currentSoundNotificationMessage = notificationService.getChannelSound(
             requireContext(),
             Constants.ChannelType.DEFAULT.type,

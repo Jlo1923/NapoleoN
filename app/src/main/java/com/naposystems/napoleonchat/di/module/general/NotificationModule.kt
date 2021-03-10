@@ -9,9 +9,9 @@ import javax.inject.Singleton
 
 @Module
 abstract class NotificationModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindNotificationService(notificationService: NotificationService): NotificationService
+//
+//    @Binds
+//    @Singleton
+//    abstract fun bindNotificationService(notificationService: NotificationService): NotificationService
 
 }

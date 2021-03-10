@@ -27,5 +27,5 @@ interface SocketService {
 //        fun subscribeToCallChannelFromBackground(channel: String)
 
     fun emitClientConversation(messages: List<ValidateMessage>)
-    fun connectSocket(locationConnectSocket: Boolean, socketCallback: SocketCallback?)
+    fun getSocketId(): String
 }

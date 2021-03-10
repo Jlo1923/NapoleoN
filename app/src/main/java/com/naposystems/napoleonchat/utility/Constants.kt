@@ -501,6 +501,10 @@ object Constants {
         YEARLY("com.naposystems.napoleonchat.yearly")
     }
 
+    enum class SocketIdNotExist constructor(val socket: String) {
+        SOCKET_ID_NO_EXIST("NO_EXIST")
+    }
+
     enum class StateFlag(val state: Int) {
         ON(1),
         OFF(0)

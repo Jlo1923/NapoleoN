@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 33
+        versionCode 35
 
-        versionName "1.1.33.FIX-CONN"
+        versionName "1.1.35.FIX-CONN-AD"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -82,7 +82,7 @@ android {
             buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
             buildConfigField("String", "SOCKET_BASE_URL", "\"https://conn.napoleon-chat.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
-            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_API", "false")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
             buildConfigField("String", "PUSHER_KEY", "\"9f3ae4bc675ddf6190a3\"")
             minifyEnabled false

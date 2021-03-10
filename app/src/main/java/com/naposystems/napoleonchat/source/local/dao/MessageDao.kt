@@ -23,7 +23,7 @@ interface MessageDao {
                 "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} = :contact " +
                 "AND (${DBConstants.Message.COLUMN_TOTAL_SELF_DESTRUCTION_AT} > strftime('%s','now') OR ${DBConstants.Message.COLUMN_TOTAL_SELF_DESTRUCTION_AT} >= 0) " +
-                "ORDER BY ${DBConstants.Message.COLUMN_ID} ASC"
+                "ORDER BY ${DBConstants.Message.COLUMN_CREATED_AT} ASC"
     )
     fun getMessagesAndAttachments(contact: Int): Flow<List<MessageAttachmentRelation>>
 
@@ -101,7 +101,7 @@ interface MessageDao {
         "SELECT * " +
                 "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} = :contactId " +
-                "ORDER BY ${DBConstants.Message.COLUMN_ID} DESC " +
+                "ORDER BY ${DBConstants.Message.COLUMN_CREATED_AT} DESC " +
                 "LIMIT 1"
     )
     suspend fun getLastMessageByContact(contactId: Int): MessageAttachmentRelation

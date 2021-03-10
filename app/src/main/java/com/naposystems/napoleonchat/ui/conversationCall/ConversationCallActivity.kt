@@ -74,7 +74,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
 
-        notificationService = NotificationService(this.applicationContext, null)
+//        notificationService = NotificationService()
+        notificationService = NotificationService(this.applicationContext)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 

@@ -58,7 +58,8 @@ class CustomUserNotificationFragment : BaseFragment() {
             false
         )
 
-        notificationService = NotificationService(requireContext().applicationContext, null)
+//        notificationService = NotificationService()
+        notificationService = NotificationService(requireContext().applicationContext)
 
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)

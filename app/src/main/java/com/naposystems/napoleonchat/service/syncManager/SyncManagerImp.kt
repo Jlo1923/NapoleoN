@@ -23,8 +23,6 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.message.Messa
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -40,6 +38,7 @@ import javax.inject.Inject
 class SyncManagerImp @Inject constructor(
     private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
+//    private val socketService: SocketService,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
@@ -51,6 +50,115 @@ class SyncManagerImp @Inject constructor(
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
     }
+
+    init {
+
+        Timber.d("Pusher: //////////////////////////////////////")
+
+    }
+
+//    override fun getSocketId(): String {
+//        return if (pusher.connection.state == ConnectionState.CONNECTED) {
+//            pusher.connection.socketId
+//        } else {
+//            Constants.SocketIdNotExist.SOCKET_ID_NO_EXIST.socket
+//        }
+//    }
+
+//    override fun getStatusGlobalChannel(): Boolean {
+//        return globalChannel.isSubscribed
+//    }
+//
+//    private fun emitClientConversation(messages: List<ValidateMessage>) {
+//
+//        try {
+//
+//            val validateMessage = ValidateMessageEventDTO(messages)
+//
+//            val adapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
+//
+//            val jsonObject = adapterValidate.toJson(validateMessage)
+//
+//            if (jsonObject.isNotEmpty())
+//                globalChannel.trigger(SocketServiceImp.CLIENT_CONVERSATION_NN, jsonObject)
+//
+//        } catch (e: Exception) {
+//            Timber.e(e)
+//        }
+//
+//    }
+    //region Implementacion Socket Mensajes
+//    override fun connectSocket() {
+//
+//        Timber.d("Instance From Sync: $pusher")
+//
+//        Timber.d("Pusher: *****************")
+//
+//        Timber.d("Pusher: connectSocket: State:${pusher.connection.state}")
+//
+//        if (getUserId() != Constants.UserNotExist.USER_NO_EXIST.user) {
+//
+//            if (pusher.connection.state == ConnectionState.DISCONNECTED ||
+//                pusher.connection.state == ConnectionState.DISCONNECTING
+//            ) {
+//
+//                pusher.connect(object : ConnectionEventListener {
+//
+//                    override fun onConnectionStateChange(change: ConnectionStateChange?) {
+//
+//                        if (change?.currentState == ConnectionState.CONNECTED) {
+//
+//                            pusher.unsubscribe(privateGlobalChannelName)
+//
+//                            subscribeToPrivateGlobalChannel()
+//
+//                        } else
+//                            Timber.d("Pusher: connectSocket: State:${pusher.connection.state}")
+//
+//                    }
+//
+//                    override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+//
+//                        Timber.d("Pusher: connectSocket: onError $message, code: $code")
+//
+//                        pusher.connect()
+//
+//                    }
+//
+//                })
+//            }
+//        }
+//    }
+
+    //region Metodos Privados
+//    private fun subscribeToPrivateGlobalChannel() {
+//
+//        try {
+//            globalChannel = pusher.subscribePrivate(
+//                privateGlobalChannelName,
+//                object : PrivateChannelEventListener {
+//                    override fun onEvent(event: PusherEvent?) {
+//                        Timber.d("Pusher: subscribeToPrivateGlobalChannel: onEvent ${event?.data}")
+//                    }
+//
+//                    override fun onAuthenticationFailure(
+//                        message: String?,
+//                        e: java.lang.Exception?
+//                    ) {
+//                        Timber.d("Pusher: subscribeToPrivateGlobalChannel: onAuthenticationFailure")
+//                    }
+//
+//                    override fun onSubscriptionSucceeded(channelName: String?) {
+//
+//                        Timber.d("Pusher: subscribeToPrivateGlobalChannel: onSubscriptionSucceeded:$channelName")
+//
+//                    }
+//                }
+//            )
+//        } catch (e: Exception) {
+//            Timber.e("Pusher:  subscribeToPrivateGlobalChannel: Exception: $e")
+//        }
+//    }
 
     //region SocketService
     //region Metodos De La Interface
@@ -152,6 +260,83 @@ class SyncManagerImp @Inject constructor(
                     Constants.MessageStatus.READED.status
                 )
             }
+        }
+    }
+
+    //TODO: Estos dos metodos tienen la misma funcion refactorizarlos
+    override fun insertMessage(messageString: String) {
+
+        Timber.d(
+            "Paso 4: voy a insertar el mensaje $messageString"
+        )
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
+                cryptoMessage.decryptMessageBody(messageString)
+            } else {
+                messageString
+            }
+
+
+            Timber.d("Paso 5: Desencriptar mensaje $messageString")
+            try {
+                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
+                    moshi.adapter(NewMessageEventMessageRes::class.java)
+
+                jsonAdapter.fromJson(newMessageEventMessageResData)
+                    ?.let { newMessageEventMessageRes ->
+
+                        if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                            getRemoteContact()
+                        }
+
+//                    validateMessageEvent(newMessageEventMessageRes)
+
+                        val databaseMessage =
+                            messageLocalDataSource.getMessageByWebId(
+                                newMessageEventMessageRes.id,
+                                false
+                            )
+
+
+                        Timber.d("Paso 6: Validar WebId ${newMessageEventMessageRes.id}")
+
+                        if (databaseMessage == null) {
+
+                            val message =
+                                newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+
+//                    if (BuildConfig.ENCRYPT_API) {
+//                        message.encryptBody(cryptoMessage)
+//                    }
+
+                            Timber.d("Paso 7: Mensaje No Existia $databaseMessage")
+
+                            val messageId =
+                                messageLocalDataSource.insertMessage(message)
+
+                            Timber.d("Paso 8: Aqui inserto eso  $messageId")
+
+                            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                                insertQuote_NOTIF(
+                                    newMessageEventMessageRes.quoted,
+                                    messageId.toInt()
+                                )
+                            }
+
+                            val listAttachments =
+                                NewMessageEventAttachmentRes.toListConversationAttachment(
+                                    messageId.toInt(),
+                                    newMessageEventMessageRes.attachments
+                                )
+
+                            attachmentLocalDataSource.insertAttachments(listAttachments)
+                        }
+                    }
+            } catch (e: java.lang.Exception) {
+                Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
+            }
+
         }
     }
 
@@ -283,7 +468,7 @@ class SyncManagerImp @Inject constructor(
             updateMessagesStatus(listWebId, state)
         }
     }
-    //endregion
+//endregion
 
     //region Metodos Privados
     suspend fun getContacts() {
@@ -412,12 +597,12 @@ class SyncManagerImp @Inject constructor(
             }
         }
     }
-    //endregion
-    //endregion
+//endregion
+//endregion
 
-    //region Notification
+//region Notification
 
-    private suspend fun getRemoteContact() {
+    override suspend fun getRemoteContact() {
         try {
             val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
 
@@ -443,115 +628,39 @@ class SyncManagerImp @Inject constructor(
                     }
                 }
             } else {
-//                Timber.e(response.errorBody()!!.string())
+                Timber.e(response.errorBody()!!.string())
             }
         } catch (e: Exception) {
 //            Timber.e(e)
         }
     }
 
-    override fun insertMessage(messageString: String) {
-
-        Timber.d(
-            "Paso 4: voy a insertar el mensaje $messageString"
-        )
-
-        GlobalScope.launch(Dispatchers.IO) {
-            val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
-                cryptoMessage.decryptMessageBody(messageString)
-            } else {
-                messageString
-            }
-
-
-            Timber.d("Paso 5: Desencriptar mensaje $messageString")
-
-
-            val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
-                moshi.adapter(NewMessageEventMessageRes::class.java)
-
-            jsonAdapter.fromJson(newMessageEventMessageResData)
-                ?.let { newMessageEventMessageRes ->
-
-                    if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
-                        getRemoteContact()
-                    }
-
-                    validateMessageEvent(newMessageEventMessageRes)
-
-                    val databaseMessage =
-                        messageLocalDataSource.getMessageByWebId(
-                            newMessageEventMessageRes.id,
-                            false
-                        )
-
-
-                    Timber.d("Paso 6: Validar WebId ${newMessageEventMessageRes.id}")
-
-                    if (databaseMessage == null) {
-
-                        val message =
-                            newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
-
-//                    if (BuildConfig.ENCRYPT_API) {
-//                        message.encryptBody(cryptoMessage)
-//                    }
-
-                        Timber.d("Paso 7: Mensaje No Existia $databaseMessage")
-
-                        val messageId =
-                            messageLocalDataSource.insertMessage(message)
-
-                        Timber.d("Paso 8: Aqui inserto eso  $messageId")
-
-                        if (newMessageEventMessageRes.quoted.isNotEmpty()) {
-                            insertQuote_NOTIF(newMessageEventMessageRes.quoted, messageId.toInt())
-                        }
-
-                        val listAttachments =
-                            NewMessageEventAttachmentRes.toListConversationAttachment(
-                                messageId.toInt(),
-                                newMessageEventMessageRes.attachments
-                            )
-
-                        attachmentLocalDataSource.insertAttachments(listAttachments)
-                    }
-                }
-        }
-    }
-
-    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
-        try {
-            val messages = arrayListOf(
-                ValidateMessage(
-                    id = newMessageDataEventRes.id,
-                    user = newMessageDataEventRes.userAddressee,
-                    status = Constants.MessageEventType.UNREAD.status
-                )
-            )
-
-            val validateMessage = ValidateMessageEventDTO(messages)
-
-            val jsonAdapterValidate =
-                moshi.adapter(ValidateMessageEventDTO::class.java)
-
-            val json = jsonAdapterValidate.toJson(validateMessage)
-
-//            socketServiceImp.emitToClientConversation(json.toString())
-
-        } catch (e: Exception) {
+//
+//    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
+//        try {
+//            val messages = arrayListOf(
+//                ValidateMessage(
+//                    id = newMessageDataEventRes.id,
+//                    user = newMessageDataEventRes.userAddressee,
+//                    status = Constants.MessageEventType.UNREAD.status
+//                )
+//            )
+//
+//            socketService.emitClientConversation(messages)
+//
+//        } catch (e: Exception) {
 //            Timber.e(e)
-        }
-    }
+//        }
+//    }
 
     override fun notifyMessageReceived_NOTIF(messageId: String) {
         GlobalScope.launch {
-                try {
-                    val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
-                    napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
-                } catch (e: Exception) {
+            try {
+                val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
+                napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
+            } catch (e: Exception) {
 //                    Timber.e(e)
-                }
+            }
         }
     }
 
@@ -614,7 +723,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    private suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int) {
+    override suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int) {
         val originalMessage =
             messageLocalDataSource.getMessageByWebId(quoteWebId, false)
 
@@ -639,6 +748,7 @@ class SyncManagerImp @Inject constructor(
             quoteLocalDataSource.insertQuote(quote)
         }
     }
-    //endregion
+
+//endregion
 
 }

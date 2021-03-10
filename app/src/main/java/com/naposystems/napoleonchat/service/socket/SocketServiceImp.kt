@@ -92,10 +92,6 @@ class SocketServiceImp @Inject constructor(
 
     //region Implementacion Socket Mensajes
     override fun connectSocket(locationConnectSocket: Boolean) {
-        connectSocket(locationConnectSocket, null)
-    }
-
-    override fun connectSocket(locationConnectSocket: Boolean, socketCallback: SocketCallback?) {
 
         this.locationConnectSocket = locationConnectSocket
 
@@ -174,6 +170,13 @@ class SocketServiceImp @Inject constructor(
             Timber.e(e)
         }
 
+    }
+
+    override fun getSocketId(): String {
+        return if (pusher.connection.state == ConnectionState.CONNECTED)
+            pusher.connection.socketId
+        else
+            Constants.SocketIdNotExist.SOCKET_ID_NO_EXIST.socket
     }
 
     //endregion
@@ -332,7 +335,9 @@ class SocketServiceImp @Inject constructor(
 
                             if (locationConnectSocket == Constants.LocationConnectSocket.FROM_NOTIFICATION.location) {
 
-//                                RxBus.publish(RxEvent.CreateNotification())
+                                Timber.d("RXBUS PUBLICADOR")
+
+                                RxBus.publish(RxEvent.CreateNotification())
 
                             } else if (locationConnectSocket == Constants.LocationConnectSocket.FROM_APP.location) {
                                 listenValidateConversationEvent()

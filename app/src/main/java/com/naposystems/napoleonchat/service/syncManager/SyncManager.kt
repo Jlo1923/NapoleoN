@@ -1,11 +1,20 @@
 package com.naposystems.napoleonchat.service.syncManager
 
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
 
 interface SyncManager {
 
+//    fun connectSocket()
+//
+//    fun getSocketId(): String
+
+//    fun getStatusGlobalChannel(): Boolean
+
     //region SocketService
+
     fun getUserId(): Int
 
     fun getMyMessages(contactId: Int?)
@@ -48,4 +57,7 @@ interface SyncManager {
     //endegion
 
 
+    suspend fun getRemoteContact()
+    suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int)
+//    fun insertAttachments(listAttachments: List<AttachmentEntity>)
 }

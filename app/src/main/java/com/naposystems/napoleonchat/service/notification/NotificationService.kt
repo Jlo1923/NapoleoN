@@ -17,31 +17,41 @@ import android.provider.Settings
 import androidx.core.app.NotificationCompat.*
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.socket.SocketCallback
 import com.naposystems.napoleonchat.service.socket.SocketService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import dagger.android.support.DaggerApplication
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 class NotificationService @Inject constructor(
-    private val applicationContext: Context,
-    val socketCallback: SocketCallback
-)  {
+    private val applicationContext: Context
+) {
+
+
+    var arrayId: MutableList<String> = mutableListOf()
 
     companion object {
         const val NOTIFICATION_RINGING = 950707
@@ -54,11 +64,18 @@ class NotificationService @Inject constructor(
         val mediaPlayer: MediaPlayer = MediaPlayer()
     }
 
-    @Inject
-    lateinit var socketService: SocketService
+    private val moshi: Moshi by lazy {
+        Moshi.Builder().build()
+    }
 
     @Inject
     lateinit var syncManager: SyncManager
+
+    @Inject
+    lateinit var cryptoMessage: CryptoMessage
+
+    @Inject
+    lateinit var socketService: SocketService
 
     private val app: NapoleonApplication by lazy {
         applicationContext as NapoleonApplication
@@ -465,14 +482,17 @@ class NotificationService @Inject constructor(
         builder: Builder,
         context: Context
     ) {
-        val disposableNotification = RxBus.listen(RxEvent.CreateNotification::class.java)
+        val disposableNotification = RxBus
+            .listen(RxEvent.CreateNotification::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                Timber.d("RXBUS ESCUCHADOR")
+                Timber.d("DATAAAAA: $data")
+                Timber.d("DATAAAAA Array: $arrayId")
                 createEncryptMessage(data, builder, context)
             }
 
         disposable.add(disposableNotification)
-
 
     }
 
@@ -521,6 +541,8 @@ class NotificationService @Inject constructor(
                         Timber.d("Paso 3: insercion mensaje $data")
 
                         syncManager.insertMessage(data.getValue(message))
+
+                        validateMessageEvent(data.getValue(message))
                     }
 
                     if (data.containsKey(messageId) && !app.isAppVisible()) {
@@ -541,6 +563,56 @@ class NotificationService @Inject constructor(
             })
     }
 
+    private fun validateMessageEvent(messageString: String) {
+
+        Timber.d(
+            "Paso 4: voy a insertar el mensaje $messageString"
+        )
+
+        GlobalScope.launch(Dispatchers.IO) {
+            var newMessageEventMessageResData: String = messageString
+
+            if (BuildConfig.ENCRYPT_API) {
+                try {
+                    newMessageEventMessageResData = cryptoMessage.decryptMessageBody(messageString)
+                } catch (e: java.lang.Exception) {
+                    Timber.e(messageString)
+                }
+            }
+
+            Timber.d("Paso 5: Desencriptar mensaje $messageString")
+
+            try {
+
+                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
+                    moshi.adapter(NewMessageEventMessageRes::class.java)
+
+                jsonAdapter.fromJson(newMessageEventMessageResData)
+                    ?.let { newMessageEventMessageRes ->
+
+                        try {
+                            val messages = arrayListOf(
+                                ValidateMessage(
+                                    id = newMessageEventMessageRes.id,
+                                    user = newMessageEventMessageRes.userAddressee,
+                                    status = Constants.MessageEventType.UNREAD.status
+                                )
+                            )
+
+                            socketService.emitClientConversation(messages)
+
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
+                    }
+            } catch (e: java.lang.Exception) {
+                Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
+            }
+
+
+        }
+
+    }
     //endregion
 
     //region Upload
@@ -695,10 +767,10 @@ class NotificationService @Inject constructor(
                 notificationType
             )
         val pendingIntent = pair.first
+
         notificationType = pair.second
 
         Timber.d("*TestNotification: Data -> $data")
-//        val channelId = getChannelType(context, notificationType, data.getValue("contact").toInt())
         val channelId = if (data.containsKey("contact")) {
             getChannelType(context, notificationType, data.getValue("contact").toInt())
         } else {
@@ -722,6 +794,14 @@ class NotificationService @Inject constructor(
             .setVisibility(VISIBILITY_PUBLIC)
             .setBadgeIconType(BADGE_ICON_SMALL)
             .setAutoCancel(true)
+
+        Timber.d("DATAAAAA: $data")
+
+        data["message_id"]?.let {
+//            if (!arrayId.contains(it))
+            Timber.d("MENSAJE ID $it")
+            arrayId.add(it)
+        }
 
         if (notificationType == Constants.NotificationType.ENCRYPTED_MESSAGE.type) {
             builder.setNumber(notificationCount)
@@ -748,10 +828,16 @@ class NotificationService @Inject constructor(
         when (notificationType) {
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
+
                 if (!app.isAppVisible()) {
+
                     Timber.d(" Paso 1: handleNotificationType: $notificationType, $data")
 
-                    socketService.connectSocket(Constants.LocationConnectSocket.FROM_NOTIFICATION.location)
+                    GlobalScope.launch {
+                        if (socketService.getSocketId() == Constants.SocketIdNotExist.SOCKET_ID_NO_EXIST.socket) {
+                            socketService.connectSocket(Constants.LocationConnectSocket.FROM_NOTIFICATION.location)
+                        }
+                    }
                 }
             }
 
@@ -1086,9 +1172,6 @@ class NotificationService @Inject constructor(
             .build()
     }
 
-    override fun subSuccess() {
-        Timber.d("EXITO")
-    }
 
     /*fun getNotificationId(context: Context, type: Int): Int {
         return if (callActivityRestricted(context) && type == Constants.NotificationType.INCOMING_CALL.type) {

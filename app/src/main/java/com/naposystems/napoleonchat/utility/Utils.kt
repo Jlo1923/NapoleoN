@@ -688,7 +688,8 @@ class Utils {
             oldNick: String,
             newNick: String
         ) {
-            val notificationUtils = NotificationService(context.applicationContext, null)
+//            val notificationUtils = NotificationService()
+            val notificationUtils = NotificationService(context.applicationContext)
             val uri = notificationUtils.getChannelSound(
                 context,
                 Constants.ChannelType.CUSTOM.type,
@@ -714,7 +715,8 @@ class Utils {
             contactId: Int? = null,
             contactNick: String? = null
         ) {
-            val notificationUtils = NotificationService(context.applicationContext, null)
+//            val notificationUtils = NotificationService()
+            val notificationUtils = NotificationService(context.applicationContext)
 
             notificationUtils.updateChannel(context, uri, channelType, contactId, contactNick)
         }
@@ -726,7 +728,8 @@ class Utils {
             notificationId: String? = null
         ) {
             Timber.d("*TestDelete: id $contactId, nick $oldNick")
-            val notificationUtils = NotificationService(context.applicationContext, null)
+//            val notificationUtils = NotificationService()
+            val notificationUtils = NotificationService(context.applicationContext)
             val channelId = if (notificationId != null) {
                 Timber.d("*TestDelete: exist Channel $notificationId")
                 context.getString(R.string.notification_custom_channel_id, oldNick, notificationId)

@@ -188,7 +188,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
                     Timber.d("startCallActivity MainActivity")
-                    val notificationService = NotificationService(this.applicationContext, null)
+//                    val notificationService = NotificationService()
+                    val notificationService = NotificationService(this.applicationContext)
                     notificationService.startWebRTCCallService(
                         it.channel,
                         it.isVideoCall,
