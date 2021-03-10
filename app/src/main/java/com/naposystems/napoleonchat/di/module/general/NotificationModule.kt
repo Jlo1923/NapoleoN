@@ -8,10 +8,10 @@ import dagger.Module
 import javax.inject.Singleton
 
 @Module
-abstract class SocketModule {
+abstract class NotificationModule {
 
     @Binds
     @Singleton
-    abstract fun bindSocketService(socketServiceImp: SocketServiceImp): SocketService
+    abstract fun bindNotificationService(notificationService: NotificationService): NotificationService
 
 }

@@ -43,7 +43,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -688,7 +688,7 @@ class Utils {
             oldNick: String,
             newNick: String
         ) {
-            val notificationUtils = NotificationUtils(context.applicationContext)
+            val notificationUtils = NotificationService(context.applicationContext, null)
             val uri = notificationUtils.getChannelSound(
                 context,
                 Constants.ChannelType.CUSTOM.type,
@@ -714,7 +714,7 @@ class Utils {
             contactId: Int? = null,
             contactNick: String? = null
         ) {
-            val notificationUtils = NotificationUtils(context.applicationContext)
+            val notificationUtils = NotificationService(context.applicationContext, null)
 
             notificationUtils.updateChannel(context, uri, channelType, contactId, contactNick)
         }
@@ -726,7 +726,7 @@ class Utils {
             notificationId: String? = null
         ) {
             Timber.d("*TestDelete: id $contactId, nick $oldNick")
-            val notificationUtils = NotificationUtils(context.applicationContext)
+            val notificationUtils = NotificationService(context.applicationContext, null)
             val channelId = if (notificationId != null) {
                 Timber.d("*TestDelete: exist Channel $notificationId")
                 context.getString(R.string.notification_custom_channel_id, oldNick, notificationId)

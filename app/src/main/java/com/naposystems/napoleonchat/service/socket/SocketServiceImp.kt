@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.webService.socket
+package com.naposystems.napoleonchat.service.socket
 
 import android.content.Context
 import android.content.Intent
@@ -8,6 +8,8 @@ import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
@@ -19,7 +21,6 @@ import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.Valid
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.pusher.client.Pusher
 import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionEventListener
@@ -31,13 +32,13 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
-class SocketService @Inject constructor(
+class SocketServiceImp @Inject constructor(
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val repository: IContractSocketService.Repository,
+    private val syncManager: SyncManager,
     private val cryptoMessage: CryptoMessage
-) : IContractSocketService.SocketService {
+) : SocketService {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -47,7 +48,7 @@ class SocketService @Inject constructor(
         context as NapoleonApplication
     }
 
-    private var userId = repository.getUserId()
+    private var userId = syncManager.getUserId()
 
     private var privateGeneralChannelName: String
 
@@ -91,6 +92,10 @@ class SocketService @Inject constructor(
 
     //region Implementacion Socket Mensajes
     override fun connectSocket(locationConnectSocket: Boolean) {
+        connectSocket(locationConnectSocket, null)
+    }
+
+    override fun connectSocket(locationConnectSocket: Boolean, socketCallback: SocketCallback?) {
 
         this.locationConnectSocket = locationConnectSocket
 
@@ -124,7 +129,10 @@ class SocketService @Inject constructor(
                     }
 
                 })
-            } else if (pusher.connection.state == ConnectionState.CONNECTED && locationConnectSocket == Constants.LocationConnectSocket.FROM_NOTIFICATION.location) {
+            } else if (pusher.connection.state == ConnectionState.CONNECTED &&
+                locationConnectSocket == Constants.LocationConnectSocket.FROM_NOTIFICATION.location &&
+                !app.isAppVisible()
+            ) {
                 subscribeChannels()
             }
         }
@@ -145,16 +153,29 @@ class SocketService @Inject constructor(
         }
     }
 
-    //TODO: Este metodo podria fusionarse con emmitReceived
-    override fun emitToClientConversation(jsonObject: String) {
-        Timber.d("SocketService: $this")
+    private fun emitClientConversation(messages: ValidateMessage) {
+        emitClientConversation(arrayListOf(messages))
+    }
+
+    override fun emitClientConversation(messages: List<ValidateMessage>) {
+
         try {
+
+            val validateMessage = ValidateMessageEventDTO(messages)
+
+            val adapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
+
+            val jsonObject = adapterValidate.toJson(validateMessage)
+
             if (jsonObject.isNotEmpty())
                 globalChannel.trigger(CLIENT_CONVERSATION_NN, jsonObject)
+
         } catch (e: Exception) {
             Timber.e(e)
         }
+
     }
+
     //endregion
 
     //region Metodos Privados
@@ -170,15 +191,13 @@ class SocketService @Inject constructor(
 
             Timber.d("Pusher: State:${pusher.connection.state}, SocketId:${pusher.connection.socketId}")
 
-            if (locationConnectSocket == Constants.LocationConnectSocket.FROM_APP.location) {
-
-                pusher.unsubscribe(privateGeneralChannelName)
-
-                subscribeToPrivateGeneralChannel()
-
-            }
+            pusher.unsubscribe(privateGeneralChannelName)
 
             pusher.unsubscribe(privateGlobalChannelName)
+
+            if (locationConnectSocket == Constants.LocationConnectSocket.FROM_APP.location) {
+                subscribeToPrivateGeneralChannel()
+            }
 
             subscribeToPrivateGlobalChannel()
 
@@ -227,16 +246,8 @@ class SocketService @Inject constructor(
 
                         override fun onSubscriptionSucceeded(channelName: String?) {
 
-                            Timber.d("Pusher: subscribeToPrivateGeneralChannel: onSubscriptionSucceeded: $channelName")
+                            Timber.d("Pusher: subscribeToPrivateGeneralChannel: fromApp onSubscriptionSucceeded: $channelName")
 
-                            Timber.d("Pusher: subscribeToPrivateGeneralChannel: fromApp")
-
-                            Timber.d("onSubscriptionSucceeded: $channelName")
-
-//                            if (!Data.isGeneralChannelSubscribed) {
-//
-//                                Data.isGeneralChannelSubscribed = true
-//
                             //Metodos Generales
                             listenOnDisconnect(generalChannel)
 
@@ -259,17 +270,15 @@ class SocketService @Inject constructor(
 
                             listenIncomingCall(generalChannel)
 
-                            listenCallRejected(generalChannel)
+                            listenRejectedCall(generalChannel)
 
                             listenCancelCall(generalChannel)
 
-//                            }
+                            syncManager.getMyMessages(null)
 
-                            repository.getMyMessages(null)
+                            syncManager.verifyMessagesReceived()
 
-                            repository.verifyMessagesReceived()
-
-                            repository.verifyMessagesRead()
+                            syncManager.verifyMessagesRead()
 
                         }
 
@@ -283,10 +292,8 @@ class SocketService @Inject constructor(
 
     private fun subscribeToPrivateGlobalChannel() {
 
-        Timber.d("Pusher: subscribeToPrivateGlobalChannel: instance:$this")
-
         Timber.d(
-            "Pusher: subscribeToPrivateGlobalChannel: privateGlobalChannelName: ${
+            "Pusher: subscribeToPrivateGlobalChannel: instance:$this privateGlobalChannelName: ${
                 pusher.getPrivateChannel(
                     privateGlobalChannelName
                 )
@@ -324,7 +331,9 @@ class SocketService @Inject constructor(
                             Timber.d("Pusher: subscribeToPrivateGlobalChannel: onSubscriptionSucceeded:$channelName")
 
                             if (locationConnectSocket == Constants.LocationConnectSocket.FROM_NOTIFICATION.location) {
-                                RxBus.publish(RxEvent.CreateNotification())
+
+//                                RxBus.publish(RxEvent.CreateNotification())
+
                             } else if (locationConnectSocket == Constants.LocationConnectSocket.FROM_APP.location) {
                                 listenValidateConversationEvent()
                             }
@@ -350,21 +359,6 @@ class SocketService @Inject constructor(
         return attachment != null
 
     }
-
-    private fun emmitReceived(messages: ValidateMessage) {
-
-        val validateMessage = ValidateMessageEventDTO(arrayListOf(messages))
-
-        val jsonAdapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
-
-        val json = jsonAdapterValidate.toJson(validateMessage)
-
-        globalChannel.trigger(
-            CLIENT_CONVERSATION_NN,
-            json.toString()
-        )
-    }
-
 
     fun subscribeToCallChannelUserAvailableForCall(channel: String) {
 
@@ -413,6 +407,9 @@ class SocketService @Inject constructor(
 
     //region Metodos Generales
     private fun listenOnDisconnect(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.DISCONNECT.channel)
+
         privateChannel.bind(
             Constants.EventsSocket.DISCONNECT.channel,
             object : PrivateChannelEventListener {
@@ -431,6 +428,9 @@ class SocketService @Inject constructor(
 
     //region Metodos de Mensajes
     private fun listenNewMessage(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.NEW_MESSAGE.channel)
+
         privateChannel.bind(Constants.EventsSocket.NEW_MESSAGE.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
@@ -459,7 +459,7 @@ class SocketService @Inject constructor(
                                             status = Constants.MessageEventType.UNREAD.status
                                         )
 
-                                    repository.insertNewMessage(newMessageDataEventRes)
+                                    syncManager.insertNewMessage(newMessageDataEventRes)
 
                                     val data: String = if (BuildConfig.ENCRYPT_API) {
                                         cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
@@ -477,12 +477,18 @@ class SocketService @Inject constructor(
                                                 if ((availableToReceived(newMessageEventMessageRes.attachments) && Data.contactId == newMessageEventMessageRes.userAddressee) ||
                                                     Data.contactId == 0
                                                 ) {
-                                                    repository.notifyMessageReceived(message.id)
-                                                    emmitReceived(message)
+
+                                                    syncManager.notifyMessageReceived(message.id)
+
+                                                    emitClientConversation(message)
+
                                                 }
                                             } else if (Data.contactId != newMessageEventMessageRes.userAddressee) {
-                                                repository.notifyMessageReceived(message.id)
-                                                emmitReceived(message)
+
+                                                syncManager.notifyMessageReceived(message.id)
+
+                                                emitClientConversation(message)
+
                                             }
                                         }
                                 }
@@ -504,6 +510,9 @@ class SocketService @Inject constructor(
     }
 
     private fun listenNotifyMessagesReceived(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.NOTIFY_MESSAGES_RECEIVED.channel)
+
         privateChannel.bind(Constants.EventsSocket.NOTIFY_MESSAGES_RECEIVED.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
@@ -518,7 +527,7 @@ class SocketService @Inject constructor(
 
                             Timber.d(messagesReceivedDTO.data.messageIds.toString())
 
-                            repository.updateMessagesStatus(
+                            syncManager.updateMessagesStatus(
                                 messagesReceivedDTO.data.messageIds,
                                 Constants.MessageStatus.UNREAD.status
                             )
@@ -536,6 +545,9 @@ class SocketService @Inject constructor(
     }
 
     private fun listenNotifyMessagesRead(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.NOTIFY_MESSAGE_READED.channel)
+
         privateChannel.bind(Constants.EventsSocket.NOTIFY_MESSAGE_READED.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
@@ -551,14 +563,14 @@ class SocketService @Inject constructor(
 
                             Timber.d(messagesReadedDTO.data.messageIds.toString())
 
-                            repository.updateMessagesStatus(
+                            syncManager.updateMessagesStatus(
                                 messagesReadedDTO.data.messageIds,
                                 Constants.MessageStatus.READED.status
                             )
                         }
                     }
 
-                    repository.verifyMessagesRead()
+                    syncManager.verifyMessagesRead()
                 }
 
                 override fun onAuthenticationFailure(
@@ -571,11 +583,14 @@ class SocketService @Inject constructor(
     }
 
     private fun listenSendMessagesDestroy(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.SEND_MESSAGES_DESTROY.channel)
+
         privateChannel.bind(Constants.EventsSocket.SEND_MESSAGES_DESTROY.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
                     Timber.d("SendMessagesDestroyEvent: ${event?.data}")
-                    repository.getDeletedMessages()
+                    syncManager.getDeletedMessages()
                 }
 
                 override fun onAuthenticationFailure(
@@ -588,6 +603,9 @@ class SocketService @Inject constructor(
     }
 
     private fun listenValidateConversationEvent() {
+
+        unbindChannel(globalChannel, CLIENT_CONVERSATION_NN)
+
         globalChannel.bind(
             CLIENT_CONVERSATION_NN,
             object : PrivateChannelEventListener {
@@ -604,14 +622,14 @@ class SocketService @Inject constructor(
 
                             val messages = dataEvent?.messages?.filter {
                                 it.user == userId
-                            }?.filter { repository.existIdMessage(it.id) }
+                            }?.filter { syncManager.existIdMessage(it.id) }
 
                             val unread = messages?.filter {
                                 it.status == Constants.MessageEventType.UNREAD.status
                             }?.map { it.id }
 
                             unread?.let {
-                                repository.updateMessagesStatus(
+                                syncManager.updateMessagesStatus(
                                     it,
                                     Constants.MessageStatus.UNREAD.status
                                 )
@@ -622,7 +640,7 @@ class SocketService @Inject constructor(
                             }?.map { it.id }
 
                             read?.let {
-                                repository.validateMessageType(
+                                syncManager.validateMessageType(
                                     it,
                                     Constants.MessageStatus.READED.status
                                 )
@@ -646,6 +664,12 @@ class SocketService @Inject constructor(
 
     //region Metodos de Contactos
     private fun listenCancelOrRejectFriendshipRequest(privateChannel: PrivateChannel) {
+
+        unbindChannel(
+            privateChannel,
+            Constants.EventsSocket.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.channel
+        )
+
         privateChannel.bind(Constants.EventsSocket.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
@@ -664,6 +688,9 @@ class SocketService @Inject constructor(
     }
 
     private fun listenBLockOrDeleteFriendship(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.BLOCK_OR_DELETE_FRIENDSHIP.channel)
+
         privateChannel.bind(Constants.EventsSocket.BLOCK_OR_DELETE_FRIENDSHIP.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent) {
@@ -673,7 +700,7 @@ class SocketService @Inject constructor(
                         jsonObject.getJSONObject("data").let { jsonData ->
                             if (jsonData.has("contact_id")) {
                                 jsonData.getInt("contact_id").let { contactId ->
-                                    repository.deleteContact(contactId)
+                                    syncManager.deleteContact(contactId)
                                     RxBus.publish(
                                         RxEvent.ContactBlockOrDelete(
                                             jsonData.getInt("contact_id")
@@ -701,6 +728,9 @@ class SocketService @Inject constructor(
     //region Metodos de Llamadas
 
     private fun listenUserAvailableForCall(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.USER_AVAILABLE_FOR_CALL.channel)
+
         privateChannel.bind(Constants.EventsSocket.USER_AVAILABLE_FOR_CALL.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent) {
@@ -736,6 +766,9 @@ class SocketService @Inject constructor(
     }
 
     private fun listenIncomingCall(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.CALL_FRIEND.channel)
+
         privateChannel.bind(Constants.EventsSocket.CALL_FRIEND.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent) {
@@ -756,7 +789,7 @@ class SocketService @Inject constructor(
                             Timber.d("IsOnCall: $isOnCallPref")
 
                             if (isOnCallPref) {
-                                repository.rejectCall(
+                                syncManager.rejectCall(
                                     incomingCall.data.contactId,
                                     channel
                                 )
@@ -790,7 +823,10 @@ class SocketService @Inject constructor(
             })
     }
 
-    private fun listenCallRejected(privateChannel: PrivateChannel) {
+    private fun listenRejectedCall(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.REJECTED_CALL.channel)
+
         privateChannel.bind(Constants.EventsSocket.REJECTED_CALL.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent) {
@@ -808,10 +844,13 @@ class SocketService @Inject constructor(
     }
 
     private fun listenCancelCall(privateChannel: PrivateChannel) {
+
+        unbindChannel(privateChannel, Constants.EventsSocket.CANCEL_CALL.channel)
+
         privateChannel.bind(Constants.EventsSocket.CANCEL_CALL.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent) {
-                    Timber.d("CancelCallEvent: ${event.data}, notificationId: ${NotificationUtils.NOTIFICATION_RINGING}")
+                    Timber.d("CancelCallEvent: ${event.data}, notificationId: ${NotificationService.NOTIFICATION_RINGING}")
                     val jsonObject = JSONObject(event.data)
                     if (jsonObject.has("data")) {
                         val jsonData = jsonObject.getJSONObject("data")
@@ -835,9 +874,15 @@ class SocketService @Inject constructor(
     }
     //endregion
 
+
+    private fun unbindChannel(privateChannel: PrivateChannel, channelName: String) {
+        privateChannel.unbind(channelName, SubscriptionEventListener { })
+
+    }
+
     //endregion
 
-//region Llamadas
+    //region Llamadas
 
     //region Metodos de la interfaz
     override fun getPusherChannel(channel: String): PresenceChannel? =

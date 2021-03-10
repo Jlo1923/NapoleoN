@@ -28,7 +28,6 @@ import com.naposystems.napoleonchat.repository.logout.LogoutRepository
 import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import com.naposystems.napoleonchat.repository.napoleonKeyboardGif.NapoleonKeyboardGifRepository
 import com.naposystems.napoleonchat.repository.notificationSettings.NotificationSettingRepository
-import com.naposystems.napoleonchat.repository.notificationUtils.NotificationUtilsRepository
 import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepository
 import com.naposystems.napoleonchat.repository.previewMedia.PreviewMediaRepository
 import com.naposystems.napoleonchat.repository.profile.ProfileRepository
@@ -40,7 +39,6 @@ import com.naposystems.napoleonchat.repository.securitySettings.SecuritySettings
 import com.naposystems.napoleonchat.repository.selfDestructTime.SelfDestructTimeRepository
 import com.naposystems.napoleonchat.repository.selfDestructTimeMessageNotSent.SelfDestructTimeMessageNotSentRepository
 import com.naposystems.napoleonchat.repository.sendCode.SendCodeRepository
-import com.naposystems.napoleonchat.repository.socket.SocketRepository
 import com.naposystems.napoleonchat.repository.splash.SplashRepository
 import com.naposystems.napoleonchat.repository.status.StatusRepository
 import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepository
@@ -99,12 +97,9 @@ import com.naposystems.napoleonchat.ui.timeAccessPin.IContractTimeAccessPin
 import com.naposystems.napoleonchat.ui.timeFormat.IContractTimeFormat
 import com.naposystems.napoleonchat.ui.unlockAppTime.IContractUnlockAppTime
 import com.naposystems.napoleonchat.ui.userDisplayFormat.IContractUserDisplayFormat
-import com.naposystems.napoleonchat.utility.notificationUtils.IContractNotificationUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.IContractDefaultPreferences
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import dagger.Binds
 import dagger.Module
-import javax.inject.Singleton
 
 @Module
 abstract class RepositoryModule {
@@ -196,9 +191,6 @@ abstract class RepositoryModule {
     abstract fun bindNotificationSettingRepository(repository: NotificationSettingRepository): IContractNotificationSetting.Repository
 
     @Binds
-    abstract fun bindNotificationUtilsRepository(repository: NotificationUtilsRepository): IContractNotificationUtils.Repository
-
-    @Binds
     abstract fun bindPreviewBackgroundChatRepository(repository: PreviewBackgroundChatRepository): IContractPreviewBackgroundChat.Repository
 
     @Binds
@@ -230,9 +222,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindSendCodeRepository(repository: SendCodeRepository): IContractSendCode.Repository
-
-    @Binds
-    abstract fun bindSocketRepository(repository: SocketRepository): IContractSocketService.Repository
 
     @Binds
     abstract fun bindSplashRepository(repository: SplashRepository): IContractSplash.Repository

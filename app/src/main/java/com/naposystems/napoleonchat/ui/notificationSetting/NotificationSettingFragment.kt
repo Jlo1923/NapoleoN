@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.ui.notificationSetting
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
@@ -14,9 +13,9 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
-import dagger.android.support.AndroidSupportInjection
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import timber.log.Timber
+import javax.inject.Inject
 
 
 class NotificationSettingFragment : BaseFragment() {
@@ -28,7 +27,9 @@ class NotificationSettingFragment : BaseFragment() {
 
     private lateinit var viewModel: NotificationSettingViewModel
     private lateinit var binding: NotificationSettingFragmentBinding
-    private lateinit var notificationUtils: NotificationUtils
+
+    lateinit var notificationService: NotificationService
+
     private var currentSoundNotificationMessage: Uri? = null
 
     override fun onCreateView(
@@ -55,8 +56,8 @@ class NotificationSettingFragment : BaseFragment() {
     }
 
     private fun updateSoundChannelMessage() {
-        notificationUtils = NotificationUtils(requireContext().applicationContext)
-        currentSoundNotificationMessage = notificationUtils.getChannelSound(
+        notificationService = NotificationService(requireContext().applicationContext, null)
+        currentSoundNotificationMessage = notificationService.getChannelSound(
             requireContext(),
             Constants.ChannelType.DEFAULT.type,
             null,
@@ -92,7 +93,7 @@ class NotificationSettingFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            notificationUtils.updateChannel(
+            notificationService.updateChannel(
                 requireContext(),
                 uri,
                 Constants.ChannelType.DEFAULT.type

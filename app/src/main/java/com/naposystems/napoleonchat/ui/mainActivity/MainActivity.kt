@@ -49,7 +49,7 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -67,6 +67,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
+
+    lateinit var notificationService: NotificationService
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -186,8 +188,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
                     Timber.d("startCallActivity MainActivity")
-                    val notificationUtils = NotificationUtils(this.applicationContext)
-                    notificationUtils.startWebRTCCallService(
+                    val notificationService = NotificationService(this.applicationContext, null)
+                    notificationService.startWebRTCCallService(
                         it.channel,
                         it.isVideoCall,
                         it.contactId,

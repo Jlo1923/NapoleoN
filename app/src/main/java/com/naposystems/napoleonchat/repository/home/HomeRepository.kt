@@ -19,8 +19,7 @@ import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
-import kotlinx.coroutines.coroutineScope
+import com.naposystems.napoleonchat.service.socket.SocketService
 import retrofit2.Response
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -30,7 +29,7 @@ class HomeRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketService: IContractSocketService.SocketService,
+    private val socketService: SocketService,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,

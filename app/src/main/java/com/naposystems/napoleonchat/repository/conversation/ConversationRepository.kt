@@ -31,7 +31,7 @@ import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.Valid
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
+import com.naposystems.napoleonchat.service.socket.SocketService
 import com.squareup.moshi.Moshi
 import com.vincent.videocompressor.VideoCompressK
 import com.vincent.videocompressor.VideoCompressResult
@@ -55,7 +55,7 @@ import javax.inject.Inject
 
 class ConversationRepository @Inject constructor(
     private val context: Context,
-    private val socketService: IContractSocketService.SocketService,
+    private val socketService: SocketService,
     private val userLocalDataSource: UserLocalDataSource,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
@@ -383,20 +383,13 @@ class ConversationRepository @Inject constructor(
                 )
             }
 
-            val validateMessage = ValidateMessageEventDTO(messagesRead)
-
-            val jsonAdapterValidate =
-                moshi.adapter(ValidateMessageEventDTO::class.java)
-
-            val json = jsonAdapterValidate.toJson(validateMessage)
-
             if (listIds.isNotEmpty()) {
 
                 try {
 
                     Timber.d("SocketService: $socketService")
 
-                    socketService.emitToClientConversation(json.toString())
+                    socketService.emitClientConversation(messagesRead)
 
                     val response = napoleonApi.sendMessagesRead(
                         MessagesReadReqDTO(

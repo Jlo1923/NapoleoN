@@ -26,7 +26,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
 import com.naposystems.napoleonchat.webRTC.WebRTCClient
@@ -52,6 +52,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     @Inject
     lateinit var webRTCClient: IContractWebRTCClient
 
+    lateinit var notificationService: NotificationService
+
     private lateinit var binding: ActivityConversationCallBinding
 
     private val viewModel: ConversationCallViewModel by viewModels { viewModelFactory }
@@ -69,12 +71,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         AudioManagerCompat.create(this)
     }
 
-    private lateinit var notificationUtils: NotificationUtils
-
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
 
-        notificationUtils = NotificationUtils(this.applicationContext)
+        notificationService = NotificationService(this.applicationContext, null)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
@@ -137,7 +137,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 /*webRTCClient.playRingtone()
                 Timber.d("*Test: Ring CallActivity")*/
             } else {
-                notificationUtils.startWebRTCCallService(
+                notificationService.startWebRTCCallService(
                     channel, isVideoCall, contactId, false, this
                 )
                 webRTCClient.playCallingTone()
@@ -159,7 +159,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
         binding.fabAnswer.setOnClickListener {
             if (isIncomingCall) {
-                notificationUtils.stopMediaPlayer()
+                notificationService.stopMediaPlayer()
                 webRTCClient.emitJoinToCall()
                 webRTCClient.stopRingAndVibrate()
                 binding.fabAnswer.visibility = View.GONE

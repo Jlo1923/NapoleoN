@@ -3,13 +3,12 @@ package com.naposystems.napoleonchat.repository.base
 import com.naposystems.napoleonchat.ui.baseFragment.IContractBase
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
-import com.naposystems.napoleonchat.webService.socket.SocketService
+import com.naposystems.napoleonchat.service.socket.SocketService
 import javax.inject.Inject
 
 class BaseRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketService: IContractSocketService.SocketService
+    private val socketService: SocketService
 ) : IContractBase.Repository {
 
     override suspend fun outputControl(state: Int) {
