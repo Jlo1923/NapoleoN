@@ -4,19 +4,17 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class UploadService @Inject constructor(
-    private val notificationService: NotificationService
-): Service(), IContractUploadService {
+class UploadService() : Service(), IContractUploadService {
 
     companion object {
         const val PROGRESS_MAX = 100
@@ -27,6 +25,9 @@ class UploadService @Inject constructor(
 
     @Inject
     lateinit var repository: IContractUploadService.Repository
+
+    @Inject
+    lateinit var notificationService: NotificationService
 
     private lateinit var napoleonApplication: NapoleonApplication
 

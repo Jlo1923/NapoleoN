@@ -27,7 +27,6 @@ abstract class ServiceModule {
     @ContributesAndroidInjector
     abstract fun contributeUploadService(): UploadService
 
-
     @ContributesAndroidInjector
     abstract fun contributeNapoleonFirebaseMessagingService(): NapoleonFirebaseMessagingService
 
