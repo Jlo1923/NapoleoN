@@ -56,7 +56,7 @@ class NotificationUtilsRepository @Inject constructor(
 
                 val contactResDTO = response.body()!!
 
-                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
+                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts, null)
 
                 val contactsToDelete = contactLocalDataSourceImp.insertOrUpdateContactList(contacts)
 

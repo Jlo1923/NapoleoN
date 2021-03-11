@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_home_item">
+
+        <ImageView
+            android:id="@+id/imageView_user_image"
+            style="@style/imageAvatarItem"
+            app:avatar="@{contact}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:scaleType="fitCenter"
+            tools:src="@drawable/ic_default_avatar" />
+
+        <TextView
+            android:id="@+id/textView_user_name"
+            style="@style/BodyTextView.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:name="@{contact}"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/textView_user_nickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="?attr/attrColorButtonTint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textView_user_name"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            app:nickname="@{contact}"
+            tools:text="@tools:sample/first_names" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.7" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:drawablePadding="@dimen/small_padding"
+            android:gravity="center"
+            android:text="@string/text_request_sent"
+            android:textAllCaps="true"
+            android:textColor="@color/green"
+            android:textSize="@dimen/minor_text_size"
+            app:drawableStartCompat="@drawable/ic_check_primary"
+            app:drawableTint="@color/green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

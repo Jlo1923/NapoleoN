@@ -63,6 +63,8 @@
                 app:nickname="@{contact}"
                 tools:text="@tools:sample/first_names" />
 
+
+
             <ViewSwitcher
                 android:id="@+id/viewSwitcher"
                 android:layout_width="wrap_content"

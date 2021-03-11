@@ -46,6 +46,11 @@ object DBConstants {
         const val COLUMN_SELF_DESTRUCT_TIME = "self_destruct_time"
         const val COLUMN_STATE_NOTIFICATION = "state_notification"
         const val COLUMN_NOTIFICATION_ID = "notification_id"
+
+        const val COLUMN_STATUS_FRIEND = "status_friend"
+        const val COLUMN_RECEIVER = "request_receiver"
+        const val COLUMN_OFFER = "request_offer"
+        const val COLUMN_OFFER_ID = "request_offer_id"
     }
 
     object Message {

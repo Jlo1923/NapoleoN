@@ -23,7 +23,7 @@ data class FriendshipRequestOfferDTO(
                 response.userObtainer,
                 response.state,
                 response.createdAt,
-                ContactResDTO.toEntity(response.contact),
+                ContactResDTO.toEntity(response.contact, null),
                 false
             )
 

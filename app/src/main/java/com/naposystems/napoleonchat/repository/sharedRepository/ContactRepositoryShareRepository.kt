@@ -29,7 +29,7 @@ class ContactRepositoryShareRepository
                 val contacts = if (state == Constants.FriendShipState.BLOCKED.state)
                     ContactResDTO.toEntityList(contactResDTO.contacts, true)
                 else
-                    ContactResDTO.toEntityList(contactResDTO.contacts)
+                    ContactResDTO.toEntityList(contactResDTO.contacts, null)
 
                 val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(
                     contacts, location

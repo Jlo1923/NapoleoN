@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.addContact.adapter
 
+import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.button.MaterialButton
@@ -14,7 +15,7 @@ fun haveFriendShipRequest(button: MaterialButton, haveFriendShipRequest: Boolean
         button.setTextColor(context.getColor(R.color.green))
         button.text = context.resources.getString(R.string.text_sent)
         button.setIconResource(R.drawable.ic_check_primary)
-        button.setStrokeColorResource(R.color.green)
+        button.setStrokeColorResource(R.color.white)
     } else {
         button.setTextColor(context.getColor(R.color.buttonTint))
         button.text = context.resources.getString(R.string.text_add)
@@ -32,4 +33,8 @@ fun bindTitleFriendshipRequest(textView: TextView, friendshipRequestTitle: Frien
         R.string.text_friend_requests_sent
     }
     textView.text = context.getString(title)
+}
+@BindingAdapter("visible")
+fun View.visible(isVisible: Boolean?) {
+    visibility = if (isVisible == true) View.VISIBLE else View.GONE
 }
