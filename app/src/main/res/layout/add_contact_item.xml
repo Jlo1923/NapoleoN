@@ -6,10 +6,6 @@
     <data>
 
         <variable
-            name="clickListener"
-            type="com.naposystems.napoleonchat.ui.addContact.adapter.AddContactAdapter.ClickListener" />
-
-        <variable
             name="contact"
             type="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
     </data>
@@ -29,71 +25,79 @@
             tools:scaleType="fitCenter"
             tools:src="@drawable/ic_default_avatar" />
 
-            <TextView
-                android:id="@+id/textView_user_name"
-                style="@style/BodyTextView.Bold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/normal_margin"
-                android:layout_marginEnd="@dimen/normal_margin"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:singleLine="true"
-                app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
-                app:layout_constraintEnd_toStartOf="@id/viewSwitcher"
-                app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed"
-                app:name="@{contact}"
-                tools:text="@tools:sample/full_names" />
+        <TextView
+            android:id="@+id/textView_user_name"
+            style="@style/BodyTextView.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:name="@{contact}"
+            tools:text="@tools:sample/full_names" />
 
-            <TextView
-                android:id="@+id/textView_user_nickname"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/normal_margin"
-                android:layout_marginEnd="@dimen/normal_margin"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textColor="?attr/attrColorButtonTint"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/viewSwitcher"
-                app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
-                app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
-                app:nickname="@{contact}"
-                tools:text="@tools:sample/first_names" />
+        <TextView
+            android:id="@+id/textView_user_nickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="?attr/attrColorButtonTint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            app:nickname="@{contact}"
+            tools:text="@tools:sample/first_names" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.7" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_add"
+            style="@style/AppOutlinedPrimaryButtonSmall"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:paddingStart="@dimen/x_small_padding"
+            android:paddingEnd="@dimen/small_padding"
+            android:text="@string/text_add"
+            android:textAlignment="textStart"
+            android:textAllCaps="true"
+            android:textColor="@color/buttonTint"
+            app:icon="@drawable/ic_add_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:strokeColor="@color/buttonTint" />
 
-            <ViewSwitcher
-                android:id="@+id/viewSwitcher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/small_margin"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+        <TextView
+            android:id="@+id/text_sent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:drawablePadding="@dimen/small_padding"
+            android:gravity="center"
+            android:text="@string/text_request_sent"
+            android:textAllCaps="true"
+            android:textColor="@color/green"
+            android:textSize="@dimen/minor_text_size"
+            app:drawableStartCompat="@drawable/ic_check_primary"
+            app:drawableTint="@color/green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_add"
-                    style="@style/AppOutlinedPrimaryButtonSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:paddingStart="@dimen/x_small_padding"
-                    android:paddingEnd="@dimen/small_padding"
-                    android:text="@string/text_add"
-                    android:layout_marginEnd="@dimen/small_margin"
-                    android:textAlignment="textStart"
-                    android:textAllCaps="true"
-                    app:haveFriendshipRequest="@{contact.haveFriendshipRequest}"
-                    app:icon="@drawable/ic_add_primary" />
-
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center" />
-
-            </ViewSwitcher>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

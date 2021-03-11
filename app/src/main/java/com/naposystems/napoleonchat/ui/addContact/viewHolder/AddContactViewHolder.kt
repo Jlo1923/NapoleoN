@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.ui.addContact.viewHolder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.AddContactItemBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
@@ -13,16 +14,19 @@ class AddContactViewHolder constructor(private val binding: AddContactItemBindin
     fun bind(item: ContactEntity, clickListener: AddContactAdapter.ClickListener) {
 
         binding.contact = item
-        binding.clickListener = clickListener
-        binding.buttonAdd.isEnabled = true
 
         binding.textViewUserName.isSelected = true
 
+        if (item.haveFriendshipRequest) {
+            binding.buttonAdd.isVisible = false
+            binding.textSent.isVisible = true
+        } else {
+            binding.buttonAdd.isVisible = true
+            binding.textSent.isVisible = false
+        }
+
         binding.buttonAdd.setOnClickListener {
-            if (!item.haveFriendshipRequest) {
-                it.isEnabled = false
-                clickListener.onAddClick(item)
-            }
+            clickListener.onAddClick(item)
         }
         binding.executePendingBindings()
     }

@@ -81,39 +81,43 @@ class AddContactViewModel @Inject constructor(
                 val response = repository.searchContact(filterQuery)
 
                 val title1 = AddContactTitle()
-                title1.id =1
+                title1.id = 1
                 title1.title = context.getString(R.string.text_my_contacts_added)
 
                 val title2 = AddContactTitle()
-                title2.id =2
+                title2.id = 2
                 title2.title = context.getString(R.string.text_coincidence)
 
                 if (response.isSuccessful) {
+
                     val multableList: MutableList<Any> = mutableListOf()
 
-                    val list = ContactResDTO.toEntityList(response.body()!!, null)
+                    val list = response.body()?.let { ContactResDTO.toEntityList(it, null) }
 
-                    val sortedByFriends = list.sortedByDescending { o -> o.statusFriend }
-                    val exists = list.findLast { it.statusFriend }
-                    val coincidences = list.find { !it.statusFriend }
+                    if (list != null) {
+                        val sortedByFriends = list.sortedByDescending { o -> o.statusFriend }
+                        val exists = list.findLast { it.statusFriend }
+                        val coincidences = list.find { !it.statusFriend }
 
-                    if (exists != null) {
-                        multableList.add(title1)
-                        multableList.addAll(sortedByFriends)
+                        if (exists != null) {
+                            multableList.add(title1)
+                            multableList.addAll(sortedByFriends)
 
-                        val lastP = multableList.indexOf(exists)
-                        if (coincidences != null)
-                            multableList.add(
-                                lastP + 1,
-                                title2
-                            )
-                    } else {
-                        if (sortedByFriends.isNotEmpty())
-                            multableList.add(title2)
-                        multableList.addAll(sortedByFriends)
+                            val lastP = multableList.indexOf(exists)
+                            if (coincidences != null)
+                                multableList.add(
+                                    lastP + 1,
+                                    title2
+                                )
+                        } else {
+                            if (sortedByFriends.isNotEmpty())
+                                multableList.add(title2)
+                            multableList.addAll(sortedByFriends)
+                        }
                     }
 
                     _users.value = multableList
+
 
                 } else {
                     _friendshipRequestWsError.value = context.getString(R.string.text_fail)

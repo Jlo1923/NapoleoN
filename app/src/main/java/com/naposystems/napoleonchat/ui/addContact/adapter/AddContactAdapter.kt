@@ -78,10 +78,10 @@ class AddContactAdapter constructor(
                 RequestContactSentViewHolder.from(parent)
             }
             TYPE_REQUEST_RECEIVED -> {
-                return RequestContactReceivedHolder.from(parent)
+                RequestContactReceivedHolder.from(parent)
             }
             TYPE_TITLE -> {
-                return AddContactTitleViewHolder.from(parent)
+                AddContactTitleViewHolder.from(parent)
             }
             else -> {
                 //friend or friend blocked

@@ -139,7 +139,8 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        _binding = null
+        searchView.setListener(null)
+        _binding = null
     }
 
     private fun observeFriendshipRequestAcceptedSuccessfully() {
