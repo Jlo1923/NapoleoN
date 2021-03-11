@@ -76,6 +76,8 @@ import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.ui.logout.IContractLogout
 import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
+import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
+import com.naposystems.napoleonchat.ui.multi.repository.MultipleAttachmentRepository
 import com.naposystems.napoleonchat.ui.muteConversation.IMuteConversation
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyboardGif
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
@@ -314,5 +316,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository
+
+    @Binds
+    @Singleton
+    abstract fun provideMultipleAttachmentRepository(repository: MultipleAttachmentRepository):
+            IContractMultipleAttachment.Repository
 
 }

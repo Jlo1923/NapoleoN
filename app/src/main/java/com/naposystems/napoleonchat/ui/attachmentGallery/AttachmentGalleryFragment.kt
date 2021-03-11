@@ -47,7 +47,7 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private val viewModel: AttachmentGalleryViewModel by viewModels {
+    private val viewModelAttachmentGallery: AttachmentGalleryViewModel by viewModels {
         viewModelFactory
     }
 
@@ -209,7 +209,7 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
         //WHERE
         var selection = if (isConversation) {
             "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
-                "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
+                "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml' "
         } else {
             "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml'"
         }

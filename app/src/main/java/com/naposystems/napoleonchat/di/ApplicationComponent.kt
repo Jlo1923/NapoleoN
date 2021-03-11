@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.di
 import android.app.Application
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.di.module.general.*
+import com.naposystems.napoleonchat.di.module.mediastore.MediaStoreModule
 import com.naposystems.napoleonchat.di.module.missnamed.CreateAccountModule
 import com.naposystems.napoleonchat.di.module.sections.RepositoryModule
 import com.naposystems.napoleonchat.di.module.sections.ViewModelModule
@@ -47,6 +48,9 @@ import javax.inject.Singleton
         //Sections
         ViewModelModule::class,
         RepositoryModule::class,
+
+        // MediaStore
+        MediaStoreModule::class,
 
         //Shared
         ContactProfileShareModule::class,
