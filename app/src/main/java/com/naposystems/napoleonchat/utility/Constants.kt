@@ -85,6 +85,9 @@ object Constants {
         const val CONTACT = "contact"
         const val ATTACK = "attacker_id"
         const val MESSAGE = "message"
+        const val BADGE = "badge"
+        const val SOUND = "sound"
+        const val SILENCE = "silence"
     }
 
     object RegularExpressions {
@@ -503,6 +506,11 @@ object Constants {
 
     enum class SocketIdNotExist constructor(val socket: String) {
         SOCKET_ID_NO_EXIST("NO_EXIST")
+    }
+
+    enum class SocketChannelStatus constructor(val status: Boolean) {
+        SOCKECT_CHANNEL_STATUS_CONNECTED(true),
+        SOCKECT_CHANNEL_STATUS_NOT_CONNECTED(false)
     }
 
     enum class StateFlag(val state: Int) {

@@ -1,9 +1,8 @@
 package com.naposystems.napoleonchat.service.syncManager
 
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 
 interface SyncManager {
 
@@ -44,20 +43,24 @@ interface SyncManager {
     fun insertMessage(messageString: String)
     fun notifyMessageReceived_NOTIF(messageId: String)
     fun getIsOnCallPref(): Boolean
-    fun getContactSilenced(contactId: Int, silenced : (Boolean?) -> Unit)
+    fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit)
     fun getContact(contactId: Int): ContactEntity?
     fun getNotificationChannelCreated(): Int
     fun setNotificationChannelCreated()
     fun getNotificationMessageChannelId(): Int
-    fun setNotificationMessageChannelId(newId:Int)
+    fun setNotificationMessageChannelId(newId: Int)
     fun getCustomNotificationChannelId(contactId: Int): String?
     fun setCustomNotificationChannelId(contactId: Int, newId: String)
     fun getContactById(contactId: Int): ContactEntity?
-    fun updateStateChannel(contactId: Int, state:Boolean)
+    fun updateStateChannel(contactId: Int, state: Boolean)
     //endegion
 
 
     suspend fun getRemoteContact()
     suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int)
-//    fun insertAttachments(listAttachments: List<AttachmentEntity>)
+
+    //    fun insertAttachments(listAttachments: List<AttachmentEntity>)
+
+    suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes)
+
 }

@@ -36,7 +36,8 @@ import javax.inject.Inject
 
 class WebRTCClient @Inject constructor(
     private val context: Context,
-    private val socketService: SocketService
+    private val socketService: SocketService,
+    private val notificationService: NotificationService
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
 
     private val vibrator: Vibrator? by lazy {
@@ -537,7 +538,7 @@ class WebRTCClient @Inject constructor(
                         )
 
 //                        val notificationService = NotificationService()
-                        val notificationService = NotificationService(context.applicationContext)
+//                        val notificationService = NotificationService(context.applicationContext)
                         notificationService.updateCallInProgress(channel, contactId, isVideoCall)
 
                         if (!isVideoCall && incomingCall) {

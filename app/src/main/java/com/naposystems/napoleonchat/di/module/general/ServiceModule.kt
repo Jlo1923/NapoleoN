@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.di.module.general
 
 import com.naposystems.napoleonchat.firebase.NapoleonFirebaseMessagingService
+import com.naposystems.napoleonchat.service.notification.NEW_NotificationService
 import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.service.phoneState.PhoneStateBroadcastReceiver
 import com.naposystems.napoleonchat.service.uploadService.UploadService
@@ -10,9 +11,12 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class ServiceModule {
-
-    @ContributesAndroidInjector
-    abstract fun contributeNotificationService(): NotificationService
+//
+//    @ContributesAndroidInjector
+//    abstract fun contributeNotificationService(): NotificationService
+//
+//    @ContributesAndroidInjector
+//    abstract fun contributeNewNotificationService(): NEW_NotificationService
 
     @ContributesAndroidInjector
     abstract fun contributeWebRTCCallService(): WebRTCCallService
@@ -22,5 +26,9 @@ abstract class ServiceModule {
 
     @ContributesAndroidInjector
     abstract fun contributeUploadService(): UploadService
+
+
+    @ContributesAndroidInjector
+    abstract fun contributeNapoleonFirebaseMessagingService(): NapoleonFirebaseMessagingService
 
 }

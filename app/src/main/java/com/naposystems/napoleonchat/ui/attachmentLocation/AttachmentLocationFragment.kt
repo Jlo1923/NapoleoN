@@ -48,6 +48,7 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.attachment.location.Place
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.SearchView
@@ -85,6 +86,10 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var notificationService: NotificationService
+
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
@@ -179,6 +184,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
                         if (contact.id == eventContact.contactId) {
                             if (contact.stateNotification) {
                                 Utils.deleteUserChannel(
+                                    notificationService,
                                     requireContext(),
                                     contact.id,
                                     contact.getNickName()

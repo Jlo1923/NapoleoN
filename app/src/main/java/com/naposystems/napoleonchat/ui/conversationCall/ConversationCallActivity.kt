@@ -52,6 +52,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     @Inject
     lateinit var webRTCClient: IContractWebRTCClient
 
+    @Inject
     lateinit var notificationService: NotificationService
 
     private lateinit var binding: ActivityConversationCallBinding
@@ -75,7 +76,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         AndroidInjection.inject(this)
 
 //        notificationService = NotificationService()
-        notificationService = NotificationService(this.applicationContext)
+//        notificationService = NotificationService(this.applicationContext)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 

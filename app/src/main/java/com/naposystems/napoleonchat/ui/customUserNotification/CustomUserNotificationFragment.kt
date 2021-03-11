@@ -17,10 +17,10 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomUserNotificationFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.service.notification.NotificationService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -38,6 +38,7 @@ class CustomUserNotificationFragment : BaseFragment() {
 
     private lateinit var binding: CustomUserNotificationFragmentBinding
 
+    @Inject
     lateinit var notificationService: NotificationService
 
     private var currentSoundNotificationMessage: Uri? = null
@@ -59,7 +60,7 @@ class CustomUserNotificationFragment : BaseFragment() {
         )
 
 //        notificationService = NotificationService()
-        notificationService = NotificationService(requireContext().applicationContext)
+//        notificationService = NotificationService(requireContext().applicationContext)
 
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
@@ -68,6 +69,7 @@ class CustomUserNotificationFragment : BaseFragment() {
                     if (args.contact.id == eventContact.contactId) {
                         if (args.contact.stateNotification) {
                             Utils.deleteUserChannel(
+                                notificationService,
                                 requireContext(),
                                 args.contact.id,
                                 args.contact.getNickName()

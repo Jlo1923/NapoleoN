@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ChangeFakeParamsDialogFragmentBinding
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.Utils
@@ -44,6 +45,10 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var notificationService: NotificationService
+
     private val viewModel: ChangeParamsDialogViewModel by viewModels {
         viewModelFactory
     }
@@ -85,7 +90,8 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
                         args.getString(CONTACT_NICK, ""),
                         binding.editTextDisplay.text.toString().toLowerCase(
                             Locale.getDefault()
-                        )
+                        ),
+                        notificationService
                     )
                 }
             }

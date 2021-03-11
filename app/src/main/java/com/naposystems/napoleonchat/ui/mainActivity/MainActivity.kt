@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
+    @Inject
     lateinit var notificationService: NotificationService
 
     private lateinit var binding: ActivityMainBinding
@@ -189,7 +190,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (this.hasMicAndCameraPermission()) {
                     Timber.d("startCallActivity MainActivity")
 //                    val notificationService = NotificationService()
-                    val notificationService = NotificationService(this.applicationContext)
+//                    val notificationService = NotificationService(this.applicationContext)
                     notificationService.startWebRTCCallService(
                         it.channel,
                         it.isVideoCall,
@@ -233,6 +234,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         Timber.d("*TestDelete: Contact ${it.contact.id}")
                         Timber.d("*TestDelete: Contact ${it.contact.getNickName()}")
                         Utils.deleteUserChannel(
+                            notificationService,
                             this,
                             it.contact.id,
                             it.contact.getNickName(),

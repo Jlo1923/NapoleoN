@@ -19,6 +19,7 @@ import com.naposystems.napoleonchat.databinding.AttachmentAudioFragmentBinding
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -40,6 +41,9 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var notificationService: NotificationService
 
     private lateinit var viewModel: AttachmentAudioViewModel
     private lateinit var conversationShareViewModel: ConversationShareViewModel
@@ -91,6 +95,7 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
                             Utils.deleteUserChannel(
+                                notificationService,
                                 requireContext(),
                                 args.contact.id,
                                 args.contact.getNickName()

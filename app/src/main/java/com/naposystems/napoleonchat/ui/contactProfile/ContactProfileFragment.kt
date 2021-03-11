@@ -28,6 +28,7 @@ import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.changeParams.ChangeFakeParamsDialogFragment
@@ -64,6 +65,10 @@ class ContactProfileFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var notificationService: NotificationService
+
     private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
     private val baseViewModel: BaseViewModel by viewModels {
@@ -155,6 +160,7 @@ class ContactProfileFragment : BaseFragment() {
                     if (args.contactId == it.contactId) {
                         if (contact.stateNotification) {
                             Utils.deleteUserChannel(
+                                notificationService,
                                 requireContext(),
                                 contact.id,
                                 contact.getNickName()
@@ -206,6 +212,7 @@ class ContactProfileFragment : BaseFragment() {
                 } else {
                     if (contact.stateNotification) {
                         Utils.deleteUserChannel(
+                            notificationService,
                             requireContext(),
                             contact.id,
                             contact.getNickName()
@@ -234,6 +241,7 @@ class ContactProfileFragment : BaseFragment() {
             ) {
                 if (contact.stateNotification) {
                     Utils.deleteUserChannel(
+                        notificationService,
                         requireContext(),
                         contact.id,
                         contact.getNickName()
@@ -264,7 +272,11 @@ class ContactProfileFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
-            Utils.deleteUserChannel(requireContext(), contact.id, contact.getNickName())
+            Utils.deleteUserChannel(notificationService,
+                requireContext(),
+                contact.id,
+                contact.getNickName()
+            )
 
             viewModel.restoreContact(args.contactId)
         }

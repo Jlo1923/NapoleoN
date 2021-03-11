@@ -25,9 +25,11 @@ class NotificationSettingFragment : BaseFragment() {
         const val RINGTONE_NOTIFICATION_CODE = 9
     }
 
+
     private lateinit var viewModel: NotificationSettingViewModel
     private lateinit var binding: NotificationSettingFragmentBinding
 
+    @Inject
     lateinit var notificationService: NotificationService
 
     private var currentSoundNotificationMessage: Uri? = null
@@ -57,7 +59,7 @@ class NotificationSettingFragment : BaseFragment() {
 
     private fun updateSoundChannelMessage() {
 //        notificationService = NotificationService()
-        notificationService = NotificationService(requireContext().applicationContext)
+//        notificationService = NotificationService(requireContext().applicationContext)
         currentSoundNotificationMessage = notificationService.getChannelSound(
             requireContext(),
             Constants.ChannelType.DEFAULT.type,

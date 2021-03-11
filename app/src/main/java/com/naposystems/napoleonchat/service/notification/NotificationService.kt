@@ -36,7 +36,6 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import dagger.android.support.DaggerApplication
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
@@ -46,12 +45,13 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class NotificationService @Inject constructor(
-    private val applicationContext: Context
+class NotificationService
+@Inject constructor(
+    private val context: Context,
+    private val syncManager: SyncManager,
+    private val cryptoMessage: CryptoMessage,
+    private val socketService: SocketService,
 ) {
-
-
-    var arrayId: MutableList<String> = mutableListOf()
 
     companion object {
         const val NOTIFICATION_RINGING = 950707
@@ -68,17 +68,8 @@ class NotificationService @Inject constructor(
         Moshi.Builder().build()
     }
 
-    @Inject
-    lateinit var syncManager: SyncManager
-
-    @Inject
-    lateinit var cryptoMessage: CryptoMessage
-
-    @Inject
-    lateinit var socketService: SocketService
-
     private val app: NapoleonApplication by lazy {
-        applicationContext as NapoleonApplication
+        context as NapoleonApplication
     }
 
     private val disposable: CompositeDisposable by lazy {
@@ -88,19 +79,19 @@ class NotificationService @Inject constructor(
     private var notificationCount: Int = 0
 
     init {
-        (applicationContext as DaggerApplication).androidInjector().inject(this)
+//        (applicationContext as DaggerApplication).androidInjector().inject(this)
 
         if (syncManager.getNotificationChannelCreated() == Constants.ChannelCreated.FALSE.state) {
             //region Chat Notification
-            createCategoryChannel(applicationContext)
-            createMessageChannel(applicationContext, getDefaultSoundUri())
+            createCategoryChannel(context)
+            createMessageChannel(context, getDefaultSoundUri())
             //endregion
 
             //region Others
-            createNotificationChannel(applicationContext)
-            createCallNotificationChannel(applicationContext)
-            createAlertsNotificationChannel(applicationContext)
-            createUploadNotificationChannel(applicationContext)
+            createNotificationChannel(context)
+            createCallNotificationChannel(context)
+            createAlertsNotificationChannel(context)
+            createUploadNotificationChannel(context)
             //endregion
 
             syncManager.setNotificationChannelCreated()
@@ -443,11 +434,11 @@ class NotificationService @Inject constructor(
             deleteChannel(context, notificationChannelId, null)
 
             if (channelType == Constants.ChannelType.DEFAULT.type) {
-                createMessageChannel(applicationContext, uri)
+                createMessageChannel(this.context, uri)
             } else {
                 contactId?.let { id ->
                     contactNick?.let { nick ->
-                        createCustomChannel(applicationContext, uri, id, nick)
+                        createCustomChannel(this.context, uri, id, nick)
                     }
                 }
             }
@@ -488,7 +479,6 @@ class NotificationService @Inject constructor(
             .subscribe {
                 Timber.d("RXBUS ESCUCHADOR")
                 Timber.d("DATAAAAA: $data")
-                Timber.d("DATAAAAA Array: $arrayId")
                 createEncryptMessage(data, builder, context)
             }
 
@@ -505,6 +495,7 @@ class NotificationService @Inject constructor(
         Timber.d("Paso 2: se va a crear la notifiacion data: $data")
 
         val contact = Constants.NotificationKeys.CONTACT
+
         syncManager.getContactSilenced(
             data.getValue(contact).toInt(),
             silenced = { silenced ->
@@ -634,19 +625,19 @@ class NotificationService @Inject constructor(
 
     fun updateUploadProgress(max: Int, progress: Int) {
         val notificationBuilder = Builder(
-            applicationContext,
-            applicationContext.getString(R.string.alerts_channel_id)
+            context,
+            context.getString(R.string.alerts_channel_id)
         )
             .setSmallIcon(R.drawable.ic_file_upload_black)
-            .setContentTitle(applicationContext.getString(R.string.text_sending_file))
-            .setContentText(applicationContext.getString(R.string.text_sending_file))
+            .setContentTitle(context.getString(R.string.text_sending_file))
+            .setContentText(context.getString(R.string.text_sending_file))
             .setProgress(max, progress, false)
             .setOngoing(true)
 
         val notification = notificationBuilder.build()
 
         val mNotificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(NOTIFICATION_UPLOADING, notification)
     }
 
@@ -757,7 +748,9 @@ class NotificationService @Inject constructor(
         val iconBitmap = BitmapFactory.decodeResource(
             context.resources, R.drawable.ic_notification_icon
         )
+
         notificationCount = if (data.containsKey("badge")) data.getValue("badge").toInt() else 0
+
         Timber.d("*Notification: $notificationCount")
 
         val pair =
@@ -797,12 +790,6 @@ class NotificationService @Inject constructor(
 
         Timber.d("DATAAAAA: $data")
 
-        data["message_id"]?.let {
-//            if (!arrayId.contains(it))
-            Timber.d("MENSAJE ID $it")
-            arrayId.add(it)
-        }
-
         if (notificationType == Constants.NotificationType.ENCRYPTED_MESSAGE.type) {
             builder.setNumber(notificationCount)
             listenEncryptMessage(data, builder, context)
@@ -833,11 +820,7 @@ class NotificationService @Inject constructor(
 
                     Timber.d(" Paso 1: handleNotificationType: $notificationType, $data")
 
-                    GlobalScope.launch {
-                        if (socketService.getSocketId() == Constants.SocketIdNotExist.SOCKET_ID_NO_EXIST.socket) {
-                            socketService.connectSocket(Constants.LocationConnectSocket.FROM_NOTIFICATION.location)
-                        }
-                    }
+                    socketService.connectSocket(Constants.LocationConnectSocket.FROM_NOTIFICATION.location)
                 }
             }
 
@@ -1035,7 +1018,7 @@ class NotificationService @Inject constructor(
             context.getString(if (app.isAppVisible()) R.string.alerts_channel_id else R.string.calls_channel_id)
         )
             .setSmallIcon(R.drawable.ic_call_black_24)
-            .setGroup(applicationContext.getString(R.string.calls_group_key))
+            .setGroup(this.context.getString(R.string.calls_group_key))
             .setContentTitle("@${contact?.getNickName()}")
             .setContentText(notificationTitle)
             .setOngoing(true)
@@ -1094,7 +1077,7 @@ class NotificationService @Inject constructor(
             context,
             context.getString(R.string.alerts_channel_id)
         )
-            .setGroup(applicationContext.getString(R.string.calls_group_key))
+            .setGroup(this.context.getString(R.string.calls_group_key))
             .setSmallIcon(R.drawable.ic_call_black_24)
             .setContentTitle(notificationTitle)
             .setContentText(context.getString(R.string.text_calling_call_title))
@@ -1115,17 +1098,17 @@ class NotificationService @Inject constructor(
 
     fun updateCallInProgress(channel: String, contactId: Int, isVideoCall: Boolean) {
         val notificationBuilder = Builder(
-            applicationContext,
-            applicationContext.getString(R.string.alerts_channel_id)
+            context,
+            context.getString(R.string.alerts_channel_id)
         )
-            .setGroup(applicationContext.getString(R.string.calls_group_key))
+            .setGroup(context.getString(R.string.calls_group_key))
             .setSmallIcon(R.drawable.ic_call_black_24)
             .setUsesChronometer(true)
-            .setContentTitle(applicationContext.getString(R.string.text_call_in_progress))
+            .setContentTitle(context.getString(R.string.text_call_in_progress))
             .setOngoing(true)
             .addAction(
                 getServiceNotificationAction(
-                    applicationContext,
+                    context,
                     WebRTCCallService.ACTION_HANG_UP,
                     R.drawable.ic_close_black_24,
                     R.string.text_hang_up_call,
@@ -1140,7 +1123,7 @@ class NotificationService @Inject constructor(
         Timber.d("notificationId: $notificationId")
 
         val mNotificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(notificationId, notification)
     }
     //endregion

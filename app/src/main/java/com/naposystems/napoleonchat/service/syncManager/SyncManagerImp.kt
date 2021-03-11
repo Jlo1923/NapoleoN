@@ -263,14 +263,62 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
+    override suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes) {
+
+        Timber.d("**Paso 7: Proceso del item $newMessageEventMessageRes")
+
+        try {
+
+            if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                getRemoteContact()
+            }
+
+            val databaseMessage = messageLocalDataSource.getMessageByWebId(
+                newMessageEventMessageRes.id,
+                false
+            )
+
+            Timber.d("**Paso 8: Validar WebId ${newMessageEventMessageRes.id}")
+
+            if (databaseMessage == null) {
+
+                Timber.d("**Paso 9: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
+
+                val message =
+                    newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+
+                val messageId = messageLocalDataSource.insertMessage(message)
+
+                Timber.d("**Paso 10: Mensaje insertado $messageId")
+
+                if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                    insertQuote_NOTIF(
+                        newMessageEventMessageRes.quoted,
+                        messageId.toInt()
+                    )
+                }
+
+                val listAttachments =
+                    NewMessageEventAttachmentRes.toListConversationAttachment(
+                        messageId.toInt(),
+                        newMessageEventMessageRes.attachments
+                    )
+
+                attachmentLocalDataSource.insertAttachments(listAttachments)
+            }
+        } catch (e: java.lang.Exception) {
+            Timber.e(e.localizedMessage)
+        }
+
+    }
+
+
     //TODO: Estos dos metodos tienen la misma funcion refactorizarlos
     override fun insertMessage(messageString: String) {
 
-        Timber.d(
-            "Paso 4: voy a insertar el mensaje $messageString"
-        )
+        Timber.d("**Paso 7: Proceso del item $messageString")
 
-        GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch() {
             val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
                 cryptoMessage.decryptMessageBody(messageString)
             } else {
@@ -290,32 +338,25 @@ class SyncManagerImp @Inject constructor(
                             getRemoteContact()
                         }
 
-//                    validateMessageEvent(newMessageEventMessageRes)
-
                         val databaseMessage =
                             messageLocalDataSource.getMessageByWebId(
                                 newMessageEventMessageRes.id,
                                 false
                             )
 
-
-                        Timber.d("Paso 6: Validar WebId ${newMessageEventMessageRes.id}")
+                        Timber.d("**Paso 8: Validar WebId ${newMessageEventMessageRes.id}")
 
                         if (databaseMessage == null) {
 
                             val message =
                                 newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
 
-//                    if (BuildConfig.ENCRYPT_API) {
-//                        message.encryptBody(cryptoMessage)
-//                    }
-
-                            Timber.d("Paso 7: Mensaje No Existia $databaseMessage")
+                            Timber.d("**Paso 9: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
 
                             val messageId =
                                 messageLocalDataSource.insertMessage(message)
 
-                            Timber.d("Paso 8: Aqui inserto eso  $messageId")
+                            Timber.d("**Paso 10: Mensaje insertado $messageId")
 
                             if (newMessageEventMessageRes.quoted.isNotEmpty()) {
                                 insertQuote_NOTIF(
@@ -393,11 +434,13 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun notifyMessageReceived(messageId: String) {
+
+        Timber.d("**Paso 13: Consumir Recibido $messageId")
+
         GlobalScope.launch {
             try {
                 val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
                 napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
-                Timber.d("notifyMessageReceived")
             } catch (e: Exception) {
                 Timber.e(e)
             }
@@ -473,7 +516,8 @@ class SyncManagerImp @Inject constructor(
     //region Metodos Privados
     suspend fun getContacts() {
         try {
-            val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
+            val response =
+                napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
 
             if (response.isSuccessful) {
 
@@ -481,7 +525,8 @@ class SyncManagerImp @Inject constructor(
 
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
+                val contactsToDelete =
+                    contactLocalDataSource.insertOrUpdateContactList(contacts)
 
                 if (contactsToDelete.isNotEmpty()) {
 
@@ -555,7 +600,8 @@ class SyncManagerImp @Inject constructor(
             }
 
             val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
-            val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
+            val locationMessagesUnreadIds =
+                locationMessagesUnread.map { it.messageEntity.webId }
 
             val listIds = mutableListOf<String>()
             listIds.addAll(textMessagesUnreadIds)
@@ -604,7 +650,8 @@ class SyncManagerImp @Inject constructor(
 
     override suspend fun getRemoteContact() {
         try {
-            val response = napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
+            val response =
+                napoleonApi.getContactsByState(Constants.FriendShipState.ACTIVE.state)
 
             if (response.isSuccessful) {
 
@@ -612,7 +659,8 @@ class SyncManagerImp @Inject constructor(
 
                 val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
-                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
+                val contactsToDelete =
+                    contactLocalDataSource.insertOrUpdateContactList(contacts)
 
                 if (contactsToDelete.isNotEmpty()) {
 
@@ -634,7 +682,7 @@ class SyncManagerImp @Inject constructor(
 //            Timber.e(e)
         }
     }
-
+//
 //
 //    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
 //        try {

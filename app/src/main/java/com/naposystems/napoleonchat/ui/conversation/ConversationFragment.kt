@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.Canvas
@@ -49,12 +48,13 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
@@ -83,7 +83,6 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.U
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -110,6 +109,9 @@ class ConversationFragment : BaseFragment(),
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
+
+    @Inject
+    lateinit var notificationService: NotificationService
 
     //TODO:Subscription
     /*@Inject
@@ -1035,6 +1037,7 @@ class ConversationFragment : BaseFragment(),
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
                             Utils.deleteUserChannel(
+                                notificationService,
                                 requireContext(),
                                 args.contact.id,
                                 args.contact.getNickName()
@@ -2128,7 +2131,10 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun goToQuote(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?) {
+    override fun goToQuote(
+        messageAndAttachmentRelation: MessageAttachmentRelation,
+        itemPosition: Int?
+    ) {
         val position = viewModel.getMessagePosition(messageAndAttachmentRelation)
 
         if (position != -1) {
@@ -2159,7 +2165,10 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity) {
+    override fun uploadAttachment(
+        attachmentEntity: AttachmentEntity,
+        messageEntity: MessageEntity
+    ) {
         viewModel.uploadAttachment(attachmentEntity, messageEntity, obtainTimeSelfDestruct())
     }
 

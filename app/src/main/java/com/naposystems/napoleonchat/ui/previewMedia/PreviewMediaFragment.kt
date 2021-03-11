@@ -32,6 +32,7 @@ import com.naposystems.napoleonchat.databinding.PreviewMediaFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
@@ -51,6 +52,9 @@ class PreviewMediaFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var notificationService: NotificationService
 
     private val viewModel: PreviewMediaViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewMediaFragmentBinding
@@ -213,6 +217,7 @@ class PreviewMediaFragment : BaseFragment() {
                         if (noNullContact.id == eventContact.contactId) {
                             if (noNullContact.stateNotification) {
                                 Utils.deleteUserChannel(
+                                    notificationService,
                                     requireContext(),
                                     noNullContact.id,
                                     noNullContact.getNickName()
