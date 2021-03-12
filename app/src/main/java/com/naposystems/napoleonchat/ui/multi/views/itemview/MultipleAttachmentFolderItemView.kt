@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.multi.views
+package com.naposystems.napoleonchat.ui.multi.views.itemview
 
 import android.content.ContentUris
 import android.graphics.BitmapFactory

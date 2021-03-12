@@ -8,9 +8,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentBinding
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
-import com.naposystems.napoleonchat.ui.multi.views.MultipleAttachmentFileItemView
-import com.naposystems.napoleonchat.ui.multi.views.MultipleAttachmentFolderItemView
+import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
+import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFolderItemView
 import com.naposystems.napoleonchat.utility.extensions.hide
+import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.xwray.groupie.GroupieAdapter
@@ -32,11 +33,11 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MultipleAttachmentViewModel::class.java)
 
-        super.onCreate(savedInstanceState)
         binding = ActivityMultipleAttachmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
@@ -60,8 +61,25 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         when (action) {
             MultipleAttachmentAction.BackToFolderList -> showFoldersAgain()
             MultipleAttachmentAction.Exit -> finish()
-            MultipleAttachmentAction.HideListSelectedFiles -> Unit
-            is MultipleAttachmentAction.ShowListSelectedFiles -> showFolderName(action.folderName)
+            MultipleAttachmentAction.HideListSelectedFiles -> hidePreviewList()
+            MultipleAttachmentAction.ShowHasMaxFilesAttached -> showMaxFilesAttached()
+            is MultipleAttachmentAction.ShowSelectFolderName -> showFolderName(action.folderName)
+            is MultipleAttachmentAction.ShowPreviewSelectedFiles -> showPreviewList(action.listElements)
+        }
+    }
+
+    private fun showMaxFilesAttached() {
+        binding.root.context.apply {
+            Toast.makeText(this, "Maximo", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun hidePreviewList() = binding.viewPreviewBottom.hide()
+
+    private fun showPreviewList(listElements: List<Item<*>>) {
+        binding.viewPreviewBottom.apply {
+            showElements(listElements)
+            show(listElements.isEmpty().not())
         }
     }
 
@@ -111,24 +129,22 @@ class MultipleAttachmentActivity : AppCompatActivity() {
     }
 
     private fun selectFileAsAttachment(item: MultipleAttachmentFileItemView) {
-        item.isSelected = item.isSelected.not()
-        if (item.isSelected) {
-            viewModel.addFileToList(item.item)
-        } else {
-            viewModel.removeFileToList(item.item)
-        }
+        viewModel.tryAddToListAttachments(item)
     }
 
     private fun defineListeners() {
         binding.apply {
             imageBack.setOnClickListener { viewModel.handleBackAction() }
+            viewPreviewBottom.setOnClickListenerButton{
+                viewModel.continueToPreview()
+            }
         }
+
     }
 
     private fun showLoading() = binding.apply {
         progress.show()
-        recyclerFolders.hide()
-        recyclerFiles.hide()
+        hideViews(recyclerFolders, recyclerFiles)
     }
 
     private fun showFolders(listElements: List<Item<*>>) =
@@ -136,7 +152,6 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     private fun showFiles(listElements: List<Item<*>>) =
         groupieAdapterFiles.updateAsync(listElements) { showFilesList() }
-
 
     private fun showFolderName(folderName: String) = binding.textExplain.apply {
         text = folderName
@@ -149,15 +164,14 @@ class MultipleAttachmentActivity : AppCompatActivity() {
     }
 
     private fun showFoldersList() = binding.apply {
-        progress.hide()
         recyclerFolders.show()
-        recyclerFiles.hide()
+        hideViews(progress, recyclerFiles)
     }
 
     private fun showFilesList() = binding.apply {
-        progress.hide()
         recyclerFiles.show()
-        recyclerFolders.hide()
+        hideViews(progress, recyclerFolders)
+
     }
 
     private fun handleError() {
