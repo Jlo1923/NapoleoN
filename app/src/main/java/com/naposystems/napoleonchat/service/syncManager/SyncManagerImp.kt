@@ -265,7 +265,7 @@ class SyncManagerImp @Inject constructor(
 
     override suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes) {
 
-        Timber.d("**Paso 7: Proceso del item $newMessageEventMessageRes")
+        Timber.d("**Paso 7: Proceso de Insercion del item $newMessageEventMessageRes")
 
         try {
 
@@ -278,20 +278,21 @@ class SyncManagerImp @Inject constructor(
                 false
             )
 
-            Timber.d("**Paso 8: Validar WebId ${newMessageEventMessageRes.id}")
+            Timber.d("**Paso 7.1: Validar WebId ${newMessageEventMessageRes.id}")
 
             if (databaseMessage == null) {
 
-                Timber.d("**Paso 9: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
+                Timber.d("**Paso 7.2: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
 
                 val message =
                     newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
 
                 val messageId = messageLocalDataSource.insertMessage(message)
 
-                Timber.d("**Paso 10: Mensaje insertado $messageId")
+                Timber.d("**Paso 7.3: Mensaje insertado $messageId")
 
                 if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                    Timber.d("**Paso 7.4: insertar mensaje Quote")
                     insertQuote_NOTIF(
                         newMessageEventMessageRes.quoted,
                         messageId.toInt()
@@ -303,8 +304,11 @@ class SyncManagerImp @Inject constructor(
                         messageId.toInt(),
                         newMessageEventMessageRes.attachments
                     )
+                if (listAttachments.isNotEmpty()) {
+                    Timber.d("**Paso 7.5: insertar ${listAttachments.size} adjuntos")
+                    attachmentLocalDataSource.insertAttachments(listAttachments)
+                }
 
-                attachmentLocalDataSource.insertAttachments(listAttachments)
             }
         } catch (e: java.lang.Exception) {
             Timber.e(e.localizedMessage)
@@ -316,7 +320,7 @@ class SyncManagerImp @Inject constructor(
     //TODO: Estos dos metodos tienen la misma funcion refactorizarlos
     override fun insertMessage(messageString: String) {
 
-        Timber.d("**Paso 7: Proceso del item $messageString")
+        Timber.d("**Paso 7: Proceso de Insercion del item $messageString")
 
         GlobalScope.launch() {
             val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
@@ -326,7 +330,8 @@ class SyncManagerImp @Inject constructor(
             }
 
 
-            Timber.d("Paso 5: Desencriptar mensaje $messageString")
+            Timber.d("**Paso 7.1: Desencriptar mensaje ${newMessageEventMessageResData}")
+
             try {
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
@@ -344,21 +349,23 @@ class SyncManagerImp @Inject constructor(
                                 false
                             )
 
-                        Timber.d("**Paso 8: Validar WebId ${newMessageEventMessageRes.id}")
+                        Timber.d("**Paso 7.2: Validar WebId ${newMessageEventMessageRes.id}")
+
 
                         if (databaseMessage == null) {
 
                             val message =
                                 newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
 
-                            Timber.d("**Paso 9: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
+                            Timber.d("**Paso 7.3: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
 
                             val messageId =
                                 messageLocalDataSource.insertMessage(message)
 
-                            Timber.d("**Paso 10: Mensaje insertado $messageId")
+                            Timber.d("**Paso 7.4: Mensaje insertado $messageId")
 
                             if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                                Timber.d("**Paso 7.5.1: insertar Quote")
                                 insertQuote_NOTIF(
                                     newMessageEventMessageRes.quoted,
                                     messageId.toInt()
@@ -370,8 +377,10 @@ class SyncManagerImp @Inject constructor(
                                     messageId.toInt(),
                                     newMessageEventMessageRes.attachments
                                 )
-
-                            attachmentLocalDataSource.insertAttachments(listAttachments)
+                            if (listAttachments.isNotEmpty()) {
+                                Timber.d("**Paso 7.5.2: insertar ${listAttachments.size} adjuntos")
+                                attachmentLocalDataSource.insertAttachments(listAttachments)
+                            }
                         }
                     }
             } catch (e: java.lang.Exception) {
@@ -435,11 +444,12 @@ class SyncManagerImp @Inject constructor(
 
     override fun notifyMessageReceived(messageId: String) {
 
-        Timber.d("**Paso 13: Consumir Recibido $messageId")
+        Timber.d("**Paso 9: Proceso consumir recibido del item $messageId")
 
         GlobalScope.launch {
             try {
                 val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
+                Timber.d("**Paso 9.1: Proceso consumir recibido del item $messageReceivedReqDTO")
                 napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
             } catch (e: Exception) {
                 Timber.e(e)

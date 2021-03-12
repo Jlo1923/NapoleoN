@@ -84,7 +84,7 @@ class NEW_NotificationService
             0
 
 
-        Timber.d("**Paso 1: Notificacion Count $notificationCount")
+        Timber.d("**Paso 1.1: Notificacion Count $notificationCount")
 
         if (data.containsKey(Constants.NotificationKeys.MESSAGE_ID))
             if (!validateExistMessageId(data.getValue(Constants.NotificationKeys.MESSAGE_ID))) {
@@ -93,14 +93,16 @@ class NEW_NotificationService
                 queueNotifications.add(notification)
             }
 
+        Timber.d("**Paso 3.1: Estados Status Socket: ${socketNotificationService.getStatusSocket()} Status Channel: ${socketNotificationService.getStatusGlobalChannel()} ")
+
         if (socketNotificationService.getStatusSocket() != ConnectionState.CONNECTED &&
-            socketNotificationService.getStatusGlobalChannel() == Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+            socketNotificationService.getStatusGlobalChannel() != Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
         ) {
-            Timber.d("**Paso 3.1: Solicitud de conexion a Socket")
+            Timber.d("**Paso 3.2: Solicitud de conexion. Status Socket: ${socketNotificationService.getStatusSocket()} Status Channel: ${socketNotificationService.getStatusGlobalChannel()} ")
             socketNotificationService.connectSocket()
             listenConnectChannel()
         } else {
-            Timber.d("**Paso 3.2: Solicitud a proceso de cola desde el principal")
+            Timber.d("**Paso 3.3: Solicitud a proceso de cola desde el principal")
             processQueueNotifications()
         }
     }
@@ -142,6 +144,8 @@ class NEW_NotificationService
 
             if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE).toBoolean()) {
 
+                Timber.d("**Paso 10: No Silenciado")
+
                 showNotification(itemDataNotification, itemNotification)
 
             }
@@ -165,7 +169,7 @@ class NEW_NotificationService
 
     private fun emitClientConversation(messageString: String) {
 
-        Timber.d("**Paso 7: Proceso del item $messageString")
+        Timber.d("**Paso 8: Proceso de Emision del item $messageString")
 
         GlobalScope.launch() {
             val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
@@ -174,7 +178,7 @@ class NEW_NotificationService
                 messageString
             }
 
-            Timber.d("Paso 5: Desencriptar mensaje $messageString")
+            Timber.d("Paso 8.1: Desencriptar mensaje $messageString")
             try {
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
@@ -190,7 +194,7 @@ class NEW_NotificationService
                             )
                         )
 
-                        Timber.d("**Paso 11: Emitir Recibido $messages")
+                        Timber.d("**Paso 8.2: Emitir Recibido $messages")
 
                         socketNotificationService.emitClientConversation(messages)
 
@@ -206,6 +210,8 @@ class NEW_NotificationService
         itemDataNotification: Map<String, String>,
         itemNotification: RemoteMessage.Notification?
     ) {
+
+        Timber.d("**Paso 10.1 : Proceso del Item mostrar notificacion itemDataNotification: $itemDataNotification itemNotification $itemNotification")
 
         var notificationType = 0
 
@@ -266,15 +272,17 @@ class NEW_NotificationService
             builder.setContentText(itemDataNotification.getValue(Constants.NotificationKeys.BODY))
         }
 
-        Timber.d("*NotificationTest: isVisible ${app.isAppVisible()}")
-
         if (!app.isAppVisible()) {
-            Timber.d("Paso 10: Muestra notificacion")
+
+            Timber.d("**Paso 10.3 : Muestra Notificacion")
+
             with(NotificationManagerCompat.from(context)) {
                 notify(123456, builder.build())
                 disposable.clear()
             }
+
         }
+
     }
 
     private fun getChannelType(
@@ -316,8 +324,13 @@ class NEW_NotificationService
         data: Map<String, String>,
         notificationType: Int
     ): Pair<PendingIntent, Int> {
-        var notificationType1 = notificationType
+
+        Timber.d("**Paso 10.2 : Crear Pending Intent data: $data notificationType $notificationType")
+
+        var notificationTypeAux = notificationType
+
         val notificationIntent = Intent(context, MainActivity::class.java)
+
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         with(data) {
@@ -332,8 +345,8 @@ class NEW_NotificationService
                 val attackKey = Constants.NotificationKeys.ATTACK
 
                 if (this.containsKey(typeNotificationKey)) {
-                    notificationType1 = this.getValue(typeNotificationKey).toInt()
-                    notificationIntent.putExtra(typeNotificationKey, notificationType1.toString())
+                    notificationTypeAux = this.getValue(typeNotificationKey).toInt()
+                    notificationIntent.putExtra(typeNotificationKey, notificationTypeAux.toString())
                 }
 
                 if (this.containsKey(contactKey)) {
@@ -357,7 +370,7 @@ class NEW_NotificationService
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_ONE_SHOT
         )
 
-        return Pair(pendingIntent, notificationType1)
+        return Pair(pendingIntent, notificationTypeAux)
     }
 
 }

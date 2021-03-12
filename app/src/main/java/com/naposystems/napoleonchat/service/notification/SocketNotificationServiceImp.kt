@@ -71,7 +71,13 @@ class SocketNotificationServiceImp @Inject constructor(
 
     override fun getStatusGlobalChannel(): Boolean {
         return if (pusher.getPrivateChannel(privateGlobalChannelName) != null)
-            pusher.getPrivateChannel(privateGlobalChannelName).isSubscribed
+            if (pusher.getPrivateChannel(privateGlobalChannelName).isSubscribed)
+                if (::globalChannel.isInitialized)
+                    globalChannel.isSubscribed
+                else
+                    Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+            else
+                Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
         else
             Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
     }
@@ -217,6 +223,7 @@ class SocketNotificationServiceImp @Inject constructor(
             val jsonObject = adapterValidate.toJson(validateMessage)
 
             if (jsonObject.isNotEmpty())
+
                 globalChannel.trigger(CLIENT_CONVERSATION_NN, jsonObject)
 
         } catch (e: Exception) {
