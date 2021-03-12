@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.socket.NEWSocketService
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.messageNotSent.MessageNotSentLocalDataSource
@@ -27,11 +28,9 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.AuthRe
 import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.HeadersReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.SocketReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
-import com.naposystems.napoleonchat.service.socket.SocketService
 import com.squareup.moshi.Moshi
 import com.vincent.videocompressor.VideoCompressK
 import com.vincent.videocompressor.VideoCompressResult
@@ -55,7 +54,7 @@ import javax.inject.Inject
 
 class ConversationRepository @Inject constructor(
     private val context: Context,
-    private val socketService: SocketService,
+    private val newSocketService: NEWSocketService,
     private val userLocalDataSource: UserLocalDataSource,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
@@ -63,8 +62,7 @@ class ConversationRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val quoteLocalDataSource: QuoteLocalDataSource,
     private val messageNotSentLocalDataSource: MessageNotSentLocalDataSource
-) :
-    IContractConversation.Repository {
+) : IContractConversation.Repository {
 
     private var envioEnProceso: Boolean = true
 
@@ -91,7 +89,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketService.unSubscribeCallChannel(channelName)
+        newSocketService.unSubscribeCallChannel(channelName)
     }
 
     override fun getLocalMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>> {
@@ -387,9 +385,9 @@ class ConversationRepository @Inject constructor(
 
                 try {
 
-                    Timber.d("SocketService: $socketService")
+                    Timber.d("SocketService: $newSocketService")
 
-                    socketService.emitClientConversation(messagesRead)
+                    newSocketService.emitClientConversation(messagesRead)
 
                     val response = napoleonApi.sendMessagesRead(
                         MessagesReadReqDTO(
@@ -617,7 +615,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketService.subscribeToCallChannel(channel, false, isVideoCall)
+        newSocketService.subscribeToCallChannel(channel, false, isVideoCall)
     }
 
     override suspend fun downloadAttachment(

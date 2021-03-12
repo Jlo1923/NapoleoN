@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.service.notification
 
 import android.content.Context
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
@@ -11,7 +10,6 @@ import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.Valid
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.pusher.client.Pusher
-import com.pusher.client.channel.PresenceChannel
 import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
@@ -26,8 +24,7 @@ class SocketNotificationServiceImp @Inject constructor(
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val syncManager: SyncManager,
-    private val cryptoMessage: CryptoMessage
+    private val syncManager: SyncManager
 ) : SocketNotificationService {
 
     private val moshi: Moshi by lazy {
@@ -40,21 +37,9 @@ class SocketNotificationServiceImp @Inject constructor(
 
     private var userId = syncManager.getUserId()
 
-    private var privateGeneralChannelName: String
-
-    private var privateGlobalChannelName: String
-
     private lateinit var globalChannel: PrivateChannel
 
-    companion object {
-        const val CLIENT_CONVERSATION_NN = "client-conversationNN"
-    }
-
     init {
-
-        privateGeneralChannelName = "private-general.${userId}"
-
-        privateGlobalChannelName = "private-global"
 
         Timber.d("Pusher: //////////////////////////////////////")
 
@@ -62,16 +47,13 @@ class SocketNotificationServiceImp @Inject constructor(
 
     //region Implementacion Interfaz
 
-    override fun getPusherChannel(channel: String): PresenceChannel? =
-        pusher.getPresenceChannel(channel)
-
     override fun getStatusSocket(): ConnectionState {
         return pusher.connection.state
     }
 
     override fun getStatusGlobalChannel(): Boolean {
-        return if (pusher.getPrivateChannel(privateGlobalChannelName) != null)
-            if (pusher.getPrivateChannel(privateGlobalChannelName).isSubscribed)
+        return if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
+            if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
                 if (::globalChannel.isInitialized)
                     globalChannel.isSubscribed
                 else
@@ -99,7 +81,7 @@ class SocketNotificationServiceImp @Inject constructor(
                     override fun onConnectionStateChange(change: ConnectionStateChange?) {
 
                         if (change?.currentState == ConnectionState.CONNECTED)
-                            subscribeChannels()
+                            subscribeChannel()
                         else
                             Timber.d("Pusher: connectSocket: State:${pusher.connection.state}")
 
@@ -115,27 +97,12 @@ class SocketNotificationServiceImp @Inject constructor(
 
                 })
             } else if (pusher.connection.state == ConnectionState.CONNECTED && !app.isAppVisible()) {
-                subscribeChannels()
+                subscribeChannel()
             }
         }
     }
 
-    override fun disconnectSocket() {
-
-        try {
-
-            if (pusher.connection.state == ConnectionState.CONNECTED ||
-                pusher.connection.state == ConnectionState.CONNECTING
-            ) {
-                pusher.disconnect()
-                Timber.d("Pusher: disconnectSocket")
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-    }
-
-    private fun subscribeChannels() {
+    private fun subscribeChannel() {
 
         Timber.d("Pusher: subscribeChannels")
 
@@ -147,9 +114,9 @@ class SocketNotificationServiceImp @Inject constructor(
 
             Timber.d("Pusher: State:${pusher.connection.state}, SocketId:${pusher.connection.socketId}")
 
-            pusher.unsubscribe(privateGeneralChannelName)
+            pusher.unsubscribe(Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId)
 
-            pusher.unsubscribe(privateGlobalChannelName)
+            pusher.unsubscribe(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
 
             subscribeToPrivateGlobalChannel()
 
@@ -161,27 +128,27 @@ class SocketNotificationServiceImp @Inject constructor(
     private fun subscribeToPrivateGlobalChannel() {
 
         Timber.d(
-            "Pusher: subscribeToPrivateGlobalChannel: instance:$this privateGlobalChannelName: ${
+            "Pusher: subscribeToPrivateGlobalChannel: instance:$this _root_ide_package_.Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName : ${
                 pusher.getPrivateChannel(
-                    privateGlobalChannelName
+                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
                 )
             }"
         )
 
         try {
 
-            if (pusher.getPrivateChannel(privateGlobalChannelName) == null) {
+            if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) == null) {
 
                 Timber.d(
-                    "Pusher: subscribeToPrivateGlobalChannel:  IF privateGlobalChannelName: ${
+                    "Pusher: subscribeToPrivateGlobalChannel:  IF _root_ide_package_.Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName : ${
                         pusher.getPrivateChannel(
-                            privateGlobalChannelName
+                            Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
                         )
                     }"
                 )
 
                 globalChannel = pusher.subscribePrivate(
-                    privateGlobalChannelName,
+                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName,
                     object : PrivateChannelEventListener {
                         override fun onEvent(event: PusherEvent?) {
                             Timber.d("Pusher: subscribeToPrivateGlobalChannel: onEvent ${event?.data}")
@@ -224,14 +191,16 @@ class SocketNotificationServiceImp @Inject constructor(
 
             if (jsonObject.isNotEmpty())
 
-                globalChannel.trigger(CLIENT_CONVERSATION_NN, jsonObject)
+                globalChannel.trigger(
+                    Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                    jsonObject
+                )
 
         } catch (e: Exception) {
             Timber.e(e)
         }
 
     }
-
 
     //endregion
 

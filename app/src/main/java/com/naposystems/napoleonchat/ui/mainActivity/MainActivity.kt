@@ -401,7 +401,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-            if (args.containsKey(Constants.NotificationKeys.ATTACK)) {
+            if (args.containsKey(Constants.NotificationKeys.ATTACKER_ID)) {
                 val dialog = AccountAttackDialogFragment()
                 dialog.show(supportFragmentManager, "AttackDialog")
             }

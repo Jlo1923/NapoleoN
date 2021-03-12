@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
+import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannel
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
@@ -31,6 +32,9 @@ class NotificationSettingFragment : BaseFragment() {
 
     @Inject
     lateinit var notificationService: OLD_NotificationService
+
+    @Inject
+    lateinit var handlerChannelService: HandlerChannel.Service
 
     private var currentSoundNotificationMessage: Uri? = null
 
@@ -60,8 +64,7 @@ class NotificationSettingFragment : BaseFragment() {
     private fun updateSoundChannelMessage() {
 //        notificationService = NotificationService()
 //        notificationService = NotificationService(requireContext().applicationContext)
-        currentSoundNotificationMessage = notificationService.getChannelSound(
-            requireContext(),
+        currentSoundNotificationMessage = handlerChannelService.getChannelSound(
             Constants.ChannelType.DEFAULT.type,
             null,
             null
@@ -96,10 +99,11 @@ class NotificationSettingFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            notificationService.updateChannel(
-                requireContext(),
+            handlerChannelService.updateChannel(
                 uri,
-                Constants.ChannelType.DEFAULT.type
+                Constants.ChannelType.DEFAULT.type,
+                null,
+                null
             )
             Timber.d("*TestSong: onActivityResult=$uri")
 

@@ -4,11 +4,17 @@ import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.Valid
 import com.pusher.client.channel.PresenceChannel
 import org.json.JSONObject
 
-interface SocketService {
+interface NEWSocketService {
 
-    fun connectSocket(locationConnectSocket: Boolean)
+    //region Conexion
+    fun connectSocket()
 
     fun disconnectSocket()
+    //endregion
+
+    //region Mensajes
+    fun emitClientConversation(messages: List<ValidateMessage>)
+    //endregion
 
     fun connectToSocketReadyForCall(channel: String)
 
@@ -26,6 +32,5 @@ interface SocketService {
 
 //        fun subscribeToCallChannelFromBackground(channel: String)
 
-    fun emitClientConversation(messages: List<ValidateMessage>)
-    fun getSocketId(): String
+//    fun getSocketId(): String
 }

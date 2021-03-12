@@ -736,50 +736,6 @@ class SyncManagerImp @Inject constructor(
         return contactLocalDataSource.getContactById(contactId)
     }
 
-    override fun getNotificationChannelCreated(): Int {
-        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_CHANNEL_CREATED)
-    }
-
-    override fun setNotificationChannelCreated() {
-        sharedPreferencesManager.putInt(
-            Constants.SharedPreferences.PREF_CHANNEL_CREATED,
-            Constants.ChannelCreated.TRUE.state
-        )
-    }
-
-    override fun getNotificationMessageChannelId(): Int {
-        return sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID
-        )
-    }
-
-    override fun setNotificationMessageChannelId(newId: Int) {
-        sharedPreferencesManager.putInt(
-            Constants.SharedPreferences.PREF_NOTIFICATION_MESSAGE_CHANNEL_ID,
-            newId
-        )
-    }
-
-    override fun getCustomNotificationChannelId(contactId: Int): String? {
-        val contact = contactLocalDataSource.getContactById(contactId)
-        return contact?.notificationId
-    }
-
-    override fun setCustomNotificationChannelId(contactId: Int, newId: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            contactLocalDataSource.updateChannelId(contactId, newId)
-        }
-    }
-
-    override fun getContactById(contactId: Int): ContactEntity? {
-        return contactLocalDataSource.getContactById(contactId)
-    }
-
-    override fun updateStateChannel(contactId: Int, state: Boolean) {
-        GlobalScope.launch(Dispatchers.IO) {
-            contactLocalDataSource.updateStateChannel(contactId, state)
-        }
-    }
 
     override suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int) {
         val originalMessage =

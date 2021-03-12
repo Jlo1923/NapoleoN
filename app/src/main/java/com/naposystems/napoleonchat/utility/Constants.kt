@@ -83,7 +83,7 @@ object Constants {
         const val BODY = "body"
         const val TITLE = "title"
         const val CONTACT = "contact"
-        const val ATTACK = "attacker_id"
+        const val ATTACKER_ID = "attacker_id"
         const val MESSAGE = "message"
         const val BADGE = "badge"
         const val SOUND = "sound"
@@ -299,20 +299,6 @@ object Constants {
         EXISTING(2)
     }
 
-    enum class EventsSocket(val channel: String) {
-        DISCONNECT("disconnect"),
-        NEW_MESSAGE("App\\Events\\NewMessageEvent"),
-        NOTIFY_MESSAGES_RECEIVED("App\\Events\\NotifyMessagesReceived"),
-        CANCEL_OR_REJECT_FRIENDSHIP_REQUEST("App\\Events\\CancelOrRejectFriendshipRequestEvent"),
-        NOTIFY_MESSAGE_READED("App\\Events\\NotifyMessageReaded"),
-        SEND_MESSAGES_DESTROY("App\\Events\\SendMessagesDestroyEvent"),
-        CALL_FRIEND("App\\Events\\CallFriendEvent"),
-        REJECTED_CALL("App\\Events\\RejectedCallEvent"),
-        CANCEL_CALL("App\\Events\\CancelCallEvent"),
-        BLOCK_OR_DELETE_FRIENDSHIP("App\\Events\\BlockOrDeleteFrienshipEvent"),
-        USER_AVAILABLE_FOR_CALL("App\\Events\\UserAvailableForCallEvent")
-    }
-
     //endregion
 
     //region F
@@ -508,9 +494,32 @@ object Constants {
         SOCKET_ID_NO_EXIST("NO_EXIST")
     }
 
+    enum class SocketChannelName constructor(val channelName: String) {
+        PRIVATE_GLOBAL_CHANNEL_NAME("private-global"),
+        PRIVATE_GENERAL_CHANNEL_NAME("private-general.")
+    }
+
     enum class SocketChannelStatus constructor(val status: Boolean) {
         SOCKECT_CHANNEL_STATUS_CONNECTED(true),
         SOCKECT_CHANNEL_STATUS_NOT_CONNECTED(false)
+    }
+
+    enum class SocketListeEvents(val channel: String) {
+        DISCONNECT("disconnect"),
+        NEW_MESSAGE("App\\Events\\NewMessageEvent"),
+        NOTIFY_MESSAGES_RECEIVED("App\\Events\\NotifyMessagesReceived"),
+        CANCEL_OR_REJECT_FRIENDSHIP_REQUEST("App\\Events\\CancelOrRejectFriendshipRequestEvent"),
+        NOTIFY_MESSAGE_READED("App\\Events\\NotifyMessageReaded"),
+        SEND_MESSAGES_DESTROY("App\\Events\\SendMessagesDestroyEvent"),
+        CALL_FRIEND("App\\Events\\CallFriendEvent"),
+        REJECTED_CALL("App\\Events\\RejectedCallEvent"),
+        CANCEL_CALL("App\\Events\\CancelCallEvent"),
+        BLOCK_OR_DELETE_FRIENDSHIP("App\\Events\\BlockOrDeleteFrienshipEvent"),
+        USER_AVAILABLE_FOR_CALL("App\\Events\\UserAvailableForCallEvent")
+    }
+
+    enum class SocketEmitTriggers(val trigger: String) {
+        CLIENT_CONVERSATION("client-conversationNN")
     }
 
     enum class StateFlag(val state: Int) {

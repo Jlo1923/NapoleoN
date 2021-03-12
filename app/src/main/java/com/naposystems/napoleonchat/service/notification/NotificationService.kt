@@ -4,7 +4,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 interface NotificationService {
     fun createInformativeNotification(
-        data: Map<String, String>,
+        dataFromNotification: Map<String, String>,
         notification: RemoteMessage.Notification?
     )
 }

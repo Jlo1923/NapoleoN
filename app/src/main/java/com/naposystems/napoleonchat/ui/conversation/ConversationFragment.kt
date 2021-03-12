@@ -50,6 +50,7 @@ import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notification.NotificationService
 import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity

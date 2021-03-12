@@ -18,8 +18,8 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
-import com.naposystems.napoleonchat.service.socket.SocketService
-import com.naposystems.napoleonchat.service.socket.SocketServiceImp
+import com.naposystems.napoleonchat.service.socket.NEWSocketService
+import com.naposystems.napoleonchat.service.socket.NEWSocketServiceImp
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.BluetoothStateManager
 import com.naposystems.napoleonchat.utility.Constants
@@ -36,7 +36,7 @@ import javax.inject.Inject
 
 class WebRTCClient @Inject constructor(
     private val context: Context,
-    private val socketService: SocketService,
+    private val socketService: NEWSocketService,
     private val notificationService: OLD_NotificationService
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
 
@@ -273,7 +273,7 @@ class WebRTCClient @Inject constructor(
                     } else {
                         socketService.emitToCall(
                             this.channel,
-                            SocketServiceImp.CONTACT_CANT_CHANGE_TO_VIDEO
+                            NEWSocketServiceImp.CONTACT_CANT_CHANGE_TO_VIDEO
                         )
                     }
                 }
@@ -900,17 +900,17 @@ class WebRTCClient @Inject constructor(
         audioManager.stopBluetoothSco()
         audioManager.isBluetoothScoOn = false
         audioManager.isSpeakerphoneOn = false
-        socketService.emitToCall(channel, SocketServiceImp.HANGUP_CALL)
+        socketService.emitToCall(channel, NEWSocketServiceImp.HANGUP_CALL)
     }
 
     override fun changeToVideoCall() {
         if (!isVideoCall) {
-            socketService.emitToCall(channel, SocketServiceImp.CONTACT_WANT_CHANGE_TO_VIDEO)
+            socketService.emitToCall(channel, NEWSocketServiceImp.CONTACT_WANT_CHANGE_TO_VIDEO)
         }
     }
 
     override fun cancelChangeToVideoCall() {
-        socketService.emitToCall(channel, SocketServiceImp.CONTACT_CANCEL_CHANGE_TO_VIDEO)
+        socketService.emitToCall(channel, NEWSocketServiceImp.CONTACT_CANCEL_CHANGE_TO_VIDEO)
     }
 
     override fun muteVideo(checked: Boolean, itsFromBackPressed: Boolean) {
@@ -919,11 +919,11 @@ class WebRTCClient @Inject constructor(
             isVideoMuted = checked
 
             if (checked) {
-                socketService.emitToCall(channel, SocketServiceImp.CONTACT_TURN_OFF_CAMERA)
+                socketService.emitToCall(channel, NEWSocketServiceImp.CONTACT_TURN_OFF_CAMERA)
                 mListener?.changeLocalRenderVisibility(View.GONE)
                 videoTrack.setEnabled(false)
             } else {
-                socketService.emitToCall(channel, SocketServiceImp.CONTACT_TURN_ON_CAMERA)
+                socketService.emitToCall(channel, NEWSocketServiceImp.CONTACT_TURN_ON_CAMERA)
                 mListener?.changeLocalRenderVisibility(View.VISIBLE)
                 videoTrack.setEnabled(true)
             }
@@ -1003,7 +1003,7 @@ class WebRTCClient @Inject constructor(
     override fun acceptChangeToVideoCall() {
         isVideoCall = true
         startCaptureVideo()
-        socketService.emitToCall(channel, SocketServiceImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO)
+        socketService.emitToCall(channel, NEWSocketServiceImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO)
         mListener?.changeTextViewTitle(R.string.text_encrypted_video_call)
         //renderRemoteVideo()
     }

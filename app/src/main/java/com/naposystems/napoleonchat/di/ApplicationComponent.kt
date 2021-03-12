@@ -30,10 +30,12 @@ import javax.inject.Singleton
         SharedPreferencesModule::class,
         PusherModule::class,
         SocketModule::class,
-        NotificationModule::class,
         WebRTCClientModule::class,
         CryptoModule::class,
         SyncManagerModule::class,
+        HandlerChannelModule::class,
+        NotificationModule::class,
+        NewNotificationServicemodule::class,
 //        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,

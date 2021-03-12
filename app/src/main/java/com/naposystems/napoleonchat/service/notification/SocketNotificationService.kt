@@ -7,15 +7,14 @@ import org.json.JSONObject
 
 interface SocketNotificationService {
 
-    fun connectSocket()
-
-    fun disconnectSocket()
-
-    fun emitClientConversation(messages: List<ValidateMessage>)
-
-    fun getPusherChannel(channel: String): PresenceChannel?
-
     fun getStatusSocket(): ConnectionState?
 
     fun getStatusGlobalChannel(): Boolean
+
+    fun connectSocket()
+
+//    fun disconnectSocket()
+
+    fun emitClientConversation(messages: List<ValidateMessage>)
+
 }

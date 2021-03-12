@@ -7,7 +7,7 @@ import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socket.SocketService
+import com.naposystems.napoleonchat.service.socket.NEWSocketService
 import javax.inject.Inject
 
 
@@ -15,7 +15,7 @@ class ProfileRepository @Inject constructor(
     private val context: Context,
     private val localDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketService: SocketService
+    private val newSocketService: NEWSocketService
 ) :
     IContractProfile.Repository {
 
@@ -33,6 +33,6 @@ class ProfileRepository @Inject constructor(
     }
 
     override fun disconnectSocket() {
-        socketService.disconnectSocket()
+        newSocketService.disconnectSocket()
     }
 }
