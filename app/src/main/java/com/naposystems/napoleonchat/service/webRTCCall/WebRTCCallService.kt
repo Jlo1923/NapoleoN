@@ -11,14 +11,14 @@ import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServi
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import javax.inject.Inject
 
 
 class WebRTCCallService @Inject constructor(
-    private val notificationService: NotificationService
+    private val notificationService: OLD_NotificationService
 ) : Service() {
 
     companion object {
@@ -39,7 +39,7 @@ class WebRTCCallService @Inject constructor(
 //        )
 //    }
 
-    private val notificationId = NotificationService.NOTIFICATION_RINGING
+    private val notificationId = OLD_NotificationService.NOTIFICATION_RINGING
 
     override fun onCreate() {
         super.onCreate()

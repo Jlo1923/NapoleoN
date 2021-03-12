@@ -8,7 +8,7 @@ import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
@@ -855,7 +855,7 @@ class SocketServiceImp @Inject constructor(
         privateChannel.bind(Constants.EventsSocket.CANCEL_CALL.channel,
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent) {
-                    Timber.d("CancelCallEvent: ${event.data}, notificationId: ${NotificationService.NOTIFICATION_RINGING}")
+                    Timber.d("CancelCallEvent: ${event.data}, notificationId: ${OLD_NotificationService.NOTIFICATION_RINGING}")
                     val jsonObject = JSONObject(event.data)
                     if (jsonObject.has("data")) {
                         val jsonData = jsonObject.getJSONObject("data")

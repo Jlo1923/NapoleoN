@@ -6,7 +6,7 @@ import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import dagger.android.support.DaggerApplication
@@ -27,11 +27,11 @@ class UploadService() : Service(), IContractUploadService {
     lateinit var repository: IContractUploadService.Repository
 
     @Inject
-    lateinit var notificationService: NotificationService
+    lateinit var notificationService: OLD_NotificationService
 
     private lateinit var napoleonApplication: NapoleonApplication
 
-    private val notificationId = NotificationService.NOTIFICATION_UPLOADING
+    private val notificationId = OLD_NotificationService.NOTIFICATION_UPLOADING
 
 //    val notificationUtils by lazy {
 //        NotificationService(

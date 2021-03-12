@@ -26,7 +26,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
 import com.naposystems.napoleonchat.webRTC.WebRTCClient
@@ -53,7 +53,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     lateinit var webRTCClient: IContractWebRTCClient
 
     @Inject
-    lateinit var notificationService: NotificationService
+    lateinit var notificationService: OLD_NotificationService
 
     private lateinit var binding: ActivityConversationCallBinding
 

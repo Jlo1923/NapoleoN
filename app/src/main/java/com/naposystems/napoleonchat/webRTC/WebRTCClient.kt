@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.service.socket.SocketService
 import com.naposystems.napoleonchat.service.socket.SocketServiceImp
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class WebRTCClient @Inject constructor(
     private val context: Context,
     private val socketService: SocketService,
-    private val notificationService: NotificationService
+    private val notificationService: OLD_NotificationService
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
 
     private val vibrator: Vibrator? by lazy {

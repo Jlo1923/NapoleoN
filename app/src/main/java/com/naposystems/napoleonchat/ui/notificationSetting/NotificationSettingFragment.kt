@@ -13,7 +13,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,7 +30,7 @@ class NotificationSettingFragment : BaseFragment() {
     private lateinit var binding: NotificationSettingFragmentBinding
 
     @Inject
-    lateinit var notificationService: NotificationService
+    lateinit var notificationService: OLD_NotificationService
 
     private var currentSoundNotificationMessage: Uri? = null
 

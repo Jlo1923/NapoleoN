@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.model.attachment.gallery.GalleryFolder
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryResult
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -41,7 +41,7 @@ class AttachmentGalleryFoldersFragment : BaseFragment() {
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var notificationService: NotificationService
+    lateinit var notificationService: OLD_NotificationService
 
     private val viewModel: AttachmentGalleryFoldersViewModel by viewModels {
         viewModelFactory

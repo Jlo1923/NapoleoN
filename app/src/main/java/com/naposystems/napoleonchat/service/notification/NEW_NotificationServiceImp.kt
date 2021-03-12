@@ -34,14 +34,14 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class NEW_NotificationService
+class NEW_NotificationServiceImp
 @Inject constructor(
     private val context: Context,
     private val socketNotificationService: SocketNotificationService,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val syncManager: SyncManager,
     private val cryptoMessage: CryptoMessage
-) {
+) : NotificationService {
 
     var queueDataNotifications: MutableList<Map<String, String>> = mutableListOf()
     var queueNotifications: MutableList<RemoteMessage.Notification?> = mutableListOf()
@@ -71,7 +71,7 @@ class NEW_NotificationService
         context as NapoleonApplication
     }
 
-    fun createInformativeNotification(
+    override fun createInformativeNotification(
         data: Map<String, String>,
         notification: RemoteMessage.Notification?
     ) {

@@ -2,8 +2,9 @@ package com.naposystems.napoleonchat.di.module.general
 
 import android.content.Context
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.service.notification.NEW_NotificationService
+import com.naposystems.napoleonchat.service.notification.NEW_NotificationServiceImp
 import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.service.notification.SocketNotificationService
 import com.naposystems.napoleonchat.service.socket.SocketService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
@@ -21,8 +22,8 @@ class NotificationModule {
         syncManager: SyncManager,
         cryptoMessage: CryptoMessage,
         socketService: SocketService
-    ): NotificationService {
-        return NotificationService(
+    ): OLD_NotificationService {
+        return OLD_NotificationService(
             context,
             syncManager,
             cryptoMessage,
@@ -38,8 +39,8 @@ class NotificationModule {
         sharedPreferencesManager: SharedPreferencesManager,
         syncManager: SyncManager,
         cryptoMessage: CryptoMessage
-    ): NEW_NotificationService {
-        return NEW_NotificationService(
+    ): NotificationService {
+        return NEW_NotificationServiceImp(
             context,
             socketNotificationService,
             sharedPreferencesManager,

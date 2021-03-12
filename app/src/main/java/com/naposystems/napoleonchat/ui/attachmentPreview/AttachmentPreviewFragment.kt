@@ -21,7 +21,7 @@ import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
@@ -46,7 +46,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var notificationService: NotificationService
+    lateinit var notificationService: OLD_NotificationService
 
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory

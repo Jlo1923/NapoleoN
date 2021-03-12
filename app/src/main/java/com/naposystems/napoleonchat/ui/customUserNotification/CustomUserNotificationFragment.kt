@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomUserNotificationFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
@@ -39,7 +39,7 @@ class CustomUserNotificationFragment : BaseFragment() {
     private lateinit var binding: CustomUserNotificationFragmentBinding
 
     @Inject
-    lateinit var notificationService: NotificationService
+    lateinit var notificationService: OLD_NotificationService
 
     private var currentSoundNotificationMessage: Uri? = null
     private val args: CustomUserNotificationFragmentArgs by navArgs()

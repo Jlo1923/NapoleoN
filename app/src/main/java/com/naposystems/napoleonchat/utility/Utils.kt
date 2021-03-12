@@ -39,7 +39,7 @@ import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.service.notification.NotificationService
+import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
@@ -688,7 +688,7 @@ class Utils {
             contactId: Int,
             oldNick: String,
             newNick: String,
-            notificationService: NotificationService
+            notificationService: OLD_NotificationService
         ) {
 //            val notificationUtils = NotificationService()
 //            val notificationUtils = NotificationService(context.applicationContext)
@@ -717,7 +717,7 @@ class Utils {
             channelType: Int,
             contactId: Int? = null,
             contactNick: String? = null,
-            notificationService: NotificationService
+            notificationService: OLD_NotificationService
         ) {
 //            val notificationUtils = NotificationService()
 //            val notificationUtils = NotificationService(context.applicationContext)
@@ -726,7 +726,7 @@ class Utils {
         }
 
         fun deleteUserChannel(
-            notificationService: NotificationService,
+            notificationService: OLD_NotificationService,
             context: Context,
             contactId: Int,
             oldNick: String,
