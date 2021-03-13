@@ -198,15 +198,15 @@ class NotificationMessagesServiceImp
 
         Timber.d("**Paso 3.1: Estados Status Socket: ${socketOutAppMessageService.getStatusSocket()} Status Channel: ${socketOutAppMessageService.getStatusGlobalChannel()} ")
 
-        if (socketOutAppMessageService.getStatusSocket() != ConnectionState.CONNECTED &&
-            socketOutAppMessageService.getStatusGlobalChannel() != Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
+        if (socketOutAppMessageService.getStatusSocket() == ConnectionState.CONNECTED &&
+            socketOutAppMessageService.getStatusGlobalChannel() == Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
         ) {
-            Timber.d("**Paso 3.2: Solicitud de conexion. Status Socket: ${socketOutAppMessageService.getStatusSocket()} Status Channel: ${socketOutAppMessageService.getStatusGlobalChannel()} ")
+            Timber.d("**Paso 3.2: Solicitud a proceso de cola desde el principal")
+            processQueueMessagesNotifications()
+        } else {
+            Timber.d("**Paso 3.3: Solicitud de conexion. Status Socket: ${socketOutAppMessageService.getStatusSocket()} Status Channel: ${socketOutAppMessageService.getStatusGlobalChannel()} ")
             socketOutAppMessageService.connectSocket()
             listenConnectChannel()
-        } else {
-            Timber.d("**Paso 3.3: Solicitud a proceso de cola desde el principal")
-            processQueueMessagesNotifications()
         }
     }
 
@@ -407,26 +407,33 @@ class NotificationMessagesServiceImp
             dataFromNotification
         )
 
-        val title = notification?.title
-
-        val body = notification?.body
-
         val iconBitmap = BitmapFactory.decodeResource(
             context.resources, R.drawable.ic_notification_icon
         )
 
+        val channelType =
+            if (dataFromNotification.containsKey(Constants.NotificationKeys.CONTACT)) {
+                handlerNotificationChannelService.getChannelType(
+                    dataFromNotification.getValue(Constants.NotificationKeys.TYPE_NOTIFICATION)
+                        .toInt(),
+                    dataFromNotification.getValue(Constants.NotificationKeys.CONTACT).toInt()
+                )
+            } else {
+                handlerNotificationChannelService.getChannelType(
+                    dataFromNotification.getValue(Constants.NotificationKeys.TYPE_NOTIFICATION)
+                        .toInt()
+                )
+            }
+
         return NotificationCompat.Builder(
             context,
-            handlerNotificationChannelService.getChannelType(
-                dataFromNotification
-                    .getValue(Constants.NotificationKeys.TYPE_NOTIFICATION).toInt()
-            )
+            channelType
         )
             .setLargeIcon(iconBitmap)
             .setSmallIcon(R.drawable.ic_notification_icon)
-            .setContentTitle(title)
+            .setContentTitle(notification?.title)
+            .setContentText(notification?.body)
             .setContentIntent(pendingIntent)
-            .setContentText(body)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setNumber(0)

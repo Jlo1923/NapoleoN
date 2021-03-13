@@ -70,6 +70,8 @@ class SocketOutAppMessageServiceImp @Inject constructor(
 
         Timber.d("Pusher: connectSocket: State:${pusher.connection.state}")
 
+        Timber.d("Pusher: userId: $userId")
+
         if (userId != Constants.UserNotExist.USER_NO_EXIST.user) {
 
             if (pusher.connection.state == ConnectionState.DISCONNECTED ||

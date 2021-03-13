@@ -80,44 +80,46 @@ class HandlerNotificationChannelServiceImp
         return channelId
     }
 
-    override fun getChannelType(
-        notificationType: Int
-    ): String {
-        return getChannelType(notificationType, null)
+    override fun getChannelType(notificationType: Int): String {
+        return if (notificationType == Constants.NotificationType.ENCRYPTED_MESSAGE.type) {
+            val notificationMessageChannelId = repository.getNotificationMessageChannelId()
+            context.getString(
+                R.string.notification_message_channel_id,
+                notificationMessageChannelId
+            )
+        } else {
+            context.getString(R.string.default_notification_channel_id)
+        }
     }
 
-    override fun getChannelType(
-        notificationType: Int,
-        contactId: Int?
-    ): String {
-        return when (notificationType) {
-            Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                val contact = contactId?.let {
-                    repository.getContactById(it)
-                }
-                contact?.let {
-                    if (it.stateNotification) {
-                        context.getString(
-                            R.string.notification_custom_channel_id,
-                            it.getNickName(),
-                            it.notificationId
-                        )
-                    } else {
-                        context.getString(
-                            R.string.notification_message_channel_id,
-                            repository.getNotificationMessageChannelId()
-                        )
-                    }
-                } ?: kotlin.run {
+    override fun getChannelType(notificationType: Int, contactId: Int): String {
+
+        return if (notificationType == Constants.NotificationType.ENCRYPTED_MESSAGE.type) {
+
+            val contact = repository.getContactById(contactId)
+
+            val notificationMessageChannelId = repository.getNotificationMessageChannelId()
+
+            val channelType = context.getString(
+                R.string.notification_message_channel_id,
+                notificationMessageChannelId
+            )
+
+            contact?.let {
+                if (it.stateNotification) {
                     context.getString(
-                        R.string.notification_message_channel_id,
-                        repository.getNotificationMessageChannelId()
+                        R.string.notification_custom_channel_id,
+                        it.getNickName(),
+                        it.notificationId
                     )
+                } else {
+                    channelType
                 }
+            } ?: kotlin.run {
+                channelType
             }
-            else -> {
-                context.getString(R.string.default_notification_channel_id)
-            }
+        } else {
+            context.getString(R.string.default_notification_channel_id)
         }
     }
 
@@ -478,6 +480,6 @@ class HandlerNotificationChannelServiceImp
         )
     }
 
-    //endregion
+//endregion
 
 }
