@@ -9,7 +9,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class HandlerChannelRepositoryImp
+class HandlerNotificationChannelRepositoryImp
 @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val contactLocalDataSource: ContactLocalDataSource

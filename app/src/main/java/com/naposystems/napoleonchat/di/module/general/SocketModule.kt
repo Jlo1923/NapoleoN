@@ -13,10 +13,10 @@ abstract class SocketModule {
 
     @Binds
     @Singleton
-    abstract fun bindSocketService(socketServiceImp: SocketInAppMessageServiceImp): SocketInAppMessageService
+    abstract fun bindSocketInAppMessageService(socketInAppMessageService: SocketInAppMessageServiceImp): SocketInAppMessageService
 
     @Binds
     @Singleton
-    abstract fun bindSocketNotificationService(socketNotificationServiceImp: SocketOutAppMessageServiceImp): SocketOutAppMessageService
+    abstract fun bindSocketOutAppMessageService(socketOutAppMessageService: SocketOutAppMessageServiceImp): SocketOutAppMessageService
 
 }

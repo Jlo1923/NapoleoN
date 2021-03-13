@@ -15,7 +15,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class HandlerChannelServiceImp
+class HandlerNotificationChannelServiceImp
 @Inject constructor(
     private val context: Context,
     private val repository: HandlerNotificationChannel.Repository

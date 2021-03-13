@@ -13,7 +13,7 @@ abstract class NotificationServicemodule {
 
     @Binds
     @Singleton
-    abstract fun bindNewNotificationService(notificationService: NotificationMessagesServiceImp): NotificationMessagesService
+    abstract fun bindNNotificationMessagesService(notificationMessagesService: NotificationMessagesServiceImp): NotificationMessagesService
 
     @Binds
     @Singleton
