@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.di.module.general
 
-import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannel
-import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannelRepositoryImp
-import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannelServiceImp
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerChannelRepositoryImp
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerChannelServiceImp
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton
@@ -12,10 +12,10 @@ abstract class HandlerChannelModule {
 
     @Binds
     @Singleton
-    abstract fun bindHandlerChannelService(handlerChannelService: HandlerChannelServiceImp): HandlerChannel.Service
+    abstract fun bindHandlerChannelService(handlerChannelService: HandlerChannelServiceImp): HandlerNotificationChannel.Service
 
     @Binds
     @Singleton
-    abstract fun bindHandlerChannerlRepository(handlerChannelRepository: HandlerChannelRepositoryImp): HandlerChannel.Repository
+    abstract fun bindHandlerChannerlRepository(handlerChannelRepository: HandlerChannelRepositoryImp): HandlerNotificationChannel.Repository
 
 }

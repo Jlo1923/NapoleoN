@@ -39,7 +39,6 @@ import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
@@ -203,6 +202,7 @@ class Utils {
             }
         }
 
+        //TODO: Abstraer a clase
         fun getFileUri(context: Context, fileName: String, subFolder: String): Uri {
             return try {
                 val path = File(context.cacheDir!!, subFolder)
@@ -683,74 +683,74 @@ class Utils {
             return data.toLowerCase(Locale.getDefault()).contains(query)
         }
 
-        fun updateNickNameChannel(
-            context: Context,
-            contactId: Int,
-            oldNick: String,
-            newNick: String,
-            notificationService: OLD_NotificationService
-        ) {
-//            val notificationUtils = NotificationService()
-//            val notificationUtils = NotificationService(context.applicationContext)
-//            val uri = notificationService.getChannelSound(
-//                context,
-//                Constants.ChannelType.CUSTOM.type,
-//                contactId,
-//                oldNick
-//            )
+//        fun updateNickNameChannel(
+//            context: Context,
+//            contactId: Int,
+//            oldNick: String,
+//            newNick: String,
+//            notificationService: OLD_NotificationService
+//        ) {
+////            val notificationUtils = NotificationService()
+////            val notificationUtils = NotificationService(context.applicationContext)
+////            val uri = notificationService.getChannelSound(
+////                context,
+////                Constants.ChannelType.CUSTOM.type,
+////                contactId,
+////                oldNick
+////            )
+////
+////            deleteUserChannel(notificationService, context, contactId, oldNick)
+////
+////            updateContactChannel(
+////                context,
+////                uri,
+////                Constants.ChannelType.CUSTOM.type,
+////                contactId,
+////                newNick,
+////                notificationService
+////            )
+//        }
+
+//        fun updateContactChannel(
+//            context: Context,
+//            uri: Uri?,
+//            channelType: Int,
+//            contactId: Int? = null,
+//            contactNick: String? = null,
+//            notificationService: OLD_NotificationService
+//        ) {
+////            val notificationUtils = NotificationService()
+////            val notificationUtils = NotificationService(context.applicationContext)
 //
-//            deleteUserChannel(notificationService, context, contactId, oldNick)
+////            notificationService.updateChannel(context, uri, channelType, contactId, contactNick)
+//        }
+
+//        fun deleteUserChannel(
+//            notificationService: OLD_NotificationService,
+//            context: Context,
+//            contactId: Int,
+//            oldNick: String,
+//            notificationId: String? = null
+//        ) {
+//            Timber.d("*TestDelete: id $contactId, nick $oldNick")
+////            val notificationUtils = NotificationService()
+////            val notificationUtils = NotificationService(context.applicationContext)
+//            val channelId = if (notificationId != null) {
+//                Timber.d("*TestDelete: exist Channel $notificationId")
+//                context.getString(R.string.notification_custom_channel_id, oldNick, notificationId)
+//            } else {
+//                Timber.d("*TestDelete: no exist Channel")
+////                notificationService.getChannelId(
+////                    context,
+////                    Constants.ChannelType.CUSTOM.type,
+////                    contactId,
+////                    oldNick
+////                )
+//            }
 //
-//            updateContactChannel(
-//                context,
-//                uri,
-//                Constants.ChannelType.CUSTOM.type,
-//                contactId,
-//                newNick,
-//                notificationService
-//            )
-        }
-
-        fun updateContactChannel(
-            context: Context,
-            uri: Uri?,
-            channelType: Int,
-            contactId: Int? = null,
-            contactNick: String? = null,
-            notificationService: OLD_NotificationService
-        ) {
-//            val notificationUtils = NotificationService()
-//            val notificationUtils = NotificationService(context.applicationContext)
-
-//            notificationService.updateChannel(context, uri, channelType, contactId, contactNick)
-        }
-
-        fun deleteUserChannel(
-            notificationService: OLD_NotificationService,
-            context: Context,
-            contactId: Int,
-            oldNick: String,
-            notificationId: String? = null
-        ) {
-            Timber.d("*TestDelete: id $contactId, nick $oldNick")
-//            val notificationUtils = NotificationService()
-//            val notificationUtils = NotificationService(context.applicationContext)
-            val channelId = if (notificationId != null) {
-                Timber.d("*TestDelete: exist Channel $notificationId")
-                context.getString(R.string.notification_custom_channel_id, oldNick, notificationId)
-            } else {
-                Timber.d("*TestDelete: no exist Channel")
-//                notificationService.getChannelId(
-//                    context,
-//                    Constants.ChannelType.CUSTOM.type,
-//                    contactId,
-//                    oldNick
-//                )
-            }
-
-            Timber.d("*TestDelete: ChannelId $channelId")
-
-//            notificationService.deleteChannel(context, channelId, contactId)
-        }
+//            Timber.d("*TestDelete: ChannelId $channelId")
+//
+////            notificationService.deleteChannel(context, channelId, contactId)
+//        }
     }
 }

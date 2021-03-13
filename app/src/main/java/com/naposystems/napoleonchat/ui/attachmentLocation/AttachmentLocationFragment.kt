@@ -17,7 +17,6 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -48,7 +47,8 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.attachment.location.Place
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.SearchView
@@ -62,7 +62,6 @@ import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -88,7 +87,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var notificationService: OLD_NotificationService
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
@@ -183,9 +182,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
                     contactProfileShareViewModel.contact.value?.let { contact ->
                         if (contact.id == eventContact.contactId) {
                             if (contact.stateNotification) {
-                                Utils.deleteUserChannel(
-                                    notificationService,
-                                    requireContext(),
+                                handlerNotificationChannelService.deleteUserChannel(
                                     contact.id,
                                     contact.getNickName()
                                 )

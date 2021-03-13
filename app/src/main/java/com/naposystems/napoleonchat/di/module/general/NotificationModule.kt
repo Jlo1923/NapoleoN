@@ -2,9 +2,9 @@ package com.naposystems.napoleonchat.di.module.general
 
 import android.content.Context
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannel
-import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
-import com.naposystems.napoleonchat.service.socket.NEWSocketService
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import dagger.Module
 import dagger.Provides
@@ -17,16 +17,16 @@ class NotificationModule {
     fun providesNotificationService(
         context: Context,
         syncManager: SyncManager,
-        handlerChannelService: HandlerChannel.Service,
+        handlerNotificationChannelService: HandlerNotificationChannel.Service,
         cryptoMessage: CryptoMessage,
-        newSocketService: NEWSocketService
+        socketInAppMessageService: SocketInAppMessageService
     ): OLD_NotificationService {
         return OLD_NotificationService(
             context,
             syncManager,
-            handlerChannelService,
+            handlerNotificationChannelService,
             cryptoMessage,
-            newSocketService
+            socketInAppMessageService
         )
     }
 

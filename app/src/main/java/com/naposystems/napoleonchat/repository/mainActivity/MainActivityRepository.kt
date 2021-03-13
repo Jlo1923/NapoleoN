@@ -9,14 +9,14 @@ import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSO
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socket.NEWSocketService
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageService
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val newSocketService: NEWSocketService
+    private val socketInAppMessageService: SocketInAppMessageService
 ) :    IContractMainActivity.Repository {
 
     override suspend fun getUser(): UserEntity {
@@ -87,6 +87,6 @@ class MainActivityRepository @Inject constructor(
     }
 
     override fun disconnectSocket() {
-        newSocketService.disconnectSocket()
+        socketInAppMessageService.disconnectSocket()
     }
 }

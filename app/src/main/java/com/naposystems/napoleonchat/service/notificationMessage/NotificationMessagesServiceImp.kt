@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.notification
+package com.naposystems.napoleonchat.service.notificationMessage
 
 import android.app.PendingIntent
 import android.content.Context
@@ -16,7 +16,8 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannel
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.socketOutAppMessage.SocketOutAppMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
@@ -36,15 +37,15 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class NEW_NotificationServiceImp
+class NotificationMessagesServiceImp
 @Inject constructor(
     private val context: Context,
-    private val socketNotificationService: SocketNotificationService,
-    private val handlerChannelService: HandlerChannel.Service,
+    private val socketOutAppMessageService: SocketOutAppMessageService,
+    private val handlerNotificationChannelService: HandlerNotificationChannel.Service,
     private val syncManager: SyncManager,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val cryptoMessage: CryptoMessage
-) : NotificationService {
+) : NotificationMessagesService {
 
     var queueDataNotifications: MutableList<Map<String, String>> = mutableListOf()
     var queueNotifications: MutableList<RemoteMessage.Notification?> = mutableListOf()
@@ -75,7 +76,7 @@ class NEW_NotificationServiceImp
     }
 
     init {
-        handlerChannelService.initializeChannels()
+        handlerNotificationChannelService.initializeChannels()
     }
 
     override fun createInformativeNotification(
@@ -93,11 +94,8 @@ class NEW_NotificationServiceImp
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
 
-                if (!app.isAppVisible()) {
-
+                if (!app.isAppVisible())
                     handlerMessage(dataFromNotification, notification)
-
-                }
 
             }
 
@@ -108,7 +106,6 @@ class NEW_NotificationServiceImp
             Constants.NotificationType.FRIEND_REQUEST_ACCEPTED.type -> {
                 RxBus.publish(RxEvent.FriendshipRequestAccepted())
             }
-
 
             Constants.NotificationType.ACCOUNT_ATTACK.type -> {
 
@@ -199,13 +196,13 @@ class NEW_NotificationServiceImp
             }
         }
 
-        Timber.d("**Paso 3.1: Estados Status Socket: ${socketNotificationService.getStatusSocket()} Status Channel: ${socketNotificationService.getStatusGlobalChannel()} ")
+        Timber.d("**Paso 3.1: Estados Status Socket: ${socketOutAppMessageService.getStatusSocket()} Status Channel: ${socketOutAppMessageService.getStatusGlobalChannel()} ")
 
-        if (socketNotificationService.getStatusSocket() != ConnectionState.CONNECTED &&
-            socketNotificationService.getStatusGlobalChannel() != Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
+        if (socketOutAppMessageService.getStatusSocket() != ConnectionState.CONNECTED &&
+            socketOutAppMessageService.getStatusGlobalChannel() != Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
         ) {
-            Timber.d("**Paso 3.2: Solicitud de conexion. Status Socket: ${socketNotificationService.getStatusSocket()} Status Channel: ${socketNotificationService.getStatusGlobalChannel()} ")
-            socketNotificationService.connectSocket()
+            Timber.d("**Paso 3.2: Solicitud de conexion. Status Socket: ${socketOutAppMessageService.getStatusSocket()} Status Channel: ${socketOutAppMessageService.getStatusGlobalChannel()} ")
+            socketOutAppMessageService.connectSocket()
             listenConnectChannel()
         } else {
             Timber.d("**Paso 3.3: Solicitud a proceso de cola desde el principal")
@@ -301,7 +298,7 @@ class NEW_NotificationServiceImp
 
                         Timber.d("**Paso 8.2: Emitir Recibido $messages")
 
-                        socketNotificationService.emitClientConversation(messages)
+                        socketOutAppMessageService.emitClientConversation(messages)
 
                     }
             } catch (e: java.lang.Exception) {
@@ -420,7 +417,7 @@ class NEW_NotificationServiceImp
 
         return NotificationCompat.Builder(
             context,
-            handlerChannelService.getChannelType(
+            handlerNotificationChannelService.getChannelType(
                 dataFromNotification
                     .getValue(Constants.NotificationKeys.TYPE_NOTIFICATION).toInt()
             )

@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.notification
+package com.naposystems.napoleonchat.service.socketOutAppMessage
 
 import android.content.Context
 import com.naposystems.napoleonchat.app.NapoleonApplication
@@ -20,12 +20,12 @@ import com.squareup.moshi.Moshi
 import timber.log.Timber
 import javax.inject.Inject
 
-class SocketNotificationServiceImp @Inject constructor(
+class SocketOutAppMessageServiceImp @Inject constructor(
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val syncManager: SyncManager
-) : SocketNotificationService {
+    syncManager: SyncManager
+) : SocketOutAppMessageService {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -82,9 +82,6 @@ class SocketNotificationServiceImp @Inject constructor(
 
                         if (change?.currentState == ConnectionState.CONNECTED)
                             subscribeChannel()
-                        else
-                            Timber.d("Pusher: connectSocket: State:${pusher.connection.state}")
-
                     }
 
                     override fun onError(message: String?, code: String?, e: java.lang.Exception?) {

@@ -1,8 +1,8 @@
-package com.naposystems.napoleonchat.service.notification
+package com.naposystems.napoleonchat.service.notificationMessage
 
 import com.google.firebase.messaging.RemoteMessage
 
-interface NotificationService {
+interface NotificationMessagesService {
     fun createInformativeNotification(
         dataFromNotification: Map<String, String>,
         notification: RemoteMessage.Notification?

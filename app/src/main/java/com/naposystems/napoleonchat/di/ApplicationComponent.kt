@@ -35,7 +35,7 @@ import javax.inject.Singleton
         SyncManagerModule::class,
         HandlerChannelModule::class,
         NotificationModule::class,
-        NewNotificationServicemodule::class,
+        NotificationServicemodule::class,
 //        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,

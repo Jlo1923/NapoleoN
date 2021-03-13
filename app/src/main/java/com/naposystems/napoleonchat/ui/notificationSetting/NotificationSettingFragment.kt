@@ -11,10 +11,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
-import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannel
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class NotificationSettingFragment : BaseFragment() {
     lateinit var notificationService: OLD_NotificationService
 
     @Inject
-    lateinit var handlerChannelService: HandlerChannel.Service
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private var currentSoundNotificationMessage: Uri? = null
 
@@ -62,9 +62,7 @@ class NotificationSettingFragment : BaseFragment() {
     }
 
     private fun updateSoundChannelMessage() {
-//        notificationService = NotificationService()
-//        notificationService = NotificationService(requireContext().applicationContext)
-        currentSoundNotificationMessage = handlerChannelService.getChannelSound(
+        currentSoundNotificationMessage = handlerNotificationChannelService.getChannelSound(
             Constants.ChannelType.DEFAULT.type,
             null,
             null
@@ -99,7 +97,7 @@ class NotificationSettingFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            handlerChannelService.updateChannel(
+            handlerNotificationChannelService.updateChannel(
                 uri,
                 Constants.ChannelType.DEFAULT.type,
                 null,

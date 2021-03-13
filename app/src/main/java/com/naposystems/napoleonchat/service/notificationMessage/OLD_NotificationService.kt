@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.notification
+package com.naposystems.napoleonchat.service.notificationMessage
 
 import android.app.*
 import android.content.Context
@@ -12,8 +12,8 @@ import androidx.core.app.NotificationCompat.*
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.service.handlerChannel.HandlerChannel
-import com.naposystems.napoleonchat.service.socket.NEWSocketService
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
@@ -29,9 +29,9 @@ class OLD_NotificationService
 @Inject constructor(
     private val context: Context,
     private val syncManager: SyncManager,
-    private val handlerChannelService: HandlerChannel.Service,
+    private val handlerNotificationChannelService: HandlerNotificationChannel.Service,
     private val cryptoMessage: CryptoMessage,
-    private val newSocketService: NEWSocketService,
+    private val socketInAppMessageService: SocketInAppMessageService,
 ) {
 
     companion object {
@@ -62,7 +62,7 @@ class OLD_NotificationService
     init {
 //        (applicationContext as DaggerApplication).androidInjector().inject(this)
 
-        handlerChannelService.initializeChannels()
+        handlerNotificationChannelService.initializeChannels()
 
     }
 
@@ -206,40 +206,39 @@ class OLD_NotificationService
     //endregion
 
     //region Upload
-    fun createUploadNotification(
-        context: Context
-    ): Notification {
-        val notificationBuilder = Builder(
-            context,
-            context.getString(R.string.alerts_channel_id)
-        )
-            .setSmallIcon(R.drawable.ic_file_upload_black)
-            .setContentTitle(context.getString(R.string.text_sending_file))
-            .setContentText(context.getString(R.string.text_sending_file))
-            .setProgress(0, 0, true)
-            .setOngoing(true)
-
-        return notificationBuilder.build()
-    }
-
-    fun updateUploadProgress(max: Int, progress: Int) {
-        val notificationBuilder = Builder(
-            context,
-            context.getString(R.string.alerts_channel_id)
-        )
-            .setSmallIcon(R.drawable.ic_file_upload_black)
-            .setContentTitle(context.getString(R.string.text_sending_file))
-            .setContentText(context.getString(R.string.text_sending_file))
-            .setProgress(max, progress, false)
-            .setOngoing(true)
-
-        val notification = notificationBuilder.build()
-
-        val mNotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(NOTIFICATION_UPLOADING, notification)
-    }
-
+//    fun createUploadNotification(
+//        context: Context
+//    ): Notification {
+//        val notificationBuilder = Builder(
+//            context,
+//            context.getString(R.string.alerts_channel_id)
+//        )
+//            .setSmallIcon(R.drawable.ic_file_upload_black)
+//            .setContentTitle(context.getString(R.string.text_sending_file))
+//            .setContentText(context.getString(R.string.text_sending_file))
+//            .setProgress(0, 0, true)
+//            .setOngoing(true)
+//
+//        return notificationBuilder.build()
+//    }
+//
+//    fun updateUploadProgress(max: Int, progress: Int) {
+//        val notificationBuilder = Builder(
+//            context,
+//            context.getString(R.string.alerts_channel_id)
+//        )
+//            .setSmallIcon(R.drawable.ic_file_upload_black)
+//            .setContentTitle(context.getString(R.string.text_sending_file))
+//            .setContentText(context.getString(R.string.text_sending_file))
+//            .setProgress(max, progress, false)
+//            .setOngoing(true)
+//
+//        val notification = notificationBuilder.build()
+//
+//        val mNotificationManager =
+//            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        mNotificationManager.notify(NOTIFICATION_UPLOADING, notification)
+//    }
     //endregion
 
     //region General

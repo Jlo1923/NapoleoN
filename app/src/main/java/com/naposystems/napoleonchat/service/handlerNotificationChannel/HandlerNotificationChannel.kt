@@ -1,10 +1,10 @@
-package com.naposystems.napoleonchat.service.handlerChannel
+package com.naposystems.napoleonchat.service.handlerNotificationChannel
 
 import android.app.NotificationChannel
 import android.net.Uri
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 
-interface HandlerChannel {
+interface HandlerNotificationChannel {
     interface Service {
 
         fun initializeChannels()
@@ -16,17 +16,21 @@ interface HandlerChannel {
         fun getChannelSound(channelType: Int, contactId: Int?, contactNick: String?): Uri?
 
         fun getChannelType(notificationType: Int): String
-        fun getChannelType(notificationType: Int, contactIdNotification: Int?): String
+        fun getChannelType(notificationType: Int, contactId: Int?): String
 
         fun updateChannel(uri: Uri?, channelType: Int, contactId: Int?, contactNick: String?)
 
-//        fun deleteUserChannel(contactId: Int, oldNick: String, notificationId: String?)
+        fun updateNickNameChannel(
+            contactId: Int,
+            oldNick: String,
+            newNick: String
+        )
+
+        fun deleteUserChannel(contactId: Int, oldNick: String)
+
+        fun deleteUserChannel(contactId: Int, oldNick: String, notificationId: String?)
 
         fun deleteChannel(channelId: String, contactId: Int?)
-
-//        fun getNotificationMessageChannelId(): Int
-
-//        fun setNotificationMessageChannelId(newId: Int)
 
     }
 

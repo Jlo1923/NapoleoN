@@ -50,8 +50,7 @@ import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notification.NotificationService
-import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -112,7 +111,7 @@ class ConversationFragment : BaseFragment(),
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
-    lateinit var notificationService: OLD_NotificationService
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     //TODO:Subscription
     /*@Inject
@@ -1037,9 +1036,7 @@ class ConversationFragment : BaseFragment(),
                 .subscribe {
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
-                            Utils.deleteUserChannel(
-                                notificationService,
-                                requireContext(),
+                            handlerNotificationChannelService.deleteUserChannel(
                                 args.contact.id,
                                 args.contact.getNickName()
                             )

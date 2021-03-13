@@ -41,6 +41,8 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
@@ -49,7 +51,6 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -70,6 +71,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var notificationService: OLD_NotificationService
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -190,7 +194,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (this.hasMicAndCameraPermission()) {
                     Timber.d("startCallActivity MainActivity")
 //                    val notificationService = NotificationService()
-//                    val notificationService = NotificationService(this.applicationContext)
                     notificationService.startWebRTCCallService(
                         it.channel,
                         it.isVideoCall,
@@ -233,9 +236,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (it.contact.stateNotification) {
                         Timber.d("*TestDelete: Contact ${it.contact.id}")
                         Timber.d("*TestDelete: Contact ${it.contact.getNickName()}")
-                        Utils.deleteUserChannel(
-                            notificationService,
-                            this,
+                        handlerNotificationChannelService.deleteUserChannel(
                             it.contact.id,
                             it.contact.getNickName(),
                             it.contact.notificationId

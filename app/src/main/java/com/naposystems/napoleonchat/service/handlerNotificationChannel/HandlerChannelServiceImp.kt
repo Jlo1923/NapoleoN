@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.handlerChannel
+package com.naposystems.napoleonchat.service.handlerNotificationChannel
 
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class HandlerChannelServiceImp
 @Inject constructor(
     private val context: Context,
-    private val repository: HandlerChannel.Repository
-) : HandlerChannel.Service {
+    private val repository: HandlerNotificationChannel.Repository
+) : HandlerNotificationChannel.Service {
 
     override fun initializeChannels() {
 
@@ -250,16 +250,6 @@ class HandlerChannelServiceImp
                 lockscreenVisibility = NotificationCompat.PRIORITY_LOW
             }
 
-            /*if (Build.VERSION.SDK_INT >= 29) {
-                val soundUri = Settings.System.DEFAULT_RINGTONE_URI
-
-                val audioAttributes: AudioAttributes = AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build()
-                channel.setSound(soundUri, audioAttributes)
-            }*/
-
             // Register the channel with the system
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -340,6 +330,7 @@ class HandlerChannelServiceImp
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
                 var notificationChannelId = ""
+
                 when (channelType) {
                     Constants.ChannelType.DEFAULT.type -> {
                         notificationChannelId = context.getString(
@@ -350,17 +341,22 @@ class HandlerChannelServiceImp
                     Constants.ChannelType.CUSTOM.type -> {
                         contactId?.let {
                             val channelId = repository.getCustomNotificationChannelId(contactId)
-                            Timber.d("*TestChannelSound: ChannelId $channelId")
-                            channelId?.let { chId ->
+
+                            if (channelId != null) {
                                 contactNick?.let { nick ->
                                     notificationChannelId =
                                         context.getString(
                                             R.string.notification_custom_channel_id,
                                             nick,
-                                            chId
+                                            channelId
                                         )
                                     Timber.d("*TestChannelSound: notificationChannelId $notificationChannelId")
                                 }
+                            } else {
+                                notificationChannelId = context.getString(
+                                    R.string.notification_message_channel_id,
+                                    repository.getNotificationMessageChannelId()
+                                )
                             }
                         }
                     }
@@ -382,21 +378,52 @@ class HandlerChannelServiceImp
         contactNick: String?
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val notificationChannelId =
-//                NotificationCompat.getChannelId(context, channelType, contactId, contactNick)
+            val notificationChannelId = getChannelId(channelType, contactId, contactNick)
 
-//            deleteChannel(context, notificationChannelId, null)
-//
-//            if (channelType == Constants.ChannelType.DEFAULT.type) {
-//                createMessageChannel(this.context, uri)
-//            } else {
-//                contactId?.let { id ->
-//                    contactNick?.let { nick ->
-//                        createCustomChannel(this.context, uri, id, nick)
-//                    }
-//                }
-//            }
+            deleteChannel(notificationChannelId, null)
+
+            if (channelType == Constants.ChannelType.DEFAULT.type) {
+                createMessageChannel(uri)
+            } else {
+                contactId?.let { id ->
+                    contactNick?.let { nick ->
+                        createCustomChannel(uri, id, nick)
+                    }
+                }
+            }
         }
+    }
+
+    override fun updateNickNameChannel(
+        contactId: Int,
+        oldNick: String,
+        newNick: String
+    ) {
+        val uri = getChannelSound(
+            Constants.ChannelType.CUSTOM.type,
+            contactId,
+            oldNick
+        )
+
+        deleteUserChannel(contactId, oldNick)
+
+        updateChannel(
+            uri,
+            Constants.ChannelType.CUSTOM.type,
+            contactId,
+            newNick
+        )
+
+    }
+
+    private fun updateContactChannel(
+        uri: Uri?,
+        channelType: Int,
+        contactId: Int? = null,
+        contactNick: String? = null
+    ) {
+
+        updateChannel(uri, channelType, contactId, contactNick)
     }
 
     override fun deleteChannel(
@@ -422,29 +449,33 @@ class HandlerChannelServiceImp
         }
     }
 
-    private fun deleteUserChannel(
+    override fun deleteUserChannel(
+        contactId: Int,
+        oldNick: String
+    ) {
+
+        deleteChannel(
+            getChannelId(
+                Constants.ChannelType.CUSTOM.type,
+                contactId,
+                oldNick
+            ), contactId
+        )
+    }
+
+    override fun deleteUserChannel(
         contactId: Int,
         oldNick: String,
         notificationId: String?
     ) {
 
-        Timber.d("*TestDelete: id $contactId, nick $oldNick")
-
-        val channelId = if (notificationId != null) {
-            Timber.d("*TestDelete: exist Channel $notificationId")
-            context.getString(R.string.notification_custom_channel_id, oldNick, notificationId)
-        } else {
-            Timber.d("*TestDelete: no exist Channel")
-            getChannelId(
-                Constants.ChannelType.CUSTOM.type,
-                contactId,
-                oldNick
-            )
-        }
-
-        Timber.d("*TestDelete: ChannelId $channelId")
-
-        deleteChannel(channelId, contactId)
+        deleteChannel(
+            context.getString(
+                R.string.notification_custom_channel_id,
+                oldNick,
+                notificationId
+            ), contactId
+        )
     }
 
     //endregion

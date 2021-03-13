@@ -11,7 +11,7 @@ import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServi
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.service.notification.OLD_NotificationService
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import javax.inject.Inject

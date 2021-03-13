@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.socket
+package com.naposystems.napoleonchat.service.socketInAppMessage
 
 import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
@@ -28,13 +28,13 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
-class NEWSocketServiceImp @Inject constructor(
+class SocketInAppMessageServiceImp @Inject constructor(
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val syncManager: SyncManager,
     private val cryptoMessage: CryptoMessage
-) : NEWSocketService {
+) : SocketInAppMessageService {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -72,6 +72,11 @@ class NEWSocketServiceImp @Inject constructor(
     }
 
     //region Metodos Interfaz
+
+    //region Conexion
+    override fun getPusherChannel(channel: String): PresenceChannel? =
+        pusher.getPresenceChannel(channel)
+
     override fun connectSocket() {
 
         Timber.d("Pusher Paso: *****************")
@@ -91,7 +96,6 @@ class NEWSocketServiceImp @Inject constructor(
                         if (change?.currentState == ConnectionState.CONNECTED) {
                             Timber.d("Pusher Paso 2.1: CONNECTED")
                             subscribeChannels()
-
                         }
                     }
 
@@ -134,7 +138,10 @@ class NEWSocketServiceImp @Inject constructor(
             Timber.e(e)
         }
     }
+    //endregion
 
+    //region Mensajes
+    //TODO: Fusionar estos metodos
     private fun emitClientConversation(messages: ValidateMessage) {
         emitClientConversation(arrayListOf(messages))
     }
@@ -164,9 +171,43 @@ class NEWSocketServiceImp @Inject constructor(
         }
 
     }
+    //endregion
 
-    override fun getPusherChannel(channel: String): PresenceChannel? =
-        pusher.getPresenceChannel(channel)
+    //region llamadas
+    override fun connectToSocketReadyForCall(channel: String) {
+//        Timber.d("connectToSocket: ${pusher.connection.state}")
+//        if (pusher.connection.state != ConnectionState.CONNECTED) {
+//            pusher.connect(object : ConnectionEventListener {
+//                override fun onConnectionStateChange(change: ConnectionStateChange?) {
+//                    when (change?.currentState) {
+//                        ConnectionState.CONNECTED -> {
+//                            try {
+//                                sharedPreferencesManager.putString(
+//                                    Constants.SharedPreferences.PREF_SOCKET_ID,
+//                                    pusher.connection.socketId
+//                                )
+//                                Timber.d("Conectó al socket ${pusher.connection.socketId}")
+//
+//                                subscribeToPrivateGeneralChannel()
+//                                subscribeToCallChannelUserAvailableForCall(channel)
+//                            } catch (e: Exception) {
+//                                Timber.e(e)
+//                            }
+//                        }
+//                        ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
+//                        ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
+//                        ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
+//                        ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
+//                        else -> Timber.d("Socket Error")
+//                    }
+//                }
+//
+//                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+//                    Timber.e("Pusher onError $message, code: $code")
+//                }
+//            })
+//        }
+    }
 
     override fun subscribeToCallChannel(
         channel: String,
@@ -223,11 +264,6 @@ class NEWSocketServiceImp @Inject constructor(
 //        emitToCall(channel, CONTACT_JOIN_TO_CALL)
     }
 
-    override fun unSubscribeCallChannel(channelName: String) {
-//        pusher.unsubscribe(channelName)
-//        Timber.d("unsubscribe to channel: $channelName")
-    }
-
     override fun emitToCall(channel: String, jsonObject: JSONObject) {
 //        callChannel?.trigger(CALL_NN, jsonObject.toString())
 //
@@ -244,40 +280,11 @@ class NEWSocketServiceImp @Inject constructor(
 //        }
     }
 
-    override fun connectToSocketReadyForCall(channel: String) {
-//        Timber.d("connectToSocket: ${pusher.connection.state}")
-//        if (pusher.connection.state != ConnectionState.CONNECTED) {
-//            pusher.connect(object : ConnectionEventListener {
-//                override fun onConnectionStateChange(change: ConnectionStateChange?) {
-//                    when (change?.currentState) {
-//                        ConnectionState.CONNECTED -> {
-//                            try {
-//                                sharedPreferencesManager.putString(
-//                                    Constants.SharedPreferences.PREF_SOCKET_ID,
-//                                    pusher.connection.socketId
-//                                )
-//                                Timber.d("Conectó al socket ${pusher.connection.socketId}")
-//
-//                                subscribeToPrivateGeneralChannel()
-//                                subscribeToCallChannelUserAvailableForCall(channel)
-//                            } catch (e: Exception) {
-//                                Timber.e(e)
-//                            }
-//                        }
-//                        ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
-//                        ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
-//                        ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
-//                        ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
-//                        else -> Timber.d("Socket Error")
-//                    }
-//                }
-//
-//                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-//                    Timber.e("Pusher onError $message, code: $code")
-//                }
-//            })
-//        }
+    override fun unSubscribeCallChannel(channelName: String) {
+//        pusher.unsubscribe(channelName)
+//        Timber.d("unsubscribe to channel: $channelName")
     }
+    //endregion
 
     //endregion
 
@@ -370,14 +377,13 @@ class NEWSocketServiceImp @Inject constructor(
             }
 
         } catch (e: Exception) {
-            Timber.e("Pusher:  subscribeToPrivateGeneralChannel: Exception: $e")
+            Timber.e("Pusher: Exception: $e")
         }
     }
 
     private fun subscribeToPrivateGlobalChannel() {
 
         Timber.d("Pusher Paso 5: subscribeToPrivateGlobalChannel")
-
 
         try {
 
@@ -430,7 +436,6 @@ class NEWSocketServiceImp @Inject constructor(
         privateChannel.unbind(channelName, SubscriptionEventListener { })
 
     }
-    //endregion
 
     //region Region Escuchadores de Eventos
 
@@ -751,6 +756,8 @@ class NEWSocketServiceImp @Inject constructor(
 
             })
     }
+    //endregion
+
     //endregion
 
     //endregion

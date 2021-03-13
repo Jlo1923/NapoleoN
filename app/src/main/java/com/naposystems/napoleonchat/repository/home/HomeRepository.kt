@@ -19,7 +19,7 @@ import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
-import com.naposystems.napoleonchat.service.socket.NEWSocketService
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageService
 import retrofit2.Response
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -29,7 +29,7 @@ class HomeRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val newSocketService: NEWSocketService,
+    private val socketInAppMessageService: SocketInAppMessageService,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,

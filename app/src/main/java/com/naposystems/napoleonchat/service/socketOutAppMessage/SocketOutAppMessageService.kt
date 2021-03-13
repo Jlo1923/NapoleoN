@@ -1,19 +1,15 @@
-package com.naposystems.napoleonchat.service.notification
+package com.naposystems.napoleonchat.service.socketOutAppMessage
 
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
-import com.pusher.client.channel.PresenceChannel
 import com.pusher.client.connection.ConnectionState
-import org.json.JSONObject
 
-interface SocketNotificationService {
+interface SocketOutAppMessageService {
 
     fun getStatusSocket(): ConnectionState?
 
     fun getStatusGlobalChannel(): Boolean
 
     fun connectSocket()
-
-//    fun disconnectSocket()
 
     fun emitClientConversation(messages: List<ValidateMessage>)
 
