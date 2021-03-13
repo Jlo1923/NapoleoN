@@ -1,13 +1,11 @@
 package com.naposystems.napoleonchat.ui.register.enterCode
 
-import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,7 +16,6 @@ import com.naposystems.napoleonchat.ui.custom.numericKeyboard.NumericKeyboardCus
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -114,7 +111,7 @@ class EnterCodeFragment :
             if (!it.isNullOrEmpty()) {
                 binding.viewSwitcher.showNext()
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
             }
         })
 

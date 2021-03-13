@@ -57,109 +57,6 @@ class SyncManagerImp @Inject constructor(
 
     }
 
-//    override fun getSocketId(): String {
-//        return if (pusher.connection.state == ConnectionState.CONNECTED) {
-//            pusher.connection.socketId
-//        } else {
-//            Constants.SocketIdNotExist.SOCKET_ID_NO_EXIST.socket
-//        }
-//    }
-
-//    override fun getStatusGlobalChannel(): Boolean {
-//        return globalChannel.isSubscribed
-//    }
-//
-//    private fun emitClientConversation(messages: List<ValidateMessage>) {
-//
-//        try {
-//
-//            val validateMessage = ValidateMessageEventDTO(messages)
-//
-//            val adapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
-//
-//            val jsonObject = adapterValidate.toJson(validateMessage)
-//
-//            if (jsonObject.isNotEmpty())
-//                globalChannel.trigger(SocketServiceImp.CLIENT_CONVERSATION_NN, jsonObject)
-//
-//        } catch (e: Exception) {
-//            Timber.e(e)
-//        }
-//
-//    }
-    //region Implementacion Socket Mensajes
-//    override fun connectSocket() {
-//
-//        Timber.d("Instance From Sync: $pusher")
-//
-//        Timber.d("Pusher: *****************")
-//
-//        Timber.d("Pusher: connectSocket: State:${pusher.connection.state}")
-//
-//        if (getUserId() != Constants.UserNotExist.USER_NO_EXIST.user) {
-//
-//            if (pusher.connection.state == ConnectionState.DISCONNECTED ||
-//                pusher.connection.state == ConnectionState.DISCONNECTING
-//            ) {
-//
-//                pusher.connect(object : ConnectionEventListener {
-//
-//                    override fun onConnectionStateChange(change: ConnectionStateChange?) {
-//
-//                        if (change?.currentState == ConnectionState.CONNECTED) {
-//
-//                            pusher.unsubscribe(privateGlobalChannelName)
-//
-//                            subscribeToPrivateGlobalChannel()
-//
-//                        } else
-//                            Timber.d("Pusher: connectSocket: State:${pusher.connection.state}")
-//
-//                    }
-//
-//                    override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-//
-//                        Timber.d("Pusher: connectSocket: onError $message, code: $code")
-//
-//                        pusher.connect()
-//
-//                    }
-//
-//                })
-//            }
-//        }
-//    }
-
-    //region Metodos Privados
-//    private fun subscribeToPrivateGlobalChannel() {
-//
-//        try {
-//            globalChannel = pusher.subscribePrivate(
-//                privateGlobalChannelName,
-//                object : PrivateChannelEventListener {
-//                    override fun onEvent(event: PusherEvent?) {
-//                        Timber.d("Pusher: subscribeToPrivateGlobalChannel: onEvent ${event?.data}")
-//                    }
-//
-//                    override fun onAuthenticationFailure(
-//                        message: String?,
-//                        e: java.lang.Exception?
-//                    ) {
-//                        Timber.d("Pusher: subscribeToPrivateGlobalChannel: onAuthenticationFailure")
-//                    }
-//
-//                    override fun onSubscriptionSucceeded(channelName: String?) {
-//
-//                        Timber.d("Pusher: subscribeToPrivateGlobalChannel: onSubscriptionSucceeded:$channelName")
-//
-//                    }
-//                }
-//            )
-//        } catch (e: Exception) {
-//            Timber.e("Pusher:  subscribeToPrivateGlobalChannel: Exception: $e")
-//        }
-//    }
-
     //region SocketService
     //region Metodos De La Interface
     override fun getUserId(): Int {
@@ -263,58 +160,58 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes) {
-
-        Timber.d("**Paso 7: Proceso de Insercion del item $newMessageEventMessageRes")
-
-        try {
-
-            if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
-                getRemoteContact()
-            }
-
-            val databaseMessage = messageLocalDataSource.getMessageByWebId(
-                newMessageEventMessageRes.id,
-                false
-            )
-
-            Timber.d("**Paso 7.1: Validar WebId ${newMessageEventMessageRes.id}")
-
-            if (databaseMessage == null) {
-
-                Timber.d("**Paso 7.2: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
-
-                val message =
-                    newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
-
-                val messageId = messageLocalDataSource.insertMessage(message)
-
-                Timber.d("**Paso 7.3: Mensaje insertado $messageId")
-
-                if (newMessageEventMessageRes.quoted.isNotEmpty()) {
-                    Timber.d("**Paso 7.4: insertar mensaje Quote")
-                    insertQuote_NOTIF(
-                        newMessageEventMessageRes.quoted,
-                        messageId.toInt()
-                    )
-                }
-
-                val listAttachments =
-                    NewMessageEventAttachmentRes.toListConversationAttachment(
-                        messageId.toInt(),
-                        newMessageEventMessageRes.attachments
-                    )
-                if (listAttachments.isNotEmpty()) {
-                    Timber.d("**Paso 7.5: insertar ${listAttachments.size} adjuntos")
-                    attachmentLocalDataSource.insertAttachments(listAttachments)
-                }
-
-            }
-        } catch (e: java.lang.Exception) {
-            Timber.e(e.localizedMessage)
-        }
-
-    }
+//    override suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes) {
+//
+//        Timber.d("**Paso 7: Proceso de Insercion del item $newMessageEventMessageRes")
+//
+//        try {
+//
+//            if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+//                getRemoteContact()
+//            }
+//
+//            val databaseMessage = messageLocalDataSource.getMessageByWebId(
+//                newMessageEventMessageRes.id,
+//                false
+//            )
+//
+//            Timber.d("**Paso 7.1: Validar WebId ${newMessageEventMessageRes.id}")
+//
+//            if (databaseMessage == null) {
+//
+//                Timber.d("**Paso 7.2: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
+//
+//                val message =
+//                    newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+//
+//                val messageId = messageLocalDataSource.insertMessage(message)
+//
+//                Timber.d("**Paso 7.3: Mensaje insertado $messageId")
+//
+//                if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+//                    Timber.d("**Paso 7.4: insertar mensaje Quote")
+//                    insertQuote_NOTIF(
+//                        newMessageEventMessageRes.quoted,
+//                        messageId.toInt()
+//                    )
+//                }
+//
+//                val listAttachments =
+//                    NewMessageEventAttachmentRes.toListConversationAttachment(
+//                        messageId.toInt(),
+//                        newMessageEventMessageRes.attachments
+//                    )
+//                if (listAttachments.isNotEmpty()) {
+//                    Timber.d("**Paso 7.5: insertar ${listAttachments.size} adjuntos")
+//                    attachmentLocalDataSource.insertAttachments(listAttachments)
+//                }
+//
+//            }
+//        } catch (e: java.lang.Exception) {
+//            Timber.e(e.localizedMessage)
+//        }
+//
+//    }
 
 
     //TODO: Estos dos metodos tienen la misma funcion refactorizarlos
@@ -366,7 +263,7 @@ class SyncManagerImp @Inject constructor(
 
                             if (newMessageEventMessageRes.quoted.isNotEmpty()) {
                                 Timber.d("**Paso 7.5.1: insertar Quote")
-                                insertQuote_NOTIF(
+                                insertQuote(
                                     newMessageEventMessageRes.quoted,
                                     messageId.toInt()
                                 )
@@ -711,56 +608,29 @@ class SyncManagerImp @Inject constructor(
 //        }
 //    }
 
-    override fun notifyMessageReceived_NOTIF(messageId: String) {
-        GlobalScope.launch {
-            try {
-                val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
-                napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
-            } catch (e: Exception) {
-//                    Timber.e(e)
-            }
-        }
-    }
+//    override fun notifyMessageReceived_NOTIF(messageId: String) {
+//        GlobalScope.launch {
+//            try {
+//                val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
+//                napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
+//            } catch (e: Exception) {
+////                    Timber.e(e)
+//            }
+//        }
+//    }
 
     override fun getIsOnCallPref() = Data.isOnCall
 
-    override fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit) {
-        GlobalScope.launch {
-            withContext(Dispatchers.IO) {
-                silenced(contactLocalDataSource.getContactSilenced(contactId))
-            }
-        }
-    }
+//    override fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit) {
+//        GlobalScope.launch {
+//            withContext(Dispatchers.IO) {
+//                silenced(contactLocalDataSource.getContactSilenced(contactId))
+//            }
+//        }
+//    }
 
     override fun getContact(contactId: Int): ContactEntity? {
         return contactLocalDataSource.getContactById(contactId)
-    }
-
-
-    override suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int) {
-        val originalMessage =
-            messageLocalDataSource.getMessageByWebId(quoteWebId, false)
-
-        if (originalMessage != null) {
-            var firstAttachmentEntity: AttachmentEntity? = null
-
-            if (originalMessage.attachmentEntityList.isNotEmpty()) {
-                firstAttachmentEntity = originalMessage.attachmentEntityList.first()
-            }
-
-            val quote = QuoteEntity(
-                id = 0,
-                messageId = messageId,
-                contactId = originalMessage.messageEntity.contactId,
-                body = originalMessage.messageEntity.body,
-                attachmentType = firstAttachmentEntity?.type ?: "",
-                thumbnailUri = firstAttachmentEntity?.fileName ?: "",
-                messageParentId = originalMessage.messageEntity.id,
-                isMine = originalMessage.messageEntity.isMine
-            )
-
-            quoteLocalDataSource.insertQuote(quote)
-        }
     }
 
 //endregion

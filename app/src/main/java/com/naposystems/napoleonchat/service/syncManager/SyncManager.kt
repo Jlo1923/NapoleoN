@@ -16,14 +16,6 @@ interface SyncManager {
 
     //endregion
 
-//    fun connectSocket()
-//
-//    fun getSocketId(): String
-
-//    fun getStatusGlobalChannel(): Boolean
-
-    //region SocketService
-
     fun getUserId(): Int
 
     fun getMyMessages(contactId: Int?)
@@ -33,7 +25,6 @@ interface SyncManager {
     fun verifyMessagesRead()
 
     fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes)
-
 
     fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
 
@@ -50,9 +41,9 @@ interface SyncManager {
 
     //region Notification
 
-    fun notifyMessageReceived_NOTIF(messageId: String)
+//    fun notifyMessageReceived_NOTIF(messageId: String)
     fun getIsOnCallPref(): Boolean
-    fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit)
+//    fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit)
     fun getContact(contactId: Int): ContactEntity?
 //    fun getNotificationChannelCreated(): Int
 //    fun setNotificationChannelCreated()
@@ -64,12 +55,12 @@ interface SyncManager {
 //    fun updateStateChannel(contactId: Int, state: Boolean)
     //endegion
 
-
     suspend fun getRemoteContact()
-    suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int)
+
+//    suspend fun insertQuote_NOTIF(quoteWebId: String, messageId: Int)
 
     //    fun insertAttachments(listAttachments: List<AttachmentEntity>)
 
-    suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes)
+//    suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes)
 
 }

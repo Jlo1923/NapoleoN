@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.enterPin
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,22 +8,20 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.EnterPinFragmentBinding
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.EnterCodeWidget
 import com.naposystems.napoleonchat.ui.custom.numericKeyboard.NumericKeyboardCustomView
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
-import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class EnterPinFragment : DaggerFragment(),
+class EnterPinFragment : BaseFragment(),
     EnterCodeWidget.OnEventListener,
     NumericKeyboardCustomView.OnEventListener {
 
@@ -34,7 +31,7 @@ class EnterPinFragment : DaggerFragment(),
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: EnterPinViewModel by viewModels { viewModelFactory }
     private lateinit var binding: EnterPinFragmentBinding
 

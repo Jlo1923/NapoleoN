@@ -79,9 +79,13 @@ class SocketInAppMessageServiceImp @Inject constructor(
 
     override fun connectSocket() {
 
-        Timber.d("Pusher Paso: *****************")
+        Timber.d("Pusher Paso IN: *****************")
 
-        Timber.d("Pusher Paso 1: connectSocket: State:${pusher.connection.state}")
+        Timber.d("Pusher Paso IN 1: connectSocket: State:${pusher.connection.state}")
+
+        Timber.d("Pusher: userId: $userId")
+
+        loggearGlobalChannel("connectSocket")
 
         if (userId != Constants.UserNotExist.USER_NO_EXIST.user) {
 
@@ -94,48 +98,53 @@ class SocketInAppMessageServiceImp @Inject constructor(
                     override fun onConnectionStateChange(change: ConnectionStateChange?) {
 
                         if (change?.currentState == ConnectionState.CONNECTED) {
-                            Timber.d("Pusher Paso 2.1: CONNECTED")
+                            Timber.d("Pusher Paso IN 2.1: CONNECTED")
                             subscribeChannels()
                         }
                     }
 
                     override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
 
-                        Timber.d("Pusher Paso 2.2: connectSocket: onError $message, code: $code")
-
-                        Timber.d(
-                            "Pusher Paso 2.2: ${
-                                pusher.getPrivateChannel(
-                                    privateGeneralChannelName
-                                )
-                            }"
-                        )
+                        Timber.d("Pusher Paso IN 2.2: connectSocket: onError $message, code: $code")
 
                         pusher.connect()
 
                     }
                 })
             } else if (pusher.connection.state == ConnectionState.CONNECTED && app.isAppVisible()) {
-                subscribeChannels()
-            }
 
+                loggearGlobalChannel("Ya Conectado")
+
+//                if (!::globalChannel.isInitialized || !::generalChannel.isInitialized) {
+
+                Timber.d("Pusher Paso IN 2.4: Canales inicializados")
+
+                subscribeChannels()
+
+//                }
+            }
         }
     }
 
     override fun disconnectSocket() {
+
+        Timber.d("Pusher Paso IN 7.1: Desconectar")
 
         try {
 
             if (pusher.connection.state == ConnectionState.CONNECTED ||
                 pusher.connection.state == ConnectionState.CONNECTING
             ) {
+//
+//                unsubscribeChannel()
+
+                Timber.d("Pusher Paso IN 7.2: Desconectando")
 
                 pusher.disconnect()
 
-                Timber.d("Pusher: disconnectSocket")
             }
         } catch (e: Exception) {
-            Timber.e(e)
+            Timber.e("Pusher Paso IN 7.3: $e")
         }
     }
     //endregion
@@ -148,7 +157,9 @@ class SocketInAppMessageServiceImp @Inject constructor(
 
     override fun emitClientConversation(messages: List<ValidateMessage>) {
 
-        Timber.d("Pusher 6: Emitir")
+        loggearGlobalChannel("emitClientConversation")
+
+        Timber.d("Pusher 6.1: Emitir")
 
         try {
 
@@ -158,16 +169,24 @@ class SocketInAppMessageServiceImp @Inject constructor(
 
             val jsonObject = adapterValidate.toJson(validateMessage)
 
-            Timber.d("Pusher 7: globalChannel")
+            if (jsonObject.isNotEmpty()) {
 
-            if (jsonObject.isNotEmpty())
+                Timber.d("Pusher Paso IN 6.2: Emitir a global")
+
                 globalChannel.trigger(
                     Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
                     jsonObject
                 )
+            }
+
 
         } catch (e: Exception) {
-            Timber.e(e)
+
+            loggearGlobalChannel("error emitClientConversation $e")
+
+            Timber.d("Pusher Paso IN 6.3: Error al emitir")
+
+            Timber.e("Pusher Paso IN 6.4: $e}")
         }
 
     }
@@ -291,7 +310,7 @@ class SocketInAppMessageServiceImp @Inject constructor(
     //region Metodos Privados
     private fun subscribeChannels() {
 
-        Timber.d("Pusher Paso 3: subscribeChannels")
+        Timber.d("Pusher Paso IN 3: subscribeChannels")
 
         try {
             sharedPreferencesManager.putString(
@@ -299,23 +318,27 @@ class SocketInAppMessageServiceImp @Inject constructor(
                 pusher.connection.socketId
             )
 
-            pusher.unsubscribe(privateGeneralChannelName)
+            loggearGlobalChannel("subscribeChannels")
 
-            pusher.unsubscribe(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+            unsubscribeChannel()
 
             subscribeToPrivateGeneralChannel()
 
             subscribeToPrivateGlobalChannel()
 
         } catch (e: Exception) {
+
+            loggearGlobalChannel("Error SubscribeChannels $e")
+
             Timber.e(e)
         }
     }
 
     private fun subscribeToPrivateGeneralChannel() {
 
-        Timber.d("Pusher Paso 4: subscribeToPrivateGeneralChannel")
+        loggearGlobalChannel("subscribeToPrivateGeneralChannel")
 
+        Timber.d("Pusher Paso IN 4: subscribeToPrivateGeneralChannel")
 
         try {
 
@@ -325,19 +348,19 @@ class SocketInAppMessageServiceImp @Inject constructor(
                     privateGeneralChannelName,
                     object : PrivateChannelEventListener {
                         override fun onEvent(event: PusherEvent) {
-                            Timber.d("Pusher: subscribeToPrivateGeneralChannel: onEvent ${event.data}")
+                            Timber.d("Pusher Paso IN : subscribeToPrivateGeneralChannel: onEvent ${event.data}")
                         }
 
                         override fun onAuthenticationFailure(
                             message: String?,
                             e: java.lang.Exception?
                         ) {
-                            Timber.d("Pusher: subscribeToPrivateGeneralChannel: onAuthenticationFailure")
+                            Timber.d("Pusher Paso IN : subscribeToPrivateGeneralChannel: onAuthenticationFailure")
                         }
 
                         override fun onSubscriptionSucceeded(channelName: String?) {
 
-                            Timber.d("Pusher Paso 4.1: onSubscriptionSucceeded $channelName")
+                            Timber.d("Pusher Paso IN 4.1: onSubscriptionSucceeded $channelName")
 
                             //Metodos Generales
                             listenOnDisconnect(generalChannel)
@@ -377,45 +400,55 @@ class SocketInAppMessageServiceImp @Inject constructor(
             }
 
         } catch (e: Exception) {
-            Timber.e("Pusher: Exception: $e")
+            Timber.e("Pusher Paso IN 4.3:  subscribeToPrivateGlobalChannel: Exception: $e")
         }
     }
 
     private fun subscribeToPrivateGlobalChannel() {
 
-        Timber.d("Pusher Paso 5: subscribeToPrivateGlobalChannel")
+        loggearGlobalChannel("subscribeToPrivateGlobalChannel")
+
+        Timber.d("Pusher Paso IN 5: subscribeToPrivateGlobalChannel")
 
         try {
 
             if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) == null) {
 
+                Timber.d("Pusher Paso IN 5.1.d: Entro al if")
+
                 globalChannel = pusher.subscribePrivate(
                     Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName,
                     object : PrivateChannelEventListener {
                         override fun onEvent(event: PusherEvent?) {
-                            Timber.d("Pusher: subscribeToPrivateGlobalChannel: onEvent ${event?.data}")
+                            Timber.d("Pusher Paso IN: subscribeToPrivateGlobalChannel: onEvent ${event?.data}")
                         }
 
                         override fun onAuthenticationFailure(
                             message: String?,
                             e: java.lang.Exception?
                         ) {
-                            Timber.d("Pusher: subscribeToPrivateGlobalChannel: onAuthenticationFailure")
+                            Timber.d("Pusher Paso IN: subscribeToPrivateGlobalChannel: onAuthenticationFailure")
                         }
 
                         override fun onSubscriptionSucceeded(channelName: String?) {
 
-                            Timber.d("Pusher 5.1: onSubscriptionSucceeded:$channelName")
+                            Timber.d("Pusher Paso IN 5.2: onSubscriptionSucceeded:$channelName")
 
                             listenValidateConversationEvent()
 
                         }
                     }
                 )
+            } else {
+
+                listenValidateConversationEvent()
             }
 
         } catch (e: Exception) {
-            Timber.e("Pusher:  subscribeToPrivateGlobalChannel: Exception: $e")
+
+            loggearGlobalChannel("error subscribeToPrivateGlobalChannel $e")
+
+            Timber.e("Pusher Paso IN 5.4:  subscribeToPrivateGlobalChannel: Exception: $e")
         }
     }
 
@@ -432,9 +465,24 @@ class SocketInAppMessageServiceImp @Inject constructor(
 
     }
 
-    private fun unbindChannel(privateChannel: PrivateChannel, channelName: String) {
-        privateChannel.unbind(channelName, SubscriptionEventListener { })
+    private fun unsubscribeChannel() {
 
+        Timber.d("Pusher Paso IN 3.1: Desubscribirse")
+
+//        if (::globalChannel.isInitialized)
+//            if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
+//                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
+        pusher.unsubscribe(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+
+//        if (::generalChannel.isInitialized)
+//            if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId) != null)
+//                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId).isSubscribed)
+        pusher.unsubscribe(privateGeneralChannelName)
+
+    }
+
+    private fun unbindChannel(channel: PrivateChannel, channelName: String) {
+        channel.unbind(channelName, SubscriptionEventListener { })
     }
 
     //region Region Escuchadores de Eventos
@@ -449,6 +497,7 @@ class SocketInAppMessageServiceImp @Inject constructor(
             object : PrivateChannelEventListener {
                 override fun onEvent(event: PusherEvent?) {
                     Timber.d("Socket disconnect ${event?.data}")
+                    Timber.e("Pusher Paso IN 8.1: Desconectado")
                     pusher.connect()
                 }
 
@@ -638,6 +687,8 @@ class SocketInAppMessageServiceImp @Inject constructor(
 
     private fun listenValidateConversationEvent() {
 
+        loggearGlobalChannel("listenValidateConversationEvent")
+
         unbindChannel(globalChannel, Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger)
 
         globalChannel.bind(
@@ -654,7 +705,9 @@ class SocketInAppMessageServiceImp @Inject constructor(
 
                             val messages = dataEvent?.messages?.filter {
                                 it.user == userId
-                            }?.filter { syncManager.existIdMessage(it.id) }
+                            }?.filter {
+                                syncManager.existIdMessage(it.id)
+                            }
 
                             val unread = messages?.filter {
                                 it.status == Constants.MessageEventType.UNREAD.status
@@ -761,5 +814,32 @@ class SocketInAppMessageServiceImp @Inject constructor(
     //endregion
 
     //endregion
+    private fun loggearGlobalChannel(location: String) {
+
+        Timber.d("Pusher Paso IN 5.1: ************************************")
+
+        Timber.d("Pusher Paso IN 5.1: Global Channel Es Inicializado: ${::globalChannel.isInitialized} en $location")
+
+        if (::globalChannel.isInitialized)
+            Timber.d("Pusher Paso IN 5.1: Global Channel Es Suscrito: ${globalChannel.isSubscribed} en $location")
+
+        Timber.d(
+            "Pusher Paso IN 5.1: Canal Global de Pusher Existe: ${
+                pusher.getPrivateChannel(
+                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                )
+            } en $location"
+        )
+
+        if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
+            Timber.d(
+                "Pusher Paso IN 5.1: Canal Global de Pusher Es Suscrito: ${
+                    pusher.getPrivateChannel(
+                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                    ).isSubscribed
+                } en $location"
+            )
+
+    }
 
 }
