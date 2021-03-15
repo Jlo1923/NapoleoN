@@ -92,7 +92,7 @@ class AddContactViewModel @Inject constructor(
 
                     val multableList: MutableList<Any> = mutableListOf()
 
-                    val list = response.body()?.let { ContactResDTO.toEntityList(it, null) }
+                    val list = response.body()?.let { ContactResDTO.toEntityList(it) }
 
                     if (list != null) {
                         val sortedByFriends = list.sortedByDescending { o -> o.statusFriend }

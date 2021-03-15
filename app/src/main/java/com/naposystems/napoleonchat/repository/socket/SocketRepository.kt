@@ -53,7 +53,7 @@ class SocketRepository @Inject constructor(
 
                 val contactResDTO = response.body()!!
 
-                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts, null)
+                val contacts = ContactResDTO.toEntityList(contactResDTO.contacts)
 
                 val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(contacts)
 

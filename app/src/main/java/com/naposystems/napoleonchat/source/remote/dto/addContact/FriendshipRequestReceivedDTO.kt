@@ -30,7 +30,7 @@ data class FriendshipRequestReceivedDTO(
                         userObtainer = friendShipReceivedDTO.userObtainer,
                         state = friendShipReceivedDTO.state,
                         createdAt = friendShipReceivedDTO.createdAt,
-                        contact = ContactResDTO.toEntity(friendShipReceivedDTO.contact, null),
+                        contact = ContactResDTO.toEntity(friendShipReceivedDTO.contact),
                         isReceived = true
                     )
                 )
@@ -46,7 +46,7 @@ data class FriendshipRequestReceivedDTO(
                 userObtainer = response.userObtainer,
                 state = response.state,
                 createdAt = response.createdAt,
-                contact = ContactResDTO.toEntity(response.contact, null),
+                contact = ContactResDTO.toEntity(response.contact),
                 isReceived = true
             )
 

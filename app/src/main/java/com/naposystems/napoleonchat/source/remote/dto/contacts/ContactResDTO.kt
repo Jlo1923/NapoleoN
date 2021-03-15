@@ -23,7 +23,7 @@ data class ContactResDTO(
 
         fun toEntityList(
             contactResDTO: List<ContactResDTO>,
-            statusBlocked: Boolean?
+            statusBlocked: Boolean = false
         ): List<ContactEntity> {
             val listContacts: MutableList<ContactEntity> = arrayListOf()
 
@@ -35,9 +35,11 @@ data class ContactResDTO(
             return listContacts
         }
 
-        fun toEntity(response: ContactResDTO, statusBlocked: Boolean?): ContactEntity {
+        fun toEntity(response: ContactResDTO, statusBlocked: Boolean = false): ContactEntity {
 
-            //falta offer
+            var isBlocked = statusBlocked
+            if (!isBlocked) isBlocked = response.isBlock ?: false
+
             return ContactEntity(
                 response.id,
                 imageUrl = response.avatar,
@@ -45,7 +47,7 @@ data class ContactResDTO(
                 displayName = response.displayName,
                 status = response.status,
                 lastSeen = response.lastSeen,
-                statusBlocked = statusBlocked ?: response.isBlock ?: false,
+                statusBlocked = isBlocked,
                 statusFriend = response.isFriend ?: false,
                 receiver = response.receiver != null,
                 offer = response.offer != null,
