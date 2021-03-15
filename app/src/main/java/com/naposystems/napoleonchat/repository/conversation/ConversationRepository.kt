@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageService
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.messageNotSent.MessageNotSentLocalDataSource
@@ -54,7 +54,7 @@ import javax.inject.Inject
 
 class ConversationRepository @Inject constructor(
     private val context: Context,
-    private val socketInAppMessageService: SocketInAppMessageService,
+    private val socketMessageService: SocketMessageService,
     private val userLocalDataSource: UserLocalDataSource,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
@@ -89,7 +89,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketInAppMessageService.unSubscribeCallChannel(channelName)
+        socketMessageService.unSubscribeCallChannel(channelName)
     }
 
     override fun getLocalMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>> {
@@ -385,9 +385,9 @@ class ConversationRepository @Inject constructor(
 
                 try {
 
-                    Timber.d("SocketService: $socketInAppMessageService")
+                    Timber.d("SocketService: $socketMessageService")
 
-                    socketInAppMessageService.emitClientConversation(messagesRead)
+                    socketMessageService.emitClientConversation(messagesRead)
 
                     val response = napoleonApi.sendMessagesRead(
                         MessagesReadReqDTO(
@@ -615,7 +615,7 @@ class ConversationRepository @Inject constructor(
             authReqDTO
         )
 
-        socketInAppMessageService.subscribeToCallChannel(channel, false, isVideoCall)
+        socketMessageService.subscribeToCallChannel(channel, false, isVideoCall)
     }
 
     override suspend fun downloadAttachment(

@@ -2,9 +2,10 @@ package com.naposystems.napoleonchat.service.socketInAppMessage
 
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.pusher.client.channel.PresenceChannel
+import com.pusher.client.connection.ConnectionState
 import org.json.JSONObject
 
-interface SocketInAppMessageService {
+interface SocketMessageService {
 
     //region Conexion
     fun getPusherChannel(channel: String): PresenceChannel?
@@ -31,4 +32,6 @@ interface SocketInAppMessageService {
 
     fun unSubscribeCallChannel(channelName: String)
     //endregion
+    fun getStatusSocket(): ConnectionState
+    fun getStatusGlobalChannel(): Boolean
 }

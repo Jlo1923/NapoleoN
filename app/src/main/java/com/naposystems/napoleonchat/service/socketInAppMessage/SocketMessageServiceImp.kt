@@ -21,6 +21,7 @@ import com.pusher.client.Pusher
 import com.pusher.client.channel.PresenceChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
+import com.pusher.client.channel.SubscriptionEventListener
 import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.connection.ConnectionStateChange
@@ -30,13 +31,13 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
-class SocketInAppMessageServiceImp @Inject constructor(
+class SocketMessageServiceImp @Inject constructor(
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val syncManager: SyncManager,
     private val cryptoMessage: CryptoMessage
-) : SocketInAppMessageService {
+) : SocketMessageService {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -73,6 +74,21 @@ class SocketInAppMessageServiceImp @Inject constructor(
     override fun getPusherChannel(channel: String): PresenceChannel? =
         pusher.getPresenceChannel(channel)
 
+    override fun getStatusSocket(): ConnectionState {
+        return pusher.connection.state
+    }
+
+    override fun getStatusGlobalChannel(): Boolean {
+
+        return if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
+            if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed
+            else
+                Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+        else
+            Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+    }
+
     override fun connectSocket() {
 
         if (userId != Constants.UserNotExist.USER_NO_EXIST.user) {
@@ -107,6 +123,60 @@ class SocketInAppMessageServiceImp @Inject constructor(
                 pusher.connection.state == ConnectionState.CONNECTING
             ) {
 
+                //Unbind Global
+
+                pusher.getPrivateChannel(
+                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                )
+                    .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                        SubscriptionEventListener {}
+                    )
+
+                //Unbind General
+
+                pusher.getPrivateChannel(privateGeneralChannelName)
+                    .unbind(Constants.SocketListeEvents.DISCONNECT.channel,
+                        SubscriptionEventListener {}
+                    )
+
+                pusher.getPrivateChannel(privateGeneralChannelName)
+                    .unbind(Constants.SocketListeEvents.NEW_MESSAGE.channel,
+                        SubscriptionEventListener {}
+                    )
+
+                pusher.getPrivateChannel(privateGeneralChannelName)
+                    .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGES_RECEIVED.channel,
+                        SubscriptionEventListener {}
+                    )
+
+                pusher.getPrivateChannel(privateGeneralChannelName)
+                    .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGE_READED.channel,
+                        SubscriptionEventListener {}
+                    )
+
+                pusher.getPrivateChannel(privateGeneralChannelName)
+                    .unbind(Constants.SocketListeEvents.SEND_MESSAGES_DESTROY.channel,
+                        SubscriptionEventListener {}
+                    )
+
+                pusher.getPrivateChannel(privateGeneralChannelName)
+                    .unbind(Constants.SocketListeEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.channel,
+                        SubscriptionEventListener {}
+                    )
+
+                pusher.getPrivateChannel(privateGeneralChannelName)
+                    .unbind(Constants.SocketListeEvents.BLOCK_OR_DELETE_FRIENDSHIP.channel,
+                        SubscriptionEventListener {}
+                    )
+
+                //Unsubscribe Channels
+                pusher.unsubscribe(
+                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                )
+
+                pusher.unsubscribe(privateGeneralChannelName)
+
+                //Disconnect Pusher
                 pusher.disconnect()
 
             }
@@ -306,7 +376,7 @@ class SocketInAppMessageServiceImp @Inject constructor(
                         override fun onSubscriptionSucceeded(channelName: String?) {
 
                             //Metodos Generales
-                            listenOnDisconnect()
+                            listenDisconnect()
 
                             //Metodos de mensajes
                             listenNewMessage()
@@ -365,6 +435,8 @@ class SocketInAppMessageServiceImp @Inject constructor(
 
                         override fun onSubscriptionSucceeded(channelName: String?) {
                             listenValidateConversationEvent()
+                            if (!app.isAppVisible())
+                                RxBus.publish(RxEvent.CreateNotification())
                         }
                     }
                 )
@@ -390,7 +462,7 @@ class SocketInAppMessageServiceImp @Inject constructor(
     //region Region Escuchadores de Eventos
 
     //region Metodos Conexion
-    private fun listenOnDisconnect() {
+    private fun listenDisconnect() {
 
         pusher
             .getPrivateChannel(privateGeneralChannelName)
@@ -649,7 +721,7 @@ class SocketInAppMessageServiceImp @Inject constructor(
                     override fun onAuthenticationFailure(
                         message: String?,
                         e: java.lang.Exception?
-                    ) =                        Unit
+                    ) = Unit
                 }
             )
     }

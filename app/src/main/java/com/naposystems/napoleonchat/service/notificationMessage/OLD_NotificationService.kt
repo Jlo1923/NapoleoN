@@ -13,7 +13,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageService
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
@@ -31,7 +31,7 @@ class OLD_NotificationService
     private val syncManager: SyncManager,
     private val handlerNotificationChannelService: HandlerNotificationChannel.Service,
     private val cryptoMessage: CryptoMessage,
-    private val socketInAppMessageService: SocketInAppMessageService,
+    private val socketMessageService: SocketMessageService,
 ) {
 
     companion object {

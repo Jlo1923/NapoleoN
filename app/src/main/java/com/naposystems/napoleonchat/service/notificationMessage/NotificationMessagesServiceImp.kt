@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.socketOutAppMessage.SocketOutAppMessageService
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
@@ -40,7 +40,7 @@ import javax.inject.Inject
 class NotificationMessagesServiceImp
 @Inject constructor(
     private val context: Context,
-    private val socketOutAppMessageService: SocketOutAppMessageService,
+    private val socketMessageService: SocketMessageService,
     private val handlerNotificationChannelService: HandlerNotificationChannel.Service,
     private val syncManager: SyncManager,
     private val sharedPreferencesManager: SharedPreferencesManager,
@@ -50,7 +50,7 @@ class NotificationMessagesServiceImp
     var queueDataNotifications: MutableList<Map<String, String>> = mutableListOf()
     var queueNotifications: MutableList<RemoteMessage.Notification?> = mutableListOf()
 
-    private var notificationCount: Int = 0
+//    private var notificationCount: Int = 0
 
     companion object {
         const val NOTIFICATION_RINGING = 950707
@@ -176,36 +176,36 @@ class NotificationMessagesServiceImp
     }
 
     private fun handlerMessage(
-        data: Map<String, String>,
+        dataFromNotification: Map<String, String>,
         notification: RemoteMessage.Notification?
     ) {
-        Timber.d("**Paso 1: Notificacion Recibida $data")
+        Timber.d("**Paso 1: Notificacion Recibida $dataFromNotification")
+//
+//        notificationCount = if (dataFromNotification.containsKey(Constants.NotificationKeys.BADGE))
+//            dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
+//        else
+//            0
 
-        notificationCount = if (data.containsKey(Constants.NotificationKeys.BADGE))
-            data.getValue(Constants.NotificationKeys.BADGE).toInt()
-        else
-            0
+//        Timber.d("**Paso 1.1: Notificacion Count $notificationCount")
 
-        Timber.d("**Paso 1.1: Notificacion Count $notificationCount")
-
-        if (data.containsKey(Constants.NotificationKeys.MESSAGE_ID)) {
-            if (!validateExistMessageId(data.getValue(Constants.NotificationKeys.MESSAGE_ID))) {
-                Timber.d("**Paso 2: Registro en la cola $data")
-                queueDataNotifications.add(data)
+        if (dataFromNotification.containsKey(Constants.NotificationKeys.MESSAGE_ID)) {
+            if (!validateExistMessageId(dataFromNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))) {
+                Timber.d("**Paso 2: Registro en la cola $dataFromNotification")
+                queueDataNotifications.add(dataFromNotification)
                 queueNotifications.add(notification)
             }
         }
 
-        Timber.d("**Paso 3.1: Estados Status Socket: ${socketOutAppMessageService.getStatusSocket()} Status Channel: ${socketOutAppMessageService.getStatusGlobalChannel()} ")
+        Timber.d("**Paso 3.1: Estados Status Socket: ${socketMessageService.getStatusSocket()} Status Channel: ${socketMessageService.getStatusGlobalChannel()} ")
 
-        if (socketOutAppMessageService.getStatusSocket() == ConnectionState.CONNECTED &&
-            socketOutAppMessageService.getStatusGlobalChannel() == Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
+        if (socketMessageService.getStatusSocket() == ConnectionState.CONNECTED &&
+            socketMessageService.getStatusGlobalChannel() == Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
         ) {
             Timber.d("**Paso 3.2: Solicitud a proceso de cola desde el principal")
             processQueueMessagesNotifications()
         } else {
-            Timber.d("**Paso 3.3: Solicitud de conexion. Status Socket: ${socketOutAppMessageService.getStatusSocket()} Status Channel: ${socketOutAppMessageService.getStatusGlobalChannel()} ")
-            socketOutAppMessageService.connectSocket()
+            Timber.d("**Paso 3.3: Solicitud de conexion. Status Socket: ${socketMessageService.getStatusSocket()} Status Channel: ${socketMessageService.getStatusGlobalChannel()} ")
+            socketMessageService.connectSocket()
             listenConnectChannel()
         }
     }
@@ -298,7 +298,7 @@ class NotificationMessagesServiceImp
 
                         Timber.d("**Paso 8.2: Emitir Recibido $messages")
 
-                        socketOutAppMessageService.emitClientConversation(messages)
+                        socketMessageService.emitClientConversation(messages)
 
                     }
             } catch (e: java.lang.Exception) {
@@ -329,7 +329,6 @@ class NotificationMessagesServiceImp
         }
 
         val builder = createNotificationBuilder(itemDataNotification, itemNotification)
-            .setNumber(notificationCount)
 
         if (itemDataNotification.containsKey(Constants.NotificationKeys.TITLE)) {
             builder.setContentTitle(itemDataNotification.getValue(Constants.NotificationKeys.TITLE))
@@ -425,6 +424,13 @@ class NotificationMessagesServiceImp
                 )
             }
 
+        val notificationCount =
+            if (dataFromNotification.containsKey(Constants.NotificationKeys.BADGE))
+//                dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
+                1
+            else
+                0
+
         return NotificationCompat.Builder(
             context,
             channelType
@@ -436,7 +442,7 @@ class NotificationMessagesServiceImp
             .setContentIntent(pendingIntent)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setNumber(0)
+            .setNumber(notificationCount)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setAutoCancel(true)

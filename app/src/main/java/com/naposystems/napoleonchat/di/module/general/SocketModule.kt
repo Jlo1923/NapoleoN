@@ -1,9 +1,7 @@
 package com.naposystems.napoleonchat.di.module.general
 
-import com.naposystems.napoleonchat.service.socketOutAppMessage.SocketOutAppMessageService
-import com.naposystems.napoleonchat.service.socketOutAppMessage.SocketOutAppMessageServiceImp
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageService
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketInAppMessageServiceImp
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageServiceImp
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton
@@ -13,10 +11,6 @@ abstract class SocketModule {
 
     @Binds
     @Singleton
-    abstract fun bindSocketInAppMessageService(socketInAppMessageService: SocketInAppMessageServiceImp): SocketInAppMessageService
-
-    @Binds
-    @Singleton
-    abstract fun bindSocketOutAppMessageService(socketOutAppMessageService: SocketOutAppMessageServiceImp): SocketOutAppMessageService
+    abstract fun bindSocketMessageService(socketInAppMessageService: SocketMessageServiceImp): SocketMessageService
 
 }
