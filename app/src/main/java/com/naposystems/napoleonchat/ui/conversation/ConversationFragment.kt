@@ -420,7 +420,7 @@ class ConversationFragment : BaseFragment(),
                             showCounterNotification()
                             false
                         }
-                    Timber.d("*TestScroll: isFabScroll on addOnScrollListener $isFabScroll")
+//                    Timber.d("*TestScroll: isFabScroll on addOnScrollListener $isFabScroll")
                     super.onScrolled(recyclerView, dx, dy)
                 }, 200)
             }
@@ -429,7 +429,7 @@ class ConversationFragment : BaseFragment(),
         binding.recyclerViewConversation.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom < oldBottom) {
                 binding.recyclerViewConversation.post {
-                    Timber.d("*TestScroll: isFabScroll on addOnLayoutChangeListener $isFabScroll")
+//                    Timber.d("*TestScroll: isFabScroll on addOnLayoutChangeListener $isFabScroll")
                     if (!isFabScroll) {
                         val friendlyMessageCount: Int = conversationAdapter.itemCount
                         binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)

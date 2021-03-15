@@ -10,7 +10,6 @@ import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.Valid
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.pusher.client.Pusher
-import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
 import com.pusher.client.connection.ConnectionEventListener
@@ -37,14 +36,6 @@ class SocketOutAppMessageServiceImp @Inject constructor(
 
     private var userId = syncManager.getUserId()
 
-    private lateinit var globalChannel: PrivateChannel
-
-    init {
-
-        Timber.d("Pusher Paso OUT: //////////////////////////////////////")
-
-    }
-
     //region Implementacion Interfaz
 
     override fun getStatusSocket(): ConnectionState {
@@ -52,12 +43,10 @@ class SocketOutAppMessageServiceImp @Inject constructor(
     }
 
     override fun getStatusGlobalChannel(): Boolean {
+
         return if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
             if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
-                if (::globalChannel.isInitialized)
-                    globalChannel.isSubscribed
-                else
-                    Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed
             else
                 Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
         else
@@ -65,12 +54,6 @@ class SocketOutAppMessageServiceImp @Inject constructor(
     }
 
     override fun connectSocket() {
-
-        Timber.d("Pusher Paso OUT 1: *****************")
-
-        Timber.d("Pusher Paso OUT 1: connectSocket: State:${pusher.connection.state}")
-
-        Timber.d("Pusher Paso OUT 1: userId: $userId")
 
         if (userId != Constants.UserNotExist.USER_NO_EXIST.user) {
 
@@ -81,48 +64,28 @@ class SocketOutAppMessageServiceImp @Inject constructor(
                 pusher.connect(object : ConnectionEventListener {
 
                     override fun onConnectionStateChange(change: ConnectionStateChange?) {
-
                         if (change?.currentState == ConnectionState.CONNECTED) {
-
-                            Timber.d("Pusher Paso OUT 1.2: CONECTADO")
-
-                            subscribeChannel()
-
+                            subscribeChannels()
                         }
-
                     }
 
                     override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-
-                        Timber.d("Pusher Paso OUT 1.3: connectSocket: onError $message, code: $code")
-
                         pusher.connect()
-
                     }
-
                 })
             } else if (pusher.connection.state == ConnectionState.CONNECTED && !app.isAppVisible()) {
-
-                Timber.d("Pusher Paso OUT 1.4: Ya Conectado")
-
-                subscribeChannel()
+                subscribeChannels()
             }
         }
     }
 
-    private fun subscribeChannel() {
-
-        Timber.d("Pusher Paso OUT 2: subscribeChannels")
+    private fun subscribeChannels() {
 
         try {
             sharedPreferencesManager.putString(
                 Constants.SharedPreferences.PREF_SOCKET_ID,
                 pusher.connection.socketId
             )
-
-            Timber.d("Pusher Paso OUT 2.1: State:${pusher.connection.state}, SocketId:${pusher.connection.socketId}")
-
-            unsubscribeChannel()
 
             subscribeToPrivateGlobalChannel()
 
@@ -133,34 +96,22 @@ class SocketOutAppMessageServiceImp @Inject constructor(
 
     private fun subscribeToPrivateGlobalChannel() {
 
-        Timber.d("Pusher Paso OUT 3: subscribeToPrivateGlobalChannel")
-
         try {
 
             if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) == null) {
 
-                Timber.d("Pusher Paso OUT 3.1: Dentro del if")
-
-                globalChannel = pusher.subscribePrivate(
+                pusher.subscribePrivate(
                     Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName,
                     object : PrivateChannelEventListener {
-                        override fun onEvent(event: PusherEvent?) {
-                            Timber.d("Pusher Paso OUT 3.2: subscribeToPrivateGlobalChannel: onEvent ${event?.data}")
-                        }
+                        override fun onEvent(event: PusherEvent?) = Unit
 
                         override fun onAuthenticationFailure(
                             message: String?,
                             e: java.lang.Exception?
-                        ) {
-                            Timber.d("Pusher Paso OUT: subscribeToPrivateGlobalChannel: onAuthenticationFailure")
-                        }
+                        ) = Unit
 
                         override fun onSubscriptionSucceeded(channelName: String?) {
-
-                            Timber.d("Pusher Paso OUT 3.3: subscribeToPrivateGlobalChannel: onSubscriptionSucceeded:$channelName")
-
                             RxBus.publish(RxEvent.CreateNotification())
-
                         }
                     }
                 )
@@ -183,30 +134,17 @@ class SocketOutAppMessageServiceImp @Inject constructor(
 
             if (jsonObject.isNotEmpty())
 
-                globalChannel.trigger(
-                    Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
-                    jsonObject
-                )
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                        jsonObject
+                    )
 
         } catch (e: Exception) {
             Timber.e(e)
         }
 
     }
-
-    private fun unsubscribeChannel() {
-        Timber.d("Pusher Paso OUT 2.2: Desubscribirse")
-//        if (::globalChannel.isInitialized)
-//            if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
-//                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
-        pusher.unsubscribe(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
-
-//        if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId) != null)
-//            if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId).isSubscribed)
-        pusher.unsubscribe(Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId)
-
-    }
-
     //endregion
 
 }
