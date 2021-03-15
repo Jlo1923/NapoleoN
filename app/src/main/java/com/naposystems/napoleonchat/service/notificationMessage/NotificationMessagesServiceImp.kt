@@ -260,10 +260,11 @@ class NotificationMessagesServiceImp
     }
 
     private fun validateExistMessageId(messageId: String): Boolean {
-        var exist: Boolean = false
-        for (item in queueDataNotifications) {
-            if (item.get("message_id").equals(messageId)) {
+        var exist = false
+        loop@ for (item in queueDataNotifications) {
+            if (item.getValue(Constants.NotificationKeys.MESSAGE_ID) == messageId) {
                 exist = true
+                break@loop
             }
         }
         return exist

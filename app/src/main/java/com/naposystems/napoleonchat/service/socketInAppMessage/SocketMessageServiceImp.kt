@@ -47,9 +47,9 @@ class SocketMessageServiceImp @Inject constructor(
         context as NapoleonApplication
     }
 
-    private var userId = syncManager.getUserId()
+    private var userId: Int = Constants.UserNotExist.USER_NO_EXIST.user
 
-    private var privateGeneralChannelName: String
+    private lateinit var privateGeneralChannelName: String
 
     companion object {
         const val HANGUP_CALL = 2
@@ -62,9 +62,9 @@ class SocketMessageServiceImp @Inject constructor(
     }
 
     init {
-
-        privateGeneralChannelName =
-            Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
+//
+//        privateGeneralChannelName =
+//            Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
 
     }
 
@@ -91,7 +91,12 @@ class SocketMessageServiceImp @Inject constructor(
 
     override fun connectSocket() {
 
+        userId = syncManager.getUserId()
+
         if (userId != Constants.UserNotExist.USER_NO_EXIST.user) {
+
+            privateGeneralChannelName =
+                Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
 
             if (pusher.connection.state == ConnectionState.DISCONNECTED ||
                 pusher.connection.state == ConnectionState.DISCONNECTING
