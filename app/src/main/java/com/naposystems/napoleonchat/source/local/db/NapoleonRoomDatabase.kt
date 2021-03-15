@@ -58,20 +58,7 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE 'message' ADD COLUMN 'cypher' INTEGER NOT NULL DEFAULT 1")
             }
         }
-//
-//        val MIGRATION_2_3 = object : Migration(2, 3) {
-//            override fun migrate(database: SupportSQLiteDatabase) {
-//
-//                database.execSQL("delete from message where web_id not in (select min(web_id) from message group by uuid, web_id)")
-//
-//            }
-//        }
-//        val MIGRATION_3_4 = object : Migration(3, 4) {
-//            override fun migrate(database: SupportSQLiteDatabase) {
-//
-//                database.execSQL("CREATE UNIQUE INDEX `index_message_web_id` ON `message` (`web_id`)")
-//            }
-//        }
+
     }
 
 }
