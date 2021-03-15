@@ -128,58 +128,69 @@ class SocketMessageServiceImp @Inject constructor(
                 pusher.connection.state == ConnectionState.CONNECTING
             ) {
 
-                //Unbind Global
+                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null) {
 
-                pusher.getPrivateChannel(
-                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                )
-                    .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
-                        SubscriptionEventListener {}
+                    //Unbind Global
+
+                    pusher.getPrivateChannel(
+                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                    )
+                        .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                            SubscriptionEventListener {}
+                        )
+
+                    //Unsubscribe Channels
+
+                    pusher.unsubscribe(
+                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
                     )
 
-                //Unbind General
+                }
 
-                pusher.getPrivateChannel(privateGeneralChannelName)
-                    .unbind(Constants.SocketListeEvents.DISCONNECT.channel,
-                        SubscriptionEventListener {}
-                    )
+                if (pusher.getPrivateChannel(privateGeneralChannelName) != null) {
 
-                pusher.getPrivateChannel(privateGeneralChannelName)
-                    .unbind(Constants.SocketListeEvents.NEW_MESSAGE.channel,
-                        SubscriptionEventListener {}
-                    )
+                    //Unbind General
 
-                pusher.getPrivateChannel(privateGeneralChannelName)
-                    .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGES_RECEIVED.channel,
-                        SubscriptionEventListener {}
-                    )
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListeEvents.DISCONNECT.channel,
+                            SubscriptionEventListener {}
+                        )
 
-                pusher.getPrivateChannel(privateGeneralChannelName)
-                    .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGE_READED.channel,
-                        SubscriptionEventListener {}
-                    )
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListeEvents.NEW_MESSAGE.channel,
+                            SubscriptionEventListener {}
+                        )
 
-                pusher.getPrivateChannel(privateGeneralChannelName)
-                    .unbind(Constants.SocketListeEvents.SEND_MESSAGES_DESTROY.channel,
-                        SubscriptionEventListener {}
-                    )
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGES_RECEIVED.channel,
+                            SubscriptionEventListener {}
+                        )
 
-                pusher.getPrivateChannel(privateGeneralChannelName)
-                    .unbind(Constants.SocketListeEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.channel,
-                        SubscriptionEventListener {}
-                    )
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGE_READED.channel,
+                            SubscriptionEventListener {}
+                        )
 
-                pusher.getPrivateChannel(privateGeneralChannelName)
-                    .unbind(Constants.SocketListeEvents.BLOCK_OR_DELETE_FRIENDSHIP.channel,
-                        SubscriptionEventListener {}
-                    )
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListeEvents.SEND_MESSAGES_DESTROY.channel,
+                            SubscriptionEventListener {}
+                        )
 
-                //Unsubscribe Channels
-                pusher.unsubscribe(
-                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                )
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListeEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.channel,
+                            SubscriptionEventListener {}
+                        )
 
-                pusher.unsubscribe(privateGeneralChannelName)
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListeEvents.BLOCK_OR_DELETE_FRIENDSHIP.channel,
+                            SubscriptionEventListener {}
+                        )
+
+                    //Unsubscribe Channels
+
+                    pusher.unsubscribe(privateGeneralChannelName)
+
+                }
 
                 //Disconnect Pusher
                 pusher.disconnect()

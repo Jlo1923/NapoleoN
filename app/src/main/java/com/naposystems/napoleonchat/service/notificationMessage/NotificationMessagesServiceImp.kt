@@ -180,13 +180,6 @@ class NotificationMessagesServiceImp
         notification: RemoteMessage.Notification?
     ) {
         Timber.d("**Paso 1: Notificacion Recibida $dataFromNotification")
-//
-//        notificationCount = if (dataFromNotification.containsKey(Constants.NotificationKeys.BADGE))
-//            dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
-//        else
-//            0
-
-//        Timber.d("**Paso 1.1: Notificacion Count $notificationCount")
 
         if (dataFromNotification.containsKey(Constants.NotificationKeys.MESSAGE_ID)) {
             if (!validateExistMessageId(dataFromNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))) {
@@ -329,21 +322,14 @@ class NotificationMessagesServiceImp
             }, 200)
         }
 
-        val builder = createNotificationBuilder(itemDataNotification, itemNotification)
-
-        if (itemDataNotification.containsKey(Constants.NotificationKeys.TITLE)) {
-            builder.setContentTitle(itemDataNotification.getValue(Constants.NotificationKeys.TITLE))
-        }
-
-        if (itemDataNotification.containsKey(Constants.NotificationKeys.BODY)) {
-            builder.setContentText(itemDataNotification.getValue(Constants.NotificationKeys.BODY))
-        }
-
         if (!app.isAppVisible()) {
 
             Timber.d("**Paso 10.3 : Muestra Notificacion")
 
-            showNotification(builder)
+            showNotification(
+                createNotificationBuilder(itemDataNotification, itemNotification),
+                SUMMARY_ID
+            )
 
             disposable.clear()
 
@@ -427,8 +413,7 @@ class NotificationMessagesServiceImp
 
         val notificationCount =
             if (dataFromNotification.containsKey(Constants.NotificationKeys.BADGE))
-//                dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
-                1
+                dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
             else
                 0
 
@@ -438,8 +423,8 @@ class NotificationMessagesServiceImp
         )
             .setLargeIcon(iconBitmap)
             .setSmallIcon(R.drawable.ic_notification_icon)
-            .setContentTitle(notification?.title)
-            .setContentText(notification?.body)
+            .setContentTitle(dataFromNotification.getValue(Constants.NotificationKeys.TITLE))
+            .setContentText(dataFromNotification.getValue(Constants.NotificationKeys.BODY))
             .setContentIntent(pendingIntent)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -447,11 +432,15 @@ class NotificationMessagesServiceImp
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setAutoCancel(true)
+
     }
 
-    private fun showNotification(builder: NotificationCompat.Builder) {
+    private fun showNotification(
+        builder: NotificationCompat.Builder,
+        notificationId: Int = Random().nextInt()
+    ) {
         with(NotificationManagerCompat.from(context)) {
-            notify(Random().nextInt(), builder.build())
+            notify(notificationId, builder.build())
         }
     }
 
