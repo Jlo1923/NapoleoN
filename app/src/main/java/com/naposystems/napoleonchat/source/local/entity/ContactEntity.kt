@@ -26,15 +26,8 @@ data class ContactEntity(
     @ColumnInfo(name = DBConstants.Contact.COLUMN_SILENCED) val silenced: Boolean = false,
     @ColumnInfo(name = DBConstants.Contact.COLUMN_SELF_DESTRUCT_TIME) val selfDestructTime: Int = -1,
     @ColumnInfo(name = DBConstants.Contact.COLUMN_STATE_NOTIFICATION) var stateNotification: Boolean = false,
-    @ColumnInfo(name = DBConstants.Contact.COLUMN_NOTIFICATION_ID) val notificationId: String? = null,
-
-    @ColumnInfo(name = DBConstants.Contact.COLUMN_STATUS_FRIEND) var statusFriend:  Boolean = false,
-    @ColumnInfo(name = DBConstants.Contact.COLUMN_RECEIVER) val receiver: Boolean? = null,
-    @ColumnInfo(name = DBConstants.Contact.COLUMN_OFFER) var offer: Boolean? = null,
-    @ColumnInfo(name = DBConstants.Contact.COLUMN_OFFER_ID) val offerId: Int? = null,
+    @ColumnInfo(name = DBConstants.Contact.COLUMN_NOTIFICATION_ID) val notificationId: String? = null
 ) : Parcelable, Serializable {
-    @Ignore
-    var haveFriendshipRequest: Boolean = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -63,10 +56,5 @@ data class ContactEntity(
         imageUrl.isNotEmpty() -> imageUrl
         else -> ""
     }
-
-    override fun toString(): String {
-        return "ContactEntity(id=$id, imageUrl='$imageUrl', imageUrlFake='$imageUrlFake', nickname='$nickname', nicknameFake='$nicknameFake', displayName='$displayName', displayNameFake='$displayNameFake', status='$status', lastSeen='$lastSeen', statusBlocked=$statusBlocked, silenced=$silenced, selfDestructTime=$selfDestructTime, stateNotification=$stateNotification, notificationId=$notificationId, statusFriend=$statusFriend, receiver=$receiver, offer=$offerId, haveFriendshipRequest=$haveFriendshipRequest)"
-    }
-
 
 }

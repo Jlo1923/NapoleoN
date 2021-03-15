@@ -4,14 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.AddContactRequestReceivedItemBinding
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.model.addContact.Contact
 import com.naposystems.napoleonchat.ui.addContact.adapter.AddContactAdapter
-import timber.log.Timber
 
 class RequestContactReceivedHolder constructor(private val binding: AddContactRequestReceivedItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: ContactEntity, clickListener: AddContactAdapter.ClickListener) {
+    fun bind(item: Contact, clickListener: AddContactAdapter.ClickListener) {
         binding.contact = item
         binding.buttonRefuse.setOnClickListener {
             item.statusFriend = false

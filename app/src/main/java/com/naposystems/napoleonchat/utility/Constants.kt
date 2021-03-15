@@ -271,6 +271,11 @@ object Constants {
         FRIENDSHIP_REQUEST_OFFER(2)
     }
 
+    enum class AddContactTitleType(val type: Int) {
+        TITLE_MY_CONTACTS(0),
+        TITLE_COINCIDENCES(1)
+    }
+
     enum class FriendshipRequestPutAction(val action: String) {
         ACCEPT("accepted"),
         REFUSE("rejected"),

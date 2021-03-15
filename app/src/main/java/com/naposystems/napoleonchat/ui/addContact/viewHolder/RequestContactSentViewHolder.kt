@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.AddContactRequestSentItemBinding
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.model.addContact.Contact
 
 class RequestContactSentViewHolder constructor(private val binding: AddContactRequestSentItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: ContactEntity) {
+    fun bind(item: Contact) {
         binding.contact = item
         binding.executePendingBindings()
     }

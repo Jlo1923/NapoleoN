@@ -6,11 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.model.addContact.AddContactTitle
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.model.addContact.Contact
 import com.naposystems.napoleonchat.ui.addContact.viewHolder.*
-import timber.log.Timber
+import com.naposystems.napoleonchat.utility.Constants
 
 class AddContactAdapter constructor(
     private val context: Context,
@@ -35,11 +34,11 @@ class AddContactAdapter constructor(
                 return false
             }
 
-            if (oldItem is ContactEntity && newItem is ContactEntity)
-                return oldItem.nickname == newItem.nickname && oldItem.haveFriendshipRequest == newItem.haveFriendshipRequest
+            if (oldItem is Contact && newItem is Contact)
+                return oldItem.nickname == newItem.nickname && oldItem.receiver == newItem.receiver
 
             return if (oldItem is AddContactTitle && newItem is AddContactTitle)
-                oldItem.title == newItem.title
+                oldItem.type == newItem.type
             else false
         }
 
@@ -54,7 +53,7 @@ class AddContactAdapter constructor(
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        return if (item is ContactEntity) {
+        return if (item is Contact) {
             when {
                 item.statusFriend -> TYPE_FRIEND
                 item.receiver == true -> TYPE_REQUEST_SENT
@@ -94,29 +93,30 @@ class AddContactAdapter constructor(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is AddContactViewHolder -> holder.bind(item as ContactEntity, clickListener)
-            is RequestContactSentViewHolder -> holder.bind(item as ContactEntity)
-            is RequestContactReceivedHolder -> holder.bind(item as ContactEntity, clickListener)
+            is AddContactViewHolder -> holder.bind(item as Contact, clickListener)
+            is RequestContactSentViewHolder -> holder.bind(item as Contact)
+            is RequestContactReceivedHolder -> holder.bind(item as Contact, clickListener)
             is AddContactTitleViewHolder -> {
                 objectTitle = item as AddContactTitle
-                holder.bind(item)
+                holder.bind(item, context)
             }
             else -> {
-                (holder as FriendContactViewHolder).bind(item as ContactEntity, clickListener)
+                (holder as FriendContactViewHolder).bind(item as Contact, clickListener)
             }
         }
     }
 
 
-    fun updateContact(index: Int) {
-        (currentList[index] as ContactEntity).haveFriendshipRequest = true
-        notifyDataSetChanged()
+    fun updateContact(contact: Contact) {
+        contact.receiver = true
+        val index = currentList.indexOf(contact)
+        notifyItemChanged(index)
     }
 
-    fun updateContactRequest(contact: ContactEntity) {
+    fun updateContactRequest(contact: Contact) {
         //update Title
         if (contact.statusFriend) {
-            objectTitle.title = context.getString(R.string.text_my_contacts_added)
+            objectTitle.type = Constants.AddContactTitleType.TITLE_MY_CONTACTS.type
             val index = currentList.indexOf(objectTitle)
             notifyItemChanged(index)
         }
@@ -127,8 +127,8 @@ class AddContactAdapter constructor(
     }
 
     interface ClickListener {
-        fun onAddClick(contact: ContactEntity)
-        fun onOpenChat(contact: ContactEntity)
-        fun onAcceptRequest(contact: ContactEntity, state: Boolean)
+        fun onAddClick(contact: Contact)
+        fun onOpenChat(contact: Contact)
+        fun onAcceptRequest(contact: Contact, state: Boolean)
     }
 }

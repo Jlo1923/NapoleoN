@@ -1,19 +1,18 @@
 package com.naposystems.napoleonchat.ui.addContact
 
 import android.content.Context
-import androidx.databinding.BaseObservable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.model.FriendShipRequest
 import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestsResDTO
 import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.model.FriendShipRequestAdapterType
-import com.naposystems.napoleonchat.model.addContact.AddContactTitle
+import com.naposystems.napoleonchat.model.addContact.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 class AddContactViewModel @Inject constructor(
@@ -21,8 +20,6 @@ class AddContactViewModel @Inject constructor(
     private val context: Context
 ) :
     ViewModel(), IContractAddContact.ViewModel {
-
-    lateinit var lastFriendshipRequest: ContactEntity
 
     private val _users = MutableLiveData<MutableList<Any>>()
     val users: LiveData<MutableList<Any>>
@@ -32,8 +29,8 @@ class AddContactViewModel @Inject constructor(
     val opened: LiveData<Boolean>
         get() = _opened
 
-    private val _friendShipRequestSendSuccessfully = MutableLiveData<Boolean>()
-    val friendShipRequestSendSuccessfully: LiveData<Boolean>
+    private val _friendShipRequestSendSuccessfully = MutableLiveData<Contact>()
+    val friendShipRequestSendSuccessfully: LiveData<Contact>
         get() = _friendShipRequestSendSuccessfully
 
     private val _friendshipRequests = MutableLiveData<List<FriendShipRequestAdapterType>>()
@@ -44,15 +41,15 @@ class AddContactViewModel @Inject constructor(
     val friendshipRequestWsError: LiveData<String>
         get() = _friendshipRequestWsError
 
-    private val _updateItem = MutableLiveData<ContactEntity>()
-    val updateItem: LiveData<ContactEntity> get() = _updateItem
+    private val _updateItem = MutableLiveData<Contact>()
+    val updateItem: LiveData<Contact> get() = _updateItem
 
-    private lateinit var contactEntity: ContactEntity
+    private lateinit var contactModel: Contact
     private var isOffer: Boolean = false
 
     init {
         _users.value = mutableListOf()
-        _friendShipRequestSendSuccessfully.value = false
+
     }
 
     //region Implementation IContractAddContact.ViewModel
@@ -80,43 +77,9 @@ class AddContactViewModel @Inject constructor(
                 val filterQuery = query.replace("@", "")
                 val response = repository.searchContact(filterQuery)
 
-                val title1 = AddContactTitle()
-                title1.id = 1
-                title1.title = context.getString(R.string.text_my_contacts_added)
-
-                val title2 = AddContactTitle()
-                title2.id = 2
-                title2.title = context.getString(R.string.text_coincidence)
-
                 if (response.isSuccessful) {
-
-                    val multableList: MutableList<Any> = mutableListOf()
-
-                    val list = response.body()?.let { ContactResDTO.toEntityList(it) }
-
-                    if (list != null) {
-                        val sortedByFriends = list.sortedByDescending { o -> o.statusFriend }
-                        val exists = list.findLast { it.statusFriend }
-                        val coincidences = list.find { !it.statusFriend }
-
-                        if (exists != null) {
-                            multableList.add(title1)
-                            multableList.addAll(sortedByFriends)
-
-                            val lastP = multableList.indexOf(exists)
-                            if (coincidences != null)
-                                multableList.add(
-                                    lastP + 1,
-                                    title2
-                                )
-                        } else {
-                            if (sortedByFriends.isNotEmpty())
-                                multableList.add(title2)
-                            multableList.addAll(sortedByFriends)
-                        }
-                    }
-
-                    _users.value = multableList
+                    val list = response.body()?.let { ContactResDTO.getUsers(it) }
+                    _users.value = list
 
 
                 } else {
@@ -148,14 +111,13 @@ class AddContactViewModel @Inject constructor(
         return _friendshipRequests.value
     }
 
-    override fun sendFriendshipRequest(contact: ContactEntity) {
+    override fun sendFriendshipRequest(contact: Contact) {
         viewModelScope.launch {
             try {
-                lastFriendshipRequest = contact
-                val response = repository.sendFriendshipRequest(contact)
 
+                val response = repository.sendFriendshipRequest(contact)
                 if (response.isSuccessful) {
-                    _friendShipRequestSendSuccessfully.value = true
+                    _friendShipRequestSendSuccessfully.value = contact
                 }
             } catch (ex: Exception) {
                 _friendshipRequestWsError.value = context.getString(R.string.text_fail)
@@ -163,17 +125,30 @@ class AddContactViewModel @Inject constructor(
         }
     }
 
-    override fun acceptOrRefuseRequest(contact: ContactEntity, state: Boolean) {
-        contactEntity = contact
+    override fun acceptOrRefuseRequest(contact: Contact, state: Boolean): FriendShipRequest {
+        contactModel = contact
         isOffer = true
+        return FriendShipRequest(
+            contact.offerId ?: 0,
+            0,
+            0,
+            "",
+            "",
+            ContactResDTO.toEntity(contact),
+            true
+        )
     }
 
     override fun validateIfExistsOffer() {
         if (isOffer) {
-            //update item
-            _updateItem.value = contactEntity
+            _updateItem.value = contactModel
             isOffer = false
         }
+    }
+
+    override fun getContact(contact: Contact): ContactEntity? {
+        val user = repository.getContact(contact.id)
+        return user
     }
     //endregion
 }

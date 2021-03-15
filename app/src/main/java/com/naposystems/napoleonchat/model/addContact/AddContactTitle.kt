@@ -1,9 +1,9 @@
 package com.naposystems.napoleonchat.model.addContact
 
-class AddContactTitle  {
-    var id = 0
-    var title:String =""
-
+class AddContactTitle(
+    val id: Int,
+    var type: Int
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
