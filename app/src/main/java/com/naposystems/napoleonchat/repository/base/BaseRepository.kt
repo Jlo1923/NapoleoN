@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.repository.base
 import com.naposystems.napoleonchat.ui.baseFragment.IContractBase
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import javax.inject.Inject
 
 class BaseRepository @Inject constructor(

@@ -19,7 +19,7 @@ import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import retrofit2.Response
 import timber.log.Timber
 import java.util.concurrent.TimeUnit

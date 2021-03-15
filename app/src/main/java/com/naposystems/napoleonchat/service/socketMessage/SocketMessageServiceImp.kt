@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.socketInAppMessage
+package com.naposystems.napoleonchat.service.socketMessage
 
 import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig

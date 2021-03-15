@@ -18,8 +18,8 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageServiceImp
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageServiceImp
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.utility.BluetoothStateManager
 import com.naposystems.napoleonchat.utility.Constants

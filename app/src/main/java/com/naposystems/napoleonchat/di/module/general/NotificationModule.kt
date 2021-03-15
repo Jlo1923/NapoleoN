@@ -4,7 +4,7 @@ import android.content.Context
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import dagger.Module
 import dagger.Provides

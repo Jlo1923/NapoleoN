@@ -9,7 +9,7 @@ import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSO
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(

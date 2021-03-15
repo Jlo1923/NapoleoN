@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.di.module.general
 
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageService
-import com.naposystems.napoleonchat.service.socketInAppMessage.SocketMessageServiceImp
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageServiceImp
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton

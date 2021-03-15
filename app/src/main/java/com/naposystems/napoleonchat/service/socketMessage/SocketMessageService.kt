@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.socketInAppMessage
+package com.naposystems.napoleonchat.service.socketMessage
 
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.pusher.client.channel.PresenceChannel
