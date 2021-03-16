@@ -411,24 +411,37 @@ class NotificationMessagesServiceImp
                 )
             }
 
-        val notificationCount =
-            if (dataFromNotification.containsKey(Constants.NotificationKeys.BADGE))
-                dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
-            else
-                0
 
-        return NotificationCompat.Builder(
+        val builder = NotificationCompat.Builder(
             context,
             channelType
         )
+            .setContentTitle(notification?.title)
+            .setContentText(notification?.body)
+
+        if (dataFromNotification.containsKey(Constants.NotificationKeys.TITLE))
+            builder.setContentTitle(
+                dataFromNotification.getValue(Constants.NotificationKeys.TITLE)
+            )
+
+        if (dataFromNotification.containsKey(Constants.NotificationKeys.BODY))
+            builder.setContentText(
+                dataFromNotification.getValue(Constants.NotificationKeys.BODY)
+            )
+
+        if (dataFromNotification.containsKey(Constants.NotificationKeys.BADGE))
+            builder.setNumber(
+                dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
+            )
+        else
+            builder.setNumber(0)
+
+        return builder
             .setLargeIcon(iconBitmap)
-            .setSmallIcon(R.drawable.ic_notification_icon)
-            .setContentTitle(dataFromNotification.getValue(Constants.NotificationKeys.TITLE))
-            .setContentText(dataFromNotification.getValue(Constants.NotificationKeys.BODY))
             .setContentIntent(pendingIntent)
+            .setSmallIcon(R.drawable.ic_notification_icon)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setNumber(notificationCount)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setAutoCancel(true)
