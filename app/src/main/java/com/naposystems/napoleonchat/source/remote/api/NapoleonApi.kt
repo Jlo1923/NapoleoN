@@ -33,9 +33,6 @@ import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoResD
 import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.napoleonchat.source.remote.dto.recoveryAccountQuestions.RecoveryAccountQuestionsReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.recoveryAccountQuestions.RecoveryAccountQuestionsResDTO
-import com.naposystems.napoleonchat.source.remote.dto.recoveryOlderAccountQuestions.getQuestions.RecoveryOlderAccountQuestionsResDTO
-import com.naposystems.napoleonchat.source.remote.dto.recoveryOlderAccountQuestions.sendAnswers.RecoveryOlderAccountQuestionsAnswersReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.recoveryOlderAccountQuestions.sendAnswers.RecoveryOlderAccountQuestionsAnswersResDTO
 import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
 import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeReqDTO
@@ -61,7 +58,6 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUEST_QUANTITY
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_MY_MESSAGES
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_QUESTIONS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_QUESTIONS_OLD_USER
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_SUBSCRIPTION_USER
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.LOG_OUT
@@ -84,7 +80,6 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_SELECTED_
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.TYPE_SUBSCRIPTIONS
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_MUTE_CONVERSATION
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_USER_INFO
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_ANSWERS_OLD_USER
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VERIFICATE_CODE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VERIFY_MESSAGES_READ
@@ -199,7 +194,7 @@ interface NapoleonApi {
     suspend fun getFriendshipRequests(): Response<FriendshipRequestsResDTO>
 
     @GET(GET_FRIENDSHIP_REQUESTS_RECEIVED)
-    suspend fun getFriendShipRequestReceivedHome() : Response<List<FriendshipRequestReceivedDTO>>
+    suspend fun getFriendShipRequestReceivedHome(): Response<List<FriendshipRequestReceivedDTO>>
 
     @PUT(PUT_FRIENDSHIP_REQUEST)
     suspend fun putFriendshipRequest(
@@ -224,12 +219,6 @@ interface NapoleonApi {
 
     @GET(DELETE_MESSAGES_FOR_ALL)
     suspend fun getDeletedMessages(): Response<List<String>>
-
-    @GET(GET_QUESTIONS_OLD_USER)
-    suspend fun getRecoveryOlderQuestions(@Path("nick") nickname: String): Response<RecoveryOlderAccountQuestionsResDTO>
-
-    @POST(VALIDATE_ANSWERS_OLD_USER)
-    suspend fun sendAnswersOldAccount(@Body recoveryOlderAccountQuestionsAnswersReqDTO: RecoveryOlderAccountQuestionsAnswersReqDTO): Response<RecoveryOlderAccountQuestionsAnswersResDTO>
 
     @POST(BLOCK_ATTACKER)
     suspend fun blockAttacker(@Body accountAttackDialogReqDTO: AccountAttackDialogReqDTO): Response<AccountAttackDialogResDTO>

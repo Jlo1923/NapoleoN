@@ -2,7 +2,9 @@ package com.naposystems.napoleonchat.webService.socket
 
 import android.content.Context
 import android.content.Intent
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -12,6 +14,8 @@ import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -34,7 +38,8 @@ class SocketService @Inject constructor(
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val repository: IContractSocketService.Repository
+    private val repository: IContractSocketService.Repository,
+    private val cryptoMessage: CryptoMessage
 ) : IContractSocketService.SocketService {
 
 
@@ -532,30 +537,45 @@ class SocketService @Inject constructor(
                     if (app.isAppVisible()) {
                         try {
                             event?.data?.let { dataEventRes ->
-                                val jsonAdapter: JsonAdapter<NewMessageEventRes> =
+                                val jsonAdapterData: JsonAdapter<NewMessageEventRes> =
                                     moshi.adapter(NewMessageEventRes::class.java)
-                                val dataEvent = jsonAdapter.fromJson(dataEventRes)
+                                val dataEvent = jsonAdapterData.fromJson(dataEventRes)
 
                                 dataEvent?.data?.let { newMessageDataEventRes ->
 
-                                    val messages = arrayListOf(
+                                    val message =
                                         ValidateMessage(
                                             id = newMessageDataEventRes.messageId,
                                             user = newMessageDataEventRes.contactId,
                                             status = Constants.MessageEventType.UNREAD.status
                                         )
-                                    )
-
-                                    val validateMessage = ValidateMessageEventDTO(messages)
-
-                                    val jsonAdapterValidate =
-                                        moshi.adapter(ValidateMessageEventDTO::class.java)
-
-                                    val json = jsonAdapterValidate.toJson(validateMessage)
-
-                                    globalChannel.trigger(CLIENT_CONVERSATION_NN, json.toString())
 
                                     repository.insertNewMessage(newMessageDataEventRes)
+
+                                    val data: String = if (BuildConfig.ENCRYPT_API) {
+                                        cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
+                                    } else {
+                                        newMessageDataEventRes.message
+                                    }
+
+                                    val jsonAdapterMessage: JsonAdapter<NewMessageEventMessageRes> =
+                                        moshi.adapter(NewMessageEventMessageRes::class.java)
+
+                                    jsonAdapterMessage.fromJson(data)
+                                        ?.let { newMessageEventMessageRes ->
+
+                                            if (newMessageEventMessageRes.numberAttachments > 0) {
+                                                if ((availableToReceived(newMessageEventMessageRes.attachments) && Data.contactId == newMessageEventMessageRes.userAddressee) ||
+                                                    Data.contactId == 0
+                                                ) {
+                                                    repository.notifyMessageReceived(message.id)
+                                                    emmitReceived(message)
+                                                }
+                                            } else if (Data.contactId != newMessageEventMessageRes.userAddressee) {
+                                                repository.notifyMessageReceived(message.id)
+                                                emmitReceived(message)
+                                            }
+                                        }
                                 }
                             }
 
@@ -573,6 +593,37 @@ class SocketService @Inject constructor(
                 override fun onSubscriptionSucceeded(channelName: String?) = Unit
             })
     }
+
+    private fun availableToReceived(attachments: List<NewMessageEventAttachmentRes>): Boolean {
+
+        var attachment: NewMessageEventAttachmentRes? = attachments.firstOrNull() {
+            it.type == Constants.AttachmentType.IMAGE.type ||
+                    it.type == Constants.AttachmentType.AUDIO.type ||
+                    it.type == Constants.AttachmentType.VIDEO.type ||
+                    it.type == Constants.AttachmentType.DOCUMENT.type
+        }
+
+        return attachment != null
+
+    }
+
+    private fun emmitReceived(messages: ValidateMessage) {
+
+        val validateMessage =
+            ValidateMessageEventDTO(arrayListOf(messages))
+
+        val jsonAdapterValidate =
+            moshi.adapter(ValidateMessageEventDTO::class.java)
+
+        val json =
+            jsonAdapterValidate.toJson(validateMessage)
+
+        globalChannel.trigger(
+            CLIENT_CONVERSATION_NN,
+            json.toString()
+        )
+    }
+
 
     private fun listenNotifyMessagesReceived(privateChannel: PrivateChannel) {
         privateChannel.bind(
@@ -688,6 +739,7 @@ class SocketService @Inject constructor(
                         val eventType = event.data.toIntOrNull()
 
                         if (eventType != null) {
+
                             Timber.d("LLegó $CALL_NN $eventType")
 
                             when (eventType) {

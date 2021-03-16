@@ -10,7 +10,6 @@ import javax.inject.Singleton
 abstract class CreateAccountModule {
 
     @Binds
-    @Singleton
     abstract fun bindCreateAccountRepository(
         repository: CreateAccountRepository
     ): IContractAccessPin.Repository

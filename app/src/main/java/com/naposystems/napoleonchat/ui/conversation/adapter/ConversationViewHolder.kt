@@ -284,6 +284,7 @@ open class ConversationViewHolder constructor(
         timeFormat: Int?,
         mediaPlayerManager: MediaPlayerManager? = null
     ) {
+
         countDown(
             item,
             textViewCountDown,
@@ -324,6 +325,7 @@ open class ConversationViewHolder constructor(
             }
 
             when (attachment.status) {
+
                 Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
                     progressBar?.setProgress(0.0f)
                     progressBar?.visibility = View.GONE
@@ -332,17 +334,20 @@ open class ConversationViewHolder constructor(
 //                    imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
 //                    imageButtonState?.visibility = View.VISIBLE
                 }
+
                 Constants.AttachmentStatus.SENDING.status -> {
 //                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
 //                    imageButtonState?.visibility = View.VISIBLE
                     progressBarIndeterminate?.isVisible = true
                 }
+
                 Constants.AttachmentStatus.SENT.status -> {
 //                    imageButtonState?.visibility = View.INVISIBLE
                     progressBarIndeterminate?.visibility = View.GONE
                     progressBar?.visibility = View.INVISIBLE
                     progressBar?.setProgress(0f)
                 }
+
                 Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
                     progressBar?.setProgress(0f)
                     progressBar?.visibility = View.GONE
@@ -350,10 +355,12 @@ open class ConversationViewHolder constructor(
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
                     imageButtonState?.visibility = View.INVISIBLE
                 }
+
                 Constants.AttachmentStatus.DOWNLOADING.status -> {
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
                     progressBarIndeterminate?.visibility = View.VISIBLE
                 }
+
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
                     progressBar?.visibility = View.GONE
                     progressBar?.setProgress(0f)
@@ -501,7 +508,7 @@ open class ConversationViewHolder constructor(
                             Utils.getFileUri(
                                 context = context,
                                 fileName = attachmentEntity.fileName,
-                                subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                                subFolder = Constants.CacheDirectories.AUDIOS.folder
                             )
                         )
                     }
@@ -511,7 +518,7 @@ open class ConversationViewHolder constructor(
                         Utils.getFileUri(
                             context = context,
                             fileName = attachmentEntity.fileName,
-                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            subFolder = Constants.CacheDirectories.AUDIOS.folder
                         )
                     )
                 }
@@ -524,7 +531,7 @@ open class ConversationViewHolder constructor(
                         Utils.getFileUri(
                             context = context,
                             fileName = attachmentEntity.fileName,
-                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            subFolder = Constants.CacheDirectories.AUDIOS.folder
                         )
                     )
                 }

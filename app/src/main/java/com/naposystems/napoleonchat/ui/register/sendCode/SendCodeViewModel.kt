@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.repository.sendCode.SendCodeRepository
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -49,8 +50,8 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
                     _codeSuccess.value = true
                 } else {
                     when (response.code()) {
-                        422 -> {
-                            _webServiceError.value = repository.get422Error(response)
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
+                            _webServiceError.value = repository.getUnprocessableEntityError(response)
                             _codeSuccess.value = false
                         }
                         else -> {

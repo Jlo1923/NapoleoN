@@ -10,6 +10,7 @@ import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReq
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.repository.accessPin.CreateAccountRepository
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -97,7 +98,7 @@ class AccessPinViewModel @Inject constructor(
 
                 } else {
                     when (response.code()) {
-                        422 -> _webServiceError.value = repository.get422Error(response)
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _webServiceError.value = repository.getUnprocessableEntityError(response)
                         else -> _webServiceError.value = repository.getError(response)
                     }
                 }

@@ -376,7 +376,7 @@ class AppearanceSettingsFragment : BaseFragment() {
             compressedFile = FileManager.createFile(
                 context,
                 compressedFileName,
-                Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                Constants.CacheDirectories.CHAT_BACKGROUND.folder
             )
 
             val destinationUri = Uri.fromFile(compressedFile)

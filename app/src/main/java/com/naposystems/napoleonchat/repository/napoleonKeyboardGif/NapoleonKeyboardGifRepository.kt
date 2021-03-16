@@ -32,7 +32,7 @@ class NapoleonKeyboardGifRepository @Inject constructor(
             if (responseDownloadFile.isSuccessful) {
                 try {
                     val body = responseDownloadFile.body()!!
-                    val folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                    val folder = Constants.CacheDirectories.GIFS.folder
                     val fileName = "${System.currentTimeMillis()}.gif"
 
                     val path = File(context.cacheDir!!, folder)

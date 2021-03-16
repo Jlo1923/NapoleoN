@@ -133,7 +133,7 @@ class NapoleonKeyboardStickerFragment : Fragment() {
                     val file = FileManager.createFile(
                         it,
                         itemStorageRef.name,
-                        Constants.NapoleonCacheDirectories.IMAGES.folder
+                        Constants.CacheDirectories.IMAGES.folder
                     )
 
                     if (!file.exists()) {

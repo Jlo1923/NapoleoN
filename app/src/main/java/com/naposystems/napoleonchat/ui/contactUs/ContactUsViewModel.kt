@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsReqDTO
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -30,9 +31,9 @@ class ContactUsViewModel @Inject constructor(private val repository: IContractCo
                     _pqrsCreatedSuccessfully.value = true
                 } else {
                     when (response.code()) {
-                        422 -> {
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
                             _pqrsCreatedSuccessfully.value = false
-                            _pqrsCreatingErrors.value = repository.get422Error(response)
+                            _pqrsCreatingErrors.value = repository.getUnprocessableEntityError(response)
                         }
                         else -> {
                             _pqrsCreatedSuccessfully.value = false

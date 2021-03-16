@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.napoleonchat.model.recoveryAccount.RecoveryAccountUserType
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,7 +41,7 @@ class RecoveryAccountViewModel @Inject constructor(
 
                 } else {
                     when (response.code()) {
-                        403 -> {
+                        Constants.CodeHttp.FORBIDDEN.code -> {
                             _recoveryErrorForAttempts.value =
                                 repository.getError(response.errorBody()!!)
                         }

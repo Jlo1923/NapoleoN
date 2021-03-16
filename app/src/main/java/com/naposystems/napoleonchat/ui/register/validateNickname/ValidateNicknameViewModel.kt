@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
+import com.naposystems.napoleonchat.utility.Constants
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -60,7 +61,7 @@ class ValidateNicknameViewModel
                     }
                 } else {
                     when (response.code()) {
-                        422 -> {
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
 
                             val moshi = Moshi.Builder().build()
 

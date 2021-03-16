@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.repository.accessPin
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
-import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccount422DTO
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountUnprocessableEntityDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
@@ -103,13 +103,13 @@ class CreateAccountRepository @Inject constructor(
     }
 
 
-    fun get422Error(response: Response<CreateAccountResDTO>): ArrayList<String> {
+    fun getUnprocessableEntityError(response: Response<CreateAccountResDTO>): ArrayList<String> {
 
-        val adapter = moshi.adapter(CreateAccount422DTO::class.java)
+        val adapter = moshi.adapter(CreateAccountUnprocessableEntityDTO::class.java)
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(enterCodeError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(enterCodeError!!)
     }
 
     fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {

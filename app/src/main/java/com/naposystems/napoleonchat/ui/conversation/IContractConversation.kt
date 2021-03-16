@@ -100,9 +100,9 @@ interface IContractConversation {
         fun updateAttachment(attachmentEntity: AttachmentEntity)
         suspend fun suspendUpdateAttachment(attachmentEntity: AttachmentEntity)
         suspend fun insertQuote(quoteWebId: String, messageEntity: MessageEntity)
-        fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
+        fun getUnprocessableEntityErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
         fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String>
-        fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>
+        fun getUnprocessableEntityErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>
         fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String>
         suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
         suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
