@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 35
+        versionCode 36
 
-        versionName "1.1.35.FIX-CONN-AD"
+        versionName "1.1.36-QA"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -108,7 +108,6 @@ android {
             matchingFallbacks = ['debug', 'release']
         }
         pruebaInterna {
-            debuggable true
             buildConfigField("String", "BASE_URL", "\"https://qa.napoleon-chat.com/api/\"")
             buildConfigField("String", "HOST_URL", "\"qa.napoleon-chat.com\"")
             buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")

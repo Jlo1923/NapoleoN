@@ -28,8 +28,6 @@ data class ContactEntity(
     @ColumnInfo(name = DBConstants.Contact.COLUMN_STATE_NOTIFICATION) var stateNotification: Boolean = false,
     @ColumnInfo(name = DBConstants.Contact.COLUMN_NOTIFICATION_ID) val notificationId: String? = null
 ) : Parcelable, Serializable {
-    @Ignore
-    var haveFriendshipRequest: Boolean = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

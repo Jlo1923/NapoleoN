@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="com.naposystems.napoleonchat.model.addContact.Contact" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_home_item">
+
+        <ImageView
+            android:id="@+id/imageView_user_image"
+            style="@style/imageAvatarItem"
+            app:avatar="@{contact.imageUrl}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:scaleType="fitCenter"
+            tools:src="@drawable/ic_default_avatar" />
+
+        <TextView
+            android:id="@+id/textView_user_name"
+            style="@style/BodyTextView.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/x_small_margin"
+            android:ellipsize="end"
+            android:lines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:name="@{contact.displayName}"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/textView_user_nickname"
+            style="@style/BodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="?attr/attrColorButtonTint"
+            app:layout_constraintEnd_toEndOf="@id/textView_user_name"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
+            app:nickname="@{contact.nickname}"
+            tools:text="@tools:sample/first_names" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_refuse"
+                style="@style/AppOutlinedPrimaryButtonSmall.Red"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:paddingStart="@dimen/x_small_padding"
+                android:paddingEnd="@dimen/small_padding"
+                android:text="@string/text_refuse"
+                android:textAlignment="textStart"
+                android:textAllCaps="true"
+                app:icon="@drawable/ic_close_black_24"
+                app:iconTint="@color/red" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_accept"
+                style="@style/AppOutlinedPrimaryButtonSmall"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:paddingStart="@dimen/x_small_padding"
+                android:paddingEnd="@dimen/small_padding"
+                android:text="@string/text_accept"
+                android:textAlignment="textStart"
+                android:textAllCaps="true"
+                app:icon="@drawable/ic_check_primary"
+                app:iconTint="@color/green" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

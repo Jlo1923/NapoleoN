@@ -17,13 +17,6 @@ object Constants {
     const val MAX_IMAGE_VIDEO_FILE_SIZE = 20 * 1048576
     const val MAX_DOCUMENT_FILE_SIZE = 100 * 1048576
 
-    object CallKeys {
-        const val IS_INCOMING_CALL = "is_incoming_call"
-        const val CHANNEL = "channel_private"
-        const val CONTACT_ID = "contact_id"
-        const val IS_VIDEO_CALL = "is_videocall"
-    }
-
     object NapoleonApi {
         /*const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
         const val SOCKET_BASE_URL = "http://192.168.1.222:6001"*/
@@ -75,6 +68,13 @@ object Constants {
         const val CHECK_SUBSCRIPTION = "subscriptions/state"
         const val CANCEL_CALL = "call/cancelcall"
         const val READY_CALL = "call/readyforcall"
+    }
+
+    object CallKeys {
+        const val IS_INCOMING_CALL = "is_incoming_call"
+        const val CHANNEL = "channel_private"
+        const val CONTACT_ID = "contact_id"
+        const val IS_VIDEO_CALL = "is_videocall"
     }
 
     object NotificationKeys {
@@ -169,6 +169,11 @@ object Constants {
         CODE_VALIDATED(1),
         ACCOUNT_CREATED(2),
         ACCOUNT_RECOVERED(3)
+    }
+
+    enum class AddContactTitleType(val type: Int) {
+        TITLE_MY_CONTACTS(0),
+        TITLE_COINCIDENCES(1)
     }
 
     enum class AllowDownloadAttachments constructor(val option: Int) {
