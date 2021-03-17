@@ -1,22 +1,13 @@
-package com.naposystems.napoleonchat.ui.multi.views
+package com.naposystems.napoleonchat.ui.multi.views.itemview
 
-import android.content.ContentUris
-import android.graphics.BitmapFactory
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Size
 import android.view.View
 import com.bumptech.glide.Glide
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ItemViewMultipleAttachFileBinding
-import com.naposystems.napoleonchat.databinding.ItemViewMultipleAttachFolderBinding
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
-import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFolderItem
-import com.naposystems.napoleonchat.utility.GlideManager
 import com.naposystems.napoleonchat.utility.abstracts.GroupieItemViewSelectable
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.show
-import com.xwray.groupie.viewbinding.BindableItem
 
 class MultipleAttachmentFileItemView(
     val item: MultipleAttachmentFileItem
@@ -32,6 +23,11 @@ class MultipleAttachmentFileItemView(
     override fun bind(viewBinding: ItemViewMultipleAttachFileBinding, position: Int) {
         binding = viewBinding
         loadImage()
+        checkSelected()
+    }
+
+    private fun checkSelected() {
+        isSelected = item.isSelected
         selectionResolver()
     }
 
@@ -44,7 +40,6 @@ class MultipleAttachmentFileItemView(
         } catch (exception: Exception) {
 
         }
-
     }
 
     override fun changeToSelected() = binding.constraintSelected.show()

@@ -17,3 +17,15 @@ fun View.show(mustShow: Boolean) {
         hide()
     }
 }
+
+fun showViews(vararg views: View) {
+    for (view in views) {
+        view.show()
+    }
+}
+
+fun hideViews(vararg views: View) {
+    for (view in views) {
+        view.hide()
+    }
+}

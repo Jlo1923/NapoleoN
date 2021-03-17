@@ -29,7 +29,7 @@ interface IContractMultipleAttachment {
         /**
          * get Files from a folder Name
          */
-        fun getFilesByFolder(folderName: String): Flow<MultipleAttachmentState>
+        fun getFilesByFolder(folderName: String, mapIds: Map<Int, Int>): Flow<MultipleAttachmentState>
 
     }
 
@@ -37,7 +37,7 @@ interface IContractMultipleAttachment {
 
         fun getFoldersForConversation(): List<MultipleAttachmentFolderItem>
 
-        fun getFilesByFolder(folderName: String): List<MultipleAttachmentFileItem>
+        fun getFilesByFolder(folderName: String, mapIds: Map<Int, Int>): List<MultipleAttachmentFileItem>
 
     }
 

@@ -43,7 +43,8 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup"
         tools:targetApi="n">
-        <activity android:name=".ui.multi.MultipleAttachmentsPreviewActivity"></activity>
+        <activity android:name=".ui.previewmulti.MultipleAttachmentPreviewActivity"></activity>
+        <activity android:name=".ui.multi.MultipleAttachmentsPreviewActivity" />
         <activity android:name=".ui.multi.MultipleAttachmentActivity" />
 
         <service android:name=".service.webRTCCall.WebRTCCallService" />
