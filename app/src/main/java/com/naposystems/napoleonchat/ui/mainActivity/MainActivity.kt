@@ -458,7 +458,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Utils.getFileUri(
                         context = this,
                         fileName = userEntity.headerUri,
-                        subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+                        subFolder = Constants.CacheDirectories.HEADER.folder
                     )
                 }
             )

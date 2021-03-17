@@ -12,7 +12,6 @@ class UserLocalDataSourceImp @Inject constructor(
 ) : UserLocalDataSource {
 
     override fun getMyUser(): UserEntity {
-
         return userDao.getMyUser()
     }
 

@@ -50,7 +50,7 @@ fun bindBannerUser(imageView: ImageView, @Nullable userEntity: UserEntity?) {
              Utils.getFileUri(
                 context = context,
                 fileName = userEntity.headerUri,
-                subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+                subFolder = Constants.CacheDirectories.HEADER.folder
             )
         } else {
             defaultHeader

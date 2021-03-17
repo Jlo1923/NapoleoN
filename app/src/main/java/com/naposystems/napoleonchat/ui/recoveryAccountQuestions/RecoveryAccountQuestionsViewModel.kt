@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.model.recoveryAccountQuestions.RecoveryAccountAnswers
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -65,10 +66,10 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
 //                    repository.setFreeTrialPref()
                 } else {
                     when (response.code()) {
-                        422 -> {
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
                             _sendAnswersSuccessfully.value = false
                             _recoveryAnswerCreatingErrors.value =
-                                repository.get422Error(response.errorBody()!!)
+                                repository.getUnprocessableEntityError(response.errorBody()!!)
                         }
                         else -> {
                             _sendAnswersSuccessfully.value = false

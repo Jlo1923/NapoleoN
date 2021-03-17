@@ -14,7 +14,7 @@ import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLo
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactResDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessage422DTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessageUnprocessableEntityDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
@@ -71,6 +71,8 @@ class ConversationRepository @Inject constructor(
     private val messageNotSentLocalDataSource: MessageNotSentLocalDataSource
 ) :
     IContractConversation.Repository {
+
+    private var envioEnProceso: Boolean = true
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -327,59 +329,96 @@ class ConversationRepository @Inject constructor(
     }
 
     override suspend fun sendTextMessagesRead(contactId: Int) {
-        val messagesUnread =
-            messageLocalDataSource.getTextMessagesByStatus(
-                contactId,
-                Constants.MessageStatus.UNREAD.status
-            )
 
-        val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
-        val locationMessagesUnread =
-            messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
-        val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
-        val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
+        Timber.d("Envio en proceso Inicio $envioEnProceso")
 
-        val listIds = mutableListOf<String>()
-        listIds.addAll(textMessagesUnreadIds)
-        listIds.addAll(locationMessagesUnreadIds)
+        if (envioEnProceso) {
 
-        val messagesRead = messagesUnread.map {
-            ValidateMessage(
-                id = it.messageEntity.webId,
-                user = contactId,
-                status = Constants.MessageEventType.READ.status
-            )
-        }
+            envioEnProceso = false
 
-        val validateMessage = ValidateMessageEventDTO(messagesRead)
+            Timber.d("Envio en proceso dentro del IF $envioEnProceso")
 
-        val jsonAdapterValidate =
-            moshi.adapter(ValidateMessageEventDTO::class.java)
-
-        val json = jsonAdapterValidate.toJson(validateMessage)
-
-        if (listIds.isNotEmpty()) {
-
-            try {
-
-                socketService.emitToClientConversation(json.toString())
-
-                val response = napoleonApi.sendMessagesRead(
-                    MessagesReadReqDTO(
-                        listIds
-                    )
+            val messagesUnread =
+                messageLocalDataSource.getTextMessagesByStatus(
+                    contactId,
+                    Constants.MessageStatus.UNREAD.status
                 )
 
-                if (response.isSuccessful) {
-                    messageLocalDataSource.updateMessageStatus(
-                        listIds,
-                        Constants.MessageStatus.READED.status
-                    )
-                }
-            } catch (ex: Exception) {
-                Timber.e(ex)
+            val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
+
+            val locationMessagesUnread =
+                messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
+
+            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
+
+            val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
+
+            val listIds = mutableListOf<String>()
+
+            listIds.addAll(textMessagesUnreadIds)
+
+            listIds.addAll(locationMessagesUnreadIds)
+
+            val messagesRead = messagesUnread.map {
+                ValidateMessage(
+                    id = it.messageEntity.webId,
+                    user = contactId,
+                    status = Constants.MessageEventType.READ.status
+                )
             }
+
+            val validateMessage = ValidateMessageEventDTO(messagesRead)
+
+            val jsonAdapterValidate =
+                moshi.adapter(ValidateMessageEventDTO::class.java)
+
+            val json = jsonAdapterValidate.toJson(validateMessage)
+
+            if (listIds.isNotEmpty()) {
+
+                try {
+
+                    socketService.emitToClientConversation(json.toString())
+
+                    val response = napoleonApi.sendMessagesRead(
+                        MessagesReadReqDTO(
+                            listIds
+                        )
+                    )
+
+                    if (response.isSuccessful) {
+
+                        envioEnProceso = true
+
+                        Timber.d("Envio en proceso Successful $envioEnProceso")
+
+                        messageLocalDataSource.updateMessageStatus(
+                            listIds,
+                            Constants.MessageStatus.READED.status
+                        )
+                    }
+
+                } catch (ex: Exception) {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Catch $envioEnProceso")
+
+                    Timber.e(ex)
+                } finally {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Finally $envioEnProceso")
+
+                }
+
+            } else {
+                envioEnProceso = true
+            }
+
         }
+
     }
 
     override suspend fun sendMissedCallRead(contactId: Int) {
@@ -499,12 +538,12 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.deleteMessagesByStatusForMe(contactId, status)
     }
 
-    override fun get422ErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
-        val adapter = moshi.adapter(Message422DTO::class.java)
+    override fun getUnprocessableEntityErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
+        val adapter = moshi.adapter(MessageUnprocessableEntityDTO::class.java)
 
         val conversationError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(conversationError!!)
     }
 
     override fun getErrorMessage(response: Response<MessageResDTO>): ArrayList<String> {
@@ -520,12 +559,12 @@ class ConversationRepository @Inject constructor(
         return errorList
     }
 
-    override fun get422ErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
-        val adapter = moshi.adapter(DeleteMessage422DTO::class.java)
+    override fun getUnprocessableEntityErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
+        val adapter = moshi.adapter(DeleteMessageUnprocessableEntityDTO::class.java)
 
         val conversationError = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(conversationError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(conversationError!!)
     }
 
     override fun getErrorDeleteMessagesForAll(response: ResponseBody): ArrayList<String> {
@@ -594,25 +633,25 @@ class ConversationRepository @Inject constructor(
                             Constants.AttachmentType.IMAGE.type,
                             Constants.AttachmentType.LOCATION.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.IMAGES.folder
+                                    Constants.CacheDirectories.IMAGES.folder
                             }
                             Constants.AttachmentType.AUDIO.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.AUDIOS.folder
+                                    Constants.CacheDirectories.AUDIOS.folder
                             }
                             Constants.AttachmentType.VIDEO.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.VIDEOS.folder
+                                    Constants.CacheDirectories.VIDEOS.folder
                             }
                             Constants.AttachmentType.DOCUMENT.type -> {
                                 folder =
-                                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                                    Constants.CacheDirectories.DOCUMENTOS.folder
                             }
                             Constants.AttachmentType.GIF.type -> {
-                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                                folder = Constants.CacheDirectories.GIFS.folder
                             }
                             Constants.AttachmentType.GIF_NN.type -> {
-                                folder = Constants.NapoleonCacheDirectories.GIFS.folder
+                                folder = Constants.CacheDirectories.GIFS.folder
                             }
                         }
 
@@ -754,7 +793,7 @@ class ConversationRepository @Inject constructor(
                             FileManager.copyFile(
                                 context,
                                 inputStream,
-                                Constants.NapoleonCacheDirectories.DOCUMENTOS.folder,
+                                Constants.CacheDirectories.DOCUMENTOS.folder,
                                 "${System.currentTimeMillis()}.$extension"
                             )
                         } else {

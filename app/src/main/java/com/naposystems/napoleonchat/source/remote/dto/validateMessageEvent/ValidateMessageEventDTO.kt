@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+//TODO: Crear metodo sobreescrito para un unico mensaje
 @JsonClass(generateAdapter = true)
 data class ValidateMessageEventDTO(
     @Json(name = "messages") val messages: List<ValidateMessage>

@@ -11,7 +11,7 @@ interface IContractContactUs {
 
     interface Repository {
         suspend fun sendPqrs(contactUsReqDTO: ContactUsReqDTO): Response<ContactUsResDTO>
-        fun get422Error(response: Response<ContactUsResDTO>): List<String>
+        fun getUnprocessableEntityError(response: Response<ContactUsResDTO>): List<String>
         fun getDefaultError(response: Response<ContactUsResDTO>): List<String>
     }
 }

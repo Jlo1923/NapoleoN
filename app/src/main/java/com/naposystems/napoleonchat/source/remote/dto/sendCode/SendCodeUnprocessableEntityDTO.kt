@@ -4,6 +4,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class SendCode422DTO(
+data class SendCodeUnprocessableEntityDTO(
     @Json(name = "firebase_id") val firebaseId: String
 )

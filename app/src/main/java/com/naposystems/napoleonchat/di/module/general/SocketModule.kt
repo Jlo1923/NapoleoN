@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.di.module.general
 
 import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.webService.socket.IContractSocketService
@@ -9,7 +10,6 @@ import com.naposystems.napoleonchat.webService.socket.SocketService
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
 import com.pusher.client.util.HttpAuthorizer
-import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import io.socket.client.IO
@@ -50,13 +50,15 @@ class SocketModule {
         context: Context,
         socket: Pusher,
         sharedPreferencesManager: SharedPreferencesManager,
-        socketRepository: IContractSocketService.Repository
+        socketRepository: IContractSocketService.Repository,
+        cryptoMessage: CryptoMessage
     ): IContractSocketService.SocketService {
         return SocketService(
             context,
             socket,
             sharedPreferencesManager,
-            socketRepository
+            socketRepository,
+            cryptoMessage
         )
     }
 

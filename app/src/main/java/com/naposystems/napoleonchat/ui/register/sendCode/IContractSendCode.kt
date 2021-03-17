@@ -27,7 +27,7 @@ interface IContractSendCode {
         fun getAttemptsEnterCode(): Int
         fun resetAttemptsEnterCode()
         fun resetAttemptsNewCode()
-        fun get422Error(response: Response<SendCodeResDTO>): ArrayList<String>
+        fun getUnprocessableEntityError(response: Response<SendCodeResDTO>): ArrayList<String>
         fun getDefaultError(response: Response<SendCodeResDTO>): ArrayList<String>
     }
 }

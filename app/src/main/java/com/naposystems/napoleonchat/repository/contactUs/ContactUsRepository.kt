@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.repository.contactUs
 
-import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUs422DTO
+import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsUnprocessableEntityDTO
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsResDTO
@@ -24,12 +24,12 @@ class ContactUsRepository
         return napoleonApi.sendPqrs(contactUsReqDTO)
     }
 
-    override fun get422Error(response: Response<ContactUsResDTO>): List<String> {
-        val adapter = moshi.adapter(ContactUs422DTO::class.java)
+    override fun getUnprocessableEntityError(response: Response<ContactUsResDTO>): List<String> {
+        val adapter = moshi.adapter(ContactUsUnprocessableEntityDTO::class.java)
 
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(enterCodeError!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(enterCodeError!!)
     }
 
     override fun getDefaultError(response: Response<ContactUsResDTO>): ArrayList<String> {
