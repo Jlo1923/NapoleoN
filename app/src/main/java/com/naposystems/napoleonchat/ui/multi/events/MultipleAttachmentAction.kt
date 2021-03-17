@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.multi.events
 
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.xwray.groupie.Item
 
 sealed class MultipleAttachmentAction {
@@ -19,5 +20,9 @@ sealed class MultipleAttachmentAction {
     object HideListSelectedFiles : MultipleAttachmentAction()
 
     object ShowHasMaxFilesAttached : MultipleAttachmentAction()
+
+    class ContinueToPreview(
+        val listElements: List<MultipleAttachmentFileItem>
+    ) : MultipleAttachmentAction()
 
 }

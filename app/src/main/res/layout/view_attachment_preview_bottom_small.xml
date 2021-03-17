@@ -3,34 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/bg_view_attachments_bottom_small">
 
-    <Button
-        android:id="@+id/text_files_count"
+    <com.naposystems.napoleonchat.ui.multi.views.ViewAttachmentsButtonSend
+        android:id="@+id/view_button_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/small_margin"
-        android:drawableEnd="@drawable/ic_send_black"
-        android:drawablePadding="@dimen/small_padding"
-        android:text="1/10"
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="1/10" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_files"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="56dp"
         android:layout_marginStart="@dimen/normal_margin"
         android:layout_marginTop="@dimen/small_margin"
         android:layout_marginEnd="@dimen/normal_margin"
         android:layout_marginBottom="@dimen/small_margin"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/text_files_count"
+        app:layout_constraintEnd_toStartOf="@id/view_button_send"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -30,11 +30,11 @@ class ViewAttachmentsPreviewBottomSmall @JvmOverloads constructor(
 
     fun showElements(listElements: List<Item<*>>) {
         groupieAdapter.update(listElements)
-        viewBinding.textFilesCount.text = "${listElements.size} de 10"
+        viewBinding.viewButtonSend.setText("${listElements.size}/10")
     }
 
     fun setOnClickListenerButton(function: () -> Unit) {
-        viewBinding.textFilesCount.setOnClickListener {
+        viewBinding.viewButtonSend.defineListener {
             function.invoke()
         }
     }

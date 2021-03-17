@@ -118,7 +118,7 @@ class MultipleAttachmentViewModel @Inject constructor(
     }
 
     fun continueToPreview() {
-        TODO("Not yet implemented")
+        actions.value = MultipleAttachmentAction.ContinueToPreview(selectedLists)
     }
 
 }

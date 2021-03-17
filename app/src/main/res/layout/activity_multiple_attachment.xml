@@ -62,7 +62,6 @@
         android:id="@+id/view_preview_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/normal_radius"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
