@@ -130,7 +130,7 @@ class AttachmentGalleryFragment : Fragment(), LoaderManager.LoaderCallbacks<Curs
                                     attachmentSelected = FileManager.copyFile(
                                         context,
                                         fileInputStream,
-                                        Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                        Constants.CacheDirectories.VIDEOS.folder,
                                         "${System.currentTimeMillis()}.mp4"
                                     )
                                 }

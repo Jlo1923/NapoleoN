@@ -16,37 +16,29 @@ import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSo
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
 import dagger.Binds
 import dagger.Module
-import javax.inject.Singleton
 
 @Module
 abstract class LocalDataSourceModule {
 
     @Binds
-    @Singleton
-    abstract fun bindUserLocalDataSource(dataSourceImp: UserLocalDataSourceImp): UserLocalDataSource
+    abstract fun bindUserLocalDataSource(dataSource: UserLocalDataSourceImp): UserLocalDataSource
 
     @Binds
-    @Singleton
-    abstract fun bindStatusLocalDataSource(dataSourceImp: StatusLocalDataSourceImp): StatusLocalDataSource
+    abstract fun bindStatusLocalDataSource(dataSource: StatusLocalDataSourceImp): StatusLocalDataSource
 
     @Binds
-    @Singleton
-    abstract fun bindQuoteLocalDataSource(dataSourceImp: QuoteLocalDataSourceImp): QuoteLocalDataSource
+    abstract fun bindQuoteLocalDataSource(dataSource: QuoteLocalDataSourceImp): QuoteLocalDataSource
 
     @Binds
-    @Singleton
-    abstract fun bindMessageLocalDataSource(dataSourceImp: MessageLocalDataSourceImp): MessageLocalDataSource
+    abstract fun bindMessageLocalDataSource(dataSource: MessageLocalDataSourceImp): MessageLocalDataSource
 
     @Binds
-    @Singleton
-    abstract fun bindContactLocalDataSource(dataSourceImp: ContactLocalDataSourceImp): ContactLocalDataSource
+    abstract fun bindContactLocalDataSource(dataSource: ContactLocalDataSourceImp): ContactLocalDataSource
 
     @Binds
-    @Singleton
-    abstract fun bindAttachmentLocalDataSource(dataSourceImp: AttachmentLocalDataSourceImp): AttachmentLocalDataSource
+    abstract fun bindAttachmentLocalDataSource(dataSource: AttachmentLocalDataSourceImp): AttachmentLocalDataSource
 
     @Binds
-    @Singleton
-    abstract fun bindMessageNotSentLocalDataSource(dataSourceImp: MessageNotSentLocalDataSourceImp): MessageNotSentLocalDataSource
+    abstract fun bindMessageNotSentLocalDataSource(dataSource: MessageNotSentLocalDataSourceImp): MessageNotSentLocalDataSource
 
 }

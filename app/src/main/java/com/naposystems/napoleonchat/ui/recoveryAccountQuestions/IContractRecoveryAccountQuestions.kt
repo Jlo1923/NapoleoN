@@ -22,7 +22,7 @@ interface IContractRecoveryAccountQuestions {
         fun setRecoveredQuestionsPref()
         suspend fun setAttemptPref()
         suspend fun setFreeTrialPref(subscription: Boolean)
-        fun get422Error(response: ResponseBody) :ArrayList<String>
+        fun getUnprocessableEntityError(response: ResponseBody) :ArrayList<String>
         fun getError(response: ResponseBody): ArrayList<String>
         suspend fun insertUser(recoveryAccountUserDTO: RecoveryAccountUserDTO)
 

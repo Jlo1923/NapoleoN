@@ -14,9 +14,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
@@ -26,7 +26,11 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @BindingAdapter("messageDateSend", "formatTime")
-fun bindMessageDateSend(textView: TextView, timestamp: Int, format: Int) {
+fun bindMessageDateSend(
+    textView: TextView,
+    timestamp: Int,
+    format: Int
+) {
     try {
         val timeActual = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
         val sdfActual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -59,7 +63,11 @@ fun bindMessageDateSend(textView: TextView, timestamp: Int, format: Int) {
 }
 
 @BindingAdapter("messageDateIncoming", "formatTime")
-fun bindMessageDateIncoming(textView: TextView, timestamp: Int, format: Int) {
+fun bindMessageDateIncoming(
+    textView: TextView,
+    timestamp: Int,
+    format: Int
+) {
     try {
         val timeActual = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
         val sdfActual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -91,7 +99,10 @@ fun bindMessageDateIncoming(textView: TextView, timestamp: Int, format: Int) {
 }
 
 @BindingAdapter("nicknameActionBar")
-fun bindNickname(textView: TextView, @Nullable contact: ContactEntity?) {
+fun bindNickname(
+    textView: TextView,
+    @Nullable contact: ContactEntity?
+) {
     if (contact != null) {
         val context = textView.context
         val formattedNickname = when {
@@ -107,7 +118,10 @@ fun bindNickname(textView: TextView, @Nullable contact: ContactEntity?) {
 }
 
 @BindingAdapter("nameActionBar")
-fun bindName(textView: TextView, @Nullable contact: ContactEntity?) {
+fun bindName(
+    textView: TextView,
+    @Nullable contact: ContactEntity?
+) {
     if (contact != null) {
         when {
             contact.displayNameFake.isNotEmpty() -> {
@@ -121,7 +135,10 @@ fun bindName(textView: TextView, @Nullable contact: ContactEntity?) {
 }
 
 @BindingAdapter("avatarActionBar")
-fun bindAvatar(imageView: ImageView, @Nullable contact: ContactEntity?) {
+fun bindAvatar(
+    imageView: ImageView,
+    @Nullable contact: ContactEntity?
+) {
     if (contact != null) {
         val context = imageView.context
 
@@ -136,7 +153,7 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: ContactEntity?) {
                 Utils.getFileUri(
                     context = context!!,
                     fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+                    subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
                 )
             }
             contact.imageUrl.isNotEmpty() -> {
@@ -158,26 +175,6 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: ContactEntity?) {
 
     }
 }
-
-/*@BindingAdapter("isFirstMyMessage")
-fun bindIsFirstMyMessage(constraintLayout: ConstraintLayout, isFirst: Boolean) {
-    val context = constraintLayout.context
-    constraintLayout.background = if (isFirst) {
-        context.getDrawable(R.drawable.bg_my_message)
-    } else {
-        context.getDrawable(R.drawable.bg_my_message_rounded)
-    }
-}
-
-@BindingAdapter("isFirstIncomingMessage")
-fun bindIsFirstIncomingMessage(constraintLayout: ConstraintLayout, isFirst: Boolean) {
-    val context = constraintLayout.context
-    constraintLayout.background = if (isFirst) {
-        context.getDrawable(R.drawable.bg_incoming_message)
-    } else {
-        context.getDrawable(R.drawable.bg_incoming_message_rounded)
-    }
-}*/
 
 @BindingAdapter("countDown")
 fun bindCountDown(
@@ -238,92 +235,11 @@ fun bindImageAttachment(
     }
 }
 
-private fun loadBlurAttachment(
-    firstAttachmentEntity: AttachmentEntity,
-    imageView: ImageView,
-    context: Context?
-) {
-    Timber.d("loadBlurAttachment")
-    when (firstAttachmentEntity.type) {
-        Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
-            Glide.with(imageView)
-                .load(firstAttachmentEntity.body)
-                .transform(
-                    CenterCrop(),
-                    BlurTransformation(context)
-                )
-                .into(imageView)
-        }
-        Constants.AttachmentType.VIDEO.type,
-        Constants.AttachmentType.GIF.type,
-        Constants.AttachmentType.GIF_NN.type -> {
-            Glide.with(imageView)
-                .load(firstAttachmentEntity.body)
-                .thumbnail(0.1f)
-                .transform(
-                    CenterCrop(),
-                    BlurTransformation(context)
-                )
-                .into(imageView)
-        }
-    }
-}
-
-private fun loadAttachment(
-    firstAttachmentEntity: AttachmentEntity,
-    imageView: ImageView,
-    isMine: Boolean
-) {
-    when (firstAttachmentEntity.type) {
-        Constants.AttachmentType.LOCATION.type -> {
-            Glide.with(imageView)
-                .load(firstAttachmentEntity)
-                .transform(RoundedCorners(8))
-                .into(imageView)
-        }
-        Constants.AttachmentType.IMAGE.type -> {
-            Glide.with(imageView)
-                .load(firstAttachmentEntity)
-                .transform(
-                    CenterCrop(),
-                    BlurTransformation(imageView.context)
-                )
-                .into(imageView)
-        }
-        Constants.AttachmentType.VIDEO.type -> {
-            val uri = if (isMine) {
-                Utils.getFileUri(
-                    imageView.context,
-                    firstAttachmentEntity.fileName,
-                    Constants.NapoleonCacheDirectories.VIDEOS.folder
-                )
-            } else {
-                Utils.getFileUri(
-                    imageView.context,
-                    "${firstAttachmentEntity.webId}.${firstAttachmentEntity.extension}",
-                    Constants.NapoleonCacheDirectories.VIDEOS.folder
-                )
-            }
-            Glide.with(imageView)
-                .load(uri)
-                .thumbnail(0.1f)
-                .transform(
-                    CenterCrop(),
-                    BlurTransformation(imageView.context)
-                )
-                .into(imageView)
-        }
-        Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
-            Glide.with(imageView)
-                .asGif()
-                .load(firstAttachmentEntity)
-                .into(imageView)
-        }
-    }
-}
-
 @BindingAdapter("attachmentDocumentName")
-fun bindAttachmentDocumentName(textView: TextView, messageAndAttachmentRelation: MessageAttachmentRelation) {
+fun bindAttachmentDocumentName(
+    textView: TextView,
+    messageAndAttachmentRelation: MessageAttachmentRelation
+) {
 
     if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
         val context = textView.context
@@ -335,7 +251,10 @@ fun bindAttachmentDocumentName(textView: TextView, messageAndAttachmentRelation:
 }
 
 @BindingAdapter("attachmentDocumentIcon")
-fun bindAttachmentDocumentIcon(imageView: ImageView, messageAndAttachmentRelation: MessageAttachmentRelation) {
+fun bindAttachmentDocumentIcon(
+    imageView: ImageView,
+    messageAndAttachmentRelation: MessageAttachmentRelation
+) {
 
     if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
         val firstAttachment = messageAndAttachmentRelation.attachmentEntityList[0]
@@ -423,7 +342,10 @@ fun bindIconForState(
 }
 
 @BindingAdapter("showCheck")
-fun bindShowCheck(imageView: ImageView, messageAndAttachmentRelation: MessageAttachmentRelation) {
+fun bindShowCheck(
+    imageView: ImageView,
+    messageAndAttachmentRelation: MessageAttachmentRelation
+) {
     if (messageAndAttachmentRelation.attachmentEntityList[0].type == Constants.AttachmentType.AUDIO.type ||
         messageAndAttachmentRelation.attachmentEntityList[0].type == Constants.AttachmentType.IMAGE.type ||
         messageAndAttachmentRelation.attachmentEntityList[0].type == Constants.AttachmentType.VIDEO.type
@@ -436,3 +358,89 @@ fun bindShowCheck(imageView: ImageView, messageAndAttachmentRelation: MessageAtt
     }
 
 }
+
+
+private fun loadBlurAttachment(
+    firstAttachment: AttachmentEntity,
+    imageView: ImageView,
+    context: Context?
+) {
+    Timber.d("loadBlurAttachment")
+    when (firstAttachment.type) {
+        Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment.body)
+                .transform(
+                    CenterCrop(),
+                    BlurTransformation(context)
+                )
+                .into(imageView)
+        }
+        Constants.AttachmentType.VIDEO.type,
+        Constants.AttachmentType.GIF.type,
+        Constants.AttachmentType.GIF_NN.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment.body)
+                .thumbnail(0.1f)
+                .transform(
+                    CenterCrop(),
+                    BlurTransformation(context)
+                )
+                .into(imageView)
+        }
+    }
+}
+
+private fun loadAttachment(
+    firstAttachment: AttachmentEntity,
+    imageView: ImageView,
+    isMine: Boolean
+) {
+    when (firstAttachment.type) {
+        Constants.AttachmentType.LOCATION.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment)
+                .transform(RoundedCorners(8))
+                .into(imageView)
+        }
+        Constants.AttachmentType.IMAGE.type -> {
+            Glide.with(imageView)
+                .load(firstAttachment)
+                .transform(
+                    CenterCrop(),
+                    BlurTransformation(imageView.context)
+                )
+                .into(imageView)
+        }
+        Constants.AttachmentType.VIDEO.type -> {
+            val uri = if (isMine) {
+                Utils.getFileUri(
+                    imageView.context,
+                    firstAttachment.fileName,
+                    Constants.CacheDirectories.VIDEOS.folder
+                )
+            } else {
+                Utils.getFileUri(
+                    imageView.context,
+                    "${firstAttachment.webId}.${firstAttachment.extension}",
+                    Constants.CacheDirectories.VIDEOS.folder
+                )
+            }
+            Glide.with(imageView)
+                .load(uri)
+                .thumbnail(0.1f)
+                .transform(
+                    CenterCrop(),
+                    BlurTransformation(imageView.context)
+                )
+                .into(imageView)
+        }
+        Constants.AttachmentType.GIF.type, Constants.AttachmentType.GIF_NN.type -> {
+            Glide.with(imageView)
+                .asGif()
+                .load(firstAttachment)
+                .into(imageView)
+        }
+    }
+}
+

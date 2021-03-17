@@ -105,11 +105,11 @@ class RecoveryAccountQuestionsRepository @Inject constructor(
         }
     }
 
-    override fun get422Error(response: ResponseBody): ArrayList<String> {
-        val adapter = moshi.adapter(RecoveryAccountQuestions422DTO::class.java)
+    override fun getUnprocessableEntityError(response: ResponseBody): ArrayList<String> {
+        val adapter = moshi.adapter(RecoveryAccountQuestionsUnprocessableEntityDTO::class.java)
         val error = adapter.fromJson(response.string())
 
-        return WebServiceUtils.get422Errors(error!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(error!!)
     }
 
     override fun getError(response: ResponseBody): ArrayList<String> {

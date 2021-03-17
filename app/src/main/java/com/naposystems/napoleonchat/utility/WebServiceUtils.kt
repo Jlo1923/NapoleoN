@@ -8,7 +8,7 @@ import kotlin.reflect.full.memberProperties
 class WebServiceUtils {
 
     companion object {
-        fun get422Errors(clazz: Any): ArrayList<String> {
+        fun getUnprocessableEntityErrors(clazz: Any): ArrayList<String> {
 
             val errorList = ArrayList<String>()
 

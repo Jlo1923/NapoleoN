@@ -534,7 +534,7 @@ class AttachmentLocationFragment : Fragment(), SearchView.OnSearchView,
                 val file = FileManager.createFileFromBitmap(
                     context = context,
                     fileName = "${System.currentTimeMillis()}.jpg",
-                    folder = Constants.NapoleonCacheDirectories.IMAGES.folder,
+                    folder = Constants.CacheDirectories.IMAGES.folder,
                     bitmap = bitmap
                 )
 

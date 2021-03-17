@@ -62,6 +62,8 @@ interface IContractSocketService {
         fun validateMessageType(messagesWebIds: List<String>, state: Int)
 
         fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
+
+        fun notifyMessageReceived(messageId: String)
     }
 
 }

@@ -146,7 +146,7 @@ class PreviewMediaFragment : Fragment() {
                                 } else {
                                     contentUri = Utils.getFileUri(
                                         context = requireContext(),
-                                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                        subFolder = Constants.CacheDirectories.VIDEOS.folder,
                                         fileName = attachment.fileName
                                     )
                                     initializePlayer()
@@ -155,7 +155,7 @@ class PreviewMediaFragment : Fragment() {
                             else -> {
                                 contentUri = Utils.getFileUri(
                                     context = requireContext(),
-                                    subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                    subFolder = Constants.CacheDirectories.VIDEOS.folder,
                                     fileName = attachment.fileName
                                 )
                                 initializePlayer()
