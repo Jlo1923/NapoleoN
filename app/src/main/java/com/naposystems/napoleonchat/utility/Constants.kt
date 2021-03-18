@@ -383,11 +383,6 @@ object Constants {
         CONVERSATION(5)
     }
 
-    enum class AddContactTitleType(val type: Int) {
-        TITLE_MY_CONTACTS(0),
-        TITLE_COINCIDENCES(1)
-    }
-
     enum class LocationSearchView(val location: Int) {
         OTHER(0),
         LOCATION(1)

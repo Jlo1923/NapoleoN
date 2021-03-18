@@ -50,8 +50,6 @@ class NotificationMessagesServiceImp
     var queueDataNotifications: MutableList<Map<String, String>> = mutableListOf()
     var queueNotifications: MutableList<RemoteMessage.Notification?> = mutableListOf()
 
-//    private var notificationCount: Int = 0
-
     companion object {
         const val NOTIFICATION_RINGING = 950707
         const val NOTIFICATION_UPLOADING = 20102020
@@ -418,6 +416,7 @@ class NotificationMessagesServiceImp
         )
             .setContentTitle(notification?.title)
             .setContentText(notification?.body)
+            .setNumber(0)
 
         if (dataFromNotification.containsKey(Constants.NotificationKeys.TITLE))
             builder.setContentTitle(
@@ -433,8 +432,6 @@ class NotificationMessagesServiceImp
             builder.setNumber(
                 dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
             )
-        else
-            builder.setNumber(0)
 
         return builder
             .setLargeIcon(iconBitmap)
