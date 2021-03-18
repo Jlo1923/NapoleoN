@@ -48,7 +48,7 @@ data class ContactResDTO(
             }
 
             val multableList: MutableList<Any> = mutableListOf()
-            val sortedByFriends = listContacts.sortedByDescending { o -> o.statusFriend }
+            val sortedByFriends = listContacts.sortedByDescending { it.statusFriend }
             val existsContact = sortedByFriends.findLast { it.statusFriend }
 
             val title1 = AddContactTitle(1, Constants.AddContactTitleType.TITLE_MY_CONTACTS.type)
