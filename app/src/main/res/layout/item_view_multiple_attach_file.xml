@@ -39,4 +39,22 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <FrameLayout
+        android:id="@+id/layout_video"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="@dimen/x_small_margin"
+        android:background="@drawable/bg_black_transparent_circle"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_video"
+            app:tint="@color/white" />
+
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

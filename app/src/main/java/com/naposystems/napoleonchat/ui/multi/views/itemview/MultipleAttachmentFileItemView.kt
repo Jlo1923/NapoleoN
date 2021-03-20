@@ -5,8 +5,10 @@ import com.bumptech.glide.Glide
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ItemViewMultipleAttachFileBinding
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.abstracts.GroupieItemViewSelectable
 import com.naposystems.napoleonchat.utility.extensions.hide
+import com.naposystems.napoleonchat.utility.extensions.isVideo
 import com.naposystems.napoleonchat.utility.extensions.show
 
 class MultipleAttachmentFileItemView(
@@ -24,6 +26,7 @@ class MultipleAttachmentFileItemView(
         binding = viewBinding
         loadImage()
         checkSelected()
+        checksVideo()
     }
 
     private fun checkSelected() {
@@ -41,6 +44,8 @@ class MultipleAttachmentFileItemView(
 
         }
     }
+
+    private fun checksVideo() = binding.layoutVideo.show(item.isVideo())
 
     override fun changeToSelected() = binding.constraintSelected.show()
 

@@ -4,6 +4,7 @@ sealed class MultipleAttachmentPreviewAction {
 
     object Exit : MultipleAttachmentPreviewAction()
     object ShowAttachmentOptions : MultipleAttachmentPreviewAction()
+    object ShowAttachmentOptionsWithoutAnim : MultipleAttachmentPreviewAction()
     object HideAttachmentOptions : MultipleAttachmentPreviewAction()
 
     class ShowSelectFolderName(

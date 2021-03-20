@@ -1,11 +1,10 @@
 package com.naposystems.napoleonchat.ui.previewmulti
 
-import android.content.ContentUris
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -14,10 +13,11 @@ import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentPrevie
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.previewmulti.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewAction
-import com.naposystems.napoleonchat.ui.previewmulti.fragments.MultipleAttachmentPreviewImageFragment
-import com.naposystems.napoleonchat.ui.previewmulti.listeners.MultipleAttachmentPreviewImageListener
+import com.naposystems.napoleonchat.ui.previewmulti.listeners.MultipleAttachmentPreviewListener
 import com.naposystems.napoleonchat.ui.previewmulti.views.ViewMultipleAttachmentTabView
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.ViewAttachmentOptionsListener
+import com.naposystems.napoleonchat.ui.previewmulti.listeners.ViewPreviewVideoControllerListener
+import com.naposystems.napoleonchat.ui.previewmulti.listeners.events.ViewPreviewVideoEvent
 import com.naposystems.napoleonchat.utility.anims.animHideSlideDown
 import com.naposystems.napoleonchat.utility.anims.animHideSlideUp
 import com.naposystems.napoleonchat.utility.anims.animShowSlideDown
@@ -30,7 +30,7 @@ import javax.inject.Inject
 class MultipleAttachmentPreviewActivity
     : AppCompatActivity(),
     ViewAttachmentOptionsListener,
-    MultipleAttachmentPreviewImageListener {
+    MultipleAttachmentPreviewListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -51,7 +51,6 @@ class MultipleAttachmentPreviewActivity
 
         viewBinding = ActivityMultipleAttachmentPreviewBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-
     }
 
     override fun onStart() {
@@ -69,7 +68,7 @@ class MultipleAttachmentPreviewActivity
                 adapter = MultipleAttachmentFragmentAdapter(this, it)
                 viewBinding.apply {
 
-                    viewPagerAttachments.offscreenPageLimit = 2
+                    viewPagerAttachments.offscreenPageLimit = 9
                     viewPagerAttachments.adapter = adapter
 
                     TabLayoutMediator(
@@ -97,10 +96,16 @@ class MultipleAttachmentPreviewActivity
             MultipleAttachmentPreviewAction.Exit -> TODO()
             MultipleAttachmentPreviewAction.HideAttachmentOptions -> hideAttachmentOptions()
             MultipleAttachmentPreviewAction.ShowAttachmentOptions -> showAttachmentOptions()
+            MultipleAttachmentPreviewAction.ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
             is MultipleAttachmentPreviewAction.ShowSelectFolderName -> TODO()
         }
 
     }
+
+    private fun showAttachmentOptionsWithoutAnim() =
+        viewBinding.apply {
+            showViews(imageClose, viewAttachmentOptions, viewPreviewBottom)
+        }
 
     private fun configureTabsAndViewPager() {
 
@@ -161,14 +166,7 @@ class MultipleAttachmentPreviewActivity
         }
     }
 
-    private fun showAttachmentOptionsWithoutAnim() {
-        viewBinding.apply {
-            showViews(imageClose, viewAttachmentOptions, viewPreviewBottom)
-        }
-    }
+    override fun changeVisibilityOptions() = viewModel.changeVisibilityOptions()
 
-    override fun changeVisibilityOptions() {
-        viewModel.changeVisibilityOptions()
-    }
-
+    override fun forceShowOptions() = viewModel.forceShowOptions()
 }

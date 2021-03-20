@@ -1,7 +1,9 @@
 package com.naposystems.napoleonchat.ui.previewmulti.listeners
 
-interface MultipleAttachmentPreviewImageListener {
+interface MultipleAttachmentPreviewListener {
 
     fun changeVisibilityOptions()
+    
+    fun forceShowOptions()
 
 }

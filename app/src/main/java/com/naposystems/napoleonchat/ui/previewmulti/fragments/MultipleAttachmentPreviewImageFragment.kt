@@ -5,14 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
-import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.databinding.FragmentMultipleAttachmentPreviewImageBinding
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
-import com.naposystems.napoleonchat.ui.previewmulti.listeners.MultipleAttachmentPreviewImageListener
+import com.naposystems.napoleonchat.ui.previewmulti.listeners.MultipleAttachmentPreviewListener
 
 class MultipleAttachmentPreviewImageFragment(
     val file: MultipleAttachmentFileItem
@@ -20,7 +16,7 @@ class MultipleAttachmentPreviewImageFragment(
 
     private lateinit var binding: FragmentMultipleAttachmentPreviewImageBinding
     private var isShowing = true
-    private var listener: MultipleAttachmentPreviewImageListener? = null
+    private var listener: MultipleAttachmentPreviewListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +45,7 @@ class MultipleAttachmentPreviewImageFragment(
         }
     }
 
-    fun setListener(listener: MultipleAttachmentPreviewImageListener) {
+    fun setListener(listener: MultipleAttachmentPreviewListener) {
         this.listener = listener
     }
 

@@ -46,4 +46,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         listFiles = files
     }
 
+    fun forceShowOptions() {
+        isShowingOptions = true
+        actions.value = MultipleAttachmentPreviewAction.ShowAttachmentOptionsWithoutAnim
+    }
+
 }
