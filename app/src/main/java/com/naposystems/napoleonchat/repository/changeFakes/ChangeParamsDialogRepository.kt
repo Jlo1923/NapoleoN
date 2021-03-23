@@ -30,15 +30,16 @@ class ChangeParamsDialogRepository @Inject constructor(
     override suspend fun updateContactFakeLocal(contactId: Int, contactUpdated: ContactFakeResDTO) {
         val contact = contactLocalDataSource.getContactById(contactId)
         contact?.let {
-            contact.displayName = contact.displayName
-            contact.nickname = contact.nickname
-            contact.imageUrl = contact.imageUrlFake
+            contact.displayName = contactUpdated.fullname
+            contact.nickname = contactUpdated.nickname
+            contact.imageUrl = contactUpdated.avatar ?: ""
             contact.displayNameFake =
-                if (contactUpdated.fullNameFake.isNullOrEmpty()) contact.displayName else contactUpdated.fullNameFake
+                if (contactUpdated.fullNameFake.isNullOrEmpty()) contactUpdated.fullname else contactUpdated.fullNameFake
             contact.nicknameFake =
-                if (contactUpdated.nicknameFake.isNullOrEmpty()) contact.nickname else contactUpdated.nicknameFake
+                if (contactUpdated.nicknameFake.isNullOrEmpty()) contactUpdated.nickname else contactUpdated.nicknameFake
             contact.imageUrlFake =
-                if (contactUpdated.avatarFake.isNullOrEmpty()) contact.imageUrl else contactUpdated.avatarFake
+                if (contactUpdated.avatarFake.isNullOrEmpty()) contactUpdated.avatar
+                    ?: "" else contactUpdated.avatarFake
             contactLocalDataSource.updateContact(contact)
         }
 

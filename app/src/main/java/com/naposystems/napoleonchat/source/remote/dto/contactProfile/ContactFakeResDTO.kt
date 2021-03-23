@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 data class ContactFakeResDTO(
     @Json(name = "id") val id: String,
     @Json(name = "nick") val nickname: String,
-    @Json(name = "fullname") val fullname: String?,
+    @Json(name = "fullname") val fullname: String,
     @Json(name = "my_status") val status: String?,
     @Json(name = "lastseen") val lastseen: Double?,
     @Json(name = "avatar") val avatar: String?,
