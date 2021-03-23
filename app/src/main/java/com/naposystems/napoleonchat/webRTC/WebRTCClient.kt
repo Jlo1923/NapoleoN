@@ -120,7 +120,7 @@ class WebRTCClient @Inject constructor(
     private var sdpConstraints: MediaConstraints? = null
     private var localVideoTrack: VideoTrack? = null
     private var localAudioTrack: AudioTrack? = null
-    private var localPeer: PeerConnection? = null
+    private var peerConnection: PeerConnection? = null
     private var localVideoView: SurfaceViewRenderer? = null
     private var remoteVideoView: SurfaceViewRenderer? = null
     private var channel: String = ""
@@ -207,7 +207,7 @@ class WebRTCClient @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it.channel == this.channel) {
-                    localPeer?.addIceCandidate(it.iceCandidate)
+                    peerConnection?.addIceCandidate(it.iceCandidate)
                 }
             }
 
@@ -216,7 +216,7 @@ class WebRTCClient @Inject constructor(
             .subscribe {
                 if (it.channel == this.channel) {
                     Timber.d("OfferReceived")
-                    localPeer?.setRemoteDescription(
+                    peerConnection?.setRemoteDescription(
                         CustomSdpObserver("Remote offer"),
                         it.sessionDescription
                     )
@@ -229,7 +229,7 @@ class WebRTCClient @Inject constructor(
             .subscribe { it ->
                 if (it.channel == this.channel) {
                     Timber.d("AnswerReceived")
-                    localPeer?.setRemoteDescription(
+                    peerConnection?.setRemoteDescription(
                         CustomSdpObserver("Answer"),
                         it.sessionDescription
                     )
@@ -255,7 +255,7 @@ class WebRTCClient @Inject constructor(
                     Data.isContactReadyForCall = false
                     stopMediaPlayer()
                     unSubscribeCallChannel()
-                    localPeer?.dispose()
+                    peerConnection?.dispose()
                 }
             }
 
@@ -431,18 +431,23 @@ class WebRTCClient @Inject constructor(
 
         Timber.d("createPeerConnection")
 
-        val rtcConfig = PeerConnection.RTCConfiguration(peerIceServer)
+        val rtcConfiguration = PeerConnection.RTCConfiguration(peerIceServer)
 
-        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED
-        rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
-        rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE
-        rtcConfig.continualGatheringPolicy =
+        rtcConfiguration.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED
+
+        rtcConfiguration.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
+
+        rtcConfiguration.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE
+
+        rtcConfiguration.continualGatheringPolicy =
             PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
-        rtcConfig.keyType = PeerConnection.KeyType.ECDSA
 
-        localPeer = peerConnectionFactory.createPeerConnection(
-            rtcConfig,
+        rtcConfiguration.keyType = PeerConnection.KeyType.ECDSA
+
+        peerConnection = peerConnectionFactory.createPeerConnection(
+            rtcConfiguration,
             object : CustomPeerConnectionObserver() {
+
                 override fun onRenegotiationNeeded() {
                     super.onRenegotiationNeeded()
                     Timber.d("onRenegotiationNeeded, renegotiateCall: $renegotiateCall, isReturnCall: $isReturnCall")
@@ -562,7 +567,7 @@ class WebRTCClient @Inject constructor(
 
         addLocalAudioTrackToLocalMediaStream()
 
-        localPeer?.addStream(localMediaStream)
+        peerConnection?.addStream(localMediaStream)
     }
 
     /**
@@ -580,10 +585,10 @@ class WebRTCClient @Inject constructor(
                 )
             )
         }
-        localPeer?.createOffer(object : CustomSdpObserver("Local offer") {
+        peerConnection?.createOffer(object : CustomSdpObserver("Local offer") {
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
                 super.onCreateSuccess(sessionDescription)
-                localPeer?.setLocalDescription(
+                peerConnection?.setLocalDescription(
                     (CustomSdpObserver("Local offer")),
                     sessionDescription
                 )
@@ -608,10 +613,10 @@ class WebRTCClient @Inject constructor(
      * Aquí creamos la respuesta y la enviamos a través del socket
      */
     override fun createAnswer() {
-        localPeer?.createAnswer(object : CustomSdpObserver("Local Answer") {
+        peerConnection?.createAnswer(object : CustomSdpObserver("Local Answer") {
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
                 super.onCreateSuccess(sessionDescription)
-                localPeer?.setLocalDescription(
+                peerConnection?.setLocalDescription(
                     CustomSdpObserver("Local Answer"),
                     sessionDescription
                 )
@@ -798,10 +803,6 @@ class WebRTCClient @Inject constructor(
         isOnCallActivity = true
 
         Timber.d("isOnCallActivity: $isOnCallActivity")
-//
-//        if (!isActiveCall) {
-//            createPeerConnection()
-//        }
 
     }
 
@@ -840,7 +841,7 @@ class WebRTCClient @Inject constructor(
                 SessionDescription.Type.OFFER
             )
 
-            localPeer?.setRemoteDescription(
+            peerConnection?.setRemoteDescription(
                 CustomSdpObserver("Remote offer"),
                 sessionDescription
             )
@@ -1061,7 +1062,7 @@ class WebRTCClient @Inject constructor(
             SocketMessageServiceImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
         )
         mListener?.changeTextViewTitle(R.string.text_encrypted_video_call)
-        //renderRemoteVideo()
+
     }
 
     override fun startProximitySensor() {
@@ -1134,7 +1135,7 @@ class WebRTCClient @Inject constructor(
 
         mListener?.callEnded()
         if (isActiveCall)
-            localPeer?.close()
+            peerConnection?.close()
     }
 
     override fun unSubscribeCallChannel() {
@@ -1161,7 +1162,6 @@ class WebRTCClient @Inject constructor(
     override fun onBluetoothStateChanged(isAvailable: Boolean) {
         Timber.d("onBluetoothStateChanged: $isAvailable")
 
-        //handleBluetooth(isAvailable)
         isBluetoothAvailable = isAvailable
 
         if (!isFirstTimeBluetoothAvailable && !isHeadsetConnected) {

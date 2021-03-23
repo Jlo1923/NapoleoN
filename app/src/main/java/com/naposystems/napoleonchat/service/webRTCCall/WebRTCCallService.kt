@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServiceRepository
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
+import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesServiceImp
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
@@ -41,7 +42,7 @@ class WebRTCCallService : Service() {
 //        )
 //    }
 
-    private val notificationId = OLD_NotificationService.NOTIFICATION_RINGING
+    private val notificationId = NotificationMessagesServiceImp.NOTIFICATION_RINGING
 
     override fun onCreate() {
         super.onCreate()

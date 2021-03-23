@@ -14,10 +14,8 @@ import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBindi
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import timber.log.Timber
 import javax.inject.Inject
-
 
 class NotificationSettingFragment : BaseFragment() {
 
@@ -26,12 +24,9 @@ class NotificationSettingFragment : BaseFragment() {
         const val RINGTONE_NOTIFICATION_CODE = 9
     }
 
-
     private lateinit var viewModel: NotificationSettingViewModel
-    private lateinit var binding: NotificationSettingFragmentBinding
 
-    @Inject
-    lateinit var notificationService: OLD_NotificationService
+    private lateinit var binding: NotificationSettingFragmentBinding
 
     @Inject
     lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service

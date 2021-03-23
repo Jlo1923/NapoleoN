@@ -49,6 +49,7 @@ class CallModule {
         return arrayListOf(
             PeerConnection.IceServer.builder(BuildConfig.STUN_SERVER)
                 .createIceServer(),
+
             PeerConnection.IceServer.builder(BuildConfig.TURN_SERVER)
                 .setUsername("wPJlHAYY")
                 .setPassword("GrI09zxkwFuOihIf")

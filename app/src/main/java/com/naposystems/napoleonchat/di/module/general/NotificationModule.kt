@@ -12,22 +12,5 @@ import javax.inject.Singleton
 
 @Module
 class NotificationModule {
-    @Provides
-    @Singleton
-    fun providesNotificationService(
-        context: Context,
-        syncManager: SyncManager,
-        handlerNotificationChannelService: HandlerNotificationChannel.Service,
-        cryptoMessage: CryptoMessage,
-        socketMessageService: SocketMessageService
-    ): OLD_NotificationService {
-        return OLD_NotificationService(
-            context,
-            syncManager,
-            handlerNotificationChannelService,
-            cryptoMessage,
-            socketMessageService
-        )
-    }
 
 }

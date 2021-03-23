@@ -1,10 +1,13 @@
 package com.naposystems.napoleonchat.ui.conversationCall
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +19,7 @@ import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityConversationCallBinding
+import com.naposystems.napoleonchat.service.HeadsetBroadcastReceiver
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
@@ -88,77 +92,64 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             webRTCClient.subscribeToCallChannel(false)
         }
 
-//
-//        audioManagerCompat.requestCallAudioFocus()
-//
-//        Timber.d("onCreate")
-//
-//        val intentFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
-//
-//        val receiver = HeadsetBroadcastReceiver()
-//
-//        registerReceiver(receiver, intentFilter)
-//
-//        volumeControlStream = AudioManager.MODE_IN_COMMUNICATION
-//
-////        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//
-//        /*when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-//            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
-//            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
-//            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
-//            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
-//            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
-//            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
-//            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
-//            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
-//        }*/
+
+        audioManagerCompat.requestCallAudioFocus()
+
+        Timber.d("onCreate")
+
+        val intentFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
+
+        val receiver = HeadsetBroadcastReceiver()
+
+        registerReceiver(receiver, intentFilter)
+
+        volumeControlStream = AudioManager.MODE_IN_COMMUNICATION
 
         super.onCreate(savedInstanceState)
 
-//        initSurfaceRenders()
-//
-//        webRTCClient.setTextViewCallDuration(binding.textViewCalling)
-//
-//        with(window) {
-//            setFlags(
-//                WindowManager.LayoutParams.FLAG_SECURE,
-//                WindowManager.LayoutParams.FLAG_SECURE
-//            )
-//            if (isVideoCall) {
-//                addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//            }
-//        }
-//
-//        if (isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
-//            webRTCClient.startCaptureVideo()
-//            binding.viewSwitcher.showNext()
-//        }
-//
-//        if (!webRTCClient.isActiveCall()) {
-//            if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
-//                if (Build.VERSION.SDK_INT < 29 || !isFromClosedApp) {
-//                    Timber.d("*Test: Ring CallActivity")
-//                    webRTCClient.playRingtone()
-//                }
-//            } else {
-//                notificationMessagesService.startWebRTCCallService(
-//                    channel, isVideoCall, contactId, false, offer, this
-//                )
-//                webRTCClient.playCallingTone()
-//            }
-//        } else {
-//            if (isVideoCall) {
-//                webRTCClient.renderRemoteVideo()
-//                showRemoteVideo()
-//                binding.surfaceRender.isVisible = !webRTCClient.isVideoMuted()
-//                binding.cameraOff.containerCameraOff.isVisible = webRTCClient.contactTurnOffCamera()
-//            }
-//            binding.imageButtonMicOff.setChecked(!webRTCClient.getMicIsOn(), false)
-//            binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
-//            binding.imageButtonMuteVideo.setChecked(webRTCClient.isVideoMuted(), false)
-//            binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive(), false)
-//        }
+        initSurfaceRenders()
+
+        webRTCClient.setTextViewCallDuration(binding.textViewCalling)
+
+        with(window) {
+            setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
+            if (isVideoCall) {
+                addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+        }
+
+        if (isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
+            webRTCClient.startCaptureVideo()
+            binding.viewSwitcher.showNext()
+        }
+
+        if (!webRTCClient.isActiveCall()) {
+            if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
+                if (Build.VERSION.SDK_INT < 29 || !isFromClosedApp) {
+                    Timber.d("*Test: Ring CallActivity")
+                    webRTCClient.playRingtone()
+                }
+            } else {
+                notificationMessagesService.startWebRTCCallService(
+                    channel, isVideoCall, contactId, false, offer, this
+                )
+                webRTCClient.playCallingTone()
+            }
+        } else {
+            if (isVideoCall) {
+                webRTCClient.renderRemoteVideo()
+                showRemoteVideo()
+                binding.surfaceRender.isVisible = !webRTCClient.isVideoMuted()
+                binding.cameraOff.containerCameraOff.isVisible = webRTCClient.contactTurnOffCamera()
+            }
+            binding.imageButtonMicOff.setChecked(!webRTCClient.getMicIsOn(), false)
+            binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
+            binding.imageButtonMuteVideo.setChecked(webRTCClient.isVideoMuted(), false)
+            binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive(), false)
+        }
 
         setUIListeners()
 
@@ -175,15 +166,18 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     }
 
     override fun onBackPressed() {
+
         if (webRTCClient.isActiveCall()) {
+
             Timber.d("startCallActivity, onBackPressed")
+
             if (webRTCClient.isVideoCall()) {
                 webRTCClient.muteVideo(true, itsFromBackPressed = true)
             }
+
             webRTCClient.setIsOnCallActivity(false)
+
             super.onBackPressed()
-            /*webRTCClient.emitHangUp()
-                webRTCClient.dispose()*/
         }
     }
 
@@ -534,10 +528,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 binding.containerControls.visibility = View.VISIBLE
                 binding.fabAnswer.visibility = View.GONE
             }
-
-            /*if (!isVideoCall) {
-                binding.imageButtonSpeaker.setChecked(false, notifyListener = false)
-            }*/
         }
     }
 

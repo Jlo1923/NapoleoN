@@ -22,7 +22,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -42,7 +41,7 @@ import com.naposystems.napoleonchat.databinding.ActivityMainBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
+import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
@@ -70,7 +69,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
-    lateinit var notificationService: OLD_NotificationService
+    lateinit var notificationMessagesService: NotificationMessagesService
 
     @Inject
     lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
@@ -193,12 +192,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
                     Timber.d("startCallActivity MainActivity")
-//                    val notificationService = NotificationService()
-                    notificationService.startWebRTCCallService(
+                    notificationMessagesService.startWebRTCCallService(
                         it.channel,
                         it.isVideoCall,
                         it.contactId,
                         true,
+                        it.incomingCallDataOffer,
                         this
                     )
 
@@ -208,7 +207,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
                                 putString(ConversationCallActivity.CHANNEL, it.channel)
                                 putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
-                                putBoolean(ConversationCallActivity.TYPE_CALL, true)
+                                putInt(
+                                    ConversationCallActivity.TYPE_CALL,
+                                    Constants.TypeCall.IS_INCOMING_CALL.type
+                                )
+                                putString(ConversationCallActivity.OFFER, it.incomingCallDataOffer)
                             })
                         }
                     startActivity(intent)

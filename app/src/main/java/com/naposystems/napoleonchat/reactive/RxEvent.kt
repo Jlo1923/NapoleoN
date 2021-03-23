@@ -18,7 +18,7 @@ class RxEvent {
     class AccountAttack
     class HideOptionMenuRecoveryAccount
     data class ItsSubscribedToCallChannel(val channel: String, val contactId: Int, val isVideoCall: Boolean)
-    data class IncomingCall(val channel: String, val contactId: Int, val isVideoCall: Boolean)
+    data class IncomingCall(val channel: String, val contactId: Int, val isVideoCall: Boolean, val incomingCallDataOffer: String)
     data class IceCandidateReceived(val channel: String, val iceCandidate: IceCandidate)
     data class OfferReceived(val channel: String, val sessionDescription: SessionDescription)
     data class AnswerReceived(val channel: String, val sessionDescription: SessionDescription)
