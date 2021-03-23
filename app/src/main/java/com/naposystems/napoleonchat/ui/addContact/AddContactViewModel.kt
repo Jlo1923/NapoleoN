@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.model.FriendShipRequest
-import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestsResDTO
-import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.model.FriendShipRequestAdapterType
 import com.naposystems.napoleonchat.model.addContact.Contact
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestsResDTO
+import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +21,8 @@ class AddContactViewModel @Inject constructor(
 ) :
     ViewModel(), IContractAddContact.ViewModel {
 
-    private val _users = MutableLiveData<MutableList<Any>>()
-    val users: LiveData<MutableList<Any>>
+    private val _users = MutableLiveData<MutableList<Contact>>()
+    val users: LiveData<MutableList<Contact>>
         get() = _users
 
     private val _opened = MutableLiveData<Boolean>()
@@ -81,7 +81,6 @@ class AddContactViewModel @Inject constructor(
                     val list = response.body()?.let { ContactResDTO.getUsers(it) }
                     _users.value = list
 
-
                 } else {
                     _friendshipRequestWsError.value = context.getString(R.string.text_fail)
                 }
@@ -114,7 +113,6 @@ class AddContactViewModel @Inject constructor(
     override fun sendFriendshipRequest(contact: Contact) {
         viewModelScope.launch {
             try {
-
                 val response = repository.sendFriendshipRequest(contact)
                 if (response.isSuccessful) {
                     _friendShipRequestSendSuccessfully.value = contact

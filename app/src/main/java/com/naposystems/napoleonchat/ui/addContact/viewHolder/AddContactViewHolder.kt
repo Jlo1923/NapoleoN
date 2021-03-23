@@ -17,6 +17,7 @@ class AddContactViewHolder constructor(private val binding: AddContactItemBindin
         binding.textViewUserName.isSelected = true
 
         binding.buttonAdd.setOnClickListener {
+            item.receiver = true
             clickListener.onAddClick(item)
         }
         binding.executePendingBindings()

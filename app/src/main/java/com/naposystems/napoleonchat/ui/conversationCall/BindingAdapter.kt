@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
@@ -20,23 +21,13 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
 
     val context = imageView.context
 
-    val defaultAvatar = context.resources.getDrawable(
-        R.drawable.logo_napoleon_app_blur,
-        context.theme
-    )
+    val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.logo_napoleon_app_blur)
 
     if (contact != null) {
 
         val loadImage = when {
             contact.imageUrlFake.isNotEmpty() -> {
-                Utils.getFileUri(
-                    context = context,
-                    fileName = contact.imageUrlFake,
-                    subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
-                )
-            }
-            contact.imageUrl.isNotEmpty() -> {
-                contact.imageUrl
+                contact.imageUrlFake
             }
             else -> {
                 null
@@ -87,14 +78,7 @@ fun bindCallMessage(textView: TextView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = textView.context
 
-        val formattedNickname = when {
-            contact.nicknameFake.isNotEmpty() -> {
-                context.getString(R.string.label_nickname, contact.nicknameFake)
-            }
-            else -> {
-                context.getString(R.string.label_nickname, contact.nickname)
-            }
-        }
+        val formattedNickname = context.getString(R.string.label_nickname, contact.nicknameFake)
 
         val finalText = context.getString(R.string.text_contact_turn_off_camera, formattedNickname)
 

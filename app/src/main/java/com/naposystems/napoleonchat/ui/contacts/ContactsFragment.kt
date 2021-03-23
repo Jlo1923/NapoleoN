@@ -146,7 +146,8 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
                         0,
                         ContactEntity(
                             0,
-                            displayName = getString(R.string.text_add_new_contact)
+                            displayName = "",
+                            displayNameFake = getString(R.string.text_add_new_contact)
                         )
                     )
                     listContacts.sortBy { contact ->

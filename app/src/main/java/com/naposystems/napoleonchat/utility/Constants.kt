@@ -75,6 +75,7 @@ object Constants {
         const val CHECK_SUBSCRIPTION = "subscriptions/state"
         const val CANCEL_CALL = "call/cancelcall"
         const val READY_CALL = "call/readyforcall"
+        const val UPDATE_CONTACT_FAKE = "friendship/updatefriendship/{friendshipId}"
     }
 
     object NotificationKeys {
@@ -370,8 +371,8 @@ object Constants {
     }
 
     enum class AddContactTitleType(val type: Int) {
-        TITLE_MY_CONTACTS(0),
-        TITLE_COINCIDENCES(1)
+        TITLE_MY_CONTACTS(1),
+        TITLE_COINCIDENCES(2)
     }
 
     enum class LocationSearchView(val location: Int) {

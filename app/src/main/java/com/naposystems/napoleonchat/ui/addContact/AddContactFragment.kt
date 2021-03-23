@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AddContactFragmentBinding
 import com.naposystems.napoleonchat.model.FriendShipRequest
@@ -199,7 +200,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendShipRequestSend() {
-        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, Observer {
+        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, {
             if (it != null) {
                 adapter.updateContact(it)
             }
@@ -274,6 +275,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
             }
         })
+        binding.recyclerViewContacts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewContacts.adapter = adapter
         binding.recyclerViewContacts.itemAnimator = ItemAnimator()
     }

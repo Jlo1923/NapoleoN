@@ -6,18 +6,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.naposystems.napoleonchat.model.addContact.AddContactTitle
 import com.naposystems.napoleonchat.model.addContact.Contact
 import com.naposystems.napoleonchat.ui.addContact.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
+import timber.log.Timber
 
 class AddContactAdapter constructor(
     private val context: Context,
     private val clickListener: ClickListener
 ) :
-    ListAdapter<Any, RecyclerView.ViewHolder>(DiffCallback) {
+    ListAdapter<Contact, RecyclerView.ViewHolder>(DiffCallback) {
 
-    private lateinit var objectTitle: AddContactTitle
 
     companion object {
         const val TYPE_NO_FRIEND = 1
@@ -28,41 +27,28 @@ class AddContactAdapter constructor(
 
     }
 
-    object DiffCallback : DiffUtil.ItemCallback<Any>() {
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            if (oldItem::class != newItem::class) {
-                return false
-            }
-
-            if (oldItem is Contact && newItem is Contact)
-                return oldItem.nickname == newItem.nickname && oldItem.receiver == newItem.receiver
-
-            return if (oldItem is AddContactTitle && newItem is AddContactTitle)
-                oldItem.type == newItem.type
-            else false
+    object DiffCallback : DiffUtil.ItemCallback<Contact>() {
+        override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            if (oldItem::class != newItem::class) {
-                return false
-            }
+        override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
             return oldItem == newItem
         }
     }
 
     override fun getItemViewType(position: Int): Int {
+
         val item = getItem(position)
-        return if (item is Contact) {
+        return if (item.type == 0) {
             when {
                 item.statusFriend -> TYPE_FRIEND
-                item.receiver == true -> TYPE_REQUEST_SENT
-                item.offer == true -> TYPE_REQUEST_RECEIVED
+                item.receiver -> TYPE_REQUEST_SENT
+                item.offer -> TYPE_REQUEST_RECEIVED
                 else ->
                     TYPE_NO_FRIEND
             }
         } else TYPE_TITLE
-
     }
 
 
@@ -93,37 +79,58 @@ class AddContactAdapter constructor(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is AddContactViewHolder -> holder.bind(item as Contact, clickListener)
-            is RequestContactSentViewHolder -> holder.bind(item as Contact)
-            is RequestContactReceivedHolder -> holder.bind(item as Contact, clickListener)
+            is RequestContactSentViewHolder -> holder.bind(item)
+            is AddContactViewHolder -> holder.bind(item, clickListener)
+            is RequestContactReceivedHolder -> holder.bind(item, clickListener)
             is AddContactTitleViewHolder -> {
-                objectTitle = item as AddContactTitle
                 holder.bind(item, context)
             }
             else -> {
-                (holder as FriendContactViewHolder).bind(item as Contact, clickListener)
+                (holder as FriendContactViewHolder).bind(item, clickListener)
             }
         }
     }
 
 
     fun updateContact(contact: Contact) {
-        contact.receiver = true
         val index = currentList.indexOf(contact)
         notifyItemChanged(index)
     }
 
     fun updateContactRequest(contact: Contact) {
-        //update Title
-        if (contact.statusFriend) {
-            objectTitle.type = Constants.AddContactTitleType.TITLE_MY_CONTACTS.type
-            val index = currentList.indexOf(objectTitle)
-            notifyItemChanged(index)
+        try {
+            //update Title
+
+            if (contact.statusFriend) {
+                val firstPosition = 0
+                val secondPosition = 1
+
+                val list: MutableList<Contact> = mutableListOf()
+                list.addAll(currentList)
+
+                val element = currentList.findLast { it.statusFriend }
+                if (element != null) {
+                    list.remove(contact)
+                    list.add(secondPosition, contact)
+                    submitList(list)
+                    notifyItemChanged(secondPosition)
+                } else {
+                    list.add(
+                        firstPosition, Contact(
+                            id = -1,
+                            type = Constants.AddContactTitleType.TITLE_MY_CONTACTS.type
+                        )
+                    )
+                    list.add(secondPosition, contact)
+                    submitList(list)
+                    notifyItemRangeChanged(firstPosition, secondPosition)
+                }
+            } else updateContact(contact)
+
+        } catch (exception: Exception) {
+            Timber.d("exception ${exception.message}")
         }
 
-        //update Contact
-        val index = currentList.indexOf(contact)
-        notifyItemChanged(index)
     }
 
     interface ClickListener {
