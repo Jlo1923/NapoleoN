@@ -36,6 +36,7 @@ import javax.inject.Singleton
         HandlerChannelModule::class,
         NotificationModule::class,
         NotificationServicemodule::class,
+        CallModule::class,
 //        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,

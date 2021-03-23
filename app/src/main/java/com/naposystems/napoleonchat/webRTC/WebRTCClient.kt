@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.webRTC
 
 import android.content.Context
 import android.content.Intent
-import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.AudioManager.MODE_IN_CALL
 import android.media.AudioManager.MODE_IN_COMMUNICATION
@@ -13,7 +12,6 @@ import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
-import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
@@ -37,7 +35,11 @@ import javax.inject.Inject
 class WebRTCClient @Inject constructor(
     private val context: Context,
     private val socketMessageService: SocketMessageService,
-    private val notificationMessagesService: NotificationMessagesService
+    private val notificationMessagesService: NotificationMessagesService,
+    private val peerConnectionFactory: PeerConnectionFactory,
+    private val peerIceServer: ArrayList<PeerConnection.IceServer>,
+    private val eglBase: EglBase,
+    private val mediaPlayer: MediaPlayer
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
 
     private val vibrator: Vibrator? by lazy {
@@ -61,7 +63,6 @@ class WebRTCClient @Inject constructor(
                     dispose()
                 }
             }
-
             override fun onTick(millisUntilFinished: Long) = Unit
         }
 
@@ -72,7 +73,6 @@ class WebRTCClient @Inject constructor(
                     dispose()
                 }
             }
-
             override fun onTick(millisUntilFinished: Long) = Unit
         }
 
@@ -85,17 +85,8 @@ class WebRTCClient @Inject constructor(
                     dispose()
                 }
             }
-
             override fun onTick(millisUntilFinished: Long) = Unit
         }
-
-    private val mediaPlayer: MediaPlayer = MediaPlayer().apply {
-        setAudioAttributes(
-            AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION_SIGNALLING)
-                .build()
-        )
-    }
 
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
@@ -135,41 +126,6 @@ class WebRTCClient @Inject constructor(
     private var isBluetoothActive: Boolean = false
     private var contactTurnOffCamera: Boolean = false
     private var isOnCallActivity: Boolean = false
-
-    private var peerIceServer: MutableList<PeerConnection.IceServer> = arrayListOf(
-        PeerConnection.IceServer.builder(BuildConfig.STUN_SERVER)
-            .createIceServer(),
-        PeerConnection.IceServer.builder(BuildConfig.TURN_SERVER)
-            .setUsername("wPJlHAYY")
-            .setPassword("GrI09zxkwFuOihIf")
-            .createIceServer()
-    )
-
-    private val eglBase: EglBase by lazy {
-        EglBase.create()
-    }
-
-    private val peerConnectionFactory: PeerConnectionFactory by lazy {
-        //Initialize PeerConnectionFactory globals.
-        val initializationOptions = PeerConnectionFactory.InitializationOptions.builder(context)
-            .createInitializationOptions()
-        PeerConnectionFactory.initialize(initializationOptions)
-
-        //Create a new PeerConnectionFactory instance - using Hardware encoder and decoder.
-        val options = PeerConnectionFactory.Options()
-        val defaultVideoEncoderFactory = DefaultVideoEncoderFactory(
-            eglBase.eglBaseContext,
-            /* enableIntelVp8Encoder */true,
-            /* enableH264HighProfile */true
-        )
-        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(eglBase.eglBaseContext)
-
-        PeerConnectionFactory.builder()
-            .setOptions(options)
-            .setVideoEncoderFactory(defaultVideoEncoderFactory)
-            .setVideoDecoderFactory(defaultVideoDecoderFactory)
-            .createPeerConnectionFactory()
-    }
 
     private lateinit var localMediaStream: MediaStream
     private lateinit var remoteMediaStream: MediaStream
