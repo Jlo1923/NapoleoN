@@ -15,7 +15,7 @@ interface IContractWebRTCClient {
     fun getChannel(): String
     fun setChannel(channel: String)
     fun setOffer(offer: String?)
-    fun subscribeToChannel(isActionAnswer: Boolean)
+    fun subscribeToCallChannel(isActionAnswer: Boolean)
     fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)

@@ -44,10 +44,6 @@ class WebRTCClient @Inject constructor(
     private val peerIceServer: ArrayList<PeerConnection.IceServer>
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
 
-    private val firebaseId by lazy {
-        sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-    }
-
     private val vibrator: Vibrator? by lazy {
         context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
@@ -195,20 +191,17 @@ class WebRTCClient @Inject constructor(
                 .subscribe {
                     Timber.d("ItsSubscribedToCallChannel, ${it.channel}, ${this.channel}")
                     if (it.channel == this.channel) {
+
                         stopMediaPlayer()
+
+                        if (!isActiveCall) {
+                            createPeerConnection()
+                        }
+
                         createOffer()
+
                     }
                 }
-
-        val disposableContactJoinToCall = RxBus.listen(RxEvent.ContactHasJoinToCall::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Timber.d("ContactHasJoinToCall, ${it.channel}, ${this.channel}")
-                if (it.channel == this.channel) {
-                    stopMediaPlayer()
-                    createOffer()
-                }
-            }
 
         val disposableIceCandidateReceived = RxBus.listen(RxEvent.IceCandidateReceived::class.java)
             .observeOn(AndroidSchedulers.mainThread())
@@ -414,17 +407,6 @@ class WebRTCClient @Inject constructor(
                     }
                 }
 
-        /*val disposableRejectByNotification =
-            RxBus.listen(RxEvent.RejectCallByNotification::class.java)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    Timber.d("RejectCallByNotification")
-                    if (it.channel == this.channel) {
-                        mListener?.rejectByNotification()
-                    }
-                }*/
-
-        disposable.add(disposableContactJoinToCall)
         disposable.add(disposableIceCandidateReceived)
         disposable.add(disposableOfferReceived)
         disposable.add(disposableAnswerReceived)
@@ -440,46 +422,6 @@ class WebRTCClient @Inject constructor(
         disposable.add(disposableHangupByNotification)
         disposable.add(disposableContactCantChangeToVideoCall)
         disposable.add(disposableItsSubscribedToCallChannel)
-    }
-
-    private fun initializeProximitySensor() {
-        if (!isVideoCall && !audioManager.isSpeakerphoneOn && !wakeLock.isHeld) {
-            wakeLock.acquire()
-        }
-    }
-
-    private fun unregisterProximityListener() {
-        if (wakeLock.isHeld) {
-            wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
-        }
-    }
-
-    private fun playSound(uriSound: Uri, isLooping: Boolean, completionCallback: () -> Unit) {
-        try {
-            mediaPlayer.apply {
-                reset()
-                if (isPlaying) {
-                    stop()
-                    reset()
-                }
-                setDataSource(
-                    context,
-                    uriSound
-                )
-                this.isLooping = isLooping
-                prepare()
-                setOnCompletionListener { completionCallback() }
-                start()
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-    }
-
-    private fun stopMediaPlayer() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
-        }
     }
 
     /**
@@ -558,7 +500,6 @@ class WebRTCClient @Inject constructor(
                         countDownIncomingCall.cancel()
                         initializeProximitySensor()
                         mListener?.enableControls()
-                        //mListener?.showTimer()
                         mHandler.postDelayed(
                             mCallTimeRunnable,
                             TimeUnit.SECONDS.toMillis(1)
@@ -618,14 +559,131 @@ class WebRTCClient @Inject constructor(
             })
 
         createLocalAudioTrack()
+
         addLocalAudioTrackToLocalMediaStream()
 
-        /*if (isVideoCall) {
-            createLocalVideoTrack()
-            addLocalVideoTrackToLocalMediaStream()
-        }*/
-
         localPeer?.addStream(localMediaStream)
+    }
+
+    /**
+     * Aquí creamos la oferta y la enviamos a través del socket
+     */
+    private fun createOffer() {
+        Timber.d("createOffer")
+        sdpConstraints = MediaConstraints()
+        sdpConstraints?.mandatory?.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
+        if (isVideoCall) {
+            sdpConstraints?.mandatory?.add(
+                MediaConstraints.KeyValuePair(
+                    "OfferToReceiveVideo",
+                    "true"
+                )
+            )
+        }
+        localPeer?.createOffer(object : CustomSdpObserver("Local offer") {
+            override fun onCreateSuccess(sessionDescription: SessionDescription) {
+                super.onCreateSuccess(sessionDescription)
+                localPeer?.setLocalDescription(
+                    (CustomSdpObserver("Local offer")),
+                    sessionDescription
+                )
+                Timber.d("createOffer onCreateSuccess")
+                if (!isActiveCall) {
+                    syncManager.callContact(
+                        contactId,
+                        isVideoCall,
+                        sessionDescription.toJSONObject().toString()
+                    )
+                } else {
+                    socketMessageService.emitToCall(
+                        channel = channel,
+                        jsonObject = sessionDescription.toJSONObject()
+                    )
+                }
+            }
+        }, sdpConstraints)
+    }
+
+    /**
+     * Aquí creamos la respuesta y la enviamos a través del socket
+     */
+    override fun createAnswer() {
+        localPeer?.createAnswer(object : CustomSdpObserver("Local Answer") {
+            override fun onCreateSuccess(sessionDescription: SessionDescription) {
+                super.onCreateSuccess(sessionDescription)
+                localPeer?.setLocalDescription(
+                    CustomSdpObserver("Local Answer"),
+                    sessionDescription
+                )
+                Timber.d("createAnswer onCreateSuccess")
+                socketMessageService.emitToCall(
+                    channel = channel,
+                    jsonObject = sessionDescription.toJSONObject()
+                )
+            }
+        }, MediaConstraints())
+    }
+
+    private fun onIceCandidateReceived(iceCandidate: IceCandidate) {
+        try {
+            if (isActiveCall) {
+                socketMessageService.emitToCall(
+                    channel = channel,
+                    jsonObject = iceCandidate.toJSONObject()
+                )
+            } else {
+                if (getTypeCall() == Constants.TypeCall.IS_INCOMING_CALL.type) {
+                    socketMessageService.emitToCall(
+                        channel = channel,
+                        jsonObject = iceCandidate.toJSONObject()
+                    )
+                } else {
+                    iceCandidatesCaller.add(iceCandidate)
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    private fun initializeProximitySensor() {
+        if (!isVideoCall && !audioManager.isSpeakerphoneOn && !wakeLock.isHeld) {
+            wakeLock.acquire()
+        }
+    }
+
+    private fun unregisterProximityListener() {
+        if (wakeLock.isHeld) {
+            wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
+        }
+    }
+
+    private fun playSound(uriSound: Uri, isLooping: Boolean, completionCallback: () -> Unit) {
+        try {
+            mediaPlayer.apply {
+                reset()
+                if (isPlaying) {
+                    stop()
+                    reset()
+                }
+                setDataSource(
+                    context,
+                    uriSound
+                )
+                this.isLooping = isLooping
+                prepare()
+                setOnCompletionListener { completionCallback() }
+                start()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    private fun stopMediaPlayer() {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
     }
 
     private fun createLocalVideoTrack() {
@@ -688,9 +746,6 @@ class WebRTCClient @Inject constructor(
         return null
     }
 
-    /**
-     * Agregamos el localVideoTrack al localMediaStream
-     */
     private fun addLocalVideoTrackToLocalMediaStream() {
         localMediaStream.addTrack(localVideoTrack)
     }
@@ -700,96 +755,12 @@ class WebRTCClient @Inject constructor(
         localMediaStream.addTrack(localAudioTrack)
     }
 
-    /**
-     * Recibe el ice candidate local y lo envía al peer remoto a través del socket
-     */
-    private fun onIceCandidateReceived(iceCandidate: IceCandidate) {
-        try {
-            if (isActiveCall) {
-                socketMessageService.emitToCall(
-                    channel = channel,
-                    jsonObject = iceCandidate.toJSONObject()
-                )
-            } else {
-                if (getTypeCall() == Constants.TypeCall.IS_INCOMING_CALL.type) {
-                    socketMessageService.emitToCall(
-                        channel = channel,
-                        jsonObject = iceCandidate.toJSONObject()
-                    )
-                } else {
-                    iceCandidatesCaller.add(iceCandidate)
-                }
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-    }
-
     private fun startCallTimer() {
         textViewTimer?.text =
             Utils.getDuration(callTime, callTime >= TimeUnit.HOURS.toMillis(1))
         val oneSecond = TimeUnit.SECONDS.toMillis(1)
         callTime += oneSecond
         mHandler.postDelayed(mCallTimeRunnable, oneSecond)
-    }
-
-    /**
-     * Aquí creamos la oferta y la enviamos a través del socket
-     */
-    private fun createOffer() {
-        Timber.d("createOffer")
-        sdpConstraints = MediaConstraints()
-        sdpConstraints?.mandatory?.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
-        if (isVideoCall) {
-            sdpConstraints?.mandatory?.add(
-                MediaConstraints.KeyValuePair(
-                    "OfferToReceiveVideo",
-                    "true"
-                )
-            )
-        }
-        localPeer?.createOffer(object : CustomSdpObserver("Local offer") {
-            override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                super.onCreateSuccess(sessionDescription)
-                localPeer?.setLocalDescription(
-                    (CustomSdpObserver("Local offer")),
-                    sessionDescription
-                )
-                Timber.d("createOffer onCreateSuccess")
-                if (!isActiveCall) {
-                    syncManager.callContact(
-                        contactId,
-                        isVideoCall,
-                        sessionDescription.toJSONObject().toString()
-                    )
-                } else {
-                    socketMessageService.emitToCall(
-                        channel = channel,
-                        jsonObject = sessionDescription.toJSONObject()
-                    )
-                }
-            }
-        }, sdpConstraints)
-    }
-
-    /**
-     * Aquí creamos la respuesta y la enviamos a través del socket
-     */
-    override fun createAnswer() {
-        localPeer?.createAnswer(object : CustomSdpObserver("Local Answer") {
-            override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                super.onCreateSuccess(sessionDescription)
-                localPeer?.setLocalDescription(
-                    CustomSdpObserver("Local Answer"),
-                    sessionDescription
-                )
-                Timber.d("createAnswer onCreateSuccess")
-                socketMessageService.emitToCall(
-                    channel = channel,
-                    jsonObject = sessionDescription.toJSONObject()
-                )
-            }
-        }, MediaConstraints())
     }
 
     private fun renderRemoteVideo(firstMediaStream: MediaStream) {
@@ -827,10 +798,10 @@ class WebRTCClient @Inject constructor(
         isOnCallActivity = true
 
         Timber.d("isOnCallActivity: $isOnCallActivity")
-
-        if (!isActiveCall) {
-            createPeerConnection()
-        }
+//
+//        if (!isActiveCall) {
+//            createPeerConnection()
+//        }
 
     }
 
@@ -852,9 +823,6 @@ class WebRTCClient @Inject constructor(
 
         this.typeCall = typeCall
 
-        if (typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type) {
-            subscribeToChannel(false)
-        }
     }
 
     override fun getChannel() = this.channel
@@ -879,7 +847,7 @@ class WebRTCClient @Inject constructor(
         }
     }
 
-    override fun subscribeToChannel(isActionAnswer: Boolean) {
+    override fun subscribeToCallChannel(isActionAnswer: Boolean) {
 
         socketMessageService.subscribeToCallChannel(
             contactId,

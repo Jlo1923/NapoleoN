@@ -757,12 +757,17 @@ class SocketMessageServiceImp @Inject constructor(
                     }
 
                     override fun onSubscriptionSucceeded(channelName: String) {
+
                         if (context is NapoleonApplication) {
-                            val app = context
+
                             if (app.isAppVisible()) {
+
                                 listenCallEvents(channelName)
+
                                 Timber.d("onSubscriptionSucceeded: $channelName")
+
                                 Data.isOnCall = true
+
                                 RxBus.publish(
                                     RxEvent.ItsSubscribedToCallChannel(
                                         channelName,
@@ -843,11 +848,6 @@ class SocketMessageServiceImp @Inject constructor(
                                     Timber.d("LLegó $CALL_NN $eventType")
 
                                     when (eventType) {
-                                        CONTACT_JOIN_TO_CALL -> RxBus.publish(
-                                            RxEvent.ContactHasJoinToCall(
-                                                event.channelName
-                                            )
-                                        )
                                         HANGUP_CALL -> {
                                             Data.isShowingCallActivity = false
                                             RxBus.publish(RxEvent.ContactHasHangup(event.channelName))
