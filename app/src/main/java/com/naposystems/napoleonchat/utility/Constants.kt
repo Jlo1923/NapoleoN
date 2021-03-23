@@ -614,6 +614,11 @@ object Constants {
         ALERT(1),
         INFO(2)
     }
+
+    enum class TypeCall constructor(val type: Int) {
+        IS_INCOMING_CALL(1),
+        IS_OUTGOING_CALL(2)
+    }
     //endregion
 
     //region U

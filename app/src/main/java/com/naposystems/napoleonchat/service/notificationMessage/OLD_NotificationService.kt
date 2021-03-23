@@ -591,7 +591,7 @@ class OLD_NotificationService
                     putInt(ConversationCallActivity.CONTACT_ID, contactId)
                     putString(ConversationCallActivity.CHANNEL, channel)
                     putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
-                    putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                    putBoolean(ConversationCallActivity.TYPE_CALL, true)
                     putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
                 })
             }

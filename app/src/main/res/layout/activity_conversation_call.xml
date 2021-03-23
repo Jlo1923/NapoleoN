@@ -14,8 +14,8 @@
             type="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
 
         <variable
-            name="isIncomingCall"
-            type="Boolean" />
+            name="typeCall"
+            type="Integer" />
 
         <variable
             name="isVideoCall"
@@ -107,7 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/x_small_margin"
-                    android:tint="@color/white"
+                    app:tint="@color/white"
                     app:srcCompat="@drawable/ic_baseline_lock" />
 
                 <TextView
@@ -186,6 +186,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/container_top" />
 
+<!--        android:text="@{typeCall ? isVideoCall ? @string/text_incoming_video_call_title: @string/text_incoming_call_title : @string/text_calling_call_title}"-->
         <TextView
             android:id="@+id/textView_calling"
             style="@style/CallCalling"
@@ -194,7 +195,6 @@
             android:layout_marginTop="@dimen/small_margin"
             android:elevation="4dp"
             android:singleLine="true"
-            android:text="@{isIncomingCall ? isVideoCall ? @string/text_incoming_video_call_title: @string/text_incoming_call_title : @string/text_calling_call_title}"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -210,13 +210,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+<!--        android:visibility="@{typeCall ? View.GONE : View.VISIBLE}"-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:background="#998B8989"
             android:padding="@dimen/normal_padding"
-            android:visibility="@{isIncomingCall ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -311,12 +311,13 @@
             app:tint="@color/white" />
 
         <!-- BUTTON ANSWER -->
+<!--        android:visibility="@{typeCall ? View.VISIBLE : View.GONE}"-->
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_answer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/green"
-            android:visibility="@{isIncomingCall ? View.VISIBLE : View.GONE}"
             app:borderWidth="0dp"
             app:layout_constraintBottom_toBottomOf="@id/fab_hangup"
             app:layout_constraintEnd_toEndOf="parent"

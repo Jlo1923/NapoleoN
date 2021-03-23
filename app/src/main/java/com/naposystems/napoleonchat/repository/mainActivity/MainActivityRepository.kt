@@ -87,6 +87,6 @@ class MainActivityRepository @Inject constructor(
     }
 
     override fun disconnectSocket() {
-        socketMessageService.disconnectSocket()
+//        socketMessageService.disconnectSocket()
     }
 }

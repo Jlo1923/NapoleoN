@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.ui.home
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,7 +11,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -50,7 +48,6 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.U
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
@@ -169,9 +166,9 @@ class HomeFragment : BaseFragment() {
                         ConversationCallActivity.IS_VIDEO_CALL,
                         webRTCClient.isVideoCall()
                     )
-                    putBoolean(
-                        ConversationCallActivity.IS_INCOMING_CALL,
-                        webRTCClient.isIncomingCall()
+                    putInt(
+                        ConversationCallActivity.TYPE_CALL,
+                        webRTCClient.getTypeCall()
                     )
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })

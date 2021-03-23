@@ -504,6 +504,9 @@ class SocketMessageServiceImp @Inject constructor(
     //region Metodos de Mensajes
     private fun listenNewMessage() {
 
+        //TODO: modificar el metodo para validacion en DEV y PROD ya que en este momento no es posible
+        // la validacion de ningun ambiente sin cifrar lo que dificultad la validacion de los metodos desde el servidor
+
         pusher
             .getPrivateChannel(privateGeneralChannelName)
             .bind(

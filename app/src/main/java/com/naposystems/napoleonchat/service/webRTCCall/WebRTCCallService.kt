@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServiceRepository
+import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
@@ -17,9 +18,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class WebRTCCallService @Inject constructor(
-    private val notificationService: OLD_NotificationService
-) : Service() {
+class WebRTCCallService : Service() {
 
     companion object {
         const val ACTION_ANSWER_CALL = "ANSWER_CALL"
@@ -30,6 +29,9 @@ class WebRTCCallService @Inject constructor(
 
     @Inject
     lateinit var repository: WebRTCCallServiceRepository
+
+    @Inject
+    lateinit var notificationMessagesService: NotificationMessagesService
 
     private lateinit var napoleonApplication: NapoleonApplication
 //
@@ -78,7 +80,8 @@ class WebRTCCallService @Inject constructor(
         }
         intent.action?.let { action ->
             Timber.d("onStartCommand action: $action")
-            notificationService.stopMediaPlayer()
+            //TODO: Remover comentario
+//            notificationMessagesService.stopMediaPlayer()
             when (action) {
                 ACTION_ANSWER_CALL -> {
                     startConversationCallActivity(
@@ -121,17 +124,17 @@ class WebRTCCallService @Inject constructor(
 
     private fun showCallingNotification(channel: String, contactId: Int, isVideoCall: Boolean) {
         if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
-
-            val notification = notificationService.createCallingNotification(
-                channel,
-                contactId,
-                isVideoCall,
-                applicationContext
-            )
+//TODO: Remover comentario
+//            val notification = notificationMessagesService.createCallingNotification(
+//                channel,
+//                contactId,
+//                isVideoCall,
+//                applicationContext
+//            )
 
             Timber.d("notificationId: $notificationId")
-
-            startForeground(notificationId, notification)
+//TODO: Remover comentario
+//            startForeground(notificationId, notification)
         }
     }
 
@@ -141,17 +144,17 @@ class WebRTCCallService @Inject constructor(
         isVideoCall: Boolean
     ) {
         if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
-
-            val notification = notificationService.createCallNotification(
-                channel,
-                contactId,
-                isVideoCall,
-                applicationContext
-            )
+//TODO: Remover comentario
+//            val notification = notificationMessagesService.createCallNotification(
+//                channel,
+//                contactId,
+//                isVideoCall,
+//                applicationContext
+//            )
 
             Timber.d("notificationId: $notificationId")
-
-            startForeground(notificationId, notification)
+//TODO: Remover comentario
+//            startForeground(notificationId, notification)
         }
     }
 
@@ -170,7 +173,7 @@ class WebRTCCallService @Inject constructor(
                         putInt(ConversationCallActivity.CONTACT_ID, contactId)
                         putString(ConversationCallActivity.CHANNEL, channel)
                         putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
-                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                        putBoolean(ConversationCallActivity.TYPE_CALL, true)
                         putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
                         putBoolean(
                             ConversationCallActivity.ANSWER_CALL,

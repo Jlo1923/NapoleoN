@@ -10,11 +10,11 @@ interface IContractWebRTCClient {
     fun setContactId(contactId: Int)
     fun isVideoCall(): Boolean
     fun setIsVideoCall(isVideoCall: Boolean)
-    fun isIncomingCall(): Boolean
-    fun setIncomingCall(incomingCall: Boolean)
+    fun getTypeCall(): Int
+    fun setTypeCall(typeCall: Int)
     fun getChannel(): String
     fun setChannel(channel: String)
-    fun subscribeToChannel(isActionAnswer: Boolean)
+    fun subscribeToCallChannel(isActionAnswer: Boolean)
     fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)

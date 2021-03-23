@@ -141,6 +141,6 @@ class MainActivityViewModel
     }
 
     override fun disconnectSocket() {
-        repository.disconnectSocket()
+//        repository.disconnectSocket()
     }
 }

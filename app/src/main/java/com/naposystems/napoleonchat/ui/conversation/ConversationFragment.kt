@@ -383,9 +383,9 @@ class ConversationFragment : BaseFragment(),
                         ConversationCallActivity.IS_VIDEO_CALL,
                         webRTCClient.isVideoCall()
                     )
-                    putBoolean(
-                        ConversationCallActivity.IS_INCOMING_CALL,
-                        webRTCClient.isIncomingCall()
+                    putInt(
+                        ConversationCallActivity.TYPE_CALL,
+                        webRTCClient.getTypeCall()
                     )
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
@@ -735,7 +735,10 @@ class ConversationFragment : BaseFragment(),
                         putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
                         putString(ConversationCallActivity.CHANNEL, channel)
                         putBoolean(ConversationCallActivity.IS_VIDEO_CALL, viewModel.isVideoCall())
-                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, false)
+                        putInt(
+                            ConversationCallActivity.TYPE_CALL,
+                            Constants.TypeCall.IS_OUTGOING_CALL.type
+                        )
                     })
                 }
                 startActivity(intent)

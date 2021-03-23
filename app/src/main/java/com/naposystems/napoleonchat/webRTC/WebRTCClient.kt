@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
+import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageServiceImp
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class WebRTCClient @Inject constructor(
     private val context: Context,
     private val socketMessageService: SocketMessageService,
-    private val notificationService: OLD_NotificationService
+    private val notificationMessagesService: NotificationMessagesService
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
 
     private val vibrator: Vibrator? by lazy {
@@ -122,7 +122,7 @@ class WebRTCClient @Inject constructor(
     private var callTime: Long = 0
     private var contactId: Int = 0
     private var isVideoCall: Boolean = false
-    private var incomingCall: Boolean = false
+    private var typeCall: Int = Constants.TypeCall.IS_INCOMING_CALL.type
     private var isMicOn: Boolean = true
     private var mediaPlayerHasStopped: Boolean = false
     private var renegotiateCall: Boolean = false
@@ -254,7 +254,7 @@ class WebRTCClient @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Timber.d("ContactHasHangup")
-                if (it.channel == this.channel && !isIncomingCall()) {
+                if (it.channel == this.channel && getTypeCall() == Constants.TypeCall.IS_OUTGOING_CALL.type) {
                     Data.isContactReadyForCall = false
                     stopMediaPlayer()
                     unSubscribeCallChannel()
@@ -537,11 +537,10 @@ class WebRTCClient @Inject constructor(
                             TimeUnit.SECONDS.toMillis(1)
                         )
 
-//                        val notificationService = NotificationService()
-//                        val notificationService = NotificationService(context.applicationContext)
-                        notificationService.updateCallInProgress(channel, contactId, isVideoCall)
+                        //TODO: Remover comentario
+//                        notificationMessagesService.updateCallInProgress(channel, contactId, isVideoCall)
 
-                        if (!isVideoCall && incomingCall) {
+                        if (!isVideoCall && typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
                             audioManager.isSpeakerphoneOn = false
                             mListener?.changeCheckedSpeaker(false)
                         }
@@ -692,7 +691,10 @@ class WebRTCClient @Inject constructor(
      */
     private fun onIceCandidateReceived(iceCandidate: IceCandidate) {
         try {
-            socketMessageService.emitToCall(channel = channel, jsonObject = iceCandidate.toJSONObject())
+            socketMessageService.emitToCall(
+                channel = channel,
+                jsonObject = iceCandidate.toJSONObject()
+            )
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -806,10 +808,10 @@ class WebRTCClient @Inject constructor(
         this.isVideoCall = isVideoCall
     }
 
-    override fun isIncomingCall(): Boolean = this.incomingCall
+    override fun getTypeCall(): Int = this.typeCall
 
-    override fun setIncomingCall(incomingCall: Boolean) {
-        this.incomingCall = incomingCall
+    override fun setTypeCall(typeCall: Int) {
+        this.typeCall = this.typeCall
     }
 
     override fun getChannel() = this.channel
@@ -818,7 +820,7 @@ class WebRTCClient @Inject constructor(
         this.channel = channel
     }
 
-    override fun subscribeToChannel(isActionAnswer: Boolean) {
+    override fun subscribeToCallChannel(isActionAnswer: Boolean) {
         socketMessageService.subscribeToCallChannel(channel, isActionAnswer, isVideoCall)
     }
 
@@ -905,12 +907,18 @@ class WebRTCClient @Inject constructor(
 
     override fun changeToVideoCall() {
         if (!isVideoCall) {
-            socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_WANT_CHANGE_TO_VIDEO)
+            socketMessageService.emitToCall(
+                channel,
+                SocketMessageServiceImp.CONTACT_WANT_CHANGE_TO_VIDEO
+            )
         }
     }
 
     override fun cancelChangeToVideoCall() {
-        socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_CANCEL_CHANGE_TO_VIDEO)
+        socketMessageService.emitToCall(
+            channel,
+            SocketMessageServiceImp.CONTACT_CANCEL_CHANGE_TO_VIDEO
+        )
     }
 
     override fun muteVideo(checked: Boolean, itsFromBackPressed: Boolean) {
@@ -919,11 +927,17 @@ class WebRTCClient @Inject constructor(
             isVideoMuted = checked
 
             if (checked) {
-                socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_TURN_OFF_CAMERA)
+                socketMessageService.emitToCall(
+                    channel,
+                    SocketMessageServiceImp.CONTACT_TURN_OFF_CAMERA
+                )
                 mListener?.changeLocalRenderVisibility(View.GONE)
                 videoTrack.setEnabled(false)
             } else {
-                socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_TURN_ON_CAMERA)
+                socketMessageService.emitToCall(
+                    channel,
+                    SocketMessageServiceImp.CONTACT_TURN_ON_CAMERA
+                )
                 mListener?.changeLocalRenderVisibility(View.VISIBLE)
                 videoTrack.setEnabled(true)
             }
@@ -1003,7 +1017,10 @@ class WebRTCClient @Inject constructor(
     override fun acceptChangeToVideoCall() {
         isVideoCall = true
         startCaptureVideo()
-        socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO)
+        socketMessageService.emitToCall(
+            channel,
+            SocketMessageServiceImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
+        )
         mListener?.changeTextViewTitle(R.string.text_encrypted_video_call)
         //renderRemoteVideo()
     }

@@ -468,29 +468,31 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun callContact() {
-        viewModelScope.launch {
-            val channel = "presence-private.${contact.id}_${userEntity.id}"
-            try {
-                repository.subscribeToCallChannel(channel, isVideoCall)
-                val response = repository.callContact(contact, isVideoCall)
-
-                if (response.isSuccessful) {
-                    response.body()?.let { _ ->
-                        _contactCalledSuccessfully.value = channel
-                    }
-                } else {
-                    Timber.e(response.errorBody()?.string())
-                    repository.unSubscribeToChannel(contact, channel)
-                    _noInternetConnection.value = true
-                    _contactCalledSuccessfully.value = null
-                }
-            } catch (e: Exception) {
-                repository.unSubscribeToChannel(contact, channel)
-                _noInternetConnection.value = true
-                _contactCalledSuccessfully.value = null
-                Timber.e(e)
-            }
-        }
+        val channel = "presence-private.${contact.id}_${userEntity.id}"
+        _contactCalledSuccessfully.value = channel
+//        viewModelScope.launch {
+//            val channel = "presence-private.${contact.id}_${userEntity.id}"
+//            try {
+//                repository.subscribeToCallChannel(channel, isVideoCall)
+//                val response = repository.callContact(contact, isVideoCall)
+//
+//                if (response.isSuccessful) {
+//                    response.body()?.let { _ ->
+//                        _contactCalledSuccessfully.value = channel
+//                    }
+//                } else {
+//                    Timber.e(response.errorBody()?.string())
+//                    repository.unSubscribeToChannel(contact, channel)
+//                    _noInternetConnection.value = true
+//                    _contactCalledSuccessfully.value = null
+//                }
+//            } catch (e: Exception) {
+//                repository.unSubscribeToChannel(contact, channel)
+//                _noInternetConnection.value = true
+//                _contactCalledSuccessfully.value = null
+//                Timber.e(e)
+//            }
+//        }
     }
 
     override fun resetContactCalledSuccessfully() {

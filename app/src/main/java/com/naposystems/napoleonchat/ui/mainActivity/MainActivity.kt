@@ -105,18 +105,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
-            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
-            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
-            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
-            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
-            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
-            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
-            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
-        }
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//
+//        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
+//            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
+//            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
+//            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
+//            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
+//            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
+//            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
+//            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
+//            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
+//        }
 
         super.onCreate(savedInstanceState)
 
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
                                 putString(ConversationCallActivity.CHANNEL, it.channel)
                                 putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
-                                putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                                putBoolean(ConversationCallActivity.TYPE_CALL, true)
                             })
                         }
                     startActivity(intent)
@@ -348,7 +348,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             ConversationCallActivity.IS_VIDEO_CALL,
                             viewModel.isVideoCall() ?: false
                         )
-                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
+                        putBoolean(ConversationCallActivity.TYPE_CALL, true)
                     })
                 }
                 startActivity(intent)
@@ -651,13 +651,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPause() {
         super.onPause()
         viewModel.setLockTimeApp()
-        viewModel.disconnectSocket()
+//        viewModel.disconnectSocket()
     }
 
     override fun onDestroy() {
         disposable.clear()
         viewModel.resetIsOnCallPref()
-        viewModel.disconnectSocket()
+//        viewModel.disconnectSocket()
         super.onDestroy()
     }
 
