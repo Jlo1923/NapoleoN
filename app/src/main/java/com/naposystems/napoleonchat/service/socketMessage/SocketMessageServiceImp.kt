@@ -17,17 +17,17 @@ import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.Valid
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
+import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
 import com.pusher.client.Pusher
-import com.pusher.client.channel.PresenceChannel
-import com.pusher.client.channel.PrivateChannelEventListener
-import com.pusher.client.channel.PusherEvent
-import com.pusher.client.channel.SubscriptionEventListener
+import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.connection.ConnectionStateChange
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import org.json.JSONObject
+import org.webrtc.SessionDescription
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -52,6 +52,8 @@ class SocketMessageServiceImp @Inject constructor(
     private lateinit var privateGeneralChannelName: String
 
     companion object {
+        const val CALL_NN = "client-callNN"
+        const val CONTACT_JOIN_TO_CALL = 1
         const val HANGUP_CALL = 2
         const val CONTACT_WANT_CHANGE_TO_VIDEO = 3
         const val CONTACT_ACCEPT_CHANGE_TO_VIDEO = 4
@@ -59,7 +61,12 @@ class SocketMessageServiceImp @Inject constructor(
         const val CONTACT_TURN_ON_CAMERA = 6
         const val CONTACT_CANCEL_CHANGE_TO_VIDEO = 7
         const val CONTACT_CANT_CHANGE_TO_VIDEO = 8
+        const val TYPE = "type"
+        const val ICE_CANDIDATE = "candidate"
+        const val OFFER = "offer"
+        const val ANSWER = "answer"
     }
+
 
     init {
 //
@@ -67,8 +74,6 @@ class SocketMessageServiceImp @Inject constructor(
 //            Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
 
     }
-
-    //region Metodos Interfaz
 
     //region Conexion
     override fun getPusherChannel(channel: String): PresenceChannel? =
@@ -200,9 +205,7 @@ class SocketMessageServiceImp @Inject constructor(
             Timber.e("Pusher Paso IN 7.3: $e")
         }
     }
-    //endregion
 
-    //region Mensajes
     //TODO: Fusionar estos metodos
     private fun emitClientConversation(messages: ValidateMessage) {
         emitClientConversation(arrayListOf(messages))
@@ -236,121 +239,6 @@ class SocketMessageServiceImp @Inject constructor(
         }
 
     }
-    //endregion
-
-    //region llamadas
-    override fun connectToSocketReadyForCall(channel: String) {
-//        Timber.d("connectToSocket: ${pusher.connection.state}")
-//        if (pusher.connection.state != ConnectionState.CONNECTED) {
-//            pusher.connect(object : ConnectionEventListener {
-//                override fun onConnectionStateChange(change: ConnectionStateChange?) {
-//                    when (change?.currentState) {
-//                        ConnectionState.CONNECTED -> {
-//                            try {
-//                                sharedPreferencesManager.putString(
-//                                    Constants.SharedPreferences.PREF_SOCKET_ID,
-//                                    pusher.connection.socketId
-//                                )
-//                                Timber.d("Conectó al socket ${pusher.connection.socketId}")
-//
-//                                subscribeToPrivateGeneralChannel()
-//                                subscribeToCallChannelUserAvailableForCall(channel)
-//                            } catch (e: Exception) {
-//                                Timber.e(e)
-//                            }
-//                        }
-//                        ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
-//                        ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
-//                        ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
-//                        ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
-//                        else -> Timber.d("Socket Error")
-//                    }
-//                }
-//
-//                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-//                    Timber.e("Pusher onError $message, code: $code")
-//                }
-//            })
-//        }
-    }
-
-    override fun subscribeToCallChannel(
-        channel: String,
-        isActionAnswer: Boolean,
-        isVideoCall: Boolean
-    ) {
-//        if (pusher.getPresenceChannel(channel) == null) {
-//            Timber.d("subscribeToCallChannel: $channel")
-//            callChannel = pusher.subscribePresence(channel, object : PresenceChannelEventListener {
-//                override fun onEvent(event: PusherEvent) {
-//                    Timber.d("event: ${event.data}")
-//                }
-//
-//                override fun onAuthenticationFailure(message: String, e: java.lang.Exception) = Unit
-//
-//                override fun onSubscriptionSucceeded(channelName: String) {
-//                    listenCallEvents(callChannel!!)
-//                    Data.isOnCall = true
-//
-//                    Timber.d("Subscribe call channel to $channelName")
-//
-//                    if (isActionAnswer) {
-//                        joinToCall(channel)
-//                    }
-//                }
-//
-//                override fun onUsersInformationReceived(
-//                    channelName: String?,
-//                    users: MutableSet<User>?
-//                ) {
-//                    Timber.d("onUsersInformationReceived, $channelName, $users")
-//                }
-//
-//                override fun userSubscribed(channelName: String, user: User) {
-//                    Timber.d("userSubscribed, $channelName, $user")
-//                    if (!Data.isContactReadyForCall) {
-//                        Data.isContactReadyForCall = true
-//                        repository.readyForCall(
-//                            user.id.toInt(),
-//                            isVideoCall,
-//                            channelName.removePrefix("presence-")
-//                        )
-//                    }
-//                }
-//
-//                override fun userUnsubscribed(channelName: String?, user: User?) {
-//                    Timber.d("userUnsubscribed, $channelName, $user")
-//                }
-//            })
-//        }
-    }
-
-    override fun joinToCall(channel: String) {
-//        emitToCall(channel, CONTACT_JOIN_TO_CALL)
-    }
-
-    override fun emitToCall(channel: String, jsonObject: JSONObject) {
-//        callChannel?.trigger(CALL_NN, jsonObject.toString())
-//
-//        Timber.d("Emit to Call $jsonObject")
-    }
-
-    override fun emitToCall(channel: String, eventType: Int) {
-//        try {
-//            callChannel?.trigger(CALL_NN, eventType.toString())
-//
-//            Timber.d("Emit to Call $eventType")
-//        } catch (e: Exception) {
-//            Timber.e(e)
-//        }
-    }
-
-    override fun unSubscribeCallChannel(channelName: String) {
-//        pusher.unsubscribe(channelName)
-//        Timber.d("unsubscribe to channel: $channelName")
-    }
-    //endregion
-
     //endregion
 
     //region Metodos Privados
@@ -475,9 +363,9 @@ class SocketMessageServiceImp @Inject constructor(
         return attachment != null
 
     }
-    //region Region Escuchadores de Eventos
+    //endregion
 
-    //region Metodos Conexion
+    // region Region Escuchadores de Eventos
     private fun listenDisconnect() {
 
         pusher
@@ -499,9 +387,7 @@ class SocketMessageServiceImp @Inject constructor(
                     override fun onSubscriptionSucceeded(channelName: String?) = Unit
                 })
     }
-    //endregion
 
-    //region Metodos de Mensajes
     private fun listenNewMessage() {
 
         //TODO: modificar el metodo para validacion en DEV y PROD ya que en este momento no es posible
@@ -744,9 +630,7 @@ class SocketMessageServiceImp @Inject constructor(
                 }
             )
     }
-    //endregion
 
-    //region Metodos de Contactos
     private fun listenCancelOrRejectFriendshipRequest() {
 
         pusher
@@ -803,10 +687,273 @@ class SocketMessageServiceImp @Inject constructor(
 
                 })
     }
-    //endregion
 
     //endregion
 
-    //endregion
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    override fun connectToSocketReadyForCall(channel: String) {
+//        Timber.d("connectToSocket: ${pusher.connection.state}")
+//        if (pusher.connection.state != ConnectionState.CONNECTED) {
+//            pusher.connect(object : ConnectionEventListener {
+//                override fun onConnectionStateChange(change: ConnectionStateChange?) {
+//                    when (change?.currentState) {
+//                        ConnectionState.CONNECTED -> {
+//                            try {
+//                                sharedPreferencesManager.putString(
+//                                    Constants.SharedPreferences.PREF_SOCKET_ID,
+//                                    pusher.connection.socketId
+//                                )
+//                                Timber.d("Conectó al socket ${pusher.connection.socketId}")
+//
+//                                subscribeToPrivateGeneralChannel()
+//                                subscribeToCallChannelUserAvailableForCall(channel)
+//                            } catch (e: Exception) {
+//                                Timber.e(e)
+//                            }
+//                        }
+//                        ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
+//                        ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
+//                        ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
+//                        ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
+//                        else -> Timber.d("Socket Error")
+//                    }
+//                }
+//
+//                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+//                    Timber.e("Pusher onError $message, code: $code")
+//                }
+//            })
+//        }
+    }
+
+    override fun subscribeToCallChannel(
+        contactId: Int,
+        channel: String,
+        isActionAnswer: Boolean,
+        isVideoCall: Boolean
+    ) {
+        Timber.d("subscribeToCallChannel: $channel")
+        if (pusher.getPresenceChannel(channel) == null) {
+            pusher.subscribePresence(
+                channel,
+                object : PresenceChannelEventListener {
+                    override fun onEvent(event: PusherEvent) {
+                        Timber.d("event: ${event.data}")
+                    }
+
+                    override fun onAuthenticationFailure(
+                        message: String,
+                        e: java.lang.Exception
+                    ) {
+                        Timber.e(e, message)
+                    }
+
+                    override fun onSubscriptionSucceeded(channelName: String) {
+                        if (context is NapoleonApplication) {
+                            val app = context
+                            if (app.isAppVisible()) {
+                                listenCallEvents(channelName)
+                                Timber.d("onSubscriptionSucceeded: $channelName")
+                                Data.isOnCall = true
+                                RxBus.publish(
+                                    RxEvent.ItsSubscribedToCallChannel(
+                                        channelName,
+                                        contactId,
+                                        isVideoCall
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    override fun onUsersInformationReceived(
+                        channelName: String?,
+                        users: MutableSet<User>?
+                    ) {
+                        Timber.d("onUsersInformationReceived, $channelName, $users")
+                    }
+
+                    override fun userSubscribed(channelName: String?, user: User?) {
+                        Timber.d("userSubscribed, $channelName, $user")
+                    }
+
+                    override fun userUnsubscribed(channelName: String?, user: User?) {
+                        Timber.d("userUnsubscribed, $channelName, $user")
+                    }
+                })
+        }
+    }
+
+    override fun joinToCall(channel: String) {
+//        emitToCall(channel, CONTACT_JOIN_TO_CALL)
+    }
+
+    override fun emitToCall(channel: String, jsonObject: JSONObject) {
+//        callChannel?.trigger(CALL_NN, jsonObject.toString())
+//
+//        Timber.d("Emit to Call $jsonObject")
+    }
+
+    override fun emitToCall(channel: String, eventType: Int) {
+//        try {
+//            callChannel?.trigger(CALL_NN, eventType.toString())
+//
+//            Timber.d("Emit to Call $eventType")
+//        } catch (e: Exception) {
+//            Timber.e(e)
+//        }
+    }
+
+    override fun unSubscribeCallChannel(channelName: String) {
+        try {
+
+            pusher.unsubscribe(channelName)
+            Timber.d("unsubscribe to channel: $channelName")
+
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
+        }
+    }
+
+    private fun listenCallEvents(channelName: String) {
+
+        try {
+
+
+            if (pusher.getPresenceChannel(channelName) == null) {
+
+                pusher
+                    .getPresenceChannel(channelName)
+                    .bind(CALL_NN, object : PresenceChannelEventListener {
+
+                        override fun onEvent(event: PusherEvent) {
+
+                            try {
+                                val eventType = event.data.toIntOrNull()
+
+                                if (eventType != null) {
+                                    Timber.d("LLegó $CALL_NN $eventType")
+
+                                    when (eventType) {
+                                        CONTACT_JOIN_TO_CALL -> RxBus.publish(
+                                            RxEvent.ContactHasJoinToCall(
+                                                event.channelName
+                                            )
+                                        )
+                                        HANGUP_CALL -> {
+                                            Data.isShowingCallActivity = false
+                                            RxBus.publish(RxEvent.ContactHasHangup(event.channelName))
+                                        }
+                                        CONTACT_WANT_CHANGE_TO_VIDEO -> RxBus.publish(
+                                            RxEvent.ContactWantChangeToVideoCall(
+                                                event.channelName
+                                            )
+                                        )
+                                        CONTACT_ACCEPT_CHANGE_TO_VIDEO -> RxBus.publish(
+                                            RxEvent.ContactAcceptChangeToVideoCall(
+                                                event.channelName
+                                            )
+                                        )
+                                        CONTACT_TURN_OFF_CAMERA -> RxBus.publish(
+                                            RxEvent.ContactTurnOffCamera(
+                                                event.channelName
+                                            )
+                                        )
+                                        CONTACT_TURN_ON_CAMERA -> RxBus.publish(
+                                            RxEvent.ContactTurnOnCamera(
+                                                event.channelName
+                                            )
+                                        )
+                                        CONTACT_CANCEL_CHANGE_TO_VIDEO -> RxBus.publish(
+                                            RxEvent.ContactCancelChangeToVideoCall(
+                                                event.channelName
+                                            )
+                                        )
+                                        CONTACT_CANT_CHANGE_TO_VIDEO -> RxBus.publish(
+                                            RxEvent.ContactCantChangeToVideoCall(
+                                                event.channelName
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    val jsonData = JSONObject(event.data)
+
+                                    Timber.d("LLegó $CALL_NN $jsonData")
+
+                                    if (jsonData.has(TYPE)) {
+
+                                        when (jsonData.getString(TYPE)) {
+                                            ICE_CANDIDATE -> RxBus.publish(
+                                                RxEvent.IceCandidateReceived(
+                                                    event.channelName,
+                                                    jsonData.toIceCandidate()
+                                                )
+                                            )
+                                            OFFER -> {
+                                                RxBus.publish(
+                                                    RxEvent.OfferReceived(
+                                                        event.channelName,
+                                                        jsonData.toSessionDescription(
+                                                            SessionDescription.Type.OFFER
+                                                        )
+                                                    )
+                                                )
+                                            }
+                                            ANSWER -> RxBus.publish(
+                                                RxEvent.AnswerReceived(
+                                                    event.channelName,
+                                                    jsonData.toSessionDescription(
+                                                        SessionDescription.Type.ANSWER
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Timber.e(e)
+                            }
+
+                        }
+
+                        override fun onAuthenticationFailure(
+                            message: String?,
+                            e: java.lang.Exception?
+                        ) {
+                            Timber.d("onAuthenticationFailure, $message")
+                        }
+
+                        override fun onSubscriptionSucceeded(channelName: String?) {
+                            Timber.d("onSubscriptionSucceeded, $channelName")
+                        }
+
+                        override fun onUsersInformationReceived(
+                            channelName: String?,
+                            users: MutableSet<User>?
+                        ) {
+                            Timber.d("onUsersInformationReceived, $channelName, $users")
+                        }
+
+                        override fun userSubscribed(channelName: String?, user: User?) {
+                            Timber.d("userSubscribed, $channelName, $user")
+                        }
+
+                        override fun userUnsubscribed(channelName: String?, user: User?) {
+                            Timber.d("userUnsubscribed, $channelName, $user")
+                        }
+                    })
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
 
 }

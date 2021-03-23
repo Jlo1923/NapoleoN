@@ -5,7 +5,7 @@ import com.pusher.client.channel.PrivateChannel
 import org.webrtc.SurfaceViewRenderer
 
 interface IContractWebRTCClient {
-    fun setListener(webRTCClientListener: WebRTCClient.WebRTCClientListener)
+    fun setWebRTCClientListener(webRTCClientListener: WebRTCClient.WebRTCClientListener)
     fun getContactId(): Int
     fun setContactId(contactId: Int)
     fun isVideoCall(): Boolean
@@ -14,7 +14,8 @@ interface IContractWebRTCClient {
     fun setTypeCall(typeCall: Int)
     fun getChannel(): String
     fun setChannel(channel: String)
-    fun subscribeToCallChannel(isActionAnswer: Boolean)
+    fun setOffer(offer: String?)
+    fun subscribeToChannel(isActionAnswer: Boolean)
     fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)
@@ -49,4 +50,5 @@ interface IContractWebRTCClient {
     fun subscribeToChannelFromBackground(channel: String)
     fun getPusherChannel(channel: String): PrivateChannel?
     fun renderRemoteVideo()
+    fun createAnswer()
 }

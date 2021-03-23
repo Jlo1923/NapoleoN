@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.repository.conversation
+package com.naposystems.napoleonchat.ui.conversation
 
 import android.content.Context
 import android.net.Uri
@@ -17,18 +17,12 @@ import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLo
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.*
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
-import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessageUnprocessableEntityDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.*
-import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.AuthReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.HeadersReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.socket.SocketReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
-import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
 import com.squareup.moshi.Moshi
@@ -73,23 +67,6 @@ class ConversationRepository @Inject constructor(
     private val firebaseId: String by lazy {
         sharedPreferencesManager
             .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-    }
-
-    override fun unSubscribeToChannel(userToChat: ContactEntity, channelName: String) {
-        val headersReqDTO = HeadersReqDTO(
-            firebaseId
-        )
-
-        val authReqDTO = AuthReqDTO(
-            headersReqDTO
-        )
-
-        val socketReqDTO = SocketReqDTO(
-            channelName,
-            authReqDTO
-        )
-
-        socketMessageService.unSubscribeCallChannel(channelName)
     }
 
     override fun getLocalMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>> {
@@ -588,35 +565,6 @@ class ConversationRepository @Inject constructor(
         return errorList
     }
 
-    override suspend fun callContact(
-        contact: ContactEntity,
-        isVideoCall: Boolean
-    ): Response<CallContactResDTO> {
-        val callContactReqDTO = CallContactReqDTO(
-            contactToCall = contact.id,
-            isVideoCall = isVideoCall
-        )
-
-        return napoleonApi.callContact(callContactReqDTO)
-    }
-
-    override fun subscribeToCallChannel(channel: String, isVideoCall: Boolean) {
-
-        val headersReqDTO = HeadersReqDTO(
-            firebaseId
-        )
-
-        val authReqDTO = AuthReqDTO(
-            headersReqDTO
-        )
-
-        val socketReqDTO = SocketReqDTO(
-            channel,
-            authReqDTO
-        )
-
-        socketMessageService.subscribeToCallChannel(channel, false, isVideoCall)
-    }
 
     override suspend fun downloadAttachment(
         messageAndAttachmentRelation: MessageAttachmentRelation,
@@ -884,10 +832,6 @@ class ConversationRepository @Inject constructor(
         } catch (ex: Exception) {
             Timber.e(ex)
         }
-    }
-
-    override suspend fun reSendMessage(messageAndAttachmentRelation: MessageAttachmentRelation) {
-
     }
 
     override suspend fun compressVideo(

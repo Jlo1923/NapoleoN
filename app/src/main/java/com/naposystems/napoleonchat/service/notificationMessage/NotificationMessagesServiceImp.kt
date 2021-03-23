@@ -1,10 +1,12 @@
 package com.naposystems.napoleonchat.service.notificationMessage
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.core.app.NotificationCompat
@@ -19,6 +21,7 @@ import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
+import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -453,5 +456,107 @@ class NotificationMessagesServiceImp
             notify(notificationId, builder.build())
         }
     }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
+    override fun stopMediaPlayer() {
+        try {
+            Timber.d("*Test: Stop Ring")
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.reset()
+//                mediaPlayer.release()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    override fun startWebRTCCallService(
+        channel: String,
+        isVideoCall: Boolean,
+        contactId: Int,
+        isIncomingCall: Boolean,
+        offer: String,
+        context: Context
+    ) {
+        val service = Intent(context, WebRTCCallService::class.java).apply {
+            putExtras(Bundle().apply {
+                putString(Constants.CallKeys.CHANNEL, channel)
+                putBoolean(Constants.CallKeys.IS_VIDEO_CALL, isVideoCall)
+                putInt(Constants.CallKeys.CONTACT_ID, contactId)
+                putBoolean(Constants.CallKeys.IS_INCOMING_CALL, isIncomingCall)
+                putString(Constants.CallKeys.OFFER, offer)
+            })
+        }
+
+        context.startService(service)
+    }
+
+    override fun updateCallInProgress(channel: String, contactId: Int, isVideoCall: Boolean) {
+        val notificationBuilder = NotificationCompat.Builder(
+            context,
+            context.getString(R.string.alerts_channel_id)
+        )
+            .setGroup(context.getString(R.string.calls_group_key))
+            .setSmallIcon(R.drawable.ic_call_black_24)
+            .setUsesChronometer(true)
+            .setContentTitle(context.getString(R.string.text_call_in_progress))
+            .setOngoing(true)
+            .addAction(
+                getServiceNotificationAction(
+                    context,
+                    WebRTCCallService.ACTION_HANG_UP,
+                    R.drawable.ic_close_black_24,
+                    R.string.text_hang_up_call,
+                    channel, contactId, isVideoCall
+                )
+            )
+
+        val notification = notificationBuilder.build()
+
+        val notificationId = NOTIFICATION_RINGING
+
+        Timber.d("notificationId: $notificationId")
+
+        val mNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        mNotificationManager.notify(notificationId, notification)
+    }
+
+    private fun getServiceNotificationAction(
+        context: Context,
+        action: String,
+        iconResId: Int,
+        titleResId: Int,
+        channel: String,
+        contactId: Int,
+        isVideoCall: Boolean,
+        offer: String = ""
+    ): NotificationCompat.Action {
+
+        val intent = Intent(context, WebRTCCallService::class.java).apply {
+            this.action = action
+            putExtras(Bundle().apply {
+                putString(Constants.CallKeys.CHANNEL, channel)
+                putBoolean(Constants.CallKeys.IS_VIDEO_CALL, isVideoCall)
+                putInt(Constants.CallKeys.CONTACT_ID, contactId)
+                putString(Constants.CallKeys.OFFER, offer)
+            })
+        }
+
+        val pendingIntent =
+            PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return NotificationCompat.Action(
+            iconResId,
+            context.getString(titleResId),
+            pendingIntent
+        )
+    }
 }

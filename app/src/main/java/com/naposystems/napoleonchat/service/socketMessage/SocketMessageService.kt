@@ -22,7 +22,12 @@ interface SocketMessageService {
     //region llamadas
     fun connectToSocketReadyForCall(channel: String)
 
-    fun subscribeToCallChannel(channel: String, isActionAnswer: Boolean, isVideoCall: Boolean)
+    fun subscribeToCallChannel(
+        contactId: Int,
+        channel: String,
+        isActionAnswer: Boolean,
+        isVideoCall: Boolean
+    )
 
     fun joinToCall(channel: String)
 

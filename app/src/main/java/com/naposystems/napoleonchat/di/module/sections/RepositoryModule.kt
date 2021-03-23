@@ -15,7 +15,7 @@ import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
 import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepository
 import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
 import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
-import com.naposystems.napoleonchat.repository.conversation.ConversationRepository
+import com.naposystems.napoleonchat.ui.conversation.ConversationRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.repository.conversationMute.ConversationMuteRepository
 import com.naposystems.napoleonchat.repository.defaultPreferences.DefaultPreferencesRepository

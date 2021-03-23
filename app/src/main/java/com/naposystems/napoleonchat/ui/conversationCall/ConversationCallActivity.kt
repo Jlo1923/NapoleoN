@@ -20,7 +20,7 @@ import androidx.transition.TransitionManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityConversationCallBinding
 import com.naposystems.napoleonchat.service.HeadsetBroadcastReceiver
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
+import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Constants
@@ -40,10 +40,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         const val ANSWER_CALL = "answerCall"
         const val IS_VIDEO_CALL = "isVideoCall"
         const val CONTACT_ID = "contact"
-        const val TYPE_CALL = "isIncomingCall"
+        const val TYPE_CALL = "typeCall"
         const val CHANNEL = "channel"
         const val IS_FROM_CLOSED_APP = "isFromClosedApp"
         const val ITS_FROM_RETURN_CALL = "its_from_return_call"
+        const val OFFER = "offer"
     }
 
     @Inject
@@ -53,7 +54,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     lateinit var webRTCClient: IContractWebRTCClient
 
     @Inject
-    lateinit var notificationService: OLD_NotificationService
+    lateinit var notificationMessagesService: NotificationMessagesService
 
     private lateinit var binding: ActivityConversationCallBinding
 
@@ -67,24 +68,34 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     private var channel: String = ""
     private var isFromClosedApp: Boolean = false
     private var hangUpPressed: Boolean = false
+    private var answerCall: Boolean = false
+    private var offer: String = ""
 
     private val audioManagerCompat by lazy {
         AudioManagerCompat.create(this)
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         AndroidInjection.inject(this)
+
+        Data.isShowingCallActivity = true
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
-        webRTCClient.setListener(this)
+        getExtras()
+
+        webRTCClient.setWebRTCClientListener(this)
 
         audioManagerCompat.requestCallAudioFocus()
 
         Timber.d("onCreate")
 
         val intentFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
+
         val receiver = HeadsetBroadcastReceiver()
+
         registerReceiver(receiver, intentFilter)
 
         volumeControlStream = AudioManager.MODE_IN_COMMUNICATION
@@ -106,10 +117,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
 
         initSurfaceRenders()
 
-        getExtras()
-
-//        webRTCClient.subscribeToCallChannel(true)
-
         webRTCClient.setTextViewCallDuration(binding.textViewCalling)
 
         with(window) {
@@ -117,11 +124,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
             )
-
-            addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
-            addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
-            addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            if (isVideoCall) {
+                addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
 
         if (isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
@@ -135,11 +140,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                     Timber.d("*Test: Ring CallActivity")
                     webRTCClient.playRingtone()
                 }
-                /*webRTCClient.playRingtone()
-                Timber.d("*Test: Ring CallActivity")*/
             } else {
-                notificationService.startWebRTCCallService(
-                    channel, isVideoCall, contactId, false, this
+                notificationMessagesService.startWebRTCCallService(
+                    channel, isVideoCall, contactId, false, offer, this
                 )
                 webRTCClient.playCallingTone()
             }
@@ -148,79 +151,18 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 webRTCClient.renderRemoteVideo()
                 showRemoteVideo()
                 binding.surfaceRender.isVisible = !webRTCClient.isVideoMuted()
-                binding.cameraOff.containerCameraOff.isVisible =
-                    webRTCClient.contactTurnOffCamera()
+                binding.cameraOff.containerCameraOff.isVisible = webRTCClient.contactTurnOffCamera()
             }
-
             binding.imageButtonMicOff.setChecked(!webRTCClient.getMicIsOn(), false)
             binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
             binding.imageButtonMuteVideo.setChecked(webRTCClient.isVideoMuted(), false)
             binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive(), false)
         }
 
-        binding.fabAnswer.setOnClickListener {
-            if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
-                notificationService.stopMediaPlayer()
-                webRTCClient.emitJoinToCall()
-                webRTCClient.stopRingAndVibrate()
-                binding.fabAnswer.visibility = View.GONE
-            }
-        }
+        setUIListeners()
 
-        binding.fabHangup.setOnClickListener {
-            hangUp()
-        }
+        setViewModelObservers()
 
-        binding.imageButtonSpeaker.setOnClickListener {
-            webRTCClient.setSpeakerOn(binding.imageButtonSpeaker.isChecked)
-        }
-
-        binding.imageButtonMicOff.setOnCheckedChangeListener { _, _ ->
-            webRTCClient.setMicOff()
-        }
-
-        binding.imageButtonChangeToVideo.setOnClickListener {
-            binding.imageButtonChangeToVideo.isEnabled = false
-            webRTCClient.changeToVideoCall()
-        }
-
-        binding.imageButtonMuteVideo.setOnCheckedChangeListener { _, isChecked ->
-            webRTCClient.muteVideo(isChecked)
-        }
-
-        binding.imageButtonSwitchCamera.setOnClickListener {
-            webRTCClient.switchCamera()
-        }
-
-        binding.imageButtonBluetooth.setOnCheckedChangeListener { _, isChecked ->
-            webRTCClient.handleBluetooth(isChecked)
-        }
-
-        viewModel.contact.observe(this, Observer { contact ->
-            if (contact != null) {
-                this.contact = contact
-                binding.contact = contact
-                binding.executePendingBindings()
-            }
-        })
-
-        viewModel.userDisplayFormat.observe(this, Observer { format ->
-            when (format) {
-                Constants.UserDisplayFormat.NAME_AND_NICKNAME.format -> {
-                    binding.textViewName.visibility = View.VISIBLE
-                    binding.textViewNickname.visibility = View.VISIBLE
-                }
-                Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
-                    binding.textViewName.visibility = View.GONE
-                    binding.textViewNickname.visibility = View.VISIBLE
-                }
-                else -> {
-                    // ONLY NAME
-                    binding.textViewName.visibility = View.VISIBLE
-                    binding.textViewNickname.visibility = View.GONE
-                }
-            }
-        })
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -259,51 +201,54 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
         webRTCClient.stopProximitySensor()
     }
 
-    override fun onStop() {
-        super.onStop()
-        //hangUp()
-    }
-
     override fun onNewIntent(intent: Intent) {
+
         super.onNewIntent(intent)
+
         Timber.d("onNewIntent ${intent.action}")
-        if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL && !webRTCClient.isActiveCall() && typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
+
+        if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL &&
+            !webRTCClient.isActiveCall() &&
+            typeCall == Constants.TypeCall.IS_INCOMING_CALL.type
+        ) {
+
             binding.fabAnswer.visibility = View.GONE
             webRTCClient.stopRingAndVibrate()
 
-            if (webRTCClient.getPusherChannel(channel) == null) {
+            if (webRTCClient.getPusherChannel(channel) != null) {
                 Timber.d("ACTION_ANSWER_CALL if")
-                //NotificationUtils.cancelWebRTCCallNotification(this)
-
-                webRTCClient.subscribeToCallChannel(true)
+                webRTCClient.createAnswer()
             } else {
                 Timber.d("ACTION_ANSWER_CALL else")
-                webRTCClient.subscribeToChannelFromBackground(channel)
+                //webRTCClient.subscribeToChannelFromBackground(channel)
             }
         }
     }
 
     private fun getExtras() {
         intent.extras?.let { bundle ->
+            channel = bundle.getString(CHANNEL, "")
+
+            if (bundle.containsKey(CONTACT_ID)) {
+                contactId = bundle.getInt(CONTACT_ID)
+                viewModel.getContact(contactId)
+                Data.currentCallContactId = contactId
+            }
+
+            webRTCClient.setContactId(contactId)
+            webRTCClient.setChannel(channel)
+
             Timber.d("getExtras: ${intent.action}, ${bundle.containsKey(ANSWER_CALL)}")
-            if (bundle.containsKey(TYPE_CALL)) {
-                if (bundle.getInt(TYPE_CALL) == Constants.TypeCall.IS_OUTGOING_CALL.type && !webRTCClient.isActiveCall()) {
-                    typeCall = bundle.getInt(TYPE_CALL)
-                    binding.typeCall = typeCall
-                    webRTCClient.setTypeCall(typeCall)
-                }
+            if (bundle.containsKey(TYPE_CALL) && !webRTCClient.isActiveCall()) {
+                typeCall = bundle.getInt(TYPE_CALL)
+                binding.typeCall = typeCall
+                webRTCClient.setTypeCall(typeCall)
             }
 
             if (bundle.containsKey(IS_VIDEO_CALL)) {
                 isVideoCall = bundle.getBoolean(IS_VIDEO_CALL, false)
                 binding.isVideoCall = isVideoCall
                 webRTCClient.setIsVideoCall(isVideoCall)
-            }
-
-            if (bundle.containsKey(CONTACT_ID)) {
-                contactId = bundle.getInt(CONTACT_ID)
-                viewModel.getContact(contactId)
-                Data.currentCallContactId = contactId
             }
 
             if (bundle.containsKey(IS_FROM_CLOSED_APP)) {
@@ -313,25 +258,98 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
             webRTCClient.setItsReturnCall(bundle.getBoolean(ITS_FROM_RETURN_CALL, false))
 
             //NotificationUtils.cancelWebRTCCallNotification(this)
-            channel = bundle.getString(CHANNEL, "")
 
-            webRTCClient.setContactId(contactId)
-            webRTCClient.setChannel(channel)
+            if (bundle.containsKey(OFFER)) {
+                offer = bundle.getString(OFFER, "")
+
+                webRTCClient.setOffer(offer)
+            }
 
             if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
+                Timber.d("ACTION_ANSWER_CALL: ${bundle.getBoolean(ANSWER_CALL, false)}")
                 val answerCall = bundle.getBoolean(ANSWER_CALL, false)
 
                 if (answerCall) {
                     Timber.d("webRTCClient.stopRingAndVibrate()")
                     webRTCClient.stopRingAndVibrate()
                     binding.fabAnswer.isVisible = false
+                    webRTCClient.createAnswer()
                 }
-
-                webRTCClient.subscribeToCallChannel(answerCall)
 
             }
 
         }
+    }
+
+    private fun setUIListeners() {
+
+        binding.fabAnswer.setOnClickListener {
+            if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
+                webRTCClient.createAnswer()
+                notificationMessagesService.stopMediaPlayer()
+                webRTCClient.stopRingAndVibrate()
+                binding.fabAnswer.visibility = View.GONE
+            }
+        }
+
+        binding.fabHangup.setOnClickListener {
+            hangUp()
+        }
+
+        binding.imageButtonSpeaker.setOnClickListener {
+            webRTCClient.setSpeakerOn(binding.imageButtonSpeaker.isChecked)
+        }
+
+        binding.imageButtonMicOff.setOnCheckedChangeListener { _, _ ->
+            webRTCClient.setMicOff()
+        }
+
+        binding.imageButtonChangeToVideo.setOnClickListener {
+            binding.imageButtonChangeToVideo.isEnabled = false
+            webRTCClient.changeToVideoCall()
+        }
+
+        binding.imageButtonMuteVideo.setOnCheckedChangeListener { _, isChecked ->
+            webRTCClient.muteVideo(isChecked)
+        }
+
+        binding.imageButtonSwitchCamera.setOnClickListener {
+            webRTCClient.switchCamera()
+        }
+
+        binding.imageButtonBluetooth.setOnCheckedChangeListener { _, isChecked ->
+            webRTCClient.handleBluetooth(isChecked)
+        }
+    }
+
+    private fun setViewModelObservers() {
+
+
+        viewModel.contact.observe(this, Observer { contact ->
+            if (contact != null) {
+                this.contact = contact
+                binding.contact = contact
+                binding.executePendingBindings()
+            }
+        })
+
+        viewModel.userDisplayFormat.observe(this, Observer { format ->
+            when (format) {
+                Constants.UserDisplayFormat.NAME_AND_NICKNAME.format -> {
+                    binding.textViewName.visibility = View.VISIBLE
+                    binding.textViewNickname.visibility = View.VISIBLE
+                }
+                Constants.UserDisplayFormat.ONLY_NICKNAME.format -> {
+                    binding.textViewName.visibility = View.GONE
+                    binding.textViewNickname.visibility = View.VISIBLE
+                }
+                else -> {
+                    // ONLY NAME
+                    binding.textViewName.visibility = View.VISIBLE
+                    binding.textViewNickname.visibility = View.GONE
+                }
+            }
+        })
     }
 
     private fun hangUp() {

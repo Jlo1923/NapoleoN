@@ -17,6 +17,7 @@ class RxEvent {
     class NoInternetConnection
     class AccountAttack
     class HideOptionMenuRecoveryAccount
+    data class ItsSubscribedToCallChannel(val channel: String, val contactId: Int, val isVideoCall: Boolean)
     data class IncomingCall(val channel: String, val contactId: Int, val isVideoCall: Boolean)
     data class ContactHasJoinToCall(val channel: String)
     data class IceCandidateReceived(val channel: String, val iceCandidate: IceCandidate)
