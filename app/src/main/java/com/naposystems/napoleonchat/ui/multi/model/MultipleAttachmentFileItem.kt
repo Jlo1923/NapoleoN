@@ -10,7 +10,8 @@ data class MultipleAttachmentFileItem(
     val id: Int,
     val attachmentType: String = "",
     var contentUri: Uri? = null,
-    val isSelected: Boolean
+    val isSelected: Boolean,
+    var selfDestruction: Int = 0
 ) : Parcelable {
 
     override fun equals(other: Any?): Boolean {

@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.previewmulti.views.items
 
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ItemViewAttachmentOptionBinding
@@ -56,6 +57,11 @@ class AttachmentOptionItemView(
 
     override fun changeToUnselected() {
         binding.layout.isSelected = false
+    }
+
+    fun changeDrawableIcon(iconSelfDestruction: Int) {
+        val drawable = binding.root.context.getDrawable(iconSelfDestruction)
+        binding.imageFolderThumbnail.setImageDrawable(drawable)
     }
 
 }

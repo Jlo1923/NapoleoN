@@ -51,4 +51,14 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         actions.value = MultipleAttachmentPreviewAction.ShowAttachmentOptionsWithoutAnim
     }
 
+    fun updateSelfDestructionForItemPosition(
+        selectedFileToSee: Int,
+        selfDestructTimeSelected: Int
+    ) {
+        val file = listFiles[selectedFileToSee]
+        listFiles.find { it.id == file.id }?.let {
+            it.selfDestruction = selfDestructTimeSelected
+        }
+    }
+
 }

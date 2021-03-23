@@ -75,4 +75,9 @@ class ViewAttachmentOptions @JvmOverloads constructor(
         this.listener = listener
     }
 
+    fun changeDrawableSelfDestructionOption(iconSelfDestruction: Int) {
+        val itemView = groupieAdapter.getItem(0) as AttachmentOptionItemView
+        itemView.changeDrawableIcon(iconSelfDestruction)
+    }
+
 }

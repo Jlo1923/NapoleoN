@@ -2,8 +2,6 @@ package com.naposystems.napoleonchat.ui.previewmulti
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
@@ -16,15 +14,17 @@ import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPre
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.MultipleAttachmentPreviewListener
 import com.naposystems.napoleonchat.ui.previewmulti.views.ViewMultipleAttachmentTabView
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.ViewAttachmentOptionsListener
-import com.naposystems.napoleonchat.ui.previewmulti.listeners.ViewPreviewVideoControllerListener
-import com.naposystems.napoleonchat.ui.previewmulti.listeners.events.ViewPreviewVideoEvent
+import com.naposystems.napoleonchat.ui.selfDestructTime.Location
+import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.utility.anims.animHideSlideDown
 import com.naposystems.napoleonchat.utility.anims.animHideSlideUp
 import com.naposystems.napoleonchat.utility.anims.animShowSlideDown
 import com.naposystems.napoleonchat.utility.anims.animShowSlideUp
+import com.naposystems.napoleonchat.utility.business.getDrawableSelfDestruction
 import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
+import java.util.ArrayList
 import javax.inject.Inject
 
 class MultipleAttachmentPreviewActivity
@@ -61,29 +61,34 @@ class MultipleAttachmentPreviewActivity
     }
 
     private fun extractFilesFromExtras() {
-        val extras = intent.extras
-        extras?.let { bundle ->
+        intent.extras?.let { bundle ->
             val files = bundle.getParcelableArrayList<MultipleAttachmentFileItem>("test")
             files?.let {
+                viewModel.defineListFiles(it)
                 adapter = MultipleAttachmentFragmentAdapter(this, it)
-                viewBinding.apply {
-
-                    viewPagerAttachments.offscreenPageLimit = 9
-                    viewPagerAttachments.adapter = adapter
-
-                    TabLayoutMediator(
-                        viewPreviewBottom.getTabLayout(),
-                        viewPagerAttachments
-                    ) { tab, position ->
-                        val view = ViewMultipleAttachmentTabView(viewBinding.root.context)
-                        view.bindFile(it[position])
-                        view.selected(position == 0)
-                        tab.customView = view
-                    }.attach()
-
-                }
-                configureTabsAndViewPager()
+                configureTabsAndViewPager(it)
+                addListenerToViewPager()
             }
+        }
+    }
+
+    private fun configureTabsAndViewPager(it: ArrayList<MultipleAttachmentFileItem>) {
+
+        viewBinding.apply {
+
+            viewPagerAttachments.offscreenPageLimit = 9
+            viewPagerAttachments.adapter = adapter
+
+            TabLayoutMediator(
+                viewPreviewBottom.getTabLayout(),
+                viewPagerAttachments
+            ) { tab, position ->
+                val view = ViewMultipleAttachmentTabView(viewBinding.root.context)
+                view.bindFile(it[position])
+                view.selected(position == 0)
+                tab.customView = view
+            }.attach()
+
         }
     }
 
@@ -99,7 +104,6 @@ class MultipleAttachmentPreviewActivity
             MultipleAttachmentPreviewAction.ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
             is MultipleAttachmentPreviewAction.ShowSelectFolderName -> TODO()
         }
-
     }
 
     private fun showAttachmentOptionsWithoutAnim() =
@@ -107,7 +111,7 @@ class MultipleAttachmentPreviewActivity
             showViews(imageClose, viewAttachmentOptions, viewPreviewBottom)
         }
 
-    private fun configureTabsAndViewPager() {
+    private fun addListenerToViewPager() {
 
         viewBinding.viewPreviewBottom.getTabLayout()
             .addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -146,8 +150,24 @@ class MultipleAttachmentPreviewActivity
     }
 
     override fun onChangeSelfDestruction() {
-        Toast.makeText(viewBinding.root.context, "onChangeSelfDestruction", Toast.LENGTH_SHORT)
-            .show()
+        val dialog = SelfDestructTimeDialogFragment.newInstance(
+            0,
+            Location.CONVERSATION
+        )
+        dialog.setListener(object :
+            SelfDestructTimeDialogFragment.SelfDestructTimeListener {
+            override fun onSelfDestructTimeChange(selfDestructTimeSelected: Int) {
+                handleSelectSelfDestruction(selfDestructTimeSelected)
+            }
+        })
+        dialog.show(supportFragmentManager, "SelfDestructTime")
+    }
+
+    private fun handleSelectSelfDestruction(selfDestructTimeSelected: Int) {
+        val selectedFileToSee = viewBinding.viewPagerAttachments.currentItem
+        viewModel.updateSelfDestructionForItemPosition(selectedFileToSee, selfDestructTimeSelected)
+        val iconSelfDestruction = getDrawableSelfDestruction(selfDestructTimeSelected)
+        viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction)
     }
 
     private fun hideAttachmentOptions() {
