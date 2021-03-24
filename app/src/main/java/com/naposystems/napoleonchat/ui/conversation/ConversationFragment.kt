@@ -128,6 +128,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
+
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }

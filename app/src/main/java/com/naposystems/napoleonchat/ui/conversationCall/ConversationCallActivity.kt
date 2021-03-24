@@ -85,12 +85,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         getExtras()
 
-
         webRTCClient.setWebRTCClientListener(this)
 
-        if (typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type) {
-            webRTCClient.subscribeToCallChannel(false)
-        }
+        if (typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type)
+            webRTCClient.subscribeToCallChannel()
 
         audioManagerCompat.requestCallAudioFocus()
 
@@ -133,7 +131,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
                 }
             } else {
                 notificationMessagesService.startWebRTCCallService(
-                    channel, isVideoCall, contactId, false, offer, this
+                    channel, isVideoCall, contactId, false, offer
                 )
                 webRTCClient.playCallingTone()
             }
@@ -171,7 +169,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
             Timber.d("startCallActivity, onBackPressed")
 
             if (webRTCClient.isVideoCall) {
-                webRTCClient.muteVideo(true, itsFromBackPressed = true)
+                webRTCClient.muteVideo(checked = true, itsFromBackPressed = true)
             }
 
             webRTCClient.setIsOnCallActivity(false)

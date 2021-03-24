@@ -511,7 +511,7 @@ object Constants {
         SOCKECT_CHANNEL_STATUS_NOT_CONNECTED(false)
     }
 
-    enum class SocketListeEvents(val channel: String) {
+    enum class SocketListenEvents(val event: String) {
         DISCONNECT("disconnect"),
         NEW_MESSAGE("App\\Events\\NewMessageEvent"),
         NOTIFY_MESSAGES_RECEIVED("App\\Events\\NotifyMessagesReceived"),

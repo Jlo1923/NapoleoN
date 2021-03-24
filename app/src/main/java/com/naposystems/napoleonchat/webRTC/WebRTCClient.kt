@@ -13,17 +13,8 @@ interface WebRTCClient {
     var channel: String
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
-
-    //    fun getContactId(): Int
-//    fun setContactId(contactId: Int)
-//    fun isVideoCall(): Boolean
-//    fun setIsVideoCall(isVideoCall: Boolean)
-//    fun getTypeCall(): Int
-//    fun setTypeCall(typeCall: Int)
-//    fun getChannel(): String
-//    fun setChannel(channel: String)
     fun setOffer(offer: String?)
-    fun subscribeToCallChannel(isActionAnswer: Boolean)
+    fun subscribeToCallChannel()
     fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)

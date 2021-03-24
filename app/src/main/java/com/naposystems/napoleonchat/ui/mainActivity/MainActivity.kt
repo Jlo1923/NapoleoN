@@ -197,8 +197,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         it.isVideoCall,
                         it.contactId,
                         true,
-                        it.incomingCallDataOffer,
-                        this
+                        it.incomingCallDataOffer
                     )
 
                     val intent =

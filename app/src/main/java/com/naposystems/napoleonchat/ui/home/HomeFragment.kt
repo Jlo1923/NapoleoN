@@ -72,21 +72,31 @@ class HomeFragment : BaseFragment() {
     lateinit var webRTCClient: WebRTCClient
 
     private val viewModel: HomeViewModel by viewModels { viewModelFactory }
+
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
+
     private val shareFriendShipViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
+
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
+
     private val timeFormatShareViewModel: TimeFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
+
     private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
         viewModelFactory
     }
+
     private lateinit var binding: HomeFragmentBinding
+
     lateinit var conversationAdapter: ConversationAdapter
+
     private lateinit var friendShipRequestReceivedAdapter: FriendShipRequestReceivedAdapter
+
     private var existConversation: Boolean = false
+
     private var existFriendShip: Boolean = false
 
     private val disposable: CompositeDisposable by lazy {
@@ -98,7 +108,9 @@ class HomeFragment : BaseFragment() {
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
 
     //    private lateinit var mFirebaseStorage: FirebaseStorage
+
     private var isShowingVersionDialog: Boolean = false
+
     private lateinit var popup: PopupMenu
 
     private var addContactsMenuItem: MenuItem? = null

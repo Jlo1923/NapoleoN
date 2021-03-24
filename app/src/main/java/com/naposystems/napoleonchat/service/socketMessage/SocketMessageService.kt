@@ -25,8 +25,8 @@ interface SocketMessageService {
     fun subscribeToCallChannel(
         contactId: Int,
         channel: String,
-        isActionAnswer: Boolean,
-        isVideoCall: Boolean
+        isVideoCall: Boolean,
+        offer: String = ""
     )
 
     fun joinToCall(channel: String)

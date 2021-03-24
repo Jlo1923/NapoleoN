@@ -91,9 +91,7 @@ class WebRTCClientImp @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long) {
-                // Intentionally empty
-            }
+            override fun onTick(millisUntilFinished: Long) = Unit
         }
 
     private var countDownIncomingCall: CountDownTimer =
@@ -603,7 +601,9 @@ class WebRTCClientImp @Inject constructor(
 
         isOnCallActivity = true
 
-        Timber.d("isOnCallActivity: $isOnCallActivity")
+        if (!isActiveCall) {
+            createPeerConnection()
+        }
 
     }
 
@@ -623,11 +623,10 @@ class WebRTCClientImp @Inject constructor(
         }
     }
 
-    override fun subscribeToCallChannel(isActionAnswer: Boolean) {
+    override fun subscribeToCallChannel() {
         socketMessageService.subscribeToCallChannel(
             contactId,
             channel,
-            isActionAnswer,
             isVideoCall
         )
     }

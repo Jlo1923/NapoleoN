@@ -130,7 +130,9 @@ class NotificationMessagesServiceImp
 
             Constants.NotificationType.INCOMING_CALL.type -> {
                 Timber.d("Incoming call, ${syncManager.getIsOnCallPref()}")
-                if (!syncManager.getIsOnCallPref() && !Data.isShowingCallActivity) {
+                //TODO: Revisar aqui el estado de la vista y de la llamada
+                if(!app.isAppVisible()){
+//                if (!syncManager.getIsOnCallPref() && !Data.isShowingCallActivity) {
                     socketMessageService.connectSocket()
                     Timber.d("Incoming call, 2")
                     var channel = ""
@@ -165,8 +167,7 @@ class NotificationMessagesServiceImp
                             isVideoCall,
                             contactId,
                             true,
-                            offer,
-                            context
+                            offer
                         )
                     }
                 }
@@ -490,8 +491,7 @@ class NotificationMessagesServiceImp
         isVideoCall: Boolean,
         contactId: Int,
         isIncomingCall: Boolean,
-        offer: String,
-        context: Context
+        offer: String
     ) {
         val service = Intent(context, WebRTCCallService::class.java).apply {
             putExtras(Bundle().apply {

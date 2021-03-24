@@ -159,37 +159,37 @@ class SocketMessageServiceImp @Inject constructor(
                     //Unbind General
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListeEvents.DISCONNECT.channel,
+                        .unbind(Constants.SocketListenEvents.DISCONNECT.event,
                             SubscriptionEventListener {}
                         )
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListeEvents.NEW_MESSAGE.channel,
+                        .unbind(Constants.SocketListenEvents.NEW_MESSAGE.event,
                             SubscriptionEventListener {}
                         )
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGES_RECEIVED.channel,
+                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
                             SubscriptionEventListener {}
                         )
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListeEvents.NOTIFY_MESSAGE_READED.channel,
+                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
                             SubscriptionEventListener {}
                         )
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListeEvents.SEND_MESSAGES_DESTROY.channel,
+                        .unbind(Constants.SocketListenEvents.SEND_MESSAGES_DESTROY.event,
                             SubscriptionEventListener {}
                         )
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListeEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.channel,
+                        .unbind(Constants.SocketListenEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.event,
                             SubscriptionEventListener {}
                         )
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListeEvents.BLOCK_OR_DELETE_FRIENDSHIP.channel,
+                        .unbind(Constants.SocketListenEvents.BLOCK_OR_DELETE_FRIENDSHIP.event,
                             SubscriptionEventListener {}
                         )
 
@@ -368,10 +368,8 @@ class SocketMessageServiceImp @Inject constructor(
     // region Region Escuchadores de Eventos
     private fun listenDisconnect() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName)
-            .bind(
-                Constants.SocketListeEvents.DISCONNECT.channel,
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.DISCONNECT.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         Timber.d("Socket disconnect ${event?.data}")
@@ -393,10 +391,8 @@ class SocketMessageServiceImp @Inject constructor(
         //TODO: modificar el metodo para validacion en DEV y PROD ya que en este momento no es posible
         // la validacion de ningun ambiente sin cifrar lo que dificultad la validacion de los metodos desde el servidor
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName)
-            .bind(
-                Constants.SocketListeEvents.NEW_MESSAGE.channel,
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.NEW_MESSAGE.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
 
@@ -478,10 +474,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenNotifyMessagesReceived() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName)
-            .bind(
-                Constants.SocketListeEvents.NOTIFY_MESSAGES_RECEIVED.channel,
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         Timber.d("NotifyMessagesReceived: ${event?.data}")
@@ -514,10 +508,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenNotifyMessagesRead() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName)
-            .bind(
-                Constants.SocketListeEvents.NOTIFY_MESSAGE_READED.channel,
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         Timber.d("NotifyMessageReaded: ${event?.data}")
@@ -552,10 +544,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenSendMessagesDestroy() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName)
-            .bind(
-                Constants.SocketListeEvents.SEND_MESSAGES_DESTROY.channel,
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.SEND_MESSAGES_DESTROY.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         Timber.d("SendMessagesDestroyEvent: ${event?.data}")
@@ -573,10 +563,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenValidateConversationEvent() {
 
-        pusher
-            .getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
-            .bind(
-                Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+        pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+            .bind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         try {
@@ -633,10 +621,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenCancelOrRejectFriendshipRequest() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName)
-            .bind(
-                Constants.SocketListeEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.channel,
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         RxBus.publish(RxEvent.CancelOrRejectFriendshipRequestEvent())
@@ -654,10 +640,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenBLockOrDeleteFriendship() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName)
-            .bind(
-                Constants.SocketListeEvents.BLOCK_OR_DELETE_FRIENDSHIP.channel,
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.BLOCK_OR_DELETE_FRIENDSHIP.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
                         Timber.d("-- BlockOrDeleteFrienshipEvent ${event.data}")
@@ -699,18 +683,15 @@ class SocketMessageServiceImp @Inject constructor(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
     private fun listenIncomingCall() {
-
-        pusher
-            .getPrivateChannel(privateGeneralChannelName).bind(
-                "App\\Events\\CallFriendEvent",
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.CALL_FRIEND.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
-                        if ((context as NapoleonApplication).isAppVisible()) {
+
+                        if (app.isAppVisible()) {
 
                             try {
-                                val moshi = Moshi.Builder().build()
 
                                 val adapter: JsonAdapter<IncomingCall> =
                                     moshi.adapter(IncomingCall::class.java)
@@ -729,9 +710,9 @@ class SocketMessageServiceImp @Inject constructor(
                                             channel
                                         )
                                     } else {
-                                        subscribeToCallChannelUserAvailableForCall(
-                                            channel,
+                                        subscribeToCallChannel(
                                             incomingCall.data.contactId,
+                                            channel,
                                             incomingCall.data.isVideoCall,
                                             incomingCall.data.offer
                                         )
@@ -754,9 +735,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenCallRejected() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName).bind(
-                "App\\Events\\RejectedCallEvent",
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.REJECTED_CALL.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
                         Data.isShowingCallActivity = false
@@ -776,9 +756,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private fun listenCancelCall() {
 
-        pusher
-            .getPrivateChannel(privateGeneralChannelName).bind(
-                "App\\Events\\CancelCallEvent",
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.CANCEL_CALL.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
                         try {
@@ -813,8 +792,8 @@ class SocketMessageServiceImp @Inject constructor(
     override fun subscribeToCallChannel(
         contactId: Int,
         channel: String,
-        isActionAnswer: Boolean,
-        isVideoCall: Boolean
+        isVideoCall: Boolean,
+        offer: String
     ) {
         Timber.d("subscribeToCallChannel: $channel")
         if (pusher.getPresenceChannel(channel) == null) {
@@ -834,30 +813,29 @@ class SocketMessageServiceImp @Inject constructor(
 
                     override fun onSubscriptionSucceeded(channelName: String) {
 
-                        if (context is NapoleonApplication) {
+                        if (app.isAppVisible()) {
 
-                            if (app.isAppVisible()) {
+                            listenCallEvents(channelName)
 
-                                listenCallEvents(channelName)
+                            Timber.d("onSubscriptionSucceeded: $channelName")
 
-                                Timber.d("onSubscriptionSucceeded: $channelName")
+                            Data.isOnCall = true
 
-                                Data.isOnCall = true
-
-
+                            if (pusher.getPresenceChannel(channel).users.size > 1) {
+                                RxBus.publish(
+                                    RxEvent.IncomingCall(
+                                        channel,
+                                        contactId,
+                                        isVideoCall,
+                                        offer
+                                    )
+                                )
+                            } else {
                                 socketEventListenerCall.itsSubscribedToCallChannel(
                                     contactId,
                                     channelName,
                                     isVideoCall
                                 )
-
-//                                RxBus.publish(
-//                                    RxEvent.ItsSubscribedToCallChannel(
-//                                        channelName,
-//                                        contactId,
-//                                        isVideoCall
-//                                    )
-//                                )
                             }
                         }
                     }
@@ -919,13 +897,10 @@ class SocketMessageServiceImp @Inject constructor(
     }
 
     private fun listenCallEvents(channelName: String) {
-
         try {
-
             if (pusher.getPresenceChannel(channelName) == null) {
 
-                pusher
-                    .getPresenceChannel(channelName)
+                pusher.getPresenceChannel(channelName)
                     .bind(CALL_NN, object : PresenceChannelEventListener {
 
                         override fun onEvent(event: PusherEvent) {
@@ -1037,66 +1012,6 @@ class SocketMessageServiceImp @Inject constructor(
             }
         } catch (e: Exception) {
             Timber.e(e)
-        }
-    }
-
-    fun subscribeToCallChannelUserAvailableForCall(
-        channel: String,
-        contactId: Int,
-        isVideoCall: Boolean,
-        offer: String
-    ) {
-        Timber.d("subscribeToCallChannel: $channel")
-        pusher.unsubscribe(channel)
-        if (pusher.getPresenceChannel(channel) == null) {
-            pusher.subscribePresence(channel, object : PresenceChannelEventListener {
-                override fun onEvent(event: PusherEvent) {
-                    Timber.d("event: ${event.data}")
-                }
-
-                override fun onAuthenticationFailure(
-                    message: String,
-                    e: java.lang.Exception
-                ) = Unit
-
-                override fun onSubscriptionSucceeded(channelName: String) {
-                    pusher.getPresenceChannel(channel)?.let {
-                        Timber.d("onSubscriptionSucceeded: $channelName")
-                        if (it.users.size >= 2) {
-                            if (context is NapoleonApplication) {
-                                val app = context
-                                if (app.isAppVisible()) {
-                                    listenCallEvents(channel)
-                                    Data.isOnCall = true
-                                    RxBus.publish(
-                                        RxEvent.IncomingCall(
-                                            channel,
-                                            contactId,
-                                            isVideoCall,
-                                            offer
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                override fun onUsersInformationReceived(
-                    channelName: String?,
-                    users: MutableSet<User>?
-                ) {
-                    Timber.d("onUsersInformationReceived, $channelName, $users")
-                }
-
-                override fun userSubscribed(channelName: String?, user: User?) {
-                    Timber.d("userSubscribed, $channelName, $user")
-                }
-
-                override fun userUnsubscribed(channelName: String?, user: User?) {
-                    Timber.d("userUnsubscribed, $channelName, $user")
-                }
-            })
         }
     }
 
