@@ -82,7 +82,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
+import com.naposystems.napoleonchat.webRTC.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -118,7 +118,7 @@ class ConversationFragment : BaseFragment(),
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
     @Inject
-    lateinit var webRTCClient: IContractWebRTCClient
+    lateinit var webRTCClient: WebRTCClient
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -377,7 +377,7 @@ class ConversationFragment : BaseFragment(),
             Timber.d("startCallActivity returnCall ConversationFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.getContactId())
+                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.contactId)
                     putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
                     putBoolean(
                         ConversationCallActivity.IS_VIDEO_CALL,

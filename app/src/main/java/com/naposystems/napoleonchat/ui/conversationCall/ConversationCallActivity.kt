@@ -28,13 +28,14 @@ import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
 import com.naposystems.napoleonchat.webRTC.WebRTCClient
+import com.naposystems.napoleonchat.webRTC.WebRTCClientImp
+import com.naposystems.napoleonchat.webRTC.WebRTCClientListener
 import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
 
-class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientListener {
+class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     companion object {
         const val ANSWER_CALL = "answerCall"
@@ -51,7 +52,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
     lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var webRTCClient: IContractWebRTCClient
+    lateinit var webRTCClient: WebRTCClient
 
     @Inject
     lateinit var notificationMessagesService: NotificationMessagesService
@@ -230,7 +231,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClient.WebRTCClientL
                 Data.currentCallContactId = contactId
             }
 
-            webRTCClient.setContactId(contactId)
+            webRTCClient.contactId = contactId
             webRTCClient.setChannel(channel)
 
             Timber.d("getExtras: ${intent.action}, ${bundle.containsKey(ANSWER_CALL)}")

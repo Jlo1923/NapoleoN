@@ -130,48 +130,55 @@ class NotificationMessagesServiceImp
 
             Constants.NotificationType.INCOMING_CALL.type -> {
                 Timber.d("Incoming call, ${syncManager.getIsOnCallPref()}")
-//                if (!syncManager.getIsOnCallPref()) {
-//                    socketService.connectSocket(Constants.LocationConnectSocket.FROM_APP.location)
-//                    Timber.d("Incoming call 2")
-//                    var channel = ""
-//                    var contactId = 0
-//                    var isVideoCall = false
-//
-//                    if (data.containsKey(Constants.CallKeys.CHANNEL)) {
-//                        channel = "presence-${data[Constants.CallKeys.CHANNEL]}"
-//                    }
-//
-//                    if (data.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
-//                        isVideoCall = data[Constants.CallKeys.IS_VIDEO_CALL] == "true"
-//                        Timber.d("Call: ${data[Constants.CallKeys.IS_VIDEO_CALL] == "true"}")
-//                    }
-//
-//                    if (data.containsKey(Constants.CallKeys.CONTACT_ID)) {
-//                        contactId = data[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
-//                    }
-//
-//                    if (channel != "presence-" && contactId != 0) {
-//                        startWebRTCCallService(channel, isVideoCall, contactId, true, context)
-//                    }
-//                }
+                if (!syncManager.getIsOnCallPref() && !Data.isShowingCallActivity) {
+                    socketMessageService.connectSocket()
+                    Timber.d("Incoming call, 2")
+                    var channel = ""
+                    var contactId = 0
+                    var isVideoCall = false
+                    var offer = ""
+
+                    if (dataFromNotification.containsKey(Constants.CallKeys.CHANNEL)) {
+                        channel = "presence-${dataFromNotification[Constants.CallKeys.CHANNEL]}"
+                    }
+
+                    if (dataFromNotification.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
+                        isVideoCall =
+                            dataFromNotification[Constants.CallKeys.IS_VIDEO_CALL] == "true"
+                        Timber.d("Call: ${dataFromNotification[Constants.CallKeys.IS_VIDEO_CALL] == "true"}")
+                    }
+
+                    if (dataFromNotification.containsKey(Constants.CallKeys.CONTACT_ID)) {
+                        contactId =
+                            dataFromNotification[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
+                    }
+
+                    if (dataFromNotification.containsKey(Constants.CallKeys.OFFER)) {
+                        offer = dataFromNotification[Constants.CallKeys.OFFER].toString()
+                    }
+
+                    socketMessageService.subscribeToCallChannelFromBackground(channel)
+
+                    if (channel != "presence-" && contactId != 0 && offer.isNotEmpty()) {
+                        startWebRTCCallService(
+                            channel,
+                            isVideoCall,
+                            contactId,
+                            true,
+                            offer,
+                            context
+                        )
+                    }
+                }
             }
+
+
             Constants.NotificationType.CANCEL_CALL.type -> {
                 Timber.d("CANCEL_CALL")
-//                Data.isOnCall = false
-//                val notificationManager =
-//                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//                notificationManager.cancelAll()
-            }
-            Constants.NotificationType.USER_AVAILABLE_FOR_CALL.type -> {
-                Timber.d("USER_AVAILABLE_FOR_CALL")
-//                if (!app.isAppVisible()) {
-//                    var channel = ""
-//
-//                    if (data.containsKey(Constants.CallKeys.CHANNEL)) {
-//                        channel = "presence-${data[Constants.CallKeys.CHANNEL]}"
-//                    }
-//                    socketService.connectToSocketReadyForCall(channel)
-//                }
+                Data.isOnCall = false
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.cancelAll()
             }
         }
     }

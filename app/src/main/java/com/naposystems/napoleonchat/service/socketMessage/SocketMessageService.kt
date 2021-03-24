@@ -7,6 +7,8 @@ import org.json.JSONObject
 
 interface SocketMessageService {
 
+    fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call)
+
     //region Conexion
     fun getPusherChannel(channel: String): PresenceChannel?
 
@@ -36,7 +38,10 @@ interface SocketMessageService {
     fun emitToCall(channel: String, eventType: Int)
 
     fun unSubscribeCallChannel(channelName: String)
+
     //endregion
     fun getStatusSocket(): ConnectionState
     fun getStatusGlobalChannel(): Boolean
+    fun subscribeToCallChannelFromBackground(channel: String)
+
 }

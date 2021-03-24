@@ -20,7 +20,6 @@ class CallModule {
     }
 
     @Provides
-    @Singleton
     fun providePeerConnectionFactory(context: Context, eglBase: EglBase): PeerConnectionFactory {
         //Initialize PeerConnectionFactory globals.
         val initializationOptions = PeerConnectionFactory.InitializationOptions.builder(context)
@@ -44,7 +43,6 @@ class CallModule {
     }
 
     @Provides
-    @Singleton
     fun providePeerConnectionIceServer(): ArrayList<PeerConnection.IceServer> {
         return arrayListOf(
             PeerConnection.IceServer.builder(BuildConfig.STUN_SERVER)
@@ -68,5 +66,26 @@ class CallModule {
             )
         }
     }
+
+    @Provides
+    fun provideRTCConfiguration(peerIceServer: ArrayList<PeerConnection.IceServer>): PeerConnection.RTCConfiguration {
+
+        val rtcConfiguration = PeerConnection.RTCConfiguration(peerIceServer)
+
+        rtcConfiguration.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED
+
+        rtcConfiguration.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
+
+        rtcConfiguration.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE
+
+        rtcConfiguration.continualGatheringPolicy =
+            PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
+
+        rtcConfiguration.keyType = PeerConnection.KeyType.ECDSA
+
+        return rtcConfiguration
+
+    }
+
 
 }

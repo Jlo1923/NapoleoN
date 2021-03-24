@@ -55,6 +55,8 @@ class SocketMessageServiceImp @Inject constructor(
 
     private lateinit var privateGeneralChannelName: String
 
+    private lateinit var socketEventListenerCall: SocketEventsListener.Call
+
     companion object {
         const val CALL_NN = "client-callNN"
         const val CONTACT_JOIN_TO_CALL = 1
@@ -77,6 +79,10 @@ class SocketMessageServiceImp @Inject constructor(
 //        privateGeneralChannelName =
 //            Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
 
+    }
+
+    override fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call) {
+        this.socketEventListenerCall = socketEventsListenerCall
     }
 
     //region Conexion
@@ -764,6 +770,7 @@ class SocketMessageServiceImp @Inject constructor(
                         Data.isShowingCallActivity = false
                         Timber.d("RejectedCallEvent: ${event.data}")
                         RxBus.publish(RxEvent.ContactRejectCall(event.channelName))
+                        socketEventListenerCall.Co
                     }
 
                     override fun onAuthenticationFailure(
@@ -880,13 +887,20 @@ class SocketMessageServiceImp @Inject constructor(
 
                                 Data.isOnCall = true
 
-                                RxBus.publish(
-                                    RxEvent.ItsSubscribedToCallChannel(
-                                        channelName,
-                                        contactId,
-                                        isVideoCall
-                                    )
+
+                                socketEventListenerCall.itsSubscribedToCallChannel(
+                                    contactId,
+                                    channelName,
+                                    isVideoCall
                                 )
+
+//                                RxBus.publish(
+//                                    RxEvent.ItsSubscribedToCallChannel(
+//                                        channelName,
+//                                        contactId,
+//                                        isVideoCall
+//                                    )
+//                                )
                             }
                         }
                     }
@@ -1091,9 +1105,7 @@ class SocketMessageServiceImp @Inject constructor(
                 override fun onAuthenticationFailure(
                     message: String,
                     e: java.lang.Exception
-                ) {
-
-                }
+                ) = Unit
 
                 override fun onSubscriptionSucceeded(channelName: String) {
                     pusher.getPresenceChannel(channel)?.let {
@@ -1135,4 +1147,44 @@ class SocketMessageServiceImp @Inject constructor(
             })
         }
     }
+
+    override fun subscribeToCallChannelFromBackground(channel: String) {
+        Timber.d("subscribeToCallChannelFromBackground: $channel")
+        pusher.unsubscribe(channel)
+        if (pusher.getPresenceChannel(channel) == null) {
+            pusher.subscribePresence(channel, object : PresenceChannelEventListener {
+                override fun onEvent(event: PusherEvent) {
+                    Timber.d("event: ${event.data}")
+                }
+
+                override fun onAuthenticationFailure(
+                    message: String,
+                    e: java.lang.Exception
+                ) = Unit
+
+                override fun onSubscriptionSucceeded(channelName: String) {
+                    pusher.getPresenceChannel(channel).let {
+                        Timber.d("onSubscriptionSucceeded: $channelName")
+                        listenCallEvents(channel)
+                    }
+                }
+
+                override fun onUsersInformationReceived(
+                    channelName: String?,
+                    users: MutableSet<User>?
+                ) {
+                    Timber.d("onUsersInformationReceived, $channelName, $users")
+                }
+
+                override fun userSubscribed(channelName: String?, user: User?) {
+                    Timber.d("userSubscribed, $channelName, $user")
+                }
+
+                override fun userUnsubscribed(channelName: String?, user: User?) {
+                    Timber.d("userUnsubscribed, $channelName, $user")
+                }
+            })
+        }
+    }
+
 }
