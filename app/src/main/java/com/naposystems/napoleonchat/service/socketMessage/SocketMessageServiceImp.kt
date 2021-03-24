@@ -73,14 +73,6 @@ class SocketMessageServiceImp @Inject constructor(
         const val ANSWER = "answer"
     }
 
-
-    init {
-//
-//        privateGeneralChannelName =
-//            Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
-
-    }
-
     override fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call) {
         this.socketEventListenerCall = socketEventsListenerCall
     }
@@ -769,8 +761,8 @@ class SocketMessageServiceImp @Inject constructor(
                     override fun onEvent(event: PusherEvent) {
                         Data.isShowingCallActivity = false
                         Timber.d("RejectedCallEvent: ${event.data}")
-                        RxBus.publish(RxEvent.ContactRejectCall(event.channelName))
-                        socketEventListenerCall.Co
+//                        RxBus.publish(RxEvent.ContactRejectCall(event.channelName))
+                        socketEventListenerCall.contactRejectCall(event.channelName)
                     }
 
                     override fun onAuthenticationFailure(
@@ -797,7 +789,8 @@ class SocketMessageServiceImp @Inject constructor(
                                 val jsonData = jsonObject.getJSONObject("data")
                                 if (jsonData.has("channel_private")) {
                                     val privateChannel = jsonData.getString("channel_private")
-                                    RxBus.publish(RxEvent.ContactCancelCall(privateChannel))
+//                                    RxBus.publish(RxEvent.ContactCancelCall(privateChannel))
+                                    socketEventListenerCall.contactCancelCall(privateChannel)
                                 }
                             }
                             val intent = Intent(context, WebRTCCallService::class.java)
@@ -815,42 +808,6 @@ class SocketMessageServiceImp @Inject constructor(
 
                     override fun onSubscriptionSucceeded(channelName: String?) = Unit
                 })
-    }
-
-
-    override fun connectToSocketReadyForCall(channel: String) {
-//        Timber.d("connectToSocket: ${pusher.connection.state}")
-//        if (pusher.connection.state != ConnectionState.CONNECTED) {
-//            pusher.connect(object : ConnectionEventListener {
-//                override fun onConnectionStateChange(change: ConnectionStateChange?) {
-//                    when (change?.currentState) {
-//                        ConnectionState.CONNECTED -> {
-//                            try {
-//                                sharedPreferencesManager.putString(
-//                                    Constants.SharedPreferences.PREF_SOCKET_ID,
-//                                    pusher.connection.socketId
-//                                )
-//                                Timber.d("Conectó al socket ${pusher.connection.socketId}")
-//
-//                                subscribeToPrivateGeneralChannel()
-//                                subscribeToCallChannelUserAvailableForCall(channel)
-//                            } catch (e: Exception) {
-//                                Timber.e(e)
-//                            }
-//                        }
-//                        ConnectionState.CONNECTING -> Timber.d("Socket: ConnectionState.CONNECTING")
-//                        ConnectionState.DISCONNECTED -> Timber.d("Socket: ConnectionState.DISCONNECTED")
-//                        ConnectionState.DISCONNECTING -> Timber.d("Socket: ConnectionState.DISCONNECTING")
-//                        ConnectionState.RECONNECTING -> Timber.d("Socket: ConnectionState.RECONNECTING")
-//                        else -> Timber.d("Socket Error")
-//                    }
-//                }
-//
-//                override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-//                    Timber.e("Pusher onError $message, code: $code")
-//                }
-//            })
-//        }
     }
 
     override fun subscribeToCallChannel(
@@ -980,42 +937,40 @@ class SocketMessageServiceImp @Inject constructor(
                                     Timber.d("LLegó $CALL_NN $eventType")
 
                                     when (eventType) {
+
+                                        CONTACT_WANT_CHANGE_TO_VIDEO ->
+                                            socketEventListenerCall.contactWantChangeToVideoCall(
+                                                event.channelName
+                                            )
+
+                                        CONTACT_ACCEPT_CHANGE_TO_VIDEO ->
+                                            socketEventListenerCall.contactAcceptChangeToVideoCall(
+                                                event.channelName
+                                            )
+
+                                        CONTACT_CANCEL_CHANGE_TO_VIDEO ->
+                                            socketEventListenerCall.contactCancelChangeToVideoCall(
+                                                event.channelName
+                                            )
+
+                                        CONTACT_CANT_CHANGE_TO_VIDEO ->
+                                            socketEventListenerCall.contactCantChangeToVideoCall(
+                                                event.channelName
+                                            )
+
+                                        CONTACT_TURN_ON_CAMERA ->
+                                            socketEventListenerCall.contactTurnOnCamera(event.channelName)
+
+                                        CONTACT_TURN_OFF_CAMERA ->
+                                            socketEventListenerCall.contactTurnOffCamera(event.channelName)
+
                                         HANGUP_CALL -> {
                                             Data.isShowingCallActivity = false
-                                            RxBus.publish(RxEvent.ContactHasHangup(event.channelName))
+                                            socketEventListenerCall.contactHasHangup(event.channelName)
                                         }
-                                        CONTACT_WANT_CHANGE_TO_VIDEO -> RxBus.publish(
-                                            RxEvent.ContactWantChangeToVideoCall(
-                                                event.channelName
-                                            )
-                                        )
-                                        CONTACT_ACCEPT_CHANGE_TO_VIDEO -> RxBus.publish(
-                                            RxEvent.ContactAcceptChangeToVideoCall(
-                                                event.channelName
-                                            )
-                                        )
-                                        CONTACT_TURN_OFF_CAMERA -> RxBus.publish(
-                                            RxEvent.ContactTurnOffCamera(
-                                                event.channelName
-                                            )
-                                        )
-                                        CONTACT_TURN_ON_CAMERA -> RxBus.publish(
-                                            RxEvent.ContactTurnOnCamera(
-                                                event.channelName
-                                            )
-                                        )
-                                        CONTACT_CANCEL_CHANGE_TO_VIDEO -> RxBus.publish(
-                                            RxEvent.ContactCancelChangeToVideoCall(
-                                                event.channelName
-                                            )
-                                        )
-                                        CONTACT_CANT_CHANGE_TO_VIDEO -> RxBus.publish(
-                                            RxEvent.ContactCantChangeToVideoCall(
-                                                event.channelName
-                                            )
-                                        )
                                     }
                                 } else {
+
                                     val jsonData = JSONObject(event.data)
 
                                     Timber.d("LLegó $CALL_NN $jsonData")
@@ -1023,30 +978,27 @@ class SocketMessageServiceImp @Inject constructor(
                                     if (jsonData.has(TYPE)) {
 
                                         when (jsonData.getString(TYPE)) {
-                                            ICE_CANDIDATE -> RxBus.publish(
-                                                RxEvent.IceCandidateReceived(
+                                            ICE_CANDIDATE ->
+                                                socketEventListenerCall.iceCandidateReceived(
                                                     event.channelName,
                                                     jsonData.toIceCandidate()
                                                 )
-                                            )
-                                            OFFER -> {
-                                                RxBus.publish(
-                                                    RxEvent.OfferReceived(
-                                                        event.channelName,
-                                                        jsonData.toSessionDescription(
-                                                            SessionDescription.Type.OFFER
-                                                        )
+
+                                            OFFER ->
+                                                socketEventListenerCall.offerReceived(
+                                                    event.channelName,
+                                                    jsonData.toSessionDescription(
+                                                        SessionDescription.Type.OFFER
                                                     )
                                                 )
-                                            }
-                                            ANSWER -> RxBus.publish(
-                                                RxEvent.AnswerReceived(
+
+                                            ANSWER ->
+                                                socketEventListenerCall.answerReceived(
                                                     event.channelName,
                                                     jsonData.toSessionDescription(
                                                         SessionDescription.Type.ANSWER
                                                     )
                                                 )
-                                            )
                                         }
                                     }
                                 }

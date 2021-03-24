@@ -31,13 +31,13 @@ class RxEvent {
 //    data class ContactRejectCall(val channel: String)
     class CallEnd
     data class EmojiSelected(val emoji: Emoji)
-//    data class HeadsetState(val state: Int)
+    data class HeadsetState(val state: Int)
     data class MessagesToEliminate(val id: List<MessageAttachmentRelation>)
     data class EnableButtonPlayAudio(val state: Boolean)
 //    data class ContactCancelCall(val channel: String)
     data class ContactBlockOrDelete(val contactId: Int)
     data class DeleteChannel(val contact: ContactEntity)
-//    data class HangupByNotification(val channel: String)
+    data class HangupByNotification(val channel: String)
 //    data class ContactCantChangeToVideoCall(val channel: String)
     data class RejectCallByNotification(val channel: String)
     class CreateNotification

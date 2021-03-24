@@ -161,14 +161,14 @@ class HomeFragment : BaseFragment() {
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
                     putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.contactId)
-                    putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
+                    putString(ConversationCallActivity.CHANNEL, webRTCClient.channel)
                     putBoolean(
                         ConversationCallActivity.IS_VIDEO_CALL,
-                        webRTCClient.isVideoCall()
+                        webRTCClient.isVideoCall
                     )
                     putInt(
                         ConversationCallActivity.TYPE_CALL,
-                        webRTCClient.getTypeCall()
+                        webRTCClient.typeCall
                     )
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
@@ -448,7 +448,7 @@ class HomeFragment : BaseFragment() {
         showCase?.setPaused(false)
         viewModel.getJsonNotification()
         showCase()
-        binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall()
+        binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall
 
         if (!isShowingVersionDialog && !BuildConfig.DEBUG) {
             Timber.d("*TestVersion: get remote")

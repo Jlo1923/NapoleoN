@@ -29,7 +29,6 @@ import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.webRTC.WebRTCClient
-import com.naposystems.napoleonchat.webRTC.WebRTCClientImp
 import com.naposystems.napoleonchat.webRTC.WebRTCClientListener
 import dagger.android.AndroidInjection
 import timber.log.Timber
@@ -93,7 +92,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
             webRTCClient.subscribeToCallChannel(false)
         }
 
-
         audioManagerCompat.requestCallAudioFocus()
 
         Timber.d("onCreate")
@@ -127,7 +125,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
             binding.viewSwitcher.showNext()
         }
 
-        if (!webRTCClient.isActiveCall()) {
+        if (!webRTCClient.isActiveCall) {
             if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
                 if (Build.VERSION.SDK_INT < 29 || !isFromClosedApp) {
                     Timber.d("*Test: Ring CallActivity")
@@ -159,7 +157,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type && !webRTCClient.isActiveCall()) {
+        return if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type && !webRTCClient.isActiveCall) {
             webRTCClient.handleKeyDown(keyCode)
         } else {
             super.onKeyDown(keyCode, event)
@@ -168,11 +166,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     override fun onBackPressed() {
 
-        if (webRTCClient.isActiveCall()) {
+        if (webRTCClient.isActiveCall) {
 
             Timber.d("startCallActivity, onBackPressed")
 
-            if (webRTCClient.isVideoCall()) {
+            if (webRTCClient.isVideoCall) {
                 webRTCClient.muteVideo(true, itsFromBackPressed = true)
             }
 
@@ -204,7 +202,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
         Timber.d("onNewIntent ${intent.action}")
 
         if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL &&
-            !webRTCClient.isActiveCall() &&
+            !webRTCClient.isActiveCall &&
             typeCall == Constants.TypeCall.IS_INCOMING_CALL.type
         ) {
 
@@ -232,13 +230,13 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
             }
 
             webRTCClient.contactId = contactId
-            webRTCClient.setChannel(channel)
+            webRTCClient.channel = channel
 
             Timber.d("getExtras: ${intent.action}, ${bundle.containsKey(ANSWER_CALL)}")
-            if (bundle.containsKey(TYPE_CALL) && !webRTCClient.isActiveCall()) {
+            if (bundle.containsKey(TYPE_CALL) && !webRTCClient.isActiveCall) {
                 typeCall = bundle.getInt(TYPE_CALL)
                 binding.typeCall = typeCall
-                webRTCClient.setTypeCall(typeCall)
+                webRTCClient.typeCall = typeCall
 
                 //TODO: Verificar si para la conexion del socket se necesita la llamada activa
             }
@@ -246,7 +244,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
             if (bundle.containsKey(IS_VIDEO_CALL)) {
                 isVideoCall = bundle.getBoolean(IS_VIDEO_CALL, false)
                 binding.isVideoCall = isVideoCall
-                webRTCClient.setIsVideoCall(isVideoCall)
+                webRTCClient.isVideoCall = isVideoCall
             }
 
             if (bundle.containsKey(IS_FROM_CLOSED_APP)) {
@@ -361,12 +359,12 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
             hangUpPressed = true
             viewModel.resetIsOnCallPref()
             when {
-                typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type && !webRTCClient.isActiveCall() -> {
+                typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type && !webRTCClient.isActiveCall -> {
                     viewModel.sendMissedCall(contactId, isVideoCall)
                     Timber.d("CancelCall 1")
                     viewModel.cancelCall(contactId, channel)
                 }
-                typeCall == Constants.TypeCall.IS_INCOMING_CALL.type && !webRTCClient.isActiveCall() -> {
+                typeCall == Constants.TypeCall.IS_INCOMING_CALL.type && !webRTCClient.isActiveCall -> {
                     Timber.d("CancelCall 2")
                     viewModel.cancelCall(contactId, channel)
                 }

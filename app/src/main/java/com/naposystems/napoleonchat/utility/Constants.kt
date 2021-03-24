@@ -332,6 +332,7 @@ object Constants {
 
     //region H
     enum class HeadsetState(val state: Int) {
+        UNKNOWN(-1),
         PLUGGED(1),
         UNPLUGGED(0)
     }

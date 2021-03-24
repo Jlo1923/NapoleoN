@@ -22,8 +22,6 @@ interface SocketMessageService {
     //endregion
 
     //region llamadas
-    fun connectToSocketReadyForCall(channel: String)
-
     fun subscribeToCallChannel(
         contactId: Int,
         channel: String,

@@ -48,7 +48,11 @@ class WebRTCClientImp @Inject constructor(
 ) : WebRTCClient, SocketEventsListener.Call, BluetoothStateManager.BluetoothStateListener {
 
     //region Atributos
+    override var isActiveCall: Boolean = false
     override var contactId: Int = 0
+    override var isVideoCall: Boolean = false
+    override var typeCall: Int = 0
+    override var channel: String = ""
     //endregion
 
 
@@ -129,15 +133,11 @@ class WebRTCClientImp @Inject constructor(
     private var peerConnection: PeerConnection? = null
     private var localVideoView: SurfaceViewRenderer? = null
     private var remoteVideoView: SurfaceViewRenderer? = null
-    private var channel: String = ""
     private var textViewTimer: TextView? = null
     private var webRTCClientListener: WebRTCClientListener? = null
     private var bluetoothStateManager: BluetoothStateManager? = null
 
-    private var isActiveCall: Boolean = false
     private var callTime: Long = 0
-    private var isVideoCall: Boolean = false
-    private var typeCall: Int = 0
     private var isMicOn: Boolean = true
     private var mediaPlayerHasStopped: Boolean = false
     private var renegotiateCall: Boolean = false
@@ -163,249 +163,61 @@ class WebRTCClientImp @Inject constructor(
         )
 
     init {
-//        subscribeToRXEvents()
-
+        subscribeToRXEvents()
         socketMessageService.setSocketCallListener(this)
-
     }
 
     private fun subscribeToRXEvents() {
-
         Timber.d("subscribeToRXEvents")
+        val disposableHeadsetState = RxBus.listen(RxEvent.HeadsetState::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                when (it.state) {
+                    Constants.HeadsetState.PLUGGED.state -> {
+                        Timber.d("Headset plugged")
+                        stopProximitySensor()
+                        isHeadsetConnected = true
+                        if (isVideoCall && !isBluetoothAvailable) {
+                            audioManager.isSpeakerphoneOn = false
+                        }
 
-//        val disposableItsSubscribedToCallChannel =
-//            RxBus.listen(RxEvent.ItsSubscribedToCallChannel::class.java)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {
-//                    Timber.d("ItsSubscribedToCallChannel, ${it.channel}, ${this.channel}")
-//                    if (it.channel == this.channel) {
-//                        stopMediaPlayer()
-//                        if (!isActiveCall) {
-//                            createPeerConnection()
-//                        }
-//                        createOffer()
-//                    }
-//                }
-//////////////////////
-//        val disposableIceCandidateReceived = RxBus.listen(RxEvent.IceCandidateReceived::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                if (it.channel == this.channel) {
-//                    peerConnection?.addIceCandidate(it.iceCandidate)
-//                }
-//            }
+                        if (!isVideoCall && audioManager.isSpeakerphoneOn) {
+                            audioManager.isSpeakerphoneOn = false
+                            webRTCClientListener?.changeCheckedSpeaker(false)
+                        }
+                    }
+                    Constants.HeadsetState.UNPLUGGED.state -> {
+                        isHeadsetConnected = false
+                        Timber.d("Headset unplugged")
 
-//        val disposableOfferReceived = RxBus.listen(RxEvent.OfferReceived::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                if (it.channel == this.channel) {
-//                    Timber.d("OfferReceived")
-//                    peerConnection?.setRemoteDescription(
-//                        CustomSdpObserver("Remote offer"),
-//                        it.sessionDescription
-//                    )
-//                    createAnswer()
-//                }
-//            }
-//
-//        val disposableAnswerReceived = RxBus.listen(RxEvent.AnswerReceived::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe { it ->
-//                if (it.channel == this.channel) {
-//                    Timber.d("AnswerReceived")
-//                    peerConnection?.setRemoteDescription(
-//                        CustomSdpObserver("Answer"),
-//                        it.sessionDescription
-//                    )
-//
-//                    if (getTypeCall() == Constants.TypeCall.IS_OUTGOING_CALL.type && iceCandidatesCaller.isNotEmpty()) {
-//                        iceCandidatesCaller.forEach { iceCandidate ->
-//                            Timber.d("Emit IceCandidate")
-//                            socketMessageService.emitToCall(
-//                                channel = channel,
-//                                jsonObject = iceCandidate.toJSONObject()
-//                            )
-//                        }
-//                        iceCandidatesCaller.clear()
-//                    }
-//                }
-//            }
-//
-//        val disposableContactHasHangup = RxBus.listen(RxEvent.ContactHasHangup::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                Timber.d("ContactHasHangup")
-//                if (it.channel == this.channel && getTypeCall() == Constants.TypeCall.IS_OUTGOING_CALL.type) {
-//                    Data.isContactReadyForCall = false
-//                    stopMediaPlayer()
-//                    unSubscribeCallChannel()
-//                    peerConnection?.dispose()
-//                }
-//            }
-//
-//        val disposableContactWantChangeToVideoCall =
-//            RxBus.listen(RxEvent.ContactWantChangeToVideoCall::class.java)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {
-//                    Timber.d("isOnCallActivity: $isOnCallActivity")
-//                    if (it.channel == this.channel && isOnCallActivity) {
-//                        Timber.d("ContactWantChangeToVideoCall")
-//                        webRTCClientListener?.contactWantChangeToVideoCall()
-//                    } else {
-//                        socketMessageService.emitToCall(
-//                            this.channel,
-//                            SocketMessageServiceImp.CONTACT_CANT_CHANGE_TO_VIDEO
-//                        )
-//                    }
-//                }
-//
-//        val disposableContactAcceptChangeToVideoCall =
-//            RxBus.listen(RxEvent.ContactAcceptChangeToVideoCall::class.java)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {
-//                    if (it.channel == this.channel && !isVideoCall) {
-//                        Timber.d("ContactAcceptChangeToVideoCall")
-//                        webRTCClientListener?.changeTextViewTitle(R.string.text_encrypted_video_call)
-//                        isVideoCall = true
-//                        renegotiateCall = true
-//                        startCaptureVideo()
-//                    }
-//                }
-//
-//        val disposableContactCancelChangeToVideoCall =
-//            RxBus.listen(RxEvent.ContactCancelChangeToVideoCall::class.java)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {
-//                    if (it.channel == this.channel) {
-//                        webRTCClientListener?.contactCancelledVideoCall()
-//                    }
-//                }
-//
-//        val disposableContactTurnOffCamera = RxBus.listen(RxEvent.ContactTurnOffCamera::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                if (it.channel == this.channel) {
-//                    contactTurnOffCamera = true
-//                    webRTCClientListener?.contactTurnOffCamera()
-//                }
-//            }
-//
-//        val disposableContactTurnOnCamera = RxBus.listen(RxEvent.ContactTurnOnCamera::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                if (it.channel == this.channel) {
-//                    contactTurnOffCamera = false
-//                    webRTCClientListener?.contactTurnOnCamera()
-//                }
-//            }
-//
-//        val disposableContactRejectCall = RxBus.listen(RxEvent.ContactRejectCall::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                Data.isContactReadyForCall = false
-//                webRTCClientListener?.changeTextViewTitle(R.string.text_contact_is_busy)
-//                countDownEndCallBusy.start()
-//                playSound(
-//                    Uri.parse("android.resource://" + context.packageName + "/" + R.raw.busy_tone),
-//                    true
-//                ) {
-//                    // Intentionally empty
-//                }
-//            }
-//
-//        val disposableHeadsetState = RxBus.listen(RxEvent.HeadsetState::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                when (it.state) {
-//                    Constants.HeadsetState.PLUGGED.state -> {
-//                        Timber.d("Headset plugged")
-//                        stopProximitySensor()
-//                        isHeadsetConnected = true
-//                        if (isVideoCall && !isBluetoothAvailable) {
-//                            audioManager.isSpeakerphoneOn = false
-//                        }
-//
-//                        if (!isVideoCall && audioManager.isSpeakerphoneOn) {
-//                            audioManager.isSpeakerphoneOn = false
-//                            webRTCClientListener?.changeCheckedSpeaker(false)
-//                        }
-//                    }
-//                    Constants.HeadsetState.UNPLUGGED.state -> {
-//                        isHeadsetConnected = false
-//                        Timber.d("Headset unplugged")
-//
-//                        if (isVideoCall && !isBluetoothAvailable) {
-//                            audioManager.isSpeakerphoneOn = true
-//                        }
-//
-//                        if (isVideoCall && isBluetoothAvailable) {
-//                            audioManager.isSpeakerphoneOn = false
-//                            startProximitySensor()
-//                        }
-//
-//                        if (!isVideoCall && !isSpeakerOn()) {
-//                            startProximitySensor()
-//                        }
-//                    }
-//                }
-//            }
-//
-//
-//        val disposableContactCancelCall = RxBus.listen(RxEvent.ContactCancelCall::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                Timber.d("ContactCancelCall")
-//                if (it.channel == this.channel) {
-//                    try {
-//                        Data.isContactReadyForCall = false
-//                        audioManager.isSpeakerphoneOn = false
-//                        audioManager.mode = AudioManager.MODE_NORMAL
-//                        stopMediaPlayer()
-//                        unSubscribeCallChannel()
-//                        localAudioTrack?.setEnabled(false)
-//                    } catch (e: Exception) {
-//                        Timber.e("Error manejado, $e")
-//                    } finally {
-//                        dispose()
-//                    }
-//                }
-//            }
-//
-//        val disposableHangupByNotification = RxBus.listen(RxEvent.HangupByNotification::class.java)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//                Timber.d("HangupByNotification")
-//                if (it.channel == this.channel) {
-//                    Data.isContactReadyForCall = false
-//                    webRTCClientListener?.hangupByNotification()
-//                }
-//            }
-//
-//        val disposableContactCantChangeToVideoCall =
-//            RxBus.listen(RxEvent.ContactCantChangeToVideoCall::class.java)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {
-//                    Timber.d("ContactCantChangeToVideoCall")
-//                    if (it.channel == this.channel) {
-//                        webRTCClientListener?.unlockVideoButton()
-//                    }
-//                }
-//
-//        disposable.add(disposableIceCandidateReceived)
-//        disposable.add(disposableOfferReceived)
-//        disposable.add(disposableAnswerReceived)
-//        disposable.add(disposableContactHasHangup)
-//        disposable.add(disposableContactWantChangeToVideoCall)
-//        disposable.add(disposableContactAcceptChangeToVideoCall)
-//        disposable.add(disposableContactCancelChangeToVideoCall)
-//        disposable.add(disposableContactTurnOffCamera)
-//        disposable.add(disposableContactTurnOnCamera)
-//        disposable.add(disposableContactRejectCall)
-//        disposable.add(disposableHeadsetState)
-//        disposable.add(disposableContactCancelCall)
-//        disposable.add(disposableHangupByNotification)
-//        disposable.add(disposableContactCantChangeToVideoCall)
-//        disposable.add(disposableItsSubscribedToCallChannel)
+                        if (isVideoCall && !isBluetoothAvailable) {
+                            audioManager.isSpeakerphoneOn = true
+                        }
+
+                        if (isVideoCall && isBluetoothAvailable) {
+                            audioManager.isSpeakerphoneOn = false
+                            startProximitySensor()
+                        }
+
+                        if (!isVideoCall && !isSpeakerOn()) {
+                            startProximitySensor()
+                        }
+                    }
+                }
+            }
+
+        val disposableHangupByNotification = RxBus.listen(RxEvent.HangupByNotification::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("HangupByNotification")
+                if (it.channel == this.channel) {
+                    Data.isContactReadyForCall = false
+                    webRTCClientListener?.hangupByNotification()
+                }
+            }
+
+        disposable.add(disposableHeadsetState)
+        disposable.add(disposableHangupByNotification)
     }
 
     /**
@@ -504,7 +316,7 @@ class WebRTCClientImp @Inject constructor(
                             isVideoCall
                         )
 
-                        if (!isVideoCall && getTypeCall() == Constants.TypeCall.IS_INCOMING_CALL.type) {
+                        if (!isVideoCall && typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
                             audioManager.isSpeakerphoneOn = false
                             webRTCClientListener?.changeCheckedSpeaker(false)
                         }
@@ -626,7 +438,7 @@ class WebRTCClientImp @Inject constructor(
                     jsonObject = iceCandidate.toJSONObject()
                 )
             } else {
-                if (getTypeCall() == Constants.TypeCall.IS_INCOMING_CALL.type) {
+                if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
                     socketMessageService.emitToCall(
                         channel = channel,
                         jsonObject = iceCandidate.toJSONObject()
@@ -795,32 +607,6 @@ class WebRTCClientImp @Inject constructor(
 
     }
 
-//    override fun getContactId() = this.contactId
-//
-//    override fun setContactId(contactId: Int) {
-//        this.contactId = contactId
-//    }
-
-    override fun isVideoCall() = this.isVideoCall
-
-    override fun setIsVideoCall(isVideoCall: Boolean) {
-        this.isVideoCall = isVideoCall
-    }
-
-    override fun getTypeCall(): Int = this.typeCall
-
-    override fun setTypeCall(typeCall: Int) {
-
-        this.typeCall = typeCall
-
-    }
-
-    override fun getChannel() = this.channel
-
-    override fun setChannel(channel: String) {
-        this.channel = channel
-    }
-
     override fun setOffer(offer: String?) {
         Timber.d("setOffer")
         offer?.let {
@@ -838,14 +624,12 @@ class WebRTCClientImp @Inject constructor(
     }
 
     override fun subscribeToCallChannel(isActionAnswer: Boolean) {
-
         socketMessageService.subscribeToCallChannel(
             contactId,
             channel,
             isActionAnswer,
             isVideoCall
         )
-
     }
 
     override fun setTextViewCallDuration(textView: TextView) {
@@ -1078,8 +862,6 @@ class WebRTCClientImp @Inject constructor(
         }
     }
 
-    override fun isActiveCall() = isActiveCall
-
     override fun dispose() {
         Timber.d("Dispose")
 
@@ -1224,7 +1006,7 @@ class WebRTCClientImp @Inject constructor(
                 sessionDescription
             )
 
-            if (getTypeCall() == Constants.TypeCall.IS_OUTGOING_CALL.type && iceCandidatesCaller.isNotEmpty()) {
+            if (typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type && iceCandidatesCaller.isNotEmpty()) {
                 iceCandidatesCaller.forEach { iceCandidate ->
                     Timber.d("Emit IceCandidate")
                     socketMessageService.emitToCall(
@@ -1309,14 +1091,14 @@ class WebRTCClientImp @Inject constructor(
     //endregion
 
     //region Handler Camera
-    override fun ContactTurnOnCamera(channelName: String) {
+    override fun contactTurnOnCamera(channelName: String) {
         if (channelName == this.channel) {
             contactTurnOffCamera = false
             webRTCClientListener?.contactTurnOnCamera()
         }
     }
 
-    override fun ContactTurnOffCamera(channelName: String) {
+    override fun contactTurnOffCamera(channelName: String) {
         if (channelName == this.channel) {
             contactTurnOffCamera = true
             webRTCClientListener?.contactTurnOffCamera()
@@ -1325,63 +1107,15 @@ class WebRTCClientImp @Inject constructor(
     //endregion
 
     //region Hangup
-    override fun ContactHasHangup(channelName: String) {
+    override fun contactHasHangup(channelName: String) {
         Timber.d("ContactHasHangup")
         if (channelName == this.channel &&
-            getTypeCall() == Constants.TypeCall.IS_OUTGOING_CALL.type
+            typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type
         ) {
             Data.isContactReadyForCall = false
             stopMediaPlayer()
             unSubscribeCallChannel()
             peerConnection?.dispose()
-        }
-    }
-
-    override fun HangupByNotification(channelName: String) {
-        Timber.d("HangupByNotification")
-        if (channelName == this.channel) {
-            Data.isContactReadyForCall = false
-            webRTCClientListener?.hangupByNotification()
-        }
-    }
-    //endregion
-
-    //region Accesories
-    override fun HeadsetState(state: Int) {
-
-        when (state) {
-
-            Constants.HeadsetState.PLUGGED.state -> {
-                Timber.d("Headset plugged")
-                stopProximitySensor()
-                isHeadsetConnected = true
-                if (isVideoCall && !isBluetoothAvailable) {
-                    audioManager.isSpeakerphoneOn = false
-                }
-
-                if (!isVideoCall && audioManager.isSpeakerphoneOn) {
-                    audioManager.isSpeakerphoneOn = false
-                    webRTCClientListener?.changeCheckedSpeaker(false)
-                }
-            }
-
-            Constants.HeadsetState.UNPLUGGED.state -> {
-                isHeadsetConnected = false
-                Timber.d("Headset unplugged")
-
-                if (isVideoCall && !isBluetoothAvailable) {
-                    audioManager.isSpeakerphoneOn = true
-                }
-
-                if (isVideoCall && isBluetoothAvailable) {
-                    audioManager.isSpeakerphoneOn = false
-                    startProximitySensor()
-                }
-
-                if (!isVideoCall && !isSpeakerOn()) {
-                    startProximitySensor()
-                }
-            }
         }
     }
     //endregion

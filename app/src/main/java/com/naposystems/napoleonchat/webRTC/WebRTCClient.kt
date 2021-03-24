@@ -6,18 +6,22 @@ import org.webrtc.SurfaceViewRenderer
 
 interface WebRTCClient {
 
+    var isActiveCall: Boolean
     var contactId: Int
+    var isVideoCall: Boolean
+    var typeCall: Int
+    var channel: String
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
 
     //    fun getContactId(): Int
 //    fun setContactId(contactId: Int)
-    fun isVideoCall(): Boolean
-    fun setIsVideoCall(isVideoCall: Boolean)
-    fun getTypeCall(): Int
-    fun setTypeCall(typeCall: Int)
-    fun getChannel(): String
-    fun setChannel(channel: String)
+//    fun isVideoCall(): Boolean
+//    fun setIsVideoCall(isVideoCall: Boolean)
+//    fun getTypeCall(): Int
+//    fun setTypeCall(typeCall: Int)
+//    fun getChannel(): String
+//    fun setChannel(channel: String)
     fun setOffer(offer: String?)
     fun subscribeToCallChannel(isActionAnswer: Boolean)
     fun setTextViewCallDuration(textView: TextView)
@@ -48,11 +52,11 @@ interface WebRTCClient {
     fun startProximitySensor()
     fun stopProximitySensor()
     fun handleKeyDown(keyCode: Int): Boolean
-    fun isActiveCall(): Boolean
     fun dispose()
     fun unSubscribeCallChannel()
     fun subscribeToChannelFromBackground(channel: String)
     fun getPusherChannel(channel: String): PrivateChannel?
     fun renderRemoteVideo()
     fun createAnswer()
+
 }

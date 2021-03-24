@@ -40,17 +40,12 @@ interface SocketEventsListener {
         //endregion
 
         //region Handler Camera
-        fun ContactTurnOnCamera(channelName: String)
-        fun ContactTurnOffCamera(channelName: String)
+        fun contactTurnOnCamera(channelName: String)
+        fun contactTurnOffCamera(channelName: String)
         //endregion
 
         //region Hangup
-        fun ContactHasHangup(channelName: String)
-        fun HangupByNotification(channelName: String)
-        //endregion
-
-        //region Accesories
-        fun HeadsetState(state: Int)
+        fun contactHasHangup(channelName: String)
         //endregion
     }
 

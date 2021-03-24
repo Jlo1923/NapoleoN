@@ -378,14 +378,14 @@ class ConversationFragment : BaseFragment(),
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
                     putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.contactId)
-                    putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
+                    putString(ConversationCallActivity.CHANNEL, webRTCClient.channel)
                     putBoolean(
                         ConversationCallActivity.IS_VIDEO_CALL,
-                        webRTCClient.isVideoCall()
+                        webRTCClient.isVideoCall
                     )
                     putInt(
                         ConversationCallActivity.TYPE_CALL,
-                        webRTCClient.getTypeCall()
+                        webRTCClient.typeCall
                     )
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
@@ -1356,7 +1356,7 @@ class ConversationFragment : BaseFragment(),
         Timber.d("onResume")
         setConversationBackground()
 
-        with(webRTCClient.isActiveCall()) {
+        with(webRTCClient.isActiveCall) {
             binding.textViewReturnCall.isVisible = this
             binding.buttonCall.isEnabled = !this
             binding.buttonVideoCall.isEnabled = !this
