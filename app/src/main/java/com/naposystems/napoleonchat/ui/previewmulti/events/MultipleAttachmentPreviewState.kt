@@ -1,17 +1,13 @@
 package com.naposystems.napoleonchat.ui.previewmulti.events
 
-import com.xwray.groupie.Item
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 
 sealed class MultipleAttachmentPreviewState {
 
     object Loading : MultipleAttachmentPreviewState()
 
     class SuccessFilesAsPager(
-        val listElements: List<Item<*>>
-    ) : MultipleAttachmentPreviewState()
-
-    class SuccessFiles(
-        val listElements: List<Item<*>>
+        val listFiles: ArrayList<MultipleAttachmentFileItem>
     ) : MultipleAttachmentPreviewState()
 
     object Error : MultipleAttachmentPreviewState()

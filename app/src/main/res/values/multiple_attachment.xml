@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="multi_title_remove_file">Eliminar archivo</string>
+
+    <string name="multi_msg_cannot_share_more_ten">No se pueden compartir más de 10 archivos multimedia.</string>
+    <string name="multi_msg_remove_file">¿Está seguro de eliminar el archivo multimedia?</string>
+
+    <string name="multi_button_accept">Aceptar</string>
+    <string name="multi_button_cancel">Cancelar</string>
+    <string name="multi_button_delete_for_me">Eliminar para mí</string>
+    <string name="multi_button_delete_for_all">Eliminar para todos</string>
+
+
+</resources>

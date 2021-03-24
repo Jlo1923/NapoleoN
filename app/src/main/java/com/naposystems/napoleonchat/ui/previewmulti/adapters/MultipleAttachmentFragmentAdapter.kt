@@ -29,4 +29,10 @@ class MultipleAttachmentFragmentAdapter(
         }
     }
 
+    fun removeFragment(position: Int) {
+        items.removeAt(position)
+        notifyItemRangeChanged(position, items.size)
+        notifyDataSetChanged()
+    }
+
 }

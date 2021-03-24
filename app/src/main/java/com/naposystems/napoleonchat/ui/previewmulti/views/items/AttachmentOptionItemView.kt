@@ -24,33 +24,6 @@ class AttachmentOptionItemView(
 
     override fun getLayout(): Int = R.layout.item_view_attachment_option
 
-    override fun bind(viewBinding: ItemViewAttachmentOptionBinding, position: Int) {
-        binding = viewBinding
-        checkSelected()
-        configureOptionType()
-    }
-
-    private fun configureOptionType() {
-        when (item) {
-            AUTO_DESTRUCTION -> modeAutoDestruction()
-            CAN_RESEND -> TODO()
-            CAN_DOWNLOAD -> TODO()
-            DELETE -> TODO()
-        }
-    }
-
-    private fun modeAutoDestruction() {
-        binding.apply {
-            layout.isSelected = true
-            imageFolderThumbnail.setImageResource(R.drawable.ic_format_time)
-        }
-    }
-
-    private fun checkSelected() {
-        //isSelected = item.isSelected
-        selectionResolver()
-    }
-
     override fun changeToSelected() {
         binding.layout.isSelected = true
     }
@@ -59,9 +32,32 @@ class AttachmentOptionItemView(
         binding.layout.isSelected = false
     }
 
+    override fun bind(viewBinding: ItemViewAttachmentOptionBinding, position: Int) {
+        binding = viewBinding
+        selectionResolver()
+        configureOptionType()
+    }
+
     fun changeDrawableIcon(iconSelfDestruction: Int) {
         val drawable = binding.root.context.getDrawable(iconSelfDestruction)
         binding.imageFolderThumbnail.setImageDrawable(drawable)
+    }
+
+    private fun configureOptionType() = when (item) {
+        AUTO_DESTRUCTION -> modeAutoDestruction()
+        CAN_RESEND -> TODO()
+        CAN_DOWNLOAD -> TODO()
+        DELETE -> modeDelete()
+    }
+
+    private fun modeAutoDestruction() = binding.apply {
+        layout.isSelected = true
+        imageFolderThumbnail.setImageResource(R.drawable.ic_format_time)
+    }
+
+    private fun modeDelete() = binding.apply {
+        layout.isSelected = false
+        imageFolderThumbnail.setImageResource(R.drawable.ic_delete_black)
     }
 
 }

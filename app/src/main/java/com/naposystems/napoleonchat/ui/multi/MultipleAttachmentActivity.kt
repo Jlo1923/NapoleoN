@@ -6,7 +6,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentBinding
+import com.naposystems.napoleonchat.ui.contacts.showToast
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
@@ -56,6 +58,8 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         bindViewModel()
     }
 
+    override fun onBackPressed() = viewModel.handleBackAction()
+
     private fun bindViewModel() {
         viewModel.state.observe(this, { handleState(it) })
         viewModel.actions().observe(this, { handleActions(it) })
@@ -83,7 +87,7 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     private fun showMaxFilesAttached() {
         viewBinding.root.context.apply {
-            Toast.makeText(this, "Maximo", Toast.LENGTH_SHORT).show()
+            showToast(this, getString(R.string.multi_msg_cannot_share_more_ten))
         }
     }
 
@@ -105,21 +109,21 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        viewModel.handleBackAction()
+    private fun defineListenerItemsGroupie() {
+        defineListenerItemFolder()
+        defineListenerItemFile()
     }
 
-    private fun defineListenerItemsGroupie() {
-        groupieAdapter.setOnItemClickListener { item, _ ->
-            if (item is MultipleAttachmentFolderItemView) {
-                viewModel.loadFilesFromFolder(item.item.folderName)
-                groupieAdapterFiles.clear()
-            }
+    private fun defineListenerItemFolder() = groupieAdapter.setOnItemClickListener { item, _ ->
+        if (item is MultipleAttachmentFolderItemView) {
+            viewModel.loadFilesFromFolder(item.item.folderName)
+            groupieAdapterFiles.clear()
         }
-        groupieAdapterFiles.setOnItemClickListener { item, _ ->
-            if (item is MultipleAttachmentFileItemView) {
-                selectFileAsAttachment(item)
-            }
+    }
+
+    private fun defineListenerItemFile() = groupieAdapterFiles.setOnItemClickListener { item, _ ->
+        if (item is MultipleAttachmentFileItemView) {
+            selectFileAsAttachment(item)
         }
     }
 
@@ -141,16 +145,13 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         }
     }
 
-    private fun selectFileAsAttachment(item: MultipleAttachmentFileItemView) {
+    private fun selectFileAsAttachment(item: MultipleAttachmentFileItemView) =
         viewModel.tryAddToListAttachments(item)
-    }
 
-    private fun defineListeners() {
-        viewBinding.apply {
-            imageBack.setOnClickListener { viewModel.handleBackAction() }
-            viewPreviewBottom.setOnClickListenerButton {
-                viewModel.continueToPreview()
-            }
+    private fun defineListeners() = viewBinding.apply {
+        imageBack.setOnClickListener { viewModel.handleBackAction() }
+        viewPreviewBottom.setOnClickListenerButton {
+            viewModel.continueToPreview()
         }
     }
 
@@ -188,5 +189,4 @@ class MultipleAttachmentActivity : AppCompatActivity() {
     private fun handleError() {
         Toast.makeText(viewBinding.root.context, "handleError", Toast.LENGTH_SHORT).show()
     }
-
 }

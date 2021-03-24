@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.tabs.TabLayout
 import com.naposystems.napoleonchat.databinding.ViewAttachmentPreviewBottomTabLayoutBinding
+import com.naposystems.napoleonchat.utility.extensions.hide
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 
@@ -36,5 +37,8 @@ class ViewAttachmentsPreviewBottomTabs @JvmOverloads constructor(
     fun setOnClickListenerButton(function: () -> Unit) {
     }
 
+    fun hideTabLayout() {
+        viewBinding.tabLayoutFiles.hide()
+    }
 
 }

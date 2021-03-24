@@ -1,19 +1,18 @@
 package com.naposystems.napoleonchat.ui.previewmulti
 
 import androidx.lifecycle.*
-import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.previewmulti.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewAction
+import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewAction.SelectItemInTabLayout
+import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
 import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewState
+import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MultipleAttachmentPreviewViewModel @Inject constructor(
+    private val repository: IContractSelfDestructTime.Repository
 ) : ViewModel(),
     IContractMultipleAttachmentPreview.ViewModel,
     LifecycleObserver {
@@ -28,7 +27,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     private val actions: SingleLiveEvent<MultipleAttachmentPreviewAction> = SingleLiveEvent()
     fun actions(): LiveData<MultipleAttachmentPreviewAction> = actions
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun initUi() {
         _state.value = MultipleAttachmentPreviewState.Loading
     }
@@ -44,6 +43,20 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     fun defineListFiles(files: ArrayList<MultipleAttachmentFileItem>) {
         listFiles = files
+        defineDefaultSelfDestructionTime()
+        showFilesAsPager()
+    }
+
+    private fun defineDefaultSelfDestructionTime() {
+        val selfDestructionTime = repository.getSelfDestructTime()
+        listFiles.forEach {
+            it.selfDestruction = selfDestructionTime
+        }
+    }
+
+    private fun showFilesAsPager() {
+        _state.value = MultipleAttachmentPreviewState.SuccessFilesAsPager(ArrayList(listFiles))
+        validateMustShowTabs()
     }
 
     fun forceShowOptions() {
@@ -59,6 +72,44 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         listFiles.find { it.id == file.id }?.let {
             it.selfDestruction = selfDestructTimeSelected
         }
+    }
+
+    fun onDeleteElement(selectedIndexToDelete: Int) {
+        removeFileFromListAndShowListInPager(selectedIndexToDelete)
+        if (isTheLastFile()) {
+            exitPreview()
+        } else {
+            selectItemInTabLayoutByIndex(selectedIndexToDelete)
+        }
+    }
+
+    private fun exitPreview() {
+        actions.value = MultipleAttachmentPreviewAction.Exit
+    }
+
+    private fun isTheLastFile(): Boolean = listFiles.isEmpty()
+
+    private fun validateMustShowTabs() {
+        if (listFiles.size == 1) {
+            actions.value = MultipleAttachmentPreviewAction.HideFileTabs
+        }
+    }
+
+    private fun selectItemInTabLayoutByIndex(selectedIndexToDelete: Int) {
+        val indexToSelectInTaLayout =
+            if (selectedIndexToDelete == 0) 0 else selectedIndexToDelete - 1
+        actions.value = SelectItemInTabLayout(indexToSelectInTaLayout)
+    }
+
+    private fun removeFileFromListAndShowListInPager(selectedIndexToDelete: Int) {
+        val file = listFiles[selectedIndexToDelete]
+        listFiles.remove(file)
+        showFilesAsPager()
+    }
+
+    fun loadSelfDestructionTimeByIndex(position: Int) {
+        actions.value =
+            ShowSelfDestruction(listFiles[position].selfDestruction)
     }
 
 }
