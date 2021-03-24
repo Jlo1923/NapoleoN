@@ -29,6 +29,7 @@ import com.naposystems.napoleonchat.model.FriendShipRequest
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
@@ -57,14 +58,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = HomeFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     //TODO:Subscription
     /*@Inject
@@ -95,11 +96,6 @@ class HomeFragment : Fragment() {
         CompositeDisposable()
     }
     private lateinit var textViewBadge: TextView
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     private var showCase: ShowCaseManager? = null
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
@@ -252,8 +248,6 @@ class HomeFragment : Fragment() {
         observeFriendshipRequestWsError()
 
         observeFriendshipRequestAcceptedSuccessfully()
-
-        viewModel.subscribeToGeneralSocketChannel()
 
         timeFormatShareViewModel.getTimeFormat()
 

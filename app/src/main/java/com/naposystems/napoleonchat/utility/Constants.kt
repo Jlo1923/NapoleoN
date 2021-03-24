@@ -17,13 +17,6 @@ object Constants {
     const val MAX_IMAGE_VIDEO_FILE_SIZE = 20 * 1048576
     const val MAX_DOCUMENT_FILE_SIZE = 100 * 1048576
 
-    object CallKeys {
-        const val IS_INCOMING_CALL = "is_incoming_call"
-        const val CHANNEL = "channel_private"
-        const val CONTACT_ID = "contact_id"
-        const val IS_VIDEO_CALL = "is_videocall"
-    }
-
     object NapoleonApi {
         /*const val BASE_URL = "http://192.168.1.222/nn-backend-secret-chat/public/api/"
         const val SOCKET_BASE_URL = "http://192.168.1.222:6001"*/
@@ -77,14 +70,24 @@ object Constants {
         const val READY_CALL = "call/readyforcall"
     }
 
+    object CallKeys {
+        const val IS_INCOMING_CALL = "is_incoming_call"
+        const val CHANNEL = "channel_private"
+        const val CONTACT_ID = "contact_id"
+        const val IS_VIDEO_CALL = "is_videocall"
+    }
+
     object NotificationKeys {
         const val TYPE_NOTIFICATION = "type_notification"
         const val MESSAGE_ID = "message_id"
         const val BODY = "body"
         const val TITLE = "title"
         const val CONTACT = "contact"
-        const val ATTACK = "attacker_id"
+        const val ATTACKER_ID = "attacker_id"
         const val MESSAGE = "message"
+        const val BADGE = "badge"
+        const val SOUND = "sound"
+        const val SILENCE = "silence"
     }
 
     object RegularExpressions {
@@ -166,6 +169,11 @@ object Constants {
         CODE_VALIDATED(1),
         ACCOUNT_CREATED(2),
         ACCOUNT_RECOVERED(3)
+    }
+
+    enum class AddContactTitleType(val type: Int) {
+        TITLE_MY_CONTACTS(0),
+        TITLE_COINCIDENCES(1)
     }
 
     enum class AllowDownloadAttachments constructor(val option: Int) {
@@ -295,6 +303,7 @@ object Constants {
         NOT_EXISTING(1),
         EXISTING(2)
     }
+
     //endregion
 
     //region F
@@ -344,6 +353,11 @@ object Constants {
     enum class LocationAlertDialog(val location: Int) {
         CONVERSATION(1),
         CALL_ACTIVITY(2)
+    }
+
+    enum class LocationConnectSocket(val location: Boolean) {
+        FROM_APP(false),
+        FROM_NOTIFICATION(true)
     }
 
     enum class LocationEmptyState(val location: Int) {
@@ -481,6 +495,38 @@ object Constants {
         YEARLY("com.naposystems.napoleonchat.yearly")
     }
 
+    enum class SocketIdNotExist constructor(val socket: String) {
+        SOCKET_ID_NO_EXIST("NO_EXIST")
+    }
+
+    enum class SocketChannelName constructor(val channelName: String) {
+        PRIVATE_GLOBAL_CHANNEL_NAME("private-global"),
+        PRIVATE_GENERAL_CHANNEL_NAME("private-general.")
+    }
+
+    enum class SocketChannelStatus constructor(val status: Boolean) {
+        SOCKECT_CHANNEL_STATUS_CONNECTED(true),
+        SOCKECT_CHANNEL_STATUS_NOT_CONNECTED(false)
+    }
+
+    enum class SocketListeEvents(val channel: String) {
+        DISCONNECT("disconnect"),
+        NEW_MESSAGE("App\\Events\\NewMessageEvent"),
+        NOTIFY_MESSAGES_RECEIVED("App\\Events\\NotifyMessagesReceived"),
+        CANCEL_OR_REJECT_FRIENDSHIP_REQUEST("App\\Events\\CancelOrRejectFriendshipRequestEvent"),
+        NOTIFY_MESSAGE_READED("App\\Events\\NotifyMessageReaded"),
+        SEND_MESSAGES_DESTROY("App\\Events\\SendMessagesDestroyEvent"),
+        CALL_FRIEND("App\\Events\\CallFriendEvent"),
+        REJECTED_CALL("App\\Events\\RejectedCallEvent"),
+        CANCEL_CALL("App\\Events\\CancelCallEvent"),
+        BLOCK_OR_DELETE_FRIENDSHIP("App\\Events\\BlockOrDeleteFrienshipEvent"),
+        USER_AVAILABLE_FOR_CALL("App\\Events\\UserAvailableForCallEvent")
+    }
+
+    enum class SocketEmitTriggers(val trigger: String) {
+        CLIENT_CONVERSATION("client-conversationNN")
+    }
+
     enum class StateFlag(val state: Int) {
         ON(1),
         OFF(0)
@@ -571,6 +617,10 @@ object Constants {
     //endregion
 
     //region U
+    enum class UserNotExist constructor(val user: Int) {
+        USER_NO_EXIST(-1)
+    }
+
     enum class UserDisplayFormat constructor(val format: Int) {
         NAME_AND_NICKNAME(1),
         ONLY_NAME(2),

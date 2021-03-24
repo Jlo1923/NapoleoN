@@ -18,10 +18,11 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import timber.log.Timber
 import javax.inject.Inject
 
-class SplashFragment : Fragment() {
+class SplashFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -36,11 +37,6 @@ class SplashFragment : Fragment() {
     private var lockTypeApp: Int = 0
     private var timeUnlockApp: Long = 0L
     //endregion
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

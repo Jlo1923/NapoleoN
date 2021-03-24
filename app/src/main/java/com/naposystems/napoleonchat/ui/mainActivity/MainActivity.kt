@@ -11,8 +11,11 @@ import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.*
+import android.view.Display
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
@@ -36,9 +39,11 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
@@ -46,7 +51,6 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -64,6 +68,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
+
+    @Inject
+    lateinit var notificationService: OLD_NotificationService
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -145,6 +155,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
 
         viewModel.getAccountStatus()
+
         viewModel.accountStatus.observe(this, Observer {
             accountStatus = it
         })
@@ -182,8 +193,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
                     Timber.d("startCallActivity MainActivity")
-                    val notificationUtils = NotificationUtils(this.applicationContext)
-                    notificationUtils.startWebRTCCallService(
+//                    val notificationService = NotificationService()
+                    notificationService.startWebRTCCallService(
                         it.channel,
                         it.isVideoCall,
                         it.contactId,
@@ -225,8 +236,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (it.contact.stateNotification) {
                         Timber.d("*TestDelete: Contact ${it.contact.id}")
                         Timber.d("*TestDelete: Contact ${it.contact.getNickName()}")
-                        Utils.deleteUserChannel(
-                            this,
+                        handlerNotificationChannelService.deleteUserChannel(
                             it.contact.id,
                             it.contact.getNickName(),
                             it.contact.notificationId
@@ -392,7 +402,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-            if (args.containsKey(Constants.NotificationKeys.ATTACK)) {
+            if (args.containsKey(Constants.NotificationKeys.ATTACKER_ID)) {
                 val dialog = AccountAttackDialogFragment()
                 dialog.show(supportFragmentManager, "AttackDialog")
             }
@@ -641,11 +651,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPause() {
         super.onPause()
         viewModel.setLockTimeApp()
+        viewModel.disconnectSocket()
     }
 
     override fun onDestroy() {
         disposable.clear()
         viewModel.resetIsOnCallPref()
+        viewModel.disconnectSocket()
         super.onDestroy()
     }
 

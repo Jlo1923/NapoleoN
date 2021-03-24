@@ -15,7 +15,6 @@ interface IContractHome {
         fun getUserLiveData()
         fun getFriendshipQuantity()
         fun getFriendshipRequestHome()
-        fun subscribeToGeneralSocketChannel()
         fun getMessages()
         fun getDeletedMessages()
         fun insertSubscription()
@@ -35,7 +34,6 @@ interface IContractHome {
         suspend fun getUserLiveData(): LiveData<UserEntity>
         suspend fun getFriendshipQuantity(): Response<FriendshipRequestQuantityResDTO>
         suspend fun getFriendshipRequestHome(): Response<List<FriendshipRequestReceivedDTO>>
-        suspend fun subscribeToGeneralSocketChannel()
         suspend fun getRemoteMessages()
         suspend fun getDeletedMessages()
         suspend fun insertSubscription()

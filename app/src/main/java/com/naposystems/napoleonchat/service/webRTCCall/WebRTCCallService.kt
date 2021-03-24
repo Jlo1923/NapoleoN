@@ -11,13 +11,15 @@ import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServi
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
 import javax.inject.Inject
 
 
-class WebRTCCallService : Service() {
+class WebRTCCallService @Inject constructor(
+    private val notificationService: OLD_NotificationService
+) : Service() {
 
     companion object {
         const val ACTION_ANSWER_CALL = "ANSWER_CALL"
@@ -30,14 +32,14 @@ class WebRTCCallService : Service() {
     lateinit var repository: WebRTCCallServiceRepository
 
     private lateinit var napoleonApplication: NapoleonApplication
+//
+//    val notificationService by lazy {
+//        NotificationService(
+//            applicationContext
+//        )
+//    }
 
-    val notificationUtils by lazy {
-        NotificationUtils(
-            applicationContext
-        )
-    }
-
-    private val notificationId = NotificationUtils.NOTIFICATION_RINGING
+    private val notificationId = OLD_NotificationService.NOTIFICATION_RINGING
 
     override fun onCreate() {
         super.onCreate()
@@ -76,7 +78,7 @@ class WebRTCCallService : Service() {
         }
         intent.action?.let { action ->
             Timber.d("onStartCommand action: $action")
-            notificationUtils.stopMediaPlayer()
+            notificationService.stopMediaPlayer()
             when (action) {
                 ACTION_ANSWER_CALL -> {
                     startConversationCallActivity(
@@ -120,7 +122,7 @@ class WebRTCCallService : Service() {
     private fun showCallingNotification(channel: String, contactId: Int, isVideoCall: Boolean) {
         if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
 
-            val notification = notificationUtils.createCallingNotification(
+            val notification = notificationService.createCallingNotification(
                 channel,
                 contactId,
                 isVideoCall,
@@ -140,7 +142,7 @@ class WebRTCCallService : Service() {
     ) {
         if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
 
-            val notification = notificationUtils.createCallNotification(
+            val notification = notificationService.createCallNotification(
                 channel,
                 contactId,
                 isVideoCall,

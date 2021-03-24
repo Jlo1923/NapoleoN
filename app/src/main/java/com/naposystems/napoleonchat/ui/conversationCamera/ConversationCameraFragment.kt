@@ -26,6 +26,7 @@ import com.naposystems.napoleonchat.databinding.ConversationCameraFragmentBindin
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.cameraButton.CameraButton
 import com.naposystems.napoleonchat.ui.custom.customVerticalSeekbar.CustomVerticalSeekBar
 import com.naposystems.napoleonchat.utility.Constants
@@ -46,7 +47,7 @@ import kotlin.properties.Delegates
 
 
 @SuppressLint("RestrictedApi")
-class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
+class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listener,
     CameraButton.CameraButtonListener {
 
     private lateinit var binding: ConversationCameraFragmentBinding

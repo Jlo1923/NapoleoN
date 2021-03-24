@@ -22,10 +22,11 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import java.util.*
 import javax.inject.Inject
 
-class RecoveryAccountFragment : Fragment() {
+class RecoveryAccountFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = RecoveryAccountFragment()
@@ -40,11 +41,6 @@ class RecoveryAccountFragment : Fragment() {
 
     private lateinit var snackbarUtils: SnackbarUtils
     private var successToken: Boolean = false
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

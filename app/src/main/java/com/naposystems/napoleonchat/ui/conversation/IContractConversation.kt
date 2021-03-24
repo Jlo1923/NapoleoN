@@ -90,7 +90,7 @@ interface IContractConversation {
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
         suspend fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity): Flow<UploadResult>
         suspend fun getLocalUser(): UserEntity
-        fun insertMessage(messageEntity: MessageEntity): Long
+        suspend fun insertMessage(messageEntity: MessageEntity): Long
         fun insertListMessage(messageEntityList: List<MessageEntity>)
         fun updateMessage(messageEntity: MessageEntity)
         suspend fun sendTextMessagesRead(contactId: Int)

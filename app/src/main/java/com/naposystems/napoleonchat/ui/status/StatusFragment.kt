@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.StatusFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.StatusEntity
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.status.adapter.StatusAdapter
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
@@ -24,14 +25,14 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 
-class StatusFragment : Fragment() {
+class StatusFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = StatusFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
@@ -40,11 +41,6 @@ class StatusFragment : Fragment() {
     private lateinit var binding: StatusFragmentBinding
     private lateinit var adapter: StatusAdapter
     private val args: StatusFragmentArgs by navArgs()
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

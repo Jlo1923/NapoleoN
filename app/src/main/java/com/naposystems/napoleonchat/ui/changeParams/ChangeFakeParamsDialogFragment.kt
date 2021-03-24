@@ -15,9 +15,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ChangeFakeParamsDialogFragmentBinding
-import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.utility.FieldsValidator
-import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -44,6 +43,10 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+
     private val viewModel: ChangeParamsDialogViewModel by viewModels {
         viewModelFactory
     }
@@ -79,8 +82,7 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
                 )
 
                 if (args.getBoolean(STATE_NOTIFICATION)) {
-                    Utils.updateNickNameChannel(
-                        requireContext(),
+                    handlerNotificationChannelService.updateNickNameChannel(
                         args.getInt(CONTACT_ID),
                         args.getString(CONTACT_NICK, ""),
                         binding.editTextDisplay.text.toString().toLowerCase(

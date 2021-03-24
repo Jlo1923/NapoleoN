@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.BlockedContactsFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.blockedContacts.adapter.BlockedContactsAdapter
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -28,7 +29,7 @@ import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
 
-class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
+class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
 
     companion object {
         private const val EMPTY_STATE = 0
@@ -38,7 +39,7 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel: BlockedContactsViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by activityViewModels { viewModelFactory }
@@ -50,12 +51,6 @@ class BlockedContactsFragment : Fragment(), SearchView.OnSearchView {
     private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
     private lateinit var popup: PopupMenu
-
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

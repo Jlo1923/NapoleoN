@@ -22,6 +22,6 @@ interface IContractFriendShipAction {
         fun getError(response: Response<FriendshipRequestPutResDTO>): String
         suspend fun addContact(friendShipRequest: FriendShipRequest)
         suspend fun sendNewContactMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
-        fun insertMessage(messageEntity: MessageEntity): Long
+        suspend fun insertMessage(messageEntity: MessageEntity): Long
     }
 }

@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -128,7 +129,8 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.getLocalMessagesByStatus(contactId, status)
     }
 
-    override fun insertMessage(messageEntity: MessageEntity): Long {
+    override suspend fun insertMessage(messageEntity: MessageEntity): Long {
+        Timber.d("insertMessage: DATASOURCE $messageEntity")
         return messageDao.insertMessage(messageEntity)
     }
 
