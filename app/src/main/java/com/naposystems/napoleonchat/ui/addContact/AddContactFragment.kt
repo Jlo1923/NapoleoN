@@ -244,7 +244,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 override fun onCancel(friendshipRequest: FriendShipRequest) {
                     shareViewModel.cancelFriendshipRequest(friendshipRequest)
                 }
-            })
+            }, childFragmentManager, requireContext())
 
         binding.recyclerViewFriendshipRequest.adapter = friendshipRequestsAdapter
         binding.recyclerViewFriendshipRequest.itemAnimator = ItemAnimator()
@@ -274,7 +274,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 else shareViewModel.refuseFriendshipRequest(request)
 
             }
-        })
+        }, childFragmentManager)
         binding.recyclerViewContacts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewContacts.adapter = adapter
         binding.recyclerViewContacts.itemAnimator = ItemAnimator()

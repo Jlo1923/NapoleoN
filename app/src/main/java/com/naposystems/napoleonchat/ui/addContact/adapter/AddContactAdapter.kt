@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.ui.addContact.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +13,8 @@ import timber.log.Timber
 
 class AddContactAdapter constructor(
     private val context: Context,
-    private val clickListener: ClickListener
+    private val clickListener: ClickListener,
+    private val fragmentManager: FragmentManager
 ) :
     ListAdapter<Contact, RecyclerView.ViewHolder>(DiffCallback) {
 
@@ -81,7 +82,12 @@ class AddContactAdapter constructor(
         when (holder) {
             is RequestContactSentViewHolder -> holder.bind(item)
             is AddContactViewHolder -> holder.bind(item, clickListener)
-            is RequestContactReceivedHolder -> holder.bind(item, clickListener)
+            is RequestContactReceivedHolder -> holder.bind(
+                item,
+                clickListener,
+                fragmentManager,
+                context
+            )
             is AddContactTitleViewHolder -> {
                 holder.bind(item, context)
             }
@@ -94,6 +100,8 @@ class AddContactAdapter constructor(
 
     fun updateContact(contact: Contact) {
         val index = currentList.indexOf(contact)
+        val item = currentList[index]
+        item.receiver = true
         notifyItemChanged(index)
     }
 
@@ -113,7 +121,6 @@ class AddContactAdapter constructor(
                     list.remove(contact)
                     list.add(secondPosition, contact)
                     submitList(list)
-                    notifyItemChanged(secondPosition)
                 } else {
                     list.add(
                         firstPosition, Contact(
@@ -121,11 +128,18 @@ class AddContactAdapter constructor(
                             type = Constants.AddContactTitleType.TITLE_MY_CONTACTS.type
                         )
                     )
+                    list.remove(contact)
                     list.add(secondPosition, contact)
                     submitList(list)
-                    notifyItemRangeChanged(firstPosition, secondPosition)
+
                 }
-            } else updateContact(contact)
+            } else {
+                val index = currentList.indexOf(contact)
+                val item = currentList[index]
+                item.statusFriend = false
+                item.offer = false
+                notifyItemChanged(index)
+            }
 
         } catch (exception: Exception) {
             Timber.d("exception ${exception.message}")
