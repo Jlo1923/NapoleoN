@@ -21,15 +21,15 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityConversationCallBinding
 import com.naposystems.napoleonchat.service.HeadsetBroadcastReceiver
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
-import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
+import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import com.naposystems.napoleonchat.webRTC.WebRTCClient
-import com.naposystems.napoleonchat.webRTC.WebRTCClientListener
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClientListener
 import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
@@ -83,9 +83,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
-        getExtras()
-
         webRTCClient.setWebRTCClientListener(this)
+
+        getExtras()
 
         if (typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type)
             webRTCClient.subscribeToCallChannel()
@@ -199,7 +199,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         Timber.d("onNewIntent ${intent.action}")
 
-        if (intent.action == WebRTCCallService.ACTION_ANSWER_CALL &&
+        if (intent.action == WebRTCService.ACTION_ANSWER_CALL &&
             !webRTCClient.isActiveCall &&
             typeCall == Constants.TypeCall.IS_INCOMING_CALL.type
         ) {
@@ -377,12 +377,12 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     private fun closeNotification() {
-        val intent = Intent(this, WebRTCCallService::class.java)
-        intent.action = WebRTCCallService.ACTION_CALL_END
+        val intent = Intent(this, WebRTCService::class.java)
+        intent.action = WebRTCService.ACTION_CALL_END
         val bundle = Bundle()
 
         bundle.putString(
-            Constants.CallKeys.CHANNEL,
+            Constants.CallKeys.CHANNEL_NAME,
             channel
         )
 

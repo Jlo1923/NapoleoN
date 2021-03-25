@@ -72,7 +72,7 @@ object Constants {
 
     object CallKeys {
         const val IS_INCOMING_CALL = "is_incoming_call"
-        const val CHANNEL = "channel_private"
+        const val CHANNEL_NAME = "channel_private"
         const val CONTACT_ID = "contact_id"
         const val IS_VIDEO_CALL = "is_videocall"
         const val OFFER = "offer"

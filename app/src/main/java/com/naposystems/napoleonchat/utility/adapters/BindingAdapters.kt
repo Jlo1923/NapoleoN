@@ -131,8 +131,8 @@ fun JSONObject.toConversationCallModel(): ConversationCall {
     var contactId = 0
     var isVideoCall = false
 
-    if (has(Constants.CallKeys.CHANNEL)) {
-        channel = "presence-${getString(Constants.CallKeys.CHANNEL)}"
+    if (has(Constants.CallKeys.CHANNEL_NAME)) {
+        channel = "presence-${getString(Constants.CallKeys.CHANNEL_NAME)}"
     }
 
     if (has(Constants.CallKeys.CONTACT_ID)) {

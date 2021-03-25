@@ -1,8 +1,4 @@
-package com.naposystems.napoleonchat.webRTC
-
-import android.widget.TextView
-import com.pusher.client.channel.PrivateChannel
-import org.webrtc.SurfaceViewRenderer
+package com.naposystems.napoleonchat.webRTC.client
 
 interface WebRTCClientListener {
     fun contactWantChangeToVideoCall()

@@ -26,7 +26,7 @@ class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        notificationMessagesService.createInformativeNotification(
+        notificationMessagesService.createNotification(
             remoteMessage.data,
             remoteMessage.notification
         )

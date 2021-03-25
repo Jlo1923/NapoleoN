@@ -1,14 +1,18 @@
 package com.naposystems.napoleonchat.service.notificationMessage
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
@@ -21,9 +25,10 @@ import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
+import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
@@ -43,6 +48,7 @@ import javax.inject.Inject
 class NotificationMessagesServiceImp
 @Inject constructor(
     private val context: Context,
+    private val napoleonApplication: NapoleonApplication,
     private val socketMessageService: SocketMessageService,
     private val handlerNotificationChannelService: HandlerNotificationChannel.Service,
     private val syncManager: SyncManager,
@@ -51,6 +57,7 @@ class NotificationMessagesServiceImp
 ) : NotificationMessagesService {
 
     var queueDataNotifications: MutableList<Map<String, String>> = mutableListOf()
+
     var queueNotifications: MutableList<RemoteMessage.Notification?> = mutableListOf()
 
     companion object {
@@ -72,32 +79,29 @@ class NotificationMessagesServiceImp
         CompositeDisposable()
     }
 
-    private val app: NapoleonApplication by lazy {
-        context as NapoleonApplication
-    }
-
     init {
         handlerNotificationChannelService.initializeChannels()
     }
 
-    override fun createInformativeNotification(
+    override fun createNotification(
         dataFromNotification: Map<String, String>,
         notification: RemoteMessage.Notification?
     ) {
 
-        when (dataFromNotification.getValue(Constants.NotificationKeys.TYPE_NOTIFICATION)
-            ?.toInt()) {
-
+        when (dataFromNotification.getValue(Constants.NotificationKeys.TYPE_NOTIFICATION).toInt()) {
             Constants.NotificationType.VERIFICATION_CODE.type,
             Constants.NotificationType.SUBSCRIPTION.type -> {
-                showNotification(createNotificationBuilder(dataFromNotification, notification))
+                showNotification(
+                    createNotificationMessageBuilder(
+                        dataFromNotification,
+                        notification
+                    )
+                )
             }
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-
-                if (!app.isAppVisible())
+                if (!napoleonApplication.visible)
                     handlerMessage(dataFromNotification, notification)
-
             }
 
             Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
@@ -110,9 +114,6 @@ class NotificationMessagesServiceImp
 
             Constants.NotificationType.ACCOUNT_ATTACK.type -> {
 
-                val attackerId =
-                    dataFromNotification.getValue(Constants.NotificationKeys.ATTACKER_ID).toString()
-
                 sharedPreferencesManager.putInt(
                     Constants.SharedPreferences.PREF_EXISTING_ATTACK,
                     Constants.ExistingAttack.EXISTING.type
@@ -120,18 +121,23 @@ class NotificationMessagesServiceImp
 
                 sharedPreferencesManager.putString(
                     Constants.SharedPreferences.PREF_ATTACKER_ID,
-                    attackerId
+                    dataFromNotification.getValue(Constants.NotificationKeys.ATTACKER_ID).toString()
                 )
 
-                showNotification(createNotificationBuilder(dataFromNotification, notification))
+                showNotification(
+                    createNotificationMessageBuilder(
+                        dataFromNotification,
+                        notification
+                    )
+                )
 
                 RxBus.publish(RxEvent.AccountAttack())
             }
 
             Constants.NotificationType.INCOMING_CALL.type -> {
-                Timber.d("Incoming call, ${syncManager.getIsOnCallPref()}")
+
                 //TODO: Revisar aqui el estado de la vista y de la llamada
-                if(!app.isAppVisible()){
+                if (!napoleonApplication.visible) {
 //                if (!syncManager.getIsOnCallPref() && !Data.isShowingCallActivity) {
                     socketMessageService.connectSocket()
                     Timber.d("Incoming call, 2")
@@ -140,24 +146,20 @@ class NotificationMessagesServiceImp
                     var isVideoCall = false
                     var offer = ""
 
-                    if (dataFromNotification.containsKey(Constants.CallKeys.CHANNEL)) {
-                        channel = "presence-${dataFromNotification[Constants.CallKeys.CHANNEL]}"
-                    }
+                    if (dataFromNotification.containsKey(Constants.CallKeys.CHANNEL_NAME))
+                        channel =
+                            "presence-${dataFromNotification[Constants.CallKeys.CHANNEL_NAME]}"
 
-                    if (dataFromNotification.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
+                    if (dataFromNotification.containsKey(Constants.CallKeys.IS_VIDEO_CALL))
                         isVideoCall =
                             dataFromNotification[Constants.CallKeys.IS_VIDEO_CALL] == "true"
-                        Timber.d("Call: ${dataFromNotification[Constants.CallKeys.IS_VIDEO_CALL] == "true"}")
-                    }
 
-                    if (dataFromNotification.containsKey(Constants.CallKeys.CONTACT_ID)) {
+                    if (dataFromNotification.containsKey(Constants.CallKeys.CONTACT_ID))
                         contactId =
                             dataFromNotification[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
-                    }
 
-                    if (dataFromNotification.containsKey(Constants.CallKeys.OFFER)) {
+                    if (dataFromNotification.containsKey(Constants.CallKeys.OFFER))
                         offer = dataFromNotification[Constants.CallKeys.OFFER].toString()
-                    }
 
                     socketMessageService.subscribeToCallChannelFromBackground(channel)
 
@@ -172,7 +174,6 @@ class NotificationMessagesServiceImp
                     }
                 }
             }
-
 
             Constants.NotificationType.CANCEL_CALL.type -> {
                 Timber.d("CANCEL_CALL")
@@ -198,15 +199,11 @@ class NotificationMessagesServiceImp
             }
         }
 
-        Timber.d("**Paso 3.1: Estados Status Socket: ${socketMessageService.getStatusSocket()} Status Channel: ${socketMessageService.getStatusGlobalChannel()} ")
-
         if (socketMessageService.getStatusSocket() == ConnectionState.CONNECTED &&
             socketMessageService.getStatusGlobalChannel() == Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
-        ) {
-            Timber.d("**Paso 3.2: Solicitud a proceso de cola desde el principal")
+        )
             processQueueMessagesNotifications()
-        } else {
-            Timber.d("**Paso 3.3: Solicitud de conexion. Status Socket: ${socketMessageService.getStatusSocket()} Status Channel: ${socketMessageService.getStatusGlobalChannel()} ")
+        else {
             socketMessageService.connectSocket()
             listenConnectChannel()
         }
@@ -272,6 +269,41 @@ class NotificationMessagesServiceImp
         return exist
     }
 
+    private fun processNotification(
+        itemDataNotification: Map<String, String>,
+        itemNotification: RemoteMessage.Notification?
+    ) {
+
+        Timber.d("**Paso 10.1 : Proceso del Item mostrar notificacion itemDataNotification: $itemDataNotification itemNotification $itemNotification")
+
+        val contactIdNotification =
+            if (itemDataNotification.containsKey(Constants.NotificationKeys.CONTACT))
+                itemDataNotification.getValue(Constants.NotificationKeys.CONTACT).toInt()
+            else
+                null
+
+        if (Data.contactId != contactIdNotification) {
+            Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
+            Handler(Looper.getMainLooper()).postDelayed({
+                Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
+            }, 200)
+        }
+
+        if (!napoleonApplication.visible) {
+
+            Timber.d("**Paso 10.3 : Muestra Notificacion")
+
+            showNotification(
+                createNotificationMessageBuilder(itemDataNotification, itemNotification),
+                SUMMARY_ID
+            )
+
+            disposable.clear()
+
+        }
+
+    }
+
     private fun emitClientConversation(messageString: String) {
 
         Timber.d("**Paso 8: Proceso de Emision del item $messageString")
@@ -309,41 +341,6 @@ class NotificationMessagesServiceImp
             }
 
         }
-    }
-
-    private fun processNotification(
-        itemDataNotification: Map<String, String>,
-        itemNotification: RemoteMessage.Notification?
-    ) {
-
-        Timber.d("**Paso 10.1 : Proceso del Item mostrar notificacion itemDataNotification: $itemDataNotification itemNotification $itemNotification")
-
-        val contactIdNotification =
-            if (itemDataNotification.containsKey(Constants.NotificationKeys.CONTACT))
-                itemDataNotification.getValue(Constants.NotificationKeys.CONTACT).toInt()
-            else
-                null
-
-        if (Data.contactId != contactIdNotification) {
-            Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
-            Handler(Looper.getMainLooper()).postDelayed({
-                Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
-            }, 200)
-        }
-
-        if (!app.isAppVisible()) {
-
-            Timber.d("**Paso 10.3 : Muestra Notificacion")
-
-            showNotification(
-                createNotificationBuilder(itemDataNotification, itemNotification),
-                SUMMARY_ID
-            )
-
-            disposable.clear()
-
-        }
-
     }
 
     private fun createPendingIntent(
@@ -393,7 +390,7 @@ class NotificationMessagesServiceImp
         )
     }
 
-    private fun createNotificationBuilder(
+    private fun createNotificationMessageBuilder(
         dataFromNotification: Map<String, String>,
         notification: RemoteMessage.Notification?
     ): NotificationCompat.Builder {
@@ -493,9 +490,9 @@ class NotificationMessagesServiceImp
         isIncomingCall: Boolean,
         offer: String
     ) {
-        val service = Intent(context, WebRTCCallService::class.java).apply {
+        val service = Intent(context, WebRTCService::class.java).apply {
             putExtras(Bundle().apply {
-                putString(Constants.CallKeys.CHANNEL, channel)
+                putString(Constants.CallKeys.CHANNEL_NAME, channel)
                 putBoolean(Constants.CallKeys.IS_VIDEO_CALL, isVideoCall)
                 putInt(Constants.CallKeys.CONTACT_ID, contactId)
                 putBoolean(Constants.CallKeys.IS_INCOMING_CALL, isIncomingCall)
@@ -518,8 +515,7 @@ class NotificationMessagesServiceImp
             .setOngoing(true)
             .addAction(
                 getServiceNotificationAction(
-                    context,
-                    WebRTCCallService.ACTION_HANG_UP,
+                    WebRTCService.ACTION_HANG_UP,
                     R.drawable.ic_close_black_24,
                     R.string.text_hang_up_call,
                     channel, contactId, isVideoCall
@@ -537,8 +533,107 @@ class NotificationMessagesServiceImp
         mNotificationManager.notify(notificationId, notification)
     }
 
+    override fun createNotificationCallBuilder(
+        channel: String,
+        contactId: Int,
+        isVideoCall: Boolean,
+        typeCall: Int,
+        offer: String,
+    ): Notification {
+
+        val contact = syncManager.getContact(contactId)
+
+        val notificationBuilder = NotificationCompat.Builder(
+            context,
+            context.getString(if (napoleonApplication.visible) R.string.alerts_channel_id else R.string.calls_channel_id)
+        ).apply {
+            setSmallIcon(R.drawable.ic_call_black_24)
+            setGroup(context.getString(R.string.calls_group_key))
+            setContentTitle("@${contact?.getNickName()}")
+            setContentText(getTexNotification(typeCall, isVideoCall))
+            setCategory(NotificationCompat.CATEGORY_CALL)
+            setOngoing(true)
+            if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
+                addAction(
+                    getServiceNotificationAction(
+                        WebRTCService.ACTION_DENY_CALL,
+                        R.drawable.ic_close_black_24,
+                        R.string.text_reject,
+                        channel, contactId, isVideoCall
+                    )
+                )
+                addAction(
+                    getServiceNotificationAction(
+                        WebRTCService.ACTION_ANSWER_CALL,
+                        R.drawable.ic_call_black_24,
+                        R.string.text_answer_call,
+                        channel, contactId, isVideoCall, offer
+                    )
+                )
+            } else {
+                addAction(
+                    getServiceNotificationAction(
+                        WebRTCService.ACTION_HANG_UP,
+                        R.drawable.ic_close_black_24,
+                        R.string.text_hang_up_call,
+                        channel, contactId, isVideoCall
+                    )
+                )
+            }
+
+        }
+
+        if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
+
+            val fullScreenIntent =
+                Intent(context, ConversationCallActivity::class.java).apply {
+                    putExtras(Bundle().apply {
+                        putInt(ConversationCallActivity.CONTACT_ID, contactId)
+                        putString(ConversationCallActivity.CHANNEL, channel)
+                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
+                        putInt(
+                            ConversationCallActivity.TYPE_CALL,
+                            Constants.TypeCall.IS_INCOMING_CALL.type
+                        )
+                        putString(ConversationCallActivity.OFFER, offer)
+                        putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
+                    })
+                }
+
+            val fullScreenPendingIntent = PendingIntent.getActivity(
+                context, 0,
+                fullScreenIntent, 0
+            )
+
+            if (Build.VERSION.SDK_INT >= 29 && !napoleonApplication.visible) {
+                notificationBuilder.apply {
+                    setFullScreenIntent(fullScreenPendingIntent, true)
+                    priority = NotificationCompat.PRIORITY_HIGH
+                }
+                playRingTone()
+            }
+        }
+
+        return notificationBuilder.build()
+
+    }
+
+    private fun getTexNotification(typeCall: Int, isVideoCall: Boolean): String {
+
+        return if (typeCall == Constants.TypeCall.IS_INCOMING_CALL.type) {
+            if (!isVideoCall)
+                context.getString(R.string.text_incoming_secure_call)
+            else
+                context.getString(R.string.text_incoming_secure_video_call)
+        } else {
+            if (!isVideoCall)
+                context.getString(R.string.text_secure_outgoing_call)
+            else
+                context.getString(R.string.text_secure_outgoing_video_call)
+        }
+    }
+
     private fun getServiceNotificationAction(
-        context: Context,
         action: String,
         iconResId: Int,
         titleResId: Int,
@@ -548,10 +643,10 @@ class NotificationMessagesServiceImp
         offer: String = ""
     ): NotificationCompat.Action {
 
-        val intent = Intent(context, WebRTCCallService::class.java).apply {
+        val intent = Intent(context, WebRTCService::class.java).apply {
             this.action = action
             putExtras(Bundle().apply {
-                putString(Constants.CallKeys.CHANNEL, channel)
+                putString(Constants.CallKeys.CHANNEL_NAME, channel)
                 putBoolean(Constants.CallKeys.IS_VIDEO_CALL, isVideoCall)
                 putInt(Constants.CallKeys.CONTACT_ID, contactId)
                 putString(Constants.CallKeys.OFFER, offer)
@@ -566,4 +661,31 @@ class NotificationMessagesServiceImp
             pendingIntent
         )
     }
+
+    private fun playRingTone() {
+        try {
+            Utils.getAudioManager(context).isSpeakerphoneOn = true
+            mediaPlayer.apply {
+                setAudioAttributes(
+                    AudioAttributes
+                        .Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                if (isPlaying) {
+                    reset()
+                }
+                setDataSource(
+                    context,
+                    Settings.System.DEFAULT_RINGTONE_URI
+                )
+                this.isLooping = isLooping
+                prepare()
+                start()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
 }

@@ -48,7 +48,6 @@ import com.naposystems.napoleonchat.model.attachment.location.Place
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.SearchView
@@ -90,6 +89,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
     lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
+
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
     }

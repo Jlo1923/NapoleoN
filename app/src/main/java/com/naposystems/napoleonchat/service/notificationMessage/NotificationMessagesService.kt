@@ -1,10 +1,11 @@
 package com.naposystems.napoleonchat.service.notificationMessage
 
+import android.app.Notification
 import com.google.firebase.messaging.RemoteMessage
 
 interface NotificationMessagesService {
 
-    fun createInformativeNotification(
+    fun createNotification(
         dataFromNotification: Map<String, String>,
         notification: RemoteMessage.Notification?
     )
@@ -19,6 +20,13 @@ interface NotificationMessagesService {
         offer: String
     )
 
-    fun stopMediaPlayer()
+    fun createNotificationCallBuilder(
+        channel: String,
+        contactId: Int,
+        isVideoCall: Boolean,
+        typeCall: Int,
+        offer: String = ""
+    ): Notification
 
+    fun stopMediaPlayer()
 }

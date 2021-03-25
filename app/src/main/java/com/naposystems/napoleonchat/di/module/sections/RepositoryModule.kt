@@ -48,9 +48,9 @@ import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeReposi
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
 import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
-import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServiceRepository
+import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
-import com.naposystems.napoleonchat.service.webRTCCall.IContractWebRTCCallService
+import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepository
 import com.naposystems.napoleonchat.ui.accountAttack.IContractAccountAttackDialog
 import com.naposystems.napoleonchat.ui.activateBiometrics.IContractActivateBiometrics
 import com.naposystems.napoleonchat.ui.addContact.IContractAddContact
@@ -248,7 +248,7 @@ abstract class RepositoryModule {
     abstract fun bindValidateNicknameRepository(repository: ValidateNicknameRepository): IContractValidateNickname.Repository
 
     @Binds
-    abstract fun bindWebRTCCallServiceRepository(repository: WebRTCCallServiceRepository): IContractWebRTCCallService.Repository
+    abstract fun bindWebRTCCallServiceRepository(repository: WebRTCServiceRepositoryImp): WebRTCServiceRepository
 
     @Binds
     abstract fun provideUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository

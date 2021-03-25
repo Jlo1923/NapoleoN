@@ -43,7 +43,7 @@
         tools:replace="android:allowBackup"
         tools:targetApi="n">
 
-        <service android:name=".service.webRTCCall.WebRTCCallService" />
+        <service android:name=".webRTC.service.WebRTCService" />
 
         <service android:name=".service.uploadService.UploadService" />
 

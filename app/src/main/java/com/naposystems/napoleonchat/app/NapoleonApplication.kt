@@ -18,13 +18,10 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
-import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.emojiManager.EmojiManager
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
-import javax.inject.Inject
-
 
 class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
@@ -32,57 +29,58 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         private const val USE_BUNDLED_EMOJI = true
     }
 
-    /*@Inject
-    lateinit var socketService: SocketService*/
+    var visible: Boolean = false
 
-    @Inject
-    lateinit var sharedPreferencesManager: SharedPreferencesManager
-
-    private var isAppVisible: Boolean = false
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerApplicationComponent.builder().create(this).build()
-    }
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
+        DaggerApplicationComponent.builder().create(this).build()
 
     override fun onCreate() {
         super<DaggerApplication>.onCreate()
+
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
             Timber.plant(Timber.DebugTree())
         }
+
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+
         EmojiManager.instance.install()
+
         configEmojiCompat()
+
         Giphy.configure(this, Constants.GIPHY_API_KEY)
+
         Places.initialize(this, "AIzaSyDcAkhqRS4BO-BoKM89HiXuR4ruLr8fj1w")
+
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-//        socketService.initSocket()
+
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
         notificationManager.cancelAll()
     }
 
     override fun onStart(owner: LifecycleOwner) {
         Timber.d("*NotificationTest: onStart")
         Data.isOnCall = false
-        isAppVisible = true
+        visible = true
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         Timber.d("*NotificationTest: onResume")
-        isAppVisible = true
+        visible = true
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
         Timber.d("*NotificationTest: onPause")
-        isAppVisible = false
+        visible = false
     }
 
     override fun onStop(owner: LifecycleOwner) {
         Timber.d("*NotificationTest: onStop")
-        isAppVisible = false
+        visible = false
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -91,10 +89,10 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         super.onDestroy(owner)
     }
 
-    fun isAppVisible() = this.isAppVisible
-
     private fun configEmojiCompat() {
+
         val config: EmojiCompat.Config
+
         if (USE_BUNDLED_EMOJI) {
             // Use the bundled font for EmojiCompat
             config = BundledEmojiCompatConfig(applicationContext)
@@ -118,6 +116,9 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
                     }
                 })
         }
+
         EmojiCompat.init(config)
+
     }
+
 }

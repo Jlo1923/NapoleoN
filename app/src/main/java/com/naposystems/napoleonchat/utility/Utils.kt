@@ -601,6 +601,7 @@ class Utils {
             return visibleHeightMethod.invoke(imm) as Int
         }
 
+        //TODO: Evitar el paso de contextos como parametros
         fun getAudioManager(context: Context) =
             context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 

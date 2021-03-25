@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.webRTC
+package com.naposystems.napoleonchat.webRTC.client
 
 import android.content.Context
 import android.content.Intent
@@ -21,7 +21,9 @@ import com.naposystems.napoleonchat.service.socketMessage.SocketEventsListener
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageServiceImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
+import com.naposystems.napoleonchat.webRTC.CustomPeerConnectionObserver
+import com.naposystems.napoleonchat.webRTC.CustomSdpObserver
+import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import com.naposystems.napoleonchat.utility.BluetoothStateManager
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Data
@@ -291,6 +293,7 @@ class WebRTCClientImp @Inject constructor(
                     }
 
                     if (iceConnectionState == PeerConnection.IceConnectionState.CONNECTED) {
+
                         isActiveCall = true
 
                         audioManager.mode = MODE_IN_COMMUNICATION
@@ -335,8 +338,8 @@ class WebRTCClientImp @Inject constructor(
                         Data.isContactReadyForCall = false
                         Data.isShowingCallActivity = false
                         RxBus.publish(RxEvent.CallEnd())
-                        val intent = Intent(context, WebRTCCallService::class.java)
-                        intent.action = WebRTCCallService.ACTION_CALL_END
+                        val intent = Intent(context, WebRTCService::class.java)
+                        intent.action = WebRTCService.ACTION_CALL_END
                         context.startService(intent)
 
                         mHandler.removeCallbacks(mCallTimeRunnable)
@@ -412,20 +415,22 @@ class WebRTCClientImp @Inject constructor(
      * Aquí creamos la respuesta y la enviamos a través del socket
      */
     override fun createAnswer() {
-        peerConnection?.createAnswer(object : CustomSdpObserver("Local Answer") {
-            override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                super.onCreateSuccess(sessionDescription)
-                peerConnection?.setLocalDescription(
-                    CustomSdpObserver("Local Answer"),
-                    sessionDescription
-                )
-                Timber.d("createAnswer onCreateSuccess")
-                socketMessageService.emitToCall(
-                    channel = channel,
-                    jsonObject = sessionDescription.toJSONObject()
-                )
-            }
-        }, MediaConstraints())
+
+        peerConnection?.createAnswer(
+            object : CustomSdpObserver("Local Answer") {
+                override fun onCreateSuccess(sessionDescription: SessionDescription) {
+                    peerConnection?.setLocalDescription(
+                        CustomSdpObserver("Local Answer"),
+                        sessionDescription
+                    )
+                    Timber.d("createAnswer onCreateSuccess")
+                    socketMessageService.emitToCall(
+                        channel = channel,
+                        jsonObject = sessionDescription.toJSONObject()
+                    )
+                }
+            }, MediaConstraints()
+        )
     }
 
     private fun onIceCandidateReceived(iceCandidate: IceCandidate) {
@@ -870,9 +875,9 @@ class WebRTCClientImp @Inject constructor(
 
         Data.isContactReadyForCall = false
 
-        val intent = Intent(context, WebRTCCallService::class.java)
+        val intent = Intent(context, WebRTCService::class.java)
 
-        intent.action = WebRTCCallService.ACTION_CALL_END
+        intent.action = WebRTCService.ACTION_CALL_END
 
         context.startService(intent)
 

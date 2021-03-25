@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.di.module.general
 
-import com.naposystems.napoleonchat.webRTC.WebRTCClient
-import com.naposystems.napoleonchat.webRTC.WebRTCClientImp
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClientImp
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton

@@ -127,8 +127,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var contactId = 0
             var isVideoCall = false
 
-            if (bundle.containsKey(Constants.CallKeys.CHANNEL)) {
-                channel = bundle.getString(Constants.CallKeys.CHANNEL) ?: ""
+            if (bundle.containsKey(Constants.CallKeys.CHANNEL_NAME)) {
+                channel = bundle.getString(Constants.CallKeys.CHANNEL_NAME) ?: ""
             }
 
             if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {

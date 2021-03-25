@@ -1,15 +1,16 @@
-package com.naposystems.napoleonchat.repository.webRTCCallService
+package com.naposystems.napoleonchat.webRTC.service
 
-import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
-import com.naposystems.napoleonchat.service.webRTCCall.IContractWebRTCCallService
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class WebRTCCallServiceRepository @Inject constructor(private val napoleonApi: NapoleonApi) :
-    IContractWebRTCCallService.Repository {
+class WebRTCServiceRepositoryImp
+@Inject constructor(
+    private val napoleonApi: NapoleonApi
+) : WebRTCServiceRepository {
 
     override fun rejectCall(contactId: Int, channel: String) {
         GlobalScope.launch {

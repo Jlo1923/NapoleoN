@@ -25,6 +25,7 @@ import javax.inject.Singleton
         //General
         AndroidSupportInjectionModule::class,
         BillingModule::class,
+        NapoleonApplicationModule::class,
         ContextModule::class,
         ServiceModule::class,
         SharedPreferencesModule::class,
@@ -34,9 +35,8 @@ import javax.inject.Singleton
         CryptoModule::class,
         SyncManagerModule::class,
         HandlerChannelModule::class,
-        NotificationModule::class,
         NotificationServicemodule::class,
-        CallModule::class,
+        CallComponentsModule::class,
 //        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,

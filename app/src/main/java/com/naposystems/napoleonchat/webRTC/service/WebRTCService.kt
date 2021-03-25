@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.webRTCCall
+package com.naposystems.napoleonchat.webRTC.service
 
 import android.app.Service
 import android.content.Intent
@@ -7,19 +7,16 @@ import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServiceRepository
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesServiceImp
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
-import dagger.android.support.DaggerApplication
+import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
 
-
-class WebRTCCallService : Service() {
+class WebRTCService : Service() {
 
     companion object {
         const val ACTION_ANSWER_CALL = "ANSWER_CALL"
@@ -29,25 +26,17 @@ class WebRTCCallService : Service() {
     }
 
     @Inject
-    lateinit var repository: WebRTCCallServiceRepository
+    lateinit var napoleonApplication: NapoleonApplication
 
     @Inject
     lateinit var notificationMessagesService: NotificationMessagesService
 
-    private lateinit var napoleonApplication: NapoleonApplication
-//
-//    val notificationService by lazy {
-//        NotificationService(
-//            applicationContext
-//        )
-//    }
-
-    private val notificationId = NotificationMessagesServiceImp.NOTIFICATION_RINGING
+    @Inject
+    lateinit var repository: WebRTCServiceRepositoryImp
 
     override fun onCreate() {
+        AndroidInjection.inject(this)
         super.onCreate()
-        (applicationContext as DaggerApplication).androidInjector().inject(this)
-        this.napoleonApplication = applicationContext as NapoleonApplication
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -55,44 +44,50 @@ class WebRTCCallService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Timber.d("onStartCommand")
 
-        var channel = ""
+        var channelName = ""
         var contactId = 0
         var isVideoCall = false
         var isIncomingCall = false
+        var offer = ""
 
         intent.extras?.let { bundle ->
-            if (bundle.containsKey(Constants.CallKeys.CHANNEL)) {
-                channel = bundle.getString(Constants.CallKeys.CHANNEL) ?: ""
-            }
+            if (bundle.containsKey(Constants.CallKeys.CHANNEL_NAME))
+                channelName = bundle.getString(Constants.CallKeys.CHANNEL_NAME) ?: ""
 
-            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {
+
+            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID))
                 contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
-            }
 
-            if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
+
+            if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL))
                 isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
-            }
 
-            if (bundle.containsKey(Constants.CallKeys.IS_INCOMING_CALL)) {
+
+            if (bundle.containsKey(Constants.CallKeys.IS_INCOMING_CALL))
                 isIncomingCall = bundle.getBoolean(Constants.CallKeys.IS_INCOMING_CALL, false)
-            }
+
+
+            if (bundle.containsKey(Constants.CallKeys.OFFER))
+                offer = bundle.getString(Constants.CallKeys.OFFER, "")
+
         }
+
         intent.action?.let { action ->
             Timber.d("onStartCommand action: $action")
-            //TODO: Remover comentario
-//            notificationMessagesService.stopMediaPlayer()
+            notificationMessagesService.stopMediaPlayer()
             when (action) {
                 ACTION_ANSWER_CALL -> {
                     startConversationCallActivity(
-                        channel, contactId, isVideoCall,
-                        ACTION_ANSWER_CALL
+                        channel = channelName,
+                        contactId = contactId,
+                        isVideoCall = isVideoCall,
+                        offer = offer,
+                        action = ACTION_ANSWER_CALL
                     )
                 }
                 ACTION_DENY_CALL -> {
-//                    RxBus.publish(RxEvent.RejectCallByNotification(channel))
-                    repository.rejectCall(contactId, channel)
+                    repository.rejectCall(contactId, channelName)
                     stopForeground(true)
                     stopSelf()
                 }
@@ -103,59 +98,55 @@ class WebRTCCallService : Service() {
                 ACTION_HANG_UP -> {
                     stopForeground(true)
                     stopSelf()
-                    RxBus.publish(RxEvent.HangupByNotification(channel))
+                    RxBus.publish(RxEvent.HangupByNotification(channelName))
                 }
                 else -> {
                 }
             }
         } ?: run {
-            Timber.d("onStartCommand bundle: $isIncomingCall")
-            println("onStartCommand bundle: $isIncomingCall, $channel")
             if (isIncomingCall) {
-                showIncomingCallNotification(channel, contactId, isVideoCall)
-                if (!napoleonApplication.isAppVisible()) {
-                    startConversationCallActivity(channel, contactId, isVideoCall)
+                showIncomingCallNotification(channelName, contactId, isVideoCall, offer)
+                if (!napoleonApplication.visible) {
+                    startConversationCallActivity(channelName, contactId, isVideoCall, offer)
                 }
             } else {
-                showCallingNotification(channel, contactId, isVideoCall)
+                showOutgoingCallNotification(channelName, contactId, isVideoCall)
             }
         }
         return START_NOT_STICKY
     }
 
-    private fun showCallingNotification(channel: String, contactId: Int, isVideoCall: Boolean) {
-        if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
-//TODO: Remover comentario
-//            val notification = notificationMessagesService.createCallingNotification(
-//                channel,
-//                contactId,
-//                isVideoCall,
-//                applicationContext
-//            )
-
-            Timber.d("notificationId: $notificationId")
-//TODO: Remover comentario
-//            startForeground(notificationId, notification)
-        }
-    }
-
     private fun showIncomingCallNotification(
         channel: String,
         contactId: Int,
+        isVideoCall: Boolean,
+        offer: String
+    ) {
+        if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission() && offer.isNotEmpty()) {
+            val notification = notificationMessagesService.createNotificationCallBuilder(
+                channel,
+                contactId,
+                isVideoCall,
+                Constants.TypeCall.IS_INCOMING_CALL.type,
+                offer
+            )
+            startForeground(NotificationMessagesServiceImp.NOTIFICATION_RINGING, notification)
+        }
+    }
+
+    private fun showOutgoingCallNotification(
+        channelName: String,
+        contactId: Int,
         isVideoCall: Boolean
     ) {
-        if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
-//TODO: Remover comentario
-//            val notification = notificationMessagesService.createCallNotification(
-//                channel,
-//                contactId,
-//                isVideoCall,
-//                applicationContext
-//            )
-
-            Timber.d("notificationId: $notificationId")
-//TODO: Remover comentario
-//            startForeground(notificationId, notification)
+        if (channelName.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
+            val notification = notificationMessagesService.createNotificationCallBuilder(
+                channelName,
+                contactId,
+                isVideoCall,
+                Constants.TypeCall.IS_OUTGOING_CALL.type,
+            )
+            startForeground(NotificationMessagesServiceImp.NOTIFICATION_RINGING, notification)
         }
     }
 
@@ -163,6 +154,7 @@ class WebRTCCallService : Service() {
         channel: String,
         contactId: Int,
         isVideoCall: Boolean,
+        offer: String,
         action: String = ""
     ) {
         if (this.hasMicAndCameraPermission()) {
@@ -174,7 +166,11 @@ class WebRTCCallService : Service() {
                         putInt(ConversationCallActivity.CONTACT_ID, contactId)
                         putString(ConversationCallActivity.CHANNEL, channel)
                         putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
-                        putBoolean(ConversationCallActivity.TYPE_CALL, true)
+                        putInt(
+                            ConversationCallActivity.TYPE_CALL,
+                            Constants.TypeCall.IS_INCOMING_CALL.type
+                        )
+                        putString(ConversationCallActivity.OFFER, offer)
                         putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
                         putBoolean(
                             ConversationCallActivity.ANSWER_CALL,
@@ -183,20 +179,12 @@ class WebRTCCallService : Service() {
                     })
                 }
 
-                if (applicationContext is NapoleonApplication) {
-                    val app = applicationContext as NapoleonApplication
-                    if (app.isAppVisible() && action.isNotEmpty()) {
-                        newIntent.action = action
-                    }
-                }
-                /*if (action.isNotEmpty()) {
+                if (napoleonApplication.visible && action.isNotEmpty())
                     newIntent.action = action
-                }*/
 
                 newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
                 startActivity(newIntent)
-                //stopForeground(true)
             }
         }
     }

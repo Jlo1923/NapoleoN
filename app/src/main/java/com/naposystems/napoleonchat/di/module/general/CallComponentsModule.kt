@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 
 @Module
-class CallModule {
+class CallComponentsModule {
 
     @Provides
     @Singleton
@@ -20,6 +20,7 @@ class CallModule {
     }
 
     @Provides
+    @Singleton
     fun providePeerConnectionFactory(context: Context, eglBase: EglBase): PeerConnectionFactory {
         //Initialize PeerConnectionFactory globals.
         val initializationOptions = PeerConnectionFactory.InitializationOptions.builder(context)
@@ -43,6 +44,7 @@ class CallModule {
     }
 
     @Provides
+    @Singleton
     fun providePeerConnectionIceServer(): ArrayList<PeerConnection.IceServer> {
         return arrayListOf(
             PeerConnection.IceServer.builder(BuildConfig.STUN_SERVER)
@@ -68,6 +70,7 @@ class CallModule {
     }
 
     @Provides
+    @Singleton
     fun provideRTCConfiguration(peerIceServer: ArrayList<PeerConnection.IceServer>): PeerConnection.RTCConfiguration {
 
         val rtcConfiguration = PeerConnection.RTCConfiguration(peerIceServer)
@@ -86,6 +89,5 @@ class CallModule {
         return rtcConfiguration
 
     }
-
 
 }

@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.webRTC
+package com.naposystems.napoleonchat.webRTC.client
 
 import android.widget.TextView
 import com.pusher.client.channel.PrivateChannel
