@@ -46,11 +46,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -70,7 +70,6 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.napoleonchat.utility.*
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
@@ -82,6 +81,8 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -111,7 +112,11 @@ class ConversationFragment : BaseFragment(),
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
 
     //TODO:Subscription
     /*@Inject
@@ -687,7 +692,7 @@ class ConversationFragment : BaseFragment(),
 
         binding.viewModel = viewModel
 
-        Data.contactId = args.contact.id
+        NapoleonApplication.currentConversationContactId = args.contact.id
 
         cleanSelectionMessages()
 
@@ -846,7 +851,7 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.noInternetConnection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                Utils.alertDialogInformative(
+                handlerDialog.alertDialogInformative(
                     getString(R.string.text_alert_failure),
                     getString(if (viewModel.isVideoCall()) R.string.text_video_call_not_internet_connection else R.string.text_call_not_internet_connection),
                     true,
@@ -1040,7 +1045,7 @@ class ConversationFragment : BaseFragment(),
                 .subscribe {
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
-                            handlerNotificationChannelService.deleteUserChannel(
+                            handlerNotificationChannel.deleteUserChannel(
                                 args.contact.id,
                                 args.contact.getNickName()
                             )
@@ -1350,7 +1355,7 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
-        Data.contactId = args.contact.id
+        NapoleonApplication.currentConversationContactId = args.contact.id
         showCase?.setPaused(false)
         showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
@@ -1375,7 +1380,7 @@ class ConversationFragment : BaseFragment(),
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
-        Data.contactId = 0
+        NapoleonApplication.currentConversationContactId = 0
         resetConversationBackground()
         MediaPlayerManager.unregisterProximityListener()
         MediaPlayerManager.resetMediaPlayer()
@@ -1464,7 +1469,7 @@ class ConversationFragment : BaseFragment(),
                         val size = cursor.getInt(sizeIndex)
 
                         if (!documentsMimeTypeAllowed.contains(mimeType)) {
-                            generalDialog(
+                            handlerDialog.generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_not_allowed),
                                 false,
@@ -1474,7 +1479,7 @@ class ConversationFragment : BaseFragment(),
 
                             }
                         } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
-                            generalDialog(
+                            handlerDialog.generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_size_exceed),
                                 false,
@@ -1496,7 +1501,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun blockContact() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,
@@ -1528,7 +1533,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun deleteConversation() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -1643,7 +1648,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun dialogWithNeutralButton(status: Int) {
         viewModel.messagesSelected.value?.let { messagesSelected ->
-            Utils.alertDialogWithNeutralButton(
+            handlerDialog.alertDialogWithNeutralButton(
                 R.string.text_delete_messages,
                 false, requireContext(),
                 R.string.text_delete_message_for_me,
@@ -1681,7 +1686,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun dialogWithoutNeutralButton(status: Int) {
         viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
-            Utils.alertDialogWithoutNeutralButton(
+            handlerDialog.alertDialogWithoutNeutralButton(
                 R.string.text_delete_messages,
                 false,
                 requireContext(),
@@ -1875,7 +1880,7 @@ class ConversationFragment : BaseFragment(),
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
-        Data.contactId = 0
+        NapoleonApplication.currentConversationContactId = 0
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()

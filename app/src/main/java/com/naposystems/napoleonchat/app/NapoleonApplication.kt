@@ -17,7 +17,6 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.emojiManager.EmojiManager
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
@@ -27,6 +26,11 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     companion object {
         private const val USE_BUNDLED_EMOJI = true
+
+        var isShowingCallActivity: Boolean = false
+        var currentConversationContactId: Int = 0
+        var currentCallContactId: Int = 0
+        var isOnCall: Boolean = false
     }
 
     var visible: Boolean = false
@@ -62,7 +66,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onStart(owner: LifecycleOwner) {
         Timber.d("*NotificationTest: onStart")
-        Data.isOnCall = false
+        isOnCall = false
         visible = true
     }
 
@@ -84,8 +88,8 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        Data.isOnCall = false
-        Data.isContactReadyForCall = false
+        isOnCall = false
+//        Data.isContactReadyForCall = false
         super.onDestroy(owner)
     }
 

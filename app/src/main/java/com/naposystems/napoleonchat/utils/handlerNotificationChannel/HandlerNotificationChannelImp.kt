@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.handlerNotificationChannel
+package com.naposystems.napoleonchat.utils.handlerNotificationChannel
 
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
@@ -15,31 +15,24 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class HandlerNotificationChannelServiceImp
+//TODO: Revisar y optimizar esta clase, hay metodos duplicados y recepcion de parametros innecesarios
+class HandlerNotificationChannelImp
 @Inject constructor(
     private val context: Context,
-    private val repository: HandlerNotificationChannel.Repository
-) : HandlerNotificationChannel.Service {
+    private val repository: HandlerNotificationChannelRepository
+) : HandlerNotificationChannel {
 
     override fun initializeChannels() {
-
         if (repository.getNotificationChannelCreated() == Constants.ChannelCreated.FALSE.state) {
-            //region Chat Notification
             createCategoryChannel()
             createMessageChannel(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            //endregion
-
-            //region Others
             createNotificationChannel()
             createCallNotificationChannel()
             createAlertsNotificationChannel()
             createUploadNotificationChannel()
-            //endregion
-
             repository.setNotificationChannelCreated()
         }
     }
-
 
     override fun getChannel(channelId: String): NotificationChannel? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

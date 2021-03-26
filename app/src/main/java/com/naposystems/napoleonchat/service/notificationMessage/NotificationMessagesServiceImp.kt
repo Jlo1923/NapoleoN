@@ -22,7 +22,7 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
@@ -31,7 +31,6 @@ import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.Valid
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.pusher.client.connection.ConnectionState
@@ -50,7 +49,7 @@ class NotificationMessagesServiceImp
     private val context: Context,
     private val napoleonApplication: NapoleonApplication,
     private val socketMessageService: SocketMessageService,
-    private val handlerNotificationChannelService: HandlerNotificationChannel.Service,
+    private val handlerNotificationChannel: HandlerNotificationChannel,
     private val syncManager: SyncManager,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val cryptoMessage: CryptoMessage
@@ -80,7 +79,7 @@ class NotificationMessagesServiceImp
     }
 
     init {
-        handlerNotificationChannelService.initializeChannels()
+        handlerNotificationChannel.initializeChannels()
     }
 
     override fun createNotification(
@@ -177,7 +176,7 @@ class NotificationMessagesServiceImp
 
             Constants.NotificationType.CANCEL_CALL.type -> {
                 Timber.d("CANCEL_CALL")
-                Data.isOnCall = false
+                NapoleonApplication.isOnCall = false
                 val notificationManager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.cancelAll()
@@ -282,7 +281,7 @@ class NotificationMessagesServiceImp
             else
                 null
 
-        if (Data.contactId != contactIdNotification) {
+        if (NapoleonApplication.currentConversationContactId != contactIdNotification) {
             Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
             Handler(Looper.getMainLooper()).postDelayed({
                 Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
@@ -405,13 +404,13 @@ class NotificationMessagesServiceImp
 
         val channelType =
             if (dataFromNotification.containsKey(Constants.NotificationKeys.CONTACT)) {
-                handlerNotificationChannelService.getChannelType(
+                handlerNotificationChannel.getChannelType(
                     dataFromNotification.getValue(Constants.NotificationKeys.TYPE_NOTIFICATION)
                         .toInt(),
                     dataFromNotification.getValue(Constants.NotificationKeys.CONTACT).toInt()
                 )
             } else {
-                handlerNotificationChannelService.getChannelType(
+                handlerNotificationChannel.getChannelType(
                     dataFromNotification.getValue(Constants.NotificationKeys.TYPE_NOTIFICATION)
                         .toInt()
                 )

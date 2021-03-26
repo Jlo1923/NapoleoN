@@ -6,10 +6,10 @@ import androidx.lifecycle.asLiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.source.local.dao.ContactDao
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.dao.MessageDao
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -29,7 +29,10 @@ class MessageLocalDataSourceImp @Inject constructor(
     private val messageDao: MessageDao
 ) : MessageLocalDataSource {
 
-    override suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAttachmentRelation? {
+    override suspend fun getMessageByWebId(
+        webId: String,
+        decrypt: Boolean
+    ): MessageAttachmentRelation? {
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
         if (BuildConfig.ENCRYPT_API && decrypt) {
             with(messageAndAttachment?.messageEntity) {
@@ -46,7 +49,8 @@ class MessageLocalDataSourceImp @Inject constructor(
         messageDao.getMessagesAndAttachmentsDistinctUntilChanged(contactId)
             .map { listMessageRelations: List<MessageAttachmentRelation> ->
 
-                val mutableListMessageRelations: MutableList<MessageAttachmentRelation> = arrayListOf()
+                val mutableListMessageRelations: MutableList<MessageAttachmentRelation> =
+                    arrayListOf()
 
                 if (BuildConfig.ENCRYPT_API) {
                     listMessageRelations.forEach { messageAndAttachmentRelation: MessageAttachmentRelation ->
@@ -125,7 +129,10 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.getQuoteId(quoteWebId)
     }
 
-    override fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation> {
+    override fun getLocalMessagesByStatus(
+        contactId: Int,
+        status: Int
+    ): List<MessageAttachmentRelation> {
         return messageDao.getLocalMessagesByStatus(contactId, status)
     }
 
@@ -208,11 +215,13 @@ class MessageLocalDataSourceImp @Inject constructor(
         val messages = messageDao.copyMessagesSelected(contactId)
         val returnMessages = arrayListOf<String>()
 
-        if (BuildConfig.ENCRYPT_API) {
-            messages.forEach { returnMessages.add(cryptoMessage.decryptMessageBody(it)) }
-        }
+//        if (BuildConfig.ENCRYPT_API) {
+//        messages.forEach {
+//            returnMessages.add(cryptoMessage.decryptMessageBody(it))
+//        }
+//        }
 
-        return returnMessages
+        return messages
     }
 
     override suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>> {

@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.service.syncManager
 
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
@@ -25,14 +26,12 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -116,7 +115,7 @@ class SyncManagerImp @Inject constructor(
 
                                 Timber.d("Conversation insertó attachment")
 
-                                if (Data.contactId != 0) {
+                                if (NapoleonApplication.currentConversationContactId != 0) {
                                     notifyMessagesReaded()
                                 }
 
@@ -393,7 +392,7 @@ class SyncManagerImp @Inject constructor(
             val response = napoleonApi.rejectCall(rejectCallReqDTO)
 
             if (response.isSuccessful) {
-                Timber.d("LLamada rechazada bb")
+                Timber.d("LLamada rechazada bb: ERROR AQUIIIII")
             }
         }
     }
@@ -493,7 +492,7 @@ class SyncManagerImp @Inject constructor(
 
             val messagesUnread =
                 messageLocalDataSource.getTextMessagesByStatus(
-                    Data.contactId,
+                    NapoleonApplication.currentConversationContactId,
                     Constants.MessageStatus.UNREAD.status
                 )
 
@@ -620,7 +619,7 @@ class SyncManagerImp @Inject constructor(
 //        }
 //    }
 
-    override fun getIsOnCallPref() = Data.isOnCall
+//    override fun getIsOnCallPref() = NapoleonApplication.isOnCall
 
 //    override fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit) {
 //        GlobalScope.launch {
@@ -649,6 +648,9 @@ class SyncManagerImp @Inject constructor(
 
 
     override fun callContact(contact: Int, videoCall: Boolean, offer: String) {
+
+        Timber.d("LLAMADA PASO 11 OUTGOING: Consumiendo llamando contacto")
+
         GlobalScope.launch(Dispatchers.IO) {
             val callContactReqDTO = CallContactReqDTO(
                 contactToCall = contact,

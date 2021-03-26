@@ -19,7 +19,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
@@ -45,7 +45,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
@@ -205,7 +205,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
                     contactProfileShareViewModel.contact.value?.let { contact ->
                         if (contact.id == eventContact.contactId) {
                             if (contact.stateNotification) {
-                                handlerNotificationChannelService.deleteUserChannel(
+                                handlerNotificationChannel.deleteUserChannel(
                                     contact.id,
                                     contact.getNickName()
                                 )

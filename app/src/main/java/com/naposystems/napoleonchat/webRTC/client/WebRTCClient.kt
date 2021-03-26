@@ -13,23 +13,26 @@ interface WebRTCClient {
     var channel: String
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
-    fun setOffer(offer: String?)
     fun subscribeToCallChannel()
+    fun setOffer(offer: String?)
     fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun setSpeakerOn(isChecked: Boolean)
     fun setMicOff()
     fun setItsReturnCall(itsReturnCall: Boolean)
+
+    //TODO: Estas funciones se pueden cambiar a accesores de atributos
     fun getMicIsOn(): Boolean
     fun isSpeakerOn(): Boolean
     fun isVideoMuted(): Boolean
     fun isBluetoothActive(): Boolean
+
     fun contactTurnOffCamera(): Boolean
     fun setIsOnCallActivity(isOnCallActivity: Boolean)
     fun initSurfaceRenders()
     fun startCaptureVideo()
-    fun emitJoinToCall()
+//    fun emitJoinToCall()
     fun stopRingAndVibrate()
     fun emitHangUp()
     fun changeToVideoCall()
@@ -38,14 +41,15 @@ interface WebRTCClient {
     fun switchCamera()
     fun handleBluetooth(isEnabled: Boolean)
     fun playRingtone()
-    fun playCallingTone()
+    fun playRingBackTone()
     fun acceptChangeToVideoCall()
     fun startProximitySensor()
     fun stopProximitySensor()
     fun handleKeyDown(keyCode: Int): Boolean
     fun dispose()
     fun unSubscribeCallChannel()
-    fun subscribeToChannelFromBackground(channel: String)
+//    fun subscribeToChannelFromBackground(channel: String)
+    //TODO: Revisar si se puede usar el metodo status connect o status channel
     fun getPusherChannel(channel: String): PrivateChannel?
     fun renderRemoteVideo()
     fun createAnswer()

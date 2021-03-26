@@ -37,8 +37,6 @@ import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
@@ -47,6 +45,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -64,6 +63,12 @@ class HomeFragment : BaseFragment() {
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
 
+    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
+
     //TODO:Subscription
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
@@ -71,7 +76,6 @@ class HomeFragment : BaseFragment() {
     @Inject
     lateinit var webRTCClient: WebRTCClient
 
-    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
 
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
 
@@ -494,7 +498,7 @@ class HomeFragment : BaseFragment() {
 //            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
 
             if (BuildConfig.VERSION_CODE < versionCodeApp.toInt()) {
-                Utils.alertDialogInformative(
+                handlerDialog.alertDialogInformative(
                     title = getString(R.string.text_alert_failure),
                     message = getString(R.string.text_update_message, versionApp),
                     titleButton = R.string.text_update,
@@ -691,7 +695,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun deleteChat(contact: ContactEntity) {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -702,7 +706,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun blockContact(contact: ContactEntity) {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,

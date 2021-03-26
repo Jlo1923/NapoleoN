@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
@@ -7,7 +8,6 @@ import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import javax.inject.Inject
@@ -79,7 +79,7 @@ class MainActivityRepository @Inject constructor(
         contactLocalDataSource.getContactById(contactId)
 
     override fun resetIsOnCallPref() {
-        Data.isOnCall = false
+        NapoleonApplication.isOnCall = false
     }
 
     override fun getRecoveryQuestionsPref(): Int {

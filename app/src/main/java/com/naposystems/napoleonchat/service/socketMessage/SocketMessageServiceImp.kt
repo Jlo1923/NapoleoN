@@ -10,7 +10,6 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesServiceImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
@@ -19,10 +18,10 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
+import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import com.pusher.client.Pusher
 import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionEventListener
@@ -434,8 +433,8 @@ class SocketMessageServiceImp @Inject constructor(
                                                 if (newMessageEventMessageRes.numberAttachments > 0) {
                                                     if ((availableToReceived(
                                                             newMessageEventMessageRes.attachments
-                                                        ) && Data.contactId == newMessageEventMessageRes.userAddressee) ||
-                                                        Data.contactId == 0
+                                                        ) && NapoleonApplication.currentConversationContactId == newMessageEventMessageRes.userAddressee) ||
+                                                        NapoleonApplication.currentConversationContactId == 0
                                                     ) {
 
                                                         syncManager.notifyMessageReceived(message.id)
@@ -443,7 +442,7 @@ class SocketMessageServiceImp @Inject constructor(
                                                         emitClientConversation(message)
 
                                                     }
-                                                } else if (Data.contactId != newMessageEventMessageRes.userAddressee) {
+                                                } else if (NapoleonApplication.currentConversationContactId != newMessageEventMessageRes.userAddressee) {
 
                                                     syncManager.notifyMessageReceived(message.id)
 
@@ -697,11 +696,7 @@ class SocketMessageServiceImp @Inject constructor(
 
                                     val channel = "presence-${incomingCall.data.channel}"
 
-                                    val isOnCallPref = Data.isOnCall
-
-                                    Timber.d("IsOnCall: $isOnCallPref")
-
-                                    if (isOnCallPref) {
+                                    if (NapoleonApplication.isOnCall) {
                                         syncManager.rejectCall(
                                             incomingCall.data.contactId,
                                             channel
@@ -736,9 +731,8 @@ class SocketMessageServiceImp @Inject constructor(
             .bind(Constants.SocketListenEvents.REJECTED_CALL.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
-                        Data.isShowingCallActivity = false
-                        Timber.d("RejectedCallEvent: ${event.data}")
-//                        RxBus.publish(RxEvent.ContactRejectCall(event.channelName))
+                        NapoleonApplication.isShowingCallActivity = false
+                        Timber.d("LLAMADA PASO RE¿JECTED: LlAMADA RECHAZADA")
                         socketEventListenerCall.contactRejectCall(event.channelName)
                     }
 
@@ -758,7 +752,7 @@ class SocketMessageServiceImp @Inject constructor(
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
                         try {
-                            Data.isShowingCallActivity = false
+                            NapoleonApplication.isShowingCallActivity = false
                             Timber.d("CancelCallEvent: ${event.data}, notificationId: ${NotificationMessagesServiceImp.NOTIFICATION_RINGING}")
                             val jsonObject = JSONObject(event.data)
                             if (jsonObject.has("data")) {
@@ -792,7 +786,7 @@ class SocketMessageServiceImp @Inject constructor(
         isVideoCall: Boolean,
         offer: String
     ) {
-        Timber.d("subscribeToCallChannel: $channel")
+        Timber.d("LLAMADA PASO 4 OUTGOING: SUSCRIBIRSE AL CANAL DE LLAMADAS ${channel}")
         if (pusher.getPresenceChannel(channel) == null) {
             pusher.subscribePresence(
                 channel,
@@ -814,11 +808,12 @@ class SocketMessageServiceImp @Inject constructor(
 
                             listenCallEvents(channelName)
 
-                            Timber.d("onSubscriptionSucceeded: $channelName")
+                            Timber.d("LLAMADA PASO 5 OUTGOING: SUSCRITO AL CANAL ${channelName}")
 
-                            Data.isOnCall = true
+                            NapoleonApplication.isOnCall = true
 
                             if (pusher.getPresenceChannel(channel).users.size > 1) {
+                                Timber.d("LLAMADA PASO 6.1 OUTGOING: Usuarios  mas de uno")
                                 RxBus.publish(
                                     RxEvent.IncomingCall(
                                         channel,
@@ -828,6 +823,8 @@ class SocketMessageServiceImp @Inject constructor(
                                     )
                                 )
                             } else {
+                                Timber.d("LLAMADA PASO 6.2 OUTGOING: Usuarios 1 o menor")
+
                                 socketEventListenerCall.itsSubscribedToCallChannel(
                                     contactId,
                                     channelName,
@@ -855,10 +852,6 @@ class SocketMessageServiceImp @Inject constructor(
         }
     }
 
-    override fun joinToCall(channel: String) {
-        emitToCall(channel, CONTACT_JOIN_TO_CALL)
-    }
-
     override fun emitToCall(channel: String, jsonObject: JSONObject) {
 
         if (pusher.getPresenceChannel(channel) != null) {
@@ -873,13 +866,14 @@ class SocketMessageServiceImp @Inject constructor(
     }
 
     override fun emitToCall(channel: String, eventType: Int) {
-//        try {
-//            callChannel?.trigger(CALL_NN, eventType.toString())
-//
-//            Timber.d("Emit to Call $eventType")
-//        } catch (e: Exception) {
-//            Timber.e(e)
-//        }
+
+        if (pusher.getPresenceChannel(channel) != null) {
+
+            pusher.getPresenceChannel(channel)
+                .trigger(CALL_NN, eventType.toString())
+
+            Timber.d("Emit to Call $eventType")
+        }
     }
 
     override fun unSubscribeCallChannel(channelName: String) {
@@ -894,6 +888,7 @@ class SocketMessageServiceImp @Inject constructor(
     }
 
     private fun listenCallEvents(channelName: String) {
+
         try {
             pusher.getPresenceChannel(channelName)
                 .bind(CALL_NN, object : PresenceChannelEventListener {
@@ -904,7 +899,8 @@ class SocketMessageServiceImp @Inject constructor(
                             val eventType = event.data.toIntOrNull()
 
                             if (eventType != null) {
-                                Timber.d("LLegó $CALL_NN $eventType")
+
+                                Timber.d("LLAMADA PASO 12.1 OUTGOING: Llega el evento de llamada ${eventType}")
 
                                 when (eventType) {
 
@@ -935,7 +931,7 @@ class SocketMessageServiceImp @Inject constructor(
                                         socketEventListenerCall.contactTurnOffCamera(event.channelName)
 
                                     HANGUP_CALL -> {
-                                        Data.isShowingCallActivity = false
+                                        NapoleonApplication.isShowingCallActivity = false
                                         socketEventListenerCall.contactHasHangup(event.channelName)
                                     }
                                 }
@@ -943,7 +939,7 @@ class SocketMessageServiceImp @Inject constructor(
 
                                 val jsonData = JSONObject(event.data)
 
-                                Timber.d("LLegó $CALL_NN $jsonData")
+                                Timber.d("LLAMADA PASO 12.2 OUTGOING: Llega el evento de llamada $CALL_NN $jsonData")
 
                                 if (jsonData.has(TYPE)) {
 

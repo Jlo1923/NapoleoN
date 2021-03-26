@@ -43,6 +43,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareV
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
@@ -57,6 +58,9 @@ class ProfileFragment : BaseFragment() {
         const val REQUEST_IMAGE_CAPTURE = 1
         private const val FILE_EXTENSION = ".jpg"
     }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -365,7 +369,7 @@ class ProfileFragment : BaseFragment() {
                         getString(R.string.text_profile_photo) to getString(R.string.text_message_restore_profile_photo)
                     else -> getString(R.string.text_cover_photo) to getString(R.string.text_message_restore_cover_photo)
                 }
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     dialogTitle,
                     dialogMessage,
                     true,

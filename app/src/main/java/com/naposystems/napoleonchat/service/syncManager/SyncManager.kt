@@ -42,7 +42,7 @@ interface SyncManager {
     //region Notification
 
 //    fun notifyMessageReceived_NOTIF(messageId: String)
-    fun getIsOnCallPref(): Boolean
+//    fun getIsOnCallPref(): Boolean
 //    fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit)
     fun getContact(contactId: Int): ContactEntity?
 //    fun getNotificationChannelCreated(): Int

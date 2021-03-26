@@ -18,18 +18,19 @@ import androidx.lifecycle.Observer
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.ActivityConversationCallBinding
 import com.naposystems.napoleonchat.service.HeadsetBroadcastReceiver
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
-import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClientListener
+import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
@@ -56,6 +57,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     @Inject
     lateinit var notificationMessagesService: NotificationMessagesService
 
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
     private lateinit var binding: ActivityConversationCallBinding
 
     private val viewModel: ConversationCallViewModel by viewModels { viewModelFactory }
@@ -79,16 +83,20 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         AndroidInjection.inject(this)
 
-        Data.isShowingCallActivity = true
+        NapoleonApplication.isShowingCallActivity = true
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
+
+        Timber.d("LLAMADA PASO 1 OUTGOING: MOSTRANDO ACTIVIDAD LLAMADA")
 
         webRTCClient.setWebRTCClientListener(this)
 
         getExtras()
 
-        if (typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type)
+        if (typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type) {
+            Timber.d("LLAMADA PASO 3 OUTGOING: SUSCRIBIRSE AL CANAL DE LLAMADAS")
             webRTCClient.subscribeToCallChannel()
+        }
 
         audioManagerCompat.requestCallAudioFocus()
 
@@ -104,7 +112,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         super.onCreate(savedInstanceState)
 
-        initSurfaceRenders()
+        if (isVideoCall) {
+            initSurfaceRenders()
+        }
 
         webRTCClient.setTextViewCallDuration(binding.textViewCalling)
 
@@ -133,7 +143,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
                 notificationMessagesService.startWebRTCCallService(
                     channel, isVideoCall, contactId, false, offer
                 )
-                webRTCClient.playCallingTone()
+                webRTCClient.playRingBackTone()
             }
         } else {
             if (isVideoCall) {
@@ -224,7 +234,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
             if (bundle.containsKey(CONTACT_ID)) {
                 contactId = bundle.getInt(CONTACT_ID)
                 viewModel.getContact(contactId)
-                Data.currentCallContactId = contactId
+                NapoleonApplication.currentCallContactId = contactId
             }
 
             webRTCClient.contactId = contactId
@@ -350,7 +360,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
         Timber.d("WebRTCClient hangUp")
         if (!hangUpPressed) {
 
-            Data.isContactReadyForCall = false
+//            Data.isContactReadyForCall = false
 
             closeNotification()
 
@@ -403,7 +413,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     //region Implementation WebRTCClient.WebRTCClientListener
     override fun contactWantChangeToVideoCall() {
         binding.imageButtonChangeToVideo.isEnabled = true
-        Utils.alertDialogWithoutNeutralButton(
+        handlerDialog.alertDialogWithoutNeutralButton(
             R.string.text_contact_want_change_to_video_call,
             false,
             this,
@@ -421,7 +431,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     override fun contactCancelledVideoCall() {
-        Utils.alertDialogInformative(
+        handlerDialog.alertDialogInformative(
             "",
             getString(R.string.text_video_call_rejected),
             true,
@@ -489,11 +499,17 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     override fun changeTextViewTitle(stringResourceId: Int) {
-        binding.textViewTitle.text =
-            getString(
-                stringResourceId,
-                this.getString(R.string.label_nickname, contact?.getNickName())
-            )
+        try {
+            binding.textViewTitle.text =
+                getString(
+                    stringResourceId,
+                    this.getString(R.string.label_nickname, contact?.getNickName())
+                )
+        } catch (e: Exception) {
+//            Timber.e(e.localizedMessage)
+            Timber.e("ERRORSISISISISIMO")
+        }
+
     }
 
     override fun changeBluetoothButtonVisibility(isVisible: Boolean) {

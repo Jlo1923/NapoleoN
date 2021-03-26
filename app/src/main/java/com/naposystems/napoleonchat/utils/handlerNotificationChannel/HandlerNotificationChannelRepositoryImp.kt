@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.handlerNotificationChannel
+package com.naposystems.napoleonchat.utils.handlerNotificationChannel
 
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
@@ -13,7 +13,7 @@ class HandlerNotificationChannelRepositoryImp
 @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val contactLocalDataSource: ContactLocalDataSource
-) : HandlerNotificationChannel.Repository {
+) : HandlerNotificationChannelRepository {
 
     override fun getContactById(contactId: Int): ContactEntity? {
         return contactLocalDataSource.getContactById(contactId)

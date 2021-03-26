@@ -27,7 +27,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
@@ -46,6 +46,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContac
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -66,7 +67,10 @@ class ContactProfileFragment : BaseFragment() {
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
@@ -158,7 +162,7 @@ class ContactProfileFragment : BaseFragment() {
                 .subscribe {
                     if (args.contactId == it.contactId) {
                         if (contact.stateNotification) {
-                            handlerNotificationChannelService.deleteUserChannel(
+                            handlerNotificationChannel.deleteUserChannel(
                                 contact.id,
                                 contact.getNickName()
                             )
@@ -197,7 +201,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionBlockContactClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,
@@ -208,7 +212,7 @@ class ContactProfileFragment : BaseFragment() {
                     shareContactViewModel.unblockContact(contact.id)
                 } else {
                     if (contact.stateNotification) {
-                        handlerNotificationChannelService.deleteUserChannel(
+                        handlerNotificationChannel.deleteUserChannel(
                             contact.id,
                             contact.getNickName()
                         )
@@ -228,14 +232,14 @@ class ContactProfileFragment : BaseFragment() {
     private fun optionDeleteContactClickListener() {
         val getContact = contactProfileShareViewModel.contact.value
         getContact?.let { contact ->
-            Utils.generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_delete_contact),
                 getString(R.string.text_wish_delete_contact),
                 true,
                 childFragmentManager
             ) {
                 if (contact.stateNotification) {
-                    handlerNotificationChannelService.deleteUserChannel(
+                    handlerNotificationChannel.deleteUserChannel(
                         contact.id,
                         contact.getNickName()
                     )
@@ -247,7 +251,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionDeleteConversationClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -259,13 +263,13 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionRestoreContactChatClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_reset_contact),
             getString(R.string.text_want_reset_contact),
             true,
             childFragmentManager
         ) {
-            handlerNotificationChannelService.deleteUserChannel(
+            handlerNotificationChannel.deleteUserChannel(
                 contact.id,
                 contact.getNickName()
             )
@@ -440,7 +444,7 @@ class ContactProfileFragment : BaseFragment() {
             }
 
             override fun defaultOptionSelected(location: Int) {
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     getString(R.string.text_select_default),
                     getString(R.string.text_message_restore_cover_photo),
                     true,

@@ -40,7 +40,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var notificationMessagesService: NotificationMessagesService
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (it.contact.stateNotification) {
                         Timber.d("*TestDelete: Contact ${it.contact.id}")
                         Timber.d("*TestDelete: Contact ${it.contact.getNickName()}")
-                        handlerNotificationChannelService.deleteUserChannel(
+                        handlerNotificationChannel.deleteUserChannel(
                             it.contact.id,
                             it.contact.getNickName(),
                             it.contact.notificationId

@@ -29,8 +29,6 @@ interface SocketMessageService {
         offer: String = ""
     )
 
-    fun joinToCall(channel: String)
-
     fun emitToCall(channel: String, jsonObject: JSONObject)
 
     fun emitToCall(channel: String, eventType: Int)

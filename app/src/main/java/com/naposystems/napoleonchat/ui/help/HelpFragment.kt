@@ -7,15 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HelpFragmentBinding
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
+import javax.inject.Inject
 
-class HelpFragment : Fragment() {
+class HelpFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = HelpFragment()
@@ -23,13 +24,18 @@ class HelpFragment : Fragment() {
 
     private lateinit var binding: HelpFragmentBinding
 
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = DataBindingUtil.inflate(
             inflater, R.layout.help_fragment, container, false
         )
+
         binding.lifecycleOwner = this
 
         binding.optionContactUs.setOnClickListener(contactUsClickListener())
@@ -81,7 +87,7 @@ class HelpFragment : Fragment() {
     }
 
     private fun repeatShowCaseClickListener() = View.OnClickListener {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             requireContext().getString(R.string.text_repeat_tutorial),
             requireContext().getString(R.string.text_message_dialog_repeat_tutorial),
             true,
