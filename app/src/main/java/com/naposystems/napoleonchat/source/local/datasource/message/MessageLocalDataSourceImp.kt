@@ -363,4 +363,12 @@ class MessageLocalDataSourceImp @Inject constructor(
     override suspend fun deleteMessageByType(contactId: Int, type: Int) {
         return messageDao.deleteMessageByType(contactId, type)
     }
+
+    override suspend fun deleteDuplicatesMessages() {
+        return messageDao.deleteDuplicatesMessages()
+    }
+
+    override suspend fun addUUID() {
+        return messageDao.addUUID()
+    }
 }

@@ -246,6 +246,8 @@ class HomeFragment : BaseFragment() {
             Constants.LocationGetContact.OTHER.location
         )
 
+        viewModel.resetDuplicates()
+
         viewModel.getConversation()
 
         viewModel.getUserLiveData()

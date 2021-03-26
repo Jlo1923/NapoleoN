@@ -214,4 +214,12 @@ class HomeRepository @Inject constructor(
             Constants.ShowDialogSubscription.NO.option
         )
     }
+
+    override suspend fun deleteDuplicatesMessages() {
+        messageLocalDataSource.deleteDuplicatesMessages()
+    }
+
+    override suspend fun addUUID() {
+        messageLocalDataSource.addUUID()
+    }
 }

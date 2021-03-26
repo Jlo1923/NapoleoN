@@ -6,7 +6,6 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.naposystems.napoleonchat.source.local.dao.*
 import com.naposystems.napoleonchat.source.local.entity.*
-import java.util.*
 
 @Database(
     entities = [
@@ -59,17 +58,6 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE 'message' ADD COLUMN 'cypher' INTEGER NOT NULL DEFAULT 1")
             }
         }
-//
-//        val MIGRATION_2_3 = object : Migration(2, 3) {
-//            override fun migrate(database: SupportSQLiteDatabase) {
-//                database.execSQL(
-//                    "UPDATE message SET uuid = " + UUID.randomUUID()
-//                        .toString() + " WHERE uuid IS NULL;".trimIndent()
-//                )
-//            }
-//
-//        }
-
     }
 
 }

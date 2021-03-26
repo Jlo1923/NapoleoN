@@ -55,4 +55,7 @@ interface MessageLocalDataSource {
     fun verifyMessagesToDelete()
 
     suspend fun deleteMessageByType(contactId: Int, type: Int)
+
+    suspend fun deleteDuplicatesMessages()
+    suspend fun addUUID()
 }
