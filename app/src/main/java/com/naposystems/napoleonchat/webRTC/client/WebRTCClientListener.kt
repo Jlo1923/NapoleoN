@@ -19,4 +19,5 @@ interface WebRTCClientListener {
     fun hangupByNotification()
     fun unlockVideoButton()
     fun rejectByNotification()
+    fun contactAcceptChangeToVideoCall()
 }

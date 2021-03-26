@@ -46,7 +46,7 @@ interface WebRTCClient {
     fun startProximitySensor()
     fun stopProximitySensor()
     fun handleKeyDown(keyCode: Int): Boolean
-    fun dispose()
+    fun disposeCall()
     fun unSubscribeCallChannel()
 //    fun subscribeToChannelFromBackground(channel: String)
     //TODO: Revisar si se puede usar el metodo status connect o status channel

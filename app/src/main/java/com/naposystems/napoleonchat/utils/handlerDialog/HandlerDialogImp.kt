@@ -10,7 +10,8 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import javax.inject.Inject
 
-class HandlerDialogImp @Inject constructor(): HandlerDialog {
+//TODO: Revisar porque se agregan atributos despues del Dialog.show()
+class HandlerDialogImp @Inject constructor() : HandlerDialog {
 
     override fun generalDialog(
         title: String,
@@ -21,6 +22,7 @@ class HandlerDialogImp @Inject constructor(): HandlerDialog {
         textButtonCancel: String,
         actionAccept: () -> Unit
     ) {
+
         val dialog = GeneralDialogFragment.newInstance(
             title,
             message,
@@ -28,11 +30,13 @@ class HandlerDialogImp @Inject constructor(): HandlerDialog {
             textButtonAccept,
             textButtonCancel
         )
+
         dialog.setListener(object : GeneralDialogFragment.OnGeneralDialog {
             override fun onAccept() {
                 actionAccept()
             }
         })
+
         dialog.show(childFragmentManager, "GeneralDialog")
     }
 
@@ -65,20 +69,23 @@ class HandlerDialogImp @Inject constructor(): HandlerDialog {
         val textColorButton =
             Utils.convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
-        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveButton.setTextColor(textColorButton)
-        positiveButton.setBackgroundColor(Color.TRANSPARENT)
-        positiveButton.isAllCaps = false
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
+            setTextColor(textColorButton)
+            setBackgroundColor(Color.TRANSPARENT)
+            isAllCaps = false
+        }
 
-        val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-        neutralButton.setTextColor(textColorButton)
-        neutralButton.setBackgroundColor(Color.TRANSPARENT)
-        neutralButton.isAllCaps = false
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).apply {
+            setTextColor(textColorButton)
+            setBackgroundColor(Color.TRANSPARENT)
+            isAllCaps = false
+        }
 
-        val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-        negativeButton.setTextColor(textColorButton)
-        negativeButton.setBackgroundColor(Color.TRANSPARENT)
-        negativeButton.isAllCaps = false
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).apply {
+            setTextColor(textColorButton)
+            setBackgroundColor(Color.TRANSPARENT)
+            isAllCaps = false
+        }
     }
 
     override fun alertDialogWithoutNeutralButton(
@@ -91,13 +98,13 @@ class HandlerDialogImp @Inject constructor(): HandlerDialog {
         clickPositiveButton: (Boolean) -> Unit,
         clickNegativeButton: (Boolean) -> Unit
     ) {
-        val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
-            .setMessage(message)
-            .setCancelable(isCancelable)
-            .setPositiveButton(titlePositiveButton) { _, _ ->
+        val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme).apply {
+            setMessage(message)
+            setCancelable(isCancelable)
+            setPositiveButton(titlePositiveButton) { _, _ ->
                 clickPositiveButton(true)
             }
-            .setNegativeButton(titleNegativeButton) { dialog, _ ->
+            setNegativeButton(titleNegativeButton) { dialog, _ ->
                 if (location == Constants.LocationAlertDialog.CONVERSATION.location)
                     dialog.dismiss()
                 else {
@@ -105,21 +112,25 @@ class HandlerDialogImp @Inject constructor(): HandlerDialog {
                     dialog.dismiss()
                 }
             }
-            .create()
+        }.create()
+
         dialog.show()
 
         val textColorButton =
             Utils.convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
-        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveButton.setTextColor(textColorButton)
-        positiveButton.setBackgroundColor(Color.TRANSPARENT)
-        positiveButton.isAllCaps = false
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
+            setTextColor(textColorButton)
+            setBackgroundColor(Color.TRANSPARENT)
+            isAllCaps = false
+        }
 
-        val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-        negativeButton.setTextColor(textColorButton)
-        negativeButton.setBackgroundColor(Color.TRANSPARENT)
-        negativeButton.isAllCaps = false
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).apply {
+            setTextColor(textColorButton)
+            setBackgroundColor(Color.TRANSPARENT)
+            isAllCaps = false
+        }
+
     }
 
     override fun alertDialogInformative(
@@ -147,9 +158,10 @@ class HandlerDialogImp @Inject constructor(): HandlerDialog {
         val textColorButton =
             Utils.convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
-        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveButton.setTextColor(textColorButton)
-        positiveButton.setBackgroundColor(Color.TRANSPARENT)
-        positiveButton.isAllCaps = false
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
+            setTextColor(textColorButton)
+            setBackgroundColor(Color.TRANSPARENT)
+            isAllCaps = false
+        }
     }
 }

@@ -35,6 +35,7 @@ import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
 
+
 class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     companion object {
@@ -357,21 +358,23 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     private fun hangUp() {
-        Timber.d("WebRTCClient hangUp")
-        if (!hangUpPressed) {
 
-//            Data.isContactReadyForCall = false
+        Timber.d("WebRTCClient hangUp")
+
+        if (!hangUpPressed) {
 
             closeNotification()
 
             hangUpPressed = true
             viewModel.resetIsOnCallPref()
             when {
+
                 typeCall == Constants.TypeCall.IS_OUTGOING_CALL.type && !webRTCClient.isActiveCall -> {
                     viewModel.sendMissedCall(contactId, isVideoCall)
                     Timber.d("CancelCall 1")
                     viewModel.cancelCall(contactId, channel)
                 }
+
                 typeCall == Constants.TypeCall.IS_INCOMING_CALL.type && !webRTCClient.isActiveCall -> {
                     Timber.d("CancelCall 2")
                     viewModel.cancelCall(contactId, channel)
@@ -381,7 +384,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
                 }
             }
 
-            webRTCClient.dispose()
+            webRTCClient.disposeCall()
             Timber.d("SocketService webRTCClient.dispose()")
         }
     }
@@ -405,29 +408,36 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     private fun initSurfaceRenders() {
-        webRTCClient.setLocalVideoView(binding.surfaceRender)
-        webRTCClient.setRemoteVideoView(binding.remoteSurfaceRender)
-        webRTCClient.initSurfaceRenders()
+        runOnUiThread {
+            webRTCClient.setLocalVideoView(binding.surfaceRender)
+            webRTCClient.setRemoteVideoView(binding.remoteSurfaceRender)
+            webRTCClient.initSurfaceRenders()
+        }
     }
 
     //region Implementation WebRTCClient.WebRTCClientListener
     override fun contactWantChangeToVideoCall() {
-        binding.imageButtonChangeToVideo.isEnabled = true
-        handlerDialog.alertDialogWithoutNeutralButton(
-            R.string.text_contact_want_change_to_video_call,
-            false,
-            this,
-            Constants.LocationAlertDialog.CALL_ACTIVITY.location,
-            R.string.text_accept,
-            R.string.text_cancel,
-            clickPositiveButton = {
-                webRTCClient.acceptChangeToVideoCall()
-                binding.textViewTitle.text =
-                    getString(R.string.text_encrypted_video_call)
-            }, clickNegativeButton = {
-                webRTCClient.cancelChangeToVideoCall()
-            }
-        )
+        runOnUiThread(Runnable {
+
+            binding.imageButtonChangeToVideo.isEnabled = true
+
+            handlerDialog.alertDialogWithoutNeutralButton(
+                R.string.text_contact_want_change_to_video_call,
+                false,
+                this,
+                Constants.LocationAlertDialog.CALL_ACTIVITY.location,
+                R.string.text_accept,
+                R.string.text_cancel,
+                clickPositiveButton = {
+                    initSurfaceRenders()
+                    webRTCClient.acceptChangeToVideoCall()
+                    binding.textViewTitle.text =
+                        getString(R.string.text_encrypted_video_call)
+                }, clickNegativeButton = {
+                    webRTCClient.cancelChangeToVideoCall()
+                }
+            )
+        })
     }
 
     override fun contactCancelledVideoCall() {
@@ -500,14 +510,15 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     override fun changeTextViewTitle(stringResourceId: Int) {
         try {
-            binding.textViewTitle.text =
-                getString(
-                    stringResourceId,
-                    this.getString(R.string.label_nickname, contact?.getNickName())
-                )
+            runOnUiThread {
+                binding.textViewTitle.text =
+                    getString(
+                        stringResourceId,
+                        this.getString(R.string.label_nickname, contact?.getNickName())
+                    )
+            }
         } catch (e: Exception) {
-//            Timber.e(e.localizedMessage)
-            Timber.e("ERRORSISISISISIMO")
+            Timber.e(e.localizedMessage)
         }
 
     }
@@ -587,6 +598,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     override fun rejectByNotification() {
         hangUp()
+    }
+
+    override fun contactAcceptChangeToVideoCall() {
+        initSurfaceRenders()
     }
 
     //endregion
