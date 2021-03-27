@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
@@ -41,18 +42,18 @@ class ConversationCallViewModel
         repository.resetIsOnCallPref()
     }
 
-    override fun sendMissedCall(contactId: Int, isVideoCall: Boolean) {
+    override fun sendMissedCall(callModel: CallModel) {
         viewModelScope.launch {
             try {
 
                 val messageReqDTO = MessageReqDTO(
-                    userDestination = contactId,
+                    userDestination = callModel.contactId,
                     quoted = "",
                     body = "",
                     numberAttachments = 0,
                     destroy = Constants.SelfDestructTime.EVERY_ONE_DAY.time,
-                    messageType = if (isVideoCall) Constants.MessageType.MISSED_VIDEO_CALL.type else
-                        Constants.MessageType.MISSED_CALL.type
+                    messageType = if (callModel.isVideoCall) Constants.MessageType.MISSED_VIDEO_CALL.type
+                    else Constants.MessageType.MISSED_CALL.type
                 )
 
                 val messageResponse = repository.sendMissedCall(messageReqDTO)
@@ -67,12 +68,12 @@ class ConversationCallViewModel
         }
     }
 
-    override fun cancelCall(contactId: Int, channel: String) {
+    override fun cancelCall(callModel: CallModel) {
         viewModelScope.launch {
             try {
                 val cancelCallReqDTO = CancelCallReqDTO(
-                    contactId,
-                    channel
+                    callModel.contactId,
+                    callModel.channelName
                 )
                 val response = repository.cancelCall(cancelCallReqDTO)
 

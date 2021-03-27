@@ -1,16 +1,17 @@
 package com.naposystems.napoleonchat.webRTC.client
 
 import android.widget.TextView
-import com.pusher.client.channel.PrivateChannel
+import com.naposystems.napoleonchat.model.CallModel
 import org.webrtc.SurfaceViewRenderer
 
 interface WebRTCClient {
 
+    var callModel: CallModel
     var isActiveCall: Boolean
-    var contactId: Int
-    var isVideoCall: Boolean
-    var typeCall: Int
-    var channel: String
+//    var contactId: Int
+//    var isVideoCall: Boolean
+//    var typeCall: Int
+//    var channel: String
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
     fun subscribeToCallChannel()
@@ -32,7 +33,8 @@ interface WebRTCClient {
     fun setIsOnCallActivity(isOnCallActivity: Boolean)
     fun initSurfaceRenders()
     fun startCaptureVideo()
-//    fun emitJoinToCall()
+
+    //    fun emitJoinToCall()
     fun stopRingAndVibrate()
     fun emitHangUp()
     fun changeToVideoCall()
@@ -48,10 +50,12 @@ interface WebRTCClient {
     fun handleKeyDown(keyCode: Int): Boolean
     fun disposeCall()
     fun unSubscribeCallChannel()
-//    fun subscribeToChannelFromBackground(channel: String)
+
+    //    fun subscribeToChannelFromBackground(channel: String)
     //TODO: Revisar si se puede usar el metodo status connect o status channel
-    fun getPusherChannel(channel: String): PrivateChannel?
+    fun getPusherChannel(channel: String): Boolean
     fun renderRemoteVideo()
     fun createAnswer()
+    fun startWebRTCCallService(callModel: CallModel)
 
 }

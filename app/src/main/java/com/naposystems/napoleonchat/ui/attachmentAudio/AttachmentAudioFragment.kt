@@ -18,7 +18,7 @@ import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
+import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -41,7 +41,7 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var notificationMessagesService: NotificationMessagesService
+    lateinit var notificationClient: NotificationClient
 
     @Inject
     lateinit var handlerNotificationChannel: HandlerNotificationChannel

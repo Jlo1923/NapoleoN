@@ -126,26 +126,6 @@ fun JSONObject.toSessionDescription(type: SessionDescription.Type): SessionDescr
     return SessionDescription(type, data.getString("sdp"))
 }
 
-fun JSONObject.toConversationCallModel(): ConversationCall {
-    var channel = ""
-    var contactId = 0
-    var isVideoCall = false
-
-    if (has(Constants.CallKeys.CHANNEL_NAME)) {
-        channel = "presence-${getString(Constants.CallKeys.CHANNEL_NAME)}"
-    }
-
-    if (has(Constants.CallKeys.CONTACT_ID)) {
-        contactId = getInt(Constants.CallKeys.CONTACT_ID)
-    }
-
-    if (has(Constants.CallKeys.IS_VIDEO_CALL)) {
-        isVideoCall = getBoolean(Constants.CallKeys.IS_VIDEO_CALL)
-    }
-
-    return ConversationCall(channel, contactId, isVideoCall)
-}
-
 fun IceCandidate.toJSONObject(): JSONObject {
     val jsonObject = JSONObject()
     jsonObject.put("type", "candidate")

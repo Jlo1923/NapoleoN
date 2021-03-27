@@ -38,10 +38,10 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
+import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
@@ -52,6 +52,8 @@ import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -69,10 +71,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
-    lateinit var notificationMessagesService: NotificationMessagesService
+    lateinit var notificationClient: NotificationClient
 
     @Inject
     lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var webRTCClient: WebRTCClient
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -123,28 +128,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .get(MainActivityViewModel::class.java)
 
         intent.extras?.let { bundle ->
-            var channel = ""
-            var contactId = 0
-            var isVideoCall = false
 
-            if (bundle.containsKey(Constants.CallKeys.CHANNEL_NAME)) {
-                channel = bundle.getString(Constants.CallKeys.CHANNEL_NAME) ?: ""
+            var callModel = CallModel(
+                contactId = 0,
+                channelName = "",
+                isVideoCall = false
+            )
+
+            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL)) {
+                callModel = bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
             }
 
-            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {
-                contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
-            }
-
-            if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
-                isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
-            }
-
-            Timber.d("Channel: $channel, ContactId: $contactId, IsVideoCall: $isVideoCall")
-
-            if (channel.isNotEmpty() || contactId > 0) {
-                viewModel.setCallChannel(channel)
-                viewModel.setIsVideoCall(isVideoCall)
-                viewModel.getContact(contactId)
+            if (callModel.channelName != "" || callModel.contactId > 0) {
+                viewModel.setCallChannel(callModel.channelName)
+                viewModel.setIsVideoCall(callModel.isVideoCall)
+                viewModel.getContact(callModel.contactId)
             }
         }
 
@@ -192,25 +190,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
                     Timber.d("startCallActivity MainActivity")
-                    notificationMessagesService.startWebRTCCallService(
-                        it.channel,
-                        it.isVideoCall,
-                        it.contactId,
-                        true,
-                        it.incomingCallDataOffer
-                    )
+//                    webRTCClient.startWebRTCCallService(
+//                        it.channel,
+//                        it.isVideoCall,
+//                        it.contactId,
+//                        Constants.TypeCall.IS_INCOMING_CALL.type,
+//                        it.incomingCallDataOffer
+//                    )
 
                     val intent =
                         Intent(applicationContext, ConversationCallActivity::class.java).apply {
                             putExtras(Bundle().apply {
-                                putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
-                                putString(ConversationCallActivity.CHANNEL, it.channel)
-                                putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
-                                putInt(
-                                    ConversationCallActivity.TYPE_CALL,
-                                    Constants.TypeCall.IS_INCOMING_CALL.type
-                                )
-                                putString(ConversationCallActivity.OFFER, it.incomingCallDataOffer)
+                                it.callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+                                putSerializable(ConversationCallActivity.CALL_MODEL, it.callModel)
                             })
                         }
                     startActivity(intent)
@@ -344,13 +336,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Timber.d("startCallActivity MainActivity viewmodel.contact")
                 val intent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putSerializable(ConversationCallActivity.CONTACT_ID, contact)
-                        putString(ConversationCallActivity.CHANNEL, viewModel.getCallChannel())
-                        putBoolean(
-                            ConversationCallActivity.IS_VIDEO_CALL,
-                            viewModel.isVideoCall() ?: false
+                        putSerializable(
+                            ConversationCallActivity.CALL_MODEL, CallModel(
+                                contactId = contact.id,
+                                channelName = viewModel.getCallChannel(),
+                                isVideoCall = viewModel.isVideoCall() ?: false,
+                                typeCall = Constants.TypeCall.IS_INCOMING_CALL
+                            )
                         )
-                        putBoolean(ConversationCallActivity.TYPE_CALL, true)
                     })
                 }
                 startActivity(intent)

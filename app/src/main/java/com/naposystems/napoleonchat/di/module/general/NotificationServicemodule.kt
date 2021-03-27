@@ -1,9 +1,8 @@
 package com.naposystems.napoleonchat.di.module.general
 
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesServiceImp
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
-import com.naposystems.napoleonchat.service.notificationUpload.NotificationUploadService
-import com.naposystems.napoleonchat.service.notificationUpload.NotificationUploadServiceImp
+import com.naposystems.napoleonchat.service.notificationClient.*
+import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClient
+import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClientImp
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton
@@ -13,10 +12,22 @@ abstract class NotificationServicemodule {
 
     @Binds
     @Singleton
-    abstract fun bindNNotificationMessagesService(notificationMessagesService: NotificationMessagesServiceImp): NotificationMessagesService
+    abstract fun bindNotificationClient(notificationClient: NotificationClientImp): NotificationClient
 
     @Binds
     @Singleton
-    abstract fun bindNotificationUploadService(notificationUploadService: NotificationUploadServiceImp): NotificationUploadService
+    abstract fun bindHandlerNotification(handlerNotification: HandlerNotificationImp): HandlerNotification
+
+    @Binds
+    @Singleton
+    abstract fun bindHandlerNotificationMessage(handlerNotificationMessage: HandlerNotificationMessageImp): HandlerNotificationMessage
+
+    @Binds
+    @Singleton
+    abstract fun bindHandlerNotificationCall(handlerNotificationCall: HandlerNotificationCallImp): HandlerNotificationCall
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationUploadClient(notificationUploadClient: NotificationUploadClientImp): NotificationUploadClient
 
 }

@@ -5,10 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesServiceImp
+import com.naposystems.napoleonchat.service.notificationClient.HandlerNotification
+import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
+import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
@@ -29,7 +31,10 @@ class WebRTCService : Service() {
     lateinit var napoleonApplication: NapoleonApplication
 
     @Inject
-    lateinit var notificationMessagesService: NotificationMessagesService
+    lateinit var notificationClient: NotificationClient
+
+    @Inject
+    lateinit var handlerNotification: HandlerNotification
 
     @Inject
     lateinit var repository: WebRTCServiceRepositoryImp
@@ -45,49 +50,31 @@ class WebRTCService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
-        var channelName = ""
-        var contactId = 0
-        var isVideoCall = false
-        var isIncomingCall = false
-        var offer = ""
+        var callModel = CallModel(
+            channelName = "",
+            contactId = 0,
+            isVideoCall = false,
+            typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
+            offer = ""
+        )
 
         intent.extras?.let { bundle ->
-            if (bundle.containsKey(Constants.CallKeys.CHANNEL_NAME))
-                channelName = bundle.getString(Constants.CallKeys.CHANNEL_NAME) ?: ""
-
-
-            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID))
-                contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
-
-
-            if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL))
-                isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
-
-
-            if (bundle.containsKey(Constants.CallKeys.IS_INCOMING_CALL))
-                isIncomingCall = bundle.getBoolean(Constants.CallKeys.IS_INCOMING_CALL, false)
-
-
-            if (bundle.containsKey(Constants.CallKeys.OFFER))
-                offer = bundle.getString(Constants.CallKeys.OFFER, "")
-
+            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL))
+                callModel = bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
         }
 
         intent.action?.let { action ->
             Timber.d("onStartCommand action: $action")
-            notificationMessagesService.stopMediaPlayer()
+            handlerNotification.stopMediaPlayer()
             when (action) {
                 ACTION_ANSWER_CALL -> {
                     startConversationCallActivity(
-                        channel = channelName,
-                        contactId = contactId,
-                        isVideoCall = isVideoCall,
-                        offer = offer,
-                        action = ACTION_ANSWER_CALL
+                        action = ACTION_ANSWER_CALL,
+                        callModel = callModel
                     )
                 }
                 ACTION_DENY_CALL -> {
-                    repository.rejectCall(contactId, channelName)
+                    repository.rejectCall(callModel)
                     stopForeground(true)
                     stopSelf()
                 }
@@ -98,83 +85,55 @@ class WebRTCService : Service() {
                 ACTION_HANG_UP -> {
                     stopForeground(true)
                     stopSelf()
-                    RxBus.publish(RxEvent.HangupByNotification(channelName))
+                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                 }
                 else -> {
                 }
             }
         } ?: run {
-            if (isIncomingCall) {
-                showIncomingCallNotification(channelName, contactId, isVideoCall, offer)
+            //TODO: Revisar aqui cuando llega la notificacion tambien muestra la pantalla  de llamada
+            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+                showCallNotification(callModel)
                 if (!napoleonApplication.visible) {
-                    startConversationCallActivity(channelName, contactId, isVideoCall, offer)
+                    startConversationCallActivity(callModel = callModel)
                 }
             } else {
-                showOutgoingCallNotification(channelName, contactId, isVideoCall)
+                showCallNotification(callModel)
             }
         }
         return START_NOT_STICKY
     }
 
-    private fun showIncomingCallNotification(
-        channel: String,
-        contactId: Int,
-        isVideoCall: Boolean,
-        offer: String
+    private fun showCallNotification(
+        callModel: CallModel
     ) {
-        if (channel.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission() && offer.isNotEmpty()) {
-            val notification = notificationMessagesService.createNotificationCallBuilder(
-                channel,
-                contactId,
-                isVideoCall,
-                Constants.TypeCall.IS_INCOMING_CALL.type,
-                offer
-            )
-            startForeground(NotificationMessagesServiceImp.NOTIFICATION_RINGING, notification)
-        }
-    }
+        if (callModel.channelName != "" && callModel.contactId > 0 && this.hasMicAndCameraPermission()) {
 
-    private fun showOutgoingCallNotification(
-        channelName: String,
-        contactId: Int,
-        isVideoCall: Boolean
-    ) {
-        if (channelName.isNotEmpty() && contactId > 0 && this.hasMicAndCameraPermission()) {
-            val notification = notificationMessagesService.createNotificationCallBuilder(
-                channelName,
-                contactId,
-                isVideoCall,
-                Constants.TypeCall.IS_OUTGOING_CALL.type,
+            callModel.typeCall = if (callModel.offer != "") Constants.TypeCall.IS_INCOMING_CALL
+            else Constants.TypeCall.IS_OUTGOING_CALL
+
+            val notification = handlerNotification.createNotificationCallBuilder(
+                callModel
             )
-            startForeground(NotificationMessagesServiceImp.NOTIFICATION_RINGING, notification)
+            startForeground(HandlerNotificationImp.NOTIFICATION_RINGING, notification)
         }
     }
 
     private fun startConversationCallActivity(
-        channel: String,
-        contactId: Int,
-        isVideoCall: Boolean,
-        offer: String,
-        action: String = ""
+        action: String = "",
+        callModel: CallModel
     ) {
         if (this.hasMicAndCameraPermission()) {
-            if (channel.isNotEmpty() && contactId > 0) {
+            if (callModel.channelName != "" && callModel.contactId > 0) {
 
                 Timber.d("startCallActivity WebRTCCallService")
                 val newIntent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putInt(ConversationCallActivity.CONTACT_ID, contactId)
-                        putString(ConversationCallActivity.CHANNEL, channel)
-                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, isVideoCall)
-                        putInt(
-                            ConversationCallActivity.TYPE_CALL,
-                            Constants.TypeCall.IS_INCOMING_CALL.type
-                        )
-                        putString(ConversationCallActivity.OFFER, offer)
+                        callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+                        putSerializable(ConversationCallActivity.CALL_MODEL, callModel)
                         putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
                         putBoolean(
-                            ConversationCallActivity.ANSWER_CALL,
-                            action == ACTION_ANSWER_CALL
+                            ConversationCallActivity.ANSWER_CALL, action == ACTION_ANSWER_CALL
                         )
                     })
                 }

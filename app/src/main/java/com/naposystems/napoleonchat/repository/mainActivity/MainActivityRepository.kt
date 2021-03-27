@@ -9,14 +9,14 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketMessageService: SocketMessageService
+    private val socketClient: SocketClient
 ) :    IContractMainActivity.Repository {
 
     override suspend fun getUser(): UserEntity {

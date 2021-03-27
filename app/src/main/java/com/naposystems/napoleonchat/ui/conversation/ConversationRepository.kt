@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.messageNotSent.MessageNotSentLocalDataSource
@@ -48,7 +48,7 @@ import javax.inject.Inject
 
 class ConversationRepository @Inject constructor(
     private val context: Context,
-    private val socketMessageService: SocketMessageService,
+    private val socketClient: SocketClient,
     private val userLocalDataSource: UserLocalDataSource,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
@@ -362,9 +362,9 @@ class ConversationRepository @Inject constructor(
 
                 try {
 
-                    Timber.d("SocketService: $socketMessageService")
+                    Timber.d("SocketService: $socketClient")
 
-                    socketMessageService.emitClientConversation(messagesRead)
+                    socketClient.emitClientConversation(messagesRead)
 
                     val response = napoleonApi.sendMessagesRead(
                         MessagesReadReqDTO(

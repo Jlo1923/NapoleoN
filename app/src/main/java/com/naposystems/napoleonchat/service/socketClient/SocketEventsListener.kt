@@ -1,5 +1,6 @@
-package com.naposystems.napoleonchat.service.socketMessage
+package com.naposystems.napoleonchat.service.socketClient
 
+import com.naposystems.napoleonchat.model.CallModel
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
 
@@ -16,11 +17,9 @@ interface SocketEventsListener {
     interface Call {
 
         //region Conection
-        fun itsSubscribedToCallChannel(
-            contactId: Int,
-            channelName: String,
-            isVideoCall: Boolean
-        )
+        fun itsSubscribedToPresenceChannelOutgoingCall(callModel: CallModel)
+
+        fun itsSubscribedToPresenceChannelIncomingCall(callModel: CallModel)
 
         fun iceCandidateReceived(channelName: String, iceCandidate: IceCandidate)
         fun offerReceived(channelName: String, sessionDescription: SessionDescription)
@@ -46,6 +45,7 @@ interface SocketEventsListener {
 
         //region Hangup
         fun contactHasHangup(channelName: String)
+
         //endregion
     }
 

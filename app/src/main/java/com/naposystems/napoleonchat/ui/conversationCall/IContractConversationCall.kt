@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.conversationCall
 
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
@@ -12,8 +13,8 @@ interface IContractConversationCall {
     interface ViewModel {
         fun getContact(contactId: Int)
         fun resetIsOnCallPref()
-        fun sendMissedCall(contactId: Int, isVideoCall: Boolean)
-        fun cancelCall(contactId: Int, channel: String)
+        fun sendMissedCall(callModel: CallModel)
+        fun cancelCall(callModel: CallModel)
     }
 
     interface Repository {

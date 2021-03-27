@@ -71,7 +71,7 @@ object Constants {
     }
 
     object CallKeys {
-        const val IS_INCOMING_CALL = "is_incoming_call"
+        const val CALL_MODEL = "callModel"
         const val CHANNEL_NAME = "channel_private"
         const val CONTACT_ID = "contact_id"
         const val IS_VIDEO_CALL = "is_videocall"
@@ -526,7 +526,8 @@ object Constants {
     }
 
     enum class SocketEmitTriggers(val trigger: String) {
-        CLIENT_CONVERSATION("client-conversationNN")
+        CLIENT_CONVERSATION("client-conversationNN"),
+        CLIENT_CALL("client-callNN")
     }
 
     enum class StateFlag(val state: Int) {

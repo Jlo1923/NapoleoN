@@ -22,11 +22,11 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.model.FriendShipRequest
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
@@ -176,16 +176,7 @@ class HomeFragment : BaseFragment() {
             Timber.d("startCallActivity returnCall HomeFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.contactId)
-                    putString(ConversationCallActivity.CHANNEL, webRTCClient.channel)
-                    putBoolean(
-                        ConversationCallActivity.IS_VIDEO_CALL,
-                        webRTCClient.isVideoCall
-                    )
-                    putInt(
-                        ConversationCallActivity.TYPE_CALL,
-                        webRTCClient.typeCall
-                    )
+                    putSerializable(ConversationCallActivity.CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }

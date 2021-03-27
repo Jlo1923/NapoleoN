@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.webRTC.service
 
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import kotlinx.coroutines.GlobalScope
@@ -12,11 +13,11 @@ class WebRTCServiceRepositoryImp
     private val napoleonApi: NapoleonApi
 ) : WebRTCServiceRepository {
 
-    override fun rejectCall(contactId: Int, channel: String) {
+    override fun rejectCall(callModel: CallModel) {
         GlobalScope.launch {
             val rejectCallReqDTO = RejectCallReqDTO(
-                contactId = contactId,
-                channel = channel
+                contactId = callModel.contactId,
+                channel = callModel.channelName
             )
             val response = napoleonApi.rejectCall(rejectCallReqDTO)
 

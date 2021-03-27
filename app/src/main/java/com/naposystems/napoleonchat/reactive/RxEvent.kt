@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.reactive
 
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -18,7 +19,7 @@ class RxEvent {
     class AccountAttack
     class HideOptionMenuRecoveryAccount
 //    data class ItsSubscribedToCallChannel(val channel: String, val contactId: Int, val isVideoCall: Boolean)
-    data class IncomingCall(val channel: String, val contactId: Int, val isVideoCall: Boolean, val incomingCallDataOffer: String)
+    data class IncomingCall(val callModel: CallModel)
 //    data class IceCandidateReceived(val channel: String, val iceCandidate: IceCandidate)
 //    data class OfferReceived(val channel: String, val sessionDescription: SessionDescription)
 //    data class AnswerReceived(val channel: String, val sessionDescription: SessionDescription)
@@ -60,4 +61,7 @@ class RxEvent {
     )
 
     data class StateFlag(val state: Int)
+    class ConnectSocket {
+
+    }
 }

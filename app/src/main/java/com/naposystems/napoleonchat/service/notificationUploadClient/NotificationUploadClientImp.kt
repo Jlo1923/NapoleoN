@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.notificationUpload
+package com.naposystems.napoleonchat.service.notificationUploadClient
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -7,10 +7,10 @@ import androidx.core.app.NotificationCompat
 import com.naposystems.napoleonchat.R
 import javax.inject.Inject
 
-class NotificationUploadServiceImp
+class NotificationUploadClientImp
 @Inject constructor(
     private val context: Context
-) : NotificationUploadService {
+) : NotificationUploadClient {
 
     companion object {
         const val NOTIFICATION_UPLOADING = 20102020
