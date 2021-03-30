@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.di.module.sources.local.RoomModule
 import com.naposystems.napoleonchat.di.module.sources.remote.RetrofitModule
 import com.naposystems.napoleonchat.di.module.ui.ActivityModule
 import com.naposystems.napoleonchat.di.module.ui.FragmentModule
+import com.naposystems.napoleonchat.di.module.workmanager.WorkManagerModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -56,6 +57,9 @@ import javax.inject.Singleton
 
         // MediaStore
         MediaStoreModule::class,
+
+        // WorkManager
+        WorkManagerModule::class,
 
         //Shared
         ContactProfileShareModule::class,

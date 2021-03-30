@@ -15,7 +15,7 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class UploadService() : Service(), IContractUploadService {
+class UploadService : Service(), IContractUploadService {
 
     companion object {
         const val PROGRESS_MAX = 100

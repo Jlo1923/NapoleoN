@@ -419,9 +419,9 @@ class SocketMessageServiceImp @Inject constructor(
 
                             syncManager.getMyMessages(null)
 
-                            syncManager.verifyMessagesReceived()
+                            //syncManager.verifyMessagesReceived()
 
-                            syncManager.verifyMessagesRead()
+                            //syncManager.verifyMessagesRead()
 
                         }
 

@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.MediaStoreAudio
+import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.utility.DownloadAttachmentResult
 import com.naposystems.napoleonchat.utility.UploadResult
 import com.vincent.videocompressor.VideoCompressResult
@@ -31,13 +32,13 @@ interface IContractConversation {
         fun getLocalMessages()
 
         fun saveMessageLocally(body: String, selfDestructTime: Int, quote: String)
-        fun saveMessageAndAttachment(
-            messageString: String,
-            attachmentEntity: AttachmentEntity?,
-            numberAttachments: Int,
-            selfDestructTime: Int,
-            quote: String
-        )
+
+        /**
+         * Save message in local and validate if must send attachment
+         *
+         * @param itemMessage: get the data for the message to send
+         */
+        fun saveMessageAndAttachment(itemMessage: ItemMessage)
 
         fun saveMessageWithAudioAttachment(
             mediaStoreAudio: MediaStoreAudio,
@@ -48,8 +49,16 @@ interface IContractConversation {
         fun sendTextMessagesRead()
         fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Boolean)
         fun cleanSelectionMessages(contactId: Int)
-        fun deleteMessagesSelected(contactId: Int, listMessageRelations: List<MessageAttachmentRelation>)
-        fun deleteMessagesForAll(contactId: Int, listMessageRelations: List<MessageAttachmentRelation>)
+        fun deleteMessagesSelected(
+            contactId: Int,
+            listMessageRelations: List<MessageAttachmentRelation>
+        )
+
+        fun deleteMessagesForAll(
+            contactId: Int,
+            listMessageRelations: List<MessageAttachmentRelation>
+        )
+
         fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
         fun deleteMessagesByStatusForAll(contactId: Int, status: Int)
         fun copyMessagesSelected(contactId: Int)
@@ -65,8 +74,17 @@ interface IContractConversation {
         fun setIsVideoCall(isVideoCall: Boolean)
         fun isVideoCall(): Boolean
         fun resetIsVideoCall()
-        fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity, selfDestructTime: Int)
-        fun downloadAttachment(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int)
+        fun uploadAttachment(
+            attachmentEntity: AttachmentEntity,
+            messageEntity: MessageEntity,
+            selfDestructTime: Int
+        )
+
+        fun downloadAttachment(
+            messageAndAttachmentRelation: MessageAttachmentRelation,
+            itemPosition: Int
+        )
+
         fun updateMessage(messageEntity: MessageEntity)
         fun updateAttachment(attachmentEntity: AttachmentEntity)
         fun sendDocumentAttachment(fileUri: Uri)
@@ -88,7 +106,11 @@ interface IContractConversation {
         suspend fun getQuoteId(quoteWebId: String): Int
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
         suspend fun sendMessage(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
-        suspend fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity): Flow<UploadResult>
+        suspend fun uploadAttachment(
+            attachmentEntity: AttachmentEntity,
+            messageEntity: MessageEntity
+        ): Flow<UploadResult>
+
         suspend fun getLocalUser(): UserEntity
         suspend fun insertMessage(messageEntity: MessageEntity): Long
         fun insertListMessage(messageEntityList: List<MessageEntity>)
@@ -107,17 +129,30 @@ interface IContractConversation {
         suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
         suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
         suspend fun cleanSelectionMessages(contactId: Int)
-        suspend fun deleteMessagesSelected(contactId: Int, listMessageRelations: List<MessageAttachmentRelation>)
+        suspend fun deleteMessagesSelected(
+            contactId: Int,
+            listMessageRelations: List<MessageAttachmentRelation>
+        )
+
         suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
         suspend fun copyMessagesSelected(contactId: Int): List<String>
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>>
-        suspend fun callContact(contact: ContactEntity, isVideoCall: Boolean): Response<CallContactResDTO>
+        suspend fun callContact(
+            contact: ContactEntity,
+            isVideoCall: Boolean
+        ): Response<CallContactResDTO>
+
         fun subscribeToCallChannel(channel: String, isVideoCall: Boolean)
         suspend fun downloadAttachment(
             messageAndAttachmentRelation: MessageAttachmentRelation,
             itemPosition: Int
         ): Flow<DownloadAttachmentResult>
-        fun updateAttachmentState(messageAndAttachmentRelation: MessageAttachmentRelation, state: Int)
+
+        fun updateAttachmentState(
+            messageAndAttachmentRelation: MessageAttachmentRelation,
+            state: Int
+        )
+
         suspend fun copyFile(fileUri: Uri): File?
         fun verifyMessagesToDelete()
         suspend fun setMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)

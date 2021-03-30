@@ -178,6 +178,7 @@ class ConversationRepository @Inject constructor(
                                 messageId = requestBodyMessageId,
                                 attachmentType = requestBodyType,
                                 duration = requestBodyDuration,
+                                destroy = null,
                                 file = requestBodyFilePart
                             )
 

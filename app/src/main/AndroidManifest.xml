@@ -43,11 +43,11 @@
         tools:replace="android:allowBackup"
         tools:targetApi="n">
         <activity android:name=".ui.previewmulti.MultipleAttachmentPreviewActivity"></activity>
-        <activity android:name=".ui.multi.MultipleAttachmentsPreviewActivity" />
         <activity android:name=".ui.multi.MultipleAttachmentActivity" />
 
         <service android:name=".service.webRTCCall.WebRTCCallService" />
         <service android:name=".service.uploadService.UploadService" />
+        <service android:name=".service.multiattachment.MultipleUploadService" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -77,7 +77,8 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" /> <!-- FIREBASE -->
-        <service android:name=".service.firebase.NapoleonFirebaseMessagingService"
+        <service
+            android:name=".service.firebase.NapoleonFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

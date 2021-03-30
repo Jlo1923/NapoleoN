@@ -49,6 +49,8 @@ import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepositor
 import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServiceRepository
+import com.naposystems.napoleonchat.service.multiattachment.IContractMultipleUpload
+import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadRepository
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.service.webRTCCall.IContractWebRTCCallService
 import com.naposystems.napoleonchat.ui.accountAttack.IContractAccountAttackDialog
@@ -81,6 +83,8 @@ import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyb
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
+import com.naposystems.napoleonchat.ui.previewmulti.contract.IContractMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.previewmulti.repository.MultipleAttachmentPreviewRepository
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
@@ -253,11 +257,19 @@ abstract class RepositoryModule {
     abstract fun bindWebRTCCallServiceRepository(repository: WebRTCCallServiceRepository): IContractWebRTCCallService.Repository
 
     @Binds
-    abstract fun provideUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository
+    abstract fun provideMultiUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository
 
     @Binds
-    @Singleton
+    abstract fun provideUploadServiceRepository(
+        repository: MultipleUploadRepository
+    ): IContractMultipleUpload.Repository
+
+    @Binds
     abstract fun provideMultipleAttachmentRepository(repository: MultipleAttachmentRepository):
             IContractMultipleAttachment.Repository
+
+    @Binds
+    abstract fun provideMultipleAttachmentPreviewRepository(repository: MultipleAttachmentPreviewRepository):
+            IContractMultipleAttachmentPreview.Repository
 
 }

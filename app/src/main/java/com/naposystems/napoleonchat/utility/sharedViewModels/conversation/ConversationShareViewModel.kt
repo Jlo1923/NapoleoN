@@ -20,6 +20,10 @@ class ConversationShareViewModel @Inject constructor() : ViewModel(),
     val attachmentEntitySelected: LiveData<AttachmentEntity>
         get() = _attachmentSelected
 
+    private val _listAttachments = MutableLiveData<List<AttachmentEntity>>()
+    val listAttachments: LiveData<List<AttachmentEntity>>
+        get() = _listAttachments
+
     private val _attachmentTaken = MutableLiveData<AttachmentEntity>()
     val attachmentEntityTaken: LiveData<AttachmentEntity>
         get() = _attachmentTaken
