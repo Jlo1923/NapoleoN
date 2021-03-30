@@ -3,7 +3,6 @@ final String REGION = "us-west-2"
 
 node('master') {
     stage("Cleaning existing resources"){
-        sh 'env'
         cleanWs()
     }
     stage("Checkout"){
@@ -13,8 +12,6 @@ node('master') {
         s3Download(file:'pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
     }
     stage("Building"){
-        sh(script:"export ${JKS_KEY_PATH}")
-        sh(script:"echo ${JKS_KEY_PATH}")
         VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
         echo "${VERSION}"
         sh(script:"./gradlew clean :app:bundleRelease :app:assembleRelease")
