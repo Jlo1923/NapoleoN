@@ -14,6 +14,7 @@ node('master') {
     stage("Building"){
         VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
         echo "${VERSION}"
+        sh(script:"chmod +x ./gradlew")
         sh(script:"./gradlew clean :app:bundleRelease :app:assembleRelease")
         sh(script:"ls -la")
     }
