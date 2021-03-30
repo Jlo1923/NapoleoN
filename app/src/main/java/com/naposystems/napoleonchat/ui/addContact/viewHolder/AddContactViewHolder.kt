@@ -14,18 +14,20 @@ class AddContactViewHolder constructor(private val binding: AddContactItemBindin
 
     fun bind(item: Contact, clickListener: AddContactAdapter.ClickListener) {
 
-        binding.contact = item
+        binding.apply {
+            contact = item
+            textViewUserName.isSelected = true
+            progressbar.isVisible = false
+            buttonAdd.setIconTintResource(R.color.colorPrimary)
 
-        binding.textViewUserName.isSelected = true
-        binding.progressbar.isVisible =false
-        binding.buttonAdd.setIconTintResource(R.color.colorPrimary)
-
-        binding.buttonAdd.setOnClickListener {
-            binding.progressbar.isVisible = true
-            binding.buttonAdd.setIconTintResource(R.color.white)
-            clickListener.onAddClick(item)
+            buttonAdd.setOnClickListener {
+                progressbar.isVisible = true
+                buttonAdd.setIconTintResource(R.color.white)
+                clickListener.onAddClick(item)
+            }
+            executePendingBindings()
         }
-        binding.executePendingBindings()
+
     }
 
     companion object {

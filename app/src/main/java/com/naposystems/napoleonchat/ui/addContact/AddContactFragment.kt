@@ -258,11 +258,11 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             }
 
             override fun onOpenChat(contact: Contact) {
-                val c = viewModel.getContact(contact)
-                if (c != null)
+                val con = viewModel.getContact(contact)
+                if (con != null)
                     findNavController().navigate(
                         AddContactFragmentDirections.actionAddContactFragmentToConversationFragment(
-                            c
+                            con
                         )
                     )
             }
@@ -270,8 +270,11 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             override fun onAcceptRequest(contact: Contact, state: Boolean) {
 
                 val request = viewModel.acceptOrRefuseRequest(contact, state)
-                if (state) shareViewModel.acceptFriendshipRequest(request)
-                else shareViewModel.refuseFriendshipRequest(request)
+                if (state) {
+                    shareViewModel.acceptFriendshipRequest(request)
+                } else {
+                    shareViewModel.refuseFriendshipRequest(request)
+                }
 
             }
         }, childFragmentManager)

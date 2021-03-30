@@ -21,39 +21,42 @@ class RequestContactReceivedHolder constructor(private val binding: AddContactRe
         fragmentManager: FragmentManager,
         context: Context
     ) {
-        binding.contact = item
+        binding.apply {
+            contact = item
+            progressbar.isVisible = false
+            containerButtons.isVisible = true
 
-        binding.progressbar.isVisible = false
-        binding.containerButtons.isVisible = true
+            buttonRefuse.setOnClickListener {
 
-        binding.buttonRefuse.setOnClickListener {
+                Utils.generalDialog(
+                    context.getString(R.string.text_friend_title_reject_request),
+                    context.getString(
+                        R.string.text_friend_text_reject_request,
+                        item.nickname
+                    ),
+                    true,
+                    fragmentManager,
+                    context.getString(
+                        R.string.text_confirm
+                    )
+                ) {
+                    hideButtons()
+                    item.statusFriend = false
+                    item.offer = false
+                    clickListener.onAcceptRequest(item, false)
+                }
 
-            Utils.generalDialog(
-                context.getString(R.string.text_friend_title_reject_request),
-                context.getString(
-                    R.string.text_friend_text_reject_request,
-                    item.nickname
-                ),
-                true,
-                fragmentManager,
-                context.getString(
-                    R.string.text_confirm)
-            ) {
-                hideButtons()
-                item.statusFriend = false
-                item.offer = false
-                clickListener.onAcceptRequest(item, false)
+
             }
-
-
+            buttonAccept.setOnClickListener {
+                hideButtons()
+                item.statusFriend = true
+                item.offer = false
+                clickListener.onAcceptRequest(item, true)
+            }
+            executePendingBindings()
         }
-        binding.buttonAccept.setOnClickListener {
-            hideButtons()
-            item.statusFriend = true
-            item.offer = false
-            clickListener.onAcceptRequest(item, true)
-        }
-        binding.executePendingBindings()
+
     }
 
     fun hideButtons() {

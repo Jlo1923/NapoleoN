@@ -58,17 +58,15 @@ class AddContactAdapter constructor(
         viewType: Int
     ): RecyclerView.ViewHolder {
         return when (viewType) {
+
             TYPE_NO_FRIEND ->
                 AddContactViewHolder.from(parent)
-            TYPE_REQUEST_SENT -> {
+            TYPE_REQUEST_SENT ->
                 RequestContactSentViewHolder.from(parent)
-            }
-            TYPE_REQUEST_RECEIVED -> {
+            TYPE_REQUEST_RECEIVED ->
                 RequestContactReceivedHolder.from(parent)
-            }
-            TYPE_TITLE -> {
+            TYPE_TITLE ->
                 AddContactTitleViewHolder.from(parent)
-            }
             else -> {
                 //friend or friend blocked
                 FriendContactViewHolder.from(parent)
@@ -130,8 +128,8 @@ class AddContactAdapter constructor(
                     )
                     list.remove(contact)
                     list.add(secondPosition, contact)
+                    notifyItemChanged(firstPosition)
                     submitList(list)
-
                 }
             } else {
                 val index = currentList.indexOf(contact)

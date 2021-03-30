@@ -19,7 +19,6 @@
             android:id="@+id/imageView_user_image"
             style="@style/imageAvatarItem"
             app:avatar="@{contact.imageUrl}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:scaleType="fitCenter"
@@ -65,21 +64,17 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_add"
-            style="@style/AppOutlinedPrimaryButtonSmall"
+            style="@style/AppOutlinedPrimaryButtonSmall.Request.Yelow"
             android:layout_width="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
             android:paddingStart="@dimen/x_small_padding"
             android:paddingEnd="@dimen/small_padding"
             android:text="@string/text_add"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
-            android:textColor="@color/buttonTint"
             app:icon="@drawable/ic_add_primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname"
-            app:layout_constraintVertical_bias="1.0"
-            app:strokeColor="@color/buttonTint" />
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

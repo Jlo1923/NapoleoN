@@ -75,15 +75,13 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_cancel"
-            style="@style/AppOutlinedPrimaryButtonSmall.Red"
+            style="@style/AppOutlinedPrimaryButtonSmall.Request.Red"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginTop="@dimen/x_small_margin"
             android:paddingStart="@dimen/small_padding"
             android:paddingEnd="@dimen/small_padding"
             android:text="@string/text_cancel"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
             app:icon="@drawable/ic_close_black_24"
             app:iconTint="@color/red"
             app:layout_constraintEnd_toEndOf="parent"

@@ -13,11 +13,14 @@ class FriendContactViewHolder constructor(private val binding: AddContactFriendI
 
     fun bind(item: Contact, clickListener: AddContactAdapter.ClickListener) {
 
-        binding.contact = item
-        binding.root.setOnClickListener {
-            if (!item.statusBlocked) clickListener.onOpenChat(item)
+        binding.apply {
+            contact = item
+            root.setOnClickListener {
+                if (!item.statusBlocked) clickListener.onOpenChat(item)
+            }
+            executePendingBindings()
         }
-        binding.executePendingBindings()
+
     }
 
     companion object {

@@ -63,22 +63,21 @@ class ContactProfileRepository @Inject constructor(
         contactUpdated: ContactFakeResDTO,
         isRestored: Boolean
     ) {
-
         val contact = contactLocalDataSource.getContactById(contactId)
         contact?.let {
-            contact.displayName = contactUpdated.fullname
-            contact.nickname = contactUpdated.nickname
-            contact.imageUrl = contactUpdated.avatar ?: ""
-            contact.displayNameFake =
+            it.displayName = contactUpdated.fullname
+            it.nickname = contactUpdated.nickname
+            it.imageUrl = contactUpdated.avatar ?: ""
+            it.displayNameFake =
                 if (contactUpdated.fullNameFake.isNullOrEmpty()) contactUpdated.fullname else contactUpdated.fullNameFake
-            contact.nicknameFake =
+            it.nicknameFake =
                 if (contactUpdated.nicknameFake.isNullOrEmpty()) contactUpdated.nickname else contactUpdated.nicknameFake
-            contact.imageUrlFake =
+            it.imageUrlFake =
                 if (contactUpdated.avatarFake.isNullOrEmpty()) contactUpdated.avatar
                     ?: "" else contactUpdated.avatarFake
-            if (isRestored) contact.stateNotification = false
+            if (isRestored) it.stateNotification = false
 
-            contactLocalDataSource.updateContact(contact)
+            contactLocalDataSource.updateContact(it)
         }
 
     }

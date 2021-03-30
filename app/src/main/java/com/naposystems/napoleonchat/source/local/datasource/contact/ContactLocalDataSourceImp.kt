@@ -46,15 +46,17 @@ class ContactLocalDataSourceImp @Inject constructor(private val contactDao: Cont
             val localContact = contactDao.getContactById(remoteContact.id)
             if (localContact != null) {
                 if (location == Constants.LocationGetContact.OTHER.location) {
-                    localContact.imageUrlFake = remoteContact.imageUrlFake
-                    localContact.displayNameFake = remoteContact.displayNameFake
-                    localContact.nicknameFake = remoteContact.nicknameFake
+                    localContact.apply {
+                        imageUrlFake = remoteContact.imageUrlFake
+                        displayNameFake = remoteContact.displayNameFake
+                        nicknameFake = remoteContact.nicknameFake
+                        imageUrl = remoteContact.imageUrl
+                        displayName = remoteContact.displayName
+                        status = remoteContact.status
+                        lastSeen = remoteContact.lastSeen
+                        contactDao.updateContact(localContact)
+                    }
 
-                    localContact.imageUrl = remoteContact.imageUrl
-                    localContact.displayName = remoteContact.displayName
-                    localContact.status = remoteContact.status
-                    localContact.lastSeen = remoteContact.lastSeen
-                    contactDao.updateContact(localContact)
                 }
             } else {
                 contactDao.insertContact(remoteContact)
