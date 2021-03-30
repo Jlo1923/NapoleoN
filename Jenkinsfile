@@ -1,11 +1,14 @@
 #!/usr/bin/env groovy
 final String REGION = "us-west-2"
 
-environment {
-    JKS_KEY_PATH = './pepito.jks'
-}
-
 node('master') {
+    environment {
+        JKS_KEY_PATH= sh (returnStdout: true, script: 'echo ./pepito.jks').trim()
+    }
+    steps {
+        sh 'env'
+        sh 'echo $JKS_KEY_PATH'
+    }
     stage("Cleaning existing resources"){
         cleanWs()
     }
