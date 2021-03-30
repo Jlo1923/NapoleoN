@@ -26,7 +26,7 @@ node('master') {
         //HORA = sh(script:"date +%T", returnStdout: true).trim();
         //slackSend (botUser: true, color: '#FFFF00', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "NN-Backend-Secret-Chat ha actualizado a la versión *${VERSION}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
     }
-    cleanWs()
+    //cleanWs()
 }
 
 
