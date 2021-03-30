@@ -2,12 +2,8 @@
 final String REGION = "us-west-2"
 
 node('master') {
-    environment {
-        JKS_KEY_PATH= sh (returnStdout: true, script: 'echo ./pepito.jks').trim()
-    }
     stage("Cleaning existing resources"){
         sh 'env'
-        sh 'echo $JKS_KEY_PATH'
         cleanWs()
     }
     stage("Checkout"){
