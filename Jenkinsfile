@@ -15,7 +15,7 @@ node('master') {
         VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
         echo "${VERSION}"
         sh(script:"chmod +x ./gradlew")
-        sh(script:"./gradlew clean bundle")
+        sh(script:"./gradlew bundle")
         sh(script:"ls -la")
     }
     script {
