@@ -5,11 +5,9 @@ node('master') {
     environment {
         JKS_KEY_PATH= sh (returnStdout: true, script: 'echo ./pepito.jks').trim()
     }
-    steps {
+    stage("Cleaning existing resources"){
         sh 'env'
         sh 'echo $JKS_KEY_PATH'
-    }
-    stage("Cleaning existing resources"){
         cleanWs()
     }
     stage("Checkout"){
