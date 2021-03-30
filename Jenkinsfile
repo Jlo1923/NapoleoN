@@ -1,6 +1,10 @@
 #!/usr/bin/env groovy
 final String REGION = "us-west-2"
 
+environment {
+    JKS_KEY_PATH = './pepito.jks'
+}
+
 node('master') {
     stage("Cleaning existing resources"){
         cleanWs()
