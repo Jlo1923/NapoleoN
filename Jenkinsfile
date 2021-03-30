@@ -9,7 +9,7 @@ node('master') {
         checkout scm
     }
     stage("Downloading JKS"){
-        s3Download(file:'pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
+        s3Download(file:'app/pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
     }
     stage("Building"){
         VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
