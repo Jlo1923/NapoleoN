@@ -4,10 +4,15 @@
     <string name="text_friend_requests_sent">Friend requests sent</string>
     <string name="text_friend_requests">Friend requests</string>
 
-    <string name="text_in_contacts">In Contacts</string>
-    <string name="text_contact_blocked">Blocked</string>
+    <string name="text_friend_in_contacts">In Contacts</string>
+    <string name="text_friend_blocked">Blocked</string>
     <string name="text_request_sent">Sent</string>
 
-    <string name="text_my_contacts_added">My contacts</string>
-    <string name="text_coincidence">Coincidences</string>
+    <string name="text_friend_my_contacts">My contacts</string>
+    <string name="text_friend_coincidences">Coincidences</string>
+    <string name="text_friend_title_reject_request">Reject request</string>
+    <string name="text_friend_text_reject_request">Are you sure you want to reject the friend request %1$s?</string>
+    <string name="text_friend_title_cancel_request">Cancel request</string>
+    <string name="text_friend_text_cancel_request">Are you sure you want to cancel the friend request %1$s?</string>
+
 </resources>

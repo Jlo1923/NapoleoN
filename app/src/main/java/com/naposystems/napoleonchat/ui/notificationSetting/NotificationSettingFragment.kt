@@ -11,13 +11,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import timber.log.Timber
 import javax.inject.Inject
-
 
 class NotificationSettingFragment : BaseFragment() {
 
@@ -26,15 +24,12 @@ class NotificationSettingFragment : BaseFragment() {
         const val RINGTONE_NOTIFICATION_CODE = 9
     }
 
-
     private lateinit var viewModel: NotificationSettingViewModel
+
     private lateinit var binding: NotificationSettingFragmentBinding
 
     @Inject
-    lateinit var notificationService: OLD_NotificationService
-
-    @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
     private var currentSoundNotificationMessage: Uri? = null
 
@@ -62,7 +57,7 @@ class NotificationSettingFragment : BaseFragment() {
     }
 
     private fun updateSoundChannelMessage() {
-        currentSoundNotificationMessage = handlerNotificationChannelService.getChannelSound(
+        currentSoundNotificationMessage = handlerNotificationChannel.getChannelSound(
             Constants.ChannelType.DEFAULT.type,
             null,
             null
@@ -97,7 +92,7 @@ class NotificationSettingFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            handlerNotificationChannelService.updateChannel(
+            handlerNotificationChannel.updateChannel(
                 uri,
                 Constants.ChannelType.DEFAULT.type,
                 null,

@@ -39,6 +39,7 @@ import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
@@ -56,6 +57,9 @@ class AppearanceSettingsFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: AppearanceSettingsViewModel by viewModels { viewModelFactory }
 
@@ -285,7 +289,7 @@ class AppearanceSettingsFragment : BaseFragment() {
             }
 
             override fun defaultOptionSelected(location: Int) {
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     getString(R.string.text_select_default),
                     getString(R.string.text_message_restore_cover_photo),
                     true,

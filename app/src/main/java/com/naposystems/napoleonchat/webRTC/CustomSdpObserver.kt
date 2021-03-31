@@ -4,7 +4,10 @@ import org.webrtc.SdpObserver
 import org.webrtc.SessionDescription
 import timber.log.Timber
 
-open class CustomSdpObserver constructor(private val label: String) : SdpObserver {
+open class CustomSdpObserver
+constructor(
+    private val label: String
+) : SdpObserver {
 
     override fun onSetFailure(s: String) {
         Timber.d("$label onSetFailure() called with: s = [$s]")

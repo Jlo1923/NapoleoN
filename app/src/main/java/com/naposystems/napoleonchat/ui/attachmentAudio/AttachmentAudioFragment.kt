@@ -17,8 +17,8 @@ import com.naposystems.napoleonchat.databinding.AttachmentAudioFragmentBinding
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -41,10 +41,13 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var notificationMessagesService: NotificationMessagesService
+    lateinit var notificationClient: NotificationClient
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var mediaPlayerGalleryManager: MediaPlayerGalleryManager
 
     private lateinit var viewModel: AttachmentAudioViewModel
     private lateinit var conversationShareViewModel: ConversationShareViewModel
@@ -95,7 +98,7 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
                 .subscribe {
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
-                            handlerNotificationChannelService.deleteUserChannel(
+                            handlerNotificationChannel.deleteUserChannel(
                                 args.contact.id,
                                 args.contact.getNickName()
                             )
@@ -106,8 +109,7 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
 
         disposable.add(disposableContactBlockOrDelete)
 
-        MediaPlayerGalleryManager.setContext(requireContext())
-        MediaPlayerGalleryManager.setListener(this)
+        mediaPlayerGalleryManager.setListener(this)
 
         setupAdapter()
 
@@ -169,7 +171,6 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
     }
 
     private fun setupAdapter() {
-
         adapter = AttachmentAudioAdapter(object : AttachmentAudioAdapter.ClickListener {
             override fun onClick(mediaStoreAudio: MediaStoreAudio) {
                 viewModel.setSelected(mediaStoreAudio)
@@ -179,22 +180,21 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
                 mediaStoreAudio: MediaStoreAudio,
                 imageButtonPlay: ImageView
             ) {
-                MediaPlayerGalleryManager.apply {
+                mediaPlayerGalleryManager.apply {
                     setAudioId(mediaStoreAudio.id.toString())
                     setImageButtonPlay(imageButtonPlay)
-                    setContext(requireContext())
                     setAudioUri(mediaStoreAudio.contentUri)
                     playAudio()
                 }
             }
-        })
+        }, mediaPlayerGalleryManager)
 
         binding.recyclerViewAudios.adapter = adapter
         binding.recyclerViewAudios.itemAnimator = ItemAnimator()
     }
 
     override fun onDestroy() {
-        MediaPlayerGalleryManager.resetMediaPlayer()
+        mediaPlayerGalleryManager.resetMediaPlayer()
         disposable.dispose()
         super.onDestroy()
     }

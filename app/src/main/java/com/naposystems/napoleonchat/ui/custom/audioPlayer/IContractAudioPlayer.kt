@@ -10,8 +10,7 @@ interface IContractAudioPlayer {
     fun setMediaPlayerManager(mediaPlayerManager: MediaPlayerManager)
     fun setAudioFileUri(uri: Uri)
     fun setEncryptedFileName(fileName: String)
-    fun setAudioId(id: String)
-    fun setWebId(webId: String?)
+    fun setMessageId(id: Int)
     fun setListener(listener: AudioPlayerCustomView.Listener)
     fun setDuration(duration: Long)
 }

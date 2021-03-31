@@ -15,10 +15,6 @@ interface ContactLocalDataSource {
 
     suspend fun restoreContact(contactId: Int)
 
-    suspend fun updateNameFakeContact(contactId: Int, nameFake: String)
-
-    suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String)
-
     suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String)
 
     suspend fun insertContact(contact: ContactEntity)
@@ -48,4 +44,6 @@ interface ContactLocalDataSource {
     suspend fun updateChannelId(contactId: Int, channelId: String)
 
     suspend fun updateStateChannel(contactId: Int, state:Boolean)
+
+    suspend fun updateContact(contact: ContactEntity)
 }

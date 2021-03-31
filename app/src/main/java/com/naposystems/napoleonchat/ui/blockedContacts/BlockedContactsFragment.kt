@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
@@ -40,6 +41,9 @@ class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: BlockedContactsViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by activityViewModels { viewModelFactory }
@@ -196,7 +200,7 @@ class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     private fun unblockContact(contact: ContactEntity) {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_unblock_contact),
             getString(R.string.text_wish_unblock_contact),
             true,

@@ -2,7 +2,7 @@ package com.naposystems.napoleonchat.service.firebase
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
+import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_FIREBASE_ID
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import dagger.android.AndroidInjection
@@ -11,7 +11,7 @@ import javax.inject.Inject
 class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
 
     @Inject
-    lateinit var notificationMessagesService: NotificationMessagesService
+    lateinit var notificationClient: NotificationClient
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
@@ -26,7 +26,7 @@ class NapoleonFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        notificationMessagesService.createInformativeNotification(
+        notificationClient.createNotification(
             remoteMessage.data,
             remoteMessage.notification
         )

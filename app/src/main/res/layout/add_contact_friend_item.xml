@@ -35,25 +35,21 @@
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
-            app:layout_constraintBottom_toTopOf="@+id/textView_user_nickname"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintTop_toTopOf="@+id/imageView_user_image"
             app:name="@{contact.displayName}"
             tools:text="@tools:sample/full_names" />
 
         <TextView
             android:id="@+id/textView_user_nickname"
+            style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/normal_margin"
-            android:ellipsize="end"
-            android:lines="1"
+            android:layout_marginEnd="@dimen/small_margin"
             android:textColor="?attr/attrColorButtonTint"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/textView_user_name"
-            app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
             app:nickname="@{contact.nickname}"
             tools:text="@tools:sample/first_names" />
@@ -70,18 +66,20 @@
             visible="@{!contact.statusBlocked}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/x_small_margin"
             android:layout_marginEnd="@dimen/small_margin"
             android:layout_marginBottom="@dimen/small_margin"
             android:drawablePadding="@dimen/small_padding"
             android:gravity="center"
-            android:text="@string/text_in_contacts"
+            android:text="@string/text_friend_in_contacts"
             android:textAllCaps="true"
             android:textColor="@color/green"
             android:textSize="@dimen/minor_text_size"
             app:drawableStartCompat="@drawable/ic_check_primary"
             app:drawableTint="@color/green"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname" />
 
         <TextView
             visible="@{contact.statusBlocked}"
@@ -91,13 +89,14 @@
             android:layout_marginBottom="@dimen/small_margin"
             android:drawablePadding="@dimen/small_padding"
             android:gravity="center"
-            android:text="@string/text_contact_blocked"
+            android:text="@string/text_friend_blocked"
             android:textAllCaps="true"
             android:textColor="@color/gray_8B8989"
             android:textSize="@dimen/minor_text_size"
             app:drawableStartCompat="@drawable/ic_block_user"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

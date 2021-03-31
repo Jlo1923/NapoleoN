@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -136,7 +136,7 @@ class ConversationAdapter constructor(
     fun setStateMessage(messageId: Int, stateMessage: Int) {
         try {
             notifyItemChanged(
-                getPositionByMessageId(messageId.toString()),
+                getPositionByMessageId(messageId),
                 Bundle().apply { putInt(STATE_MESSAGE, stateMessage) }
             )
         } catch (e: Exception) {
@@ -195,7 +195,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun checkIfNextIsAudio(messageId: String) {
+    fun checkIfNextIsAudio(messageId: Int) {
         val positionActualAudio = getPositionByMessageId(messageId)
         if (positionActualAudio >= 0) {
             val actualMessageAndAttachment = getItem(positionActualAudio)
@@ -236,9 +236,9 @@ class ConversationAdapter constructor(
         )
     }
 
-    private fun getPositionByMessageId(id: String) =
+    private fun getPositionByMessageId(id: Int) =
         currentList.indexOfFirst { messageAndAttachment ->
-            messageAndAttachment.messageEntity.id.toString() == id
+            messageAndAttachment.messageEntity.id == id
         }
 
     private fun getPositionByItem(attachmentEntity: AttachmentEntity) =
@@ -535,8 +535,8 @@ class ConversationAdapter constructor(
         fun updateAttachmentState(messageAndAttachmentEntity: AttachmentEntity)
         fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)
         fun sendMessageRead(
-            messageId: String,
-            messageWebId: String,
+            messageId: Int,
+            webId: String,
             isComplete: Boolean,
             position: Int = -1
         )

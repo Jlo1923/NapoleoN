@@ -9,8 +9,11 @@ import com.naposystems.napoleonchat.model.addContact.Contact
 class RequestContactSentViewHolder constructor(private val binding: AddContactRequestSentItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(item: Contact) {
-        binding.contact = item
-        binding.executePendingBindings()
+        binding.apply {
+            contact = item
+            executePendingBindings()
+        }
+
     }
 
     companion object {

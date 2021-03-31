@@ -15,7 +15,7 @@ import com.naposystems.napoleonchat.model.attachment.gallery.GalleryFolder
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryResult
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -37,7 +37,7 @@ class AttachmentGalleryFoldersFragment : BaseFragment() {
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel
 
     private val viewModel: AttachmentGalleryFoldersViewModel by viewModels {
         viewModelFactory
@@ -119,8 +119,8 @@ class AttachmentGalleryFoldersFragment : BaseFragment() {
                 var displayName = ""
 
                 args.contact?.let { contact ->
-                    displayName = if (contact.nicknameFake.isNotEmpty())
-                        contact.nicknameFake else contact.nickname
+                    displayName =
+                        contact.nicknameFake
                 }
                 getString(R.string.text_send_to, displayName)
             }

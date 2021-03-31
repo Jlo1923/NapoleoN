@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.utility.mediaPlayer
 
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
 import android.widget.ImageView
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
@@ -12,21 +11,18 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.naposystems.napoleonchat.R
 import timber.log.Timber
+import javax.inject.Inject
 
-object MediaPlayerGalleryManager {
+class MediaPlayerGalleryManager @Inject constructor(
+    private val context: Context
+) {
 
     private var mediaPlayer: SimpleExoPlayer? = null
-    private lateinit var context: Context
-
     private var mImageButtonPlay: ImageView? = null
     private var mPreviousAudioId: String? = null
     private var currentAudioId: String = ""
     private var currentAudioUri: Uri? = null
     private var mListener: Listener? = null
-    private val mHandler: Handler by lazy {
-        Handler()
-    }
-    private lateinit var mRunnable: Runnable
 
     private val loadControl: LoadControl = DefaultLoadControl.Builder().setBufferDurationsMs(
         Int.MAX_VALUE,
@@ -38,10 +34,6 @@ object MediaPlayerGalleryManager {
     interface Listener {
         fun onErrorPlayingAudio()
         fun onCompleteAudio(messageId: String)
-    }
-
-    fun setContext(context: Context) {
-        this.context = context
     }
 
     fun setAudioId(audioId: String) {
@@ -57,7 +49,7 @@ object MediaPlayerGalleryManager {
         this.currentAudioUri = uri
     }
 
-    fun playAudio () {
+    fun playAudio() {
         if (mPreviousAudioId == currentAudioId) {
             if (mediaPlayer != null) {
                 if (mediaPlayer?.isPlaying == true) {
@@ -119,9 +111,6 @@ object MediaPlayerGalleryManager {
 
                     override fun onPlayerError(error: ExoPlaybackException?) {
                         Timber.w("Conver MediaPlayer Error: $error")
-                        if (MediaPlayerGalleryManager::mRunnable.isInitialized) {
-                            mHandler.removeCallbacks(mRunnable)
-                        }
                         resetMediaPlayer()
                         mListener?.onErrorPlayingAudio()
                     }
@@ -143,10 +132,6 @@ object MediaPlayerGalleryManager {
     fun isPlaying() = mediaPlayer?.isPlaying ?: false
 
     fun resetMediaPlayer() {
-        if (MediaPlayerGalleryManager::mRunnable.isInitialized) {
-            mHandler.removeCallbacks(mRunnable)
-        }
-
         changeIconPlayPause(R.drawable.ic_baseline_play_circle)
         mImageButtonPlay = null
         mPreviousAudioId = null

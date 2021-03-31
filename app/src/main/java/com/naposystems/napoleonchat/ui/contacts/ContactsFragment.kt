@@ -23,11 +23,11 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.util.*
@@ -41,7 +41,12 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
     private val viewModel: ContactsViewModel by viewModels { viewModelFactory }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -58,7 +63,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.contacts_fragment, container, false
         )
@@ -142,7 +147,8 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
                         0,
                         ContactEntity(
                             0,
-                            displayName = getString(R.string.text_add_new_contact)
+                            displayName = "",
+                            displayNameFake = getString(R.string.text_add_new_contact)
                         )
                     )
                     listContacts.sortBy { contact ->
@@ -246,7 +252,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
     }
 
     private fun blockedContact(contact: ContactEntity) {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,
@@ -257,7 +263,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
     }
 
     private fun deleteContact(contact: ContactEntity) {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_delete_contact),
             getString(R.string.text_wish_delete_contact),
             true,

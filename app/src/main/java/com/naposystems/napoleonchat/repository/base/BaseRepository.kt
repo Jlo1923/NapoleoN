@@ -3,12 +3,12 @@ package com.naposystems.napoleonchat.repository.base
 import com.naposystems.napoleonchat.ui.baseFragment.IContractBase
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import javax.inject.Inject
 
 class BaseRepository @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketMessageService: SocketMessageService
+    private val socketClient: SocketClient
 ) : IContractBase.Repository {
 
     override suspend fun outputControl(state: Int) {
@@ -24,6 +24,6 @@ class BaseRepository @Inject constructor(
     }
 
     override fun connectSocket() {
-        socketMessageService.connectSocket()
+        socketClient.connectSocket()
     }
 }

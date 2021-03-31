@@ -8,6 +8,8 @@ interface MessageLocalDataSource {
 
     suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAttachmentRelation?
 
+    suspend fun getMessageById(id: Int, decrypt: Boolean): MessageAttachmentRelation?
+
     fun getMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>>
 
     fun getQuoteId(quoteWebId: String): Int
@@ -55,4 +57,7 @@ interface MessageLocalDataSource {
     fun verifyMessagesToDelete()
 
     suspend fun deleteMessageByType(contactId: Int, type: Int)
+
+    suspend fun deleteDuplicatesMessages()
+    suspend fun addUUID()
 }

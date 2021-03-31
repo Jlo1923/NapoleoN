@@ -3,9 +3,11 @@ package com.naposystems.napoleonchat.ui.contactProfile
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +29,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
@@ -41,11 +43,13 @@ import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.napoleonchat.utility.Utils.Companion.showSimpleSnackbar
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -66,7 +70,10 @@ class ContactProfileFragment : BaseFragment() {
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
@@ -101,6 +108,7 @@ class ContactProfileFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
+
             galleryShareViewModel.uriImageSelected.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
@@ -158,7 +166,7 @@ class ContactProfileFragment : BaseFragment() {
                 .subscribe {
                     if (args.contactId == it.contactId) {
                         if (contact.stateNotification) {
-                            handlerNotificationChannelService.deleteUserChannel(
+                            handlerNotificationChannel.deleteUserChannel(
                                 contact.id,
                                 contact.getNickName()
                             )
@@ -197,7 +205,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionBlockContactClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,
@@ -208,7 +216,7 @@ class ContactProfileFragment : BaseFragment() {
                     shareContactViewModel.unblockContact(contact.id)
                 } else {
                     if (contact.stateNotification) {
-                        handlerNotificationChannelService.deleteUserChannel(
+                        handlerNotificationChannel.deleteUserChannel(
                             contact.id,
                             contact.getNickName()
                         )
@@ -228,14 +236,14 @@ class ContactProfileFragment : BaseFragment() {
     private fun optionDeleteContactClickListener() {
         val getContact = contactProfileShareViewModel.contact.value
         getContact?.let { contact ->
-            Utils.generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_delete_contact),
                 getString(R.string.text_wish_delete_contact),
                 true,
                 childFragmentManager
             ) {
                 if (contact.stateNotification) {
-                    handlerNotificationChannelService.deleteUserChannel(
+                    handlerNotificationChannel.deleteUserChannel(
                         contact.id,
                         contact.getNickName()
                     )
@@ -247,7 +255,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionDeleteConversationClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -259,13 +267,13 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionRestoreContactChatClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_reset_contact),
             getString(R.string.text_want_reset_contact),
             true,
             childFragmentManager
         ) {
-            handlerNotificationChannelService.deleteUserChannel(
+            handlerNotificationChannel.deleteUserChannel(
                 contact.id,
                 contact.getNickName()
             )
@@ -288,6 +296,10 @@ class ContactProfileFragment : BaseFragment() {
                 snackbarUtils.showSnackbar {}
             }
         })
+        viewModel.contactProfileWsError.observe(viewLifecycleOwner, {
+            //show message error
+            showSimpleSnackbar(binding.coordinator, it, 2)
+        })
 
         contactProfileShareViewModel.contact.observe(viewLifecycleOwner, { contact ->
             contact?.let {
@@ -308,7 +320,7 @@ class ContactProfileFragment : BaseFragment() {
                 }
             }
             UCrop.REQUEST_CROP -> {
-                requestCrop(resultCode)
+                data?.let { requestCrop(resultCode, data) }
             }
         }
     }
@@ -440,7 +452,7 @@ class ContactProfileFragment : BaseFragment() {
             }
 
             override fun defaultOptionSelected(location: Int) {
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     getString(R.string.text_select_default),
                     getString(R.string.text_message_restore_cover_photo),
                     true,
@@ -483,13 +495,26 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun requestCrop(resultCode: Int) {
+    private fun requestCrop(resultCode: Int, data: Intent) {
         if (resultCode == RESULT_OK) {
             try {
-                viewModel.updateAvatarFakeContact(args.contactId, compressedFile?.name ?: "")
-                context?.let { context ->
-                    clearCache(context)
+                val uri = UCrop.getOutput(data)
+                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val source = ImageDecoder.createSource(requireContext().contentResolver, uri!!)
+                    ImageDecoder.decodeBitmap(source)
+                } else {
+                    MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
                 }
+
+                bitmap?.let {
+                    val string64 = Utils.convertBitmapToBase64(bitmap)
+                    viewModel.updateAvatarFakeContact(args.contactId, string64)
+                    context?.let { context ->
+                        clearCache(context)
+                    }
+                }
+
+
             } catch (ex: IOException) {
                 Timber.e(ex)
             }

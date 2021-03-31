@@ -46,11 +46,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -72,7 +73,6 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.napoleonchat.utility.*
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
@@ -86,7 +86,9 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -100,8 +102,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : BaseFragment(),
-    MediaPlayerManager.Listener, ConversationAdapter.ClickListener, InputPanelWidget.Listener {
+class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -115,14 +116,21 @@ class ConversationFragment : BaseFragment(),
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
+
+    @Inject
+    lateinit var mediaPlayerManager: MediaPlayerManager
 
     //TODO:Subscription
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
     @Inject
-    lateinit var webRTCClient: IContractWebRTCClient
+    lateinit var webRTCClient: WebRTCClient
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -132,6 +140,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
+
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -381,16 +390,7 @@ class ConversationFragment : BaseFragment(),
             Timber.d("startCallActivity returnCall ConversationFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.getContactId())
-                    putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
-                    putBoolean(
-                        ConversationCallActivity.IS_VIDEO_CALL,
-                        webRTCClient.isVideoCall()
-                    )
-                    putBoolean(
-                        ConversationCallActivity.IS_INCOMING_CALL,
-                        webRTCClient.isIncomingCall()
-                    )
+                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }
@@ -445,8 +445,6 @@ class ConversationFragment : BaseFragment(),
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
         binding.textViewUserStatus.isSelected = true
-        MediaPlayerManager.setContext(requireContext())
-        MediaPlayerManager.initializeBluetoothManager()
 
         return binding.root
     }
@@ -715,7 +713,7 @@ class ConversationFragment : BaseFragment(),
 
         binding.viewModel = viewModel
 
-        Data.contactId = args.contact.id
+        NapoleonApplication.currentConversationContactId = args.contact.id
 
         cleanSelectionMessages()
 
@@ -761,10 +759,14 @@ class ConversationFragment : BaseFragment(),
                 Timber.d("startCallActivity contactCalledSuccessfully")
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
-                        putString(ConversationCallActivity.CHANNEL, channel)
-                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, viewModel.isVideoCall())
-                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, false)
+                        putSerializable(
+                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
+                                contactId = args.contact.id,
+                                channelName = channel,
+                                isVideoCall = viewModel.isVideoCall(),
+                                typeCall = Constants.TypeCall.IS_OUTGOING_CALL
+                            )
+                        )
                     })
                 }
                 startActivity(intent)
@@ -860,7 +862,7 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.noInternetConnection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                Utils.alertDialogInformative(
+                handlerDialog.alertDialogInformative(
                     getString(R.string.text_alert_failure),
                     getString(if (viewModel.isVideoCall()) R.string.text_video_call_not_internet_connection else R.string.text_call_not_internet_connection),
                     true,
@@ -1055,7 +1057,7 @@ class ConversationFragment : BaseFragment(),
                 .subscribe {
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
-                            handlerNotificationChannelService.deleteUserChannel(
+                            handlerNotificationChannel.deleteUserChannel(
                                 args.contact.id,
                                 args.contact.getNickName()
                             )
@@ -1365,14 +1367,14 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
-        Data.contactId = args.contact.id
+        NapoleonApplication.currentConversationContactId = args.contact.id
         showCase?.setPaused(false)
         showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
         setConversationBackground()
 
-        with(webRTCClient.isActiveCall()) {
+        with(webRTCClient.isActiveCall) {
             binding.textViewReturnCall.isVisible = this
             binding.buttonCall.isEnabled = !this
             binding.buttonVideoCall.isEnabled = !this
@@ -1390,10 +1392,10 @@ class ConversationFragment : BaseFragment(),
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
-        Data.contactId = 0
+        NapoleonApplication.currentConversationContactId = 0
         resetConversationBackground()
-        MediaPlayerManager.unregisterProximityListener()
-        MediaPlayerManager.resetMediaPlayer()
+        mediaPlayerManager.unregisterProximityListener()
+        mediaPlayerManager.resetMediaPlayer()
         emojiKeyboard?.dispose()
         disposable.dispose()
         if (mRecordingAudioRunnable != null) {
@@ -1479,7 +1481,7 @@ class ConversationFragment : BaseFragment(),
                         val size = cursor.getInt(sizeIndex)
 
                         if (!documentsMimeTypeAllowed.contains(mimeType)) {
-                            generalDialog(
+                            handlerDialog.generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_not_allowed),
                                 false,
@@ -1489,7 +1491,7 @@ class ConversationFragment : BaseFragment(),
 
                             }
                         } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
-                            generalDialog(
+                            handlerDialog.generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_size_exceed),
                                 false,
@@ -1511,7 +1513,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun blockContact() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,
@@ -1543,7 +1545,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun deleteConversation() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -1658,7 +1660,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun dialogWithNeutralButton(status: Int) {
         viewModel.messagesSelected.value?.let { messagesSelected ->
-            Utils.alertDialogWithNeutralButton(
+            handlerDialog.alertDialogWithNeutralButton(
                 R.string.text_delete_messages,
                 false, requireContext(),
                 R.string.text_delete_message_for_me,
@@ -1696,7 +1698,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun dialogWithoutNeutralButton(status: Int) {
         viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
-            Utils.alertDialogWithoutNeutralButton(
+            handlerDialog.alertDialogWithoutNeutralButton(
                 R.string.text_delete_messages,
                 false,
                 requireContext(),
@@ -1724,7 +1726,7 @@ class ConversationFragment : BaseFragment(),
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(
             this,
-            MediaPlayerManager,
+            mediaPlayerManager,
             timeFormatShareViewModel.getValTimeFormat()
         )
 
@@ -1875,6 +1877,7 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onPause() {
+        viewModel.sendMessageRead(mediaPlayerManager.getMessageId(), "")
         if (binding.inputPanel.getEditText().text.toString().trim() != "") {
             viewModel.insertMessageNotSent(
                 binding.inputPanel.getEditText().text.toString(),
@@ -1883,20 +1886,18 @@ class ConversationFragment : BaseFragment(),
         } else {
             viewModel.deleteMessageNotSent(args.contact.id)
         }
-
         super.onPause()
-        MediaPlayerManager.unregisterProximityListener()
-        //MediaPlayerManager.completeAudioPlaying()
+        mediaPlayerManager.unregisterProximityListener()
+        mediaPlayerManager.resetMediaPlayer()
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
-        Data.contactId = 0
+        NapoleonApplication.currentConversationContactId = 0
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()
         showShowCase = false
         resetAudioRecording()
-        MediaPlayerManager.pauseAudio()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
@@ -2025,7 +2026,7 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onRecorderStarted() {
-        MediaPlayerManager.resetMediaPlayer()
+        mediaPlayerManager.resetMediaPlayer()
         startRecording()
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
@@ -2081,25 +2082,6 @@ class ConversationFragment : BaseFragment(),
             }
         }
 
-    }
-
-    //endregion
-
-    //region Implementation MediaPlayerManager.Listener
-    override fun onErrorPlayingAudio() {
-        Utils.showSimpleSnackbar(
-            binding.coordinator,
-            getString(R.string.text_error_playing_audio),
-            3
-        )
-    }
-
-    override fun onPauseAudio(messageWebId: String?) {
-        // Intentionally empty
-    }
-
-    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
-        // Intentionally empty
     }
 
     //endregion
@@ -2199,13 +2181,12 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun sendMessageRead(
-        messageId: String,
-        messageWebId: String,
+        messageId: Int,
+        webId: String,
         isComplete: Boolean,
         position: Int
     ) {
-        Timber.d("sendMessageRead: $messageWebId")
-        viewModel.sendMessageRead(messageWebId)
+        viewModel.sendMessageRead(messageId, webId)
 
         if (isComplete) {
             conversationAdapter.checkIfNextIsAudio(messageId)

@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.ui.home
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,7 +11,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -24,11 +22,11 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.model.FriendShipRequest
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
@@ -39,8 +37,6 @@ import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
@@ -49,8 +45,8 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
-import dagger.android.support.AndroidSupportInjection
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
@@ -67,29 +63,44 @@ class HomeFragment : BaseFragment() {
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
 
+    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
+
     //TODO:Subscription
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
     @Inject
-    lateinit var webRTCClient: IContractWebRTCClient
+    lateinit var webRTCClient: WebRTCClient
 
-    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
+
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
+
     private val shareFriendShipViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
+
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
+
     private val timeFormatShareViewModel: TimeFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
+
     private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
         viewModelFactory
     }
+
     private lateinit var binding: HomeFragmentBinding
+
     lateinit var conversationAdapter: ConversationAdapter
+
     private lateinit var friendShipRequestReceivedAdapter: FriendShipRequestReceivedAdapter
+
     private var existConversation: Boolean = false
+
     private var existFriendShip: Boolean = false
 
     private val disposable: CompositeDisposable by lazy {
@@ -101,7 +112,9 @@ class HomeFragment : BaseFragment() {
     private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
 
     //    private lateinit var mFirebaseStorage: FirebaseStorage
+
     private var isShowingVersionDialog: Boolean = false
+
     private lateinit var popup: PopupMenu
 
     private var addContactsMenuItem: MenuItem? = null
@@ -122,6 +135,7 @@ class HomeFragment : BaseFragment() {
 
         setHasOptionsMenu(true)
 
+        //TODO: Verificar los mensajes no se estan borrando
         viewModel.verifyMessagesToDelete()
 
         //TODO:Subscription
@@ -163,16 +177,7 @@ class HomeFragment : BaseFragment() {
             Timber.d("startCallActivity returnCall HomeFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.getContactId())
-                    putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
-                    putBoolean(
-                        ConversationCallActivity.IS_VIDEO_CALL,
-                        webRTCClient.isVideoCall()
-                    )
-                    putBoolean(
-                        ConversationCallActivity.IS_INCOMING_CALL,
-                        webRTCClient.isIncomingCall()
-                    )
+                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }
@@ -232,6 +237,8 @@ class HomeFragment : BaseFragment() {
             Constants.FriendShipState.ACTIVE.state,
             Constants.LocationGetContact.OTHER.location
         )
+
+        viewModel.resetDuplicates()
 
         viewModel.getConversation()
 
@@ -451,7 +458,7 @@ class HomeFragment : BaseFragment() {
         showCase?.setPaused(false)
         viewModel.getJsonNotification()
         showCase()
-        binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall()
+        binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall
 
         if (!isShowingVersionDialog && !BuildConfig.DEBUG) {
             Timber.d("*TestVersion: get remote")
@@ -485,7 +492,7 @@ class HomeFragment : BaseFragment() {
 //            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
 
             if (BuildConfig.VERSION_CODE < versionCodeApp.toInt()) {
-                Utils.alertDialogInformative(
+                handlerDialog.alertDialogInformative(
                     title = getString(R.string.text_alert_failure),
                     message = getString(R.string.text_update_message, versionApp),
                     titleButton = R.string.text_update,
@@ -682,7 +689,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun deleteChat(contact: ContactEntity) {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -693,7 +700,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun blockContact(contact: ContactEntity) {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,

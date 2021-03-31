@@ -35,9 +35,9 @@ import javax.inject.Singleton
         WebRTCClientModule::class,
         CryptoModule::class,
         SyncManagerModule::class,
-        HandlerChannelModule::class,
-        NotificationModule::class,
+        UtilsModule::class,
         NotificationServicemodule::class,
+        CallComponentsModule::class,
 //        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,

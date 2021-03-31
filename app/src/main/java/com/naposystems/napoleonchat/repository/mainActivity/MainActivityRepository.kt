@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
@@ -7,16 +8,15 @@ import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketMessageService: SocketMessageService
+    private val socketClient: SocketClient
 ) :    IContractMainActivity.Repository {
 
     override suspend fun getUser(): UserEntity {
@@ -79,7 +79,7 @@ class MainActivityRepository @Inject constructor(
         contactLocalDataSource.getContactById(contactId)
 
     override fun resetIsOnCallPref() {
-        Data.isOnCall = false
+        NapoleonApplication.isCurrentOnCall = false
     }
 
     override fun getRecoveryQuestionsPref(): Int {
@@ -87,6 +87,6 @@ class MainActivityRepository @Inject constructor(
     }
 
     override fun disconnectSocket() {
-        socketMessageService.disconnectSocket()
+//        socketMessageService.disconnectSocket()
     }
 }

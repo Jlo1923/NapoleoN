@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AddContactFragmentBinding
 import com.naposystems.napoleonchat.model.FriendShipRequest
@@ -24,6 +25,7 @@ import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -36,6 +38,9 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
     companion object {
         fun newInstance() = AddContactFragment()
     }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -195,7 +200,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendShipRequestSend() {
-        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, Observer {
+        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, {
             if (it != null) {
                 adapter.updateContact(it)
             }
@@ -239,7 +244,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
                 override fun onCancel(friendshipRequest: FriendShipRequest) {
                     shareViewModel.cancelFriendshipRequest(friendshipRequest)
                 }
-            })
+            }, childFragmentManager, handlerDialog, requireContext())
 
         binding.recyclerViewFriendshipRequest.adapter = friendshipRequestsAdapter
         binding.recyclerViewFriendshipRequest.itemAnimator = ItemAnimator()
@@ -253,11 +258,11 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
             }
 
             override fun onOpenChat(contact: Contact) {
-                val c = viewModel.getContact(contact)
-                if (c != null)
+                val con = viewModel.getContact(contact)
+                if (con != null)
                     findNavController().navigate(
                         AddContactFragmentDirections.actionAddContactFragmentToConversationFragment(
-                            c
+                            con
                         )
                     )
             }
@@ -265,11 +270,15 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
             override fun onAcceptRequest(contact: Contact, state: Boolean) {
 
                 val request = viewModel.acceptOrRefuseRequest(contact, state)
-                if (state) shareViewModel.acceptFriendshipRequest(request)
-                else shareViewModel.refuseFriendshipRequest(request)
+                if (state) {
+                    shareViewModel.acceptFriendshipRequest(request)
+                } else {
+                    shareViewModel.refuseFriendshipRequest(request)
+                }
 
             }
-        })
+        }, childFragmentManager, handlerDialog)
+        binding.recyclerViewContacts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewContacts.adapter = adapter
         binding.recyclerViewContacts.itemAnimator = ItemAnimator()
     }

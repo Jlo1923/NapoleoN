@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -15,7 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ChangeFakeParamsDialogFragmentBinding
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
@@ -45,7 +46,7 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
     lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
     private val viewModel: ChangeParamsDialogViewModel by viewModels {
         viewModelFactory
@@ -82,7 +83,7 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
                 )
 
                 if (args.getBoolean(STATE_NOTIFICATION)) {
-                    handlerNotificationChannelService.updateNickNameChannel(
+                    handlerNotificationChannel.updateNickNameChannel(
                         args.getInt(CONTACT_ID),
                         args.getString(CONTACT_NICK, ""),
                         binding.editTextDisplay.text.toString().toLowerCase(
@@ -120,7 +121,9 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
                 dismiss()
             }
         })
-
+        viewModel.changeParamsWsError.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        })
         observers()
 
     }

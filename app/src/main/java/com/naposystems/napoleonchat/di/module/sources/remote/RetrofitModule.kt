@@ -8,6 +8,9 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.utility.mediaPlayer.IContractMediaPlayer
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
+import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -253,5 +256,25 @@ class RetrofitModule {
         }
     }
 
+    @Provides
+    @Singleton
+    fun provideMediaPlayerGalleryManager(
+        context: Context,
+    ) : MediaPlayerGalleryManager {
+        return MediaPlayerGalleryManager(
+            context
+        )
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideMediaPlayerManager(
+        context: Context,
+    ) : IContractMediaPlayer {
+        return MediaPlayerManager(
+            context
+        )
+    }
 
 }

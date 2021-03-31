@@ -45,7 +45,8 @@
         <activity android:name=".ui.previewmulti.MultipleAttachmentPreviewActivity"></activity>
         <activity android:name=".ui.multi.MultipleAttachmentActivity" />
 
-        <service android:name=".service.webRTCCall.WebRTCCallService" />
+        <service android:name=".webRTC.service.WebRTCService" />
+
         <service android:name=".service.uploadService.UploadService" />
         <service android:name=".service.multiattachment.MultipleUploadService" />
 
@@ -68,6 +69,7 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -1,5 +1,7 @@
 package com.naposystems.napoleonchat.utility
 
+import java.io.Serializable
+
 object Constants {
 
     const val URL_TERMS_AND_CONDITIONS = "https://napoleon.chat/terminos-condiciones/"
@@ -68,13 +70,15 @@ object Constants {
         const val CHECK_SUBSCRIPTION = "subscriptions/state"
         const val CANCEL_CALL = "call/cancelcall"
         const val READY_CALL = "call/readyforcall"
+        const val UPDATE_CONTACT_FAKE = "friendship/updatefriendship/{friendshipId}"
     }
 
     object CallKeys {
-        const val IS_INCOMING_CALL = "is_incoming_call"
-        const val CHANNEL = "channel_private"
+        const val CALL_MODEL = "callModel"
+        const val CHANNEL_NAME = "channel_private"
         const val CONTACT_ID = "contact_id"
         const val IS_VIDEO_CALL = "is_videocall"
+        const val OFFER = "offer"
     }
 
     object NotificationKeys {
@@ -327,10 +331,17 @@ object Constants {
         ACTIVE("active"),
         BLOCKED("block")
     }
+
+    enum class FromClosedApp constructor(val type: Boolean) : Serializable {
+        YES(true),
+        NO(false)
+    }
+
     //endregion
 
     //region H
     enum class HeadsetState(val state: Int) {
+        UNKNOWN(-1),
         PLUGGED(1),
         UNPLUGGED(0)
     }
@@ -383,7 +394,7 @@ object Constants {
         CONVERSATION(5)
     }
 
-    enum class LocationSearchView(val location: Int) {
+   enum class LocationSearchView(val location: Int) {
         OTHER(0),
         LOCATION(1)
     }
@@ -509,7 +520,7 @@ object Constants {
         SOCKECT_CHANNEL_STATUS_NOT_CONNECTED(false)
     }
 
-    enum class SocketListeEvents(val channel: String) {
+    enum class SocketListenEvents(val event: String) {
         DISCONNECT("disconnect"),
         NEW_MESSAGE("App\\Events\\NewMessageEvent"),
         NOTIFY_MESSAGES_RECEIVED("App\\Events\\NotifyMessagesReceived"),
@@ -524,7 +535,8 @@ object Constants {
     }
 
     enum class SocketEmitTriggers(val trigger: String) {
-        CLIENT_CONVERSATION("client-conversationNN")
+        CLIENT_CONVERSATION("client-conversationNN"),
+        CLIENT_CALL("client-callNN")
     }
 
     enum class StateFlag(val state: Int) {
@@ -613,6 +625,11 @@ object Constants {
     enum class TypeDialog constructor(val option: Int) {
         ALERT(1),
         INFO(2)
+    }
+
+    enum class TypeCall constructor(val type: Int) : Serializable {
+        IS_INCOMING_CALL(1),
+        IS_OUTGOING_CALL(2)
     }
     //endregion
 

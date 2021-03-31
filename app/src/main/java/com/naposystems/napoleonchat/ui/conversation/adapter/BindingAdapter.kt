@@ -9,10 +9,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
@@ -105,14 +108,7 @@ fun bindNickname(
 ) {
     if (contact != null) {
         val context = textView.context
-        val formattedNickname = when {
-            contact.nicknameFake.isNotEmpty() -> {
-                context.getString(R.string.label_nickname, contact.nicknameFake)
-            }
-            else -> {
-                context.getString(R.string.label_nickname, contact.nickname)
-            }
-        }
+        val formattedNickname = context.getString(R.string.label_nickname, contact.nicknameFake)
         textView.text = formattedNickname
     }
 }
@@ -123,14 +119,7 @@ fun bindName(
     @Nullable contact: ContactEntity?
 ) {
     if (contact != null) {
-        when {
-            contact.displayNameFake.isNotEmpty() -> {
-                textView.text = contact.displayNameFake
-            }
-            contact.displayName.isNotEmpty() -> {
-                textView.text = contact.displayName
-            }
-        }
+        textView.text = contact.displayNameFake
     }
 }
 
@@ -142,37 +131,17 @@ fun bindAvatar(
     if (contact != null) {
         val context = imageView.context
 
-        val defaultAvatar = context.resources.getDrawable(
-            R.drawable.ic_default_avatar,
-            context.theme
-        )
+        val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.ic_default_avatar)
 
-        @Suppress("IMPLICIT_CAST_TO_ANY")
-        val loadImage = when {
-            contact.imageUrlFake.isNotEmpty() -> {
-                Utils.getFileUri(
-                    context = context!!,
-                    fileName = contact.imageUrlFake,
-                    subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
-                )
-            }
-            contact.imageUrl.isNotEmpty() -> {
-                contact.imageUrl
-            }
-            else -> {
-                ""
-            }
-        }
-
-        if (loadImage != "") {
-            Glide.with(context)
-                .load(loadImage)
-                .circleCrop()
-                .into(imageView)
-        } else {
-            imageView.setImageDrawable(defaultAvatar)
-        }
-
+        Glide.with(context)
+            .load(contact.imageUrlFake)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.NORMAL)
+                    .fitCenter()
+            ).error(defaultAvatar)
+            .circleCrop()
+            .into(imageView)
     }
 }
 

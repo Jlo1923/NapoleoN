@@ -6,8 +6,8 @@ import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notificationUpload.NotificationUploadService
-import com.naposystems.napoleonchat.service.notificationUpload.NotificationUploadServiceImp
+import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClient
+import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClientImp
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import dagger.android.support.DaggerApplication
@@ -28,11 +28,11 @@ class UploadService : Service(), IContractUploadService {
     lateinit var repository: IContractUploadService.Repository
 
     @Inject
-    lateinit var notificationUploadService: NotificationUploadService
+    lateinit var notificationUploadClient: NotificationUploadClient
 
     private lateinit var napoleonApplication: NapoleonApplication
 
-    private val notificationId = NotificationUploadServiceImp.NOTIFICATION_UPLOADING
+    private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -80,7 +80,7 @@ class UploadService : Service(), IContractUploadService {
     }
 
     private fun showNotification() {
-        val notification = notificationUploadService.createUploadNotification(
+        val notification = notificationUploadClient.createUploadNotification(
             applicationContext
         )
 
@@ -111,7 +111,7 @@ class UploadService : Service(), IContractUploadService {
 
         val disposableUploadProgress = RxBus.listen(RxEvent.UploadProgress::class.java)
             .subscribe {
-                notificationUploadService.updateUploadNotificationProgress(PROGRESS_MAX, it.progress.toInt())
+                notificationUploadClient.updateUploadNotificationProgress(PROGRESS_MAX, it.progress.toInt())
             }
 
         val disposableCompressProgress = RxBus.listen(RxEvent.CompressProgress::class.java)

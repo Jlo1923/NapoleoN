@@ -37,12 +37,15 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-object MediaPlayerManager :
+class MediaPlayerManager @Inject constructor(private val context: Context) :
     SensorEventListener, IContractMediaPlayer, BluetoothStateManager.BluetoothStateListener {
 
-    private const val NORMAL_SPEED = 1.0f
-    private const val TWO_X_SPEED = 1.5f
+    companion object {
+        const val NORMAL_SPEED = 1.0f
+        const val TWO_X_SPEED = 1.5f
+    }
 
     private val loadControl: LoadControl = DefaultLoadControl.Builder().setBufferDurationsMs(
         Int.MAX_VALUE,
@@ -52,24 +55,20 @@ object MediaPlayerManager :
     ).createDefaultLoadControl()
 
     private var mediaPlayer: SimpleExoPlayer? = null
-    private lateinit var context: Context
-
     private var mStartAudioTime: Long = 0L
     private var mIsEncryptedFile: Boolean = false
     private var mIsBluetoothConnected: Boolean = false
-    private var currentAudioId: String = ""
+    private var currentMessageId: Int = -1
     private var currentAudioUri: Uri? = null
     private var currentAudioFileName: String? = null
     private var mSpeed: Float = 1.0f
     private var mImageButtonPlay: ImageView? = null
     private var mImageButtonSpeed: ImageButton? = null
-    private var mPreviousAudioId: String? = null
+    private var mPreviousMessageId: Int = -1
     private var mSeekBar: AppCompatSeekBar? = null
     private var mTextViewDuration: TextView? = null
     private var mListener: Listener? = null
     private var tempFile: File? = null
-    private var mDuration: Long = 0L
-    private var mWebId: String? = null
     private var mStatusPlayWithSensor : Boolean = false
 
     private val mHandler: Handler by lazy {
@@ -97,7 +96,7 @@ object MediaPlayerManager :
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
-    private var bluetoothStateManager: BluetoothStateManager? = null
+    private var bluetoothStateManager: BluetoothStateManager
 
     private val audioManagerCompat by lazy {
         AudioManagerCompat.create(context)
@@ -122,24 +121,27 @@ object MediaPlayerManager :
 
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPauseAudio(messageWebId: String?)
-        fun onCompleteAudio(messageId: String, messageWebId: String?)
+        fun onPauseAudio(messageId: Int, webId: String = "")
+        fun onCompleteAudio(messageId: Int)
     }
 
     init {
         subscribeToRXEvents()
+        bluetoothStateManager = BluetoothStateManager(context, this)
     }
 
     private fun subscribeToRXEvents() {
         val disposableMessagesToEliminate = RxBus.listen(RxEvent.MessagesToEliminate::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { params ->
-                params.id.forEach { message ->
-                    if(currentAudioId == message.messageEntity.id.toString()) {
-                        mListener?.onPauseAudio(message.messageEntity.webId)
-                        resetMediaPlayer()
+                params?.id?.forEach { message ->
+                    if(currentMessageId == message.messageEntity.id) {
+                        mListener?.onPauseAudio(message.messageEntity.id, message.messageEntity.webId)
                     }
+                } ?: kotlin.run {
+                    mListener?.onPauseAudio(currentMessageId)
                 }
+                resetMediaPlayer()
             }
 
         disposable.add(disposableMessagesToEliminate)
@@ -147,7 +149,7 @@ object MediaPlayerManager :
 
     private fun setSeekbarProgress() {
         mediaPlayer?.let {
-            if (it.duration > 0 && currentAudioId == mSeekBar?.tag) {
+            if (it.duration > 0 && currentMessageId == mSeekBar?.tag) {
                 val progress = ((it.currentPosition.toFloat() * 100) / it.duration.toFloat())
 
                 Timber.d("Conver setSeekbarProgress: $progress, position: ${it.currentPosition}, duration: ${it.duration}, seekbar: ${mSeekBar == null}")
@@ -167,10 +169,6 @@ object MediaPlayerManager :
         if (mIsEncryptedFile && tempFile?.exists() == true) {
             tempFile?.delete()
         }
-    }
-
-    private fun enableSpeedControl(isEnabled: Boolean) {
-        mImageButtonSpeed?.isEnabled = isEnabled
     }
 
     private fun buildMediaSource(uri: Uri): MediaSource {
@@ -202,10 +200,7 @@ object MediaPlayerManager :
         }
     }
 
-    //region Implementation SensorEventListener
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        //nothing
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type != Sensor.TYPE_PROXIMITY) return
@@ -259,7 +254,7 @@ object MediaPlayerManager :
                 if (mediaPlayer.isPlaying) {
                     mediaPlayer.playWhenReady = false
                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
-                    mListener?.onPauseAudio(mWebId)
+                    mListener?.onPauseAudio(currentMessageId)
                     mHandler.removeCallbacks(mRunnable)
                     Timber.d("*TestProximity: unregisterProximityListener")
                     RxBus.publish(
@@ -273,23 +268,15 @@ object MediaPlayerManager :
 
     //region Implementation
 
-    override fun setContext(context: Context) {
-        this.context = context
-    }
-
-    override fun initializeBluetoothManager() {
-        bluetoothStateManager = BluetoothStateManager(context, this)
-    }
-
-    override fun setAudioId(audioId: String) {
-        if (mPreviousAudioId != audioId) {
-            mListener?.onPauseAudio(mWebId)
+    override fun setMessageId(messageId: Int) {
+        if (currentMessageId != -1 && mPreviousMessageId != messageId) {
+            mListener?.onPauseAudio(currentMessageId)
             mSeekBar?.progress = 0
             if (mediaPlayer?.isPlaying == true) {
                 changeIconPlayPause(R.drawable.ic_baseline_play_circle)
             }
         }
-        this.currentAudioId = audioId
+        this.currentMessageId = messageId
     }
 
     override fun setAudioUri(uri: Uri?) {
@@ -300,24 +287,20 @@ object MediaPlayerManager :
         this.currentAudioFileName = fileName
     }
 
-    override fun setWebId(webId: String?) {
-        this.mWebId = webId
-    }
-
     override fun playAudio(progress: Int, isEarpiece: Boolean) {
 
         try {
 
             mAudioManager.isSpeakerphoneOn = !isProximitySensorActive
 
-            if (mPreviousAudioId == currentAudioId && progress == 0) {
+            if (mPreviousMessageId == currentMessageId && progress == 0) {
                 if (mediaPlayer != null) {
                     if (mediaPlayer?.isPlaying == true) {
                         changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                         isProximitySensorActive = false
                         mAudioManager.isSpeakerphoneOn = false
                         mHandler.removeCallbacks(mRunnable)
-                        mListener?.onPauseAudio(mWebId)
+                        mListener?.onPauseAudio(currentMessageId)
 
 //                        Timber.d("*TestAudio: pause")
                         RxBus.publish(
@@ -344,7 +327,7 @@ object MediaPlayerManager :
                 }
             } else {
 
-                mPreviousAudioId = currentAudioId
+                mPreviousMessageId = currentMessageId
 
                 mStartAudioTime = System.currentTimeMillis()
 
@@ -429,7 +412,7 @@ object MediaPlayerManager :
                                     registerProximityListener()
 
                                     Timber.d("Conver start audio")
-                                    enableSpeedControl(true)
+                                    mImageButtonSpeed?.isEnabled = true
 
                                     mRunnable = Runnable {
                                         setSeekbarProgress()
@@ -458,7 +441,7 @@ object MediaPlayerManager :
                                     }
                                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                                     mHandler.removeCallbacks(mRunnable)
-                                    mListener?.onCompleteAudio(currentAudioId, mWebId)
+                                    mListener?.onCompleteAudio(currentMessageId)
                                     setupVoiceNoteSound(R.raw.tone_audio_message_end)
                                     Timber.d("*TestAudio: Pause Media Player")
                                     RxBus.publish(
@@ -542,8 +525,8 @@ object MediaPlayerManager :
         this.mImageButtonSpeed = imageButtonSpeed
     }
 
-    override fun setStateImageButtonSpeed(imageButtonSpeed: ImageButton, webId : String) {
-        if (mWebId == webId) {
+    override fun setStateImageButtonSpeed(imageButtonSpeed: ImageButton, messageId: Int) {
+        if (currentMessageId == messageId) {
             this.mImageButtonSpeed = imageButtonSpeed
             if (mSpeed == NORMAL_SPEED) {
                 this.mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
@@ -572,13 +555,9 @@ object MediaPlayerManager :
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                // Intentionally empty
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                // Intentionally empty
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
     }
 
@@ -586,9 +565,9 @@ object MediaPlayerManager :
         this.mTextViewDuration = textView
     }
 
-    override fun rewindMilliseconds(audioId: String, millis: Long) {
+    override fun rewindMilliseconds(messageId: Int, millis: Long) {
         mediaPlayer?.let {
-            if (mSeekBar != null && audioId == currentAudioId) {
+            if (mSeekBar != null && messageId == currentMessageId) {
                 val minusValue = it.currentPosition - millis
 
                 if (it.currentPosition >= millis) {
@@ -601,8 +580,8 @@ object MediaPlayerManager :
         }
     }
 
-    override fun changeSpeed(audioId: String) {
-        if (mPreviousAudioId == audioId) {
+    override fun changeSpeed(messageId: Int) {
+        if (mPreviousMessageId == messageId) {
             mSpeed = if (mSpeed == NORMAL_SPEED) {
                 mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_1x_circle_outline)
                 TWO_X_SPEED
@@ -615,9 +594,9 @@ object MediaPlayerManager :
         }
     }
 
-    override fun forwardMilliseconds(audioId: String, millis: Long) {
+    override fun forwardMilliseconds(messageId: Int, millis: Long) {
         mediaPlayer?.let {
-            if (mSeekBar != null && currentAudioId == audioId) {
+            if (mSeekBar != null && currentMessageId == messageId) {
                 val minorValue = it.duration - (millis + TimeUnit.SECONDS.toMillis(1))
 
                 Timber.d("minorValue: $minorValue, seekBarProgress: ${mSeekBar!!.progress}, duration: ${it.duration}, current: ${it.currentPosition}")
@@ -636,10 +615,9 @@ object MediaPlayerManager :
         mediaPlayer?.let {
             if (duration > 0 && it.duration > 0) {
                 val progress = ((it.currentPosition * 100) / it.duration)
-                Timber.d("Conver setDuration: $duration, current: ${getCurrentPosition()}, max: ${getMax()}, audioId: ${getAudioId()}, progress: $progress")
+                Timber.d("Conver setDuration: $duration, current: ${getCurrentPosition()}, max: ${getMax()}, audioId: ${getMessageId()}, progress: $progress")
                 mSeekBar?.max = 100
                 mSeekBar?.progress = progress.toInt()
-                this.mDuration = duration
             }
         }
     }
@@ -648,12 +626,12 @@ object MediaPlayerManager :
 
     override fun getMax() = mSeekBar?.max ?: -1
 
-    override fun getAudioId() = this.currentAudioId
+    override fun getMessageId() = this.currentMessageId
 
     override fun isPlaying() = mediaPlayer?.isPlaying ?: false
 
     override fun completeAudioPlaying() {
-        mListener?.onPauseAudio(mWebId)
+        mListener?.onPauseAudio(currentMessageId)
     }
 
     override fun refreshSeekbarProgress() {
@@ -672,7 +650,7 @@ object MediaPlayerManager :
         changeIconPlayPause(R.drawable.ic_baseline_play_circle)
         mImageButtonPlay = null
         mImageButtonSpeed = null
-        mPreviousAudioId = null
+        mPreviousMessageId = -1
         mSeekBar?.progress = 0
         mSeekBar = null
         mTextViewDuration = null
@@ -686,32 +664,6 @@ object MediaPlayerManager :
 
     }
 
-    override fun resetMediaPlayer(id: String) {
-        if (currentAudioId == id) {
-            deleteTempFile()
-
-            if (::mRunnable.isInitialized) {
-                mHandler.removeCallbacks(mRunnable)
-            }
-            mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_2x_circle_outline)
-            changeIconPlayPause(R.drawable.ic_baseline_play_circle)
-            mImageButtonPlay = null
-            mImageButtonSpeed = null
-            mPreviousAudioId = null
-            mSeekBar?.progress = 0
-            mSeekBar = null
-            mTextViewDuration?.text = ""
-            mTextViewDuration = null
-            mSpeed = NORMAL_SPEED
-
-            mediaPlayer?.stop()
-            mediaPlayer?.release()
-            mediaPlayer = null
-
-            unregisterProximityListener()
-
-        }
-    }
     //endregion
 
     //region Implementation BluetoothStateManager.BluetoothStateListener

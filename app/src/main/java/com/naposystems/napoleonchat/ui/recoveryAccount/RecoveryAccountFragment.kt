@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.recoveryAccount
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,10 +16,9 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.RecoveryAccountFragmentBinding
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.DaggerFragment
 import java.util.*
 import javax.inject.Inject
@@ -31,6 +28,9 @@ class RecoveryAccountFragment : DaggerFragment() {
     companion object {
         fun newInstance() = RecoveryAccountFragment()
     }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -117,7 +117,7 @@ class RecoveryAccountFragment : DaggerFragment() {
 
         viewModel.recoveryErrorForAttempts.observe(viewLifecycleOwner, Observer {
             if (!it.isNullOrEmpty()) {
-                generalDialog(
+                handlerDialog.generalDialog(
                     getString(R.string.text_title_block_attempts),
                     getString(R.string.text_description_block_attempts),
                     false,

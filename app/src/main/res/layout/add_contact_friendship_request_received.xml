@@ -6,10 +6,6 @@
     <data>
 
         <variable
-            name="clickListener"
-            type="com.naposystems.napoleonchat.ui.addContact.adapter.FriendshipRequestAdapter.ClickListener" />
-
-        <variable
             name="friendshipRequest"
             type="com.naposystems.napoleonchat.model.FriendShipRequest" />
     </data>
@@ -29,7 +25,6 @@
             android:layout_height="64dp"
             android:background="@drawable/border_avatar_contact"
             app:avatar="@{friendshipRequest.contact}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
@@ -65,39 +60,49 @@
             app:nickname="@{friendshipRequest.contact}"
             tools:text="@tools:sample/first_names" />
 
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="@dimen/progress_friendship_request"
+            android:visibility="gone"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname"/>
+
+
         <LinearLayout
+            android:id="@+id/containerButtons"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/x_small_margin"
             android:orientation="horizontal"
+            android:gravity="end"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/textView_user_name"
             app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_refuse"
-                style="@style/AppOutlinedPrimaryButtonSmall.Red"
+                style="@style/AppOutlinedPrimaryButtonSmall.Request.Red"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginEnd="@dimen/small_margin"
                 android:paddingStart="@dimen/x_small_padding"
                 android:paddingEnd="@dimen/small_padding"
                 android:text="@string/text_refuse"
-                android:textAlignment="textStart"
-                android:textAllCaps="true"
                 app:icon="@drawable/ic_close_black_24"
                 app:iconTint="@color/red" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_accept"
-                style="@style/AppOutlinedPrimaryButtonSmall"
+                style="@style/AppOutlinedPrimaryButtonSmall.Request.Green"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:paddingStart="@dimen/x_small_padding"
                 android:paddingEnd="@dimen/small_padding"
                 android:text="@string/text_accept"
-                android:textAlignment="textStart"
-                android:textAllCaps="true"
                 app:icon="@drawable/ic_check_primary"
                 app:iconTint="@color/green" />
         </LinearLayout>

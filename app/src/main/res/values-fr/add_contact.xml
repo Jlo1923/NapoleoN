@@ -4,10 +4,14 @@
     <string name="text_friend_requests_sent">Demandes d\'amis envoyées</string>
     <string name="text_friend_requests">Demandes d\'amis</string>
 
-    <string name="text_in_contacts">Dans les contacts</string>
-    <string name="text_contact_blocked">Bloqué</string>
+    <string name="text_friend_in_contacts">Dans les contacts</string>
+    <string name="text_friend_blocked">Bloqué</string>
     <string name="text_request_sent">Expédié</string>
 
-    <string name="text_my_contacts_added">Mes contacts</string>
-    <string name="text_coincidence">Coïncidences</string>
+    <string name="text_friend_my_contacts">Mes contacts</string>
+    <string name="text_friend_coincidences">Coïncidences</string>
+    <string name="text_friend_title_reject_request">rejeter la demande</string>
+    <string name="text_friend_text_reject_request">Etes-vous sûr de vouloir rejeter la demande d\'ami %1$s?</string>
+    <string name="text_friend_title_cancel_request">Demande d\'annulation</string>
+    <string name="text_friend_text_cancel_request">Etes-vous sûr de vouloir annuler la demande de %1$s amitié?</string>
 </resources>

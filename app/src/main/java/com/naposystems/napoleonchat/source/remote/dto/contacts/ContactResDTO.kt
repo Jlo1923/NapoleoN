@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.source.remote.dto.contacts
 
-import com.naposystems.napoleonchat.model.addContact.AddContactTitle
 import com.naposystems.napoleonchat.model.addContact.Contact
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Constants
@@ -19,18 +18,22 @@ data class ContactResDTO(
     @Json(name = "isFriend") val isFriend: Boolean?,
     @Json(name = "isBlock") val isBlock: Boolean?,
     @Json(name = "request_receiver") val receiver: ContactFriendshipResDTO?,
-    @Json(name = "request_offer") val offer: ContactFriendshipResDTO?
-) {
+    @Json(name = "request_offer") val offer: ContactFriendshipResDTO?,
+    @Json(name = "full_name_fake") val fullNameFake: String?,
+    @Json(name = "nick_fake") val nickNameFake: String?,
+    @Json(name = "avatar_fake") val avatarFake: String?,
+
+    ) {
     companion object {
 
-        fun getUsers(contactResDTO: List<ContactResDTO>): MutableList<Any> {
+        fun getUsers(contactResDTO: List<ContactResDTO>): MutableList<Contact> {
 
             val listContacts: MutableList<Contact> = arrayListOf()
             var existsC = false
 
             for (resContact in contactResDTO) {
                 val contact = Contact(
-                    resContact.id,
+                    id = resContact.id,
                     imageUrl = resContact.avatar,
                     nickname = resContact.nickname,
                     displayName = resContact.displayName,
@@ -47,12 +50,16 @@ data class ContactResDTO(
                 listContacts.add(contact)
             }
 
-            val multableList: MutableList<Any> = mutableListOf()
-            val sortedByFriends = listContacts.sortedByDescending { o -> o.statusFriend }
+            val multableList: MutableList<Contact> = mutableListOf()
+            val sortedByFriends = listContacts.sortedByDescending { it.statusFriend }
             val existsContact = sortedByFriends.findLast { it.statusFriend }
 
-            val title1 = AddContactTitle(1, Constants.AddContactTitleType.TITLE_MY_CONTACTS.type)
-            val title2 = AddContactTitle(2, Constants.AddContactTitleType.TITLE_COINCIDENCES.type)
+            val title1 =
+                Contact(id = -1, type = Constants.AddContactTitleType.TITLE_MY_CONTACTS.type)
+            val title2 = Contact(
+                id = -2,
+                type = Constants.AddContactTitleType.TITLE_COINCIDENCES.type
+            )
 
             if (existsContact != null) {
                 multableList.add(title1)
@@ -76,6 +83,7 @@ data class ContactResDTO(
             contactResDTO: List<ContactResDTO>,
             statusBlocked: Boolean = false
         ): List<ContactEntity> {
+
             val listContacts: MutableList<ContactEntity> = arrayListOf()
 
             for (resContact in contactResDTO) {
@@ -95,7 +103,11 @@ data class ContactResDTO(
                 displayName = response.displayName,
                 status = response.status,
                 lastSeen = response.lastSeen,
-                statusBlocked = statusBlocked
+                statusBlocked = statusBlocked,
+                imageUrlFake = if (response.avatarFake.isNullOrEmpty()) response.avatar else response.avatarFake,
+                displayNameFake = if (response.fullNameFake.isNullOrEmpty()) response.displayName else response.fullNameFake,
+                nicknameFake = if (response.nickNameFake.isNullOrEmpty()) response.nickname else response.nickNameFake
+
             )
         }
 
@@ -107,7 +119,11 @@ data class ContactResDTO(
                 displayName = contactModel.displayName,
                 status = contactModel.status,
                 lastSeen = contactModel.lastSeen,
-                statusBlocked = false
+                statusBlocked = false,
+                imageUrlFake = contactModel.imageUrl,
+                displayNameFake = contactModel.displayName,
+                nicknameFake = contactModel.nickname
+
             )
         }
     }

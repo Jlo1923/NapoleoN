@@ -256,5 +256,19 @@ interface MessageDao {
     )
     suspend fun deleteMessageByType(contactId: Int, type: Int)
 
+    @Query(
+        " DELETE FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+                " WHERE ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
+                " SELECT MIN(${DBConstants.Message.COLUMN_ID}) ${DBConstants.Message.COLUMN_ID} " +
+                " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID})"
+    )
+    suspend fun deleteDuplicatesMessages()
+
+    @Query("UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16)) WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL")
+    suspend fun addUUID()
+
+    @Query("SELECT * FROM message WHERE id=:id")
+    suspend fun getMessageById(id: Int): MessageAttachmentRelation?
 
 }

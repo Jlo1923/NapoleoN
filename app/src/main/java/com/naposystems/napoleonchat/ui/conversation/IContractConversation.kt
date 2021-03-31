@@ -91,7 +91,7 @@ interface IContractConversation {
         fun resetDocumentCopied()
         fun resetUploadProgress()
         fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)
-        fun sendMessageRead(messageWebId: String)
+        fun sendMessageRead(messageId: Int, webId: String)
         fun reSendMessage(messageEntity: MessageEntity, selfDestructTime: Int)
         fun resetNewMessage()
         fun getFreeTrial(): Long
@@ -101,7 +101,6 @@ interface IContractConversation {
     }
 
     interface Repository {
-        fun unSubscribeToChannel(userToChat: ContactEntity, channelName: String)
         fun getLocalMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>>
         suspend fun getQuoteId(quoteWebId: String): Int
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
@@ -137,12 +136,6 @@ interface IContractConversation {
         suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
         suspend fun copyMessagesSelected(contactId: Int): List<String>
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>>
-        suspend fun callContact(
-            contact: ContactEntity,
-            isVideoCall: Boolean
-        ): Response<CallContactResDTO>
-
-        fun subscribeToCallChannel(channel: String, isVideoCall: Boolean)
         suspend fun downloadAttachment(
             messageAndAttachmentRelation: MessageAttachmentRelation,
             itemPosition: Int
@@ -156,8 +149,7 @@ interface IContractConversation {
         suspend fun copyFile(fileUri: Uri): File?
         fun verifyMessagesToDelete()
         suspend fun setMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)
-        suspend fun setMessageRead(messageWebId: String)
-        suspend fun reSendMessage(messageAndAttachmentRelation: MessageAttachmentRelation)
+        suspend fun setMessageRead(messageId: Int, webId: String)
         suspend fun compressVideo(
             attachmentEntity: AttachmentEntity,
             srcFile: File,
