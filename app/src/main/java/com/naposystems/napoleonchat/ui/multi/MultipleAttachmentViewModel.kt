@@ -52,7 +52,7 @@ class MultipleAttachmentViewModel @Inject constructor(
         }
     }
 
-    fun loadFilesFromFolder(folderName: String) {
+    override fun loadFilesFromFolder(folderName: String) {
         isShowingFiles = true
         viewModelScope.launch {
             try {
@@ -114,7 +114,6 @@ class MultipleAttachmentViewModel @Inject constructor(
             item.isSelected = item.isSelected.not()
             showPreviewSelectedFiles()
         }
-
     }
 
     fun continueToPreview() {

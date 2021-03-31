@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.databinding.ItemViewMultipleAttachPreviewSma
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.utility.abstracts.GroupieItemViewSelectable
 import com.naposystems.napoleonchat.utility.extensions.hide
+import com.naposystems.napoleonchat.utility.extensions.isVideo
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.xwray.groupie.viewbinding.BindableItem
 
@@ -25,7 +26,10 @@ class MultipleAttachmentPreviewSmallFileItemView(
     override fun bind(viewBinding: ItemViewMultipleAttachPreviewSmallFileBinding, position: Int) {
         binding = viewBinding
         loadImage()
+        checkIsVideo()
     }
+
+    private fun checkIsVideo() = binding.layoutVideo.show(item.isVideo())
 
     private fun loadImage() {
         try {

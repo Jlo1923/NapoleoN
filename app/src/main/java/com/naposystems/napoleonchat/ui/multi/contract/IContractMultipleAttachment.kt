@@ -14,9 +14,12 @@ interface IContractMultipleAttachment {
          */
         fun getFolders()
 
+        fun loadFilesFromFolder(folderName: String)
+
         fun addFileToList(item: MultipleAttachmentFileItem)
 
         fun removeFileToList(item: MultipleAttachmentFileItem)
+        
     }
 
     interface Repository {
@@ -29,7 +32,10 @@ interface IContractMultipleAttachment {
         /**
          * get Files from a folder Name
          */
-        fun getFilesByFolder(folderName: String, mapIds: Map<Int, Int>): Flow<MultipleAttachmentState>
+        fun getFilesByFolder(
+            folderName: String,
+            mapIds: Map<Int, Int>
+        ): Flow<MultipleAttachmentState>
 
     }
 
@@ -37,7 +43,10 @@ interface IContractMultipleAttachment {
 
         fun getFoldersForConversation(): List<MultipleAttachmentFolderItem>
 
-        fun getFilesByFolder(folderName: String, mapIds: Map<Int, Int>): List<MultipleAttachmentFileItem>
+        fun getFilesByFolder(
+            folderName: String,
+            mapIds: Map<Int, Int>
+        ): List<MultipleAttachmentFileItem>
 
     }
 
