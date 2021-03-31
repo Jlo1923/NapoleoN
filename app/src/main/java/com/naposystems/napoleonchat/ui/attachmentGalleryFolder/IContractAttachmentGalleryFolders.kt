@@ -6,6 +6,10 @@ import kotlinx.coroutines.flow.Flow
 interface IContractAttachmentGalleryFolders {
 
     interface ViewModel {
+
+        /**
+         * Get the folders to show the user
+         */
         fun getFolders(isConversation: Boolean)
     }
 

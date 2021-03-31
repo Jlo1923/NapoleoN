@@ -49,12 +49,12 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
@@ -64,6 +64,7 @@ import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
+import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
@@ -97,8 +98,11 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : BaseFragment(),
-    MediaPlayerManager.Listener, ConversationAdapter.ClickListener, InputPanelWidget.Listener {
+class ConversationFragment :
+    BaseFragment(),
+    MediaPlayerManager.Listener,
+    ConversationAdapter.ClickListener,
+    InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -249,9 +253,9 @@ class ConversationFragment : BaseFragment(),
                     ?.let { messageAndAttachment ->
                         if (messageAndAttachment.messageEntity.messageType == Constants.MessageType.MESSAGE.type &&
                             (messageAndAttachment.messageEntity.status == Constants.MessageStatus.UNREAD.status ||
-                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
-                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
-                                    messageAndAttachment.getFirstAttachment()?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status)
+                                messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
+                                messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
+                                messageAndAttachment.getFirstAttachment()?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status)
                         ) {
                             actionSwipeQuote(
                                 actionState,
@@ -479,14 +483,21 @@ class ConversationFragment : BaseFragment(),
                         drawableIconId = R.drawable.ic_folder_primary,
                         message = R.string.text_explanation_to_send_audio_attachment
                     ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
-                                args.contact,
-                                binding.inputPanel.getWebIdQuote(),
-                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditText().text.toString().trim()
-                            )
+
+                        val intent = Intent(
+                            context,
+                            MultipleAttachmentActivity::class.java
                         )
+                        startActivity(intent)
+
+                        // findNavController().navigate(
+                        //     ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
+                        //         args.contact,
+                        //         binding.inputPanel.getWebIdQuote(),
+                        //         Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
+                        //         binding.inputPanel.getEditText().text.toString().trim()
+                        //     )
+                        // )
                     }
                 }
 
@@ -1160,7 +1171,6 @@ class ConversationFragment : BaseFragment(),
         if (!isFabScroll && actionMode.mode == null && !isSelectedMessage) {
             binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
         } else isSelectedMessage = false
-
     }
 
     private fun showCounterNotification() {
@@ -1823,7 +1833,7 @@ class ConversationFragment : BaseFragment(),
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             recyclerView.setOnTouchListener { _, event ->
                 swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
-                        event?.action == MotionEvent.ACTION_UP
+                    event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
                     binding.inputPanel.resetImage()
                     if (messageAndAttachmentRelation.messageEntity.status != Constants.MessageStatus.ERROR.status) {
@@ -1960,7 +1970,6 @@ class ConversationFragment : BaseFragment(),
                     }
 
                     mHandler.postDelayed(mRecordingAudioRunnable!!, 1000)
-
                 } catch (e: IOException) {
                     RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
                     Timber.e("prepare() failed")
@@ -2065,7 +2074,6 @@ class ConversationFragment : BaseFragment(),
                 binding.inputPanel.cancelRecording()
             }
         }
-
     }
 
     //endregion
@@ -2133,7 +2141,10 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun goToQuote(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?) {
+    override fun goToQuote(
+        messageAndAttachmentRelation: MessageAttachmentRelation,
+        itemPosition: Int?
+    ) {
         val position = viewModel.getMessagePosition(messageAndAttachmentRelation)
 
         if (position != -1) {
@@ -2164,7 +2175,10 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity) {
+    override fun uploadAttachment(
+        attachmentEntity: AttachmentEntity,
+        messageEntity: MessageEntity
+    ) {
         viewModel.uploadAttachment(attachmentEntity, messageEntity, obtainTimeSelfDestruct())
     }
 

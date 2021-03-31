@@ -19,6 +19,7 @@ open class BaseFragment : Fragment() {
 
     @Inject
     open lateinit var viewModelFactory: ViewModelFactory
+
     private val viewModel: BaseViewModel by viewModels { viewModelFactory }
 
     override fun onAttach(context: Context) {

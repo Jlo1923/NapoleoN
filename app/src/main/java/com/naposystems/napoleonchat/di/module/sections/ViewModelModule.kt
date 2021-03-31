@@ -26,6 +26,7 @@ import com.naposystems.napoleonchat.ui.home.HomeViewModel
 import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
+import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
@@ -226,7 +227,7 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ActivateBiometricsViewModel::class)
     internal abstract fun bindActivateBiometricsViewModel(viewModel: ActivateBiometricsViewModel): ViewModel
-    
+
     @Binds
     @IntoMap
     @ViewModelKey(EnterPinViewModel::class)
@@ -361,4 +362,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(NotificationSettingViewModel::class)
     internal abstract fun bindNotificationSettingViewModel(viewModel: NotificationSettingViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MultipleAttachmentViewModel::class)
+    internal abstract fun bindMultipleAttachmentViewModel(
+        viewModel: MultipleAttachmentViewModel
+    ): ViewModel
 }
