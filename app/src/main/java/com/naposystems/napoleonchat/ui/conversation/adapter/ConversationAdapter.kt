@@ -18,8 +18,7 @@ class ConversationAdapter constructor(
     private val clickListener: ClickListener,
     private val mediaPlayerManager: MediaPlayerManager,
     private var timeFormat: Int?
-) :
-    ListAdapter<MessageAttachmentRelation, RecyclerView.ViewHolder>(DiffCallback) {
+) : ListAdapter<MessageAttachmentRelation, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         const val IS_UPLOAD = "is_upload"
@@ -134,7 +133,7 @@ class ConversationAdapter constructor(
         }
     }
 
-    fun setStateMessage(messageId: Int, stateMessage : Int) {
+    fun setStateMessage(messageId: Int, stateMessage: Int) {
         try {
             notifyItemChanged(
                 getPositionByMessageId(messageId.toString()),
@@ -527,7 +526,11 @@ class ConversationAdapter constructor(
         fun errorPlayingAudio()
         fun onPreviewClick(item: MessageAttachmentRelation)
         fun goToQuote(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?)
-        fun downloadAttachment(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?)
+        fun downloadAttachment(
+            messageAndAttachmentRelation: MessageAttachmentRelation,
+            itemPosition: Int?
+        )
+
         fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity)
         fun updateAttachmentState(messageAndAttachmentEntity: AttachmentEntity)
         fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)

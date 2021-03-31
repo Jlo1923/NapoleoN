@@ -353,6 +353,9 @@ dependencies {
 
     // WebRTC
     implementation "org.webrtc:google-webrtc:$web_rtc_version"
+
+    // WorkManager
+    implementation "androidx.work:work-runtime-ktx:$work_version"
     //endregion
 
     //region Testing
