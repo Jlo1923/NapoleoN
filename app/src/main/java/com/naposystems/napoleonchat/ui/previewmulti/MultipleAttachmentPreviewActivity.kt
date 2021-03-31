@@ -8,6 +8,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentPreviewBinding
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.previewmulti.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewAction
@@ -27,7 +28,12 @@ import com.naposystems.napoleonchat.utility.anims.animHideSlideUp
 import com.naposystems.napoleonchat.utility.anims.animShowSlideDown
 import com.naposystems.napoleonchat.utility.anims.animShowSlideUp
 import com.naposystems.napoleonchat.utility.business.getDrawableSelfDestruction
+import com.naposystems.napoleonchat.utility.extensions.hide
+import com.naposystems.napoleonchat.utility.extensions.hideViews
+import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extensions.showViews
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
@@ -63,8 +69,10 @@ class MultipleAttachmentPreviewActivity
 
     override fun onStart() {
         super.onStart()
-        extractFilesFromExtras()
+        //showLoading()
         bindViewModel()
+        extractContactFromExtras()
+        extractFilesFromExtras()
         defineListeners()
     }
 
@@ -133,10 +141,17 @@ class MultipleAttachmentPreviewActivity
 
     private fun extractFilesFromExtras() {
         intent.extras?.let { bundle ->
-            val files = bundle.getParcelableArrayList<MultipleAttachmentFileItem>("test")
+            val files = bundle.getParcelableArrayList<MultipleAttachmentFileItem>(MULTI_EXTRA_FILES)
             files?.let {
                 viewModel.defineListFiles(it)
             }
+        }
+    }
+
+    private fun extractContactFromExtras() {
+        intent.extras?.let { bundle ->
+            val contact = bundle.getParcelable<ContactEntity>(MULTI_EXTRA_CONTACT)
+            contact?.let { viewModel.setContact(it) }
         }
     }
 
@@ -174,14 +189,21 @@ class MultipleAttachmentPreviewActivity
         }
     }
 
-    private fun showLoading() {
-
-    }
-
     private fun showFilesAsPager(listFiles: ArrayList<MultipleAttachmentFileItem>) {
+        showPagerAndOptions()
         adapter = MultipleAttachmentFragmentAdapter(this, listFiles)
         configureTabsAndViewPager(listFiles)
         addListenerToPager()
+    }
+
+    private fun showLoading() = viewBinding.apply {
+        progressLoader.show()
+        hideViews(viewPagerAttachments, viewPreviewBottom, viewAttachmentOptions)
+    }
+
+    private fun showPagerAndOptions() = viewBinding.apply {
+        progressLoader.hide()
+        showViews(viewPagerAttachments, viewPreviewBottom, viewAttachmentOptions)
     }
 
     private fun handleActions(action: MultipleAttachmentPreviewAction) {
@@ -202,19 +224,14 @@ class MultipleAttachmentPreviewActivity
         viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction)
     }
 
-    private fun exitPreview() {
-        finish()
-    }
+    private fun exitPreview() = finish()
 
-    private fun hideBottomTabs() {
-        viewBinding.viewPreviewBottom.hideTabLayout()
-    }
+    private fun hideBottomTabs() = viewBinding.viewPreviewBottom.hideTabLayout()
 
-    private fun removeElementPager(indexItem: Int) {
+    private fun removeElementPager(indexItem: Int) =
         viewBinding.viewPreviewBottom.getTabLayout().apply {
             selectTab(getTabAt(indexItem))
         }
-    }
 
     private fun showAttachmentOptionsWithoutAnim() =
         viewBinding.apply {
@@ -258,6 +275,9 @@ class MultipleAttachmentPreviewActivity
     private fun defineListeners() = viewBinding.apply {
         imageClose.setOnClickListener { finish() }
         viewAttachmentOptions.defineListener(this@MultipleAttachmentPreviewActivity)
+        viewPreviewBottom.setOnClickListenerButton {
+            viewModel.saveMessageAndAttachments(viewPreviewBottom.getTextInEdit())
+        }
     }
 
     private fun handleSelectSelfDestruction(selfDestructTimeSelected: Int) {

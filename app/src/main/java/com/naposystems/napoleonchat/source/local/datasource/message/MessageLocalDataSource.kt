@@ -14,7 +14,7 @@ interface MessageLocalDataSource {
 
     fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
 
-    fun insertMessage(messageEntity: MessageEntity): Long
+    suspend fun insertMessage(messageEntity: MessageEntity): Long
 
     fun insertListMessage(messageEntityList: List<MessageEntity>)
 

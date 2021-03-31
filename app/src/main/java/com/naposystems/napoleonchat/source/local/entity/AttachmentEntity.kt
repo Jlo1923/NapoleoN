@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.naposystems.napoleonchat.source.local.DBConstants
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus
 import com.naposystems.napoleonchat.utility.FileManager
 import kotlinx.android.parcel.Parcelize
@@ -70,6 +71,10 @@ data class AttachmentEntity(
         result = 31 * result + messageWebId.hashCode()
         result = 31 * result + status
         return result
+    }
+
+    fun mustBeCompressed(): Boolean {
+        return type == Constants.AttachmentType.VIDEO.type && isCompressed.not()
     }
 
 }

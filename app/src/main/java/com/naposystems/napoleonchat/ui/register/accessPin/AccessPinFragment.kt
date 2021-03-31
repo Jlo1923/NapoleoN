@@ -24,9 +24,10 @@ import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class AccessPinFragment : Fragment() {
+class AccessPinFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = AccessPinFragment()
@@ -55,11 +56,6 @@ class AccessPinFragment : Fragment() {
 
     private var observerCreateUser = false
     private var observerSubscription = false
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

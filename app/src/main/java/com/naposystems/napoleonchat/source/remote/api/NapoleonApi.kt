@@ -150,6 +150,7 @@ interface NapoleonApi {
         @Part("message_id") messageId: RequestBody,
         @Part("type") attachmentType: RequestBody,
         @Part("duration") duration: RequestBody,
+        @Part("destroy") destroy: RequestBody?,
         @Part file: MultipartBody.Part
     ): Response<AttachmentResDTO>
 

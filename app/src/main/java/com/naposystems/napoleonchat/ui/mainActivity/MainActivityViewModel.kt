@@ -4,15 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivityViewModel @Inject constructor(private val repository: MainActivityRepository) :
-    ViewModel(), IContractMainActivity.ViewModel {
+class MainActivityViewModel
+@Inject constructor(
+    private val repository: MainActivityRepository
+) : ViewModel(), IContractMainActivity.ViewModel {
 
     private var callChannel = ""
     private var isVideoCall: Boolean? = null
@@ -136,5 +138,9 @@ class MainActivityViewModel @Inject constructor(private val repository: MainActi
 
     override fun getRecoveryQuestionsPref(): Int {
         return repository.getRecoveryQuestionsPref()
+    }
+
+    override fun disconnectSocket() {
+        repository.disconnectSocket()
     }
 }

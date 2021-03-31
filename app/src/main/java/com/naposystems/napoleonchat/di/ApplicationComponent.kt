@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.di.module.sources.local.RoomModule
 import com.naposystems.napoleonchat.di.module.sources.remote.RetrofitModule
 import com.naposystems.napoleonchat.di.module.ui.ActivityModule
 import com.naposystems.napoleonchat.di.module.ui.FragmentModule
+import com.naposystems.napoleonchat.di.module.workmanager.WorkManagerModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -29,9 +30,14 @@ import javax.inject.Singleton
         ContextModule::class,
         ServiceModule::class,
         SharedPreferencesModule::class,
+        PusherModule::class,
         SocketModule::class,
         WebRTCClientModule::class,
         CryptoModule::class,
+        SyncManagerModule::class,
+        HandlerChannelModule::class,
+        NotificationModule::class,
+        NotificationServicemodule::class,
 //        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,
@@ -51,6 +57,9 @@ import javax.inject.Singleton
 
         // MediaStore
         MediaStoreModule::class,
+
+        // WorkManager
+        WorkManagerModule::class,
 
         //Shared
         ContactProfileShareModule::class,

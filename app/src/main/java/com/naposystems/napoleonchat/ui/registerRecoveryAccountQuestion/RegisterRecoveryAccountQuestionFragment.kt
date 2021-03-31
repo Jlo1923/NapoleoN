@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.RegisterRecoveryAccountQuestionFragmentBinding
 import com.naposystems.napoleonchat.model.Questions
 import com.naposystems.napoleonchat.model.RecoveryAnswer
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
@@ -27,24 +28,19 @@ import java.util.*
 import javax.inject.Inject
 
 
-class RegisterRecoveryAccountQuestionFragment : Fragment() {
+class RegisterRecoveryAccountQuestionFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = RegisterRecoveryAccountQuestionFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: RegisterRecoveryAccountQuestionViewModel by viewModels { viewModelFactory }
     private lateinit var binding: RegisterRecoveryAccountQuestionFragmentBinding
     private lateinit var snackbarUtils: SnackbarUtils
     private var countAnswer = 1
     private var maxAnswer = 3
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

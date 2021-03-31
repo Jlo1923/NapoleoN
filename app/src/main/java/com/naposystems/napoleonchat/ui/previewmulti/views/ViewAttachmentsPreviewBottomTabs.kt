@@ -35,10 +35,15 @@ class ViewAttachmentsPreviewBottomTabs @JvmOverloads constructor(
     }
 
     fun setOnClickListenerButton(function: () -> Unit) {
+        viewBinding.buttonSend.setOnClickListener {
+            function.invoke()
+        }
     }
 
     fun hideTabLayout() {
         viewBinding.tabLayoutFiles.hide()
     }
+
+    fun getTextInEdit(): String = viewBinding.editTextMessage.text.toString()
 
 }

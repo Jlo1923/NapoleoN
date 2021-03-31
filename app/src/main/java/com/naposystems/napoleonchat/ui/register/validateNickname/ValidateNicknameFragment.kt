@@ -24,10 +24,11 @@ import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateN
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import java.util.*
 import javax.inject.Inject
 
-class ValidateNicknameFragment : Fragment() {
+class ValidateNicknameFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = ValidateNicknameFragment()
@@ -40,11 +41,6 @@ class ValidateNicknameFragment : Fragment() {
     private lateinit var binding: ValidateNicknameFragmentBinding
 
     private var itsNicknameAvailable = true
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

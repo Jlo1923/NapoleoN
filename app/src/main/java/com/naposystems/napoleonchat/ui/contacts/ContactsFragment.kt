@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactsFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
@@ -32,14 +33,14 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomView.OnEventListener {
+class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCustomView.OnEventListener {
 
     companion object {
         fun newInstance() = ContactsFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: ContactsViewModel by viewModels { viewModelFactory }
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
@@ -53,11 +54,6 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
     private lateinit var popup: PopupMenu
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

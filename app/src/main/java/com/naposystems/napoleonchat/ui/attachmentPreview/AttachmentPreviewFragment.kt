@@ -12,15 +12,16 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
@@ -32,7 +33,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
+class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
 
     companion object {
         fun newInstance() = AttachmentPreviewFragment()
@@ -41,7 +42,11 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -200,8 +205,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
                     contactProfileShareViewModel.contact.value?.let { contact ->
                         if (contact.id == eventContact.contactId) {
                             if (contact.stateNotification) {
-                                Utils.deleteUserChannel(
-                                    requireContext(),
+                                handlerNotificationChannelService.deleteUserChannel(
                                     contact.id,
                                     contact.getNickName()
                                 )

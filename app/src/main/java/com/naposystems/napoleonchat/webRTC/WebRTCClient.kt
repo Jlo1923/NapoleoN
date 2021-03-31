@@ -17,12 +17,15 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageServiceImp
 import com.naposystems.napoleonchat.service.webRTCCall.WebRTCCallService
-import com.naposystems.napoleonchat.utility.*
+import com.naposystems.napoleonchat.utility.BluetoothStateManager
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Data
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.toJSONObject
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
-import com.naposystems.napoleonchat.webService.socket.SocketService
 import com.pusher.client.channel.PresenceChannel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -33,7 +36,8 @@ import javax.inject.Inject
 
 class WebRTCClient @Inject constructor(
     private val context: Context,
-    private val socketService: IContractSocketService.SocketService,
+    private val socketMessageService: SocketMessageService,
+    private val notificationService: OLD_NotificationService
 ) : IContractWebRTCClient, BluetoothStateManager.BluetoothStateListener {
 
     private val vibrator: Vibrator? by lazy {
@@ -58,7 +62,7 @@ class WebRTCClient @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long)  = Unit
+            override fun onTick(millisUntilFinished: Long) = Unit
         }
 
     private var countDownEndCallBusy: CountDownTimer =
@@ -69,7 +73,7 @@ class WebRTCClient @Inject constructor(
                 }
             }
 
-            override fun onTick(millisUntilFinished: Long)  = Unit
+            override fun onTick(millisUntilFinished: Long) = Unit
         }
 
     private var countDownIncomingCall: CountDownTimer =
@@ -267,9 +271,9 @@ class WebRTCClient @Inject constructor(
                         Timber.d("ContactWantChangeToVideoCall")
                         mListener?.contactWantChangeToVideoCall()
                     } else {
-                        socketService.emitToCall(
+                        socketMessageService.emitToCall(
                             this.channel,
-                            SocketService.CONTACT_CANT_CHANGE_TO_VIDEO
+                            SocketMessageServiceImp.CONTACT_CANT_CHANGE_TO_VIDEO
                         )
                     }
                 }
@@ -533,8 +537,9 @@ class WebRTCClient @Inject constructor(
                             TimeUnit.SECONDS.toMillis(1)
                         )
 
-                        val notificationUtils = NotificationUtils(context.applicationContext)
-                        notificationUtils.updateCallInProgress(channel, contactId, isVideoCall)
+//                        val notificationService = NotificationService()
+//                        val notificationService = NotificationService(context.applicationContext)
+                        notificationService.updateCallInProgress(channel, contactId, isVideoCall)
 
                         if (!isVideoCall && incomingCall) {
                             audioManager.isSpeakerphoneOn = false
@@ -687,7 +692,7 @@ class WebRTCClient @Inject constructor(
      */
     private fun onIceCandidateReceived(iceCandidate: IceCandidate) {
         try {
-            socketService.emitToCall(channel = channel, jsonObject = iceCandidate.toJSONObject())
+            socketMessageService.emitToCall(channel = channel, jsonObject = iceCandidate.toJSONObject())
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -724,7 +729,7 @@ class WebRTCClient @Inject constructor(
                     sessionDescription
                 )
                 Timber.d("createOffer onCreateSuccess")
-                socketService.emitToCall(
+                socketMessageService.emitToCall(
                     channel = channel,
                     jsonObject = sessionDescription.toJSONObject()
                 )
@@ -744,7 +749,7 @@ class WebRTCClient @Inject constructor(
                     sessionDescription
                 )
                 Timber.d("createAnswer onCreateSuccess")
-                socketService.emitToCall(
+                socketMessageService.emitToCall(
                     channel = channel,
                     jsonObject = sessionDescription.toJSONObject()
                 )
@@ -814,7 +819,7 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun subscribeToChannel(isActionAnswer: Boolean) {
-        socketService.subscribeToCallChannel(channel, isActionAnswer, isVideoCall)
+        socketMessageService.subscribeToCallChannel(channel, isActionAnswer, isVideoCall)
     }
 
     override fun setTextViewCallDuration(textView: TextView) {
@@ -882,7 +887,7 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun emitJoinToCall() {
-        socketService.joinToCall(channel)
+        socketMessageService.joinToCall(channel)
     }
 
     override fun stopRingAndVibrate() {
@@ -895,17 +900,17 @@ class WebRTCClient @Inject constructor(
         audioManager.stopBluetoothSco()
         audioManager.isBluetoothScoOn = false
         audioManager.isSpeakerphoneOn = false
-        socketService.emitToCall(channel, SocketService.HANGUP_CALL)
+        socketMessageService.emitToCall(channel, SocketMessageServiceImp.HANGUP_CALL)
     }
 
     override fun changeToVideoCall() {
         if (!isVideoCall) {
-            socketService.emitToCall(channel, SocketService.CONTACT_WANT_CHANGE_TO_VIDEO)
+            socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_WANT_CHANGE_TO_VIDEO)
         }
     }
 
     override fun cancelChangeToVideoCall() {
-        socketService.emitToCall(channel, SocketService.CONTACT_CANCEL_CHANGE_TO_VIDEO)
+        socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_CANCEL_CHANGE_TO_VIDEO)
     }
 
     override fun muteVideo(checked: Boolean, itsFromBackPressed: Boolean) {
@@ -914,11 +919,11 @@ class WebRTCClient @Inject constructor(
             isVideoMuted = checked
 
             if (checked) {
-                socketService.emitToCall(channel, SocketService.CONTACT_TURN_OFF_CAMERA)
+                socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_TURN_OFF_CAMERA)
                 mListener?.changeLocalRenderVisibility(View.GONE)
                 videoTrack.setEnabled(false)
             } else {
-                socketService.emitToCall(channel, SocketService.CONTACT_TURN_ON_CAMERA)
+                socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_TURN_ON_CAMERA)
                 mListener?.changeLocalRenderVisibility(View.VISIBLE)
                 videoTrack.setEnabled(true)
             }
@@ -998,7 +1003,7 @@ class WebRTCClient @Inject constructor(
     override fun acceptChangeToVideoCall() {
         isVideoCall = true
         startCaptureVideo()
-        socketService.emitToCall(channel, SocketService.CONTACT_ACCEPT_CHANGE_TO_VIDEO)
+        socketMessageService.emitToCall(channel, SocketMessageServiceImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO)
         mListener?.changeTextViewTitle(R.string.text_encrypted_video_call)
         //renderRemoteVideo()
     }
@@ -1030,7 +1035,7 @@ class WebRTCClient @Inject constructor(
     override fun dispose() {
         Timber.d("Dispose")
 
-        socketService.unSubscribeCallChannel(this.channel)
+        socketMessageService.unSubscribeCallChannel(this.channel)
 
         Data.isOnCall = false
         Data.isContactReadyForCall = false
@@ -1069,15 +1074,15 @@ class WebRTCClient @Inject constructor(
     }
 
     override fun unSubscribeCallChannel() {
-        socketService.unSubscribeCallChannel(channel)
+        socketMessageService.unSubscribeCallChannel(channel)
     }
 
     override fun subscribeToChannelFromBackground(channel: String) {
-        socketService.joinToCall(channel)
+        socketMessageService.joinToCall(channel)
     }
 
     override fun getPusherChannel(channel: String): PresenceChannel? {
-        return socketService.getPusherChannel(channel)
+        return socketMessageService.getPusherChannel(channel)
     }
 
     override fun renderRemoteVideo() {

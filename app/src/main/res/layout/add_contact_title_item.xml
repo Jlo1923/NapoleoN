@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/sectionColor">
+
+    <TextView
+        android:id="@+id/textView_title"
+        style="@style/BodyTextView.Bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:padding="@dimen/small_margin"
+        android:textSize="@dimen/small_text_size"
+        android:textAllCaps="true"
+        android:singleLine="true"
+        android:textColor="@color/gray_8B8989"
+        tools:text="coincidencias" />
+
+</LinearLayout>

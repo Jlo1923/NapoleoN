@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.Canvas
@@ -51,6 +50,7 @@ import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -60,6 +60,7 @@ import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
@@ -67,7 +68,6 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
-import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewActivity
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -76,6 +76,8 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -85,7 +87,6 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.U
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -99,11 +100,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment :
-    BaseFragment(),
-    MediaPlayerManager.Listener,
-    ConversationAdapter.ClickListener,
-    InputPanelWidget.Listener {
+class ConversationFragment : BaseFragment(),
+    MediaPlayerManager.Listener, ConversationAdapter.ClickListener, InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -115,6 +113,9 @@ class ConversationFragment :
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     //TODO:Subscription
     /*@Inject
@@ -314,11 +315,6 @@ class ConversationFragment :
         CompositeDisposable()
     }
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun onCreateView(
@@ -428,7 +424,7 @@ class ConversationFragment :
                             showCounterNotification()
                             false
                         }
-                    Timber.d("*TestScroll: isFabScroll on addOnScrollListener $isFabScroll")
+//                    Timber.d("*TestScroll: isFabScroll on addOnScrollListener $isFabScroll")
                     super.onScrolled(recyclerView, dx, dy)
                 }, 200)
             }
@@ -437,7 +433,7 @@ class ConversationFragment :
         binding.recyclerViewConversation.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom < oldBottom) {
                 binding.recyclerViewConversation.post {
-                    Timber.d("*TestScroll: isFabScroll on addOnLayoutChangeListener $isFabScroll")
+//                    Timber.d("*TestScroll: isFabScroll on addOnLayoutChangeListener $isFabScroll")
                     if (!isFabScroll) {
                         val friendlyMessageCount: Int = conversationAdapter.itemCount
                         binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
@@ -486,16 +482,19 @@ class ConversationFragment :
                     ) {
 
                         val intent = Intent(context, MultipleAttachmentActivity::class.java)
+                        intent.putExtras(Bundle().apply {
+                            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+                        })
                         startActivity(intent)
 
-                        // findNavController().navigate(
-                        //     ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
-                        //         args.contact,
-                        //         binding.inputPanel.getWebIdQuote(),
-                        //         Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                        //         binding.inputPanel.getEditText().text.toString().trim()
-                        //     )
-                        // )
+//                        findNavController().navigate(
+//                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
+//                                args.contact,
+//                                binding.inputPanel.getWebIdQuote(),
+//                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
+//                                binding.inputPanel.getEditText().text.toString().trim()
+//                            )
+//                        )
                     }
                 }
 
@@ -651,11 +650,29 @@ class ConversationFragment :
                 val quote = binding.inputPanel.getQuote()
                 shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 viewModel.saveMessageAndAttachment(
-                    shareViewModel.getMessage() ?: "",
-                    attachment,
-                    1,
-                    obtainTimeSelfDestruct(),
-                    shareViewModel.getQuoteWebId() ?: ""
+                    ItemMessage(
+                        messageString = shareViewModel.getMessage() ?: "",
+                        attachment = attachment,
+                        numberAttachments = 1,
+                        selfDestructTime = obtainTimeSelfDestruct(),
+                        quote = shareViewModel.getQuoteWebId() ?: ""
+                    )
+                )
+            }
+        })
+
+        shareViewModel.listAttachments.observe(requireActivity(), Observer { attachments ->
+            attachments?.forEach {
+                val quote = binding.inputPanel.getQuote()
+                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                viewModel.saveMessageAndAttachment(
+                    ItemMessage(
+                        shareViewModel.getMessage() ?: "",
+                        it,
+                        1,
+                        obtainTimeSelfDestruct(),
+                        shareViewModel.getQuoteWebId() ?: ""
+                    )
                 )
             }
         })
@@ -826,26 +843,15 @@ class ConversationFragment :
             if (it != null) {
                 val quote = binding.inputPanel.getQuote()
                 shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
-                val attachment = AttachmentEntity(
-                    id = 0,
-                    messageId = 0,
-                    webId = "",
-                    messageWebId = "",
-                    type = Constants.AttachmentType.DOCUMENT.type,
-                    body = "",
-                    fileName = it.name,
-                    origin = Constants.AttachmentOrigin.GALLERY.origin,
-                    thumbnailUri = "",
-                    status = Constants.AttachmentStatus.SENDING.status,
-                    extension = it.extension
-                )
+                val attachment = it.toAttachmentEntityDocument()
 
                 viewModel.saveMessageAndAttachment(
-                    messageString = "",
-                    attachmentEntity = attachment,
-                    numberAttachments = 1,
-                    selfDestructTime = obtainTimeSelfDestruct(),
-                    quote = shareViewModel.getQuoteWebId() ?: ""
+                    ItemMessage(
+                        attachment = attachment,
+                        numberAttachments = 1,
+                        selfDestructTime = obtainTimeSelfDestruct(),
+                        quote = shareViewModel.getQuoteWebId() ?: ""
+                    )
                 )
                 viewModel.resetDocumentCopied()
                 binding.inputPanel.closeQuote()
@@ -985,11 +991,12 @@ class ConversationFragment :
             stopRecording()
 
             viewModel.saveMessageAndAttachment(
-                "",
-                attachment,
-                1,
-                obtainTimeSelfDestruct(),
-                shareViewModel.getQuoteWebId() ?: ""
+                ItemMessage(
+                    attachment = attachment,
+                    numberAttachments = 1,
+                    selfDestructTime = obtainTimeSelfDestruct(),
+                    quote = shareViewModel.getQuoteWebId() ?: ""
+                )
             )
         }
     }
@@ -1048,8 +1055,7 @@ class ConversationFragment :
                 .subscribe {
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
-                            Utils.deleteUserChannel(
-                                requireContext(),
+                            handlerNotificationChannelService.deleteUserChannel(
                                 args.contact.id,
                                 args.contact.getNickName()
                             )
@@ -1169,6 +1175,7 @@ class ConversationFragment :
         if (!isFabScroll && actionMode.mode == null && !isSelectedMessage) {
             binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
         } else isSelectedMessage = false
+
     }
 
     private fun showCounterNotification() {
@@ -1968,6 +1975,7 @@ class ConversationFragment :
                     }
 
                     mHandler.postDelayed(mRecordingAudioRunnable!!, 1000)
+
                 } catch (e: IOException) {
                     RxBus.publish(RxEvent.EnableButtonPlayAudio(true))
                     Timber.e("prepare() failed")
@@ -2072,6 +2080,7 @@ class ConversationFragment :
                 binding.inputPanel.cancelRecording()
             }
         }
+
     }
 
     //endregion

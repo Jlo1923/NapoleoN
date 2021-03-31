@@ -1,13 +1,11 @@
 package com.naposystems.napoleonchat.source.local.entity
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.source.local.DBConstants
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -21,7 +19,12 @@ import kotlinx.android.parcel.Parcelize
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ],
+//    indices = [Index(
+//        value = [DBConstants.Message.COLUMN_WEB_ID],
+//        unique = true
+//    )]
+
 )
 data class MessageEntity(
     @PrimaryKey(autoGenerate = true)
@@ -73,4 +76,11 @@ data class MessageEntity(
         } else {
             this.body
         }
+
+    fun mustSendToRemote(): Boolean {
+        return (status == Constants.MessageStatus.ERROR.status ||
+                status == Constants.MessageStatus.SENDING.status
+                ) && webId.isEmpty()
+    }
+
 }

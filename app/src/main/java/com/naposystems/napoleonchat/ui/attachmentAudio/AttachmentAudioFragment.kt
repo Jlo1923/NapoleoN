@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.attachmentAudio
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -19,26 +17,34 @@ import com.naposystems.napoleonchat.databinding.AttachmentAudioFragmentBinding
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.notificationMessage.NotificationMessagesService
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
+class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listener {
 
     companion object {
         fun newInstance() = AttachmentAudioFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var notificationMessagesService: NotificationMessagesService
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private lateinit var viewModel: AttachmentAudioViewModel
     private lateinit var conversationShareViewModel: ConversationShareViewModel
@@ -66,11 +72,6 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
         )
     }
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,8 +95,7 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
                 .subscribe {
                     if (args.contact.id == it.contactId) {
                         if (args.contact.stateNotification) {
-                            Utils.deleteUserChannel(
-                                requireContext(),
+                            handlerNotificationChannelService.deleteUserChannel(
                                 args.contact.id,
                                 args.contact.getNickName()
                             )

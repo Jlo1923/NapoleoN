@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentBinding
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.contacts.showToast
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
@@ -18,6 +19,8 @@ import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewAct
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
@@ -35,6 +38,7 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     private val groupieAdapter = GroupieAdapter()
     private val groupieAdapterFiles = GroupieAdapter()
+    private lateinit var contact: ContactEntity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -44,6 +48,12 @@ class MultipleAttachmentActivity : AppCompatActivity() {
             .get(MultipleAttachmentViewModel::class.java)
 
         viewBinding = ActivityMultipleAttachmentBinding.inflate(layoutInflater)
+
+        intent.extras?.let {
+            if (it.containsKey(MULTI_EXTRA_CONTACT)) {
+                contact = it.getSerializable(MULTI_EXTRA_CONTACT) as ContactEntity
+            }
+        }
 
         setContentView(viewBinding.root)
     }
@@ -79,9 +89,10 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     private fun continueToPreview(listElements: List<MultipleAttachmentFileItem>) {
         val intent = Intent(this, MultipleAttachmentPreviewActivity::class.java)
-        val bundle = Bundle()
-        bundle.putParcelableArrayList("test", ArrayList(listElements))
-        intent.putExtras(bundle)
+        intent.putExtras(Bundle().apply {
+            putParcelable(MULTI_EXTRA_CONTACT, contact)
+            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
+        })
         startActivity(intent)
     }
 

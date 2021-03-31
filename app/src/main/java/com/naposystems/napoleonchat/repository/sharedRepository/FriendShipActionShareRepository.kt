@@ -58,7 +58,7 @@ class FriendShipActionShareRepository @Inject constructor(
         return napoleonApi.sendMessage(messageReqDTO)
     }
 
-    override fun insertMessage(messageEntity: MessageEntity): Long {
+    override suspend fun insertMessage(messageEntity: MessageEntity): Long {
         return messageLocalDataSource.insertMessage(messageEntity)
     }
 }

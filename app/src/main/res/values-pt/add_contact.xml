@@ -3,4 +3,11 @@
     <string name="text_friend_requests_received">Pedidos de amizade recebidos</string>
     <string name="text_friend_requests_sent">Pedidos de amizade enviados</string>
     <string name="text_friend_requests">Pedidos de amizade</string>
+
+    <string name="text_in_contacts">Em Contatos</string>
+    <string name="text_contact_blocked">Bloqueado</string>
+    <string name="text_request_sent">Enviado</string>
+
+    <string name="text_my_contacts_added">Meus contatos</string>
+    <string name="text_coincidence">Coincidências</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.ui.notificationSetting
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
@@ -12,11 +11,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.NotificationSettingFragmentBinding
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
-import dagger.android.support.AndroidSupportInjection
+import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
 import timber.log.Timber
+import javax.inject.Inject
 
 
 class NotificationSettingFragment : BaseFragment() {
@@ -26,19 +26,17 @@ class NotificationSettingFragment : BaseFragment() {
         const val RINGTONE_NOTIFICATION_CODE = 9
     }
 
+
     private lateinit var viewModel: NotificationSettingViewModel
     private lateinit var binding: NotificationSettingFragmentBinding
-    private lateinit var notificationUtils: NotificationUtils
+
+    @Inject
+    lateinit var notificationService: OLD_NotificationService
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+
     private var currentSoundNotificationMessage: Uri? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,9 +62,7 @@ class NotificationSettingFragment : BaseFragment() {
     }
 
     private fun updateSoundChannelMessage() {
-        notificationUtils = NotificationUtils(requireContext().applicationContext)
-        currentSoundNotificationMessage = notificationUtils.getChannelSound(
-            requireContext(),
+        currentSoundNotificationMessage = handlerNotificationChannelService.getChannelSound(
             Constants.ChannelType.DEFAULT.type,
             null,
             null
@@ -101,10 +97,11 @@ class NotificationSettingFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            notificationUtils.updateChannel(
-                requireContext(),
+            handlerNotificationChannelService.updateChannel(
                 uri,
-                Constants.ChannelType.DEFAULT.type
+                Constants.ChannelType.DEFAULT.type,
+                null,
+                null
             )
             Timber.d("*TestSong: onActivityResult=$uri")
 

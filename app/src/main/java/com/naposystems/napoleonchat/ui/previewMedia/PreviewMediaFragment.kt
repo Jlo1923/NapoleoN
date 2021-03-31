@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.previewMedia
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -13,7 +12,6 @@ import android.view.animation.AnimationUtils
 import android.widget.SeekBar
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -29,27 +27,31 @@ import com.google.android.exoplayer2.util.Util
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.PreviewMediaFragmentBinding
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
-class PreviewMediaFragment : Fragment() {
+class PreviewMediaFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = PreviewMediaFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private val viewModel: PreviewMediaViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewMediaFragmentBinding
@@ -91,11 +93,6 @@ class PreviewMediaFragment : Fragment() {
         Handler()
     }
     private var mRunnable: Runnable? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -216,8 +213,7 @@ class PreviewMediaFragment : Fragment() {
                     args.messageAndAttachment.contact?.let { noNullContact ->
                         if (noNullContact.id == eventContact.contactId) {
                             if (noNullContact.stateNotification) {
-                                Utils.deleteUserChannel(
-                                    requireContext(),
+                                handlerNotificationChannelService.deleteUserChannel(
                                     noNullContact.id,
                                     noNullContact.getNickName()
                                 )
@@ -245,7 +241,8 @@ class PreviewMediaFragment : Fragment() {
     private fun sentMessageReaded(isPlaying: Boolean) {
         if (!isFirstPause && !isPlaying && messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.UNREAD.status) {
             isFirstPause = true
-            messageAndAttachmentRelation.messageEntity.status = Constants.MessageStatus.READED.status
+            messageAndAttachmentRelation.messageEntity.status =
+                Constants.MessageStatus.READED.status
             Timber.d("isFirstPause: $isFirstPause")
             viewModel.sentMessageReaded(messageAndAttachmentRelation)
         }

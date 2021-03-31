@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.repository.uploadService
+package com.naposystems.napoleonchat.service.uploadService
 
 import android.content.Context
 import android.webkit.MimeTypeMap
@@ -9,7 +9,6 @@ import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
@@ -113,6 +112,7 @@ class UploadServiceRepository @Inject constructor(
                                     messageId = requestBodyMessageId,
                                     attachmentType = requestBodyType,
                                     duration = requestBodyDuration,
+                                    destroy = null,
                                     file = requestBodyFilePart
                                 )
 

@@ -1,12 +1,10 @@
 package com.naposystems.napoleonchat.ui.attachmentGalleryFolder
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -17,26 +15,29 @@ import com.naposystems.napoleonchat.model.attachment.gallery.GalleryFolder
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryResult
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.adapter.AttachmentGalleryFolderAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class AttachmentGalleryFoldersFragment : Fragment() {
+class AttachmentGalleryFoldersFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = AttachmentGalleryFoldersFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
 
     private val viewModel: AttachmentGalleryFoldersViewModel by viewModels {
         viewModelFactory
@@ -47,11 +48,6 @@ class AttachmentGalleryFoldersFragment : Fragment() {
 
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        AndroidSupportInjection.inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,8 +71,7 @@ class AttachmentGalleryFoldersFragment : Fragment() {
                     args.contact?.let { noNullContact ->
                         if (noNullContact.id == eventContact.contactId) {
                             if (noNullContact.stateNotification) {
-                                Utils.deleteUserChannel(
-                                    requireContext(),
+                                handlerNotificationChannelService.deleteUserChannel(
                                     noNullContact.id,
                                     noNullContact.getNickName()
                                 )
