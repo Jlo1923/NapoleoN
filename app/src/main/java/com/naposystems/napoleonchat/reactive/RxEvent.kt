@@ -51,11 +51,35 @@ class RxEvent {
         val message: String,
         val cause: Exception? = null
     )
+
     data class CompressProgress(
         val attachmentEntity: AttachmentEntity,
         val progress: Float
     )
+
     data class UploadProgress(
+        val attachmentEntity: AttachmentEntity,
+        val progress: Float
+    )
+
+    data class MultiUploadStart(val attachmentEntity: AttachmentEntity)
+
+    class MultiUploadTryNextAttachment()
+
+    data class MultiUploadSuccess(val attachmentEntity: AttachmentEntity)
+
+    data class MultiUploadError(
+        val attachmentEntity: AttachmentEntity,
+        val message: String,
+        val cause: Exception? = null
+    )
+
+    data class MultiCompressProgress(
+        val attachmentEntity: AttachmentEntity,
+        val progress: Float
+    )
+
+    data class MultiUploadProgress(
         val attachmentEntity: AttachmentEntity,
         val progress: Float
     )

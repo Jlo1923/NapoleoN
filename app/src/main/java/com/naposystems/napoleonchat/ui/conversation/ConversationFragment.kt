@@ -61,10 +61,12 @@ import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
+import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
@@ -74,6 +76,8 @@ import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -474,14 +478,21 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
                         drawableIconId = R.drawable.ic_folder_primary,
                         message = R.string.text_explanation_to_send_audio_attachment
                     ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
-                                args.contact,
-                                binding.inputPanel.getWebIdQuote(),
-                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditText().text.toString().trim()
-                            )
-                        )
+
+                        val intent = Intent(context, MultipleAttachmentActivity::class.java)
+                        intent.putExtras(Bundle().apply {
+                            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+                        })
+                        startActivity(intent)
+
+//                        findNavController().navigate(
+//                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
+//                                args.contact,
+//                                binding.inputPanel.getWebIdQuote(),
+//                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
+//                                binding.inputPanel.getEditText().text.toString().trim()
+//                            )
+//                        )
                     }
                 }
 
@@ -637,11 +648,29 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
                 val quote = binding.inputPanel.getQuote()
                 shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 viewModel.saveMessageAndAttachment(
-                    shareViewModel.getMessage() ?: "",
-                    attachment,
-                    1,
-                    obtainTimeSelfDestruct(),
-                    shareViewModel.getQuoteWebId() ?: ""
+                    ItemMessage(
+                        messageString = shareViewModel.getMessage() ?: "",
+                        attachment = attachment,
+                        numberAttachments = 1,
+                        selfDestructTime = obtainTimeSelfDestruct(),
+                        quote = shareViewModel.getQuoteWebId() ?: ""
+                    )
+                )
+            }
+        })
+
+        shareViewModel.listAttachments.observe(requireActivity(), Observer { attachments ->
+            attachments?.forEach {
+                val quote = binding.inputPanel.getQuote()
+                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                viewModel.saveMessageAndAttachment(
+                    ItemMessage(
+                        shareViewModel.getMessage() ?: "",
+                        it,
+                        1,
+                        obtainTimeSelfDestruct(),
+                        shareViewModel.getQuoteWebId() ?: ""
+                    )
                 )
             }
         })
@@ -816,26 +845,15 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
             if (it != null) {
                 val quote = binding.inputPanel.getQuote()
                 shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
-                val attachment = AttachmentEntity(
-                    id = 0,
-                    messageId = 0,
-                    webId = "",
-                    messageWebId = "",
-                    type = Constants.AttachmentType.DOCUMENT.type,
-                    body = "",
-                    fileName = it.name,
-                    origin = Constants.AttachmentOrigin.GALLERY.origin,
-                    thumbnailUri = "",
-                    status = Constants.AttachmentStatus.SENDING.status,
-                    extension = it.extension
-                )
+                val attachment = it.toAttachmentEntityDocument()
 
                 viewModel.saveMessageAndAttachment(
-                    messageString = "",
-                    attachmentEntity = attachment,
-                    numberAttachments = 1,
-                    selfDestructTime = obtainTimeSelfDestruct(),
-                    quote = shareViewModel.getQuoteWebId() ?: ""
+                    ItemMessage(
+                        attachment = attachment,
+                        numberAttachments = 1,
+                        selfDestructTime = obtainTimeSelfDestruct(),
+                        quote = shareViewModel.getQuoteWebId() ?: ""
+                    )
                 )
                 viewModel.resetDocumentCopied()
                 binding.inputPanel.closeQuote()
@@ -975,11 +993,12 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
             stopRecording()
 
             viewModel.saveMessageAndAttachment(
-                "",
-                attachment,
-                1,
-                obtainTimeSelfDestruct(),
-                shareViewModel.getQuoteWebId() ?: ""
+                ItemMessage(
+                    attachment = attachment,
+                    numberAttachments = 1,
+                    selfDestructTime = obtainTimeSelfDestruct(),
+                    quote = shareViewModel.getQuoteWebId() ?: ""
+                )
             )
         }
     }

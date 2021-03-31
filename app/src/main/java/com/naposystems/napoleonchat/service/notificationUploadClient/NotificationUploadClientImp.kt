@@ -14,6 +14,7 @@ class NotificationUploadClientImp
 
     companion object {
         const val NOTIFICATION_UPLOADING = 20102020
+        const val NOTIFICATION_UPLOADING_MULTI = 20102021
     }
 
     override fun createUploadNotification(
@@ -47,7 +48,7 @@ class NotificationUploadClientImp
 
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(NOTIFICATION_UPLOADING, notification)
+        mNotificationManager.notify(NOTIFICATION_UPLOADING_MULTI, notification)
     }
 
 }

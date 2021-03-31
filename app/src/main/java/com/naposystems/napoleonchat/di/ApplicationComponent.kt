@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.di
 import android.app.Application
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.di.module.general.*
+import com.naposystems.napoleonchat.di.module.mediastore.MediaStoreModule
 import com.naposystems.napoleonchat.di.module.missnamed.CreateAccountModule
 import com.naposystems.napoleonchat.di.module.sections.RepositoryModule
 import com.naposystems.napoleonchat.di.module.sections.ViewModelModule
@@ -13,6 +14,7 @@ import com.naposystems.napoleonchat.di.module.sources.local.RoomModule
 import com.naposystems.napoleonchat.di.module.sources.remote.RetrofitModule
 import com.naposystems.napoleonchat.di.module.ui.ActivityModule
 import com.naposystems.napoleonchat.di.module.ui.FragmentModule
+import com.naposystems.napoleonchat.di.module.workmanager.WorkManagerModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -52,6 +54,12 @@ import javax.inject.Singleton
         //Sections
         ViewModelModule::class,
         RepositoryModule::class,
+
+        // MediaStore
+        MediaStoreModule::class,
+
+        // WorkManager
+        WorkManagerModule::class,
 
         //Shared
         ContactProfileShareModule::class,

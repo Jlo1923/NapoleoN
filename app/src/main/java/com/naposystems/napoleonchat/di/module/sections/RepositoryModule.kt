@@ -48,6 +48,8 @@ import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeReposi
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
 import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
+import com.naposystems.napoleonchat.service.multiattachment.IContractMultipleUpload
+import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepository
@@ -74,11 +76,15 @@ import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.ui.logout.IContractLogout
 import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
+import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
+import com.naposystems.napoleonchat.ui.multi.repository.MultipleAttachmentRepository
 import com.naposystems.napoleonchat.ui.muteConversation.IMuteConversation
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyboardGif
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
+import com.naposystems.napoleonchat.ui.previewmulti.contract.IContractMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.previewmulti.repository.MultipleAttachmentPreviewRepository
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
@@ -251,6 +257,19 @@ abstract class RepositoryModule {
     abstract fun bindWebRTCServiceRepository(repository: WebRTCServiceRepositoryImp): WebRTCServiceRepository
 
     @Binds
-    abstract fun provideUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository
+    abstract fun provideMultiUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository
+
+    @Binds
+    abstract fun provideUploadServiceRepository(
+        repository: MultipleUploadRepository
+    ): IContractMultipleUpload.Repository
+
+    @Binds
+    abstract fun provideMultipleAttachmentRepository(repository: MultipleAttachmentRepository):
+            IContractMultipleAttachment.Repository
+
+    @Binds
+    abstract fun provideMultipleAttachmentPreviewRepository(repository: MultipleAttachmentPreviewRepository):
+            IContractMultipleAttachmentPreview.Repository
 
 }

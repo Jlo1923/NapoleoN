@@ -26,12 +26,14 @@ import com.naposystems.napoleonchat.ui.home.HomeViewModel
 import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
+import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.napoleonchat.ui.previewImage.PreviewImageViewModel
 import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaViewModel
+import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.profile.ProfileViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -226,7 +228,7 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ActivateBiometricsViewModel::class)
     internal abstract fun bindActivateBiometricsViewModel(viewModel: ActivateBiometricsViewModel): ViewModel
-    
+
     @Binds
     @IntoMap
     @ViewModelKey(EnterPinViewModel::class)
@@ -361,4 +363,18 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(NotificationSettingViewModel::class)
     internal abstract fun bindNotificationSettingViewModel(viewModel: NotificationSettingViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MultipleAttachmentViewModel::class)
+    internal abstract fun bindMultipleAttachmentViewModel(
+        viewModel: MultipleAttachmentViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MultipleAttachmentPreviewViewModel::class)
+    internal abstract fun bindMultipleAttachmentPreviewViewModel(
+        viewModel: MultipleAttachmentPreviewViewModel
+    ): ViewModel
 }

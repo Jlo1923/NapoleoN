@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/normal_padding"
+    android:paddingTop="@dimen/large_padding"
+    android:paddingEnd="@dimen/normal_padding"
+    android:paddingBottom="@dimen/large_padding"
+    tools:context=".ui.previewmulti.fragments.dialog.MultipleAttachmentRemoveAttachmentDialogFragment">
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextViewListTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Titulo de dialogo" />
+
+    <TextView
+        android:id="@+id/text_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/normal_margin"
+        android:textAppearance="@style/BodyTextView.message"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_title"
+        tools:text="Mensaje al usuario Mensaje al usuario Mensaje al usuario Mensaje al usuario Mensaje al usuario " />
+
+    <TextView
+        android:id="@+id/button_action_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_margin"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:padding="@dimen/small_padding"
+        android:textAppearance="@style/AppPrimaryButtonText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_message"
+        tools:text="Action Primary" />
+
+    <TextView
+        android:id="@+id/button_action_secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/normal_margin"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:padding="@dimen/small_padding"
+        android:textAppearance="@style/AppPrimaryButtonText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_action_primary"
+        tools:text="Action Primary" />
+
+    <TextView
+        android:id="@+id/button_action_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/normal_margin"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:padding="@dimen/small_padding"
+        android:textAppearance="@style/AppPrimaryButtonText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_action_secondary"
+        tools:text="Cancelar" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
