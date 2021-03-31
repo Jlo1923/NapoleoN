@@ -19,6 +19,7 @@
             android:id="@+id/imageView_user_image"
             style="@style/imageAvatarItem"
             app:avatar="@{contact.imageUrl}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:scaleType="fitCenter"
@@ -26,7 +27,7 @@
 
         <TextView
             android:id="@+id/textView_user_name"
-            style="@style/BodyTextView.Bold"
+            tyle="@style/BodyTextView.Bold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_margin"
@@ -42,6 +43,7 @@
 
         <TextView
             android:id="@+id/textView_user_nickname"
+            style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
@@ -52,29 +54,23 @@
             app:nickname="@{contact.nickname}"
             tools:text="@tools:sample/first_names" />
 
-        <ProgressBar
-            android:id="@+id/progressbar"
-            android:layout_width="@dimen/progress_friendship_request"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/x_small_margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/button_add"
-            app:layout_constraintTop_toTopOf="@+id/button_add" />
 
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_add"
-            style="@style/AppOutlinedPrimaryButtonSmall.Request.Yelow"
+        <TextView
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
-            android:paddingStart="@dimen/x_small_padding"
-            android:paddingEnd="@dimen/small_padding"
-            android:text="@string/text_add"
-            app:icon="@drawable/ic_add_primary"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:drawablePadding="@dimen/small_padding"
+            android:gravity="center"
+            android:text="@string/text_request_sent"
+            android:textAllCaps="true"
+            android:textColor="@color/green"
+            android:textSize="@dimen/minor_text_size"
+            app:drawableStartCompat="@drawable/ic_check_primary"
+            app:drawableTint="@color/green"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -124,8 +124,8 @@ class AttachmentGalleryFoldersFragment : Fragment() {
                 var displayName = ""
 
                 args.contact?.let { contact ->
-                    displayName = if (contact.nicknameFake.isNotEmpty())
-                        contact.nicknameFake else contact.nickname
+                    displayName =
+                        contact.nicknameFake
                 }
                 getString(R.string.text_send_to, displayName)
             }

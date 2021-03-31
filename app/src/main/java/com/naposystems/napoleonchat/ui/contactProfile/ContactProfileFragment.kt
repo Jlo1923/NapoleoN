@@ -3,9 +3,11 @@ package com.naposystems.napoleonchat.ui.contactProfile
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +42,7 @@ import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.napoleonchat.utility.Utils.Companion.showSimpleSnackbar
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -102,6 +105,7 @@ class ContactProfileFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
+
             galleryShareViewModel.uriImageSelected.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
@@ -270,7 +274,6 @@ class ContactProfileFragment : BaseFragment() {
             childFragmentManager
         ) {
             Utils.deleteUserChannel(requireContext(), contact.id, contact.getNickName())
-
             viewModel.restoreContact(args.contactId)
         }
     }
@@ -289,6 +292,10 @@ class ContactProfileFragment : BaseFragment() {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
                 snackbarUtils.showSnackbar {}
             }
+        })
+        viewModel.contactProfileWsError.observe(viewLifecycleOwner, {
+            //show message error
+            showSimpleSnackbar(binding.coordinator, it, 2)
         })
 
         contactProfileShareViewModel.contact.observe(viewLifecycleOwner, { contact ->
@@ -310,7 +317,7 @@ class ContactProfileFragment : BaseFragment() {
                 }
             }
             UCrop.REQUEST_CROP -> {
-                requestCrop(resultCode)
+                data?.let { requestCrop(resultCode, data) }
             }
         }
     }
@@ -485,13 +492,26 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun requestCrop(resultCode: Int) {
+    private fun requestCrop(resultCode: Int, data: Intent) {
         if (resultCode == RESULT_OK) {
             try {
-                viewModel.updateAvatarFakeContact(args.contactId, compressedFile?.name ?: "")
-                context?.let { context ->
-                    clearCache(context)
+                val uri = UCrop.getOutput(data)
+                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val source = ImageDecoder.createSource(requireContext().contentResolver, uri!!)
+                    ImageDecoder.decodeBitmap(source)
+                } else {
+                    MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
                 }
+
+                bitmap?.let {
+                    val string64 = Utils.convertBitmapToBase64(bitmap)
+                    viewModel.updateAvatarFakeContact(args.contactId, string64)
+                    context?.let { context ->
+                        clearCache(context)
+                    }
+                }
+
+
             } catch (ex: IOException) {
                 Timber.e(ex)
             }

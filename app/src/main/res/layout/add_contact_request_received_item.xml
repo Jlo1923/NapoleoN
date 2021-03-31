@@ -42,6 +42,7 @@
 
         <TextView
             android:id="@+id/textView_user_nickname"
+            style="@style/BodyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
@@ -56,26 +57,44 @@
             android:id="@+id/progressbar"
             android:layout_width="@dimen/progress_friendship_request"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/x_small_margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/button_add"
-            app:layout_constraintTop_toTopOf="@+id/button_add" />
-
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_add"
-            style="@style/AppOutlinedPrimaryButtonSmall.Request.Yelow"
-            android:layout_width="wrap_content"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:paddingStart="@dimen/x_small_padding"
-            android:paddingEnd="@dimen/small_padding"
-            android:text="@string/text_add"
-            app:icon="@drawable/ic_add_primary"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname" />
 
+        <LinearLayout
+            android:id="@+id/containerButtons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_refuse"
+                style="@style/AppOutlinedPrimaryButtonSmall.Request.Red"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:paddingStart="@dimen/x_small_padding"
+                android:paddingEnd="@dimen/small_padding"
+                android:text="@string/text_refuse"
+                app:icon="@drawable/ic_close_black_24"
+                app:iconTint="@color/red" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_accept"
+                style="@style/AppOutlinedPrimaryButtonSmall.Request.Green"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:paddingStart="@dimen/x_small_padding"
+                android:paddingEnd="@dimen/small_padding"
+                android:text="@string/text_accept"
+                app:icon="@drawable/ic_check_primary"
+                app:iconTint="@color/green" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

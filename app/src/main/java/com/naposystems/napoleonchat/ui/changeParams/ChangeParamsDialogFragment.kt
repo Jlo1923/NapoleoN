@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.databinding.ChangeFakesDialogFragmentBinding
 import com.naposystems.napoleonchat.source.remote.dto.user.DisplayNameReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FieldsValidator
+import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -56,7 +57,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.change_fakes_dialog_fragment,
@@ -116,6 +117,9 @@ class ChangeParamsDialogFragment : DialogFragment() {
             if (it) {
                 dismiss()
             }
+        })
+        viewModel.changeParamsWsError.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         })
 
         observers()
