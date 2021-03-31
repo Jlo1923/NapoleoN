@@ -25,7 +25,7 @@ class ConversationCallRepository @Inject constructor(
     }
 
     override fun resetIsOnCallPref() {
-        NapoleonApplication.isOnCall = false
+        NapoleonApplication.isCurrentOnCall = false
     }
 
     override suspend fun sendMissedCall(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {

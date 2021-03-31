@@ -53,7 +53,6 @@ import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -76,12 +75,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @Inject
     lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
-    @Inject
-    lateinit var webRTCClient: WebRTCClient
-
     private lateinit var binding: ActivityMainBinding
+
     private lateinit var navController: NavController
+
     private lateinit var appBarConfiguration: AppBarConfiguration
+
     private lateinit var viewModel: MainActivityViewModel
 
     private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
@@ -189,22 +188,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
-                    Timber.d("startCallActivity MainActivity")
-//                    webRTCClient.startWebRTCCallService(
-//                        it.channel,
-//                        it.isVideoCall,
-//                        it.contactId,
-//                        Constants.TypeCall.IS_INCOMING_CALL.type,
-//                        it.incomingCallDataOffer
-//                    )
 
-                    val intent =
-                        Intent(applicationContext, ConversationCallActivity::class.java).apply {
-                            putExtras(Bundle().apply {
-                                it.callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                                putSerializable(ConversationCallActivity.CALL_MODEL, it.callModel)
-                            })
-                        }
+                    Timber.d("LLAMADA PASO: INICIANDO CONVERSATIONCALLACTIVITY")
+
+                    val intent = Intent(
+                        applicationContext,
+                        ConversationCallActivity::class.java
+                    ).apply {
+                        putExtras(Bundle().apply {
+                            it.callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+                            putSerializable(ConversationCallActivity.KEY_CALL_MODEL, it.callModel)
+                        })
+                    }
                     startActivity(intent)
                 }
             }
@@ -337,7 +332,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putSerializable(
-                            ConversationCallActivity.CALL_MODEL, CallModel(
+                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
                                 contactId = contact.id,
                                 channelName = viewModel.getCallChannel(),
                                 isVideoCall = viewModel.isVideoCall() ?: false,

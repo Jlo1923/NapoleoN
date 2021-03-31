@@ -8,10 +8,6 @@ interface WebRTCClient {
 
     var callModel: CallModel
     var isActiveCall: Boolean
-//    var contactId: Int
-//    var isVideoCall: Boolean
-//    var typeCall: Int
-//    var channel: String
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
     fun subscribeToCallChannel()
@@ -56,6 +52,6 @@ interface WebRTCClient {
     fun getPusherChannel(channel: String): Boolean
     fun renderRemoteVideo()
     fun createAnswer()
-    fun startWebRTCCallService(callModel: CallModel)
+    fun startWebRTCService(callModel: CallModel)
 
 }

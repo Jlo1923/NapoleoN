@@ -25,7 +25,6 @@ import javax.inject.Singleton
         //General
         AndroidSupportInjectionModule::class,
         BillingModule::class,
-        NapoleonApplicationModule::class,
         ContextModule::class,
         ServiceModule::class,
         SharedPreferencesModule::class,

@@ -67,6 +67,7 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -78,7 +79,8 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" /> <!-- FIREBASE -->
-        <service android:name=".service.firebase.NapoleonFirebaseMessagingService"
+        <service
+            android:name=".service.firebase.NapoleonFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

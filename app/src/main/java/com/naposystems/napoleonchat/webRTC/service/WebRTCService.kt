@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.service.notificationClient.NotificationClien
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
+import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
 import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,13 +29,13 @@ class WebRTCService : Service() {
     }
 
     @Inject
-    lateinit var napoleonApplication: NapoleonApplication
-
-    @Inject
     lateinit var notificationClient: NotificationClient
 
     @Inject
     lateinit var handlerNotification: HandlerNotification
+
+    @Inject
+    lateinit var handlerMediaPlayerNotification: HandlerMediaPlayerNotification
 
     @Inject
     lateinit var repository: WebRTCServiceRepositoryImp
@@ -50,6 +51,8 @@ class WebRTCService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
+        Timber.d("LLAMADA PASO 1: STARTWEBRTCSERVICE")
+
         var callModel = CallModel(
             channelName = "",
             contactId = 0,
@@ -59,13 +62,19 @@ class WebRTCService : Service() {
         )
 
         intent.extras?.let { bundle ->
-            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL))
-                callModel = bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
+            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL)) {
+                callModel =
+                    bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
+                Timber.d("LLAMADA OBTENIENDO EXTRAS: STARTWEBRTCSERVICE callModel $callModel")
+            }
         }
 
         intent.action?.let { action ->
-            Timber.d("onStartCommand action: $action")
-            handlerNotification.stopMediaPlayer()
+
+            handlerMediaPlayerNotification.stopMedia()
+
+            Timber.d("LLAMADA PASO: ACTION $action")
+
             when (action) {
                 ACTION_ANSWER_CALL -> {
                     startConversationCallActivity(
@@ -87,64 +96,66 @@ class WebRTCService : Service() {
                     stopSelf()
                     RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                 }
-                else -> {
-                }
+                else ->
+                    Timber.e("Action no recognized")
+
             }
         } ?: run {
-            //TODO: Revisar aqui cuando llega la notificacion tambien muestra la pantalla  de llamada
-            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                showCallNotification(callModel)
-                if (!napoleonApplication.visible) {
-                    startConversationCallActivity(callModel = callModel)
-                }
-            } else {
-                showCallNotification(callModel)
+
+            Timber.d("LLAMADA PASO 2: RUN")
+
+            showCallNotification(callModel)
+
+            if (NapoleonApplication.isVisible) {
+
+                Timber.d("LLAMADA PASO 3: MOSTRAR ACTIVITY CALL")
+
+                startConversationCallActivity(callModel = callModel)
             }
         }
         return START_NOT_STICKY
     }
 
-    private fun showCallNotification(
-        callModel: CallModel
-    ) {
+    private fun showCallNotification(callModel: CallModel) {
+
+        Timber.d("LLAMADA PASO: MOSTRANDO NOTIFICACION $callModel")
+
         if (callModel.channelName != "" && callModel.contactId > 0 && this.hasMicAndCameraPermission()) {
 
             callModel.typeCall = if (callModel.offer != "") Constants.TypeCall.IS_INCOMING_CALL
             else Constants.TypeCall.IS_OUTGOING_CALL
 
-            val notification = handlerNotification.createNotificationCallBuilder(
-                callModel
-            )
+            val notification = handlerNotification.createNotificationCallBuilder(callModel)
+
             startForeground(HandlerNotificationImp.NOTIFICATION_RINGING, notification)
+
         }
     }
 
-    private fun startConversationCallActivity(
-        action: String = "",
-        callModel: CallModel
-    ) {
+    private fun startConversationCallActivity(action: String = "", callModel: CallModel) {
+
+        Timber.d("LLAMADA PASO: INICIANDO CONVERSATION: ACTION: $action, CALLMODEL: $callModel")
+
         if (this.hasMicAndCameraPermission()) {
-            if (callModel.channelName != "" && callModel.contactId > 0) {
 
-                Timber.d("startCallActivity WebRTCCallService")
-                val newIntent = Intent(this, ConversationCallActivity::class.java).apply {
-                    putExtras(Bundle().apply {
-                        callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                        putSerializable(ConversationCallActivity.CALL_MODEL, callModel)
-                        putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
-                        putBoolean(
-                            ConversationCallActivity.ANSWER_CALL, action == ACTION_ANSWER_CALL
-                        )
-                    })
-                }
-
-                if (napoleonApplication.visible && action.isNotEmpty())
-                    newIntent.action = action
-
-                newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-                startActivity(newIntent)
+            val intent = Intent(this, ConversationCallActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, callModel)
+                    putBoolean(
+                        ConversationCallActivity.ACTION_ANSWER_CALL,
+                        action == ACTION_ANSWER_CALL
+                    )
+                })
             }
+
+            if (NapoleonApplication.isVisible && action.isNotEmpty())
+                intent.action = action
+
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+            startActivity(intent)
+
         }
+
     }
 }

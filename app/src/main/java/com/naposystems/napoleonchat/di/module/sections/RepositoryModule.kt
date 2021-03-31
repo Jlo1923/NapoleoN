@@ -248,7 +248,7 @@ abstract class RepositoryModule {
     abstract fun bindValidateNicknameRepository(repository: ValidateNicknameRepository): IContractValidateNickname.Repository
 
     @Binds
-    abstract fun bindWebRTCCallServiceRepository(repository: WebRTCServiceRepositoryImp): WebRTCServiceRepository
+    abstract fun bindWebRTCServiceRepository(repository: WebRTCServiceRepositoryImp): WebRTCServiceRepository
 
     @Binds
     abstract fun provideUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository

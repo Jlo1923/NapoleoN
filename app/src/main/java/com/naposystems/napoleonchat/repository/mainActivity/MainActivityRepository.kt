@@ -79,7 +79,7 @@ class MainActivityRepository @Inject constructor(
         contactLocalDataSource.getContactById(contactId)
 
     override fun resetIsOnCallPref() {
-        NapoleonApplication.isOnCall = false
+        NapoleonApplication.isCurrentOnCall = false
     }
 
     override fun getRecoveryQuestionsPref(): Int {

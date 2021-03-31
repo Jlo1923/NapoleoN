@@ -1,5 +1,7 @@
 package com.naposystems.napoleonchat.utility
 
+import java.io.Serializable
+
 object Constants {
 
     const val URL_TERMS_AND_CONDITIONS = "https://napoleon.chat/terminos-condiciones/"
@@ -328,6 +330,12 @@ object Constants {
         ACTIVE("active"),
         BLOCKED("block")
     }
+
+    enum class FromClosedApp constructor(val type: Boolean) : Serializable {
+        YES(true),
+        NO(false)
+    }
+
     //endregion
 
     //region H
@@ -618,7 +626,7 @@ object Constants {
         INFO(2)
     }
 
-    enum class TypeCall constructor(val type: Int) {
+    enum class TypeCall constructor(val type: Int) : Serializable {
         IS_INCOMING_CALL(1),
         IS_OUTGOING_CALL(2)
     }

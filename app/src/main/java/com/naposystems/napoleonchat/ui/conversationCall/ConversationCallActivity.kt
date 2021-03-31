@@ -41,9 +41,13 @@ import javax.inject.Inject
 class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     companion object {
-        const val ANSWER_CALL = "answerCall"
-        const val CALL_MODEL = "callModel"
-        const val IS_FROM_CLOSED_APP = "isFromClosedApp"
+
+        //Llaves Modelo
+        const val KEY_CALL_MODEL = "callModel"
+
+        //Llaves Acciones
+        const val ACTION_ANSWER_CALL = "answerCall"
+
         const val ITS_FROM_RETURN_CALL = "its_from_return_call"
     }
 
@@ -70,12 +74,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     private lateinit var callModel: CallModel
 
-    private var isFromClosedApp: Boolean = false
-
-    private var hangUpPressed: Boolean = false
-
-    private var answerCall: Boolean = false
-
     private val audioManagerCompat by lazy {
         AudioManagerCompat.create(this)
     }
@@ -86,16 +84,18 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         NapoleonApplication.isShowingCallActivity = true
 
+        NapoleonApplication.isCurrentOnCall = true
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
-        Timber.d("LLAMADA PASO 1 OUTGOING: MOSTRANDO ACTIVIDAD LLAMADA")
+        Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
 
         webRTCClient.setWebRTCClientListener(this)
 
         getExtras()
 
         if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-            Timber.d("LLAMADA PASO 3 OUTGOING: SUSCRIBIRSE AL CANAL DE LLAMADAS")
+            Timber.d("LLAMADA PASO 2: LLAMADA SALIENTE")
             webRTCClient.subscribeToCallChannel()
         }
 
@@ -119,6 +119,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         webRTCClient.setTextViewCallDuration(binding.textViewCalling)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
+
         with(window) {
             setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
@@ -136,13 +141,13 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         if (!webRTCClient.isActiveCall) {
             if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                if (Build.VERSION.SDK_INT < 29 || !isFromClosedApp) {
+                if (Build.VERSION.SDK_INT < 29 || callModel.isFromClosedApp == Constants.FromClosedApp.YES) {
                     Timber.d("*Test: Ring CallActivity")
                     webRTCClient.playRingtone()
                 }
             } else {
 
-                webRTCClient.startWebRTCCallService(
+                webRTCClient.startWebRTCService(
                     callModel
                 )
                 webRTCClient.playRingBackTone()
@@ -217,6 +222,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
         ) {
 
             binding.fabAnswer.visibility = View.GONE
+
             webRTCClient.stopRingAndVibrate()
 
             if (webRTCClient.getPusherChannel(callModel.channelName)) {
@@ -230,13 +236,25 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     private fun getExtras() {
-        intent.extras?.let { bundle ->
 
-            if (bundle.containsKey(CALL_MODEL)) {
+        try {
 
-                callModel = bundle.getSerializable(CALL_MODEL) as CallModel
+            Timber.d("LLAMADA PASO: INTENTA OBTENER EXTRAS}")
 
-                webRTCClient.callModel = callModel
+            intent
+//
+//            intent.extras?.keySet()?.forEach {
+//                Timber.d("LLAMADA PASO: KEY $it")
+//            }
+
+            intent.extras?.let { extras ->
+
+                Timber.d("LLAMADA PASO: OBTENIENDO EXTRAS ${extras.keySet()}")
+
+                Timber.d("LLAMADA PASO: OBTENIENDO KEY_CALL_MODEL")
+                callModel = extras.getSerializable(KEY_CALL_MODEL) as CallModel
+
+                Timber.d("LLAMADA PASO 2: GETEXTRAS CALLMODEL: $callModel")
 
                 viewModel.getContact(callModel.contactId)
 
@@ -246,45 +264,31 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
                 binding.isVideoCall = callModel.isVideoCall
 
-                if (callModel.offer != "") {
+                webRTCClient.callModel = callModel
+
+                if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+
                     webRTCClient.setOffer(callModel.offer)
+
+                    if (extras.getBoolean(ACTION_ANSWER_CALL, false))
+                        answerCall()
                 }
 
-            }
-
-            if (bundle.containsKey(IS_FROM_CLOSED_APP)) {
-                isFromClosedApp = bundle.getBoolean(IS_FROM_CLOSED_APP, false)
-            }
-
-            if (bundle.containsKey(ITS_FROM_RETURN_CALL)) {
-                webRTCClient.setItsReturnCall(bundle.getBoolean(ITS_FROM_RETURN_CALL, false))
-            }
-
-            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-
-                val answerCall = bundle.getBoolean(ANSWER_CALL, false)
-
-                if (answerCall) {
-
-                    webRTCClient.stopRingAndVibrate()
-
-                    binding.fabAnswer.isVisible = false
-
-                    //TODO: Revisar si este create answe si va aqui
-                    webRTCClient.createAnswer()
+                if (extras.containsKey(ITS_FROM_RETURN_CALL)) {
+                    webRTCClient.setItsReturnCall(extras.getBoolean(ITS_FROM_RETURN_CALL, false))
                 }
             }
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
         }
+
     }
 
     private fun setUIListeners() {
 
         binding.fabAnswer.setOnClickListener {
             if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                webRTCClient.createAnswer()
-                handlerNotification.stopMediaPlayer()
-                webRTCClient.stopRingAndVibrate()
-                binding.fabAnswer.visibility = View.GONE
+                answerCall()
             }
         }
 
@@ -346,36 +350,55 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
         })
     }
 
+    private fun answerCall() {
+
+        webRTCClient.stopRingAndVibrate()
+
+        binding.fabAnswer.visibility = View.GONE
+
+        webRTCClient.createAnswer()
+
+    }
+
     private fun hangUp() {
 
-        Timber.d("WebRTCClient hangUp")
+        Timber.d("HANGUP: PRESIONADO")
 
-        if (!hangUpPressed) {
+        binding.fabHangup.isEnabled = false
 
-            closeNotification()
+        viewModel.resetIsOnCallPref()
 
-            hangUpPressed = true
-            viewModel.resetIsOnCallPref()
-            when {
+        Timber.d("HANGUP: PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${callModel.typeCall}")
 
-                callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL && !webRTCClient.isActiveCall -> {
+        if (!webRTCClient.isActiveCall)
+            when (callModel.typeCall) {
+                Constants.TypeCall.IS_OUTGOING_CALL -> {
+
+                    Timber.d("HANGUP: SEND MISSED CALL")
+                    Timber.d("HANGUP: CANCELL CALL")
+
                     viewModel.sendMissedCall(callModel)
-                    Timber.d("CancelCall 1")
                     viewModel.cancelCall(callModel)
                 }
 
-                callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL && !webRTCClient.isActiveCall -> {
-                    Timber.d("CancelCall 2")
+                Constants.TypeCall.IS_INCOMING_CALL -> {
+
+                    Timber.d("HANGUP: CANCELL CALL")
+
                     viewModel.cancelCall(callModel)
-                }
-                else -> {
-                    webRTCClient.emitHangUp()
                 }
             }
+        else
+            webRTCClient.emitHangUp()
 
-            webRTCClient.disposeCall()
-            Timber.d("SocketService webRTCClient.dispose()")
-        }
+        Timber.d("HANGUP: EMITE COLGAR")
+
+        webRTCClient.disposeCall()
+
+        closeNotification()
+
+        Timber.d("SocketService webRTCClient.dispose()")
+
     }
 
     private fun closeNotification() {

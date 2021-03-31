@@ -1,9 +1,8 @@
 package com.naposystems.napoleonchat.service.notificationClient
 
 import android.content.Context
-import com.naposystems.napoleonchat.model.toCallModel
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
-import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,16 +17,14 @@ class HandlerNotificationCallImp
     var isVideoCall = false
     var offer = ""
 
-    private val disposable: CompositeDisposable by lazy {
-        CompositeDisposable()
-    }
+    override fun handlerCall(callModel: CallModel) {
 
-    override fun handlerCall(
-        dataFromNotification: Map<String, String>
-    ) {
-        Timber.d("INCOMING OUTAPP PASO 2: $dataFromNotification")
+        Timber.d("LLAMADA PASO 3: EN HANDLER CALL $callModel")
 
-        socketClient.connectSocket(true, dataFromNotification.toCallModel())
+        socketClient.connectSocket(
+            mustSubscribeToPresenceChannel = true,
+            callModel = callModel
+        )
 
     }
 

@@ -11,7 +11,7 @@ import dagger.android.ContributesAndroidInjector
 abstract class ServiceModule {
 
     @ContributesAndroidInjector
-    abstract fun contributeWebRTCCallService(): WebRTCService
+    abstract fun contributeWebRTCService(): WebRTCService
 
     @ContributesAndroidInjector
     abstract fun contributePhoneStateBroadcastReceiver(): PhoneStateBroadcastReceiver

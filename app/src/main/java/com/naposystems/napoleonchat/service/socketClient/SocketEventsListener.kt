@@ -14,13 +14,15 @@ interface SocketEventsListener {
 
     }
 
-    interface Call {
+    interface CallOutApp{
+        fun itsSubscribedToPresenceChannelIncomingCall(callModel: CallModel)
+    }
 
-        //region Conection
+    interface Call {
+        fun itsSubscribedToPresenceChannelIncomingCall(callModel: CallModel)
         fun itsSubscribedToPresenceChannelOutgoingCall(callModel: CallModel)
 
-        fun itsSubscribedToPresenceChannelIncomingCall(callModel: CallModel)
-
+        //region Conection
         fun iceCandidateReceived(channelName: String, iceCandidate: IceCandidate)
         fun offerReceived(channelName: String, sessionDescription: SessionDescription)
         fun answerReceived(channelName: String, sessionDescription: SessionDescription)

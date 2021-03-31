@@ -30,7 +30,6 @@ import javax.inject.Inject
 class HandlerNotificationMessageImp
 @Inject constructor(
     private val context: Context,
-    private val napoleonApplication: NapoleonApplication,
     private val socketClient: SocketClient,
     private val syncManager: SyncManager,
     private val cryptoMessage: CryptoMessage,
@@ -158,7 +157,7 @@ class HandlerNotificationMessageImp
             }, 200)
         }
 
-        if (!napoleonApplication.visible) {
+        if (NapoleonApplication.isVisible.not()) {
 
             Timber.d("**Paso 10.3 : Muestra Notificacion")
 

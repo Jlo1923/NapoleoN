@@ -17,8 +17,6 @@ interface HandlerNotification {
         callModel: CallModel
     ): Notification
 
-    fun stopMediaPlayer()
-
     fun notificationCallInProgress(callModel: CallModel)
 
 }

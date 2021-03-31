@@ -6,11 +6,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
@@ -21,7 +18,7 @@ import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import timber.log.Timber
@@ -31,7 +28,7 @@ class HandlerNotificationImp
 @Inject constructor(
     private val context: Context,
     private val handlerNotificationChannel: HandlerNotificationChannel,
-    private val napoleonApplication: NapoleonApplication,
+    private val handlerMediaPlayerNotification: HandlerMediaPlayerNotification,
     private val syncManager: SyncManager,
 ) : HandlerNotification {
 
@@ -43,7 +40,7 @@ class HandlerNotificationImp
         const val SUMMARY_ID = 12345678
         const val GROUP_MESSAGE = "GROUP_MESSAGE"
 
-        val mediaPlayer: MediaPlayer = MediaPlayer()
+//        val mediaPlayer: MediaPlayer = MediaPlayer()
     }
 
     override fun showNotification(
@@ -169,15 +166,15 @@ class HandlerNotificationImp
         )
     }
 
-    override fun createNotificationCallBuilder(
-        callModel: CallModel
-    ): Notification {
+    override fun createNotificationCallBuilder(callModel: CallModel): Notification {
+
+        Timber.d("LLAMADA PASO: createNotificationCallBuilder $callModel")
 
         val contact = syncManager.getContact(callModel.contactId)
 
         val notificationBuilder = NotificationCompat.Builder(
             context,
-            context.getString(if (napoleonApplication.visible) R.string.alerts_channel_id else R.string.calls_channel_id)
+            context.getString(if (NapoleonApplication.isVisible) R.string.alerts_channel_id else R.string.calls_channel_id)
         ).apply {
             setSmallIcon(R.drawable.ic_call_black_24)
             setGroup(context.getString(R.string.calls_group_key))
@@ -217,26 +214,23 @@ class HandlerNotificationImp
 
         if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
 
-            val fullScreenIntent =
-                Intent(context, ConversationCallActivity::class.java).apply {
-                    putExtras(Bundle().apply {
-                        callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                        putSerializable(ConversationCallActivity.CALL_MODEL,callModel)
-                        putBoolean(ConversationCallActivity.IS_FROM_CLOSED_APP, true)
-                    })
-                }
+            val intent = Intent(context, ConversationCallActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, callModel)
+                })
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
 
-            val fullScreenPendingIntent = PendingIntent.getActivity(
-                context, 0,
-                fullScreenIntent, 0
+            val pendingIntent = PendingIntent.getActivity(
+                context, 0, intent, PendingIntent.FLAG_ONE_SHOT
             )
 
-            if (Build.VERSION.SDK_INT >= 29 && !napoleonApplication.visible) {
+            if (Build.VERSION.SDK_INT >= 29 && NapoleonApplication.isVisible.not()) {
                 notificationBuilder.apply {
-                    setFullScreenIntent(fullScreenPendingIntent, true)
-                    priority = NotificationCompat.PRIORITY_HIGH
+                    setFullScreenIntent(pendingIntent, true)
+                    priority = NotificationCompat.PRIORITY_MAX
                 }
-                playRingTone()
+                handlerMediaPlayerNotification.playRingtone()
             }
         }
 
@@ -296,54 +290,15 @@ class HandlerNotificationImp
     private fun getTexNotification(typeCall: Constants.TypeCall, isVideoCall: Boolean): String {
 
         return if (typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-            if (!isVideoCall)
+            if (isVideoCall.not())
                 context.getString(R.string.text_incoming_secure_call)
             else
                 context.getString(R.string.text_incoming_secure_video_call)
         } else {
-            if (!isVideoCall)
+            if (isVideoCall.not())
                 context.getString(R.string.text_secure_outgoing_call)
             else
                 context.getString(R.string.text_secure_outgoing_video_call)
         }
     }
-
-    private fun playRingTone() {
-        try {
-            Utils.getAudioManager(context).isSpeakerphoneOn = true
-            mediaPlayer.apply {
-                setAudioAttributes(
-                    AudioAttributes
-                        .Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-                )
-                if (isPlaying) {
-                    reset()
-                }
-                setDataSource(
-                    context,
-                    Settings.System.DEFAULT_RINGTONE_URI
-                )
-                this.isLooping = isLooping
-                prepare()
-                start()
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-    }
-
-    override fun stopMediaPlayer() {
-        try {
-            Timber.d("*Test: Stop Ring")
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.reset()
-//                mediaPlayer.release()
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-    }
-
 }

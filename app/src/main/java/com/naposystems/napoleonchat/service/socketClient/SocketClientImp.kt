@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.service.socketClient
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
@@ -37,7 +38,6 @@ import javax.inject.Inject
 
 class SocketClientImp @Inject constructor(
     private val context: Context,
-    private val napoleonApplication: NapoleonApplication,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val syncManager: SyncManager,
@@ -53,6 +53,8 @@ class SocketClientImp @Inject constructor(
     private lateinit var privateGeneralChannelName: String
 
     private lateinit var socketEventListenerCall: SocketEventsListener.Call
+
+    private lateinit var socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp
 
     companion object {
         const val CONTACT_JOIN_TO_CALL = 1
@@ -72,6 +74,10 @@ class SocketClientImp @Inject constructor(
     //region Conexion
     override fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call) {
         this.socketEventListenerCall = socketEventsListenerCall
+    }
+
+    override fun setSocketCallOutAppListener(socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp) {
+        this.socketEventsListenerCallOutApp = socketEventsListenerCallOutApp
     }
 
     override fun getStatusSocket(): ConnectionState {
@@ -101,7 +107,7 @@ class SocketClientImp @Inject constructor(
 
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel?) {
 
-        Timber.d("INCOMING OUTAPP PASO 3: Conectar Socket")
+        Timber.d("LLAMADA PASO 4: EN CONNECT SOCKET")
 
         userId = syncManager.getUserId()
 
@@ -114,15 +120,17 @@ class SocketClientImp @Inject constructor(
                 pusher.connection.state == ConnectionState.DISCONNECTING
             ) {
 
-                Timber.d("INCOMING OUTAPP PASO 3: Conectar Socket")
+                Timber.d("LLAMADA PASO 5: EN SOCKET DESCONECTADO")
 
                 pusher.connect(object : ConnectionEventListener {
 
                     override fun onConnectionStateChange(change: ConnectionStateChange?) {
                         if (change?.currentState == ConnectionState.CONNECTED) {
                             subscribeChannels()
-                            if (mustSubscribeToPresenceChannel)
-                                RxBus.publish(RxEvent.ConnectSocket())
+                            if (mustSubscribeToPresenceChannel) {
+                                Timber.d("LLAMADA PASO 6: CONEXION SUCCESS")
+                                callModel?.let { subscribeToPresenceChannel(it) }
+                            }
                         }
                     }
 
@@ -131,10 +139,15 @@ class SocketClientImp @Inject constructor(
                     }
                 })
             } else if (pusher.connection.state == ConnectionState.CONNECTED) {
-                if (napoleonApplication.visible)
+
+                if (NapoleonApplication.isVisible)
                     subscribeChannels()
-                else if (!napoleonApplication.visible && mustSubscribeToPresenceChannel)
+
+                if (mustSubscribeToPresenceChannel) {
+                    Timber.d("LLAMADA PASO: EN SOCKET CONECTADO")
                     callModel?.let { subscribeToPresenceChannel(it) }
+                }
+
             }
         }
     }
@@ -221,8 +234,10 @@ class SocketClientImp @Inject constructor(
     }
 
     override fun unSubscribePresenceChannel(channelName: String) {
-        if (pusher.getPresenceChannel(channelName) != null)
+        if (pusher.getPresenceChannel(channelName) != null) {
+            NapoleonApplication.isCurrentOnCall = false
             pusher.unsubscribe(channelName)
+        }
     }
 
     //TODO: Fusionar estos metodos
@@ -342,15 +357,15 @@ class SocketClientImp @Inject constructor(
                             //Metodos de Llamadas
                             listenIncomingCall()
 
-                            listenCallRejected()
+                            listenRejectedCall()
 
                             listenCancelCall()
 
                             syncManager.getMyMessages(null)
 
-                            syncManager.verifyMessagesReceived()
-
-                            syncManager.verifyMessagesRead()
+//                            syncManager.verifyMessagesReceive d()
+//
+//                            syncManager.verifyMessagesRead()
 
                         }
 
@@ -380,7 +395,7 @@ class SocketClientImp @Inject constructor(
 
                         override fun onSubscriptionSucceeded(channelName: String?) {
                             listenValidateConversationEvent()
-                            if (!napoleonApplication.visible)
+                            if (NapoleonApplication.isVisible.not())
                                 RxBus.publish(RxEvent.CreateNotification())
                         }
                     }
@@ -393,7 +408,9 @@ class SocketClientImp @Inject constructor(
     }
 
     override fun subscribeToPresenceChannel(callModel: CallModel) {
-        Timber.d("LLAMADA PASO 4 OUTGOING: SUSCRIBIRSE AL CANAL DE LLAMADAS ${callModel.channelName}")
+
+        Timber.d("LLAMADA PASO 1: SUSCRIBIRSE AL CANAL DE LLAMADAS ${callModel.channelName}")
+
         if (pusher.getPresenceChannel(callModel.channelName) == null) {
             pusher.subscribePresence(
                 callModel.channelName,
@@ -411,26 +428,20 @@ class SocketClientImp @Inject constructor(
 
                     override fun onSubscriptionSucceeded(channelName: String) {
 
-                        if (napoleonApplication.visible) {
+                        Timber.d("LLAMADA PASO 2: SUSCRIPCION LLAMADAS SUCCESS")
 
-                            listenCallEvents(channelName)
+                        listenCallEvents(channelName)
 
-                            Timber.d("LLAMADA PASO 5 OUTGOING: SUSCRITO AL CANAL ${channelName}")
+                        if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
 
-                            NapoleonApplication.isOnCall = true
+                            Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
 
-                            if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
-                                Timber.d("LLAMADA PASO 6.1 OUTGOING: Usuarios  mas de uno")
-                                processIncomingCall(callModel)
-                            } else {
-                                Timber.d("LLAMADA PASO 6.2 OUTGOING: Usuarios 1 o menor")
-
-                                socketEventListenerCall.itsSubscribedToPresenceChannelOutgoingCall(
-                                    callModel
-                                )
-                            }
-                        } else {
                             processIncomingCall(callModel)
+
+                        } else {
+                            socketEventListenerCall.itsSubscribedToPresenceChannelOutgoingCall(
+                                callModel
+                            )
                         }
                     }
 
@@ -452,16 +463,24 @@ class SocketClientImp @Inject constructor(
         }
     }
 
-    private fun processIncomingCall(
-        callModel: CallModel
-    ) {
-        Timber.d("LLAMADA PASO 6.1 OUTGOING: Usuarios  mas de uno")
+    private fun processIncomingCall(callModel: CallModel) {
 
-        callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-        RxBus.publish(
-            RxEvent.IncomingCall(callModel)
-        )
-        socketEventListenerCall.itsSubscribedToPresenceChannelIncomingCall(callModel)
+        Timber.d("LLAMADA PASO 4: PROCESANDO LLAMADA ENTRANTE callModel $callModel")
+
+        val service = Intent(context, WebRTCService::class.java).apply {
+            putExtras(Bundle().apply {
+                putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
+            })
+        }
+
+        context.startService(service)
+
+//
+//        if (::socketEventListenerCall.isInitialized)
+//            socketEventListenerCall.itsSubscribedToPresenceChannelIncomingCall(callModel)
+//        else if (::socketEventsListenerCallOutApp.isInitialized)
+//            socketEventsListenerCallOutApp.itsSubscribedToPresenceChannelIncomingCall(callModel)
+
     }
 
     //endregion
@@ -499,7 +518,7 @@ class SocketClientImp @Inject constructor(
 
                         Timber.d("Pusher: listenNewMessage:${event?.data}")
 
-                        if (napoleonApplication.visible) {
+                        if (NapoleonApplication.isVisible) {
 
                             Timber.d("Pusher: appVisible")
 
@@ -779,7 +798,11 @@ class SocketClientImp @Inject constructor(
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
 
-                        if (napoleonApplication.visible) {
+                        Timber.d("LLAMADA PASO 1: LlAMADA ENTRANTE")
+
+                        if (NapoleonApplication.isVisible) {
+
+                            Timber.d("LLAMADA PASO 2: APLICACION VISIBLE")
 
                             try {
 
@@ -790,20 +813,29 @@ class SocketClientImp @Inject constructor(
 
                                     val channel = "presence-${incomingCall.data.channel}"
 
-                                    if (NapoleonApplication.isOnCall)
+                                    if (NapoleonApplication.isCurrentOnCall) {
+
                                         syncManager.rejectCall(
                                             incomingCall.data.contactId,
                                             channel
                                         )
-                                    else
+                                    } else {
+
+                                        Timber.d("LLAMADA PASO 3: USUARIO NO ESTA EN LLAMADA")
+
+                                        NapoleonApplication.isCurrentOnCall = true
+
                                         subscribeToPresenceChannel(
                                             CallModel(
                                                 contactId = incomingCall.data.contactId,
                                                 channelName = channel,
                                                 isVideoCall = incomingCall.data.isVideoCall,
-                                                offer = incomingCall.data.offer
+                                                offer = incomingCall.data.offer,
+                                                typeCall = Constants.TypeCall.IS_INCOMING_CALL,
+                                                isFromClosedApp = Constants.FromClosedApp.NO
                                             )
                                         )
+                                    }
                                 }
                             } catch (e: Exception) {
                                 Timber.e(e)
@@ -820,7 +852,7 @@ class SocketClientImp @Inject constructor(
                 })
     }
 
-    private fun listenCallRejected() {
+    private fun listenRejectedCall() {
 
         pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.REJECTED_CALL.event,

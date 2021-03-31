@@ -384,7 +384,7 @@ class ConversationFragment : BaseFragment(),
             Timber.d("startCallActivity returnCall ConversationFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putSerializable(ConversationCallActivity.CALL_MODEL, webRTCClient.callModel)
+                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }
@@ -731,7 +731,7 @@ class ConversationFragment : BaseFragment(),
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
                         putSerializable(
-                            ConversationCallActivity.CALL_MODEL, CallModel(
+                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
                                 contactId = args.contact.id,
                                 channelName = channel,
                                 isVideoCall = viewModel.isVideoCall(),

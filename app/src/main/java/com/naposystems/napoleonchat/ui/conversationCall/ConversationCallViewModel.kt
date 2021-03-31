@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.utility.Constants
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -69,7 +70,7 @@ class ConversationCallViewModel
     }
 
     override fun cancelCall(callModel: CallModel) {
-        viewModelScope.launch {
+        GlobalScope.launch {
             try {
                 val cancelCallReqDTO = CancelCallReqDTO(
                     callModel.contactId,

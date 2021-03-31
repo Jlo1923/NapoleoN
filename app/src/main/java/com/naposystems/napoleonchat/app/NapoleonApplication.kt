@@ -27,13 +27,12 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
     companion object {
         private const val USE_BUNDLED_EMOJI = true
 
+        var isVisible: Boolean = false
+        var isCurrentOnCall: Boolean = false
         var isShowingCallActivity: Boolean = false
         var currentConversationContactId: Int = 0
         var currentCallContactId: Int = 0
-        var isOnCall: Boolean = false
     }
-
-    var visible: Boolean = false
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
         DaggerApplicationComponent.builder().create(this).build()
@@ -65,32 +64,43 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
     }
 
     override fun onStart(owner: LifecycleOwner) {
+
         Timber.d("*NotificationTest: onStart")
-        isOnCall = false
-        visible = true
+
+        isCurrentOnCall = false
+
+        isVisible = true
+
     }
 
     override fun onResume(owner: LifecycleOwner) {
+
         super.onResume(owner)
-        Timber.d("*NotificationTest: onResume")
-        visible = true
+
+        isVisible = true
+
     }
 
     override fun onPause(owner: LifecycleOwner) {
+
         super.onPause(owner)
-        Timber.d("*NotificationTest: onPause")
-        visible = false
+
+        isVisible = false
+
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        Timber.d("*NotificationTest: onStop")
-        visible = false
+
+        isVisible = false
+
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        isOnCall = false
-//        Data.isContactReadyForCall = false
+
+        isCurrentOnCall = false
+
         super.onDestroy(owner)
+
     }
 
     private fun configEmojiCompat() {

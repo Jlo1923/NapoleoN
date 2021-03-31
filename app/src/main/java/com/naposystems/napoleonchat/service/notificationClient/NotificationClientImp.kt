@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.model.toCallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
@@ -15,7 +16,6 @@ import javax.inject.Inject
 class NotificationClientImp
 @Inject constructor(
     private val context: Context,
-    private val napoleonApplication: NapoleonApplication,
     private val sharedPreferencesManager: SharedPreferencesManager,
     handlerNotificationChannel: HandlerNotificationChannel,
     private val handlerNotification: HandlerNotification,
@@ -37,13 +37,13 @@ class NotificationClientImp
             Constants.NotificationType.VERIFICATION_CODE.type,
             Constants.NotificationType.SUBSCRIPTION.type -> {
                 handlerNotification.showNotification(
-                        dataFromNotification,
-                        notification
+                    dataFromNotification,
+                    notification
                 )
             }
 
             Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                if (!napoleonApplication.visible)
+                if (NapoleonApplication.isVisible.not())
                     handlerNotificationMessage.handlerMessage(dataFromNotification, notification)
             }
 
@@ -67,8 +67,8 @@ class NotificationClientImp
                     dataFromNotification.getValue(Constants.NotificationKeys.ATTACKER_ID).toString()
                 )
                 handlerNotification.showNotification(
-                        dataFromNotification,
-                        notification
+                    dataFromNotification,
+                    notification
                 )
 
                 RxBus.publish(RxEvent.AccountAttack())
@@ -76,17 +76,31 @@ class NotificationClientImp
 
             Constants.NotificationType.INCOMING_CALL.type -> {
 
+                Timber.d("LLAMADA PASO 1: LLAMADA ENTRANTE EN NOTIFICACION")
+
                 //TODO: Revisar aqui el estado de la vista y de la llamada
+
                 //if (!syncManager.getIsOnCallPref() && !Data.isShowingCallActivity) {
-                if (!napoleonApplication.visible){
-                    Timber.d("INCOMING OUTAPP PASO 1: Notificacion Entrante")
-                    handlerNotificationCall.handlerCall(dataFromNotification)
+
+                if (NapoleonApplication.isVisible.not()) {
+
+                    Timber.d("LLAMADA PASO 2: APLICACION NO VISIBLE")
+
+                    var callModel = dataFromNotification.toCallModel()
+
+                    callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+
+                    callModel.isFromClosedApp = Constants.FromClosedApp.YES
+
+                    handlerNotificationCall.handlerCall(callModel)
+
                 }
+
             }
 
             Constants.NotificationType.CANCEL_CALL.type -> {
                 Timber.d("CANCEL_CALL")
-                NapoleonApplication.isOnCall = false
+                NapoleonApplication.isCurrentOnCall = false
                 val notificationManager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.cancelAll()

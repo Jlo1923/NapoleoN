@@ -9,6 +9,8 @@ interface SocketClient {
 
     fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call)
 
+    fun setSocketCallOutAppListener(socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp)
+
     fun getStatusSocket(): ConnectionState
 
     fun getStatusGlobalChannel(): Boolean
@@ -28,4 +30,5 @@ interface SocketClient {
     fun emitClientCall(channel: String, eventType: Int)
 
     fun subscribeToPresenceChannel(callModel: CallModel)
+
 }

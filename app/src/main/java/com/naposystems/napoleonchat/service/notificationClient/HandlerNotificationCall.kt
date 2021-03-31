@@ -1,5 +1,7 @@
 package com.naposystems.napoleonchat.service.notificationClient
 
+import com.naposystems.napoleonchat.model.CallModel
+
 interface HandlerNotificationCall {
-    fun handlerCall(dataFromNotification: Map<String, String>)
+    fun handlerCall(callModel: CallModel)
 }

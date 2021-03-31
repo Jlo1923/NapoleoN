@@ -19,18 +19,18 @@ class CustomPhoneStateListener(
         when (state) {
             TelephonyManager.CALL_STATE_IDLE -> {
                 //when Idle i.e no call
-                NapoleonApplication.isOnCall = false
+                NapoleonApplication.isCurrentOnCall = false
             }
             TelephonyManager.CALL_STATE_OFFHOOK -> {
                 //when Off hook i.e in call
-                NapoleonApplication.isOnCall = true
+                NapoleonApplication.isCurrentOnCall = true
             }
             TelephonyManager.CALL_STATE_RINGING -> {
                 //when Ringing
                 RxBus.publish(
                     RxEvent.IncomingCallSystem()
                 )
-                NapoleonApplication.isOnCall = true
+                NapoleonApplication.isCurrentOnCall = true
             }
         }
     }

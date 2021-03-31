@@ -59,18 +59,6 @@ class CallComponentsModule {
 
     @Provides
     @Singleton
-    fun provideMediaPlayer(): MediaPlayer {
-        return MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION_SIGNALLING)
-                    .build()
-            )
-        }
-    }
-
-    @Provides
-    @Singleton
     fun provideRTCConfiguration(peerIceServer: ArrayList<PeerConnection.IceServer>): PeerConnection.RTCConfiguration {
 
         val rtcConfiguration = PeerConnection.RTCConfiguration(peerIceServer)
