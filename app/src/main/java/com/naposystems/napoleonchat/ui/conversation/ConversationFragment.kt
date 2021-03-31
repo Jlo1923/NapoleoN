@@ -67,6 +67,7 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
+import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewActivity
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
@@ -253,9 +254,9 @@ class ConversationFragment :
                     ?.let { messageAndAttachment ->
                         if (messageAndAttachment.messageEntity.messageType == Constants.MessageType.MESSAGE.type &&
                             (messageAndAttachment.messageEntity.status == Constants.MessageStatus.UNREAD.status ||
-                                messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
-                                messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
-                                messageAndAttachment.getFirstAttachment()?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status)
+                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
+                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
+                                    messageAndAttachment.getFirstAttachment()?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status)
                         ) {
                             actionSwipeQuote(
                                 actionState,
@@ -484,10 +485,7 @@ class ConversationFragment :
                         message = R.string.text_explanation_to_send_audio_attachment
                     ) {
 
-                        val intent = Intent(
-                            context,
-                            MultipleAttachmentActivity::class.java
-                        )
+                        val intent = Intent(context, MultipleAttachmentActivity::class.java)
                         startActivity(intent)
 
                         // findNavController().navigate(
@@ -1833,7 +1831,7 @@ class ConversationFragment :
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             recyclerView.setOnTouchListener { _, event ->
                 swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
-                    event?.action == MotionEvent.ACTION_UP
+                        event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
                     binding.inputPanel.resetImage()
                     if (messageAndAttachmentRelation.messageEntity.status != Constants.MessageStatus.ERROR.status) {

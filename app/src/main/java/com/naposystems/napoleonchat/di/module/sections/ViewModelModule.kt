@@ -33,6 +33,7 @@ import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingVi
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.napoleonchat.ui.previewImage.PreviewImageViewModel
 import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaViewModel
+import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.profile.ProfileViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -368,5 +369,12 @@ abstract class ViewModelModule {
     @ViewModelKey(MultipleAttachmentViewModel::class)
     internal abstract fun bindMultipleAttachmentViewModel(
         viewModel: MultipleAttachmentViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MultipleAttachmentPreviewViewModel::class)
+    internal abstract fun bindMultipleAttachmentPreviewViewModel(
+        viewModel: MultipleAttachmentPreviewViewModel
     ): ViewModel
 }

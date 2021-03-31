@@ -70,7 +70,7 @@ class MultipleAttachmentMediaStore @Inject constructor(
         return galleryFolders.toList()
     }
 
-    override fun getFilesByFolder(folderName: String): List<MultipleAttachmentFileItem> {
+    override fun getFilesByFolder(folderName: String, mapIds: Map<Int, Int>): List<MultipleAttachmentFileItem> {
         val galleryFiles = mutableListOf<MultipleAttachmentFileItem>()
 
         val projection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
@@ -109,7 +109,11 @@ class MultipleAttachmentMediaStore @Inject constructor(
 
                     val contentUri = ContentUris.withAppendedId(externalUri, fileId.toLong())
 
-                    galleryFiles.add(MultipleAttachmentFileItem(fileId, attachmentType, contentUri))
+                    val isInMapIds = mapIds.containsKey(fileId)
+                    galleryFiles.add(
+                        MultipleAttachmentFileItem(fileId, attachmentType, contentUri, isInMapIds)
+                    )
+
                 } while (newCursor.moveToNext())
             }
         }
