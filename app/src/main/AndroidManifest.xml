@@ -42,10 +42,13 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup"
         tools:targetApi="n">
+        <activity android:name=".ui.previewmulti.MultipleAttachmentPreviewActivity"></activity>
+        <activity android:name=".ui.multi.MultipleAttachmentActivity" />
 
         <service android:name=".webRTC.service.WebRTCService" />
 
         <service android:name=".service.uploadService.UploadService" />
+        <service android:name=".service.multiattachment.MultipleUploadService" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -60,7 +63,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.conversationCall.ConversationCallActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -72,9 +74,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.mainActivity.MainActivity" />
-        </activity>
-
-        <!-- uCrop cropping activity -->
+        </activity> <!-- uCrop cropping activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

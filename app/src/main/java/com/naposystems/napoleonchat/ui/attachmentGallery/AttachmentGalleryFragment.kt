@@ -68,7 +68,6 @@ class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<
         binding = DataBindingUtil.inflate(
             inflater, R.layout.attachment_gallery_fragment, container, false
         )
-
         return binding.root
     }
 

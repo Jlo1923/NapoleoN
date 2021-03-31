@@ -42,6 +42,11 @@ android {
             }
         }
     }
+
+    androidExtensions {
+        experimental = true
+    }
+
     buildTypes {
         /*Produccion*/
         release {
@@ -349,6 +354,9 @@ dependencies {
 
     // WebRTC
     implementation "org.webrtc:google-webrtc:$web_rtc_version"
+
+    // WorkManager
+    implementation "androidx.work:work-runtime-ktx:$work_version"
     //endregion
 
     //region Testing
@@ -363,6 +371,10 @@ dependencies {
 
     //Video Compressor
     implementation project(':videocompressor')
+
+    implementation "com.xwray:groupie:$groupie_version"
+    implementation "com.xwray:groupie-viewbinding:$groupie_version"
+    implementation "com.xwray:groupie-kotlin-android-extensions:$groupie_version"
     //endregion
 
 }

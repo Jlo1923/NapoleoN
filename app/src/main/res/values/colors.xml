@@ -134,5 +134,7 @@
     <color name="color_703E5C">#703E5C</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="multiple_attachment_bg_options">#e62d2c2c</color>
+    <color name="multiple_attachment_bg_options_selected">#ffd74b</color>
 
 </resources>
