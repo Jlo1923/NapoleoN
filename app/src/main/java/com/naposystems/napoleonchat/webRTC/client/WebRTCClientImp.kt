@@ -191,11 +191,11 @@ class WebRTCClientImp @Inject constructor(
                         Timber.d("Headset plugged")
                         stopProximitySensor()
                         isHeadsetConnected = true
-                        if (callModel.isVideoCall && !isBluetoothAvailable) {
+                        if (callModel.isVideoCall && isBluetoothAvailable.not()) {
                             audioManager.isSpeakerphoneOn = false
                         }
 
-                        if (!callModel.isVideoCall && audioManager.isSpeakerphoneOn) {
+                        if (callModel.isVideoCall.not() && audioManager.isSpeakerphoneOn) {
                             audioManager.isSpeakerphoneOn = false
                             webRTCClientListener?.changeCheckedSpeaker(false)
                         }
@@ -204,7 +204,7 @@ class WebRTCClientImp @Inject constructor(
                         isHeadsetConnected = false
                         Timber.d("Headset unplugged")
 
-                        if (callModel.isVideoCall && !isBluetoothAvailable) {
+                        if (callModel.isVideoCall && isBluetoothAvailable.not()) {
                             audioManager.isSpeakerphoneOn = true
                         }
 
@@ -213,7 +213,7 @@ class WebRTCClientImp @Inject constructor(
                             startProximitySensor()
                         }
 
-                        if (!callModel.isVideoCall && !isSpeakerOn()) {
+                        if (callModel.isVideoCall.not() && isSpeakerOn().not()) {
                             startProximitySensor()
                         }
                     }
@@ -326,7 +326,7 @@ class WebRTCClientImp @Inject constructor(
                                 callModel
                             )
 
-                            if (!callModel.isVideoCall && callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+                            if (callModel.isVideoCall.not() && callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
                                 audioManager.isSpeakerphoneOn = false
                                 webRTCClientListener?.changeCheckedSpeaker(false)
                             }
@@ -469,7 +469,7 @@ class WebRTCClientImp @Inject constructor(
     }
 
     private fun initializeProximitySensor() {
-        if (!callModel.isVideoCall && !audioManager.isSpeakerphoneOn && !wakeLock.isHeld) {
+        if (callModel.isVideoCall.not() && !audioManager.isSpeakerphoneOn && !wakeLock.isHeld) {
             wakeLock.acquire()
         }
     }
@@ -675,7 +675,7 @@ class WebRTCClientImp @Inject constructor(
     }
 
     override fun setMicOff() {
-        isMicOn = !isMicOn
+        isMicOn = isMicOn.not()
         localAudioTrack?.setEnabled(isMicOn)
     }
 
@@ -726,7 +726,7 @@ class WebRTCClientImp @Inject constructor(
     }
 
     override fun changeToVideoCall() {
-        if (!callModel.isVideoCall) {
+        if (callModel.isVideoCall.not()) {
             socketClient.emitClientCall(
                 callModel.channelName,
                 SocketClientImp.CONTACT_WANT_CHANGE_TO_VIDEO
@@ -848,7 +848,7 @@ class WebRTCClientImp @Inject constructor(
     }
 
     override fun startProximitySensor() {
-        if (!audioManager.isSpeakerphoneOn && !isHeadsetConnected && !isBluetoothActive) {
+        if (audioManager.isSpeakerphoneOn.not() && isHeadsetConnected.not() && isBluetoothActive.not()) {
             initializeProximitySensor()
         }
     }
@@ -967,7 +967,7 @@ class WebRTCClientImp @Inject constructor(
 
         isBluetoothAvailable = isAvailable
 
-        if (!isFirstTimeBluetoothAvailable && !isHeadsetConnected) {
+        if (isFirstTimeBluetoothAvailable.not() && isHeadsetConnected.not()) {
             Timber.d("isFirstTimeBluetoothAvailableeeee")
             isFirstTimeBluetoothAvailable = true
             audioManager.startBluetoothSco()
@@ -985,7 +985,7 @@ class WebRTCClientImp @Inject constructor(
             stopProximitySensor()
         }
 
-        if (!isAvailable && isHeadsetConnected) {
+        if (isAvailable.not() && isHeadsetConnected) {
             Timber.d("onBluetoothStateChanged 3ero")
             audioManager.isSpeakerphoneOn = false
         }

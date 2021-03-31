@@ -241,12 +241,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
             Timber.d("LLAMADA PASO: INTENTA OBTENER EXTRAS}")
 
-            intent
-//
-//            intent.extras?.keySet()?.forEach {
-//                Timber.d("LLAMADA PASO: KEY $it")
-//            }
-
             intent.extras?.let { extras ->
 
                 Timber.d("LLAMADA PASO: OBTENIENDO EXTRAS ${extras.keySet()}")
