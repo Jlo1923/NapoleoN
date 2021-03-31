@@ -11,6 +11,7 @@ import com.naposystems.napoleonchat.ui.previewmulti.model.AttachmentOptionItem
 import com.naposystems.napoleonchat.ui.previewmulti.model.AttachmentOptionItem.*
 import com.naposystems.napoleonchat.ui.previewmulti.views.items.AttachmentOptionItemView
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.ViewAttachmentOptionsListener
+import com.naposystems.napoleonchat.ui.previewmulti.listeners.events.ViewAttachmentOptionEvent
 import com.xwray.groupie.GroupieAdapter
 
 class ViewAttachmentOptions @JvmOverloads constructor(
@@ -31,36 +32,11 @@ class ViewAttachmentOptions @JvmOverloads constructor(
     init {
         configureRecycler()
         configureElements()
-        defineListeners()
+        defineListenerItemOption()
     }
 
-    private fun defineListeners() {
-        groupieAdapter.setOnItemClickListener { item, _ ->
-            when (item) {
-                is AttachmentOptionItemView -> handleAttachmentOptionClick(item.item)
-            }
-        }
-    }
-
-    private fun handleAttachmentOptionClick(item: AttachmentOptionItem) {
-        when (item) {
-            AUTO_DESTRUCTION -> listener?.onChangeSelfDestruction()
-            CAN_RESEND -> TODO()
-            CAN_DOWNLOAD -> TODO()
-            DELETE -> TODO()
-        }
-    }
-
-    private fun configureElements() {
-
-        val listElements = mutableListOf<AttachmentOptionItemView>()
-
-        val elementAutoDestruction = AttachmentOptionItemView(item = AUTO_DESTRUCTION)
-
-        listElements.add(elementAutoDestruction)
-
-        groupieAdapter.update(listElements)
-
+    fun defineListener(listener: ViewAttachmentOptionsListener) {
+        this.listener = listener
     }
 
     private fun configureRecycler() {
@@ -71,9 +47,32 @@ class ViewAttachmentOptions @JvmOverloads constructor(
         }
     }
 
-    fun defineListener(listener: ViewAttachmentOptionsListener) {
-        this.listener = listener
+    private fun configureElements() {
+        val listElements = mutableListOf<AttachmentOptionItemView>()
+        val elementAutoDestruction = AttachmentOptionItemView(item = AUTO_DESTRUCTION)
+        val elementDelete = AttachmentOptionItemView(item = DELETE)
+        listElements.add(elementAutoDestruction)
+        listElements.add(elementDelete)
+        groupieAdapter.update(listElements)
     }
+
+    private fun defineListenerItemOption() = groupieAdapter.setOnItemClickListener { item, _ ->
+        when (item) {
+            is AttachmentOptionItemView -> handleAttachmentOptionClick(item.item)
+        }
+    }
+
+    private fun handleAttachmentOptionClick(item: AttachmentOptionItem) {
+        when (item) {
+            AUTO_DESTRUCTION -> launchEvent(ViewAttachmentOptionEvent.OnChangeSelfDestruction)
+            CAN_RESEND -> TODO()
+            CAN_DOWNLOAD -> TODO()
+            DELETE -> launchEvent(ViewAttachmentOptionEvent.OnDelete)
+        }
+    }
+
+    private fun launchEvent(event: ViewAttachmentOptionEvent) =
+        listener?.onViewAttachmentOptionEvent(event)
 
     fun changeDrawableSelfDestructionOption(iconSelfDestruction: Int) {
         val itemView = groupieAdapter.getItem(0) as AttachmentOptionItemView

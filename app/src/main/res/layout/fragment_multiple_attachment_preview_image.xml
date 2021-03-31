@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.previewmulti.fragments.MultipleAttachmentPreviewImageFragment">
 
-    <ImageView
+    <com.naposystems.napoleonchat.utility.ZoomImage
         android:id="@+id/image_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
