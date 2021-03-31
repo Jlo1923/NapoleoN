@@ -9,13 +9,6 @@ import javax.inject.Inject
 class ContactLocalDataSourceImp @Inject constructor(private val contactDao: ContactDao) :
     ContactLocalDataSource {
 
-    override suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String) {
-        contactDao.updateNickNameFakeContact(contactId, nicknameFake)
-    }
-
-    override suspend fun updateNameFakeContact(contactId: Int, nameFake: String) {
-        contactDao.updateNameFakeContact(contactId, nameFake)
-    }
 
     override suspend fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
         contactDao.updateAvatarFakeContact(contactId, avatarFake)
@@ -45,21 +38,31 @@ class ContactLocalDataSourceImp @Inject constructor(private val contactDao: Cont
         contactDao.insertContact(contact)
     }
 
-    override suspend fun insertOrUpdateContactList(contactList: List<ContactEntity>, location : Int): List<ContactEntity> {
+    override suspend fun insertOrUpdateContactList(
+        contactList: List<ContactEntity>,
+        location: Int
+    ): List<ContactEntity> {
         contactList.forEach { remoteContact ->
             val localContact = contactDao.getContactById(remoteContact.id)
             if (localContact != null) {
                 if (location == Constants.LocationGetContact.OTHER.location) {
-                    localContact.imageUrl = remoteContact.imageUrl
-                    localContact.displayName = remoteContact.displayName
-                    localContact.status = remoteContact.status
-                    localContact.lastSeen = remoteContact.lastSeen
-                    contactDao.updateContact(localContact)
+                    localContact.apply {
+                        imageUrlFake = remoteContact.imageUrlFake
+                        displayNameFake = remoteContact.displayNameFake
+                        nicknameFake = remoteContact.nicknameFake
+                        imageUrl = remoteContact.imageUrl
+                        displayName = remoteContact.displayName
+                        status = remoteContact.status
+                        lastSeen = remoteContact.lastSeen
+                        contactDao.updateContact(localContact)
+                    }
+
                 }
             } else {
                 contactDao.insertContact(remoteContact)
             }
         }
+
         val localContacts = getLocaleContacts()
         return localContacts.subtract(contactList).toList()
     }
@@ -110,5 +113,9 @@ class ContactLocalDataSourceImp @Inject constructor(private val contactDao: Cont
 
     override suspend fun updateStateChannel(contactId: Int, state: Boolean) {
         contactDao.updateStateChannel(contactId, state)
+    }
+
+    override suspend fun updateContact(contact: ContactEntity) {
+        contactDao.updateContact(contact)
     }
 }

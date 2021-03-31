@@ -7,6 +7,8 @@ import com.naposystems.napoleonchat.source.remote.dto.accountAttackDialog.Accoun
 import com.naposystems.napoleonchat.source.remote.dto.addContact.*
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallResDTO
+import com.naposystems.napoleonchat.source.remote.dto.contactProfile.ContactFakeReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.contactProfile.ContactFakeResDTO
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsResDTO
 import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
@@ -78,6 +80,7 @@ import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_PQRS
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_QUESTIONS
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_SELECTED_SUBSCRIPTION
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.TYPE_SUBSCRIPTIONS
+import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_CONTACT_FAKE
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_MUTE_CONVERSATION
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_USER_INFO
 import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
@@ -252,4 +255,7 @@ interface NapoleonApi {
 
     @POST(READY_CALL)
     suspend fun readyForCall(@Body readyForCallReqDTO: ReadyForCallReqDTO): Response<ReadyForCallResDTO>
+
+    @PUT(UPDATE_CONTACT_FAKE)
+    suspend fun updateContactFake(@Body contactFakeReqDTO: ContactFakeReqDTO,@Path("friendshipId") idContact: Int): Response<ContactFakeResDTO>
 }

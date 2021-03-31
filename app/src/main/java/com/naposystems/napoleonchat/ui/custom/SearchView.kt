@@ -27,7 +27,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
     private var customHint: String? = ""
     private var characterCount: Int = 0
     private var isOpen: Boolean = false
-    private lateinit var listener: OnSearchView
+    private var listener: OnSearchView?=null
     private var location: Int = 0
 
     private val normalMargin by lazy {
@@ -102,7 +102,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
                 Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                listener.onQuery(s.toString())
+                listener?.onQuery(s.toString())
             }
         })
 
@@ -223,14 +223,14 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
 
             override fun onAnimationEnd(animation: Animator?) {
                 if (isOpen) {
-                    listener.onClosed()
+                    listener?.onClosed()
                     visibility = View.GONE
                     isOpen = false
                     textInput.text = ""
                     Utils.hideKeyboard(textInput)
                 } else {
                     isOpen = true
-                    listener.onOpened()
+                    listener?.onOpened()
                 }
             }
 
@@ -285,12 +285,12 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
                         textInput.text = ""
                         Utils.hideKeyboard(textInput)
                         if (location == Constants.LocationAddContact.CONTACTS.location) {
-                            listener.onClosedCompleted()
+                            listener?.onClosedCompleted()
                         }
-                        listener.onClosed()
+                        listener?.onClosed()
                     } else {
                         isOpen = true
-                        listener.onOpened()
+                        listener?.onOpened()
                     }
                 }
 
@@ -311,7 +311,7 @@ class SearchView(context: Context, attrs: AttributeSet) : LinearLayout(context, 
         }
     }
 
-    fun setListener(listener: OnSearchView) {
+    fun setListener(listener: OnSearchView?) {
         this.listener = listener
     }
 

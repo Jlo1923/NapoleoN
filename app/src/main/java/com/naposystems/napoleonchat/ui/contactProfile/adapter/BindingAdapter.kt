@@ -15,19 +15,14 @@ fun bindNickNameContact(textView: TextView, @Nullable contact: ContactEntity?) {
 fun bindNameContact(textView: TextView, @Nullable contact: ContactEntity?) {
     val context = textView.context
     if (contact != null) {
-        when {
-            contact.displayNameFake.isNotEmpty() -> {
-                if (contact.displayNameFake.count() < 2) {
-                    textView.text = ""
-                    textView.hint = context.getString(R.string.text_display_name)
-                } else {
-                    textView.text = contact.displayNameFake
-                }
-            }
-            contact.displayName.isNotEmpty() -> {
-                textView.text = contact.displayName
-            }
+
+        if (contact.displayNameFake.count() < 2) {
+            textView.text = ""
+            textView.hint = context.getString(R.string.text_display_name)
+        } else {
+            textView.text = contact.getName()
         }
+
     }
 }
 

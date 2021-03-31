@@ -146,7 +146,8 @@ class Utils {
         }
 
         fun isInternetAvailable(context: Context): Boolean {
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkCapabilities = connectivityManager.activeNetwork ?: return false
             val actNw =
                 connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
@@ -667,14 +668,12 @@ class Utils {
             contact: ContactEntity,
             query: String
         ): Boolean {
-            val data =
-                if (contact.nicknameFake.isEmpty()) contact.nickname else contact.nicknameFake
+            val data = contact.nicknameFake
             return validateSearch(data, query)
         }
 
         fun validateDisplayName(contact: ContactEntity, query: String): Boolean {
-            val data =
-                if (contact.displayNameFake.isEmpty()) contact.displayName else contact.displayNameFake
+            val data = contact.displayNameFake
             return validateSearch(data, query)
         }
 

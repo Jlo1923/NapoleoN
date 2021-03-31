@@ -3,4 +3,16 @@
     <string name="text_friend_requests_received">Solicitudes de amistad recibidas</string>
     <string name="text_friend_requests_sent">Solicitudes de amistad enviadas</string>
     <string name="text_friend_requests">Solicitudes de amistad</string>
+
+    <string name="text_friend_in_contacts">En Contactos</string>
+    <string name="text_friend_blocked">Bloqueado</string>
+    <string name="text_request_sent">Enviado</string>
+
+    <string name="text_friend_my_contacts">Mis Contactos</string>
+    <string name="text_friend_coincidences">Coincidencias</string>
+    <string name="text_friend_title_reject_request">Rechazar solicitud</string>
+    <string name="text_friend_text_reject_request">¿Está seguro que desea rechazar la solicitud de amistad de %1$s?</string>
+    <string name="text_friend_title_cancel_request">Cancelar solicitud</string>
+    <string name="text_friend_text_cancel_request">¿Está seguro que desea cancelar la solicitud de amistad de %1$s?</string>
+
 </resources>

@@ -19,7 +19,7 @@ class ContactsAdapter constructor(
 
     object DiffCallback : DiffUtil.ItemCallback<ContactEntity>() {
         override fun areItemsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
-            return oldItem.nickname == newItem.nickname && oldItem.displayName == newItem.displayName
+            return oldItem.nicknameFake == newItem.nicknameFake && oldItem.displayNameFake == newItem.displayNameFake
         }
 
         override fun areContentsTheSame(oldItem: ContactEntity, newItem: ContactEntity): Boolean {
