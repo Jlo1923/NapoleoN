@@ -14,19 +14,20 @@ import androidx.transition.ChangeBounds
 import com.bumptech.glide.Glide
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.PreviewImageFragmentBinding
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class PreviewImageFragment : Fragment() {
+class PreviewImageFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = PreviewImageFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: PreviewImageViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewImageFragmentBinding
     private val args: PreviewImageFragmentArgs by navArgs()
@@ -35,11 +36,6 @@ class PreviewImageFragment : Fragment() {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = ChangeBounds().apply { duration = 350 }
         sharedElementReturnTransition = ChangeBounds().apply { duration = 350 }
-    }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
     }
 
     override fun onCreateView(

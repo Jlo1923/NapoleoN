@@ -27,9 +27,10 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.changeParams.ChangeFakeParamsDialogFragment
@@ -49,7 +50,6 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.Cont
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -67,6 +67,10 @@ class ContactProfileFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+
     private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
     private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
     private val baseViewModel: BaseViewModel by viewModels {
@@ -96,11 +100,6 @@ class ContactProfileFragment : BaseFragment() {
     private val bitmapMaxWidth = 1000
     private val bitmapMaxHeight = 1000
     private val imageCompression = 80
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,8 +162,7 @@ class ContactProfileFragment : BaseFragment() {
                 .subscribe {
                     if (args.contactId == it.contactId) {
                         if (contact.stateNotification) {
-                            Utils.deleteUserChannel(
-                                requireContext(),
+                            handlerNotificationChannelService.deleteUserChannel(
                                 contact.id,
                                 contact.getNickName()
                             )
@@ -214,8 +212,7 @@ class ContactProfileFragment : BaseFragment() {
                     shareContactViewModel.unblockContact(contact.id)
                 } else {
                     if (contact.stateNotification) {
-                        Utils.deleteUserChannel(
-                            requireContext(),
+                        handlerNotificationChannelService.deleteUserChannel(
                             contact.id,
                             contact.getNickName()
                         )
@@ -242,8 +239,7 @@ class ContactProfileFragment : BaseFragment() {
                 childFragmentManager
             ) {
                 if (contact.stateNotification) {
-                    Utils.deleteUserChannel(
-                        requireContext(),
+                    handlerNotificationChannelService.deleteUserChannel(
                         contact.id,
                         contact.getNickName()
                     )
@@ -273,7 +269,10 @@ class ContactProfileFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
-            Utils.deleteUserChannel(requireContext(), contact.id, contact.getNickName())
+            handlerNotificationChannelService.deleteUserChannel(
+                contact.id,
+                contact.getNickName()
+            )
             viewModel.restoreContact(args.contactId)
         }
     }

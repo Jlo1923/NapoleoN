@@ -4,20 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.naposystems.napoleonchat.source.local.dao.AttachmentDao
-import com.naposystems.napoleonchat.source.local.dao.ContactDao
-import com.naposystems.napoleonchat.source.local.dao.MessageDao
-import com.naposystems.napoleonchat.source.local.dao.MessageNotSentDao
-import com.naposystems.napoleonchat.source.local.dao.QuoteDao
-import com.naposystems.napoleonchat.source.local.dao.StatusDao
-import com.naposystems.napoleonchat.source.local.dao.UserDao
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageNotSentEntity
-import com.naposystems.napoleonchat.source.local.entity.StatusEntity
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.dao.*
+import com.naposystems.napoleonchat.source.local.entity.*
 
 @Database(
     entities = [
@@ -70,6 +58,7 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE 'message' ADD COLUMN 'cypher' INTEGER NOT NULL DEFAULT 1")
             }
         }
+
     }
 
 }

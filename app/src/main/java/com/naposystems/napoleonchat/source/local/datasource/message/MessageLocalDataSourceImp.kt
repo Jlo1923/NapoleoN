@@ -13,6 +13,8 @@ import com.naposystems.napoleonchat.source.local.dao.MessageDao
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -138,7 +140,8 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.getLocalMessagesByStatus(contactId, status)
     }
 
-    override fun insertMessage(messageEntity: MessageEntity): Long {
+    override suspend fun insertMessage(messageEntity: MessageEntity): Long {
+        Timber.d("insertMessage: DATASOURCE $messageEntity")
         return messageDao.insertMessage(messageEntity)
     }
 

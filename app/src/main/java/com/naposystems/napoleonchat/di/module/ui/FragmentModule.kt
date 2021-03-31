@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.ui.attachmentAudio.AttachmentAudioFragment
 import com.naposystems.napoleonchat.ui.attachmentGallery.AttachmentGalleryFragment
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.AttachmentGalleryFoldersFragment
 import com.naposystems.napoleonchat.ui.attachmentLocation.AttachmentLocationFragment
+import com.naposystems.napoleonchat.ui.attachmentPreview.AttachmentPreviewFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.blockedContacts.BlockedContactsFragment
 import com.naposystems.napoleonchat.ui.cancelSubscription.CancelSubscriptionDialogFragment
@@ -209,5 +210,8 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeCustomUserNotificationFragment(): CustomUserNotificationFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeAttachmentPreviewFragment(): AttachmentPreviewFragment
 
 }

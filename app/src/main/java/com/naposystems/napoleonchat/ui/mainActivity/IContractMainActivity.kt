@@ -25,6 +25,7 @@ interface IContractMainActivity {
         fun resetIsVideoCall()
         fun resetIsOnCallPref()
         fun getRecoveryQuestionsPref(): Int
+        fun disconnectSocket()
     }
 
     interface Repository {
@@ -40,5 +41,6 @@ interface IContractMainActivity {
         suspend fun getContactById(contactId: Int): ContactEntity?
         fun resetIsOnCallPref()
         fun getRecoveryQuestionsPref(): Int
+        fun disconnectSocket()
     }
 }

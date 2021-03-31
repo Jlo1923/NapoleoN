@@ -26,9 +26,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 33
+        versionCode 37
 
-        versionName "1.1.33.FIX-CONN"
+        versionName "1.1.37-FIX-CALL"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -74,6 +74,23 @@ android {
             signingConfig signingConfigs.config
             matchingFallbacks = ['debug', 'release']
         }
+        /*PUNTOS*/
+        puntos {
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"https://punto.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"punto.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://punto.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("String", "PUSHER_KEY", "\"4aab95e901cc54283f7d\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
+        }
         /*QA*/
         qa {
             debuggable true
@@ -92,7 +109,6 @@ android {
             matchingFallbacks = ['debug', 'release']
         }
         pruebaInterna {
-            debuggable true
             buildConfigField("String", "BASE_URL", "\"https://qa.napoleon-chat.com/api/\"")
             buildConfigField("String", "HOST_URL", "\"qa.napoleon-chat.com\"")
             buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")

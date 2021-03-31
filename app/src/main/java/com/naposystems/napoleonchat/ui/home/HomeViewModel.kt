@@ -4,17 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
+import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(private val repository: IContractHome.Repository) :
-    ViewModel(), IContractHome.ViewModel {
+class HomeViewModel
+@Inject constructor(
+    private val repository: IContractHome.Repository
+) : ViewModel(),
+    IContractHome.ViewModel {
 
     private lateinit var _userEntity: LiveData<UserEntity>
     val userEntity: LiveData<UserEntity>
@@ -97,12 +100,6 @@ class HomeViewModel @Inject constructor(private val repository: IContractHome.Re
     override fun getUserLiveData() {
         viewModelScope.launch {
             _userEntity = repository.getUserLiveData()
-        }
-    }
-
-    override fun subscribeToGeneralSocketChannel() {
-        viewModelScope.launch {
-            repository.subscribeToGeneralSocketChannel()
         }
     }
 

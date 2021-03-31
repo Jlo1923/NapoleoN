@@ -20,9 +20,10 @@ import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class SendCodeFragment : Fragment() {
+class SendCodeFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = SendCodeFragment()
@@ -37,11 +38,6 @@ class SendCodeFragment : Fragment() {
     private var timeForNewCode = 0L
     private var timeForEnterCode = 0L
     private var countDownTimer: CountDownTimer? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -26,4 +26,8 @@ class BaseViewModel @Inject constructor(
             _outputControl.value = repository.getOutputControl()
         }
     }
+
+    override fun connectSocket() {
+        repository.connectSocket()
+    }
 }

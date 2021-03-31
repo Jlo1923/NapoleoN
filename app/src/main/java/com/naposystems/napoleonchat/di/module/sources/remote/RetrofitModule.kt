@@ -41,6 +41,7 @@ val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
 @Module
 class RetrofitModule {
 
+    //TODO: Eliminar la referencia del sharedPreferences e inyectar socket service
     @Provides
     @Singleton
     fun provideHttpClient(

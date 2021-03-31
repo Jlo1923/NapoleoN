@@ -19,8 +19,7 @@ import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
-import kotlinx.coroutines.coroutineScope
+import com.naposystems.napoleonchat.service.socketMessage.SocketMessageService
 import retrofit2.Response
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -30,7 +29,7 @@ class HomeRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketService: IContractSocketService.SocketService,
+    private val socketMessageService: SocketMessageService,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
@@ -48,20 +47,6 @@ class HomeRepository @Inject constructor(
 
     override suspend fun getFriendshipRequestHome(): Response<List<FriendshipRequestReceivedDTO>> {
         return napoleonApi.getFriendShipRequestReceivedHome()
-    }
-
-    override suspend fun subscribeToGeneralSocketChannel() {
-        var userEntity: UserEntity? = null
-
-        coroutineScope {
-//            user = userLocalDataSource.getUserLiveData(firebaseId)
-            userEntity = userLocalDataSourceImp.getMyUser()
-        }
-
-        val channelName =
-            "private-general.${userEntity!!.id}"
-
-        socketService.subscribe(channelName)
     }
 
     override suspend fun getUserLiveData(): LiveData<UserEntity> {
