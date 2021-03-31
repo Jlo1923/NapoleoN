@@ -47,8 +47,7 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.attachment.location.Place
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.service.notificationMessage.OLD_NotificationService
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.attachmentLocation.adapter.AttachmentLocationAdapter
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.SearchView
@@ -62,6 +61,7 @@ import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -87,9 +87,13 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
     override lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
+
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -182,7 +186,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
                     contactProfileShareViewModel.contact.value?.let { contact ->
                         if (contact.id == eventContact.contactId) {
                             if (contact.stateNotification) {
-                                handlerNotificationChannelService.deleteUserChannel(
+                                handlerNotificationChannel.deleteUserChannel(
                                     contact.id,
                                     contact.getNickName()
                                 )
@@ -197,7 +201,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
         if (Utils.isInternetAvailable(requireContext()) && Utils.isOnline()) {
             validateGpsEnable()
         } else {
-            Utils.generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_location),
                 getString(R.string.text_location_not_found_without_connection),
                 false,
@@ -362,7 +366,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
                 }
                 Activity.RESULT_CANCELED -> {
                     moveMapToPosition(LatLng(LAT, LNG), 0f)
-                    Utils.generalDialog(
+                    handlerDialog.generalDialog(
                         getString(R.string.text_location),
                         getString(R.string.text_location_not_found),
                         false,

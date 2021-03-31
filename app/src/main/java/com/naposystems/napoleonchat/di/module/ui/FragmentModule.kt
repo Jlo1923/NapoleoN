@@ -24,6 +24,7 @@ import com.naposystems.napoleonchat.ui.customUserNotification.CustomUserNotifica
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinFragment
+import com.naposystems.napoleonchat.ui.help.HelpFragment
 import com.naposystems.napoleonchat.ui.home.HomeFragment
 import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogFragment
@@ -213,5 +214,8 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeAttachmentPreviewFragment(): AttachmentPreviewFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeHelpFragment(): HelpFragment
 
 }

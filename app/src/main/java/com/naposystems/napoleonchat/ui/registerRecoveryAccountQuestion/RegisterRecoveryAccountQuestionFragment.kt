@@ -21,8 +21,8 @@ import com.naposystems.napoleonchat.model.RecoveryAnswer
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
@@ -33,6 +33,9 @@ class RegisterRecoveryAccountQuestionFragment : BaseFragment() {
     companion object {
         fun newInstance() = RegisterRecoveryAccountQuestionFragment()
     }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -151,7 +154,7 @@ class RegisterRecoveryAccountQuestionFragment : BaseFragment() {
             binding.textInputEditTextAnswers.text.toString().trim().replace("\\s+".toRegex(), " ")
 
         if (selectedIdQuestion.toInt() == 0 && textInputAnswer.isEmpty() && countAnswer > 3) {
-            generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_title_info),
                 getString(R.string.text_final_register),
                 true,
@@ -207,7 +210,7 @@ class RegisterRecoveryAccountQuestionFragment : BaseFragment() {
     }
 
     private fun infoQuestions() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_info),
             getString(R.string.text_info_register_account),
             false,
@@ -216,7 +219,7 @@ class RegisterRecoveryAccountQuestionFragment : BaseFragment() {
     }
 
     private fun showDeleteQuestionsDialog() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_cancel),
             getString(R.string.text_description_cancel),
             true,

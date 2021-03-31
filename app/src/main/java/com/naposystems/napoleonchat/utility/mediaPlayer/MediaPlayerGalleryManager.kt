@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.utility.mediaPlayer
 
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
 import android.widget.ImageView
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
@@ -11,8 +10,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -52,7 +49,7 @@ class MediaPlayerGalleryManager @Inject constructor(
         this.currentAudioUri = uri
     }
 
-    fun playAudio () {
+    fun playAudio() {
         if (mPreviousAudioId == currentAudioId) {
             if (mediaPlayer != null) {
                 if (mediaPlayer?.isPlaying == true) {

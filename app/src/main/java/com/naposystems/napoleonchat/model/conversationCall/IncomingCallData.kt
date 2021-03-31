@@ -7,5 +7,6 @@ import com.squareup.moshi.JsonClass
 data class IncomingCallData(
     @Json(name = "channel_private") val channel: String,
     @Json(name = "contact_id") val contactId: Int,
-    @Json(name = "is_videocall") val isVideoCall: Boolean
+    @Json(name = "is_videocall") val isVideoCall: Boolean,
+    @Json(name = "offer") val offer: String,
 )

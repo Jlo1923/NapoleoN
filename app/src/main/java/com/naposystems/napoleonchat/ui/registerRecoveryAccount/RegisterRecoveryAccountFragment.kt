@@ -20,6 +20,7 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -29,6 +30,9 @@ class RegisterRecoveryAccountFragment : BaseFragment() {
         fun newInstance() =
             RegisterRecoveryAccountFragment()
     }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -72,7 +76,7 @@ class RegisterRecoveryAccountFragment : BaseFragment() {
 
     private fun gotoRegisterQuestions(){
         if (recoveryQuestionsPref == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
-            Utils.generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_alert_failure),
                 getString(R.string.text_recovery_account_ok),
                 true,

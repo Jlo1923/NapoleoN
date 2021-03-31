@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -37,6 +38,9 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
     companion object {
         fun newInstance() = AddContactFragment()
     }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -240,7 +244,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
                 override fun onCancel(friendshipRequest: FriendShipRequest) {
                     shareViewModel.cancelFriendshipRequest(friendshipRequest)
                 }
-            }, childFragmentManager, requireContext())
+            }, childFragmentManager, handlerDialog, requireContext())
 
         binding.recyclerViewFriendshipRequest.adapter = friendshipRequestsAdapter
         binding.recyclerViewFriendshipRequest.itemAnimator = ItemAnimator()
@@ -273,7 +277,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
                 }
 
             }
-        }, childFragmentManager)
+        }, childFragmentManager, handlerDialog)
         binding.recyclerViewContacts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewContacts.adapter = adapter
         binding.recyclerViewContacts.itemAnimator = ItemAnimator()

@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.CustomUserNotificationFragmentBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -38,7 +38,7 @@ class CustomUserNotificationFragment : BaseFragment() {
     private lateinit var binding: CustomUserNotificationFragmentBinding
 
     @Inject
-    lateinit var handlerNotificationChannelService: HandlerNotificationChannel.Service
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
     private var currentSoundNotificationMessage: Uri? = null
 
@@ -65,7 +65,7 @@ class CustomUserNotificationFragment : BaseFragment() {
                 .subscribe { eventContact ->
                     if (args.contact.id == eventContact.contactId) {
                         if (args.contact.stateNotification) {
-                            handlerNotificationChannelService.deleteUserChannel(
+                            handlerNotificationChannel.deleteUserChannel(
                                 args.contact.id,
                                 args.contact.getNickName()
                             )
@@ -156,18 +156,18 @@ class CustomUserNotificationFragment : BaseFragment() {
 
     private fun createDefaultChannel() {
 
-        val channelId = handlerNotificationChannelService.getChannelId(
+        val channelId = handlerNotificationChannel.getChannelId(
             Constants.ChannelType.CUSTOM.type,
             args.contact.id,
             args.contact.getNickName()
         )
 
-        val notificationChannel = handlerNotificationChannelService.getChannel(channelId)
+        val notificationChannel = handlerNotificationChannel.getChannel(channelId)
 
         if (notificationChannel == null) {
             val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-            handlerNotificationChannelService.updateChannel(
+            handlerNotificationChannel.updateChannel(
                 uri,
                 Constants.ChannelType.CUSTOM.type,
                 args.contact.id,
@@ -177,7 +177,7 @@ class CustomUserNotificationFragment : BaseFragment() {
     }
 
     private fun deleteChannel() {
-        val channel = handlerNotificationChannelService.getChannelId(
+        val channel = handlerNotificationChannel.getChannelId(
             Constants.ChannelType.CUSTOM.type,
             args.contact.id,
             args.contact.getNickName()
@@ -185,11 +185,11 @@ class CustomUserNotificationFragment : BaseFragment() {
 
         Timber.d("")
 
-        handlerNotificationChannelService.deleteChannel(channel, args.contact.id)
+        handlerNotificationChannel.deleteChannel(channel, args.contact.id)
     }
 
     private fun updateSoundDefaultChannel() {
-        currentSoundNotificationMessage = handlerNotificationChannelService.getChannelSound(
+        currentSoundNotificationMessage = handlerNotificationChannel.getChannelSound(
             Constants.ChannelType.CUSTOM.type,
             args.contact.id,
             args.contact.getNickName()
@@ -232,7 +232,7 @@ class CustomUserNotificationFragment : BaseFragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == RINGTONE_NOTIFICATION_CODE) {
             val uri = data?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
             Timber.d("*TestChannelSound: onActivityResult=$uri")
-            handlerNotificationChannelService.updateChannel(
+            handlerNotificationChannel.updateChannel(
                 uri,
                 Constants.ChannelType.CUSTOM.type,
                 args.contact.id,

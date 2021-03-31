@@ -91,6 +91,13 @@ class HomeViewModel
         }
     }
 
+    override fun resetDuplicates() {
+        viewModelScope.launch {
+            repository.deleteDuplicatesMessages()
+            repository.addUUID()
+        }
+    }
+
     override fun getConversation() {
         viewModelScope.launch {
             _conversations = repository.getMessagesForHome()

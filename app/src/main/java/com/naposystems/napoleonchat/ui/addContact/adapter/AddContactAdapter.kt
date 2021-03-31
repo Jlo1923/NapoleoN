@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.model.addContact.Contact
 import com.naposystems.napoleonchat.ui.addContact.viewHolder.*
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import timber.log.Timber
 
 class AddContactAdapter constructor(
     private val context: Context,
     private val clickListener: ClickListener,
-    private val fragmentManager: FragmentManager
+    private val fragmentManager: FragmentManager,
+    private val handlerDialog: HandlerDialog,
 ) :
     ListAdapter<Contact, RecyclerView.ViewHolder>(DiffCallback) {
 
@@ -84,6 +86,7 @@ class AddContactAdapter constructor(
                 item,
                 clickListener,
                 fragmentManager,
+                handlerDialog,
                 context
             )
             is AddContactTitleViewHolder -> {

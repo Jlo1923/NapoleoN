@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.status
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
@@ -21,7 +19,7 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import javax.inject.Inject
 
 
@@ -30,6 +28,9 @@ class StatusFragment : BaseFragment() {
     companion object {
         fun newInstance() = StatusFragment()
     }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -98,15 +99,26 @@ class StatusFragment : BaseFragment() {
                         statusList.add(StatusEntity(1, getString(R.string.text_status_available)))
                         statusList.add(StatusEntity(2, getString(R.string.text_status_busy)))
                         statusList.add(StatusEntity(3, getString(R.string.text_status_in_meeting)))
-                        statusList.add(StatusEntity(4, getString(R.string.text_status_only_messages)))
+                        statusList.add(
+                            StatusEntity(
+                                4,
+                                getString(R.string.text_status_only_messages)
+                            )
+                        )
                         statusList.add(StatusEntity(5, getString(R.string.text_status_sleeping)))
-                        statusList.add(StatusEntity(6, getString(R.string.text_status_only_emergency)))
+                        statusList.add(
+                            StatusEntity(
+                                6,
+                                getString(R.string.text_status_only_emergency)
+                            )
+                        )
                         if (args.user.status != getString(R.string.text_status_available) &&
                             args.user.status != getString(R.string.text_status_busy) &&
                             args.user.status != getString(R.string.text_status_in_meeting) &&
                             args.user.status != getString(R.string.text_status_only_messages) &&
                             args.user.status != getString(R.string.text_status_sleeping) &&
-                            args.user.status != getString(R.string.text_status_only_emergency)) {
+                            args.user.status != getString(R.string.text_status_only_emergency)
+                        ) {
                             statusList.add(StatusEntity(7, customStatus = args.user.status))
                         }
                         viewModel.insertStatus(statusList)
@@ -177,7 +189,7 @@ class StatusFragment : BaseFragment() {
                         viewModel.updateStatus(textStatus)
                         binding.textInputEditTextStatus.clearFocus()
                     } else {
-                        Utils.alertDialogInformative(
+                        handlerDialog.alertDialogInformative(
                             getString(R.string.text_alert_failure),
                             getString(R.string.text_status_limit),
                             true,

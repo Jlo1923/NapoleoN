@@ -83,7 +83,6 @@ interface IContractConversation {
     }
 
     interface Repository {
-        fun unSubscribeToChannel(userToChat: ContactEntity, channelName: String)
         fun getLocalMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>>
         suspend fun getQuoteId(quoteWebId: String): Int
         fun getLocalMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
@@ -111,8 +110,6 @@ interface IContractConversation {
         suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
         suspend fun copyMessagesSelected(contactId: Int): List<String>
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>>
-        suspend fun callContact(contact: ContactEntity, isVideoCall: Boolean): Response<CallContactResDTO>
-        fun subscribeToCallChannel(channel: String, isVideoCall: Boolean)
         suspend fun downloadAttachment(
             messageAndAttachmentRelation: MessageAttachmentRelation,
             itemPosition: Int
@@ -122,7 +119,6 @@ interface IContractConversation {
         fun verifyMessagesToDelete()
         suspend fun setMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)
         suspend fun setMessageRead(messageId: Int, webId: String)
-        suspend fun reSendMessage(messageAndAttachmentRelation: MessageAttachmentRelation)
         suspend fun compressVideo(
             attachmentEntity: AttachmentEntity,
             srcFile: File,

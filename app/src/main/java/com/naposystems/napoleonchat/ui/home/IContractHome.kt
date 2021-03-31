@@ -28,6 +28,7 @@ interface IContractHome {
         fun verifyMessagesToDelete()
         fun getDialogSubscription(): Int
         fun setDialogSubscription()
+        fun resetDuplicates()
     }
 
     interface Repository {
@@ -46,5 +47,7 @@ interface IContractHome {
         fun verifyMessagesToDelete()
         fun getDialogSubscription(): Int
         fun setDialogSubscription()
+        suspend fun deleteDuplicatesMessages()
+        suspend fun addUUID()
     }
 }

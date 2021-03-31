@@ -16,14 +16,14 @@ import com.naposystems.napoleonchat.model.FriendShipRequest
 import com.naposystems.napoleonchat.model.FriendShipRequestAdapterType
 import com.naposystems.napoleonchat.model.FriendshipRequestTitle
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 
 class FriendshipRequestAdapter constructor(
     private val clickListener: ClickListener,
     private val fragmentManager: FragmentManager,
+    private val handlerDialog: HandlerDialog,
     private val context: Context
-) :
-    ListAdapter<FriendShipRequestAdapterType, RecyclerView.ViewHolder>(DiffCallback) {
+) : ListAdapter<FriendShipRequestAdapterType, RecyclerView.ViewHolder>(DiffCallback) {
 
     object DiffCallback : DiffUtil.ItemCallback<FriendShipRequestAdapterType>() {
         override fun areItemsTheSame(
@@ -75,17 +75,21 @@ class FriendshipRequestAdapter constructor(
             val friendshipRequest = item as FriendShipRequest
 
             if (friendshipRequest.isReceived) {
+                //TODO: Remover el paso de context por parametro
                 (holder as FriendshipRequestViewHolder).bind(
                     item,
                     clickListener,
                     fragmentManager,
+                    handlerDialog,
                     context
                 )
             } else {
+                //TODO: Remover el paso de context por parametro
                 (holder as FriendshipOfferViewHolder).bind(
                     item,
                     clickListener,
                     fragmentManager,
+                    handlerDialog,
                     context
                 )
             }
@@ -99,6 +103,7 @@ class FriendshipRequestAdapter constructor(
             item: FriendShipRequest,
             clickListener: ClickListener,
             fragmentManager: FragmentManager,
+            handlerDialog: HandlerDialog,
             context: Context
         ) {
 
@@ -109,7 +114,7 @@ class FriendshipRequestAdapter constructor(
 
             binding.buttonRefuse.setOnClickListener {
 
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     context.getString(R.string.text_friend_title_reject_request),
                     context.getString(
                         R.string.text_friend_text_reject_request,
@@ -161,6 +166,7 @@ class FriendshipRequestAdapter constructor(
         fun bind(
             item: FriendShipRequest, clickListener: ClickListener,
             fragmentManager: FragmentManager,
+            handlerDialog: HandlerDialog,
             context: Context
         ) {
             binding.progressbar.isVisible = false
@@ -169,7 +175,7 @@ class FriendshipRequestAdapter constructor(
             binding.clickListener = clickListener
 
             binding.buttonCancel.setOnClickListener {
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     context.getString(R.string.text_friend_title_cancel_request),
                     context.getString(
                         R.string.text_friend_text_cancel_request,
