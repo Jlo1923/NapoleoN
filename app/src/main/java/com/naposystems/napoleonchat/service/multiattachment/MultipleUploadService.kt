@@ -6,13 +6,9 @@ import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notificationUpload.NotificationUploadService
-import com.naposystems.napoleonchat.service.notificationUpload.NotificationUploadServiceImp
-import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
-import com.naposystems.napoleonchat.service.uploadService.UploadService
+import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClientImp
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.SENDING
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
@@ -33,10 +29,10 @@ class MultipleUploadService
     lateinit var repository: IContractMultipleUpload.Repository
 
     @Inject
-    lateinit var notificationUploadService: NotificationUploadService
+    lateinit var notificationUploadService: NotificationUploadClientImp
 
     private lateinit var napoleonApplication: NapoleonApplication
-    private val notificationId = NotificationUploadServiceImp.NOTIFICATION_UPLOADING_MULTI
+    private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING_MULTI
     private val compositeDisposable = CompositeDisposable()
     private var attachmentsSentCount = 0
     private var attachmentsPendingCount = 0

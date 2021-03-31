@@ -441,7 +441,7 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun callContact() {
-        val channel = "presence-private.${contact.id}_${userEntity.id}"
+        val channel = "presence-private.${contactEntity.id}_${userEntity.id}"
         _contactCalledSuccessfully.value = channel
     }
 

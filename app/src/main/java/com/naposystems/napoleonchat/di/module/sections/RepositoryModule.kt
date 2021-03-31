@@ -48,7 +48,6 @@ import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeReposi
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
 import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
-import com.naposystems.napoleonchat.repository.webRTCCallService.WebRTCCallServiceRepository
 import com.naposystems.napoleonchat.service.multiattachment.IContractMultipleUpload
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
