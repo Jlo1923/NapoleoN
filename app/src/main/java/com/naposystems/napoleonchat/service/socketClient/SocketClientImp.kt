@@ -363,9 +363,9 @@ class SocketClientImp @Inject constructor(
 
                             syncManager.getMyMessages(null)
 
-//                            syncManager.verifyMessagesReceive d()
-//
-//                            syncManager.verifyMessagesRead()
+////                            syncManager.verifyMessagesReceive d()
+////
+////                            syncManager.verifyMessagesRead()
 
                         }
 

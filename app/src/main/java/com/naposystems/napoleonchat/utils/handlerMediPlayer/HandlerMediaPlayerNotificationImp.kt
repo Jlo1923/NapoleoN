@@ -17,7 +17,7 @@ class HandlerMediaPlayerNotificationImp
     private val context: Context
 ) : HandlerMediaPlayerNotification {
 
-    val mediaPlayer: MediaPlayer = MediaPlayer()
+    lateinit var mediaPlayer: MediaPlayer
 
     private var stringResource: String = "android.resource://" + context.packageName + "/"
 
@@ -28,18 +28,23 @@ class HandlerMediaPlayerNotificationImp
     }
 
     override fun playRingtone() {
+
+        Timber.d("MEDIAPLAYER: playRingtone")
         playMedia(Settings.System.DEFAULT_RINGTONE_URI, isLooping = true, needVibrate = true)
     }
 
     override fun playEndTone() {
+        Timber.d("MEDIAPLAYER: playEndTone")
         playMedia(Uri.parse(stringResource + R.raw.end_call_tone))
     }
 
     override fun playRingBack() {
+        Timber.d("MEDIAPLAYER: playRingBack")
         playMedia(Uri.parse(stringResource + R.raw.ringback_tone))
     }
 
     override fun playBusyTone() {
+        Timber.d("MEDIAPLAYER: playBusyTone")
         playMedia(Uri.parse(stringResource + R.raw.busy_tone), isLooping = true)
     }
 
@@ -47,17 +52,16 @@ class HandlerMediaPlayerNotificationImp
 
         try {
 
-            mediaPlayer.apply {
+            stopMedia()
+
+            mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes
                         .Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .build()
                 )
-                if (isPlaying) {
-                    stop()
-                    reset()
-                }
                 setDataSource(
                     context,
                     uriSound
@@ -84,11 +88,12 @@ class HandlerMediaPlayerNotificationImp
     override fun stopMedia() {
         try {
 
-            if (mediaPlayer.isPlaying)
+            if (::mediaPlayer.isInitialized) {
+
                 mediaPlayer.stop()
 
-            vibrator?.cancel()
-
+                vibrator?.cancel()
+            }
         } catch (e: Exception) {
             Timber.e(e)
         }

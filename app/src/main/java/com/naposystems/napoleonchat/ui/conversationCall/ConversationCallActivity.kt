@@ -37,7 +37,6 @@ import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     companion object {
