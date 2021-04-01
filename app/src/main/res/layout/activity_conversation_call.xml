@@ -220,7 +220,7 @@
             android:layout_height="70dp"
             android:background="#998B8989"
             android:padding="@dimen/normal_padding"
-            android:visibility="@{typeCall == Constants.TypeCall.IS_INCOMING_CALL.type ? View.GONE : View.VISIBLE}"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -185,20 +185,21 @@ class WebRTCClientImp @Inject constructor(
                         Timber.d("Headset plugged")
                         stopProximitySensor()
                         isHeadsetConnected = true
-                        if (callModel.isVideoCall && isBluetoothAvailable.not()) {
-                            audioManager.isSpeakerphoneOn = false
-                        }
-
-                        if (callModel.isVideoCall.not() && audioManager.isSpeakerphoneOn) {
-                            audioManager.isSpeakerphoneOn = false
-                            webRTCClientListener?.changeCheckedSpeaker(false)
+                        if (callModel.isVideoCall) {
+                            if (isBluetoothAvailable.not()) {
+                                audioManager.isSpeakerphoneOn = false
+                            }
+                        } else {
+                            if (audioManager.isSpeakerphoneOn) {
+                                audioManager.isSpeakerphoneOn = false
+                                webRTCClientListener?.changeCheckedSpeaker(false)
+                            }
                         }
                     }
                     Constants.HeadsetState.UNPLUGGED.state -> {
                         isHeadsetConnected = false
                         Timber.d("Headset unplugged")
 
-                        //
                         if (callModel.isVideoCall) {
                             if (isBluetoothAvailable) {
                                 audioManager.isSpeakerphoneOn = false
@@ -214,14 +215,15 @@ class WebRTCClientImp @Inject constructor(
                 }
             }
 
-        val disposableHangupByNotification = RxBus.listen(RxEvent.HangupByNotification::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Timber.d("HangupByNotification")
-                if (it.channel == this.callModel.channelName) {
-                    webRTCClientListener?.hangupByNotification()
+        val disposableHangupByNotification =
+            RxBus.listen(RxEvent.HangupByNotification::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Timber.d("HangupByNotification")
+                    if (it.channel == this.callModel.channelName) {
+                        webRTCClientListener?.hangupByNotification()
+                    }
                 }
-            }
 
         disposable.add(disposableHeadsetState)
         disposable.add(disposableHangupByNotification)
@@ -369,10 +371,8 @@ class WebRTCClientImp @Inject constructor(
 
         addLocalAudioTrackToLocalMediaStream()
 
-        if (callModel.isVideoCall) {
-            createLocalVideoTrack()
-            addLocalVideoTrackToLocalMediaStream()
-        }
+        if (callModel.isVideoCall)
+            startCaptureVideo()
 
         peerConnection?.addStream(localMediaStream)
     }
@@ -464,7 +464,7 @@ class WebRTCClientImp @Inject constructor(
     }
 
     private fun initializeProximitySensor() {
-        if (callModel.isVideoCall.not() && !audioManager.isSpeakerphoneOn && !wakeLock.isHeld) {
+        if (callModel.isVideoCall.not() && audioManager.isSpeakerphoneOn.not() && wakeLock.isHeld.not()) {
             wakeLock.acquire()
         }
     }
@@ -479,14 +479,19 @@ class WebRTCClientImp @Inject constructor(
         Timber.d("createLocalVideoTrack")
 
         videoCapturerAndroid = createVideoCapturer()
+
         mediaConstraints = MediaConstraints()
 
         videoCapturerAndroid?.let { videoCapturer ->
 
             val surfaceTextureHelper: SurfaceTextureHelper =
-                SurfaceTextureHelper.create("SurfaceTextureHelper", eglBase.eglBaseContext)
+                SurfaceTextureHelper.create(
+                    "SurfaceTextureHelper",
+                    eglBase.eglBaseContext
+                )
 
-            videoSource = peerConnectionFactory.createVideoSource(videoCapturer.isScreencast)
+            videoSource =
+                peerConnectionFactory.createVideoSource(videoCapturer.isScreencast)
 
             videoCapturer.initialize(
                 surfaceTextureHelper,
@@ -503,8 +508,10 @@ class WebRTCClientImp @Inject constructor(
 
     private fun createLocalAudioTrack() {
         val audioConstraints = MediaConstraints()
-        val audioSource: AudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
-        localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
+        val audioSource: AudioSource =
+            peerConnectionFactory.createAudioSource(audioConstraints)
+        localAudioTrack =
+            peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
         localAudioTrack?.setEnabled(true)
     }
 
@@ -524,7 +531,7 @@ class WebRTCClientImp @Inject constructor(
         }
 
         for (deviceName in deviceNames) {
-            if (!enumerator.isFrontFacing(deviceName)) {
+            if (enumerator.isFrontFacing(deviceName).not()) {
                 Timber.d("Creating other camera capturer.")
                 val videoCapturer = enumerator.createCapturer(deviceName, null)
                 if (videoCapturer != null) {
@@ -540,7 +547,8 @@ class WebRTCClientImp @Inject constructor(
     }
 
     private fun addLocalAudioTrackToLocalMediaStream() {
-        localMediaStream = peerConnectionFactory.createLocalMediaStream("localMediaStream")
+        localMediaStream =
+            peerConnectionFactory.createLocalMediaStream("localMediaStream")
         localMediaStream.addTrack(localAudioTrack)
     }
 
@@ -708,7 +716,7 @@ class WebRTCClientImp @Inject constructor(
         }
 
         if (itsFromBackPressed) {
-             videoCapturerAndroid?.stopCapture()
+            videoCapturerAndroid?.stopCapture()
             localMediaStream.removeTrack(localVideoTrack)
         }
     }
@@ -756,7 +764,7 @@ class WebRTCClientImp @Inject constructor(
 
         countDownIncomingCall.start()
 
-        audioManager.isSpeakerphoneOn = !(isBluetoothAvailable || isHeadsetConnected)
+        audioManager.isSpeakerphoneOn = (isBluetoothAvailable || isHeadsetConnected).not()
 
         Timber.d("*Test: ${audioManager.isSpeakerphoneOn}")
 
@@ -848,14 +856,15 @@ class WebRTCClientImp @Inject constructor(
 
         //disposable.clear()
 
-        if (callModel.isVideoCall) {
+        //TODO: Revisar posible leak de memoria por apertura de camara
 
-            localVideoView?.release()
-            remoteVideoView?.release()
+//        if (callModel.isVideoCall) {
 
-            videoCapturerAndroid?.stopCapture()
-//            videoCapturerAndroid?.dispose()
-        }
+//            localVideoView?.release()
+//            remoteVideoView?.release()
+
+//            videoCapturerAndroid?.stopCapture()
+//        }
 
         mHandler.removeCallbacks(mCallTimeRunnable)
 
@@ -895,7 +904,7 @@ class WebRTCClientImp @Inject constructor(
                 if (isBluetoothAvailable) {
                     audioManager.isSpeakerphoneOn = false
                 } else {
-                    audioManager.isSpeakerphoneOn = !this.isHeadsetConnected
+                    audioManager.isSpeakerphoneOn = this.isHeadsetConnected.not()
                 }
                 webRTCClientListener?.showRemoteVideo()
 
@@ -943,7 +952,7 @@ class WebRTCClientImp @Inject constructor(
             audioManager.isSpeakerphoneOn = true
         }
 
-        if (isAvailable && !callModel.isVideoCall) {
+        if (isAvailable && callModel.isVideoCall.not()) {
             stopProximitySensor()
         }
 
@@ -983,7 +992,10 @@ class WebRTCClientImp @Inject constructor(
             peerConnection?.addIceCandidate(iceCandidate)
     }
 
-    override fun offerReceived(channelName: String, sessionDescription: SessionDescription) {
+    override fun offerReceived(
+        channelName: String,
+        sessionDescription: SessionDescription
+    ) {
         if (channelName == this.callModel.channelName) {
             peerConnection?.setRemoteDescription(
                 CustomSdpObserver("Remote offer"),
@@ -993,7 +1005,10 @@ class WebRTCClientImp @Inject constructor(
         }
     }
 
-    override fun answerReceived(channelName: String, sessionDescription: SessionDescription) {
+    override fun answerReceived(
+        channelName: String,
+        sessionDescription: SessionDescription
+    ) {
         if (channelName == this.callModel.channelName) {
             peerConnection?.setRemoteDescription(
                 CustomSdpObserver("Answer"),
@@ -1053,7 +1068,7 @@ class WebRTCClientImp @Inject constructor(
     }
 
     override fun contactAcceptChangeToVideoCall(channelName: String) {
-        if (channelName == this.callModel.channelName && !callModel.isVideoCall) {
+        if (channelName == this.callModel.channelName && callModel.isVideoCall.not()) {
             webRTCClientListener?.changeTextViewTitle(R.string.text_encrypted_video_call)
             webRTCClientListener?.contactAcceptChangeToVideoCall()
             callModel.isVideoCall = true
