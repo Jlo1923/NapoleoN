@@ -10,7 +10,7 @@ interface WebRTCClient {
     var isActiveCall: Boolean
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
-    fun subscribeToCallChannel()
+    fun subscribeToPresenceChannel()
     fun setOffer(offer: String?)
     fun setTextViewCallDuration(textView: TextView)
     fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
@@ -26,7 +26,6 @@ interface WebRTCClient {
     fun isBluetoothActive(): Boolean
 
     fun contactTurnOffCamera(): Boolean
-    fun setIsOnCallActivity(isOnCallActivity: Boolean)
     fun initSurfaceRenders()
     fun startCaptureVideo()
 
@@ -45,7 +44,7 @@ interface WebRTCClient {
     fun stopProximitySensor()
     fun handleKeyDown(keyCode: Int): Boolean
     fun disposeCall()
-    fun unSubscribeCallChannel()
+    fun unSubscribePresenceChannel()
 
     //    fun subscribeToChannelFromBackground(channel: String)
     //TODO: Revisar si se puede usar el metodo status connect o status channel

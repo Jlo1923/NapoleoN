@@ -37,7 +37,8 @@ import dagger.android.AndroidInjection
 import timber.log.Timber
 import javax.inject.Inject
 
-class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
+class ConversationCallActivity :
+    AppCompatActivity(), WebRTCClientListener {
 
     companion object {
 
@@ -83,8 +84,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         NapoleonApplication.isShowingCallActivity = true
 
-        NapoleonApplication.isCurrentOnCall = true
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
         Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
@@ -94,13 +93,11 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
         getExtras()
 
         if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-            Timber.d("LLAMADA PASO 2: LLAMADA SALIENTE")
-            webRTCClient.subscribeToCallChannel()
+            Timber.d("LLAMADA PASO 2: LLAMADA SALIENTE SUSCRIBIENDOSE AL CANAL DE PRESENCIA")
+            webRTCClient.subscribeToPresenceChannel()
         }
 
         audioManagerCompat.requestCallAudioFocus()
-
-        Timber.d("onCreate")
 
         val intentFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
 
@@ -112,58 +109,6 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         super.onCreate(savedInstanceState)
 
-        if (callModel.isVideoCall) {
-            initSurfaceRenders()
-        }
-
-        webRTCClient.setTextViewCallDuration(binding.textViewCalling)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true)
-            setTurnScreenOn(true)
-        }
-
-        with(window) {
-            setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-            if (callModel.isVideoCall) {
-                addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
-        }
-
-        if (callModel.isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
-            webRTCClient.startCaptureVideo()
-            binding.viewSwitcher.showNext()
-        }
-
-        if (!webRTCClient.isActiveCall) {
-            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                if (Build.VERSION.SDK_INT < 29 || callModel.isFromClosedApp == Constants.FromClosedApp.YES) {
-                    Timber.d("*Test: Ring CallActivity")
-                    webRTCClient.playRingtone()
-                }
-            } else {
-
-                webRTCClient.startWebRTCService(
-                    callModel
-                )
-                webRTCClient.playRingBackTone()
-            }
-        } else {
-            if (callModel.isVideoCall) {
-                webRTCClient.renderRemoteVideo()
-                showRemoteVideo()
-                binding.surfaceRender.isVisible = !webRTCClient.isVideoMuted()
-                binding.cameraOff.containerCameraOff.isVisible = webRTCClient.contactTurnOffCamera()
-            }
-            binding.imageButtonMicOff.setChecked(!webRTCClient.getMicIsOn(), false)
-            binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
-            binding.imageButtonMuteVideo.setChecked(webRTCClient.isVideoMuted(), false)
-            binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive(), false)
-        }
-
         setUIListeners()
 
         setViewModelObservers()
@@ -171,7 +116,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL && !webRTCClient.isActiveCall) {
+        return if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL && webRTCClient.isActiveCall.not()) {
             webRTCClient.handleKeyDown(keyCode)
         } else {
             super.onKeyDown(keyCode, event)
@@ -188,7 +133,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
                 webRTCClient.muteVideo(checked = true, itsFromBackPressed = true)
             }
 
-            webRTCClient.setIsOnCallActivity(false)
+            NapoleonApplication.isShowingCallActivity = false
 
             super.onBackPressed()
         }
@@ -216,7 +161,7 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
         Timber.d("onNewIntent ${intent.action}")
 
         if (intent.action == WebRTCService.ACTION_ANSWER_CALL &&
-            !webRTCClient.isActiveCall &&
+            webRTCClient.isActiveCall.not() &&
             callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL
         ) {
 
@@ -238,13 +183,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
         try {
 
-            Timber.d("LLAMADA PASO: INTENTA OBTENER EXTRAS}")
+            Timber.d("LLAMADA PASO: INTENTA OBTENER EXTRAS")
 
             intent.extras?.let { extras ->
 
-                Timber.d("LLAMADA PASO: OBTENIENDO EXTRAS ${extras.keySet()}")
-
-                Timber.d("LLAMADA PASO: OBTENIENDO KEY_CALL_MODEL")
                 callModel = extras.getSerializable(KEY_CALL_MODEL) as CallModel
 
                 Timber.d("LLAMADA PASO 2: GETEXTRAS CALLMODEL: $callModel")
@@ -261,10 +203,14 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
                 if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
 
+                    Timber.d("LLAMADA PASO: LLAMADA ENTRANTE SETEANDO OFERTA")
+
                     webRTCClient.setOffer(callModel.offer)
 
-                    if (extras.getBoolean(ACTION_ANSWER_CALL, false))
+                    if (extras.getBoolean(ACTION_ANSWER_CALL, false)) {
+                        Timber.d("LLAMADA PASO: LLAMADA ENTRANTE RESPONDIENDO LLAMADA")
                         answerCall()
+                    }
                 }
 
                 if (extras.containsKey(ITS_FROM_RETURN_CALL)) {
@@ -355,43 +301,38 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
 
     private fun hangUp() {
 
-        Timber.d("HANGUP: PRESIONADO")
-
         binding.fabHangup.isEnabled = false
 
-        viewModel.resetIsOnCallPref()
+        Timber.d("LLAMADA PASO: HANGUP PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${callModel.typeCall}")
 
-        Timber.d("HANGUP: PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${callModel.typeCall}")
+        if (webRTCClient.isActiveCall.not()) {
 
-        if (!webRTCClient.isActiveCall)
+            Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
+
             when (callModel.typeCall) {
                 Constants.TypeCall.IS_OUTGOING_CALL -> {
 
                     Timber.d("HANGUP: SEND MISSED CALL")
-                    Timber.d("HANGUP: CANCELL CALL")
-
                     viewModel.sendMissedCall(callModel)
+
+                    Timber.d("HANGUP: CANCELL CALL")
                     viewModel.cancelCall(callModel)
                 }
 
                 Constants.TypeCall.IS_INCOMING_CALL -> {
 
                     Timber.d("HANGUP: CANCELL CALL")
-
                     viewModel.cancelCall(callModel)
                 }
             }
-        else
+        } else {
+            Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
             webRTCClient.emitHangUp()
-
-        Timber.d("HANGUP: EMITE COLGAR")
+        }
 
         webRTCClient.disposeCall()
 
         closeNotification()
-
-        Timber.d("SocketService webRTCClient.dispose()")
-
     }
 
     private fun closeNotification() {
@@ -405,6 +346,9 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     private fun initSurfaceRenders() {
+
+        Timber.d("LLAMADA PASO: INICIANDO LAS SUPERFICIES DE RENDERIZADO")
+
         runOnUiThread {
             webRTCClient.setLocalVideoView(binding.surfaceRender)
             webRTCClient.setRemoteVideoView(binding.remoteSurfaceRender)
@@ -413,6 +357,71 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     //region Implementation WebRTCClient.WebRTCClientListener
+    override fun onSuccessConnectPresenceChannel() {
+        runOnUiThread {
+            if (callModel.isVideoCall) {
+
+                Timber.d("LLAMADA PASO: ES VIDEOLLAMADA INICIANDO LAS SUPERFICIES DE RENDERIZADO")
+
+                initSurfaceRenders()
+            }
+
+            webRTCClient.setTextViewCallDuration(binding.textViewCalling)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                setShowWhenLocked(true)
+                setTurnScreenOn(true)
+            }
+
+            with(window) {
+                setFlags(
+                    WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE
+                )
+                if (callModel.isVideoCall) {
+                    addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            }
+
+            if (callModel.isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
+                webRTCClient.startCaptureVideo()
+                binding.viewSwitcher.showNext()
+            }
+
+            if (webRTCClient.isActiveCall.not()) {
+
+                if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+
+                    Timber.d("LLAMADA PASO: LLAMADA ENTRANTE INICIANDO RINGTONE")
+
+                    webRTCClient.playRingtone()
+
+                } else {
+
+                    Timber.d("LLAMADA PASO: : playRingBackTone EN CONVERSATIONCALLACTIVITY")
+
+                    webRTCClient.playRingBackTone()
+
+                }
+            } else {
+
+                Timber.d("LLAMADA PASO: : LLAMADA ACTIVA")
+
+                if (callModel.isVideoCall) {
+                    webRTCClient.renderRemoteVideo()
+                    showRemoteVideo()
+                    binding.surfaceRender.isVisible = webRTCClient.isVideoMuted().not()
+                    binding.cameraOff.containerCameraOff.isVisible =
+                        webRTCClient.contactTurnOffCamera()
+                }
+                binding.imageButtonMicOff.setChecked(webRTCClient.getMicIsOn().not(), false)
+                binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
+                binding.imageButtonMuteVideo.setChecked(webRTCClient.isVideoMuted(), false)
+                binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive(), false)
+            }
+        }
+    }
+
     override fun contactWantChangeToVideoCall() {
         runOnUiThread(Runnable {
 
@@ -498,6 +507,8 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     }
 
     override fun callEnded() {
+        Timber.d("LLAMADA PASO: SETEA A FALSE LA VISTA DE LLAMADA")
+        NapoleonApplication.isShowingCallActivity = false
         finish()
     }
 
@@ -547,13 +558,10 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
         runOnUiThread {
             if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
                 binding.containerControls.visibility = View.VISIBLE
+                binding.viewBottomSeparator.visibility = View.VISIBLE
                 binding.fabAnswer.visibility = View.GONE
             }
         }
-    }
-
-    override fun resetIsOnCallPref() {
-        viewModel.resetIsOnCallPref()
     }
 
     override fun contactNotAnswer() {
@@ -600,6 +608,5 @@ class ConversationCallActivity : AppCompatActivity(), WebRTCClientListener {
     override fun contactAcceptChangeToVideoCall() {
         initSurfaceRenders()
     }
-
     //endregion
 }

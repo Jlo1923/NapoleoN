@@ -17,7 +17,17 @@ class HandlerMediaPlayerNotificationImp
     private val context: Context
 ) : HandlerMediaPlayerNotification {
 
+    enum class ActionPlay {
+        ACTION_NONE,
+        ACTION_PLAY_RINGTONE,
+        ACTION_PLAY_ENDTONE,
+        ACTION_PLAY_BUSY_TONE,
+        ACTION_PLAY_RING_BACK
+    }
+
     lateinit var mediaPlayer: MediaPlayer
+
+    var currentlyAction: ActionPlay = ActionPlay.ACTION_NONE
 
     private var stringResource: String = "android.resource://" + context.packageName + "/"
 
@@ -29,71 +39,137 @@ class HandlerMediaPlayerNotificationImp
 
     override fun playRingtone() {
 
-        Timber.d("MEDIAPLAYER: playRingtone")
-        playMedia(Settings.System.DEFAULT_RINGTONE_URI, isLooping = true, needVibrate = true)
+        if (::mediaPlayer.isInitialized)
+            Timber.d("RINGTONE: playRingtone mediaPlayer. $mediaPlayer")
+        else
+            Timber.d("RINGTONE: playRingtone mediaPlayer. NO INICIALIZADO")
+
+        playMedia(
+            Settings.System.DEFAULT_RINGTONE_URI,
+            isLooping = true,
+            needVibrate = true,
+            ActionPlay.ACTION_PLAY_RINGTONE
+        )
     }
 
     override fun playEndTone() {
-        Timber.d("MEDIAPLAYER: playEndTone")
-        playMedia(Uri.parse(stringResource + R.raw.end_call_tone))
+
+        if (::mediaPlayer.isInitialized)
+            Timber.d("RINGTONE: playEndTone mediaPlayer. $mediaPlayer")
+        else
+            Timber.d("RINGTONE: playEndTone mediaPlayer. NO INICIALIZADO")
+
+        playMedia(
+            Uri.parse(stringResource + R.raw.end_call_tone),
+            isLooping = false,
+            needVibrate = false,
+            ActionPlay.ACTION_PLAY_RING_BACK
+        )
     }
 
     override fun playRingBack() {
-        Timber.d("MEDIAPLAYER: playRingBack")
-        playMedia(Uri.parse(stringResource + R.raw.ringback_tone))
+
+        if (::mediaPlayer.isInitialized)
+            Timber.d("RINGTONE: playRingBack mediaPlayer. $mediaPlayer")
+        else
+            Timber.d("RINGTONE: playRingBack mediaPlayer. NO INICIALIZADO")
+
+        playMedia(
+            Uri.parse(stringResource + R.raw.ringback_tone),
+            isLooping = true,
+            needVibrate = false,
+            ActionPlay.ACTION_PLAY_RING_BACK
+        )
     }
 
     override fun playBusyTone() {
-        Timber.d("MEDIAPLAYER: playBusyTone")
-        playMedia(Uri.parse(stringResource + R.raw.busy_tone), isLooping = true)
+
+        if (::mediaPlayer.isInitialized)
+            Timber.d("RINGTONE: playBusyTone mediaPlayer. $mediaPlayer")
+        else
+            Timber.d("RINGTONE: playBusyTone mediaPlayer. NO INICIALIZADO")
+
+        playMedia(
+            Uri.parse(stringResource + R.raw.busy_tone),
+            isLooping = true,
+            needVibrate = false,
+            ActionPlay.ACTION_PLAY_BUSY_TONE
+        )
     }
 
-    private fun playMedia(uriSound: Uri, isLooping: Boolean = false, needVibrate: Boolean = false) {
+    override fun stopRingtone() {
+
+        Timber.d("RINGTONE: stopRingtone")
+        currentlyAction = ActionPlay.ACTION_NONE
+        stopMedia()
+    }
+
+    private fun playMedia(
+        uriSound: Uri,
+        isLooping: Boolean = false,
+        needVibrate: Boolean = false,
+        actionPlay: ActionPlay
+    ) {
 
         try {
 
-            stopMedia()
+            if (::mediaPlayer.isInitialized.not() || mediaPlayer == null)
+                mediaPlayer = MediaPlayer()
 
-            mediaPlayer = MediaPlayer().apply {
-                setAudioAttributes(
-                    AudioAttributes
-                        .Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
-                )
-                setDataSource(
-                    context,
-                    uriSound
-                )
-                this.isLooping = isLooping
-                prepare()
-                start()
-            }
+            if (currentlyAction != actionPlay) {
 
-            if (needVibrate)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val effect = VibrationEffect.createWaveform(vibratePattern, 0)
-                    vibrator?.vibrate(effect)
-                } else {
-                    vibrator?.vibrate(vibratePattern, 0)
+                currentlyAction = actionPlay
+
+                stopMedia()
+
+                mediaPlayer = mediaPlayer.apply {
+//                    setAudioAttributes(
+//                        AudioAttributes
+//                            .Builder()
+//                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+//                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+//                            .build()
+//                    )
+                    setDataSource(
+                        context,
+                        uriSound
+                    )
+                    this.isLooping = isLooping
+                    prepare()
+                    start()
                 }
+
+                Timber.d("RINGTONE: playMedia mediaPlayer. $mediaPlayer uriSound $uriSound")
+
+                if (needVibrate)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val effect = VibrationEffect.createWaveform(vibratePattern, 0)
+                        vibrator?.vibrate(effect)
+                    } else {
+                        vibrator?.vibrate(vibratePattern, 0)
+                    }
+
+            }
 
         } catch (e: Exception) {
             Timber.e(e)
         }
     }
 
-
-    override fun stopMedia() {
+    private fun stopMedia() {
         try {
 
-            if (::mediaPlayer.isInitialized) {
+            if (::mediaPlayer.isInitialized)
+                if (mediaPlayer.isPlaying) {
+                    Timber.d("RINGTONE: stopMedia mediaPlayer. $mediaPlayer ")
+                    mediaPlayer.apply {
+                        stop()
+                        reset()
+                    }
+                }
 
-                mediaPlayer.stop()
+            vibrator?.cancel()
 
-                vibrator?.cancel()
-            }
         } catch (e: Exception) {
             Timber.e(e)
         }

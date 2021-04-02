@@ -51,7 +51,7 @@ class WebRTCService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
-        Timber.d("LLAMADA PASO 1: STARTWEBRTCSERVICE")
+        Timber.d("LLAMADA PASO 1: INICIANDO SERVICIO")
 
         var callModel = CallModel(
             channelName = "",
@@ -71,7 +71,7 @@ class WebRTCService : Service() {
 
         intent.action?.let { action ->
 
-            handlerMediaPlayerNotification.stopMedia()
+            handlerMediaPlayerNotification.stopRingtone()
 
             Timber.d("LLAMADA PASO: ACTION $action")
 
@@ -106,7 +106,7 @@ class WebRTCService : Service() {
 
             showCallNotification(callModel)
 
-            if (NapoleonApplication.isVisible) {
+            if (NapoleonApplication.isVisible && NapoleonApplication.isShowingCallActivity.not()) {
 
                 Timber.d("LLAMADA PASO 3: MOSTRAR ACTIVITY CALL")
 
@@ -127,7 +127,7 @@ class WebRTCService : Service() {
 
             val notification = handlerNotification.createNotificationCallBuilder(callModel)
 
-            startForeground(HandlerNotificationImp.NOTIFICATION_RINGING, notification)
+            startForeground(HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE, notification)
 
         }
     }

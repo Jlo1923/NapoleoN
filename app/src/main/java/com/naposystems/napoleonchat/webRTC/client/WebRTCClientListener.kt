@@ -11,7 +11,6 @@ interface WebRTCClientListener {
     fun changeTextViewTitle(stringResourceId: Int)
     fun changeBluetoothButtonVisibility(isVisible: Boolean)
     fun enableControls()
-    fun resetIsOnCallPref()
     fun contactNotAnswer()
     fun showTimer()
     fun showConnectingTitle()
@@ -20,4 +19,5 @@ interface WebRTCClientListener {
     fun unlockVideoButton()
     fun rejectByNotification()
     fun contactAcceptChangeToVideoCall()
+    fun onSuccessConnectPresenceChannel()
 }

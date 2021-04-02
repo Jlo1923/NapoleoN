@@ -23,7 +23,6 @@ interface IContractMainActivity {
         fun setIsVideoCall(isVideoCall: Boolean)
         fun isVideoCall(): Boolean?
         fun resetIsVideoCall()
-        fun resetIsOnCallPref()
         fun getRecoveryQuestionsPref(): Int
         fun disconnectSocket()
     }
@@ -39,7 +38,6 @@ interface IContractMainActivity {
         fun setLockTimeApp(lockTime: Long)
         fun setJsonNotification(json: String)
         suspend fun getContactById(contactId: Int): ContactEntity?
-        fun resetIsOnCallPref()
         fun getRecoveryQuestionsPref(): Int
         fun disconnectSocket()
     }

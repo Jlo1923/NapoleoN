@@ -33,6 +33,7 @@ class HandlerNotificationImp
 ) : HandlerNotification {
 
     companion object {
+        const val NOTIFICATION_CALL_ACTIVE = 171087
         const val NOTIFICATION_RINGING = 950707
         const val NOTIFICATION_UPLOADING = 20102020
         const val NOTIFICATION = 162511
@@ -230,6 +231,7 @@ class HandlerNotificationImp
                     setFullScreenIntent(pendingIntent, true)
                     priority = NotificationCompat.PRIORITY_MAX
                 }
+                Timber.d("RINGTONE: PlayRingtone EN HANDLER NOTIFICATION")
                 handlerMediaPlayerNotification.playRingtone()
             }
         }
@@ -261,7 +263,7 @@ class HandlerNotificationImp
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        notificationManager.notify(NOTIFICATION_RINGING, notificationBuilder.build())
+        notificationManager.notify(NOTIFICATION_CALL_ACTIVE, notificationBuilder.build())
     }
 
     private fun getServiceNotificationAction(

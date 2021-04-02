@@ -39,7 +39,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 //TODO: Refactorizar esta clase e independizar la conexion del WebRTC, con los contadores y los manejadores de notificacion
-class WebRTCClientImp @Inject constructor(
+class WebRTCClientImp
+@Inject constructor(
     private val context: Context,
     private val socketClient: SocketClient,
     private val syncManager: SyncManager,
@@ -160,7 +161,6 @@ class WebRTCClientImp @Inject constructor(
     private var isVideoMuted: Boolean = false
     private var isBluetoothActive: Boolean = false
     private var contactTurnOffCamera: Boolean = false
-    private var isOnCallActivity: Boolean = false
 
     private var textViewTimer: TextView? = null
 
@@ -176,7 +176,6 @@ class WebRTCClientImp @Inject constructor(
     }
 
     private fun subscribeToRXEvents() {
-        Timber.d("subscribeToRXEvents")
         val disposableHeadsetState = RxBus.listen(RxEvent.HeadsetState::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -226,7 +225,22 @@ class WebRTCClientImp @Inject constructor(
                 }
 
         disposable.add(disposableHeadsetState)
+
         disposable.add(disposableHangupByNotification)
+    }
+
+    override fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener) {
+
+        Timber.d("LLAMADA PASO 2: SETEANDO webRTCClientListener isActiveCall: $isActiveCall")
+
+        this.webRTCClientListener = webRTCClientListener
+
+        bluetoothStateManager = BluetoothStateManager(context, this)
+
+        if (isActiveCall.not()) {
+            createPeerConnection()
+        }
+
     }
 
     private fun createPeerConnection() {
@@ -239,10 +253,11 @@ class WebRTCClientImp @Inject constructor(
 
                 override fun onRenegotiationNeeded() {
                     super.onRenegotiationNeeded()
-                    Timber.d("LLAMADA PASO: onRenegotiationNeeded")
+                    Timber.d("LLAMADA PASO: onRenegotiationNeeded renegotiateCall: $renegotiateCall isReturnCall: $isReturnCall")
                     if (renegotiateCall || isReturnCall) {
                         isReturnCall = false
                         renegotiateCall = false
+                        Timber.d("LLAMADA PASO: onRenegotiationNeeded CREAR OFERTA")
                         createOffer()
                     }
                 }
@@ -259,7 +274,8 @@ class WebRTCClientImp @Inject constructor(
                 ) {
                     super.onAddTrack(rtpReceiver, mediaStreams)
 
-                    Timber.d("LLAMADA PASO: onAddTrack")
+                    Timber.d("LLAMADA PASO: onAddTrack RTPRECEIVERS $rtpReceiver")
+                    Timber.d("LLAMADA PASO: onAddTrack MEDIASTREAMS $mediaStreams")
 
                     if (mediaStreams.isNotEmpty()) {
 
@@ -293,75 +309,12 @@ class WebRTCClientImp @Inject constructor(
 
                     when (iceConnectionState) {
 
-                        PeerConnection.IceConnectionState.CHECKING ->
-                            webRTCClientListener?.showConnectingTitle()
-
-                        PeerConnection.IceConnectionState.CONNECTED -> {
-
-                            isActiveCall = true
-
-                            audioManager.mode = MODE_IN_COMMUNICATION
-
-                            countDownEndCall.cancel()
-
-                            countDownIncomingCall.cancel()
-
-                            initializeProximitySensor()
-
-                            webRTCClientListener?.enableControls()
-
-                            mHandler.postDelayed(
-                                mCallTimeRunnable,
-                                TimeUnit.SECONDS.toMillis(1)
-                            )
-
-                            handlerNotification.notificationCallInProgress(
-                                callModel
-                            )
-
-                            if (callModel.isVideoCall) {
-                                renderRemoteVideo(remoteMediaStream)
-                            } else {
-                                if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                                    audioManager.isSpeakerphoneOn = false
-                                    webRTCClientListener?.changeCheckedSpeaker(false)
-                                }
-                                if (isBluetoothActive || isHeadsetConnected) {
-                                    stopProximitySensor()
-                                }
-                            }
-                        }
-
-                        PeerConnection.IceConnectionState.DISCONNECTED,
-                        PeerConnection.IceConnectionState.CLOSED -> {
-                            NapoleonApplication.isShowingCallActivity = false
-                            RxBus.publish(RxEvent.CallEnd())
-                            val intent = Intent(context, WebRTCService::class.java)
-                            intent.action = WebRTCService.ACTION_CALL_END
-                            context.startService(intent)
-
-                            mHandler.removeCallbacks(mCallTimeRunnable)
-
-                            isMicOn = true
-                            isVideoMuted = false
-                            isBluetoothActive = false
-                            isReturnCall = false
-                            contactTurnOffCamera = false
-                            callTime = 0L
-                            isActiveCall = false
-                            renegotiateCall = false
-                            unSubscribeCallChannel()
-                            webRTCClientListener?.resetIsOnCallPref()
-
-                            Timber.d("RINGTONE END CALL TONE ${R.raw.end_call_tone}")
-
-                            handlerMediaPlayerNotification.playEndTone()
-
-                            disposeCall()
-                        }
-
-                        else ->
-                            Timber.e("IceConnectionState Not Recognized")
+                        PeerConnection.IceConnectionState.CHECKING -> webRTCClientListener?.showConnectingTitle()
+                        PeerConnection.IceConnectionState.CONNECTED -> connectCall()
+                        PeerConnection.IceConnectionState.CLOSED,
+                        PeerConnection.IceConnectionState.DISCONNECTED -> disposeCall()
+//                        PeerConnection.IceConnectionState.CLOSED -> disposeCall()
+                        else -> Timber.e("IceConnectionState Not Recognized")
 
                     }
                 }
@@ -378,30 +331,41 @@ class WebRTCClientImp @Inject constructor(
     }
 
     private fun createOffer() {
+
         Timber.d("LLAMADA PASO 10: Creando Oferta")
+
         mediaConstraints = MediaConstraints()
-        mediaConstraints?.mandatory?.add(
-            MediaConstraints.KeyValuePair(
-                "OfferToReceiveAudio",
-                "true"
-            )
-        )
-        if (callModel.isVideoCall) {
-            mediaConstraints?.mandatory?.add(
+
+        mediaConstraints?.mandatory?.apply {
+            add(
                 MediaConstraints.KeyValuePair(
-                    "OfferToReceiveVideo",
+                    "OfferToReceiveAudio",
                     "true"
                 )
             )
+
+            if (callModel.isVideoCall)
+                add(
+                    MediaConstraints.KeyValuePair(
+                        "OfferToReceiveVideo",
+                        "true"
+                    )
+                )
         }
+
         peerConnection?.createOffer(object : CustomSdpObserver("Local offer") {
+
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
+
                 super.onCreateSuccess(sessionDescription)
+
+                Timber.d("LLAMADA PASO: OFERTA CREADA SETEANDOLA")
+
                 peerConnection?.setLocalDescription(
                     (CustomSdpObserver("Local offer")),
                     sessionDescription
                 )
-                Timber.d("createOffer onCreateSuccess")
+
                 if (isActiveCall.not()) {
                     Timber.d("LLAMADA PASO 10.1: Llamada no activa consume api")
                     syncManager.callContact(
@@ -417,6 +381,7 @@ class WebRTCClientImp @Inject constructor(
                     )
                 }
             }
+
         }, mediaConstraints)
     }
 
@@ -463,16 +428,13 @@ class WebRTCClientImp @Inject constructor(
         }
     }
 
-    private fun initializeProximitySensor() {
-        if (callModel.isVideoCall.not() && audioManager.isSpeakerphoneOn.not() && wakeLock.isHeld.not()) {
-            wakeLock.acquire()
-        }
-    }
-
-    private fun unregisterProximityListener() {
-        if (wakeLock.isHeld) {
-            wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
-        }
+    private fun createLocalAudioTrack() {
+        val audioConstraints = MediaConstraints()
+        val audioSource: AudioSource =
+            peerConnectionFactory.createAudioSource(audioConstraints)
+        localAudioTrack =
+            peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
+        localAudioTrack?.setEnabled(true)
     }
 
     private fun createLocalVideoTrack() {
@@ -504,15 +466,6 @@ class WebRTCClientImp @Inject constructor(
             localVideoView?.setMirror(true)
             remoteVideoView?.setMirror(false)
         }
-    }
-
-    private fun createLocalAudioTrack() {
-        val audioConstraints = MediaConstraints()
-        val audioSource: AudioSource =
-            peerConnectionFactory.createAudioSource(audioConstraints)
-        localAudioTrack =
-            peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
-        localAudioTrack?.setEnabled(true)
     }
 
     private fun createVideoCapturer(): VideoCapturer? {
@@ -552,30 +505,150 @@ class WebRTCClientImp @Inject constructor(
         localMediaStream.addTrack(localAudioTrack)
     }
 
+    private fun connectCall() {
+
+        Timber.d("LLAMADA PASO: LLAMADA CONECTADA")
+
+        isActiveCall = true
+
+        audioManager.mode = MODE_IN_COMMUNICATION
+
+        countDownEndCall.cancel()
+
+        countDownIncomingCall.cancel()
+
+        initializeProximitySensor()
+
+        webRTCClientListener?.enableControls()
+
+        mHandler.postDelayed(
+            mCallTimeRunnable,
+            TimeUnit.SECONDS.toMillis(1)
+        )
+
+        handlerNotification.notificationCallInProgress(callModel)
+
+        stopRingAndVibrate()
+
+        if (callModel.isVideoCall) {
+            renderRemoteVideo(remoteMediaStream)
+        } else {
+            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+                audioManager.isSpeakerphoneOn = false
+                webRTCClientListener?.changeCheckedSpeaker(false)
+            }
+            if (isBluetoothActive || isHeadsetConnected) {
+                stopProximitySensor()
+            }
+        }
+    }
+
+    override fun disposeCall() {
+
+        Timber.d("LLAMADA PASO: DISPOSE CALL")
+
+        RxBus.publish(RxEvent.CallEnd())
+
+        Timber.d("LLAMADA PASO: PIDE ENVIAR A SERVICIO CALL END")
+
+        val intent = Intent(context, WebRTCService::class.java)
+
+        intent.action = WebRTCService.ACTION_CALL_END
+
+        context.startService(intent)
+
+
+        Timber.d("LLAMADA PASO: END CALL TONE")
+
+        handlerMediaPlayerNotification.stopRingtone()
+
+        handlerMediaPlayerNotification.playEndTone()
+
+        Timber.d("LLAMADA PASO: DESSUSCRIBIR A CANAL")
+        socketClient.unSubscribePresenceChannel(this.callModel.channelName)
+
+        audioManager.mode = AudioManager.MODE_NORMAL
+
+        audioManager.stopBluetoothSco()
+
+        audioManager.isBluetoothScoOn = false
+
+        audioManager.isSpeakerphoneOn = false
+
+        unregisterProximityListener()
+
+        countDownEndCallBusy.cancel()
+
+        countDownEndCall.cancel()
+
+        countDownIncomingCall.cancel()
+
+        //disposable.clear()
+
+        //TODO: Revisar posible leak de memoria por apertura de camara
+
+//        if (callModel.isVideoCall) {
+
+//            localVideoView?.release()
+//            remoteVideoView?.release()
+
+//            videoCapturerAndroid?.stopCapture()
+//        }
+
+        mHandler.removeCallbacks(mCallTimeRunnable)
+
+        bluetoothStateManager?.onDestroy()
+
+        if (isActiveCall) {
+            Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA DISPOSE PEERCONECTION")
+            isActiveCall = false
+            try {
+                peerConnection?.close()
+                peerConnection?.dispose()
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
+            }
+        }
+
+        isMicOn = true
+
+        isVideoMuted = false
+
+        isBluetoothActive = false
+
+        isReturnCall = false
+
+        contactTurnOffCamera = false
+
+        callTime = 0L
+
+        renegotiateCall = false
+
+        Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
+        webRTCClientListener?.callEnded()
+
+    }
+
+
+    private fun initializeProximitySensor() {
+        if (callModel.isVideoCall.not() && audioManager.isSpeakerphoneOn.not() && wakeLock.isHeld.not()) {
+            wakeLock.acquire()
+        }
+    }
+
+    private fun unregisterProximityListener() {
+        if (wakeLock.isHeld) {
+            wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
+        }
+    }
+
+
     private fun startCallTimer() {
         textViewTimer?.text =
             Utils.getDuration(callTime, callTime >= TimeUnit.HOURS.toMillis(1))
         val oneSecond = TimeUnit.SECONDS.toMillis(1)
         callTime += oneSecond
         mHandler.postDelayed(mCallTimeRunnable, oneSecond)
-    }
-
-    //region Implementation IContractWebRTCClient
-
-    override fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener) {
-
-        Timber.d("LLAMADA PASO 2: SETEANDO webRTCClientListener isActiveCall: $isActiveCall")
-
-        this.webRTCClientListener = webRTCClientListener
-
-        bluetoothStateManager = BluetoothStateManager(context, this)
-
-        isOnCallActivity = true
-
-        if (isActiveCall.not()) {
-            createPeerConnection()
-        }
-
     }
 
     override fun setOffer(offer: String?) {
@@ -596,7 +669,7 @@ class WebRTCClientImp @Inject constructor(
         }
     }
 
-    override fun subscribeToCallChannel() {
+    override fun subscribeToPresenceChannel() {
         Timber.d("LLAMADA PASO 4: SUSCRIBIRSE AL CANAL DE LLAMADAS")
         socketClient.subscribeToPresenceChannel(callModel)
     }
@@ -646,10 +719,6 @@ class WebRTCClientImp @Inject constructor(
 
     override fun contactTurnOffCamera(): Boolean = this.contactTurnOffCamera
 
-    override fun setIsOnCallActivity(isOnCallActivity: Boolean) {
-        this.isOnCallActivity = isOnCallActivity
-    }
-
     override fun initSurfaceRenders() {
         localVideoView?.init(eglBase.eglBaseContext, null)
         localVideoView?.setZOrderMediaOverlay(true)
@@ -666,7 +735,7 @@ class WebRTCClientImp @Inject constructor(
     }
 
     override fun stopRingAndVibrate() {
-        handlerMediaPlayerNotification.stopMedia()
+        handlerMediaPlayerNotification.stopRingtone()
     }
 
     override fun emitHangUp() {
@@ -768,6 +837,7 @@ class WebRTCClientImp @Inject constructor(
 
         Timber.d("*Test: ${audioManager.isSpeakerphoneOn}")
 
+        Timber.d("RINGTONE: PlayRingtone")
         handlerMediaPlayerNotification.playRingtone()
 
     }
@@ -784,6 +854,7 @@ class WebRTCClientImp @Inject constructor(
 
         countDownEndCall.start()
 
+        Timber.d("RINGTONE: playRingBack EN WEBRTCCLIENT")
         handlerMediaPlayerNotification.playRingBack()
 
     }
@@ -814,7 +885,7 @@ class WebRTCClientImp @Inject constructor(
             KeyEvent.KEYCODE_VOLUME_DOWN,
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 if (isActiveCall.not()) {
-                    handlerMediaPlayerNotification.stopMedia()
+                    handlerMediaPlayerNotification.stopRingtone()
                     true
                 } else {
                     false
@@ -824,61 +895,7 @@ class WebRTCClientImp @Inject constructor(
         }
     }
 
-    override fun disposeCall() {
-
-        NapoleonApplication.isCurrentOnCall = false
-
-        socketClient.unSubscribePresenceChannel(this.callModel.channelName)
-
-        val intent = Intent(context, WebRTCService::class.java)
-
-        intent.action = WebRTCService.ACTION_CALL_END
-
-        context.startService(intent)
-
-        audioManager.mode = AudioManager.MODE_NORMAL
-
-        audioManager.stopBluetoothSco()
-
-        audioManager.isBluetoothScoOn = false
-
-        audioManager.isSpeakerphoneOn = false
-
-        unregisterProximityListener()
-
-        countDownEndCallBusy.cancel()
-        countDownEndCall.cancel()
-        countDownIncomingCall.cancel()
-
-        stopRingAndVibrate()
-
-        handlerMediaPlayerNotification.stopMedia()
-
-        //disposable.clear()
-
-        //TODO: Revisar posible leak de memoria por apertura de camara
-
-//        if (callModel.isVideoCall) {
-
-//            localVideoView?.release()
-//            remoteVideoView?.release()
-
-//            videoCapturerAndroid?.stopCapture()
-//        }
-
-        mHandler.removeCallbacks(mCallTimeRunnable)
-
-        bluetoothStateManager?.onDestroy()
-
-        webRTCClientListener?.callEnded()
-
-        if (isActiveCall) {
-            peerConnection?.close()
-            peerConnection?.dispose()
-        }
-    }
-
-    override fun unSubscribeCallChannel() {
+    override fun unSubscribePresenceChannel() {
         socketClient.unSubscribePresenceChannel(callModel.channelName)
     }
 
@@ -930,8 +947,6 @@ class WebRTCClientImp @Inject constructor(
         context.startService(service)
     }
 
-    //endregion
-
     //region Implementation BluetoothStateManager.BluetoothStateListener
     override fun onBluetoothStateChanged(isAvailable: Boolean) {
         Timber.d("onBluetoothStateChanged: $isAvailable")
@@ -968,23 +983,32 @@ class WebRTCClientImp @Inject constructor(
 
     //region Conexion
     override fun itsSubscribedToPresenceChannelOutgoingCall(callModel: CallModel) {
+
         Timber.d("LLAMADA PASO 7: ya Suscrito")
+
         if (callModel.channelName == this.callModel.channelName) {
 
-            handlerMediaPlayerNotification.stopMedia()
+            Timber.d("LLAMADA PASO: onSuccessConnectPresenceChannel")
 
-            if (isActiveCall.not()) {
-                Timber.d("LLAMADA PASO 8: En llamada activa crea PeerConnection")
-                createPeerConnection()
-            }
+            webRTCClientListener?.onSuccessConnectPresenceChannel()
 
-            Timber.d("LLAMADA PASO 9: Crea Offer")
+            Timber.d("LLAMADA PASO: Crea Offer")
+
             createOffer()
+
         }
     }
 
     override fun itsSubscribedToPresenceChannelIncomingCall(callModel: CallModel) {
+
+        Timber.d("LLAMADA PASO: Inicia el servicio WebRTC desde itsSubscribedToPresenceChannelIncomingCall")
+
+        Timber.d("LLAMADA PASO: onSuccessConnectPresenceChannel callModel: $callModel")
+
+        webRTCClientListener?.onSuccessConnectPresenceChannel()
+
         startWebRTCService(callModel)
+
     }
 
     override fun iceCandidateReceived(channelName: String, iceCandidate: IceCandidate) {
@@ -1041,9 +1065,9 @@ class WebRTCClientImp @Inject constructor(
                 audioManager.isSpeakerphoneOn = false
                 audioManager.mode = AudioManager.MODE_NORMAL
 
-                handlerMediaPlayerNotification.stopMedia()
+                handlerMediaPlayerNotification.stopRingtone()
 
-                unSubscribeCallChannel()
+                unSubscribePresenceChannel()
 
                 localAudioTrack?.setEnabled(false)
             } catch (e: Exception) {
@@ -1057,7 +1081,7 @@ class WebRTCClientImp @Inject constructor(
 
     //region ChangeToVideoCall
     override fun contactWantChangeToVideoCall(channelName: String) {
-        if (channelName == this.callModel.channelName && isOnCallActivity)
+        if (channelName == this.callModel.channelName && NapoleonApplication.isShowingCallActivity)
             webRTCClientListener?.contactWantChangeToVideoCall()
         else {
             socketClient.emitClientCall(
@@ -1106,9 +1130,12 @@ class WebRTCClientImp @Inject constructor(
 
     //region Hangup
     override fun contactHasHangup(channelName: String) {
-        if (channelName == this.callModel.channelName && callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
+        if (channelName == this.callModel.channelName && callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+
+            Timber.d("LLAMADA PASO: COLGAR LLAMADA DESDE ESCUCHADOR")
             disposeCall()
 
+        }
     }
     //endregion
 

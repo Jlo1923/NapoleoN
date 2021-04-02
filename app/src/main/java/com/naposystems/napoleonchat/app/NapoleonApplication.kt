@@ -28,10 +28,15 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         private const val USE_BUNDLED_EMOJI = true
 
         var isVisible: Boolean = false
+
         var isCurrentOnCall: Boolean = false
+
         var isShowingCallActivity: Boolean = false
+
         var currentConversationContactId: Int = 0
+
         var currentCallContactId: Int = 0
+
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> =

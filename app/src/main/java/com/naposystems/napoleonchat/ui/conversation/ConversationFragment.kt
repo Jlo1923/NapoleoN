@@ -1093,6 +1093,8 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
         val disposableContactHasHangup = RxBus.listen(RxEvent.CallEnd::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+
+                Timber.d("LLAMADA PASO: DISPOSE CALL OYENDO DESDE LA CONVERSACION")
                 binding.textViewReturnCall.isVisible = false
                 binding.buttonCall.isEnabled = true
                 binding.buttonVideoCall.isEnabled = true
