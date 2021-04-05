@@ -243,6 +243,13 @@ class WebRTCClientImp
 
     }
 
+    override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel) {
+        socketClient.connectSocket(
+            mustSubscribeToPresenceChannel = true,
+            callModel = callModel
+        )
+    }
+
     private fun createPeerConnection() {
 
         Timber.d("LLAMADA PASO 3: CREANDO PEERCONNECTION")
@@ -990,7 +997,7 @@ class WebRTCClientImp
 
             Timber.d("LLAMADA PASO: onSuccessConnectPresenceChannel")
 
-            webRTCClientListener?.onSuccessConnectPresenceChannel()
+//            webRTCClientListener?.onSuccessConnectPresenceChannel()
 
             Timber.d("LLAMADA PASO: Crea Offer")
 
@@ -1005,7 +1012,10 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO: onSuccessConnectPresenceChannel callModel: $callModel")
 
-        webRTCClientListener?.onSuccessConnectPresenceChannel()
+        //El webRTCClientListener se inicializa cuando se inicializa el WebRTCClient
+        //Si la app esta encendida el WebRTCClient se inicia en el MainActivity
+        //Si la app esta cerrada en el HandlerNotificationCall
+//        webRTCClientListener?.onSuccessConnectPresenceChannel()
 
         startWebRTCService(callModel)
 

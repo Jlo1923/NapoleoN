@@ -10,6 +10,8 @@ interface WebRTCClient {
     var isActiveCall: Boolean
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
+
+    fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel)
     fun subscribeToPresenceChannel()
     fun setOffer(offer: String?)
     fun setTextViewCallDuration(textView: TextView)

@@ -14,8 +14,7 @@ android {
     signingConfigs {
         config {
 //            storeFile file('pepito.jks')
-//            storeFile file('D:\\Proyectos_NN\\Desarrollo\\Llaves JKS Android\\pepito.jks')
-            storeFile file('E:\\Proyectos\\NapoleoN\\JKS\\pepito.jks')
+            storeFile file('D:\\Proyectos_NN\\Desarrollo\\Llaves JKS Android\\pepito.jks')
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
