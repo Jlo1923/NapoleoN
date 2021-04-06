@@ -84,8 +84,11 @@ class WebRTCService : Service() {
                     )
                 }
                 ACTION_DENY_CALL -> {
+
                     Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
                     repository.rejectCall(callModel)
+                    if (NapoleonApplication.isShowingCallActivity)
+                        RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                     stopForeground(true)
                     stopSelf()
                 }

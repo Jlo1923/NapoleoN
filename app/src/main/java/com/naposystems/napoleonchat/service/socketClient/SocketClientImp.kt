@@ -12,7 +12,6 @@ import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -203,7 +202,7 @@ class SocketClientImp
 
                             syncManager.getMyMessages(null)
 
-////                            syncManager.verifyMessagesReceive d()
+////                            syncManager.verifyMessagesReceived()
 ////
 ////                            syncManager.verifyMessagesRead()
 
@@ -423,14 +422,16 @@ class SocketClientImp
     override fun emitClientCall(channel: String, jsonObject: JSONObject) {
 
         if (pusher.getPresenceChannel(channel) != null) {
+            if (pusher.connection.state == ConnectionState.CONNECTED) {
+                pusher.getPresenceChannel(channel)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CALL.trigger,
+                        jsonObject.toString()
+                    )
 
-            pusher.getPresenceChannel(channel)
-                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, jsonObject.toString())
-
-            Timber.d("Emit to Call $jsonObject")
-
+                Timber.d("Emit to Call $jsonObject")
+            }
         }
-
     }
 
     override fun emitClientCall(channel: String, eventType: Int) {
@@ -561,20 +562,22 @@ class SocketClientImp
                     override fun onEvent(event: PusherEvent?) {
                         Timber.d("NotifyMessagesReceived: ${event?.data}")
                         event?.data?.let {
-                            val jsonAdapter: JsonAdapter<MessagesReceivedDTO> =
-                                moshi.adapter(MessagesReceivedDTO::class.java)
 
-                            val dataEvent = jsonAdapter.fromJson(it)
-
-                            dataEvent?.let { messagesReceivedDTO ->
-
-                                Timber.d(messagesReceivedDTO.data.messageIds.toString())
-
-                                syncManager.updateMessagesStatus(
-                                    messagesReceivedDTO.data.messageIds,
-                                    Constants.MessageStatus.UNREAD.status
-                                )
-                            }
+                            //TODO: Descomentarear cuando puntos verdes arreglado
+//                            val jsonAdapter: JsonAdapter<MessagesReceivedDTO> =
+//                                moshi.adapter(MessagesReceivedDTO::class.java)
+//
+//                            val dataEvent = jsonAdapter.fromJson(it)
+//
+//                            dataEvent?.let { messagesReceivedDTO ->
+//
+//                                Timber.d(messagesReceivedDTO.data.messageIds.toString())
+//
+//                                syncManager.updateMessagesStatus(
+//                                    messagesReceivedDTO.data.messageIds,
+//                                    Constants.MessageStatus.UNREAD.status
+//                                )
+//                            }
                         }
                     }
 
@@ -649,40 +652,44 @@ class SocketClientImp
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         try {
-                            event?.data?.let { dataEventRes ->
+                            event?.data?.let {
 
-                                val jsonAdapter: JsonAdapter<ValidateMessageEventDTO> =
-                                    moshi.adapter(ValidateMessageEventDTO::class.java)
+                                //TODO: Descomentarear cuando puntos verdes arreglado
 
-                                val dataEvent = jsonAdapter.fromJson(dataEventRes)
-
-                                val messages = dataEvent?.messages?.filter {
-                                    it.user == userId
-                                }?.filter {
-                                    syncManager.existIdMessage(it.id)
-                                }
-
-                                val unread = messages?.filter {
-                                    it.status == Constants.MessageEventType.UNREAD.status
-                                }?.map { it.id }
-
-                                unread?.let {
-                                    syncManager.updateMessagesStatus(
-                                        it,
-                                        Constants.MessageStatus.UNREAD.status
-                                    )
-                                }
-
-                                val read = messages?.filter {
-                                    it.status == Constants.MessageEventType.READ.status
-                                }?.map { it.id }
-
-                                read?.let {
-                                    syncManager.validateMessageType(
-                                        it,
-                                        Constants.MessageStatus.READED.status
-                                    )
-                                }
+//                                    dataEventRes ->
+//
+//                                val jsonAdapter: JsonAdapter<ValidateMessageEventDTO> =
+//                                    moshi.adapter(ValidateMessageEventDTO::class.java)
+//
+//                                val dataEvent = jsonAdapter.fromJson(dataEventRes)
+//
+//                                val messages = dataEvent?.messages?.filter {
+//                                    it.user == userId
+//                                }?.filter {
+//                                    syncManager.existIdMessage(it.id)
+//                                }
+//
+//                                val unread = messages?.filter {
+//                                    it.status == Constants.MessageEventType.UNREAD.status
+//                                }?.map { it.id }
+//
+//                                unread?.let {
+//                                    syncManager.updateMessagesStatus(
+//                                        it,
+//                                        Constants.MessageStatus.UNREAD.status
+//                                    )
+//                                }
+//
+//                                val read = messages?.filter {
+//                                    it.status == Constants.MessageEventType.READ.status
+//                                }?.map { it.id }
+//
+//                                read?.let {
+//                                    syncManager.validateMessageType(
+//                                        it,
+//                                        Constants.MessageStatus.READED.status
+//                                    )
+//                                }
 
                             }
                         } catch (e: Exception) {
