@@ -11,7 +11,7 @@ node('master') {
     stage("Downloading JKS"){
         s3Download(file:'app/pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
     }
-    GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+    GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replace(" ", "-")
     VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
     VERSIONCODE = sh(script:"cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'",returnStdout: true).trim()
     INCREASEDVERSION = "${VERSIONCODE}+1"
