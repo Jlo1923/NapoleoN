@@ -435,13 +435,14 @@ class SocketClientImp
 
     override fun emitClientCall(channel: String, eventType: Int) {
 
-        if (pusher.getPresenceChannel(channel) != null) {
+        Timber.d("LLAMADA PASO: channel $channel eventType: $eventType")
 
+        if (pusher.getPresenceChannel(channel) != null)
             pusher.getPresenceChannel(channel)
-                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, eventType.toString())
-
-            Timber.d("Emit to Call $eventType")
-        }
+                .trigger(
+                    Constants.SocketEmitTriggers.CLIENT_CALL.trigger,
+                    eventType.toString()
+                )
     }
     //endregion
 
@@ -881,7 +882,7 @@ class SocketClientImp
 
                                 if (eventType != null) {
 
-                                    Timber.d("LLAMADA PASO 12.1 OUTGOING: Llega el evento de llamada ${eventType}")
+                                    Timber.d("LLAMADA PASO: Llega el evento de llamada ${eventType}")
 
                                     when (eventType) {
 

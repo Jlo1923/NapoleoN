@@ -93,6 +93,7 @@ class ConversationCallActivity :
         getExtras()
 
         if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+            NapoleonApplication.isCurrentOnCall = true
             Timber.d("LLAMADA PASO 2: LLAMADA SALIENTE SUSCRIBIENDOSE AL CANAL DE PRESENCIA")
             webRTCClient.subscribeToPresenceChannel()
         }
@@ -128,19 +129,11 @@ class ConversationCallActivity :
 
         if (webRTCClient.isActiveCall.not()) {
 
-            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-
-                Timber.d("LLAMADA PASO: LLAMADA ENTRANTE INICIANDO RINGTONE")
-
-                webRTCClient.playRingtone()
-
-            } else {
-
-                Timber.d("LLAMADA PASO: : playRingBackTone EN CONVERSATIONCALLACTIVITY")
-
-                webRTCClient.playRingBackTone()
-
+            when (callModel.typeCall) {
+                Constants.TypeCall.IS_INCOMING_CALL -> webRTCClient.playRingtone()
+                Constants.TypeCall.IS_OUTGOING_CALL -> webRTCClient.playRingBackTone()
             }
+
         } else {
 
             Timber.d("LLAMADA PASO: : LLAMADA ACTIVA")
@@ -360,21 +353,16 @@ class ConversationCallActivity :
         Timber.d("LLAMADA PASO: HANGUP PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${callModel.typeCall}")
 
         if (webRTCClient.isActiveCall.not()) {
-
             Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
-
             when (callModel.typeCall) {
                 Constants.TypeCall.IS_OUTGOING_CALL -> {
-
                     Timber.d("HANGUP: SEND MISSED CALL")
                     viewModel.sendMissedCall(callModel)
-
                     Timber.d("HANGUP: CANCELL CALL")
                     viewModel.cancelCall(callModel)
                 }
 
                 Constants.TypeCall.IS_INCOMING_CALL -> {
-
                     Timber.d("HANGUP: CANCELL CALL")
                     viewModel.cancelCall(callModel)
                 }
@@ -559,7 +547,7 @@ class ConversationCallActivity :
         }
     }
 
-    override fun hangupByNotification() {
+    override fun hangUpFromNotification() {
         hangUp()
     }
 

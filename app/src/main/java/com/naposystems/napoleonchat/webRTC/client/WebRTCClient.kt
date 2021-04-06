@@ -31,10 +31,6 @@ interface WebRTCClient {
 
     fun startWebRTCService(callModel: CallModel)
 
-    fun emitHangUp()
-
-    fun disposeCall()
-
     //Change to video Call
     fun changeToVideoCall()
     fun acceptChangeToVideoCall()
@@ -77,5 +73,9 @@ interface WebRTCClient {
     fun setTextViewCallDuration(textView: TextView)
 
     fun setItsReturnCall(itsReturnCall: Boolean)
+
+    //Hang Up
+    fun emitHangUp()
+    fun disposeCall()
 
 }

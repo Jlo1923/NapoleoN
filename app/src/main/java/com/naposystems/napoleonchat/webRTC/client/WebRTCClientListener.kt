@@ -21,7 +21,7 @@ interface WebRTCClientListener {
     fun toggleBluetoothButtonVisibility(isVisible: Boolean)
     fun toggleCheckedSpeaker(checked: Boolean)
 
-    fun hangupByNotification()
+    fun hangUpFromNotification()
     fun onContactNotAnswer()
     fun callEnded()
 

@@ -77,24 +77,28 @@ class WebRTCService : Service() {
 
             when (action) {
                 ACTION_ANSWER_CALL -> {
+                    Timber.d("LLAMADA PASO: CONTESTANDO LLAMADA")
                     startConversationCallActivity(
                         action = ACTION_ANSWER_CALL,
                         callModel = callModel
                     )
                 }
                 ACTION_DENY_CALL -> {
+                    Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
                     repository.rejectCall(callModel)
                     stopForeground(true)
                     stopSelf()
                 }
                 ACTION_CALL_END -> {
+                    Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
                     stopForeground(true)
                     stopSelf()
                 }
                 ACTION_HANG_UP -> {
+                    Timber.d("LLAMADA PASO: COLGANDO LLAMADA")
+                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                     stopForeground(true)
                     stopSelf()
-                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                 }
                 else ->
                     Timber.e("Action no recognized")
