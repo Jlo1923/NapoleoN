@@ -12,30 +12,38 @@ node('master') {
         s3Download(file:'app/pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
     }
     GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+    VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
+    VERSIONCODE = sh(script:"cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'",returnStdout: true).trim()
+    INCREASEDVERSION = "${VERSIONCODE}+1"
+    GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+    VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
+    VERSIONCODE = sh(script:"cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'",returnStdout: true).trim().toInteger()
+    INCREASEDVERSION = VERSIONCODE + 1
+    sh("sed -i 's/versionCode ${VERSIONCODE}/versionCode ${INCREASEDVERSION}/g' app/build.gradle")
+    sh("sed -i 's/${VERSION}/1.1.${INCREASEDVERSION}-${GIT_COMMIT_MSG}/g' app/build.gradle")
+    sh("cat app/build.gradle")
     echo "${GIT_COMMIT_MSG}"
-    /*stage("Building"){
-        VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
-        VERSIONCODE = sh(script:"cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'",returnStdout: true).trim()
+    stage("Building"){
         echo "VersionName ${VERSION}"
         echo "VersionCode ${VERSIONCODE}"
         sh(script:"chmod +x ./gradlew")
         sh(script:"./gradlew clean bundle")
         sh(script:"ls -la")
     }
-    */
-    //script {
-    //    archiveArtifacts allowEmptyArchive: true,
-    //            artifacts: '**/*.apk, **/*.aab, app/build/**/mapping/**/*.txt, app/build/**/logs/**/*.txt, app/build/**/bundle'
-    //}
-    //stage('Upload to Play Store') {
-    //    androidApkUpload googleCredentialsId: 'Google-Play', apkFilesPattern: '**/build/outputs/**/*.aab, **/build/outputs/**/*.apk', trackName: 'internal', releaseName: "${VERSION}", rolloutPercentage: '100', inAppUpdatePriority: '5'
-    //}
 
-    //stage("Slack notification"){
-    //    HORA = sh(script:"date +%T", returnStdout: true).trim();
-    //    slackSend (botUser: true, color: '#FFFF00', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha compilado satisfactoriamente el VersionName *${VERSION}* con código de version *${VERSIONCODE}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
-    //}
-    //cleanWs()
+    script {
+        archiveArtifacts allowEmptyArchive: true,
+                artifacts: '**/*.apk, **/*.aab, app/build/**/mapping/**/*.txt, app/build/**/logs/**/*.txt, app/build/**/bundle'
+    }
+    stage('Upload to Play Store') {
+        androidApkUpload googleCredentialsId: 'Google-Play', apkFilesPattern: '**/build/outputs/**/*.aab, **/build/outputs/**/*.apk', trackName: 'internal', releaseName: "${VERSION}", rolloutPercentage: '100', inAppUpdatePriority: '5'
+    }
+
+    stage("Slack notification"){
+        HORA = sh(script:"date +%T", returnStdout: true).trim();
+        slackSend (botUser: true, color: '#FFFF00', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha compilado satisfactoriamente el VersionName *${VERSION}* con código de version *${VERSIONCODE}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
+    }
+    cleanWs()
 }
 
 
