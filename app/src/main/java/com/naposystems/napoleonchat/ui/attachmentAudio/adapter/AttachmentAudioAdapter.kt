@@ -8,10 +8,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentAudioItemBinding
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
+import javax.inject.Inject
 
-class AttachmentAudioAdapter constructor(private val clickListener: ClickListener) :
+class AttachmentAudioAdapter constructor(
+    private val clickListener: ClickListener,
+    private val mediaPlayerGalleryManager: MediaPlayerGalleryManager
+    ) :
     ListAdapter<MediaStoreAudio, AttachmentAudioAdapter.AttachmentAudioViewHolder>(MediaStoreAudio.DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AttachmentAudioViewHolder {
@@ -20,19 +24,19 @@ class AttachmentAudioAdapter constructor(private val clickListener: ClickListene
 
     override fun onBindViewHolder(holder: AttachmentAudioViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, clickListener)
+        holder.bind(item, clickListener, mediaPlayerGalleryManager)
     }
 
     class AttachmentAudioViewHolder constructor(private val binding: AttachmentAudioItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: MediaStoreAudio, clickListener: ClickListener) {
+        fun bind(item: MediaStoreAudio, clickListener: ClickListener, mediaPlayerGalleryManager: MediaPlayerGalleryManager) {
             binding.mediaStoreAudio = item
             binding.clickListener = clickListener
             val context = binding.container.context
 
-            if (MediaPlayerGalleryManager.getAudioId() == item.id.toString()) {
-                if (MediaPlayerGalleryManager.isPlaying()) {
+            if (mediaPlayerGalleryManager.getAudioId() == item.id.toString()) {
+                if (mediaPlayerGalleryManager.isPlaying()) {
                     changeIconPlayPause(context, R.drawable.ic_baseline_pause_circle)
                 } else {
                     changeIconPlayPause(context, R.drawable.ic_baseline_play_circle)

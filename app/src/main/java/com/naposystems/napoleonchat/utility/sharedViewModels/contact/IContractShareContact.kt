@@ -1,34 +1,34 @@
 package com.naposystems.napoleonchat.utility.sharedViewModels.contact
 
-import com.naposystems.napoleonchat.dto.contacts.blockedContact.BlockedContactResDTO
-import com.naposystems.napoleonchat.dto.contacts.deleteContact.DeleteContactResDTO
-import com.naposystems.napoleonchat.dto.contacts.unblockContact.UnblockContactResDTO
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationReqDTO
-import com.naposystems.napoleonchat.dto.muteConversation.MuteConversationResDTO
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.remote.dto.contacts.blockedContact.BlockedContactResDTO
+import com.naposystems.napoleonchat.source.remote.dto.contacts.deleteContact.DeleteContactResDTO
+import com.naposystems.napoleonchat.source.remote.dto.contacts.unblockContact.UnblockContactResDTO
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationResDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import retrofit2.Response
 
 interface IContractShareContact {
     interface ViewModel {
-        fun sendBlockedContact(contact: Contact)
+        fun sendBlockedContact(contact: ContactEntity)
         fun unblockContact(contactId: Int)
-        fun sendDeleteContact(contact: Contact)
+        fun sendDeleteContact(contact: ContactEntity)
         fun deleteConversation(contactId: Int)
         fun muteConversation(contactId: Int, contactSilenced: Boolean)
     }
 
     interface Repository {
         //region Block Contact
-        suspend fun sendBlockedContact(contact: Contact) : Response<BlockedContactResDTO>
-        suspend fun blockContactLocal(contact: Contact)
+        suspend fun sendBlockedContact(contact: ContactEntity) : Response<BlockedContactResDTO>
+        suspend fun blockContactLocal(contact: ContactEntity)
         //endregion
         //region Unblock Contact
         suspend fun unblockContact(contactId: Int): Response<UnblockContactResDTO>
         suspend fun unblockContactLocal(contactId: Int)
         //endregion
         //region Delete Contact
-        suspend fun sendDeleteContact(contact: Contact) : Response<DeleteContactResDTO>
-        suspend fun deleteContactLocal(contact: Contact)
+        suspend fun sendDeleteContact(contact: ContactEntity) : Response<DeleteContactResDTO>
+        suspend fun deleteContactLocal(contact: ContactEntity)
         //endregion
         //region Delete Conversation
         suspend fun deleteConversation(contactId: Int)

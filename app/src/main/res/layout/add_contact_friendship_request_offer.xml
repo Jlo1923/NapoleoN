@@ -11,7 +11,7 @@
 
         <variable
             name="friendshipRequest"
-            type="com.naposystems.napoleonchat.entity.addContact.FriendShipRequest" />
+            type="com.naposystems.napoleonchat.model.FriendShipRequest" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +29,6 @@
             android:layout_height="64dp"
             android:background="@drawable/border_avatar_contact"
             app:avatar="@{friendshipRequest.contact}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
@@ -40,12 +39,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/normal_margin"
-            android:layout_marginBottom="@dimen/x_small_margin"
             android:ellipsize="end"
             android:lines="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView_user_image"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView_user_image"
             app:layout_constraintVertical_chainStyle="packed"
             app:name="@{friendshipRequest.contact}"
             tools:text="@tools:sample/full_names" />
@@ -64,21 +62,29 @@
             app:nickname="@{friendshipRequest.contact}"
             tools:text="@tools:sample/first_names" />
 
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="@dimen/progress_friendship_request"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/x_small_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/button_cancel"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user_nickname" />
+
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_cancel"
-            style="@style/AppOutlinedPrimaryButtonSmall.Red"
+            style="@style/AppOutlinedPrimaryButtonSmall.Request.Red"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginTop="@dimen/x_small_margin"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:paddingStart="@dimen/x_small_padding"
+            android:paddingStart="@dimen/small_padding"
             android:paddingEnd="@dimen/small_padding"
             android:text="@string/text_cancel"
-            android:textAlignment="textStart"
-            android:textAllCaps="true"
             app:icon="@drawable/ic_close_black_24"
             app:iconTint="@color/red"
-            app:layout_constraintStart_toStartOf="@id/textView_user_name"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_user_nickname" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

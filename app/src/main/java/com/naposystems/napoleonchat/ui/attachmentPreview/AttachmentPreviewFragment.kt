@@ -12,24 +12,28 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentPreviewFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
-class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
+class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
 
     companion object {
         fun newInstance() = AttachmentPreviewFragment()
@@ -37,11 +41,20 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
     private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
 
+    @Inject
+    override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+        viewModelFactory
+    }
     private lateinit var binding: AttachmentPreviewFragmentBinding
     private var isPlayingVideo: Boolean = false
     private var hasSentAttachment: Boolean = false
     private val args: AttachmentPreviewFragmentArgs by navArgs()
-    private val attachment: Attachment by lazy {
+    private val attachmentEntity: AttachmentEntity by lazy {
         args.attachment
     }
     private val animationFadeIn: Animation by lazy {
@@ -83,9 +96,9 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         binding.galleryItemId = args.galleryItemId
         binding.inputPanel.setListener(this)
 
-        conversationShareViewModel.setAttachmentTaken(attachment)
+        conversationShareViewModel.setAttachmentTaken(attachmentEntity)
 
-        when (attachment.type) {
+        when (attachmentEntity.type) {
             Constants.AttachmentType.IMAGE.type,
             Constants.AttachmentType.GIF.type,
             Constants.AttachmentType.GIF_NN.type -> {
@@ -104,8 +117,8 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
                     val fileUri = Utils.getFileUri(
                         context = requireContext(),
-                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
-                        fileName = attachment.fileName
+                        subFolder = Constants.CacheDirectories.VIDEOS.folder,
+                        fileName = attachmentEntity.fileName
                     )
 
                     setVideoURI(fileUri)
@@ -188,9 +201,18 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.contactId == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    contactProfileShareViewModel.contact.value?.let { contact ->
+                        if (contact.id == eventContact.contactId) {
+                            if (contact.stateNotification) {
+                                handlerNotificationChannel.deleteUserChannel(
+                                    contact.id,
+                                    contact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)
@@ -232,7 +254,7 @@ class AttachmentPreviewFragment : Fragment(), InputPanelWidget.Listener {
 
     private fun deleteFile() {
         if (!hasSentAttachment) {
-            FileManager.deleteAttachmentFile(requireContext(), attachment)
+            FileManager.deleteAttachmentFile(requireContext(), attachmentEntity)
         }
     }
 

@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.ui.recoveryAccountQuestions
 
-import com.naposystems.napoleonchat.dto.recoveryAccountQuestions.RecoveryAccountAnswersDTO
-import com.naposystems.napoleonchat.dto.recoveryAccountQuestions.RecoveryAccountQuestionsResDTO
-import com.naposystems.napoleonchat.dto.recoveryAccountQuestions.RecoveryAccountUserDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccountQuestions.RecoveryAccountAnswersDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccountQuestions.RecoveryAccountQuestionsResDTO
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccountQuestions.RecoveryAccountUserDTO
 import com.naposystems.napoleonchat.model.recoveryAccountQuestions.RecoveryAccountAnswers
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -22,7 +22,7 @@ interface IContractRecoveryAccountQuestions {
         fun setRecoveredQuestionsPref()
         suspend fun setAttemptPref()
         suspend fun setFreeTrialPref(subscription: Boolean)
-        fun get422Error(response: ResponseBody) :ArrayList<String>
+        fun getUnprocessableEntityError(response: ResponseBody) :ArrayList<String>
         fun getError(response: ResponseBody): ArrayList<String>
         suspend fun insertUser(recoveryAccountUserDTO: RecoveryAccountUserDTO)
 

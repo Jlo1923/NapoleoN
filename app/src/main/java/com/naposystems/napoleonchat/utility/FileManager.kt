@@ -8,12 +8,12 @@ import android.webkit.MimeTypeMap
 import androidx.lifecycle.MutableLiveData
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants.AttachmentType.*
-import com.naposystems.napoleonchat.utility.Constants.NapoleonCacheDirectories.*
-import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.quality
-import id.zelory.compressor.constraint.resolution
+import com.naposystems.napoleonchat.utility.Constants.CacheDirectories.*
+import com.naposystems.napoleonchat.utils.imageCompressor.Compressor
+import com.naposystems.napoleonchat.utils.imageCompressor.constraint.quality
+import com.naposystems.napoleonchat.utils.imageCompressor.constraint.resolution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -242,7 +242,7 @@ class FileManager {
                 //this is the file going to use temporally to save the bytes.
                 // This file will not be a image, it will store the raw image data.
                 val path =
-                    File(context.cacheDir!!, Constants.NapoleonCacheDirectories.IMAGES.folder)
+                    File(context.cacheDir!!, Constants.CacheDirectories.IMAGES.folder)
                 if (!path.exists())
                     path.mkdirs()
 
@@ -293,14 +293,14 @@ class FileManager {
 
         fun copyEncryptedFile(
             context: Context,
-            attachment: Attachment
+            attachmentEntity: AttachmentEntity
         ): File {
 
-            val folder = getSubfolderByAttachmentType(attachment.type)
+            val folder = getSubfolderByAttachmentType(attachmentEntity.type)
 
-            val fileInputStream = getFileInputStreamFromAttachment(context, attachment, folder)
+            val fileInputStream = getFileInputStreamFromAttachment(context, attachmentEntity, folder)
 
-            val fileName = "${attachment.webId}.${attachment.extension}"
+            val fileName = "${attachmentEntity.webId}.${attachmentEntity.extension}"
             val path = File(context.cacheDir!!, folder)
             if (!path.exists())
                 path.mkdirs()
@@ -365,14 +365,14 @@ class FileManager {
 
         fun getFileInputStreamFromAttachment(
             context: Context,
-            attachment: Attachment,
+            attachmentEntity: AttachmentEntity,
             folder: String
         ): InputStream {
 
             val path = File(context.cacheDir!!, folder)
             if (!path.exists())
                 path.mkdirs()
-            val file = File(path, attachment.fileName)
+            val file = File(path, attachmentEntity.fileName)
             return FileInputStream(file)
         }
 
@@ -399,20 +399,20 @@ class FileManager {
             return encryptedFile.openFileInput()
         }
 
-        fun deleteAttachmentFile(context: Context, attachment: Attachment) {
-            val folder = getSubfolderByAttachmentType(attachment.type)
+        fun deleteAttachmentFile(context: Context, attachmentEntity: AttachmentEntity) {
+            val folder = getSubfolderByAttachmentType(attachmentEntity.type)
             val path = File(context.cacheDir!!, folder)
-            val file = File(path, attachment.fileName)
+            val file = File(path, attachmentEntity.fileName)
 
             if (file.exists()) {
                 file.delete()
             }
         }
 
-        fun deleteAttachmentEncryptedFile(context: Context, attachment: Attachment) {
-            val folder = getSubfolderByAttachmentType(attachment.type)
+        fun deleteAttachmentEncryptedFile(context: Context, attachmentEntity: AttachmentEntity) {
+            val folder = getSubfolderByAttachmentType(attachmentEntity.type)
             val path = File(context.cacheDir!!, folder)
-            val file = File(path, "${attachment.webId}.${attachment.extension}")
+            val file = File(path, "${attachmentEntity.webId}.${attachmentEntity.extension}")
 
             if (file.exists()) {
                 file.delete()

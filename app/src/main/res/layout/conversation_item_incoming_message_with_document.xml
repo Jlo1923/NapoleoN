@@ -8,7 +8,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
         <variable
             name="itemPosition"
@@ -46,7 +46,7 @@
             android:onClick="@{() -> clickListener.onPreviewClick(conversation)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.7">
+            app:layout_constraintWidth_percent="0.8">
 
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
@@ -97,7 +97,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageView_document_type"
-                app:messageDateIncoming="@{conversation.message.createdAt}"
+                app:messageDateIncoming="@{conversation.messageEntity.createdAt}"
                 tools:text="10:34 "
                 tools:visibility="visible" />
 

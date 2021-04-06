@@ -7,7 +7,7 @@
 
         <variable
             name="mediaStoreAudio"
-            type="com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio" />
+            type="com.naposystems.napoleonchat.model.MediaStoreAudio" />
 
         <variable
             name="clickListener"

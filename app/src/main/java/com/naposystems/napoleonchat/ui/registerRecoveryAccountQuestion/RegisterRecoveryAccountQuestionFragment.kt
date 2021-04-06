@@ -16,35 +16,34 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.RegisterRecoveryAccountQuestionFragmentBinding
-import com.naposystems.napoleonchat.entity.Questions
-import com.naposystems.napoleonchat.entity.RecoveryAnswer
+import com.naposystems.napoleonchat.model.Questions
+import com.naposystems.napoleonchat.model.RecoveryAnswer
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
 
 
-class RegisterRecoveryAccountQuestionFragment : Fragment() {
+class RegisterRecoveryAccountQuestionFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = RegisterRecoveryAccountQuestionFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var handlerDialog: HandlerDialog
+
+    @Inject
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: RegisterRecoveryAccountQuestionViewModel by viewModels { viewModelFactory }
     private lateinit var binding: RegisterRecoveryAccountQuestionFragmentBinding
     private lateinit var snackbarUtils: SnackbarUtils
     private var countAnswer = 1
     private var maxAnswer = 3
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,12 +138,12 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
 
         viewModel.recoveryAnswerCreatingErrors.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar{}
+            snackbarUtils.showSnackbar {}
         })
 
         viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             snackbarUtils = SnackbarUtils(binding.coordinator, it)
-            snackbarUtils.showSnackbar{}
+            snackbarUtils.showSnackbar {}
         })
     }
 
@@ -155,7 +154,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
             binding.textInputEditTextAnswers.text.toString().trim().replace("\\s+".toRegex(), " ")
 
         if (selectedIdQuestion.toInt() == 0 && textInputAnswer.isEmpty() && countAnswer > 3) {
-            generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_title_info),
                 getString(R.string.text_final_register),
                 true,
@@ -180,7 +179,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
             if (selectedQuestion is Questions) {
                 val recoveryAnswer = RecoveryAnswer(
                     selectedQuestion.id,
-                    binding.textInputEditTextAnswers.text.toString().toLowerCase(Locale.ROOT)
+                    binding.textInputEditTextAnswers.text.toString().trim().toLowerCase(Locale.ROOT)
                 )
                 if (flag == 0) {
                     if (countAnswer >= 3) {
@@ -211,7 +210,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
     }
 
     private fun infoQuestions() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_info),
             getString(R.string.text_info_register_account),
             false,
@@ -220,7 +219,7 @@ class RegisterRecoveryAccountQuestionFragment : Fragment() {
     }
 
     private fun showDeleteQuestionsDialog() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_cancel),
             getString(R.string.text_description_cancel),
             true,

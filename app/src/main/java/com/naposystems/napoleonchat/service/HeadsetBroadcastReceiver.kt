@@ -16,9 +16,17 @@ class HeadsetBroadcastReceiver : BroadcastReceiver() {
 
             Timber.d("headsetType: $headsetType")
 
-            when (intent?.getIntExtra("state", -1)) {
-                0 -> RxBus.publish(RxEvent.HeadsetState(Constants.HeadsetState.UNPLUGGED.state))
-                1 -> RxBus.publish(RxEvent.HeadsetState(Constants.HeadsetState.PLUGGED.state))
+            when (intent?.getIntExtra("state", Constants.HeadsetState.UNKNOWN.state)) {
+                Constants.HeadsetState.UNPLUGGED.state ->
+                    RxBus.publish(
+                        RxEvent.HeadsetState(
+                            Constants.HeadsetState.UNPLUGGED.state
+                        )
+                    )
+
+                Constants.HeadsetState.PLUGGED.state ->
+                    RxBus.publish(RxEvent.HeadsetState(Constants.HeadsetState.PLUGGED.state))
+
                 else -> Timber.d("Error")
             }
         }

@@ -9,7 +9,7 @@ import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithVideoBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.BlurTransformation
@@ -32,7 +32,7 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
     }
 
     override fun bind(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean,
         timeFormat: Int?,
@@ -52,11 +52,11 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
     }
 
     private fun bindImageAttachment(
-        messageAndAttachment: MessageAndAttachment
+        messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         try {
             val context = binding.imageViewAttachment.context
-            messageAndAttachment.getFirstAttachment()?.let { attachment ->
+            messageAndAttachmentRelation.getFirstAttachment()?.let { attachment ->
 
                 val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
 

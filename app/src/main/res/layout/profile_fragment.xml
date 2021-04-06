@@ -7,8 +7,8 @@
     <data>
 
         <variable
-            name="viewModel"
-            type="com.naposystems.napoleonchat.ui.profile.ProfileViewModel" />
+            name="user"
+            type="com.naposystems.napoleonchat.source.local.entity.UserEntity" />
     </data>
 
     <ScrollView
@@ -42,7 +42,7 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:scaleType="centerCrop"
-                        app:bannerUser="@{viewModel.user}"
+                        app:bannerUser="@{user}"
                         app:layout_constraintBottom_toTopOf="@id/header_separator"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +67,7 @@
                         android:background="@drawable/bg_profile_avatar"
                         android:scaleType="centerInside"
                         android:transitionName="transition_image_preview"
-                        app:avatarUser="@{viewModel.user}"
+                        app:avatarUser="@{user}"
                         app:layout_constraintBottom_toTopOf="@+id/textView_user_name"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -117,7 +117,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/imageView_profile_image"
-                        app:nameUserCover="@{viewModel.user}"
+                        app:nameUserCover="@{user}"
                         tools:text="Giussep Ricardo"
                         tools:visibility="visible" />
 
@@ -131,7 +131,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView_user_name"
-                        app:nicknameUser="@{viewModel.user}"
+                        app:nicknameUser="@{user}"
                         tools:text="\@giusseprc7" />
 
                     <!-- EDIT ICON -->
@@ -227,7 +227,7 @@
                             app:layout_constraintEnd_toEndOf="@id/textView_label_name"
                             app:layout_constraintStart_toStartOf="@id/textView_label_name"
                             app:layout_constraintTop_toBottomOf="@id/textView_label_name"
-                            app:nameUser="@{viewModel.user}"
+                            app:nameUser="@{user}"
                             tools:text="Giussep Ricardo Cachaya" />
 
                     </LinearLayout>
@@ -310,7 +310,7 @@
                             android:maxLength="@dimen/max_length_status"
                             android:padding="0dp"
                             android:singleLine="true"
-                            android:text="@{viewModel.user.status}"
+                            android:text="@{user.status}"
                             android:textColor="?attr/attrColorButtonTint"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="@id/textView_label_status"

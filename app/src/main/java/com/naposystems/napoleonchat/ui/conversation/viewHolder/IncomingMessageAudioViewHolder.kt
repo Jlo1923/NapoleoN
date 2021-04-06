@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.ui.conversation.viewHolder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.naposystems.napoleonchat.databinding.ConversationItemIncomingMessageWithAudioBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -24,7 +24,7 @@ class IncomingMessageAudioViewHolder constructor(
     }
 
     override fun bind(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean,
         timeFormat: Int?,

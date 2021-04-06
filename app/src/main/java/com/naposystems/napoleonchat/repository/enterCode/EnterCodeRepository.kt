@@ -1,20 +1,21 @@
 package com.naposystems.napoleonchat.repository.enterCode
 
-import com.naposystems.napoleonchat.dto.enterCode.EnterCode422DTO
-import com.naposystems.napoleonchat.dto.enterCode.EnterCodeErrorDTO
-import com.naposystems.napoleonchat.dto.enterCode.EnterCodeReqDTO
-import com.naposystems.napoleonchat.dto.enterCode.EnterCodeResDTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCode422DTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeErrorDTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeReqDTO
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeResDTO
 import com.naposystems.napoleonchat.ui.register.enterCode.IContractEnterCode
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 class EnterCodeRepository @Inject constructor(
@@ -95,11 +96,11 @@ class EnterCodeRepository @Inject constructor(
         )
     }
 
-    override fun get422Error(response: Response<EnterCodeResDTO>): ArrayList<String> {
-        val adapter = moshi.adapter(EnterCode422DTO::class.java)
+    override fun getUnprocessableEntityError(response: Response<EnterCodeResDTO>): ArrayList<String> {
+        val adapter = moshi.adapter(EnterCodeUnprocessableEntityDTO::class.java)
         val error = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(error!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(error!!)
     }
 
     override fun getDefaultError(response: Response<EnterCodeResDTO>): ArrayList<String> {
@@ -109,11 +110,11 @@ class EnterCodeRepository @Inject constructor(
         return arrayListOf(updateInfoError!!.error)
     }
 
-    override fun get422ErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String> {
-        val adapter = moshi.adapter(SendCode422DTO::class.java)
+    override fun getUnprocessableEntityErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String> {
+        val adapter = moshi.adapter(SendCodeUnprocessableEntityDTO::class.java)
         val error = adapter.fromJson(response.errorBody()!!.string())
 
-        return WebServiceUtils.get422Errors(error!!)
+        return WebServiceUtils.getUnprocessableEntityErrors(error!!)
     }
 
     override fun getDefaultErrorSendCode(response: Response<SendCodeResDTO>): ArrayList<String> {
@@ -124,6 +125,9 @@ class EnterCodeRepository @Inject constructor(
     }
 
     override fun saveAccountStatus(id: Int) {
+
+        Timber.d("AccountStatus saveAccountStatus $id")
+
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_ACCOUNT_STATUS,
             id

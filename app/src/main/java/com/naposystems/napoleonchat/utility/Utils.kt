@@ -13,6 +13,8 @@ import android.graphics.Rect
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
@@ -37,17 +39,16 @@ import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileDescriptor
-import java.io.FileInputStream
+import java.io.*
 import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -143,6 +144,34 @@ class Utils {
             context.startActivity(intent)
         }
 
+        fun isInternetAvailable(context: Context): Boolean {
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw =
+                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        }
+
+        fun isOnline(): Boolean {
+            val runtime = Runtime.getRuntime()
+            try {
+                val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+                val exitValue = ipProcess.waitFor()
+                return exitValue == 0
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+            return false
+        }
 
         fun vibratePhone(context: Context?, effect: Int, duration: Long) {
             val vibrator = context?.let {
@@ -173,6 +202,7 @@ class Utils {
             }
         }
 
+        //TODO: Abstraer a clase
         fun getFileUri(context: Context, fileName: String, subFolder: String): Uri {
             return try {
                 val path = File(context.cacheDir!!, subFolder)
@@ -219,147 +249,147 @@ class Utils {
                     }
                 }
             }
-
-        fun generalDialog(
-            title: String,
-            message: String,
-            isCancelable: Boolean,
-            childFragmentManager: FragmentManager,
-            textButtonAccept: String = "",
-            textButtonCancel: String = "",
-            actionAccept: () -> Unit
-        ) {
-            val dialog = GeneralDialogFragment.newInstance(
-                title,
-                message,
-                isCancelable,
-                textButtonAccept,
-                textButtonCancel
-            )
-            dialog.setListener(object : GeneralDialogFragment.OnGeneralDialog {
-                override fun onAccept() {
-                    actionAccept()
-                }
-            })
-            dialog.show(childFragmentManager, "GeneralDialog")
-        }
-
-        fun alertDialogWithNeutralButton(
-            message: Int,
-            isCancelable: Boolean,
-            childFragmentManager: Context,
-            titleTopButton: Int,
-            titleCentralButton: Int,
-            titleDownButton: Int,
-            clickTopButton: (Boolean) -> Unit,
-            clickDownButton: (Boolean) -> Unit
-        ) {
-            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
-                .setMessage(message)
-                .setCancelable(isCancelable)
-                .setPositiveButton(titleTopButton) { _, _ ->
-                    clickTopButton(true)
-                }
-                .setNeutralButton(titleCentralButton) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setNegativeButton(titleDownButton) { _, _ ->
-                    clickDownButton(true)
-                }
-                .create()
-
-            dialog.show()
-
-            val textColorButton =
-                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
-
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            positiveButton.setTextColor(textColorButton)
-            positiveButton.setBackgroundColor(Color.TRANSPARENT)
-            positiveButton.isAllCaps = false
-
-            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-            neutralButton.setTextColor(textColorButton)
-            neutralButton.setBackgroundColor(Color.TRANSPARENT)
-            neutralButton.isAllCaps = false
-
-            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-            negativeButton.setTextColor(textColorButton)
-            negativeButton.setBackgroundColor(Color.TRANSPARENT)
-            negativeButton.isAllCaps = false
-        }
-
-        fun alertDialogWithoutNeutralButton(
-            message: Int,
-            isCancelable: Boolean,
-            childFragmentManager: Context,
-            location: Int,
-            titlePositiveButton: Int,
-            titleNegativeButton: Int,
-            clickPositiveButton: (Boolean) -> Unit,
-            clickNegativeButton: (Boolean) -> Unit
-        ) {
-            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
-                .setMessage(message)
-                .setCancelable(isCancelable)
-                .setPositiveButton(titlePositiveButton) { _, _ ->
-                    clickPositiveButton(true)
-                }
-                .setNegativeButton(titleNegativeButton) { dialog, _ ->
-                    if (location == Constants.LocationAlertDialog.CONVERSATION.location)
-                        dialog.dismiss()
-                    else {
-                        clickNegativeButton(true)
-                        dialog.dismiss()
-                    }
-                }
-                .create()
-            dialog.show()
-
-            val textColorButton =
-                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
-
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            positiveButton.setTextColor(textColorButton)
-            positiveButton.setBackgroundColor(Color.TRANSPARENT)
-            positiveButton.isAllCaps = false
-
-            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-            negativeButton.setTextColor(textColorButton)
-            negativeButton.setBackgroundColor(Color.TRANSPARENT)
-            negativeButton.isAllCaps = false
-        }
-
-        fun alertDialogInformative(
-            title: String,
-            message: String,
-            isCancelable: Boolean,
-            childFragmentManager: Context,
-            titleButton: Int,
-            clickTopButton: (Boolean) -> Unit
-        ) {
-            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
-                .setMessage(message)
-                .setCancelable(isCancelable)
-                .setPositiveButton(titleButton) { _, _ ->
-                    clickTopButton(true)
-                }
-                .create()
-
-            if (title.isNotEmpty()) {
-                dialog.setTitle(title)
-            }
-
-            dialog.show()
-
-            val textColorButton =
-                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
-
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            positiveButton.setTextColor(textColorButton)
-            positiveButton.setBackgroundColor(Color.TRANSPARENT)
-            positiveButton.isAllCaps = false
-        }
+//
+//        fun generalDialog(
+//            title: String,
+//            message: String,
+//            isCancelable: Boolean,
+//            childFragmentManager: FragmentManager,
+//            textButtonAccept: String = "",
+//            textButtonCancel: String = "",
+//            actionAccept: () -> Unit
+//        ) {
+//            val dialog = GeneralDialogFragment.newInstance(
+//                title,
+//                message,
+//                isCancelable,
+//                textButtonAccept,
+//                textButtonCancel
+//            )
+//            dialog.setListener(object : GeneralDialogFragment.OnGeneralDialog {
+//                override fun onAccept() {
+//                    actionAccept()
+//                }
+//            })
+//            dialog.show(childFragmentManager, "GeneralDialog")
+//        }
+//
+//        fun alertDialogWithNeutralButton(
+//            message: Int,
+//            isCancelable: Boolean,
+//            childFragmentManager: Context,
+//            titleTopButton: Int,
+//            titleCentralButton: Int,
+//            titleDownButton: Int,
+//            clickTopButton: (Boolean) -> Unit,
+//            clickDownButton: (Boolean) -> Unit
+//        ) {
+//            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
+//                .setMessage(message)
+//                .setCancelable(isCancelable)
+//                .setPositiveButton(titleTopButton) { _, _ ->
+//                    clickTopButton(true)
+//                }
+//                .setNeutralButton(titleCentralButton) { dialog, _ ->
+//                    dialog.dismiss()
+//                }
+//                .setNegativeButton(titleDownButton) { _, _ ->
+//                    clickDownButton(true)
+//                }
+//                .create()
+//
+//            dialog.show()
+//
+//            val textColorButton =
+//                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
+//
+//            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+//            positiveButton.setTextColor(textColorButton)
+//            positiveButton.setBackgroundColor(Color.TRANSPARENT)
+//            positiveButton.isAllCaps = false
+//
+//            val neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+//            neutralButton.setTextColor(textColorButton)
+//            neutralButton.setBackgroundColor(Color.TRANSPARENT)
+//            neutralButton.isAllCaps = false
+//
+//            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+//            negativeButton.setTextColor(textColorButton)
+//            negativeButton.setBackgroundColor(Color.TRANSPARENT)
+//            negativeButton.isAllCaps = false
+//        }
+//
+//        fun alertDialogWithoutNeutralButton(
+//            message: Int,
+//            isCancelable: Boolean,
+//            childFragmentManager: Context,
+//            location: Int,
+//            titlePositiveButton: Int,
+//            titleNegativeButton: Int,
+//            clickPositiveButton: (Boolean) -> Unit,
+//            clickNegativeButton: (Boolean) -> Unit
+//        ) {
+//            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
+//                .setMessage(message)
+//                .setCancelable(isCancelable)
+//                .setPositiveButton(titlePositiveButton) { _, _ ->
+//                    clickPositiveButton(true)
+//                }
+//                .setNegativeButton(titleNegativeButton) { dialog, _ ->
+//                    if (location == Constants.LocationAlertDialog.CONVERSATION.location)
+//                        dialog.dismiss()
+//                    else {
+//                        clickNegativeButton(true)
+//                        dialog.dismiss()
+//                    }
+//                }
+//                .create()
+//            dialog.show()
+//
+//            val textColorButton =
+//                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
+//
+//            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+//            positiveButton.setTextColor(textColorButton)
+//            positiveButton.setBackgroundColor(Color.TRANSPARENT)
+//            positiveButton.isAllCaps = false
+//
+//            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+//            negativeButton.setTextColor(textColorButton)
+//            negativeButton.setBackgroundColor(Color.TRANSPARENT)
+//            negativeButton.isAllCaps = false
+//        }
+//
+//        fun alertDialogInformative(
+//            title: String,
+//            message: String,
+//            isCancelable: Boolean,
+//            childFragmentManager: Context,
+//            titleButton: Int,
+//            clickTopButton: (Boolean) -> Unit
+//        ) {
+//            val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
+//                .setMessage(message)
+//                .setCancelable(isCancelable)
+//                .setPositiveButton(titleButton) { _, _ ->
+//                    clickTopButton(true)
+//                }
+//                .create()
+//
+//            if (title.isNotEmpty()) {
+//                dialog.setTitle(title)
+//            }
+//
+//            dialog.show()
+//
+//            val textColorButton =
+//                convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
+//
+//            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+//            positiveButton.setTextColor(textColorButton)
+//            positiveButton.setBackgroundColor(Color.TRANSPARENT)
+//            positiveButton.isAllCaps = false
+//        }
 
         fun queryName(resolver: ContentResolver, uri: Uri): String {
             val returnCursor =
@@ -374,11 +404,11 @@ class Utils {
 
 
         fun convertBooleanToInvertedInt(boolean: Boolean): Int {
-            return if (boolean) {
-                0
-            } else {
-                1
-            }
+            return if (boolean) 0 else 1
+        }
+
+        fun convertIntToInvertedBoolean(int: Int): Boolean {
+            return int == 1
         }
 
         fun convertAttrToColorResource(context: Context, attr: Int): Int {
@@ -571,6 +601,7 @@ class Utils {
             return visibleHeightMethod.invoke(imm) as Int
         }
 
+        //TODO: Evitar el paso de contextos como parametros
         fun getAudioManager(context: Context) =
             context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -633,5 +664,92 @@ class Utils {
             tv.textSize = 14F
             vwToast.show()
         }
+
+        fun validateNickname(
+            contact: ContactEntity,
+            query: String
+        ): Boolean {
+            val data = contact.nicknameFake
+            return validateSearch(data, query)
+        }
+
+        fun validateDisplayName(contact: ContactEntity, query: String): Boolean {
+            val data = contact.displayNameFake
+            return validateSearch(data, query)
+        }
+
+        private fun validateSearch(data: String, query: String): Boolean {
+            return data.toLowerCase(Locale.getDefault()).contains(query)
+        }
+
+//        fun updateNickNameChannel(
+//            context: Context,
+//            contactId: Int,
+//            oldNick: String,
+//            newNick: String,
+//            notificationService: OLD_NotificationService
+//        ) {
+////            val notificationUtils = NotificationService()
+////            val notificationUtils = NotificationService(context.applicationContext)
+////            val uri = notificationService.getChannelSound(
+////                context,
+////                Constants.ChannelType.CUSTOM.type,
+////                contactId,
+////                oldNick
+////            )
+////
+////            deleteUserChannel(notificationService, context, contactId, oldNick)
+////
+////            updateContactChannel(
+////                context,
+////                uri,
+////                Constants.ChannelType.CUSTOM.type,
+////                contactId,
+////                newNick,
+////                notificationService
+////            )
+//        }
+
+//        fun updateContactChannel(
+//            context: Context,
+//            uri: Uri?,
+//            channelType: Int,
+//            contactId: Int? = null,
+//            contactNick: String? = null,
+//            notificationService: OLD_NotificationService
+//        ) {
+////            val notificationUtils = NotificationService()
+////            val notificationUtils = NotificationService(context.applicationContext)
+//
+////            notificationService.updateChannel(context, uri, channelType, contactId, contactNick)
+//        }
+
+//        fun deleteUserChannel(
+//            notificationService: OLD_NotificationService,
+//            context: Context,
+//            contactId: Int,
+//            oldNick: String,
+//            notificationId: String? = null
+//        ) {
+//            Timber.d("*TestDelete: id $contactId, nick $oldNick")
+////            val notificationUtils = NotificationService()
+////            val notificationUtils = NotificationService(context.applicationContext)
+//            val channelId = if (notificationId != null) {
+//                Timber.d("*TestDelete: exist Channel $notificationId")
+//                context.getString(R.string.notification_custom_channel_id, oldNick, notificationId)
+//            } else {
+//                Timber.d("*TestDelete: no exist Channel")
+////                notificationService.getChannelId(
+////                    context,
+////                    Constants.ChannelType.CUSTOM.type,
+////                    contactId,
+////                    oldNick
+////                )
+//            }
+//
+//            Timber.d("*TestDelete: ChannelId $channelId")
+//
+////            notificationService.deleteChannel(context, channelId, contactId)
+//        }
     }
 }

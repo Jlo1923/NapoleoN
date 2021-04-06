@@ -1,16 +1,13 @@
 package com.naposystems.napoleonchat.ui.baseFragment
 
-import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-open class BaseFragment : Fragment() {
+open class BaseFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = BaseFragment()
@@ -18,22 +15,11 @@ open class BaseFragment : Fragment() {
 
     @Inject
     open lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: BaseViewModel
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
+    private val viewModel: BaseViewModel by viewModels { viewModelFactory }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         viewModel.outputControl(Constants.OutputControl.TRUE.state)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(BaseViewModel::class.java)
     }
 
     open fun validateStateOutputControl() {
@@ -42,4 +28,8 @@ open class BaseFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.connectSocket()
+    }
 }

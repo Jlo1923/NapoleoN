@@ -1,7 +1,7 @@
 package com.naposystems.napoleonchat.ui.mainActivity
 
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 
 interface IContractMainActivity {
 
@@ -24,10 +24,12 @@ interface IContractMainActivity {
         fun isVideoCall(): Boolean?
         fun resetIsVideoCall()
         fun resetIsOnCallPref()
+        fun getRecoveryQuestionsPref(): Int
+        fun disconnectSocket()
     }
 
     interface Repository {
-        suspend fun getUser(): User
+        suspend fun getUser(): UserEntity
         suspend fun getAccountStatus(): Int
         fun getOutputControl(): Int
         suspend fun setOutputControl(state: Int)
@@ -36,7 +38,9 @@ interface IContractMainActivity {
         suspend fun setLockStatus(state: Int)
         fun setLockTimeApp(lockTime: Long)
         fun setJsonNotification(json: String)
-        suspend fun getContactById(contactId: Int): Contact?
+        suspend fun getContactById(contactId: Int): ContactEntity?
         fun resetIsOnCallPref()
+        fun getRecoveryQuestionsPref(): Int
+        fun disconnectSocket()
     }
 }

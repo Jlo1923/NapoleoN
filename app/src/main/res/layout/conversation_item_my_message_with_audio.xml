@@ -14,7 +14,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
         <variable
             name="itemPosition"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.7">
+            app:layout_constraintWidth_percent="0.8">
 
             <com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
                 android:id="@+id/quote"
@@ -88,7 +88,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/imageView_message_status"
                 app:layout_constraintTop_toBottomOf="@+id/audio_player"
-                app:messageDateSend="@{conversation.message.createdAt}"
+                app:messageDateSend="@{conversation.messageEntity.createdAt}"
                 tools:text="10:34 "
                 tools:visibility="visible" />
 
@@ -98,7 +98,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/textView_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/textView_date"
-                app:messageStatus="@{conversation.message.status}"
+                app:messageStatus="@{conversation.messageEntity.status}"
                 tools:srcCompat="@drawable/ic_message_sent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

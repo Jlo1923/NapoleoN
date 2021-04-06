@@ -14,7 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactsFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.custom.emptyState.EmptyStateCustomView
@@ -22,25 +23,30 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomView.OnEventListener {
+class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCustomView.OnEventListener {
 
     companion object {
         fun newInstance() = ContactsFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
+
     private val viewModel: ContactsViewModel by viewModels { viewModelFactory }
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -54,15 +60,10 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
     private lateinit var searchView: SearchView
     private lateinit var popup: PopupMenu
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.contacts_fragment, container, false
         )
@@ -144,9 +145,10 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
                 if (listContacts.count() >= 1) {
                     listContacts.add(
                         0,
-                        Contact(
+                        ContactEntity(
                             0,
-                            displayName = getString(R.string.text_add_new_contact)
+                            displayName = "",
+                            displayNameFake = getString(R.string.text_add_new_contact)
                         )
                     )
                     listContacts.sortBy { contact ->
@@ -191,7 +193,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
 
     private fun setAdapter() {
         adapter = ContactsAdapter(object : ContactsAdapter.ContactClickListener {
-            override fun onClick(item: Contact) {
+            override fun onClick(item: ContactEntity) {
                 if (item.id != 0) {
                     goToConversation(item)
                 } else {
@@ -199,7 +201,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
                 }
             }
 
-            override fun onMoreClick(item: Contact, view: View) {
+            override fun onMoreClick(item: ContactEntity, view: View) {
                 popup = PopupMenu(context!!, view)
                 popup.menuInflater.inflate(R.menu.menu_popup_contact, popup.menu)
 
@@ -224,7 +226,7 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
 
     }
 
-    private fun goToConversation(item: Contact) {
+    private fun goToConversation(item: ContactEntity) {
         searchView.close()
         findNavController().currentDestination?.getAction(R.id.action_contactsFragment_to_conversationFragment)?.let {
             findNavController().navigate(
@@ -242,15 +244,15 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
         )
     }
 
-    private fun seeProfile(contact: Contact) {
+    private fun seeProfile(contact: ContactEntity) {
         findNavController().navigate(
             ContactsFragmentDirections
                 .actionContactsFragmentToContactProfileFragment(contact.id)
         )
     }
 
-    private fun blockedContact(contact: Contact) {
-        generalDialog(
+    private fun blockedContact(contact: ContactEntity) {
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,
@@ -260,8 +262,8 @@ class ContactsFragment : Fragment(), SearchView.OnSearchView, EmptyStateCustomVi
         }
     }
 
-    private fun deleteContact(contact: Contact) {
-        generalDialog(
+    private fun deleteContact(contact: ContactEntity) {
+        handlerDialog.generalDialog(
             getString(R.string.text_delete_contact),
             getString(R.string.text_wish_delete_contact),
             true,

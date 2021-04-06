@@ -1,19 +1,38 @@
 package com.naposystems.napoleonchat.ui.addContact.adapter
 
-import android.view.LayoutInflater
+import android.content.Context
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.naposystems.napoleonchat.databinding.AddContactItemBinding
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.model.addContact.Contact
+import com.naposystems.napoleonchat.ui.addContact.viewHolder.*
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
+import timber.log.Timber
 
-class AddContactAdapter constructor(private val clickListener: ClickListener) :
-    ListAdapter<Contact, AddContactAdapter.AddContactViewHolder>(DiffCallback) {
+class AddContactAdapter constructor(
+    private val context: Context,
+    private val clickListener: ClickListener,
+    private val fragmentManager: FragmentManager,
+    private val handlerDialog: HandlerDialog,
+) :
+    ListAdapter<Contact, RecyclerView.ViewHolder>(DiffCallback) {
+
+
+    companion object {
+        const val TYPE_NO_FRIEND = 1
+        const val TYPE_FRIEND = 2
+        const val TYPE_REQUEST_SENT = 3
+        const val TYPE_REQUEST_RECEIVED = 4
+        const val TYPE_TITLE = 5
+
+    }
 
     object DiffCallback : DiffUtil.ItemCallback<Contact>() {
         override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean {
-            return oldItem.nickname == newItem.nickname && oldItem.haveFriendshipRequest == newItem.haveFriendshipRequest
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
@@ -21,58 +40,117 @@ class AddContactAdapter constructor(private val clickListener: ClickListener) :
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+
+        val item = getItem(position)
+        return if (item.type == 0) {
+            when {
+                item.statusFriend -> TYPE_FRIEND
+                item.receiver -> TYPE_REQUEST_SENT
+                item.offer -> TYPE_REQUEST_RECEIVED
+                else ->
+                    TYPE_NO_FRIEND
+            }
+        } else TYPE_TITLE
+    }
+
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): AddContactViewHolder {
-        return AddContactViewHolder.from(parent)
+    ): RecyclerView.ViewHolder {
+        return when (viewType) {
+
+            TYPE_NO_FRIEND ->
+                AddContactViewHolder.from(parent)
+            TYPE_REQUEST_SENT ->
+                RequestContactSentViewHolder.from(parent)
+            TYPE_REQUEST_RECEIVED ->
+                RequestContactReceivedHolder.from(parent)
+            TYPE_TITLE ->
+                AddContactTitleViewHolder.from(parent)
+            else -> {
+                //friend or friend blocked
+                FriendContactViewHolder.from(parent)
+            }
+        }
+
     }
 
-    override fun onBindViewHolder(holder: AddContactViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, clickListener)
+        when (holder) {
+            is RequestContactSentViewHolder -> holder.bind(item)
+            is AddContactViewHolder -> holder.bind(item, clickListener)
+            is RequestContactReceivedHolder -> holder.bind(
+                item,
+                clickListener,
+                fragmentManager,
+                handlerDialog,
+                context
+            )
+            is AddContactTitleViewHolder -> {
+                holder.bind(item, context)
+            }
+            else -> {
+                (holder as FriendContactViewHolder).bind(item, clickListener)
+            }
+        }
     }
 
-    class AddContactViewHolder constructor(private val binding: AddContactItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Contact, clickListener: ClickListener) {
+    fun updateContact(contact: Contact) {
+        val index = currentList.indexOf(contact)
+        val item = currentList[index]
+        item.receiver = true
+        notifyItemChanged(index)
+    }
 
-            binding.contact = item
-            binding.clickListener = clickListener
-            binding.buttonAdd.isEnabled = true
+    fun updateContactRequest(contact: Contact) {
+        try {
+            //update Title
 
-            binding.textViewUserName.isSelected = true
+            if (contact.statusFriend) {
+                val firstPosition = 0
+                val secondPosition = 1
 
-            binding.buttonAdd.setOnClickListener {
-                if (!item.haveFriendshipRequest) {
-                    it.isEnabled = false
-                    clickListener.onAddClick(item)
+                val list: MutableList<Contact> = mutableListOf()
+                list.addAll(currentList)
+
+                val element = currentList.findLast { it.statusFriend }
+                if (element != null) {
+                    list.remove(contact)
+                    list.add(secondPosition, contact)
+                    submitList(list)
+                } else {
+                    list.add(
+                        firstPosition, Contact(
+                            id = -1,
+                            type = Constants.AddContactTitleType.TITLE_MY_CONTACTS.type
+                        )
+                    )
+                    list.remove(contact)
+                    list.add(secondPosition, contact)
+                    notifyItemChanged(firstPosition)
+                    submitList(list)
                 }
+            } else {
+                val index = currentList.indexOf(contact)
+                val item = currentList[index]
+                item.statusFriend = false
+                item.offer = false
+                notifyItemChanged(index)
             }
-            binding.executePendingBindings()
+
+        } catch (exception: Exception) {
+            Timber.d("exception ${exception.message}")
         }
 
-        companion object {
-            fun from(parent: ViewGroup): AddContactViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = AddContactItemBinding.inflate(
-                    layoutInflater,
-                    parent,
-                    false
-                )
-
-                return AddContactViewHolder(binding)
-            }
-        }
-    }
-
-    fun updateContact(index: Int) {
-        currentList[index].haveFriendshipRequest = true
-        notifyDataSetChanged()
     }
 
     interface ClickListener {
         fun onAddClick(contact: Contact)
+        fun onOpenChat(contact: Contact)
+        fun onAcceptRequest(contact: Contact, state: Boolean)
     }
 }

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.AddContactFriendshipRequestReceivedBinding
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
+import com.naposystems.napoleonchat.model.FriendShipRequest
 
 class FriendShipRequestReceivedAdapter constructor(private val clickListener: ClickListener) :
     ListAdapter<FriendShipRequest, FriendShipRequestReceivedAdapter.FriendShipRequestReceivedViewHolder>(

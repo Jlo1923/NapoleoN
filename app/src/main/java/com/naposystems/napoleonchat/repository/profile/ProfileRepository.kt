@@ -2,25 +2,25 @@ package com.naposystems.napoleonchat.repository.profile
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.webService.socket.IContractSocketService
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import javax.inject.Inject
 
 
 class ProfileRepository @Inject constructor(
     private val context: Context,
-    private val localDataSource: UserLocalDataSource,
+    private val localDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketService: IContractSocketService.SocketService
+    private val socketClient: SocketClient
 ) :
     IContractProfile.Repository {
 
-    override suspend fun getUser(): LiveData<User> {
-        return localDataSource.getUserLiveData(
+    override suspend fun getUser(): LiveData<UserEntity> {
+        return localDataSourceImp.getUserLiveData(
             sharedPreferencesManager.getString(
                 Constants.SharedPreferences.PREF_FIREBASE_ID,
                 ""
@@ -28,11 +28,11 @@ class ProfileRepository @Inject constructor(
         )
     }
 
-    override suspend fun updateLocalUser(user: User) {
-        localDataSource.updateUser(user)
+    override suspend fun updateLocalUser(userEntity: UserEntity) {
+        localDataSourceImp.updateUser(userEntity)
     }
 
     override fun disconnectSocket() {
-        socketService.disconnectSocket()
+        socketClient.disconnectSocket()
     }
 }

@@ -1,9 +1,9 @@
 package com.naposystems.napoleonchat.repository.validateNickname
 
-import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameReqDTO
-import com.naposystems.napoleonchat.dto.validateNickname.ValidateNicknameResDTO
+import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameResDTO
 import com.naposystems.napoleonchat.ui.register.validateNickname.IContractValidateNickname
-import com.naposystems.napoleonchat.webService.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import retrofit2.Response
 import javax.inject.Inject
 

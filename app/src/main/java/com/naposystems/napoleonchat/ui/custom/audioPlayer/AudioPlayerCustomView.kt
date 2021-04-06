@@ -27,8 +27,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     private var mIsEncryptedFile: Boolean = false
     private var mAudioFileUri: Uri? = null
     private var mEncryptedFileName: String = ""
-    private var mAudioId: String = ""
-    private var mWebId: String? = null
+    private var mMessageId: Int = -1
     private var mEnable : Boolean = true
     private var mSeekbarProgressBackgroundTint: Int = 0
     private var mSeekbarProgressTint: Int = 0
@@ -45,8 +44,8 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
     interface Listener {
         fun onErrorPlayingAudio()
-        fun onPause(audioId: String?)
-        fun onComplete(messageId : String, audioId: String?)
+        fun onPause(messageId : Int, webId: String)
+        fun onComplete(messageId : Int)
     }
 
     init {
@@ -137,9 +136,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         binding.imageButtonPlay.setOnClickListener {
             if (mEnable) {
                 mediaPlayerManager?.apply {
-                    Timber.d("-- OLA $mAudioId")
-                    setAudioId(mAudioId)
-                    setWebId(mWebId)
+                    setMessageId(mMessageId)
                     setImageButtonPlay(binding.imageButtonPlay)
                     setSeekbar(binding.seekbar)
                     setImageButtonSpeed(binding.imageButtonSpeed)
@@ -159,15 +156,15 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         }
 
         binding.imageButtonRewind.setOnClickListener {
-            mediaPlayerManager?.rewindMilliseconds(mAudioId, TimeUnit.SECONDS.toMillis(5))
+            mediaPlayerManager?.rewindMilliseconds(mMessageId, TimeUnit.SECONDS.toMillis(5))
         }
 
         binding.imageButtonForward.setOnClickListener {
-            mediaPlayerManager?.forwardMilliseconds(mAudioId, TimeUnit.SECONDS.toMillis(5))
+            mediaPlayerManager?.forwardMilliseconds(mMessageId, TimeUnit.SECONDS.toMillis(5))
         }
 
         binding.imageButtonSpeed.setOnClickListener {
-            mediaPlayerManager?.changeSpeed(mAudioId)
+            mediaPlayerManager?.changeSpeed(mMessageId)
         }
     }
 
@@ -178,7 +175,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun playAudio() {
-        Timber.d("Conver playAudio: $mAudioId")
+        Timber.d("Conver playAudio: $mMessageId")
         binding.imageButtonPlay.performClick()
     }
 
@@ -200,12 +197,8 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this.mEncryptedFileName = fileName
     }
 
-    override fun setAudioId(id: String) {
-        this.mAudioId = id
-    }
-
-    override fun setWebId(webId: String?) {
-        this.mWebId = webId
+    override fun setMessageId(id: Int) {
+        this.mMessageId = id
     }
 
     override fun setListener(listener: Listener) {
@@ -213,11 +206,11 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun setDuration(duration: Long) {
-        Timber.d("Conver setDuration: $duration, mAudioId: $mAudioId, mediaPlayerAudioId: ${mediaPlayerManager?.getAudioId()}")
+        Timber.d("Conver setDuration: $duration, mAudioId: $mMessageId, mediaPlayerAudioId: ${mediaPlayerManager?.getMessageId()}")
         binding.seekbar.max = 100
         mediaPlayerManager?.let {
-            binding.seekbar.tag = mAudioId
-            if (mAudioId.isNotEmpty() && it.getCurrentPosition() != 0 && duration > 0 && mAudioId == mediaPlayerManager?.getAudioId()) {
+            binding.seekbar.tag = mMessageId
+            if (mMessageId != -1 && it.getCurrentPosition() != 0 && duration > 0 && mMessageId == mediaPlayerManager?.getMessageId()) {
                 val progress = ((it.getCurrentPosition() * 100) / duration).toInt()
                 binding.textViewDuration.text = Utils.getDuration(
                     (duration - ((duration * progress) / 100)),
@@ -229,19 +222,21 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     it.setSeekbar(binding.seekbar)
                     it.setTextViewDuration(binding.textViewDuration)
                     it.setImageButtonPlay(binding.imageButtonPlay)
-                    it.setStateImageButtonSpeed(binding.imageButtonSpeed, mWebId ?: "")
+                    it.setStateImageButtonSpeed(binding.imageButtonSpeed, mMessageId)
                     binding.imageButtonPlay.setImageDrawable(
                         context.resources.getDrawable(
                             R.drawable.ic_baseline_pause_circle, context.theme
                         )
                     )
+                    Timber.d("*TestAudio: Play")
                 } else {
-                    it.setStateImageButtonSpeed(binding.imageButtonSpeed, mWebId ?: "")
+                    it.setStateImageButtonSpeed(binding.imageButtonSpeed, mMessageId)
                     binding.imageButtonPlay.setImageDrawable(
                         context.resources.getDrawable(
                             R.drawable.ic_baseline_play_circle, context.theme
                         )
                     )
+                    Timber.d("*TestAudio: Pause")
                 }
 //                mediaPlayerManager?.setDuration(duration)
                 /*if (mediaPlayerManager?.isPlaying() == true && !binding.imageButtonPlay.hasBeenInitialized) {
@@ -259,6 +254,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                         R.drawable.ic_baseline_play_circle, context.theme
                     )
                 )
+//                Timber.d("*TestAudio: Pause")
             }
         } ?: run {
             binding.textViewDuration.text = Utils.getDuration(duration, false)
@@ -273,23 +269,12 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
         this@AudioPlayerCustomView.mListener?.onErrorPlayingAudio()
     }
 
-    override fun onPauseAudio(messageWebId: String?) {
-        Timber.d("Conver onPauseAudio: $messageWebId")
-        /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
-            messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
-            Timber.d("Conver audioPlayerCustom pause")
-            this.mListener?.onPause(audioId)
-        }*/
-        this.mListener?.onPause(messageWebId)
+    override fun onPauseAudio(messageId: Int, webId: String) {
+        this.mListener?.onPause(messageId, webId)
     }
 
-    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
-        Timber.d("Conver onCompleteAudio: $messageWebId")
-        /*if (messageAndAttachment?.message?.status == Constants.MessageStatus.UNREAD.status) {
-            messageAndAttachment?.message?.status = Constants.MessageStatus.READED.status
-            this.mListener?.onComplete(audioId)
-        }*/
-        this.mListener?.onComplete(messageId, messageWebId)
+    override fun onCompleteAudio(messageId: Int) {
+        this.mListener?.onComplete(messageId)
     }
     //endregion
 }

@@ -1,18 +1,47 @@
 package com.naposystems.napoleonchat.repository.changeFakes
 
-import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
-import com.naposystems.napoleonchat.ui.changeParams.IContractChangeParams
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.dto.contactProfile.ContactFakeReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.contactProfile.ContactFakeResDTO
+import com.naposystems.napoleonchat.ui.changeParams.IContractChangeDialogParams
+import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
-class ChangeParamsDialogRepository@Inject constructor(
-    private val contactDataSource: ContactDataSource
-) : IContractChangeParams.Repository {
+class ChangeParamsDialogRepository @Inject constructor(
+    private val napoleonApi: NapoleonApi,
+    private val contactLocalDataSource: ContactLocalDataSource
+) : IContractChangeDialogParams.Repository {
 
-    override suspend fun updateNameFakeContact(contactId: Int, nameFake: String) {
-        contactDataSource.updateNameFakeContact(contactId, nameFake)
+    override suspend fun updateNameOrNickNameFakeContact(
+        contactId: Int,
+        data: String,
+        isNameFake: Boolean
+    ): Response<ContactFakeResDTO> {
+        val request = if (isNameFake) {
+            ContactFakeReqDTO(data, null, null)
+        } else {
+            ContactFakeReqDTO(null, data, null)
+        }
+        return napoleonApi.updateContactFake(request, contactId)
     }
 
-    override suspend fun updateNicknameFakeContact(contactId: Int, nicknameFake: String) {
-        contactDataSource.updateNicknameFakeContact(contactId, nicknameFake)
+    override suspend fun updateContactFakeLocal(contactId: Int, contactUpdated: ContactFakeResDTO) {
+        val contact = contactLocalDataSource.getContactById(contactId)
+        contact?.let {
+            it.displayName = contactUpdated.fullname
+            it.nickname = contactUpdated.nickname
+            it.imageUrl = contactUpdated.avatar ?: ""
+            it.displayNameFake =
+                if (contactUpdated.fullNameFake.isNullOrEmpty()) contactUpdated.fullname else contactUpdated.fullNameFake
+            it.nicknameFake =
+                if (contactUpdated.nicknameFake.isNullOrEmpty()) contactUpdated.nickname else contactUpdated.nicknameFake
+            it.imageUrlFake =
+                if (contactUpdated.avatarFake.isNullOrEmpty()) contactUpdated.avatar
+                    ?: "" else contactUpdated.avatarFake
+            contactLocalDataSource.updateContact(it)
+        }
+
     }
 }

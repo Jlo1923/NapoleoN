@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 16
+        versionCode 37
 
-        versionName "1.0.0-interna16"
+        versionName "1.1.37-FIX-CALL"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -41,18 +41,13 @@ android {
             }
         }
     }
+
+    androidExtensions {
+        experimental = true
+    }
+
     buildTypes {
-        debug {
-            buildConfigField("String", "BASE_URL", "\"https://dev.napoleon-chat.com/api/\"")
-            buildConfigField("String", "HOST_URL", "\"dev.napoleon-chat.com\"")
-            buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
-            buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
-            buildConfigField("String", "SOCKET_BASE_URL", "\"https://dev.napoleon-chat.com/broadcasting/auth\"")
-            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
-            buildConfigField("boolean", "ENCRYPT_API", "false")
-            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
-            buildConfigField("String", "PUSHER_KEY", "\"36880baf488e08473554\"")
-        }
+        /*Produccion*/
         release {
             buildConfigField("String", "BASE_URL", "\"https://prod.napoleon-chat.com/api/\"")
             buildConfigField("String", "HOST_URL", "\"prod.napoleon-chat.com\"")
@@ -83,16 +78,34 @@ android {
             signingConfig signingConfigs.config
             matchingFallbacks = ['debug', 'release']
         }
-        qaTest {
+        /*PUNTOS*/
+        puntos {
             debuggable true
-            buildConfigField("String", "BASE_URL", "\"https://qatest.napoleon-chat.com/api/\"")
-            buildConfigField("String", "HOST_URL", "\"qatest.napoleon-chat.com\"")
-            buildConfigField("String", "STUN_SERVER", "\"stun:stun-qatest.napoleon-chat.com:3478\"")
-            buildConfigField("String", "TURN_SERVER", "\"turn:turn-qatest.napoleon-chat.com:3478\"")
-            buildConfigField("String", "SOCKET_BASE_URL", "\"https://qatest.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "BASE_URL", "\"https://punto.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"punto.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://punto.napoleon-chat.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "true")
-            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
+            buildConfigField("String", "PUSHER_KEY", "\"4aab95e901cc54283f7d\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['debug', 'release']
+        }
+        /*QA*/
+        qa {
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"https://qa.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"qa.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://qa.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
             buildConfigField("String", "PUSHER_KEY", "\"80ce06fc03dc14b7a2dc\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -100,7 +113,22 @@ android {
             matchingFallbacks = ['debug', 'release']
         }
         pruebaInterna {
-            debuggable false
+            buildConfigField("String", "BASE_URL", "\"https://qa.napoleon-chat.com/api/\"")
+            buildConfigField("String", "HOST_URL", "\"qa.napoleon-chat.com\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "SOCKET_BASE_URL", "\"https://qa.napoleon-chat.com/broadcasting/auth\"")
+            buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
+            buildConfigField("boolean", "ENCRYPT_API", "true")
+            buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "true")
+            buildConfigField("String", "PUSHER_KEY", "\"80ce06fc03dc14b7a2dc\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            matchingFallbacks = ['qa', 'release']
+        }
+        /*DEV*/
+        debug {
             buildConfigField("String", "BASE_URL", "\"https://dev.napoleon-chat.com/api/\"")
             buildConfigField("String", "HOST_URL", "\"dev.napoleon-chat.com\"")
             buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
@@ -110,15 +138,12 @@ android {
             buildConfigField("boolean", "ENCRYPT_API", "false")
             buildConfigField("boolean", "ENCRYPT_SHARED_PREFERENCES", "false")
             buildConfigField("String", "PUSHER_KEY", "\"36880baf488e08473554\"")
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
-            matchingFallbacks = ['debug', 'release']
         }
     }
 
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
 
     kotlinOptions {
@@ -282,7 +307,7 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:$glide_version"
 
     //Image Compressor
-    implementation "id.zelory:compressor:$image_compressor_version"
+//    implementation "id.zelory:compressor:$image_compressor_version"
 
     //Socket-io
     implementation("io.socket:socket.io-client:$io_socket_version") {
@@ -314,7 +339,7 @@ dependencies {
     //RXKotlin & RXAndroid
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
-    implementation  'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
 
     //Stetho
     implementation "com.facebook.stetho:stetho:$stetho_version"
@@ -328,6 +353,9 @@ dependencies {
 
     // WebRTC
     implementation "org.webrtc:google-webrtc:$web_rtc_version"
+
+    // WorkManager
+    implementation "androidx.work:work-runtime-ktx:$work_version"
     //endregion
 
     //region Testing
@@ -342,6 +370,10 @@ dependencies {
 
     //Video Compressor
     implementation project(':videocompressor')
+
+    implementation "com.xwray:groupie:$groupie_version"
+    implementation "com.xwray:groupie-viewbinding:$groupie_version"
+    implementation "com.xwray:groupie-kotlin-android-extensions:$groupie_version"
     //endregion
 
 }

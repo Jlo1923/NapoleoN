@@ -18,6 +18,9 @@ interface IContractDefaultPreferences {
         suspend fun setDefaultAttemptsForRetryCode()
         suspend fun setDefaultTimeForRetryCode()
         suspend fun setDefaultAttemptsForNewCode()
+        suspend fun setDefaultNotificationMessageChannelId()
+        suspend fun setDefaultNotificationGroupChannelId()
+        suspend fun setDefaultDialogSubscription()
     }
 
 }

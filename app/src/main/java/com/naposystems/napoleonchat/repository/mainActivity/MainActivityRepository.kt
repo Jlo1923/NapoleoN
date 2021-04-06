@@ -1,27 +1,28 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
-import com.naposystems.napoleonchat.db.dao.contact.ContactDataSource
-import com.naposystems.napoleonchat.db.dao.user.UserLocalDataSource
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
-import com.naposystems.napoleonchat.utility.Data
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
-    private val contactLocalDataSource: ContactDataSource,
-    private val userLocalDataSource: UserLocalDataSource,
-    private val sharedPreferencesManager: SharedPreferencesManager
-) :
-    IContractMainActivity.Repository {
+    private val contactLocalDataSource: ContactLocalDataSource,
+    private val userLocalDataSourceImp: UserLocalDataSourceImp,
+    private val sharedPreferencesManager: SharedPreferencesManager,
+    private val socketClient: SocketClient
+) :    IContractMainActivity.Repository {
 
-    override suspend fun getUser(): User {
-        val firebaseId = sharedPreferencesManager
-            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-        return userLocalDataSource.getUser(firebaseId)
+    override suspend fun getUser(): UserEntity {
+//        val firebaseId = sharedPreferencesManager
+//            .getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
+        return userLocalDataSourceImp.getMyUser()
     }
 
     override suspend fun getAccountStatus(): Int {
@@ -78,6 +79,14 @@ class MainActivityRepository @Inject constructor(
         contactLocalDataSource.getContactById(contactId)
 
     override fun resetIsOnCallPref() {
-        Data.isOnCall = false
+        NapoleonApplication.isCurrentOnCall = false
+    }
+
+    override fun getRecoveryQuestionsPref(): Int {
+        return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED)
+    }
+
+    override fun disconnectSocket() {
+//        socketMessageService.disconnectSocket()
     }
 }

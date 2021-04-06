@@ -50,7 +50,7 @@ class NapoleonKeyboardStickerPageAdapter constructor(private val listener: Napol
             val file = FileManager.createFile(
                 binding.imageViewProgress.context,
                 item.name,
-                Constants.NapoleonCacheDirectories.GIFS.folder
+                Constants.CacheDirectories.GIFS.folder
             )
 
             binding.file = file

@@ -7,25 +7,27 @@ import android.view.View
 import androidx.annotation.MenuRes
 import com.naposystems.napoleonchat.R
 
-class ActionModeMenu(private val clickDelete: (Boolean) -> Unit,
-                     private val clickCopy: (Boolean) -> Unit,
-                     private val clickBack: (Boolean) -> Unit) : ActionMode.Callback {
+class ActionModeMenu(
+    private val clickDelete: (Boolean) -> Unit,
+    private val clickCopy: (Boolean) -> Unit,
+    private val clickBack: (Boolean) -> Unit
+) : ActionMode.Callback {
 
     var mode: ActionMode? = null
     var hideCopyButton = false
+    var quantitySystemMessage = 0
     var quantityMessageOtherUser = 0
     var quantityMessagesFailed = 0
 
     @MenuRes
-    private var menuResId :  Int  =  0
+    private var menuResId: Int = 0
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.delete -> {
-                if(quantityMessageOtherUser > 0 || quantityMessagesFailed > 0){
+                if (quantityMessageOtherUser > 0 || quantityMessagesFailed > 0 || quantitySystemMessage > 0) {
                     clickDelete(true)
-                }
-                else {
+                } else {
                     clickDelete(false)
                 }
             }
@@ -53,7 +55,7 @@ class ActionModeMenu(private val clickDelete: (Boolean) -> Unit,
         this.mode = null
     }
 
-    fun changeTitle (text : String) {
+    fun changeTitle(text: String) {
         mode?.title = text
     }
 

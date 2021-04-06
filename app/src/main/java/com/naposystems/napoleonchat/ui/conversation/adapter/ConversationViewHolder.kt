@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.RxView
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.ui.custom.audioPlayer.AudioPlayerCustomView
 import com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
@@ -32,7 +32,6 @@ import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -55,17 +54,18 @@ open class ConversationViewHolder constructor(
     var imageButtonSend: AppCompatImageButton? = null
     var textViewMessage: TextView? = null
     var imageButtonPlay: AppCompatImageButton? = null
+    var imageButtonShow: AppCompatImageButton? = null
 
     var progressVisibility = false
 
     open fun countDown(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         textView: TextView?,
-        itemToEliminate: (MessageAndAttachment) -> Unit
+        itemToEliminate: (MessageAttachmentRelation) -> Unit
     ) {
 
         countDownTimer?.cancel()
-        val endTime = item.message.totalSelfDestructionAt.toLong()
+        val endTime = item.messageEntity.totalSelfDestructionAt.toLong()
         if (endTime > 0) {
             val remainingTime =
                 (endTime - TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
@@ -117,6 +117,7 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     imageButtonState?.visibility = View.INVISIBLE
                     imageButtonPlay?.visibility = View.VISIBLE
+                    imageButtonShow?.visibility = View.VISIBLE
                 }
             }
         } catch (e: Exception) {
@@ -218,6 +219,7 @@ open class ConversationViewHolder constructor(
             imageButtonState?.visibility = View.INVISIBLE
             imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
             imageButtonPlay?.visibility = View.VISIBLE
+            imageButtonShow?.visibility = View.VISIBLE
         }
     }
 
@@ -270,18 +272,19 @@ open class ConversationViewHolder constructor(
         }
     }
 
-    fun setStateMessage(state : Int) {
+    fun setStateMessage(state: Int) {
         imageButtonSend?.isEnabled =
             !(state == Constants.StateMessage.START.state || state == Constants.StateMessage.SUCCESS.state)
     }
 
     open fun bind(
-        item: MessageAndAttachment,
+        item: MessageAttachmentRelation,
         clickListener: ConversationAdapter.ClickListener,
         isFirst: Boolean = false,
         timeFormat: Int?,
         mediaPlayerManager: MediaPlayerManager? = null
     ) {
+
         countDown(
             item,
             textViewCountDown,
@@ -290,31 +293,31 @@ open class ConversationViewHolder constructor(
             }
         )
 
-        if (item.message.isSelected) {
+        if (item.messageEntity.isSelected) {
             parentContainerMessage?.setBackgroundColor(Color.parseColor("#99CCCCCC"))
         } else {
             parentContainerMessage?.setBackgroundColor(Color.TRANSPARENT)
         }
 
         parentContainerMessage?.setOnLongClickListener {
-            clickListener.onLongClick(item.message)
+            clickListener.onLongClick(item.messageEntity)
             true
         }
 
-        item.quote?.let {
+        item.quoteEntity?.let {
             quote?.setupMessageAndAttachment(item)
             quote?.visibility = View.VISIBLE
         } ?: run {
             quote?.visibility = View.GONE
         }
 
-        val firstAttachment: Attachment? = item.getFirstAttachment()
+        val firstAttachmentEntity: AttachmentEntity? = item.getFirstAttachment()
 
-        firstAttachment?.let { attachment ->
-            Timber.d("message.id: ${item.message.id}, attachment.id: ${attachment.id}, message.status ${item.message.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
+        firstAttachmentEntity?.let { attachment ->
+            Timber.d("message.id: ${item.messageEntity.id}, attachment.id: ${attachment.id}, message.status ${item.messageEntity.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
 //            Timber.d("hasUploadComplete: $hasUploadComplete")
 
-            if (item.message.status == Constants.MessageStatus.UNREAD.status &&
+            if (item.messageEntity.status == Constants.MessageStatus.UNREAD.status &&
                 attachment.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status
             ) {
                 Timber.d("Attachment status: ${attachment.status}, uri: ${attachment.fileName}")
@@ -322,6 +325,7 @@ open class ConversationViewHolder constructor(
             }
 
             when (attachment.status) {
+
                 Constants.AttachmentStatus.UPLOAD_CANCEL.status -> {
                     progressBar?.setProgress(0.0f)
                     progressBar?.visibility = View.GONE
@@ -330,17 +334,20 @@ open class ConversationViewHolder constructor(
 //                    imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
 //                    imageButtonState?.visibility = View.VISIBLE
                 }
+
                 Constants.AttachmentStatus.SENDING.status -> {
 //                    imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
 //                    imageButtonState?.visibility = View.VISIBLE
                     progressBarIndeterminate?.isVisible = true
                 }
+
                 Constants.AttachmentStatus.SENT.status -> {
 //                    imageButtonState?.visibility = View.INVISIBLE
                     progressBarIndeterminate?.visibility = View.GONE
                     progressBar?.visibility = View.INVISIBLE
                     progressBar?.setProgress(0f)
                 }
+
                 Constants.AttachmentStatus.NOT_DOWNLOADED.status -> {
                     progressBar?.setProgress(0f)
                     progressBar?.visibility = View.GONE
@@ -348,10 +355,12 @@ open class ConversationViewHolder constructor(
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
                     imageButtonState?.visibility = View.INVISIBLE
                 }
+
                 Constants.AttachmentStatus.DOWNLOADING.status -> {
                     imageButtonState?.setImageResource(R.drawable.ic_close_black_24)
                     progressBarIndeterminate?.visibility = View.VISIBLE
                 }
+
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
                     progressBar?.visibility = View.GONE
                     progressBar?.setProgress(0f)
@@ -365,13 +374,14 @@ open class ConversationViewHolder constructor(
                         imageButtonState?.visibility = View.INVISIBLE
                     }
 
-                    if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.message.status == Constants.MessageStatus.UNREAD.status ||
-                        attachment.type == Constants.AttachmentType.GIF.type && item.message.status == Constants.MessageStatus.UNREAD.status
+                    if (attachment.type == Constants.AttachmentType.GIF_NN.type && item.messageEntity.status == Constants.MessageStatus.UNREAD.status ||
+                        attachment.type == Constants.AttachmentType.GIF.type && item.messageEntity.status == Constants.MessageStatus.UNREAD.status
                     ) {
                         clickListener.sendMessageRead(item)
                     }
 
                     imageButtonPlay?.visibility = View.VISIBLE
+                    imageButtonShow?.visibility = View.VISIBLE
                 }
                 Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,
                 Constants.AttachmentStatus.DOWNLOAD_ERROR.status -> {
@@ -389,7 +399,7 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
 
-                    if (item.message.isMine == Constants.IsMine.YES.value) {
+                    if (item.messageEntity.isMine == Constants.IsMine.YES.value) {
 //                        imageButtonState?.setImageResource(R.drawable.ic_file_upload_black)
                     } else {
 //                        imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
@@ -404,6 +414,7 @@ open class ConversationViewHolder constructor(
                     progressBar?.visibility = View.GONE
                     progressBarIndeterminate?.visibility = View.GONE
                     imageButtonPlay?.visibility = View.GONE
+                    imageButtonShow?.visibility = View.GONE
                 }
             }
 
@@ -421,14 +432,17 @@ open class ConversationViewHolder constructor(
             }
 
             imageViewAttachment?.setOnClickListener {
-                if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
-                    attachment.status == Constants.AttachmentStatus.SENT.status
-                ) {
-                    clickListener.onPreviewClick(item)
+                imageButtonShow?.let { button ->
+                    if (attachment.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status ||
+                        attachment.status == Constants.AttachmentStatus.SENT.status ||
+                        button.isVisible
+                    ) {
+                        clickListener.onPreviewClick(item)
+                    }
                 }
             }
 
-            if (item.message.isMine == Constants.IsMine.YES.value && audioPlayer != null && mediaPlayerManager != null) {
+            if (item.messageEntity.isMine == Constants.IsMine.YES.value && audioPlayer != null && mediaPlayerManager != null) {
                 loadMediaPlayer(mediaPlayerManager, attachment, item, clickListener)
             }
         } ?: run {
@@ -438,18 +452,19 @@ open class ConversationViewHolder constructor(
             progressBar?.visibility = View.GONE
             progressBarIndeterminate?.visibility = View.GONE
             imageButtonPlay?.visibility = View.GONE
+            imageButtonShow?.visibility = View.GONE
         }
 
         imageButtonSend?.setSafeOnClickListener {
-            if (item.message.status == Constants.MessageStatus.ERROR.status) {
+            if (item.messageEntity.status == Constants.MessageStatus.ERROR.status) {
                 imageButtonSend?.isEnabled = false
-                clickListener.reSendMessage(item.message)
+                clickListener.reSendMessage(item.messageEntity)
             }
         }
     }
 
-    private fun showDestructionTime(messageAndAttachment: MessageAndAttachment) {
-        val message = messageAndAttachment.message
+    private fun showDestructionTime(messageAndAttachmentRelation: MessageAttachmentRelation) {
+        val message = messageAndAttachmentRelation.messageEntity
         val stringId = when (message.selfDestructionAt) {
             Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time -> R.string.text_every_five_seconds
             Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time -> R.string.text_every_fifteen_seconds
@@ -471,29 +486,27 @@ open class ConversationViewHolder constructor(
 
     private fun loadMediaPlayer(
         mediaPlayerManager: MediaPlayerManager,
-        attachment: Attachment,
-        item: MessageAndAttachment,
+        attachmentEntity: AttachmentEntity,
+        item: MessageAttachmentRelation,
         clickListener: ConversationAdapter.ClickListener
     ) {
-        Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getAudioId()}")
-//        mediaPlayerManager.resetMediaPlayer()
+        Timber.d("loadMediaPlayer, current: ${mediaPlayerManager.getCurrentPosition()}, max: ${mediaPlayerManager.getMax()}, audioId: ${mediaPlayerManager.getMessageId()}")
         with(audioPlayer!!) {
-            setAudioId(item.message.id.toString())
-            setWebId(item.message.webId)
+            setMessageId(item.messageEntity.id)
             setMediaPlayerManager(mediaPlayerManager)
-            setDuration(attachment.duration)
+            setDuration(attachmentEntity.duration)
 
-            if (item.message.isMine == Constants.IsMine.YES.value) {
-                if (attachment.status == Constants.AttachmentStatus.SENT.status) {
+            if (item.messageEntity.isMine == Constants.IsMine.YES.value) {
+                if (attachmentEntity.status == Constants.AttachmentStatus.SENT.status) {
                     isEncryptedFile(BuildConfig.ENCRYPT_API)
                     if (BuildConfig.ENCRYPT_API) {
-                        setEncryptedFileName("${attachment.webId}.${attachment.extension}")
+                        setEncryptedFileName("${attachmentEntity.webId}.${attachmentEntity.extension}")
                     } else {
                         setAudioFileUri(
                             Utils.getFileUri(
                                 context = context,
-                                fileName = attachment.fileName,
-                                subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                                fileName = attachmentEntity.fileName,
+                                subFolder = Constants.CacheDirectories.AUDIOS.folder
                             )
                         )
                     }
@@ -502,21 +515,21 @@ open class ConversationViewHolder constructor(
                     setAudioFileUri(
                         Utils.getFileUri(
                             context = context,
-                            fileName = attachment.fileName,
-                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            fileName = attachmentEntity.fileName,
+                            subFolder = Constants.CacheDirectories.AUDIOS.folder
                         )
                     )
                 }
             } else {
                 isEncryptedFile(BuildConfig.ENCRYPT_API)
                 if (BuildConfig.ENCRYPT_API) {
-                    setEncryptedFileName("${attachment.webId}.${attachment.extension}")
+                    setEncryptedFileName("${attachmentEntity.webId}.${attachmentEntity.extension}")
                 } else {
                     setAudioFileUri(
                         Utils.getFileUri(
                             context = context,
-                            fileName = attachment.fileName,
-                            subFolder = Constants.NapoleonCacheDirectories.AUDIOS.folder
+                            fileName = attachmentEntity.fileName,
+                            subFolder = Constants.CacheDirectories.AUDIOS.folder
                         )
                     )
                 }
@@ -526,33 +539,27 @@ open class ConversationViewHolder constructor(
                     clickListener.errorPlayingAudio()
                 }
 
-                override fun onPause(audioId: String?) {
-                    Timber.d("--onPause $audioId")
-                    audioId?.let {
-                        clickListener.sendMessageRead("", audioId, false, adapterPosition)
-                    }
+                override fun onPause(messageId: Int, webId: String) {
+                    clickListener.sendMessageRead(messageId, webId, false, adapterPosition)
                 }
 
-                override fun onComplete(messageId: String, audioId: String?) {
-                    Timber.d("--onComplete $audioId")
-                    audioId?.let {
-                        clickListener.sendMessageRead(messageId, audioId, true, adapterPosition)
-                    }
+                override fun onComplete(messageId: Int) {
+                    clickListener.sendMessageRead(messageId, "", true, adapterPosition)
                 }
             })
         }
     }
 
     private fun imageButtonStateClickListener(
-        attachment: Attachment,
+        attachmentEntity: AttachmentEntity,
         clickListener: ConversationAdapter.ClickListener,
-        item: MessageAndAttachment
+        item: MessageAttachmentRelation
     ) {
-        when (attachment.status) {
+        when (attachmentEntity.status) {
             Constants.AttachmentStatus.SENDING.status -> {
-                attachment.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
-                clickListener.updateAttachmentState(attachment)
-                val message = item.message
+                attachmentEntity.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
+                clickListener.updateAttachmentState(attachmentEntity)
+                val message = item.messageEntity
                 message.status = Constants.MessageStatus.ERROR.status
                 clickListener.updateMessageState(message)
                 progressBar?.setProgress(0.0f)
@@ -569,8 +576,8 @@ open class ConversationViewHolder constructor(
             }
             Constants.AttachmentStatus.UPLOAD_CANCEL.status,
             Constants.AttachmentStatus.ERROR.status -> {
-                attachment.status = Constants.AttachmentStatus.SENDING.status
-                clickListener.uploadAttachment(attachment, item.message)
+                attachmentEntity.status = Constants.AttachmentStatus.SENDING.status
+                clickListener.uploadAttachment(attachmentEntity, item.messageEntity)
             }
             Constants.AttachmentStatus.DOWNLOADING.status -> {
                 try {
@@ -584,8 +591,8 @@ open class ConversationViewHolder constructor(
                 progressBar?.setProgress(0.0f)
                 progressBar?.visibility = View.GONE
                 imageButtonState?.setImageResource(R.drawable.ic_file_download_black)
-                attachment.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
-                clickListener.updateAttachmentState(attachment)
+                attachmentEntity.status = Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
+                clickListener.updateAttachmentState(attachmentEntity)
             }
             Constants.AttachmentStatus.DOWNLOAD_ERROR.status,
             Constants.AttachmentStatus.DOWNLOAD_CANCEL.status,

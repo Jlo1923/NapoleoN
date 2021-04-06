@@ -14,13 +14,17 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.RegisterRecoveryAccountBinding
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class RegisterRecoveryAccountFragment : Fragment() {
+class RegisterRecoveryAccountFragment : BaseFragment() {
 
     companion object {
         fun newInstance() =
@@ -28,16 +32,14 @@ class RegisterRecoveryAccountFragment : Fragment() {
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var handlerDialog: HandlerDialog
+
+    @Inject
+    override lateinit var viewModelFactory: ViewModelFactory
     private lateinit var binding: RegisterRecoveryAccountBinding
     private val viewModel: RegisterRecoveryAccountViewModel by viewModels { viewModelFactory }
 
     private var recoveryQuestionsPref: Int = 0
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,13 +69,14 @@ class RegisterRecoveryAccountFragment : Fragment() {
             if (recoveryQuestionsPref == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
                 binding.textViewDescription.setText(R.string.text_recovery_account_ok)
                 binding.buttonRegister.setText(R.string.text_edit)
+                RxBus.publish(RxEvent.HideOptionMenuRecoveryAccount())
             }
         })
     }
 
     private fun gotoRegisterQuestions(){
         if (recoveryQuestionsPref == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
-            Utils.generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_alert_failure),
                 getString(R.string.text_recovery_account_ok),
                 true,

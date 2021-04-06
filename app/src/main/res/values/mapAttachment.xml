@@ -2,4 +2,6 @@
 <resources>
     <string name="text_error_map">An error occurred while capturing the map</string>
     <string name="text_site_not_found">Site could not be found</string>
+    <string name="text_location_not_found">Location could not be set, Please select manually.</string>
+    <string name="text_location_not_found_without_connection">It was not possible to establish the location, check the internet connection.</string>
 </resources>

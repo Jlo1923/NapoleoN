@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemGroupDateMessageBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -18,11 +18,11 @@ class GroupDateMessageViewHolder constructor(
 
     @SuppressLint("ResourceAsColor", "SetTextI18n")
     fun bind(
-        item: MessageAndAttachment
+        item: MessageAttachmentRelation
     ) {
         val context = binding.textViewBody.context
         val timeStamp =
-            TimeUnit.SECONDS.toMillis(item.message.createdAt.toLong())
+            TimeUnit.SECONDS.toMillis(item.messageEntity.createdAt.toLong())
         val messageDate =
             Date(timeStamp)
 
@@ -33,7 +33,7 @@ class GroupDateMessageViewHolder constructor(
 
         binding.conversation = item
         binding.textViewBody.text = when {
-            item.message.body == dayActual -> {
+            item.messageEntity.body == dayActual -> {
                 context.getString(R.string.text_date_today)
             }
             dayNext == dayActual -> {

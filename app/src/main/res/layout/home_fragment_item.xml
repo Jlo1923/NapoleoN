@@ -19,7 +19,7 @@
 
         <variable
             name="conversation"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
 
     </data>
 
@@ -55,7 +55,7 @@
             app:format="@{timeFormat}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:messageHour="@{conversation.message.createdAt}"
+            app:messageHour="@{conversation.messageEntity.createdAt}"
             tools:text="8:15 a.m" />
 
         <TextView
@@ -70,7 +70,7 @@
             app:layout_constraintBottom_toBottomOf="@id/linear_container"
             app:layout_constraintEnd_toEndOf="@id/textView_hora"
             app:layout_constraintTop_toTopOf="@+id/linear_container"
-            app:typeMessage="@{conversation.message.messageType}"
+            app:typeMessage="@{conversation.messageEntity.messageType}"
             app:unreadMessages="@{conversation.messagesUnReads}"
             tools:text="100"
             tools:visibility="visible" />
@@ -83,7 +83,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/linear_container"
             app:layout_constraintEnd_toEndOf="@+id/textView_hora"
             app:layout_constraintTop_toTopOf="@+id/linear_container"
-            app:statusMessage="@{conversation.message}"
+            app:statusMessage="@{conversation.messageEntity}"
             tools:src="@drawable/ic_message_readed"
             tools:visibility="visible" />
 

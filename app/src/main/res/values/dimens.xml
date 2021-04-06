@@ -52,6 +52,10 @@
     <dimen name="text_size_calling">16sp</dimen>
     <dimen name="text_size_call_nickname">28sp</dimen>
     <dimen name="recording_voice_lock_target">-100dp</dimen>
+    <dimen name="progress_friendship_request">20dp</dimen>
+
+    <dimen name="multiple_attachment_tab_select_stroke">2dp</dimen>
+    <dimen name="multiple_attachment_tab_un_select_stroke">0dp</dimen>
 
     <!-- BEGIN MATERIAL RIPPLE DIMENS -->
     <item name="low_ripple_pressed_alpha" format="float" type="dimen">0.12</item>

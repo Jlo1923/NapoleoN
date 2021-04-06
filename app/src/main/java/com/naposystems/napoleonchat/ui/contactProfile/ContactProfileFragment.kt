@@ -3,18 +3,20 @@ package com.naposystems.napoleonchat.ui.contactProfile
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -25,9 +27,10 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactProfileFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.changeParams.ChangeFakeParamsDialogFragment
@@ -40,13 +43,14 @@ import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.napoleonchat.utility.Utils.Companion.showSimpleSnackbar
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -64,8 +68,15 @@ class ContactProfileFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ContactProfileViewModel
-    private lateinit var shareContactViewModel: ShareContactViewModel
+
+    @Inject
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
+
+    private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
+    private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
@@ -84,6 +95,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private var compressedFile: File? = null
+    private lateinit var contact: ContactEntity
     private var contactSilenced: Boolean = false
     private lateinit var subFolder: String
     private lateinit var fileName: String
@@ -93,20 +105,16 @@ class ContactProfileFragment : BaseFragment() {
     private val bitmapMaxHeight = 1000
     private val imageCompression = 80
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
-            galleryShareViewModel.uriImageSelected.observe(activity, Observer { uri ->
+
+            galleryShareViewModel.uriImageSelected.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }
             })
-            cameraShareViewModel.uriImageTaken.observe(activity, Observer { uri ->
+            cameraShareViewModel.uriImageTaken.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }
@@ -117,27 +125,29 @@ class ContactProfileFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.contact_profile_fragment, container, false
         )
 
         binding.lifecycleOwner = this
 
-        binding.imageViewProfileContact.setSafeOnClickListener {showPreviewImage()}
+        binding.imageViewProfileContact.setSafeOnClickListener { showPreviewImage() }
+
+        binding.optionCustomNotification.setOnClickListener { optionCustomNotification() }
 
         binding.switchSilenceConversation.setOnCheckedChangeListener(optionMessageClickListener())
 
-        binding.optionRestoreContactChat.setSafeOnClickListener {optionRestoreContactChatClickListener()}
+        binding.optionRestoreContactChat.setSafeOnClickListener { optionRestoreContactChatClickListener() }
 
-        binding.optionDeleteConversation.setSafeOnClickListener {optionDeleteConversationClickListener()}
+        binding.optionDeleteConversation.setSafeOnClickListener { optionDeleteConversationClickListener() }
 
-        binding.optionBlockContact.setSafeOnClickListener {optionBlockContactClickListener()}
+        binding.optionBlockContact.setSafeOnClickListener { optionBlockContactClickListener() }
 
-        binding.optionDeleteContact.setSafeOnClickListener {optionDeleteContactClickListener()}
+        binding.optionDeleteContact.setSafeOnClickListener { optionDeleteContactClickListener() }
 
         binding.imageButtonEditHeader.setSafeOnClickListener {
-            subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
+            subFolder = Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder
             verifyCameraAndMediaPermission()
         }
 
@@ -148,24 +158,35 @@ class ContactProfileFragment : BaseFragment() {
             dialog.show(childFragmentManager, "ChangeFakesDialog")
         }
 
-        binding.imageButtonChangeNicknameEndIcon.setSafeOnClickListener {
-            val dialog = ChangeFakeParamsDialogFragment.newInstance(
-                args.contactId
-            )
-            dialog.show(childFragmentManager, "ChangeNickNameFakeDialog")
-        }
+        binding.optionChangeNickname.setSafeOnClickListener { openDialogNickFake() }
 
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (args.contactId == it.contactId)
+                    if (args.contactId == it.contactId) {
+                        if (contact.stateNotification) {
+                            handlerNotificationChannel.deleteUserChannel(
+                                contact.id,
+                                contact.getNickName()
+                            )
+                        }
                         findNavController().popBackStack(R.id.homeFragment, false)
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)
 
+        hideOptionForAndroidVersion()
+
         return binding.root
+    }
+
+    private fun openDialogNickFake() {
+        val dialog = ChangeFakeParamsDialogFragment.newInstance(
+            contact.id, contact.getNickName(), contact.stateNotification
+        )
+        dialog.show(childFragmentManager, "ChangeNickNameFakeDialog")
     }
 
     private fun showPreviewImage() {
@@ -173,11 +194,7 @@ class ContactProfileFragment : BaseFragment() {
             val extra = FragmentNavigatorExtras(
                 binding.imageViewProfileContact to "transition_image_preview"
             )
-            val titleToolbar = if (contact.nicknameFake.isNotEmpty()) {
-                contact.nicknameFake
-            } else {
-                contact.nickname
-            }
+            val titleToolbar = contact.getNickName()
             findNavController().navigate(
                 ContactProfileFragmentDirections
                     .actionContactProfileFragmentToPreviewImageFragment(
@@ -188,12 +205,9 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionBlockContactClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
-            getString(
-                R.string.text_wish_block_contact,
-                contactProfileShareViewModel.contact.value?.getName()
-            ),
+            getString(R.string.text_wish_block_contact),
             true,
             childFragmentManager
         ) {
@@ -201,6 +215,12 @@ class ContactProfileFragment : BaseFragment() {
                 if (contact.statusBlocked) {
                     shareContactViewModel.unblockContact(contact.id)
                 } else {
+                    if (contact.stateNotification) {
+                        handlerNotificationChannel.deleteUserChannel(
+                            contact.id,
+                            contact.getNickName()
+                        )
+                    }
                     shareContactViewModel.sendBlockedContact(contact)
                     findNavController().popBackStack(R.id.homeFragment, false)
                 }
@@ -216,16 +236,18 @@ class ContactProfileFragment : BaseFragment() {
     private fun optionDeleteContactClickListener() {
         val getContact = contactProfileShareViewModel.contact.value
         getContact?.let { contact ->
-            Utils.generalDialog(
+            handlerDialog.generalDialog(
                 getString(R.string.text_delete_contact),
-                getString(
-                    R.string.text_wish_delete_contact,
-                    if (contact.displayNameFake.isEmpty()) contact.displayName
-                    else contact.displayNameFake
-                ),
+                getString(R.string.text_wish_delete_contact),
                 true,
                 childFragmentManager
             ) {
+                if (contact.stateNotification) {
+                    handlerNotificationChannel.deleteUserChannel(
+                        contact.id,
+                        contact.getNickName()
+                    )
+                }
                 shareContactViewModel.sendDeleteContact(contact)
                 findNavController().popBackStack(R.id.homeFragment, false)
             }
@@ -233,7 +255,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionDeleteConversationClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -245,12 +267,16 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionRestoreContactChatClickListener() {
-        Utils.generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_reset_contact),
             getString(R.string.text_want_reset_contact),
             true,
             childFragmentManager
         ) {
+            handlerNotificationChannel.deleteUserChannel(
+                contact.id,
+                contact.getNickName()
+            )
             viewModel.restoreContact(args.contactId)
         }
     }
@@ -258,34 +284,29 @@ class ContactProfileFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(ContactProfileViewModel::class.java)
-
-        try {
-            shareContactViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
-                .get(ShareContactViewModel::class.java)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-
         binding.viewModel = contactProfileShareViewModel
 
         baseViewModel.getOutputControl()
 
         contactProfileShareViewModel.getLocalContact(args.contactId)
 
-        viewModel.muteConversationWsError.observe(viewLifecycleOwner, Observer {
+        viewModel.muteConversationWsError.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
             }
         })
+        viewModel.contactProfileWsError.observe(viewLifecycleOwner, {
+            //show message error
+            showSimpleSnackbar(binding.coordinator, it, 2)
+        })
 
-        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
+        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, { contact ->
             contact?.let {
                 checkSilenceConversation(contact.silenced)
                 setTextToolbar(contact)
                 setTextBlockedContact(contact.statusBlocked)
+                setActiveCustomNotification(contact)
             }
         })
     }
@@ -299,9 +320,16 @@ class ContactProfileFragment : BaseFragment() {
                 }
             }
             UCrop.REQUEST_CROP -> {
-                requestCrop(resultCode)
+                data?.let { requestCrop(resultCode, data) }
             }
         }
+    }
+
+    private fun optionCustomNotification() {
+        findNavController().navigate(
+            ContactProfileFragmentDirections
+                .actionContactProfileFragmentToCustomUserNotificationFragment(contact)
+        )
     }
 
     private fun optionMessageClickListener() =
@@ -337,13 +365,18 @@ class ContactProfileFragment : BaseFragment() {
         contactSilenced = silenced
     }
 
-    private fun setTextToolbar(contact: Contact) {
+    private fun setTextToolbar(contact: ContactEntity) {
         val text = if (contact.nicknameFake.isNotEmpty()) {
             contact.nicknameFake
         } else {
             contact.nickname
         }
         (activity as MainActivity).supportActionBar?.title = text
+    }
+
+    private fun setActiveCustomNotification(contactProfile: ContactEntity) {
+        contact = contactProfile
+        binding.editTextCustomNotification.isVisible = contactProfile.stateNotification
     }
 
     private fun verifyCameraAndMediaPermission() {
@@ -390,7 +423,7 @@ class ContactProfileFragment : BaseFragment() {
         var title = ""
 
         when (subFolder) {
-            Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder -> title =
+            Constants.CacheDirectories.IMAGE_FAKE_CONTACT.folder -> title =
                 requireContext().resources.getString(R.string.text_change_cover_photo)
         }
 
@@ -419,7 +452,7 @@ class ContactProfileFragment : BaseFragment() {
             }
 
             override fun defaultOptionSelected(location: Int) {
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     getString(R.string.text_select_default),
                     getString(R.string.text_message_restore_cover_photo),
                     true,
@@ -462,13 +495,26 @@ class ContactProfileFragment : BaseFragment() {
         }
     }
 
-    private fun requestCrop(resultCode: Int) {
+    private fun requestCrop(resultCode: Int, data: Intent) {
         if (resultCode == RESULT_OK) {
             try {
-                viewModel.updateAvatarFakeContact(args.contactId, compressedFile?.name ?: "")
-                context?.let { context ->
-                    clearCache(context)
+                val uri = UCrop.getOutput(data)
+                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val source = ImageDecoder.createSource(requireContext().contentResolver, uri!!)
+                    ImageDecoder.decodeBitmap(source)
+                } else {
+                    MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
                 }
+
+                bitmap?.let {
+                    val string64 = Utils.convertBitmapToBase64(bitmap)
+                    viewModel.updateAvatarFakeContact(args.contactId, string64)
+                    context?.let { context ->
+                        clearCache(context)
+                    }
+                }
+
+
             } catch (ex: IOException) {
                 Timber.e(ex)
             }
@@ -483,6 +529,12 @@ class ContactProfileFragment : BaseFragment() {
                     child.delete()
                 }
             }
+        }
+    }
+
+    private fun hideOptionForAndroidVersion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            binding.optionCustomNotification.isVisible = false
         }
     }
 }

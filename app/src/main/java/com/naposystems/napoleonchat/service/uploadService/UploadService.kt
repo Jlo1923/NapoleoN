@@ -4,11 +4,12 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
+import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClient
+import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClientImp
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -26,21 +27,21 @@ class UploadService : Service(), IContractUploadService {
     @Inject
     lateinit var repository: IContractUploadService.Repository
 
+    @Inject
+    lateinit var notificationUploadClient: NotificationUploadClient
+
     private lateinit var napoleonApplication: NapoleonApplication
 
-    private val notificationId = NotificationUtils.NOTIFICATION_UPLOADING
-
-    val notificationUtils by lazy {
-        NotificationUtils(
-            applicationContext
-        )
-    }
+    private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING
 
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate() {
+
         super.onCreate()
+
         (applicationContext as DaggerApplication).androidInjector().inject(this)
+
         this.napoleonApplication = applicationContext as NapoleonApplication
 
         subscribeRxEvents()
@@ -53,16 +54,16 @@ class UploadService : Service(), IContractUploadService {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand")
 
-        var message: Message? = null
-        var attachment: Attachment? = null
+        var messageEntity: MessageEntity? = null
+        var attachmentEntity: AttachmentEntity? = null
 
         intent.extras?.let { bundle ->
-            message = bundle.getParcelable(MESSAGE_KEY) as Message?
-            attachment = bundle.getParcelable(ATTACHMENT_KEY) as Attachment?
+            messageEntity = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
+            attachmentEntity = bundle.getParcelable(ATTACHMENT_KEY) as AttachmentEntity?
         }
 
-        if (message != null && attachment != null) {
-            repository.uploadAttachment(attachment!!, message!!)
+        if (messageEntity != null && attachmentEntity != null) {
+            repository.uploadAttachment(attachmentEntity!!, messageEntity!!)
             showNotification()
         }
 
@@ -79,7 +80,7 @@ class UploadService : Service(), IContractUploadService {
     }
 
     private fun showNotification() {
-        val notification = notificationUtils.createUploadNotification(
+        val notification = notificationUploadClient.createUploadNotification(
             applicationContext
         )
 
@@ -110,7 +111,7 @@ class UploadService : Service(), IContractUploadService {
 
         val disposableUploadProgress = RxBus.listen(RxEvent.UploadProgress::class.java)
             .subscribe {
-                notificationUtils.updateUploadProgress(PROGRESS_MAX, it.progress.toInt())
+                notificationUploadClient.updateUploadNotificationProgress(PROGRESS_MAX, it.progress.toInt())
             }
 
         val disposableCompressProgress = RxBus.listen(RxEvent.CompressProgress::class.java)

@@ -3,19 +3,21 @@ package com.naposystems.napoleonchat.ui.addContact
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AddContactFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.addContact.FriendShipRequest
+import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.model.addContact.Contact
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.ui.addContact.adapter.AddContactAdapter
 import com.naposystems.napoleonchat.ui.addContact.adapter.FriendshipRequestAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
@@ -23,6 +25,7 @@ import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -30,17 +33,22 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class AddContactFragment : Fragment(), SearchView.OnSearchView {
+class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
 
     companion object {
         fun newInstance() = AddContactFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var handlerDialog: HandlerDialog
+
+    @Inject
+    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
     private val shareViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
-    private lateinit var binding: AddContactFragmentBinding
+    private var _binding: AddContactFragmentBinding? = null
+    private val binding get() = _binding!!
+
     private val args: AddContactFragmentArgs by navArgs()
     private lateinit var mainActivity: MainActivity
     private lateinit var searchView: SearchView
@@ -50,21 +58,14 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         CompositeDisposable()
     }
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         setHasOptionsMenu(true)
 
-        binding = DataBindingUtil.inflate(
-            inflater, R.layout.add_contact_fragment, container, false
-        )
+        _binding = AddContactFragmentBinding.inflate(layoutInflater, container, false)
 
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.getFriendshipRequests()
@@ -81,11 +82,12 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
 
         disposable.add(disposableNewMessageReceived)
 
-        val disposableCancelOrRejectFriendshipRequest = RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                viewModel.getFriendshipRequests()
-            }
+        val disposableCancelOrRejectFriendshipRequest =
+            RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    viewModel.getFriendshipRequests()
+                }
 
         disposable.add(disposableCancelOrRejectFriendshipRequest)
 
@@ -133,17 +135,25 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         searchView.close()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        searchView.setListener(null)
+        _binding = null
+    }
+
     private fun observeFriendshipRequestAcceptedSuccessfully() {
-        shareViewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, Observer {
+        shareViewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, {
             if (it == true) {
+                viewModel.validateIfExistsOffer()
                 viewModel.getFriendshipRequests()
             }
         })
     }
 
     private fun observeFriendshipRequestPutSuccessfully() {
-        shareViewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, Observer {
+        shareViewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, {
             if (it == true) {
+                viewModel.validateIfExistsOffer()
                 viewModel.getFriendshipRequests()
             }
         })
@@ -159,14 +169,14 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
         })
     }
 
-    private fun showError(error: String){
+    private fun showError(error: String) {
         if (error.isNotEmpty()) {
             val list = ArrayList<String>()
             list.add(error)
 
             val snackbarUtils = SnackbarUtils(binding.coordinator, list)
 
-            snackbarUtils.showSnackbar{}
+            snackbarUtils.showSnackbar {}
         }
     }
 
@@ -190,10 +200,9 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendShipRequestSend() {
-        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                val index = viewModel.users.value!!.indexOf(viewModel.lastFriendshipRequest)
-                adapter.updateContact(index)
+        viewModel.friendShipRequestSendSuccessfully.observe(viewLifecycleOwner, {
+            if (it != null) {
+                adapter.updateContact(it)
             }
         })
     }
@@ -214,6 +223,11 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 binding.emptyStateSearch.textViewTitleSetVisibility(true)
             }
         })
+
+        viewModel.updateItem.observe(viewLifecycleOwner, {
+            adapter.updateContactRequest(it)
+        })
+
     }
 
     private fun setupFriendshipRequestsAdapter() {
@@ -230,7 +244,7 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
                 override fun onCancel(friendshipRequest: FriendShipRequest) {
                     shareViewModel.cancelFriendshipRequest(friendshipRequest)
                 }
-            })
+            }, childFragmentManager, handlerDialog, requireContext())
 
         binding.recyclerViewFriendshipRequest.adapter = friendshipRequestsAdapter
         binding.recyclerViewFriendshipRequest.itemAnimator = ItemAnimator()
@@ -238,17 +252,40 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
     }
 
     private fun setupSearchContactAdapter() {
-        adapter = AddContactAdapter(object : AddContactAdapter.ClickListener {
+        adapter = AddContactAdapter(requireContext(), object : AddContactAdapter.ClickListener {
             override fun onAddClick(contact: Contact) {
                 viewModel.sendFriendshipRequest(contact)
             }
-        })
+
+            override fun onOpenChat(contact: Contact) {
+                val con = viewModel.getContact(contact)
+                if (con != null)
+                    findNavController().navigate(
+                        AddContactFragmentDirections.actionAddContactFragmentToConversationFragment(
+                            con
+                        )
+                    )
+            }
+
+            override fun onAcceptRequest(contact: Contact, state: Boolean) {
+
+                val request = viewModel.acceptOrRefuseRequest(contact, state)
+                if (state) {
+                    shareViewModel.acceptFriendshipRequest(request)
+                } else {
+                    shareViewModel.refuseFriendshipRequest(request)
+                }
+
+            }
+        }, childFragmentManager, handlerDialog)
+        binding.recyclerViewContacts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewContacts.adapter = adapter
         binding.recyclerViewContacts.itemAnimator = ItemAnimator()
     }
 
     //region Implementation SearchView.OnSearchView
     override fun onOpened() {
+
         if (binding.viewSwitcher.currentView.id == binding.swipeRefresh.id) {
             binding.viewSwitcher.showNext()
             binding.emptyStateSearch.imageViewSetVisibility(true)
@@ -289,4 +326,5 @@ class AddContactFragment : Fragment(), SearchView.OnSearchView {
             viewModel.setSearchOpened()
         }
     }
+
 }

@@ -1,21 +1,17 @@
 package com.naposystems.napoleonchat.ui.previewMedia
 
-import android.content.Context
-import android.graphics.Paint
-import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -31,28 +27,31 @@ import com.google.android.exoplayer2.util.Util
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.PreviewMediaFragmentBinding
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
-import kotlin.math.ceil
 
-class PreviewMediaFragment : Fragment() {
+class PreviewMediaFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = PreviewMediaFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
     private val viewModel: PreviewMediaViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewMediaFragmentBinding
@@ -70,7 +69,7 @@ class PreviewMediaFragment : Fragment() {
     private val exoplayer: SimpleExoPlayer by lazy {
         ExoPlayerFactory.newSimpleInstance(context)
     }
-    private val messageAndAttachment: MessageAndAttachment by lazy {
+    private val messageAndAttachmentRelation: MessageAttachmentRelation by lazy {
         args.messageAndAttachment
     }
     private val animationFadeIn: Animation by lazy {
@@ -95,11 +94,6 @@ class PreviewMediaFragment : Fragment() {
     }
     private var mRunnable: Runnable? = null
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -113,11 +107,11 @@ class PreviewMediaFragment : Fragment() {
 
         binding.message = args.messageAndAttachment
 
-        if (args.messageAndAttachment.message.body.isEmpty()) {
+        if (args.messageAndAttachment.messageEntity.body.isEmpty()) {
             binding.containerMessageAndSeekbar.visibility = View.GONE
         }
 
-        val firstAttachment = messageAndAttachment.getFirstAttachment()
+        val firstAttachment = messageAndAttachmentRelation.getFirstAttachment()
 
         firstAttachment?.let { attachment ->
             when (attachment.type) {
@@ -125,12 +119,19 @@ class PreviewMediaFragment : Fragment() {
                 Constants.AttachmentType.GIF.type,
                 Constants.AttachmentType.LOCATION.type -> {
                     binding.imageViewPreview.visibility = View.VISIBLE
-                    if (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
-                        viewModel.sentMessageReaded(messageAndAttachment)
+                    if (messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.UNREAD.status) {
+                        viewModel.sentMessageReaded(messageAndAttachmentRelation)
                     }
                 }
                 Constants.AttachmentType.VIDEO.type -> {
                     try {
+
+                        binding.imageViewPreview.apply {
+                            visibility = View.GONE
+                            isClickable = false
+                            isFocusable = false
+                        }
+
                         binding.containerSeekbar.visibility = View.VISIBLE
                         binding.containerVideoView.visibility = View.VISIBLE
 
@@ -142,7 +143,7 @@ class PreviewMediaFragment : Fragment() {
                                 } else {
                                     contentUri = Utils.getFileUri(
                                         context = requireContext(),
-                                        subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                        subFolder = Constants.CacheDirectories.VIDEOS.folder,
                                         fileName = attachment.fileName
                                     )
                                     initializePlayer()
@@ -151,7 +152,7 @@ class PreviewMediaFragment : Fragment() {
                             else -> {
                                 contentUri = Utils.getFileUri(
                                     context = requireContext(),
-                                    subFolder = Constants.NapoleonCacheDirectories.VIDEOS.folder,
+                                    subFolder = Constants.CacheDirectories.VIDEOS.folder,
                                     fileName = attachment.fileName
                                 )
                                 initializePlayer()
@@ -169,11 +170,7 @@ class PreviewMediaFragment : Fragment() {
         }
 
         binding.container.setOnClickListener {
-            if (isUIVisible) {
-                hideUI()
-            } else {
-                showUI()
-            }
+            validateUI()
         }
 
         binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -212,24 +209,42 @@ class PreviewMediaFragment : Fragment() {
         val disposableContactBlockOrDelete =
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (args.messageAndAttachment.contact?.id == it.contactId)
-                        findNavController().popBackStack(R.id.homeFragment, false)
+                .subscribe { eventContact ->
+                    args.messageAndAttachment.contact?.let { noNullContact ->
+                        if (noNullContact.id == eventContact.contactId) {
+                            if (noNullContact.stateNotification) {
+                                handlerNotificationChannel.deleteUserChannel(
+                                    noNullContact.id,
+                                    noNullContact.getNickName()
+                                )
+                            }
+                            findNavController().popBackStack(R.id.homeFragment, false)
+                        }
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)
+
+        binding.imageViewPreview.setOnClickListener {
+            validateUI()
+        }
 
         binding.executePendingBindings()
 
         return binding.root
     }
 
+    private fun validateUI() {
+        if (isUIVisible) hideUI() else showUI()
+    }
+
     private fun sentMessageReaded(isPlaying: Boolean) {
-        if (!isFirstPause && !isPlaying && messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status) {
+        if (!isFirstPause && !isPlaying && messageAndAttachmentRelation.messageEntity.status == Constants.MessageStatus.UNREAD.status) {
             isFirstPause = true
-            messageAndAttachment.message.status = Constants.MessageStatus.READED.status
+            messageAndAttachmentRelation.messageEntity.status =
+                Constants.MessageStatus.READED.status
             Timber.d("isFirstPause: $isFirstPause")
-            viewModel.sentMessageReaded(messageAndAttachment)
+            viewModel.sentMessageReaded(messageAndAttachmentRelation)
         }
     }
 
@@ -272,6 +287,7 @@ class PreviewMediaFragment : Fragment() {
 
                             mHandler.postDelayed(mRunnable!!, 0)
                         }
+                        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
 
                     Player.STATE_ENDED -> {
@@ -288,6 +304,8 @@ class PreviewMediaFragment : Fragment() {
                         isEndFirstTime = true
 
                         sentMessageReaded(false)
+
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 }
             }
@@ -299,10 +317,14 @@ class PreviewMediaFragment : Fragment() {
                 if (isPlaying) {
                     binding.imageButtonPlay.playAnimation()
                     hideUI()
+//                    Timber.d("*TestPlay: Play")
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 } else {
                     binding.imageButtonPlay.apply {
                         reverseAnimation()
                         showUI()
+//                        Timber.d("*TestPlay: Pause")
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 }
             }
@@ -381,6 +403,7 @@ class PreviewMediaFragment : Fragment() {
             releasePlayer()
         }
         sentMessageReaded(false)
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onDestroy() {
@@ -390,6 +413,7 @@ class PreviewMediaFragment : Fragment() {
             tempFile?.delete()
         }
         sentMessageReaded(false)
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
 }

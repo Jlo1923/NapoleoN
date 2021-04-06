@@ -4,39 +4,30 @@ import android.graphics.Bitmap
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 
 @BindingAdapter("callBackground")
-fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact?) {
+fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: ContactEntity?) {
 
     val context = imageView.context
 
-    val defaultAvatar = context.resources.getDrawable(
-        R.drawable.logo_napoleon_app_blur,
-        context.theme
-    )
+    val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.logo_napoleon_app_blur)
 
     if (contact != null) {
 
         val loadImage = when {
             contact.imageUrlFake.isNotEmpty() -> {
-                Utils.getFileUri(
-                    context = context,
-                    fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
-                )
-            }
-            contact.imageUrl.isNotEmpty() -> {
-                contact.imageUrl
+                contact.imageUrlFake
             }
             else -> {
                 null
@@ -65,7 +56,7 @@ fun bindCallBackground(imageView: AppCompatImageView, @Nullable contact: Contact
 }
 
 @BindingAdapter("callTitle")
-fun bindCallTitle(textView: TextView, @Nullable contact: Contact?) {
+fun bindCallTitle(textView: TextView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = textView.context
 
@@ -74,7 +65,7 @@ fun bindCallTitle(textView: TextView, @Nullable contact: Contact?) {
 }
 
 @BindingAdapter("callName")
-fun bindCallName(textView: TextView, @Nullable contact: Contact?) {
+fun bindCallName(textView: TextView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = textView.context
 
@@ -83,18 +74,11 @@ fun bindCallName(textView: TextView, @Nullable contact: Contact?) {
 }
 
 @BindingAdapter("callMessage")
-fun bindCallMessage(textView: TextView, @Nullable contact: Contact?) {
+fun bindCallMessage(textView: TextView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = textView.context
 
-        val formattedNickname = when {
-            contact.nicknameFake.isNotEmpty() -> {
-                context.getString(R.string.label_nickname, contact.nicknameFake)
-            }
-            else -> {
-                context.getString(R.string.label_nickname, contact.nickname)
-            }
-        }
+        val formattedNickname = context.getString(R.string.label_nickname, contact.nicknameFake)
 
         val finalText = context.getString(R.string.text_contact_turn_off_camera, formattedNickname)
 

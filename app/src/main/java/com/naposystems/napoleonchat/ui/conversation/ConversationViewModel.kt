@@ -9,55 +9,62 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.dto.conversation.deleteMessages.DeleteMessagesReqDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageReqDTO
-import com.naposystems.napoleonchat.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.User
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageNotSentEntity
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.service.uploadService.UploadService
+import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
+import com.naposystems.napoleonchat.ui.conversation.model.ItemMessageWithMsgEntity
+import com.naposystems.napoleonchat.ui.conversation.model.toItemMessageWithMsgEntity
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
-import com.naposystems.napoleonchat.utility.Utils.Companion.setupNotificationSound
+import com.naposystems.napoleonchat.utility.extensions.getMessageEntityForCreate
+import com.naposystems.napoleonchat.utility.extensions.getSelfAutoDestructionForSave
+import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityAudio
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
+import retrofit2.Response
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class ConversationViewModel @Inject constructor(
+    private val cryptoMessage: CryptoMessage,
     private val context: Context,
     private val repository: IContractConversation.Repository
 ) : ViewModel(), IContractConversation.ViewModel {
 
-    private val cryptoMessage = CryptoMessage(context)
-
-    private lateinit var user: User
-    private lateinit var contact: Contact
+    private lateinit var userEntity: UserEntity
+    private lateinit var contactEntity: ContactEntity
     private var isVideoCall: Boolean = false
-    lateinit var contactProfile: LiveData<Contact>
+    lateinit var contactProfile: LiveData<ContactEntity>
 
     private val _webServiceError = MutableLiveData<List<String>>()
     val webServiceError: LiveData<List<String>>
         get() = _webServiceError
 
-    private lateinit var _messageMessages: LiveData<List<MessageAndAttachment>>
-    val messageMessages: LiveData<List<MessageAndAttachment>>
-        get() = _messageMessages
+    private lateinit var _messageMessagesRelation: LiveData<List<MessageAttachmentRelation>>
+    val messageMessagesRelation: LiveData<List<MessageAttachmentRelation>>
+        get() = _messageMessagesRelation
 
-    private lateinit var _messagesSelected: LiveData<List<MessageAndAttachment>>
-    val messagesSelected: LiveData<List<MessageAndAttachment>>
+    private lateinit var _messagesSelected: LiveData<List<MessageAttachmentRelation>>
+    val messagesSelected: LiveData<List<MessageAttachmentRelation>>
         get() = _messagesSelected
 
     private val _stringsCopy = MutableLiveData<List<String>>()
@@ -100,6 +107,10 @@ class ConversationViewModel @Inject constructor(
     val newMessageSend: LiveData<Boolean>
         get() = _newMessageSend
 
+    private val _messageNotSent = MutableLiveData<MessageNotSentEntity>()
+    val messageNotSentEntity: LiveData<MessageNotSentEntity>
+        get() = _messageNotSent
+
     private var countOldMessages: Int = 0
 
     init {
@@ -115,104 +126,93 @@ class ConversationViewModel @Inject constructor(
         return FileManager.copyFile(
             context,
             fileInputStream,
-            Constants.NapoleonCacheDirectories.AUDIOS.folder,
+            Constants.CacheDirectories.AUDIOS.folder,
             "${System.currentTimeMillis()}.mp3"
         )
     }
 
-    private fun setStatusErrorMessageAndAttachment(message: Message, attachment: Attachment?) {
-        message.status = Constants.MessageStatus.ERROR.status
-        repository.updateMessage(message)
-        attachment?.let {
-            attachment.status = Constants.AttachmentStatus.ERROR.status
-            repository.updateAttachment(attachment)
+    private fun setStatusErrorMessageAndAttachment(
+        messageEntity: MessageEntity,
+        attachmentEntity: AttachmentEntity?
+    ) {
+        messageEntity.status = Constants.MessageStatus.ERROR.status
+        repository.updateMessage(messageEntity)
+        attachmentEntity?.let {
+            attachmentEntity.status = Constants.AttachmentStatus.ERROR.status
+            repository.updateAttachment(attachmentEntity)
         }
     }
 
     //region Implementation IContractConversation.ViewModel
 
-    override fun getUser() = user
+    override fun getUser() = userEntity
 
-    override fun setContact(contact: Contact) {
-        this.contact = contact
+    override fun setContact(contact: ContactEntity) {
+        this.contactEntity = contact
     }
 
     override fun getLocalMessages() {
         viewModelScope.launch {
-            user = repository.getLocalUser()
+            userEntity = repository.getLocalUser()
             repository.verifyMessagesToDelete()
-            _messageMessages = repository.getLocalMessages(contact.id)
+            _messageMessagesRelation = repository.getLocalMessages(contactEntity.id)
         }
     }
 
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun saveMessageLocally(body: String, selfDestructTime: Int, quote: String) {
-        saveMessageAndAttachment(body, null, 0, selfDestructTime, quote)
+        val itemMessage = ItemMessage(
+            body,
+            selfDestructTime = selfDestructTime,
+            quote = quote,
+            contact = contactEntity
+        )
+        saveMessageAndAttachment(itemMessage)
     }
 
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun saveMessageAndAttachment(
-        messageString: String,
-        attachment: Attachment?,
-        numberAttachments: Int,
-        selfDestructTime: Int,
-        quote: String
+        itemMessage: ItemMessage
     ) {
         viewModelScope.launch {
-            val durationAttachment =
-                TimeUnit.MILLISECONDS.toSeconds(attachment?.duration ?: 0).toInt()
-            val selfAutoDestruction = compareDurationAttachmentWithSelfAutoDestructionInSeconds(
-                durationAttachment, selfDestructTime
-            )
+            itemMessage.apply {
+                this.contact = contactEntity // TODO: this can change
+                val selfAutoDestruction =
+                    attachment?.getSelfAutoDestructionForSave(selfDestructTime) ?: 0
 
-            if (messageString.isNotEmpty() || attachment != null) {
-                val message = Message(
-                    id = 0,
-                    webId = "",
-                    body = messageString,
-                    quoted = quote,
-                    contactId = contact.id,
-                    updatedAt = 0,
-                    createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
-                    isMine = Constants.IsMine.YES.value,
-                    status = Constants.MessageStatus.SENDING.status,
-                    numberAttachments = numberAttachments,
-                    messageType = Constants.MessageType.MESSAGE.type,
-                    selfDestructionAt = selfAutoDestruction
-                )
-
-                if (BuildConfig.ENCRYPT_API) {
-                    message.encryptBody(cryptoMessage)
+                if (messageString.isNotEmpty() || attachment != null) {
+                    val message = insertNewMessage(selfAutoDestruction)
+                    contact?.let { deleteMessageNotSent(it.id) }
+                    tryInsertAttachIfExists(message, attachment)
+                    if (message.quoted.isNotEmpty()) repository.insertQuote(quote, message)
+                    sendMessageAndAttachment(this.toItemMessageWithMsgEntity(message))
                 }
-
-                val messageId = repository.insertMessage(message).toInt()
-                Timber.d("insertMessage")
-                _newMessageSend.value = true
-
-                message.id = messageId
-
-                attachment?.let {
-                    attachment.messageId = messageId
-
-                    val attachmentId = repository.insertAttachment(attachment)
-                    attachment.id = attachmentId.toInt()
-                }
-
-                if (message.quoted.isNotEmpty()) {
-                    repository.insertQuote(quote, message)
-                }
-
-                sendMessageAndAttachment(
-                    attachment = attachment,
-                    message = message,
-                    numberAttachments = numberAttachments,
-                    selfDestructTime = selfAutoDestruction,
-                    quote = quote
-                )
             }
         }
+    }
+
+    private fun tryInsertAttachIfExists(
+        message: MessageEntity,
+        attachment: AttachmentEntity?
+    ) {
+        attachment?.let {
+            it.messageId = message.id
+            it.id = 0
+            val attachmentId = repository.insertAttachment(attachment)
+            attachment.id = attachmentId.toInt()
+        }
+    }
+
+    private suspend fun ItemMessage.insertNewMessage(selfAutoDestruction: Int): MessageEntity {
+        val message = this.getMessageEntityForCreate()
+        message.selfDestructionAt = selfAutoDestruction
+        // if (BuildConfig.ENCRYPT_API) message.encryptBody(cryptoMessage)
+        message.id = repository.insertMessage(message).toInt()
+        Timber.d("insertMessage")
+        _newMessageSend.value = true
+        return message
     }
 
     @ExperimentalCoroutinesApi
@@ -227,30 +227,16 @@ class ConversationViewModel @Inject constructor(
                 .openFileDescriptor(mediaStoreAudio.contentUri, "r")
 
             if (fileDescriptor != null) {
-
                 val audioFile = copyAudioToAppFolder(fileDescriptor)
-
-                val attachment = Attachment(
-                    id = 0,
-                    messageId = 0,
-                    webId = "",
-                    messageWebId = "",
-                    type = Constants.AttachmentType.AUDIO.type,
-                    body = "",
-                    fileName = audioFile.name,
-                    origin = Constants.AttachmentOrigin.AUDIO_SELECTION.origin,
-                    thumbnailUri = "",
-                    status = Constants.AttachmentStatus.SENDING.status,
-                    extension = "mp3",
-                    duration = mediaStoreAudio.duration
-                )
-
+                val attachment = audioFile.toAttachmentEntityAudio(mediaStoreAudio)
                 saveMessageAndAttachment(
-                    messageString = "",
-                    attachment = attachment,
-                    numberAttachments = 1,
-                    selfDestructTime = selfDestructTime,
-                    quote = quote
+                    ItemMessage(
+                        attachment = attachment,
+                        numberAttachments = 1,
+                        selfDestructTime = selfDestructTime,
+                        quote = quote,
+                        contact = contactEntity
+                    )
                 )
             }
         }
@@ -259,56 +245,45 @@ class ConversationViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     private suspend fun sendMessageAndAttachment(
-        attachment: Attachment?,
-        message: Message,
-        numberAttachments: Int,
-        selfDestructTime: Int,
-        quote: String = ""
+        itemMessage: ItemMessageWithMsgEntity
     ) {
         try {
-            val messageReqDTO = MessageReqDTO(
-                userDestination = contact.id,
-                quoted = quote,
-                body = message.getBody(cryptoMessage),
-                numberAttachments = numberAttachments,
-                destroy = selfDestructTime,
-                messageType = Constants.MessageType.MESSAGE.type
-            )
+            itemMessage.apply {
 
-            val messageResponse = repository.sendMessage(messageReqDTO)
+                val messageReqDTO = this.toMessageReqDto(cryptoMessage)
+                val messageResponse = repository.sendMessage(messageReqDTO)
 
-            if (messageResponse.isSuccessful) {
-                val messageEntity = MessageResDTO.toMessageEntity(
-                    message,
-                    messageResponse.body()!!,
-                    Constants.IsMine.YES.value
-                )
+                if (messageResponse.isSuccessful) {
 
-                if (attachment != null) {
-                    attachment.messageWebId = messageResponse.body()!!.id
-                    uploadAttachment(attachment, messageEntity, selfDestructTime)
+                    val messageEntityFromResDto = MessageResDTO.toMessageEntity(
+                        messageEntity,
+                        messageResponse.body()!!,
+                        Constants.IsMine.YES.value
+                    )
+
+                    if (attachment != null) {
+                        attachment.messageWebId = messageResponse.body()!!.id
+                        uploadAttachment(attachment, messageEntityFromResDto, selfDestructTime)
+                    } else {
+                        messageEntityFromResDto.status =
+                            if (isTheMsgMine(messageEntityFromResDto)) Constants.MessageStatus.UNREAD.status
+                            else Constants.MessageStatus.SENT.status
+                        repository.updateMessage(messageEntityFromResDto)
+                        Timber.d("updateMessage")
+                    }
+
+                    //setupNotificationSound(context, R.raw.tone_send_message)
+
                 } else {
-                    messageEntity.status =
-                        if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
-                        else Constants.MessageStatus.SENT.status
-                    repository.updateMessage(messageEntity)
-                    Timber.d("updateMessage")
-                }
-
-                //setupNotificationSound(context, R.raw.tone_send_message)
-
-            } else {
-                setStatusErrorMessageAndAttachment(message, attachment)
-
-                when (messageResponse.code()) {
-                    422 -> _webServiceError.value =
-                        repository.get422ErrorMessage(messageResponse)
-                    else -> _webServiceError.value = repository.getErrorMessage(messageResponse)
+                    setStatusErrorMessageAndAttachment(messageEntity, attachment)
+                    handleMessageResponseCode(messageResponse)
                 }
             }
         } catch (e: Exception) {
-            setStatusErrorMessageAndAttachment(message, attachment)
-            Timber.e(e)
+            itemMessage.apply {
+                setStatusErrorMessageAndAttachment(messageEntity, attachment)
+                Timber.e(e)
+            }
         }
     }
 
@@ -328,34 +303,40 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun deleteMessagesSelected(contactId: Int, listMessages: List<MessageAndAttachment>) {
+    override fun deleteMessagesSelected(
+        contactId: Int,
+        listMessageRelations: List<MessageAttachmentRelation>
+    ) {
         viewModelScope.launch {
-            repository.deleteMessagesSelected(contactId, listMessages)
+            repository.deleteMessagesSelected(contactId, listMessageRelations)
             _responseDeleteLocalMessages.value = true
         }
     }
 
-    override fun deleteMessagesForAll(contactId: Int, listMessages: List<MessageAndAttachment>) {
+    override fun deleteMessagesForAll(
+        contactId: Int,
+        listMessageRelations: List<MessageAttachmentRelation>
+    ) {
         viewModelScope.launch {
             try {
                 val response =
                     repository.deleteMessagesForAll(
                         buildObjectDeleteMessages(
                             contactId,
-                            listMessages.filter { messageAndAttachment ->
-                                messageAndAttachment.message.webId.isNotEmpty()
+                            listMessageRelations.filter { messageAndAttachment ->
+                                messageAndAttachment.messageEntity.webId.isNotEmpty()
                             }
                         )
                     )
 
                 if (response.isSuccessful) {
-                    repository.deleteMessagesSelected(contactId, listMessages)
+                    repository.deleteMessagesSelected(contactId, listMessageRelations)
                     _responseDeleteLocalMessages.value = true
                 } else {
                     when (response.code()) {
-                        422 -> {
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
                             _deleteMessagesForAllWsError.value =
-                                repository.get422ErrorDeleteMessagesForAll(response.errorBody()!!)
+                                repository.getUnprocessableEntityErrorDeleteMessagesForAll(response.errorBody()!!)
                         }
                         else -> {
                             _deleteMessagesForAllWsError.value =
@@ -424,18 +405,22 @@ class ConversationViewModel @Inject constructor(
 
     override fun sendTextMessagesRead() {
         viewModelScope.launch {
-            repository.sendTextMessagesRead(contact.id)
-            repository.sendMissedCallRead(contact.id)
+            repository.sendTextMessagesRead(contactEntity.id)
+            repository.sendMissedCallRead(contactEntity.id)
         }
+    }
+
+    override fun deleteMessageNotSent(contactId: Int) {
+        repository.deleteMessageNotSent(contactId)
     }
 
     private fun buildObjectDeleteMessages(
         contactId: Int,
-        listMessages: List<MessageAndAttachment>
+        listMessageRelations: List<MessageAttachmentRelation>
     ): DeleteMessagesReqDTO {
         val listReturn = arrayListOf<String>()
-        listMessages.forEach {
-            listReturn.add(it.message.webId)
+        listMessageRelations.forEach {
+            listReturn.add(it.messageEntity.webId)
         }
         return DeleteMessagesReqDTO(
             userReceiver = contactId,
@@ -443,12 +428,12 @@ class ConversationViewModel @Inject constructor(
         )
     }
 
-    override fun getMessagePosition(messageAndAttachment: MessageAndAttachment): Int {
+    override fun getMessagePosition(messageAndAttachmentRelation: MessageAttachmentRelation): Int {
         var index = -1
 
-        messageAndAttachment.quote?.let { quote ->
-            messageMessages.value?.let { messagesList ->
-                index = messagesList.indexOfFirst { it.message.id == quote.messageParentId }
+        messageAndAttachmentRelation.quoteEntity?.let { quote ->
+            messageMessagesRelation.value?.let { messagesList ->
+                index = messagesList.indexOfFirst { it.messageEntity.id == quote.messageParentId }
             }
         }
 
@@ -456,29 +441,8 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun callContact() {
-        viewModelScope.launch {
-            val channel = "presence-private.${contact.id}_${user.id}"
-            try {
-                repository.subscribeToCallChannel(channel, isVideoCall)
-                val response = repository.callContact(contact, isVideoCall)
-
-                if (response.isSuccessful) {
-                    response.body()?.let { _ ->
-                        _contactCalledSuccessfully.value = channel
-                    }
-                } else {
-                    Timber.e(response.errorBody()?.string())
-                    repository.unSubscribeToChannel(contact, channel)
-                    _noInternetConnection.value = true
-                    _contactCalledSuccessfully.value = null
-                }
-            } catch (e: Exception) {
-                repository.unSubscribeToChannel(contact, channel)
-                _noInternetConnection.value = true
-                _contactCalledSuccessfully.value = null
-                Timber.e(e)
-            }
-        }
+        val channel = "presence-private.${contactEntity.id}_${userEntity.id}"
+        _contactCalledSuccessfully.value = channel
     }
 
     override fun resetContactCalledSuccessfully() {
@@ -500,54 +464,50 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun uploadAttachment(
-        attachment: Attachment,
-        message: Message,
+        attachmentEntity: AttachmentEntity,
+        messageEntity: MessageEntity,
         selfDestructTime: Int
     ) {
         viewModelScope.launch {
-            val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(attachment.duration).toInt()
+            val durationAttachment =
+                TimeUnit.MILLISECONDS.toSeconds(attachmentEntity.duration).toInt()
             val selfAutoDestruction = compareDurationAttachmentWithSelfAutoDestructionInSeconds(
                 durationAttachment, selfDestructTime
             )
-            message.selfDestructionAt = selfAutoDestruction
+            messageEntity.selfDestructionAt = selfAutoDestruction
             try {
-                if (message.status == Constants.MessageStatus.ERROR.status && message.webId.isEmpty()) {
+                if (messageEntity.status == Constants.MessageStatus.ERROR.status && messageEntity.webId.isEmpty()) {
                     val messageReqDTO = MessageReqDTO(
-                        userDestination = contact.id,
-                        quoted = message.quoted,
-                        body = message.getBody(cryptoMessage),
+                        userDestination = contactEntity.id,
+                        quoted = messageEntity.quoted,
+                        body = messageEntity.getBody(cryptoMessage),
                         numberAttachments = 1,
                         destroy = selfAutoDestruction,
-                        messageType = Constants.MessageType.MESSAGE.type
+                        messageType = Constants.MessageType.MESSAGE.type,
+                        uuidSender = messageEntity.uuid
                     )
 
                     val messageResponse = repository.sendMessage(messageReqDTO)
 
                     if (messageResponse.isSuccessful) {
                         val messageEntity = MessageResDTO.toMessageEntity(
-                            message,
+                            messageEntity,
                             messageResponse.body()!!,
                             Constants.IsMine.YES.value
                         )
 
-                        attachment.messageWebId = messageResponse.body()!!.id
-                        uploadAttachment(attachment, messageEntity, selfDestructTime)
+                        attachmentEntity.messageWebId = messageResponse.body()!!.id
+                        uploadAttachment(attachmentEntity, messageEntity, selfDestructTime)
                     } else {
-                        setStatusErrorMessageAndAttachment(message, attachment)
-
-                        when (messageResponse.code()) {
-                            422 -> _webServiceError.value =
-                                repository.get422ErrorMessage(messageResponse)
-                            else -> _webServiceError.value =
-                                repository.getErrorMessage(messageResponse)
-                        }
+                        setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
+                        handleMessageResponseCode(messageResponse)
                     }
                 } else {
-                    repository.suspendUpdateAttachment(attachment)
+                    repository.suspendUpdateAttachment(attachmentEntity)
                     val intent = Intent(context, UploadService::class.java).apply {
                         putExtras(Bundle().apply {
-                            putParcelable(UploadService.MESSAGE_KEY, message)
-                            putParcelable(UploadService.ATTACHMENT_KEY, attachment)
+                            putParcelable(UploadService.MESSAGE_KEY, messageEntity)
+                            putParcelable(UploadService.ATTACHMENT_KEY, attachmentEntity)
                         })
                     }
                     context.startService(intent)
@@ -558,18 +518,21 @@ class ConversationViewModel @Inject constructor(
                         }*/
                 }
             } catch (e: Exception) {
-                setStatusErrorMessageAndAttachment(message, attachment)
+                setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
                 Timber.e(e)
             }
         }
     }
 
-    override fun downloadAttachment(messageAndAttachment: MessageAndAttachment, itemPosition: Int) {
+    override fun downloadAttachment(
+        messageAndAttachmentRelation: MessageAttachmentRelation,
+        itemPosition: Int
+    ) {
         viewModelScope.launch {
-            repository.downloadAttachment(messageAndAttachment, itemPosition)
+            repository.downloadAttachment(messageAndAttachmentRelation, itemPosition)
                 .flowOn(Dispatchers.IO)
                 .onStart {
-                    messageAndAttachment.getFirstAttachment()?.let { attachment ->
+                    messageAndAttachmentRelation.getFirstAttachment()?.let { attachment ->
 
                         val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
                         attachment.status = Constants.AttachmentStatus.DOWNLOADING.status
@@ -584,8 +547,8 @@ class ConversationViewModel @Inject constructor(
 
                     Timber.e("catch flow")
 
-                    val message = messageAndAttachment.message
-                    val firstAttachment = messageAndAttachment.getFirstAttachment()
+                    val message = messageAndAttachmentRelation.messageEntity
+                    val firstAttachment = messageAndAttachmentRelation.getFirstAttachment()
 
                     message.status = Constants.MessageStatus.ERROR.status
                     updateMessage(message)
@@ -596,7 +559,7 @@ class ConversationViewModel @Inject constructor(
                     }
 
                     _downloadProgress.value =
-                        DownloadAttachmentResult.Cancel(messageAndAttachment, itemPosition)
+                        DownloadAttachmentResult.Cancel(messageAndAttachmentRelation, itemPosition)
                 }
                 .collect {
                     _downloadProgress.value = it
@@ -604,12 +567,12 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun updateMessage(message: Message) {
-        repository.updateMessage(message)
+    override fun updateMessage(messageEntity: MessageEntity) {
+        repository.updateMessage(messageEntity)
     }
 
-    override fun updateAttachment(attachment: Attachment) {
-        repository.updateAttachment(attachment)
+    override fun updateAttachment(attachmentEntity: AttachmentEntity) {
+        repository.updateAttachment(attachmentEntity)
     }
 
     override fun sendDocumentAttachment(fileUri: Uri) {
@@ -630,70 +593,78 @@ class ConversationViewModel @Inject constructor(
         _uploadProgress.value = null
     }
 
-    override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
+    override fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation) {
         viewModelScope.launch {
-            repository.setMessageRead(messageAndAttachment)
+            repository.setMessageRead(messageAndAttachmentRelation)
         }
     }
 
-    override fun sendMessageRead(messageWebId: String) {
-        viewModelScope.launch {
-            repository.setMessageRead(messageWebId)
+    override fun sendMessageRead(messageId: Int, webId: String) {
+        GlobalScope.launch {
+            repository.setMessageRead(messageId, webId)
         }
     }
 
-    override fun reSendMessage(message: Message, selfDestructTime: Int) {
+    override fun reSendMessage(messageEntity: MessageEntity, selfDestructTime: Int) {
         viewModelScope.launch {
             try {
 
                 val messageReqDTO = MessageReqDTO(
-                    userDestination = contact.id,
-                    quoted = message.quoted,
-                    body = message.body,
+                    userDestination = contactEntity.id,
+                    quoted = messageEntity.quoted,
+                    body = messageEntity.body,
                     numberAttachments = 0,
                     destroy = selfDestructTime,
-                    messageType = Constants.MessageType.MESSAGE.type
+                    messageType = Constants.MessageType.MESSAGE.type,
+                    uuidSender = messageEntity.uuid
                 )
 
-                _stateMessage.value = StateMessage.Start(message.id)
+                _stateMessage.value = StateMessage.Start(messageEntity.id)
 
                 val messageResponse = repository.sendMessage(messageReqDTO)
 
                 if (messageResponse.isSuccessful) {
 
-                    _stateMessage.value = StateMessage.Success(message.id)
+                    _stateMessage.value = StateMessage.Success(messageEntity.id)
 
                     val messageEntity = MessageResDTO.toMessageEntity(
-                        message,
+                        messageEntity,
                         messageResponse.body()!!,
                         Constants.IsMine.YES.value
                     )
 
                     messageEntity.status =
-                        if (messageEntity.isMine == Constants.IsMine.NO.value) Constants.MessageStatus.UNREAD.status
+                        if (isTheMsgMine(messageEntity)) Constants.MessageStatus.UNREAD.status
                         else Constants.MessageStatus.SENT.status
                     repository.updateMessage(messageEntity)
                     Timber.d("updateMessage")
                 } else {
 
-                    _stateMessage.value = StateMessage.Error(message.id)
+                    _stateMessage.value = StateMessage.Error(messageEntity.id)
 
-                    setStatusErrorMessageAndAttachment(message, null)
+                    setStatusErrorMessageAndAttachment(messageEntity, null)
 
-                    when (messageResponse.code()) {
-                        422 -> _webServiceError.value =
-                            repository.get422ErrorMessage(messageResponse)
-                        else -> _webServiceError.value = repository.getErrorMessage(messageResponse)
-                    }
+                    handleMessageResponseCode(messageResponse)
                 }
             } catch (e: Exception) {
-                _stateMessage.value = StateMessage.Error(message.id)
+                _stateMessage.value = StateMessage.Error(messageEntity.id)
 
-                setStatusErrorMessageAndAttachment(message, null)
+                setStatusErrorMessageAndAttachment(messageEntity, null)
                 Timber.e(e)
             }
         }
     }
+
+    private fun handleMessageResponseCode(messageResponse: Response<MessageResDTO>) {
+        when (messageResponse.code()) {
+            Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _webServiceError.value =
+                repository.getUnprocessableEntityErrorMessage(messageResponse)
+            else -> _webServiceError.value = repository.getErrorMessage(messageResponse)
+        }
+    }
+
+    private fun isTheMsgMine(messageEntityFromResDto: MessageEntity) =
+        messageEntityFromResDto.isMine == Constants.IsMine.NO.value
 
     override fun resetNewMessage() {
         _newMessageSend.value = null
@@ -701,5 +672,17 @@ class ConversationViewModel @Inject constructor(
 
     override fun getFreeTrial() = repository.getFreeTrial()
 
+    override fun getMessageNotSent(contactId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _messageNotSent.postValue(repository.getMessageNotSent(contactId))
+        }
+    }
+
+    override fun insertMessageNotSent(message: String, contactId: Int) {
+        repository.insertMessageNotSent(message, contactId)
+    }
+
     //endregion
 }
+
+

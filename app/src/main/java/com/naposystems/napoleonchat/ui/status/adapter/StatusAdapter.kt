@@ -5,11 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.StatusFragmentItemBinding
-import com.naposystems.napoleonchat.entity.Status
+import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 
 class StatusAdapter(
-    private val status: List<Status>,
+    private val statusEntities: List<StatusEntity>,
     private val clickListener: StatusSelectionListener
 ) :
     RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
@@ -18,23 +18,23 @@ class StatusAdapter(
         return StatusViewHolder.from(parent)
     }
 
-    override fun getItemCount() = status.size
+    override fun getItemCount() = statusEntities.size
 
     override fun onBindViewHolder(holderStatus: StatusViewHolder, position: Int) {
-        val status = status[position]
+        val status = statusEntities[position]
         holderStatus.bind(status, clickListener)
     }
 
     class StatusViewHolder private constructor(private val binding: StatusFragmentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(status: Status, clickListener: StatusSelectionListener) {
-            binding.status = status
+        fun bind(statusEntity: StatusEntity, clickListener: StatusSelectionListener) {
+            binding.status = statusEntity
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
             binding.buttonMore.setSafeOnClickListener {
-                clickListener.onMoreClick(status, it)
+                clickListener.onMoreClick(statusEntity, it)
             }
         }
 
@@ -52,10 +52,10 @@ class StatusAdapter(
     }
 
     class StatusSelectionListener(
-        val clickListener: (status: Status) -> Unit,
-        val clickDelete: (status: Status, view: View) -> Unit
+        val clickListener: (statusEntity: StatusEntity) -> Unit,
+        val clickDelete: (statusEntity: StatusEntity, view: View) -> Unit
     ) {
-        fun onClick(status: Status) = clickListener(status)
-        fun onMoreClick(status: Status, view: View) = clickDelete(status, view)
+        fun onClick(statusEntity: StatusEntity) = clickListener(statusEntity)
+        fun onMoreClick(statusEntity: StatusEntity, view: View) = clickDelete(statusEntity, view)
     }
 }

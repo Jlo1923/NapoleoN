@@ -5,8 +5,12 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences
+import javax.inject.Inject
 
-class SharedPreferencesManager(private val context: Context) {
+class SharedPreferencesManager
+@Inject constructor(
+    private val context: Context
+) {
 
     private val sharedPreferences by lazy {
         if (BuildConfig.ENCRYPT_SHARED_PREFERENCES) {

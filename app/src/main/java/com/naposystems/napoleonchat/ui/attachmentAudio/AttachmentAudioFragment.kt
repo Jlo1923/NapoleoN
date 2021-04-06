@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.attachmentAudio
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,36 +8,46 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AttachmentAudioFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.MediaStoreAudio
+import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.ui.attachmentAudio.adapter.AttachmentAudioAdapter
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
+class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listener {
 
     companion object {
         fun newInstance() = AttachmentAudioFragment()
     }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var notificationClient: NotificationClient
+
+    @Inject
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
+    @Inject
+    lateinit var mediaPlayerGalleryManager: MediaPlayerGalleryManager
 
     private lateinit var viewModel: AttachmentAudioViewModel
     private lateinit var conversationShareViewModel: ConversationShareViewModel
@@ -66,11 +75,6 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
         )
     }
 
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -92,14 +96,20 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (args.contact.id == it.contactId)
+                    if (args.contact.id == it.contactId) {
+                        if (args.contact.stateNotification) {
+                            handlerNotificationChannel.deleteUserChannel(
+                                args.contact.id,
+                                args.contact.getNickName()
+                            )
+                        }
                         findNavController().popBackStack(R.id.homeFragment, false)
+                    }
                 }
 
         disposable.add(disposableContactBlockOrDelete)
 
-        MediaPlayerGalleryManager.setContext(requireContext())
-        MediaPlayerGalleryManager.setListener(this)
+        mediaPlayerGalleryManager.setListener(this)
 
         setupAdapter()
 
@@ -161,7 +171,6 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
     }
 
     private fun setupAdapter() {
-
         adapter = AttachmentAudioAdapter(object : AttachmentAudioAdapter.ClickListener {
             override fun onClick(mediaStoreAudio: MediaStoreAudio) {
                 viewModel.setSelected(mediaStoreAudio)
@@ -171,22 +180,21 @@ class AttachmentAudioFragment : Fragment(), MediaPlayerGalleryManager.Listener {
                 mediaStoreAudio: MediaStoreAudio,
                 imageButtonPlay: ImageView
             ) {
-                MediaPlayerGalleryManager.apply {
+                mediaPlayerGalleryManager.apply {
                     setAudioId(mediaStoreAudio.id.toString())
                     setImageButtonPlay(imageButtonPlay)
-                    setContext(requireContext())
                     setAudioUri(mediaStoreAudio.contentUri)
                     playAudio()
                 }
             }
-        })
+        }, mediaPlayerGalleryManager)
 
         binding.recyclerViewAudios.adapter = adapter
         binding.recyclerViewAudios.itemAnimator = ItemAnimator()
     }
 
     override fun onDestroy() {
-        MediaPlayerGalleryManager.resetMediaPlayer()
+        mediaPlayerGalleryManager.resetMediaPlayer()
         disposable.dispose()
         super.onDestroy()
     }

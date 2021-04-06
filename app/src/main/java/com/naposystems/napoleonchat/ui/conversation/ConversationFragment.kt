@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.Canvas
@@ -45,39 +44,40 @@ import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.PurchaseHistoryRecord
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
-import com.naposystems.napoleonchat.entity.Contact
-import com.naposystems.napoleonchat.entity.message.Message
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.ui.actionMode.ActionModeMenu
 import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
+import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.napoleonchat.utility.*
-import com.naposystems.napoleonchat.utility.Utils.Companion.generalDialog
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
-import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -86,8 +86,9 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeForm
 import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import com.naposystems.napoleonchat.webRTC.IContractWebRTCClient
-import dagger.android.support.AndroidSupportInjection
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
+import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -97,13 +98,11 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : BaseFragment(),
-    MediaPlayerManager.Listener, ConversationAdapter.ClickListener, InputPanelWidget.Listener {
+class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -117,10 +116,21 @@ class ConversationFragment : BaseFragment(),
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
-    lateinit var billingClientLifecycle: BillingClientLifecycle
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
     @Inject
-    lateinit var webRTCClient: IContractWebRTCClient
+    lateinit var handlerDialog: HandlerDialog
+
+
+    @Inject
+    lateinit var mediaPlayerManager: MediaPlayerManager
+
+    //TODO:Subscription
+    /*@Inject
+    lateinit var billingClientLifecycle: BillingClientLifecycle*/
+
+    @Inject
+    lateinit var webRTCClient: WebRTCClient
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -130,6 +140,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private val shareViewModel: ConversationShareViewModel by activityViewModels()
+
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
@@ -251,10 +262,10 @@ class ConversationFragment : BaseFragment(),
             if (viewHolder.adapterPosition >= 0) {
                 conversationAdapter.getMessageAndAttachment(viewHolder.adapterPosition)
                     ?.let { messageAndAttachment ->
-                        if (messageAndAttachment.message.messageType == Constants.MessageType.MESSAGE.type &&
-                            (messageAndAttachment.message.status == Constants.MessageStatus.UNREAD.status ||
-                                    messageAndAttachment.message.status == Constants.MessageStatus.READED.status ||
-                                    messageAndAttachment.message.status == Constants.MessageStatus.SENT.status ||
+                        if (messageAndAttachment.messageEntity.messageType == Constants.MessageType.MESSAGE.type &&
+                            (messageAndAttachment.messageEntity.status == Constants.MessageStatus.UNREAD.status ||
+                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
+                                    messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
                                     messageAndAttachment.getFirstAttachment()?.status == Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status)
                         ) {
                             actionSwipeQuote(
@@ -311,11 +322,6 @@ class ConversationFragment : BaseFragment(),
 
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
-    }
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
     }
 
     @ExperimentalCoroutinesApi
@@ -384,16 +390,7 @@ class ConversationFragment : BaseFragment(),
             Timber.d("startCallActivity returnCall ConversationFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putInt(ConversationCallActivity.CONTACT_ID, webRTCClient.getContactId())
-                    putString(ConversationCallActivity.CHANNEL, webRTCClient.getChannel())
-                    putBoolean(
-                        ConversationCallActivity.IS_VIDEO_CALL,
-                        webRTCClient.isVideoCall()
-                    )
-                    putBoolean(
-                        ConversationCallActivity.IS_INCOMING_CALL,
-                        webRTCClient.isIncomingCall()
-                    )
+                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }
@@ -427,7 +424,7 @@ class ConversationFragment : BaseFragment(),
                             showCounterNotification()
                             false
                         }
-                    Timber.d("*TestScroll: isFabScroll on addOnScrollListener $isFabScroll")
+//                    Timber.d("*TestScroll: isFabScroll on addOnScrollListener $isFabScroll")
                     super.onScrolled(recyclerView, dx, dy)
                 }, 200)
             }
@@ -436,7 +433,7 @@ class ConversationFragment : BaseFragment(),
         binding.recyclerViewConversation.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom < oldBottom) {
                 binding.recyclerViewConversation.post {
-                    Timber.d("*TestScroll: isFabScroll on addOnLayoutChangeListener $isFabScroll")
+//                    Timber.d("*TestScroll: isFabScroll on addOnLayoutChangeListener $isFabScroll")
                     if (!isFabScroll) {
                         val friendlyMessageCount: Int = conversationAdapter.itemCount
                         binding.recyclerViewConversation.scrollToPosition(friendlyMessageCount - 1)
@@ -448,8 +445,6 @@ class ConversationFragment : BaseFragment(),
         clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
         binding.textViewUserStatus.isSelected = true
-        MediaPlayerManager.setContext(requireContext())
-        MediaPlayerManager.initializeBluetoothManager()
 
         return binding.root
     }
@@ -472,6 +467,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun inputPanelAttachmentButtonClickListener() {
         binding.inputPanel.getImageButtonAttachment().setSafeOnClickListener {
+            Utils.hideKeyboard(binding.inputPanel.getImageButtonAttachment())
             validateStateOutputControl()
             val attachmentDialog = AttachmentDialogFragment()
             attachmentDialog.setListener(object :
@@ -482,14 +478,21 @@ class ConversationFragment : BaseFragment(),
                         drawableIconId = R.drawable.ic_folder_primary,
                         message = R.string.text_explanation_to_send_audio_attachment
                     ) {
-                        findNavController().navigate(
-                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
-                                args.contact,
-                                binding.inputPanel.getWebIdQuote(),
-                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
-                                binding.inputPanel.getEditText().text.toString().trim()
-                            )
-                        )
+
+                        val intent = Intent(context, MultipleAttachmentActivity::class.java)
+                        intent.putExtras(Bundle().apply {
+                            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+                        })
+                        startActivity(intent)
+
+//                        findNavController().navigate(
+//                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
+//                                args.contact,
+//                                binding.inputPanel.getWebIdQuote(),
+//                                Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
+//                                binding.inputPanel.getEditText().text.toString().trim()
+//                            )
+//                        )
                     }
                 }
 
@@ -640,16 +643,34 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        shareViewModel.attachmentSelected.observe(requireActivity(), Observer { attachment ->
+        shareViewModel.attachmentEntitySelected.observe(requireActivity(), Observer { attachment ->
             if (attachment != null) {
                 val quote = binding.inputPanel.getQuote()
-                shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
+                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 viewModel.saveMessageAndAttachment(
-                    shareViewModel.getMessage() ?: "",
-                    attachment,
-                    1,
-                    obtainTimeSelfDestruct(),
-                    shareViewModel.getQuoteWebId() ?: ""
+                    ItemMessage(
+                        messageString = shareViewModel.getMessage() ?: "",
+                        attachment = attachment,
+                        numberAttachments = 1,
+                        selfDestructTime = obtainTimeSelfDestruct(),
+                        quote = shareViewModel.getQuoteWebId() ?: ""
+                    )
+                )
+            }
+        })
+
+        shareViewModel.listAttachments.observe(requireActivity(), Observer { attachments ->
+            attachments?.forEach {
+                val quote = binding.inputPanel.getQuote()
+                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                viewModel.saveMessageAndAttachment(
+                    ItemMessage(
+                        shareViewModel.getMessage() ?: "",
+                        it,
+                        1,
+                        obtainTimeSelfDestruct(),
+                        shareViewModel.getQuoteWebId() ?: ""
+                    )
                 )
             }
         })
@@ -666,12 +687,13 @@ class ConversationFragment : BaseFragment(),
             try {
                 if (gifAttachment != null) {
                     val quote = binding.inputPanel.getQuote()
-                    shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
-                    findNavController().navigate(
+                    shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                    this.findNavController().navigate(
                         ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                             gifAttachment,
                             0,
                             shareViewModel.getQuoteWebId() ?: "",
+                            message = binding.inputPanel.getEditText().text.toString(),
                             contactId = args.contact.id
                         )
                     )
@@ -686,12 +708,12 @@ class ConversationFragment : BaseFragment(),
     @InternalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        lifecycle.addObserver(billingClientLifecycle)
+        //TODO:Subscription
+//        lifecycle.addObserver(billingClientLifecycle)
 
         binding.viewModel = viewModel
 
-        Data.contactId = args.contact.id
+        NapoleonApplication.currentConversationContactId = args.contact.id
 
         cleanSelectionMessages()
 
@@ -702,6 +724,8 @@ class ConversationFragment : BaseFragment(),
         viewModel.getLocalMessages()
 
         viewModel.getMessagesSelected(args.contact.id)
+
+        viewModel.getMessageNotSent(args.contact.id)
 
         selfDestructTimeViewModel.getSelfDestructTimeByContact(args.contact.id)
 
@@ -735,10 +759,14 @@ class ConversationFragment : BaseFragment(),
                 Timber.d("startCallActivity contactCalledSuccessfully")
                 val intent = Intent(context, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putInt(ConversationCallActivity.CONTACT_ID, args.contact.id)
-                        putString(ConversationCallActivity.CHANNEL, channel)
-                        putBoolean(ConversationCallActivity.IS_VIDEO_CALL, viewModel.isVideoCall())
-                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, false)
+                        putSerializable(
+                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
+                                contactId = args.contact.id,
+                                channelName = channel,
+                                isVideoCall = viewModel.isVideoCall(),
+                                typeCall = Constants.TypeCall.IS_OUTGOING_CALL
+                            )
+                        )
                     })
                 }
                 startActivity(intent)
@@ -769,12 +797,13 @@ class ConversationFragment : BaseFragment(),
                         )
                     }
                     is DownloadAttachmentResult.Error -> {
-                        it.attachment.status =
+                        it.attachmentEntity.status =
                             Constants.AttachmentStatus.DOWNLOAD_ERROR.status
                         viewModel.updateAttachment(
-                            it.attachment
+                            it.attachmentEntity
                         )
                         Timber.d("Error")
+                        conversationAdapter.setDownloadCancel(it.itemPosition)
                     }
                     is DownloadAttachmentResult.Cancel -> {
                         conversationAdapter.setDownloadCancel(it.itemPosition)
@@ -815,27 +844,16 @@ class ConversationFragment : BaseFragment(),
         viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 val quote = binding.inputPanel.getQuote()
-                shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
-                val attachment = Attachment(
-                    id = 0,
-                    messageId = 0,
-                    webId = "",
-                    messageWebId = "",
-                    type = Constants.AttachmentType.DOCUMENT.type,
-                    body = "",
-                    fileName = it.name,
-                    origin = Constants.AttachmentOrigin.GALLERY.origin,
-                    thumbnailUri = "",
-                    status = Constants.AttachmentStatus.SENDING.status,
-                    extension = it.extension
-                )
+                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                val attachment = it.toAttachmentEntityDocument()
 
                 viewModel.saveMessageAndAttachment(
-                    messageString = "",
-                    attachment = attachment,
-                    numberAttachments = 1,
-                    selfDestructTime = obtainTimeSelfDestruct(),
-                    quote = shareViewModel.getQuoteWebId() ?: ""
+                    ItemMessage(
+                        attachment = attachment,
+                        numberAttachments = 1,
+                        selfDestructTime = obtainTimeSelfDestruct(),
+                        quote = shareViewModel.getQuoteWebId() ?: ""
+                    )
                 )
                 viewModel.resetDocumentCopied()
                 binding.inputPanel.closeQuote()
@@ -844,7 +862,7 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.noInternetConnection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                Utils.alertDialogInformative(
+                handlerDialog.alertDialogInformative(
                     getString(R.string.text_alert_failure),
                     getString(if (viewModel.isVideoCall()) R.string.text_video_call_not_internet_connection else R.string.text_call_not_internet_connection),
                     true,
@@ -861,10 +879,18 @@ class ConversationFragment : BaseFragment(),
 
         viewModel.newMessageSend.observe(viewLifecycleOwner, Observer { newMessage ->
             if (newMessage == true) {
-                binding.inputPanel.clearTextEditText()
+                binding.inputPanel.post {
+                    binding.inputPanel.clearTextEditText()
+                }
                 viewModel.resetNewMessage()
             }
         })
+
+        viewModel.messageNotSentEntity.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.inputPanel.getEditText().setText(it.message)
+            }
+        }
 
         shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -872,41 +898,55 @@ class ConversationFragment : BaseFragment(),
             }
         })
 
-        billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchaseList ->
-            purchaseList?.let {
-                val freeTrial = viewModel.getFreeTrial()
-
-                if (System.currentTimeMillis() > freeTrial) {
-                    if (purchaseList.isEmpty()) {
-                        binding.inputPanel.isVisible = false
-                        binding.buttonCall.isVisible = false
-                        binding.buttonVideoCall.isVisible = false
-                    } else {
-                        try {
-                            val dateExpireSubscriptionMillis = getDataSubscription(purchaseList)
-                            if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
-                                binding.inputPanel.isVisible = false
-                                binding.buttonCall.isVisible = false
-                                binding.buttonVideoCall.isVisible = false
-                            }
-                        } catch (e: Exception) {
-                            Timber.e(e)
-                        }
-                    }
-                } else {
-                    binding.inputPanel.isVisible = true
-                    binding.buttonCall.isVisible = true
-                    binding.buttonVideoCall.isVisible = true
+        //TODO:Subscription
+        /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
+            purchasesList?.let {
+                for (purchase in purchasesList) {
+                    billingClientLifecycle.acknowledged(purchase)
                 }
+                Timber.d("Billing purchases $purchasesList")
+                billingClientLifecycle.queryPurchasesHistory()
             }
         })
+
+        billingClientLifecycle.purchasesHistory.observe(
+            viewLifecycleOwner,
+            Observer { purchasesHistory ->
+                purchasesHistory?.let {
+                    val freeTrial = viewModel.getFreeTrial()
+
+                    if (System.currentTimeMillis() > freeTrial) {
+                        if (purchasesHistory.isEmpty()) {
+                            binding.inputPanel.isVisible = false
+                            binding.buttonCall.isVisible = false
+                            binding.buttonVideoCall.isVisible = false
+                        } else {
+                            try {
+                                val dateExpireSubscriptionMillis =
+                                    getDataSubscription(purchasesHistory)
+                                if (System.currentTimeMillis() > dateExpireSubscriptionMillis) {
+                                    binding.inputPanel.isVisible = false
+                                    binding.buttonCall.isVisible = false
+                                    binding.buttonVideoCall.isVisible = false
+                                }
+                            } catch (e: Exception) {
+                                Timber.e(e)
+                            }
+                        }
+                    } else {
+                        binding.inputPanel.isVisible = true
+                        binding.buttonCall.isVisible = true
+                        binding.buttonVideoCall.isVisible = true
+                    }
+                }
+            })*/
     }
 
-    private fun getDataSubscription(purchaseList: List<Purchase>): Long {
+    /*private fun getDataSubscription(purchasesHistory: List<PurchaseHistoryRecord>): Long {
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = purchaseList.last().purchaseTime
+        calendar.timeInMillis = purchasesHistory[0].purchaseTime
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val lastPurchase = purchaseList.last()
+        val lastPurchase = purchasesHistory[0]
 
         when (lastPurchase.sku) {
             Constants.SkuSubscriptions.MONTHLY.sku -> calendar.add(
@@ -924,16 +964,16 @@ class ConversationFragment : BaseFragment(),
 
         val dateExpireSubscription = sdf.parse(sdf.format(calendar.time))
         return dateExpireSubscription!!.time
-    }
+    }*/
 
     @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     private fun saveAndSendRecordAudio() {
         recordFile?.let { file ->
             val quote = binding.inputPanel.getQuote()
-            shareViewModel.setQuoteWebId(quote?.message?.webId ?: "")
+            shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
 
-            val attachment = Attachment(
+            val attachment = AttachmentEntity(
                 id = 0,
                 messageId = 0,
                 webId = "",
@@ -953,11 +993,12 @@ class ConversationFragment : BaseFragment(),
             stopRecording()
 
             viewModel.saveMessageAndAttachment(
-                "",
-                attachment,
-                1,
-                obtainTimeSelfDestruct(),
-                shareViewModel.getQuoteWebId() ?: ""
+                ItemMessage(
+                    attachment = attachment,
+                    numberAttachments = 1,
+                    selfDestructTime = obtainTimeSelfDestruct(),
+                    quote = shareViewModel.getQuoteWebId() ?: ""
+                )
             )
         }
     }
@@ -991,7 +1032,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun observeMessageMessages() {
-        viewModel.messageMessages.observe(viewLifecycleOwner, Observer { conversationList ->
+        viewModel.messageMessagesRelation.observe(viewLifecycleOwner, Observer { conversationList ->
             if (conversationList.isNotEmpty()) {
                 conversationAdapter.submitList(conversationList) {
                     if (enterConversation) {
@@ -1002,7 +1043,7 @@ class ConversationFragment : BaseFragment(),
                     }
                 }
 
-                Timber.d("*TestMessage: ${conversationList.last()}")
+//                Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
             } else conversationAdapter.submitList(conversationList)
         })
@@ -1014,7 +1055,15 @@ class ConversationFragment : BaseFragment(),
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    findNavController().popBackStack()
+                    if (args.contact.id == it.contactId) {
+                        if (args.contact.stateNotification) {
+                            handlerNotificationChannel.deleteUserChannel(
+                                args.contact.id,
+                                args.contact.getNickName()
+                            )
+                        }
+                        findNavController().popBackStack()
+                    }
                 }
 
         val disposableIncomingCall = RxBus.listen(RxEvent.IncomingCall::class.java)
@@ -1054,7 +1103,7 @@ class ConversationFragment : BaseFragment(),
             .subscribe {
                 Timber.d("RxEvent.UploadStart")
                 conversationAdapter.setUploadStart(
-                    it.attachment
+                    it.attachmentEntity
                 )
             }
 
@@ -1062,7 +1111,7 @@ class ConversationFragment : BaseFragment(),
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Timber.d("RxEvent.UploadSuccess")
-                conversationAdapter.setUploadComplete(it.attachment)
+                conversationAdapter.setUploadComplete(it.attachmentEntity)
             }
 
         val disposableUploadError = RxBus.listen(RxEvent.UploadError::class.java)
@@ -1076,7 +1125,7 @@ class ConversationFragment : BaseFragment(),
             .subscribe {
                 Timber.d("RxEvent.UploadProgress: ${it.progress}")
                 conversationAdapter.setUploadProgress(
-                    it.attachment,
+                    it.attachmentEntity,
                     it.progress
                 )
             }
@@ -1086,9 +1135,19 @@ class ConversationFragment : BaseFragment(),
             .subscribe {
                 Timber.d("RxEvent.CompressProgress")
                 conversationAdapter.setCompressProgress(
-                    it.attachment,
+                    it.attachmentEntity,
                     it.progress
                 )
+            }
+
+        val disposableStateFlag = RxBus.listen(RxEvent.StateFlag::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Timber.d("RxEvent.StateFlag")
+                if (it.state == Constants.StateFlag.ON.state)
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                else
+                    requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
 
         disposable.add(disposableContactBlockOrDelete)
@@ -1101,14 +1160,15 @@ class ConversationFragment : BaseFragment(),
         disposable.add(disposableUploadProgress)
         disposable.add(disposableCompressProgress)
         disposable.add(disposableIncomingCallSystem)
+        disposable.add(disposableStateFlag)
     }
 
     private fun validScroll(
-        conversationList: List<MessageAndAttachment>,
+        conversationList: List<MessageAttachmentRelation>,
         friendlyMessageCount: Int
     ) {
-        if (conversationList.last().message.isMine == Constants.IsMine.YES.value &&
-            conversationList.last().message.status == Constants.MessageStatus.SENDING.status
+        if (conversationList.last().messageEntity.isMine == Constants.IsMine.YES.value &&
+            conversationList.last().messageEntity.status == Constants.MessageStatus.SENDING.status
         ) {
             counterNotification = 0
             showCounterNotification()
@@ -1158,11 +1218,15 @@ class ConversationFragment : BaseFragment(),
             viewLifecycleOwner, Observer { listMessageAndAttachment ->
 
                 val quantityMessagesOtherUser = listMessageAndAttachment.filter {
-                    it.message.isMine == 0
+                    it.messageEntity.isMine == 0
                 }.toList().count()
 
                 val quantityMessagesFailed = listMessageAndAttachment.filter {
-                    it.message.status == Constants.MessageStatus.ERROR.status
+                    it.messageEntity.status == Constants.MessageStatus.ERROR.status
+                }.toList().count()
+
+                val quantitySystemMessage = listMessageAndAttachment.filter {
+                    it.messageEntity.messageType == Constants.MessageType.NEW_CONTACT.type
                 }.toList().count()
 
                 actionMode.hideCopyButton = false
@@ -1178,18 +1242,20 @@ class ConversationFragment : BaseFragment(),
 
                     Constants.QUANTITY_MIN_TO_SHOW_ACTIONMODE -> {
                         listMessageAndAttachment.forEach { messageAndAttachment ->
-                            if (messageAndAttachment.attachmentList.count() > Constants.QUANTITY_ATTACHMENTS) {
+                            if (messageAndAttachment.attachmentEntityList.count() > Constants.QUANTITY_ATTACHMENTS) {
                                 actionMode.hideCopyButton = true
                             }
                         }
                         actionMode.quantityMessageOtherUser = quantityMessagesOtherUser
                         actionMode.quantityMessagesFailed = quantityMessagesFailed
+                        actionMode.quantitySystemMessage = quantitySystemMessage
                     }
 
                     else -> {
                         actionMode.hideCopyButton = true
                         actionMode.quantityMessageOtherUser = quantityMessagesOtherUser
                         actionMode.quantityMessagesFailed = quantityMessagesFailed
+                        actionMode.quantitySystemMessage = quantitySystemMessage
                     }
                 }
                 actionMode.mode?.invalidate()
@@ -1287,7 +1353,7 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun setTextSilenceOfMenu(contact: Contact) {
+    private fun setTextSilenceOfMenu(contact: ContactEntity) {
         menuOptionsContact?.let { menuOptions ->
             if (contact.silenced) {
                 menuOptions.findItem(R.id.menu_item_mute_conversation).title =
@@ -1301,13 +1367,14 @@ class ConversationFragment : BaseFragment(),
 
     override fun onResume() {
         super.onResume()
+        NapoleonApplication.currentConversationContactId = args.contact.id
         showCase?.setPaused(false)
         showCase()
         requireActivity().volumeControlStream = AudioManager.STREAM_MUSIC
         Timber.d("onResume")
         setConversationBackground()
 
-        with(webRTCClient.isActiveCall()) {
+        with(webRTCClient.isActiveCall) {
             binding.textViewReturnCall.isVisible = this
             binding.buttonCall.isEnabled = !this
             binding.buttonVideoCall.isEnabled = !this
@@ -1325,10 +1392,10 @@ class ConversationFragment : BaseFragment(),
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
-        Data.contactId = 0
+        NapoleonApplication.currentConversationContactId = 0
         resetConversationBackground()
-        MediaPlayerManager.unregisterProximityListener()
-        MediaPlayerManager.resetMediaPlayer()
+        mediaPlayerManager.unregisterProximityListener()
+        mediaPlayerManager.resetMediaPlayer()
         emojiKeyboard?.dispose()
         disposable.dispose()
         if (mRecordingAudioRunnable != null) {
@@ -1414,7 +1481,7 @@ class ConversationFragment : BaseFragment(),
                         val size = cursor.getInt(sizeIndex)
 
                         if (!documentsMimeTypeAllowed.contains(mimeType)) {
-                            generalDialog(
+                            handlerDialog.generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_not_allowed),
                                 false,
@@ -1424,7 +1491,7 @@ class ConversationFragment : BaseFragment(),
 
                             }
                         } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
-                            generalDialog(
+                            handlerDialog.generalDialog(
                                 getString(R.string.text_title_attach_doc),
                                 getString(R.string.text_attch_doc_size_exceed),
                                 false,
@@ -1446,7 +1513,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun blockContact() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_block_contact),
             getString(R.string.text_wish_block_contact),
             true,
@@ -1478,7 +1545,7 @@ class ConversationFragment : BaseFragment(),
     }
 
     private fun deleteConversation() {
-        generalDialog(
+        handlerDialog.generalDialog(
             getString(R.string.text_title_delete_conversation),
             getString(R.string.text_want_delete_conversation),
             true,
@@ -1500,7 +1567,7 @@ class ConversationFragment : BaseFragment(),
                 val uri = Utils.getFileUri(
                     context = context,
                     fileName = chatBackgroundFileName,
-                    subFolder = Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                    subFolder = Constants.CacheDirectories.CHAT_BACKGROUND.folder
                 )
                 val inputStream: InputStream = context.contentResolver.openInputStream(uri)!!
                 val backgroundDrawable = Drawable.createFromStream(inputStream, uri.toString())
@@ -1556,7 +1623,8 @@ class ConversationFragment : BaseFragment(),
 
         actionBarCustomView.contact = args.contact
 
-        actionBarCustomView.viewModel = userDisplayFormatShareViewModel
+        actionBarCustomView.userDisplayFormat =
+            userDisplayFormatShareViewModel.getUserDisplayFormat()
 
         actionBarCustomView.containerBack.setOnClickListener {
             findNavController().popBackStack()
@@ -1592,7 +1660,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun dialogWithNeutralButton(status: Int) {
         viewModel.messagesSelected.value?.let { messagesSelected ->
-            Utils.alertDialogWithNeutralButton(
+            handlerDialog.alertDialogWithNeutralButton(
                 R.string.text_delete_messages,
                 false, requireContext(),
                 R.string.text_delete_message_for_me,
@@ -1630,7 +1698,7 @@ class ConversationFragment : BaseFragment(),
 
     private fun dialogWithoutNeutralButton(status: Int) {
         viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
-            Utils.alertDialogWithoutNeutralButton(
+            handlerDialog.alertDialogWithoutNeutralButton(
                 R.string.text_delete_messages,
                 false,
                 requireContext(),
@@ -1658,7 +1726,7 @@ class ConversationFragment : BaseFragment(),
     private fun setupAdapter() {
         conversationAdapter = ConversationAdapter(
             this,
-            MediaPlayerManager,
+            mediaPlayerManager,
             timeFormatShareViewModel.getValTimeFormat()
         )
 
@@ -1691,9 +1759,9 @@ class ConversationFragment : BaseFragment(),
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewConversation)
     }
 
-    private fun conversationAdapterOnClickEvent(item: MessageAndAttachment) {
+    private fun conversationAdapterOnClickEvent(item: MessageAttachmentRelation) {
         if (actionMode.mode != null) {
-            updateStateSelectionMessage(item.message)
+            updateStateSelectionMessage(item.messageEntity)
         }
     }
 
@@ -1704,7 +1772,7 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    private fun updateStateSelectionMessage(item: Message) {
+    private fun updateStateSelectionMessage(item: MessageEntity) {
         viewModel.updateStateSelectionMessage(args.contact.id, item.id, item.isSelected)
     }
 
@@ -1712,7 +1780,7 @@ class ConversationFragment : BaseFragment(),
         viewModel.cleanSelectionMessages(args.contact.id)
     }
 
-    private fun openAttachmentDocument(attachment: Attachment) {
+    private fun openAttachmentDocument(attachmentEntity: AttachmentEntity) {
 
         try {
             var tempFile: File? = null
@@ -1720,9 +1788,9 @@ class ConversationFragment : BaseFragment(),
             val uri: Uri = if (BuildConfig.ENCRYPT_API) {
                 tempFile = FileManager.createTempFileFromEncryptedFile(
                     requireContext(),
-                    attachment.type,
-                    "${attachment.webId}.${attachment.extension}",
-                    attachment.extension
+                    attachmentEntity.type,
+                    "${attachmentEntity.webId}.${attachmentEntity.extension}",
+                    attachmentEntity.extension
                 )!!
                 FileProvider.getUriForFile(
                     requireContext(),
@@ -1732,8 +1800,8 @@ class ConversationFragment : BaseFragment(),
             } else {
                 Utils.getFileUri(
                     requireContext(),
-                    attachment.fileName,
-                    Constants.NapoleonCacheDirectories.DOCUMENTOS.folder
+                    attachmentEntity.fileName,
+                    Constants.CacheDirectories.DOCUMENTOS.folder
                 )
             }
 
@@ -1765,7 +1833,7 @@ class ConversationFragment : BaseFragment(),
         dX: Float,
         viewHolder: RecyclerView.ViewHolder,
         c: Canvas,
-        messageAndAttachment: MessageAndAttachment
+        messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         val icon = resources.getDrawable(R.drawable.ic_quote_new, null)
 
@@ -1775,8 +1843,8 @@ class ConversationFragment : BaseFragment(),
                         event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
                     binding.inputPanel.resetImage()
-                    if (messageAndAttachment.message.status != Constants.MessageStatus.ERROR.status) {
-                        binding.inputPanel.openQuote(messageAndAttachment)
+                    if (messageAndAttachmentRelation.messageEntity.status != Constants.MessageStatus.ERROR.status) {
+                        binding.inputPanel.openQuote(messageAndAttachmentRelation)
                     }
                 }
                 false
@@ -1809,19 +1877,27 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onPause() {
+        viewModel.sendMessageRead(mediaPlayerManager.getMessageId(), "")
+        if (binding.inputPanel.getEditText().text.toString().trim() != "") {
+            viewModel.insertMessageNotSent(
+                binding.inputPanel.getEditText().text.toString(),
+                args.contact.id
+            )
+        } else {
+            viewModel.deleteMessageNotSent(args.contact.id)
+        }
         super.onPause()
-        MediaPlayerManager.unregisterProximityListener()
-        //MediaPlayerManager.completeAudioPlaying()
+        mediaPlayerManager.unregisterProximityListener()
+        mediaPlayerManager.resetMediaPlayer()
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
-        Data.contactId = 0
+        NapoleonApplication.currentConversationContactId = 0
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()
         showShowCase = false
         resetAudioRecording()
-        MediaPlayerManager.pauseAudio()
         if (actionMode.mode != null) {
             actionMode.mode!!.finish()
         }
@@ -1868,7 +1944,7 @@ class ConversationFragment : BaseFragment(),
             recordFile = FileManager.createFile(
                 requireContext(),
                 "${System.currentTimeMillis()}.mp3",
-                Constants.NapoleonCacheDirectories.AUDIOS.folder
+                Constants.CacheDirectories.AUDIOS.folder
             )
 
             recorder = MediaRecorder().apply {
@@ -1950,8 +2026,9 @@ class ConversationFragment : BaseFragment(),
 
     @InternalCoroutinesApi
     override fun onRecorderStarted() {
-        MediaPlayerManager.resetMediaPlayer()
+        mediaPlayerManager.resetMediaPlayer()
         startRecording()
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Utils.vibratePhone(context, Constants.Vibrate.DEFAULT.type, 100)
     }
 
@@ -1965,6 +2042,7 @@ class ConversationFragment : BaseFragment(),
             saveAndSendRecordAudio()
         }
         binding.inputPanel.closeQuote()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onRecorderLocked() {
@@ -1991,7 +2069,7 @@ class ConversationFragment : BaseFragment(),
                 viewModel.saveMessageLocally(
                     binding.inputPanel.getEditText().text.toString().trim(),
                     obtainTimeSelfDestruct(),
-                    quote?.message?.webId ?: ""
+                    quote?.messageEntity?.webId ?: ""
                 )
 
                 with(binding.inputPanel.getEditText()) {
@@ -2008,39 +2086,20 @@ class ConversationFragment : BaseFragment(),
 
     //endregion
 
-    //region Implementation MediaPlayerManager.Listener
-    override fun onErrorPlayingAudio() {
-        Utils.showSimpleSnackbar(
-            binding.coordinator,
-            getString(R.string.text_error_playing_audio),
-            3
-        )
-    }
-
-    override fun onPauseAudio(messageWebId: String?) {
-        // Intentionally empty
-    }
-
-    override fun onCompleteAudio(messageId: String, messageWebId: String?) {
-        // Intentionally empty
-    }
-
-    //endregion
-
     //region Implementation ConversationAdapter.ClickListener
-    override fun onClick(item: MessageAndAttachment) {
+    override fun onClick(item: MessageAttachmentRelation) {
         conversationAdapterOnClickEvent(item)
     }
 
-    override fun onLongClick(item: Message) {
+    override fun onLongClick(item: MessageEntity) {
         if (actionMode.mode == null) {
             actionMode.startActionMode(view, R.menu.menu_selection_message)
             updateStateSelectionMessage(item)
         }
     }
 
-    override fun messageToEliminate(item: MessageAndAttachment) {
-        val messages = arrayListOf<MessageAndAttachment>()
+    override fun messageToEliminate(item: MessageAttachmentRelation) {
+        val messages = arrayListOf<MessageAttachmentRelation>()
         messages.add(item)
         viewModel.deleteMessagesSelected(args.contact.id, messages)
     }
@@ -2053,12 +2112,12 @@ class ConversationFragment : BaseFragment(),
         )
     }
 
-    override fun onPreviewClick(item: MessageAndAttachment) {
-        if (item.attachmentList.isNotEmpty()) {
-            val firstAttachment = item.attachmentList.first()
+    override fun onPreviewClick(item: MessageAttachmentRelation) {
+        if (item.attachmentEntityList.isNotEmpty()) {
+            val firstAttachment = item.attachmentEntityList.first()
 
             if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
-                if (item.message.status == Constants.MessageStatus.UNREAD.status && item.message.isMine == Constants.IsMine.NO.value) {
+                if (item.messageEntity.status == Constants.MessageStatus.UNREAD.status && item.messageEntity.isMine == Constants.IsMine.NO.value) {
                     viewModel.sendMessageRead(item)
                 }
                 openAttachmentDocument(firstAttachment)
@@ -2071,8 +2130,11 @@ class ConversationFragment : BaseFragment(),
         }
     }
 
-    override fun goToQuote(messageAndAttachment: MessageAndAttachment, itemPosition: Int?) {
-        val position = viewModel.getMessagePosition(messageAndAttachment)
+    override fun goToQuote(
+        messageAndAttachmentRelation: MessageAttachmentRelation,
+        itemPosition: Int?
+    ) {
+        val position = viewModel.getMessagePosition(messageAndAttachmentRelation)
 
         if (position != -1) {
             binding.recyclerViewConversation.apply {
@@ -2093,69 +2155,71 @@ class ConversationFragment : BaseFragment(),
     }
 
     override fun downloadAttachment(
-        messageAndAttachment: MessageAndAttachment,
+        messageAndAttachmentRelation: MessageAttachmentRelation,
         itemPosition: Int?
     ) {
         Timber.d("downloadAttachment")
-        if (itemPosition != null && messageAndAttachment.getFirstAttachment() != null) {
-            viewModel.downloadAttachment(messageAndAttachment, itemPosition)
+        if (itemPosition != null && messageAndAttachmentRelation.getFirstAttachment() != null) {
+            viewModel.downloadAttachment(messageAndAttachmentRelation, itemPosition)
         }
     }
 
-    override fun uploadAttachment(attachment: Attachment, message: Message) {
-        viewModel.uploadAttachment(attachment, message, obtainTimeSelfDestruct())
+    override fun uploadAttachment(
+        attachmentEntity: AttachmentEntity,
+        messageEntity: MessageEntity
+    ) {
+        viewModel.uploadAttachment(attachmentEntity, messageEntity, obtainTimeSelfDestruct())
     }
 
-    override fun updateAttachmentState(attachment: Attachment) {
-        viewModel.updateAttachment(attachment)
+    override fun updateAttachmentState(attachmentEntity: AttachmentEntity) {
+        viewModel.updateAttachment(attachmentEntity)
     }
 
-    override fun sendMessageRead(messageAndAttachment: MessageAndAttachment) {
+    override fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation) {
         Timber.d("sendMessageRead")
-        viewModel.sendMessageRead(messageAndAttachment)
+        viewModel.sendMessageRead(messageAndAttachmentRelation)
     }
 
     override fun sendMessageRead(
-        messageId: String,
-        messageWebId: String,
+        messageId: Int,
+        webId: String,
         isComplete: Boolean,
         position: Int
     ) {
-        Timber.d("sendMessageRead: $messageWebId")
-        viewModel.sendMessageRead(messageWebId)
+        viewModel.sendMessageRead(messageId, webId)
 
         if (isComplete) {
             conversationAdapter.checkIfNextIsAudio(messageId)
         }
     }
 
-    override fun reSendMessage(message: Message) {
-        viewModel.reSendMessage(message, obtainTimeSelfDestruct())
+    override fun reSendMessage(messageEntity: MessageEntity) {
+        viewModel.reSendMessage(messageEntity, obtainTimeSelfDestruct())
     }
 
-    override fun scrollToNextAudio(position: Int) {
-        binding.recyclerViewConversation.smoothScrollToPosition(position)
+    override fun scrollToNextAudio(nextPosition: Int) {
+        binding.recyclerViewConversation.smoothScrollToPosition(nextPosition)
 
         binding.recyclerViewConversation.apply {
             removeOnScrollListener(onScrollPLayNextAudioListener)
-            mNextAudioPosition = position
+            mNextAudioPosition = nextPosition
             addOnScrollListener(onScrollPLayNextAudioListener)
 
             val lastItemVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition()
 
-            Timber.d("lastItemVisible: $lastItemVisible, position: $position")
+            Timber.d("lastItemVisible: $lastItemVisible, position: $nextPosition")
 
-            if (lastItemVisible < position) {
-                Timber.d("scrollTo $position")
-                binding.recyclerViewConversation.smoothScrollToPosition(position)
+            if (lastItemVisible < nextPosition) {
+                Timber.d("scrollTo $nextPosition")
+                binding.recyclerViewConversation.smoothScrollToPosition(nextPosition)
             } else {
-                conversationAdapter.notifyPlayAudio(position)
+                conversationAdapter.notifyPlayAudio(nextPosition)
             }
         }
     }
 
-    override fun updateMessageState(message: Message) {
-        viewModel.updateMessage(message)
+    override fun updateMessageState(messageEntity: MessageEntity) {
+        viewModel.updateMessage(messageEntity)
     }
 
     private fun showCase() {

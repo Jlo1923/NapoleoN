@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_notifications">Notifications</string>
+    <string name="text_notification_tone">Tonalité de notification</string>
+    <string name="text_select_notification_tone">Sélectionnez la tonalité de notification</string>
+    <string name="text_custom_notifications">Notifications personnalisées</string>
+    <string name="text_notification_message">Notifications de message</string>
+    <string name="text_customize_notification">Personnalisez les notifications</string>
+</resources>

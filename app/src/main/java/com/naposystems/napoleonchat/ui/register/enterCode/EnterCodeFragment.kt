@@ -1,13 +1,11 @@
 package com.naposystems.napoleonchat.ui.register.enterCode
 
-import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,12 +16,12 @@ import com.naposystems.napoleonchat.ui.custom.numericKeyboard.NumericKeyboardCus
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class EnterCodeFragment :
-    Fragment(), EnterCodeWidget.OnEventListener,
+    DaggerFragment(), EnterCodeWidget.OnEventListener,
     NumericKeyboardCustomView.OnEventListener {
 
     companion object {
@@ -41,11 +39,6 @@ class EnterCodeFragment :
     private var attemptsForNewCode: Int = 0
     private var timerEnterCode: CountDownTimer? = null
     private var timerNewCode: CountDownTimer? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -118,7 +111,7 @@ class EnterCodeFragment :
             if (!it.isNullOrEmpty()) {
                 binding.viewSwitcher.showNext()
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
             }
         })
 

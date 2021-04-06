@@ -8,6 +8,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Display
@@ -21,7 +22,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -38,9 +38,11 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
-import com.naposystems.napoleonchat.entity.User
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
@@ -48,15 +50,16 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
-import com.naposystems.napoleonchat.utility.notificationUtils.NotificationUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import dagger.android.AndroidInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -66,9 +69,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
+    @Inject
+    lateinit var notificationClient: NotificationClient
+
+    @Inject
+    lateinit var handlerNotificationChannel: HandlerNotificationChannel
+
     private lateinit var binding: ActivityMainBinding
+
     private lateinit var navController: NavController
+
     private lateinit var appBarConfiguration: AppBarConfiguration
+
     private lateinit var viewModel: MainActivityViewModel
 
     private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
@@ -96,18 +108,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
-            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
-            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
-            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
-            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
-            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
-            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
-            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
-        }
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//
+//        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
+//            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
+//            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
+//            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
+//            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
+//            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
+//            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
+//            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
+//            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
+//        }
 
         super.onCreate(savedInstanceState)
 
@@ -115,28 +127,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .get(MainActivityViewModel::class.java)
 
         intent.extras?.let { bundle ->
-            var channel = ""
-            var contactId = 0
-            var isVideoCall = false
 
-            if (bundle.containsKey(Constants.CallKeys.CHANNEL)) {
-                channel = bundle.getString(Constants.CallKeys.CHANNEL) ?: ""
+            var callModel = CallModel(
+                contactId = 0,
+                channelName = "",
+                isVideoCall = false
+            )
+
+            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL)) {
+                callModel = bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
             }
 
-            if (bundle.containsKey(Constants.CallKeys.CONTACT_ID)) {
-                contactId = bundle.getInt(Constants.CallKeys.CONTACT_ID, 0)
-            }
-
-            if (bundle.containsKey(Constants.CallKeys.IS_VIDEO_CALL)) {
-                isVideoCall = bundle.getBoolean(Constants.CallKeys.IS_VIDEO_CALL, false)
-            }
-
-            Timber.d("Channel: $channel, ContactId: $contactId, IsVideoCall: $isVideoCall")
-
-            if (channel.isNotEmpty() || contactId > 0) {
-                viewModel.setCallChannel(channel)
-                viewModel.setIsVideoCall(isVideoCall)
-                viewModel.getContact(contactId)
+            if (callModel.channelName != "" || callModel.contactId > 0) {
+                viewModel.setCallChannel(callModel.channelName)
+                viewModel.setIsVideoCall(callModel.isVideoCall)
+                viewModel.getContact(callModel.contactId)
             }
         }
 
@@ -146,6 +151,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
 
         viewModel.getAccountStatus()
+
         viewModel.accountStatus.observe(this, Observer {
             accountStatus = it
         })
@@ -182,25 +188,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (this.hasMicAndCameraPermission()) {
-                    Timber.d("startCallActivity MainActivity")
-                    val notificationUtils = NotificationUtils(this.applicationContext)
-                    notificationUtils.startWebRTCCallService(
-                        it.channel,
-                        it.isVideoCall,
-                        it.contactId,
-                        true,
-                        this
-                    )
 
-                    val intent =
-                        Intent(applicationContext, ConversationCallActivity::class.java).apply {
-                            putExtras(Bundle().apply {
-                                putInt(ConversationCallActivity.CONTACT_ID, it.contactId)
-                                putString(ConversationCallActivity.CHANNEL, it.channel)
-                                putBoolean(ConversationCallActivity.IS_VIDEO_CALL, it.isVideoCall)
-                                putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
-                            })
-                        }
+                    Timber.d("LLAMADA PASO: INICIANDO CONVERSATIONCALLACTIVITY")
+
+                    val intent = Intent(
+                        applicationContext,
+                        ConversationCallActivity::class.java
+                    ).apply {
+                        putExtras(Bundle().apply {
+                            it.callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+                            putSerializable(ConversationCallActivity.KEY_CALL_MODEL, it.callModel)
+                        })
+                    }
                     startActivity(intent)
                 }
             }
@@ -217,6 +216,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     )
                 }
         disposable.add(disposableFriendRequestAccepted)
+
+        val disposableDeleteChannel =
+            RxBus.listen(RxEvent.DeleteChannel::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Timber.d("*TestDelete: State ${it.contact.stateNotification}")
+                    if (it.contact.stateNotification) {
+                        Timber.d("*TestDelete: Contact ${it.contact.id}")
+                        Timber.d("*TestDelete: Contact ${it.contact.getNickName()}")
+                        handlerNotificationChannel.deleteUserChannel(
+                            it.contact.id,
+                            it.contact.getNickName(),
+                            it.contact.notificationId
+                        )
+                    }
+                }
+
+        disposable.add(disposableDeleteChannel)
+
+        val disposableHideOptionMenuRecoveryAccount =
+            RxBus.listen(RxEvent.HideOptionMenuRecoveryAccount::class.java)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    hideOptionMenuRecoveryAccount()
+                }
+
+        disposable.add(disposableHideOptionMenuRecoveryAccount)
+
 
         setSupportActionBar(binding.toolbar)
 
@@ -259,6 +286,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     binding.frameLayout.elevation = 0f
                 }
                 R.id.accessPinFragment -> {
+
+                    Timber.d("AccountStatus Destination Listener {$accountStatus}")
+
                     if (accountStatus == Constants.AccountStatus.ACCOUNT_RECOVERED.id) {
                         hideToolbar()
                         disableDrawer()
@@ -282,7 +312,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        viewModel.user.observe(this, Observer {
+        viewModel.userEntity.observe(this, Observer {
             if (it != null) {
                 updateHeaderDrawer(it)
             }
@@ -301,13 +331,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Timber.d("startCallActivity MainActivity viewmodel.contact")
                 val intent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putSerializable(ConversationCallActivity.CONTACT_ID, contact)
-                        putString(ConversationCallActivity.CHANNEL, viewModel.getCallChannel())
-                        putBoolean(
-                            ConversationCallActivity.IS_VIDEO_CALL,
-                            viewModel.isVideoCall() ?: false
+                        putSerializable(
+                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
+                                contactId = contact.id,
+                                channelName = viewModel.getCallChannel(),
+                                isVideoCall = viewModel.isVideoCall() ?: false,
+                                typeCall = Constants.TypeCall.IS_INCOMING_CALL
+                            )
                         )
-                        putBoolean(ConversationCallActivity.IS_INCOMING_CALL, true)
                     })
                 }
                 startActivity(intent)
@@ -322,6 +353,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navView.setNavigationItemSelectedListener(this)
 
         setMarginToNavigationView()
+
+        hideOptionMenuForAndroidVersion()
+
+        hideOptionMenuRecoveryAccount()
     }
 
     private fun openMenu() {
@@ -357,7 +392,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 viewModel.setJsonNotification(jsonNotification.toString())
             }
-            if (args.containsKey(Constants.NotificationKeys.ATTACK)){
+            if (args.containsKey(Constants.NotificationKeys.ATTACKER_ID)) {
                 val dialog = AccountAttackDialogFragment()
                 dialog.show(supportFragmentManager, "AttackDialog")
             }
@@ -388,7 +423,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel.getUser()
     }
 
-    private fun updateHeaderDrawer(user: User) {
+    private fun updateHeaderDrawer(userEntity: UserEntity) {
         val headerView = binding.navView.getHeaderView(0)
 
         val imageViewBackground = headerView.findViewById<ImageView>(R.id.imageView_background)
@@ -406,7 +441,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             this.theme
         )
 
-        val imageUrl = user.imageUrl
+        val imageUrl = userEntity.imageUrl
 
         Glide.with(this)
             .load(
@@ -417,27 +452,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         Glide.with(this)
             .load(
-                if (user.headerUri.isEmpty()) {
+                if (userEntity.headerUri.isEmpty()) {
                     defaultHeaderBackground
                 } else {
                     Utils.getFileUri(
                         context = this,
-                        fileName = user.headerUri,
-                        subFolder = Constants.NapoleonCacheDirectories.HEADER.folder
+                        fileName = userEntity.headerUri,
+                        subFolder = Constants.CacheDirectories.HEADER.folder
                     )
                 }
             )
             .into(imageViewBackground)
 
-        if (user.displayName != "") {
+        if (userEntity.displayName != "") {
             textViewDisplayName.visibility = View.VISIBLE
         } else {
             textViewDisplayName.visibility = View.GONE
         }
 
-        textViewDisplayName.text = user.displayName
+        textViewDisplayName.text = userEntity.displayName
 
-        val nickname = getString(R.string.label_nickname, user.nickname)
+        val nickname = getString(R.string.label_nickname, userEntity.nickname)
 
         textViewNickname.text = nickname
 
@@ -536,18 +571,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-            R.id.suscription -> navController.navigate(
+            //TODO:Subscription
+            /*R.id.subscription -> navController.navigate(
                 R.id.subscriptionFragment,
                 null,
                 options
-            )
+            )*/
             R.id.security_settings -> navController.navigate(
                 R.id.securitySettingsFragment,
                 null,
                 options
             )
+            R.id.recovery_account_option_main_menu -> navController.navigate(
+                R.id.registerRecoveryAccountFragment,
+                null,
+                options
+            )
             R.id.appearance_settings -> navController.navigate(
                 R.id.appearanceSettingsFragment,
+                null,
+                options
+            )
+            R.id.notification_option_main_menu -> navController.navigate(
+                R.id.notificationFragment,
                 null,
                 options
             )
@@ -567,6 +613,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.applyOverrideConfiguration(overrideConfiguration)
     }*/
 
+    private fun hideOptionMenuForAndroidVersion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            binding.navView.menu.findItem(R.id.notification_option_main_menu).isVisible = false
+        }
+    }
+
+    private fun hideOptionMenuRecoveryAccount() {
+        if (viewModel.getRecoveryQuestionsPref() == Constants.RecoveryQuestionsSaved.SAVED_QUESTIONS.id) {
+            binding.navView.menu.findItem(R.id.recovery_account_option_main_menu).isVisible = false
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         val notificationManager =
@@ -583,11 +641,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPause() {
         super.onPause()
         viewModel.setLockTimeApp()
+//        viewModel.disconnectSocket()
     }
 
     override fun onDestroy() {
         disposable.clear()
         viewModel.resetIsOnCallPref()
+//        viewModel.disconnectSocket()
         super.onDestroy()
     }
 
@@ -595,6 +655,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
             when (accountStatus) {
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
+
+                    Timber.d("AccountStatus validLockTime {$accountStatus}")
+
                     val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
                     if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
                         val currentTime = System.currentTimeMillis()

@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.ui.register.sendCode
 
-import com.naposystems.napoleonchat.dto.sendCode.SendCodeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeResDTO
 import retrofit2.Response
 
 interface IContractSendCode {
@@ -27,7 +27,7 @@ interface IContractSendCode {
         fun getAttemptsEnterCode(): Int
         fun resetAttemptsEnterCode()
         fun resetAttemptsNewCode()
-        fun get422Error(response: Response<SendCodeResDTO>): ArrayList<String>
+        fun getUnprocessableEntityError(response: Response<SendCodeResDTO>): ArrayList<String>
         fun getDefaultError(response: Response<SendCodeResDTO>): ArrayList<String>
     }
 }

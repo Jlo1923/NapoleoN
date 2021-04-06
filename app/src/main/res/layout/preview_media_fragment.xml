@@ -7,7 +7,7 @@
 
         <variable
             name="message"
-            type="com.naposystems.napoleonchat.entity.message.MessageAndAttachment" />
+            type="com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +18,7 @@
         android:focusable="true"
         tools:context=".ui.previewMedia.PreviewMediaFragment">
 
-        <ImageView
+        <com.naposystems.napoleonchat.utility.ZoomImage
             android:id="@+id/imageView_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -49,10 +49,10 @@
                 android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/x_small_margin"
-                android:padding="@dimen/x_small_padding"
                 android:background="@drawable/bg_rounded_icon_show"
                 android:clickable="true"
                 android:focusable="true"
+                android:padding="@dimen/x_small_padding"
                 android:scaleType="fitCenter"
                 app:firstAnimation="@drawable/anim_play_to_pause"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -93,8 +93,8 @@
             android:id="@+id/container_message_and_seekbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@color/black_40"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -105,22 +105,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ellipsize="end"
-                android:padding="@dimen/normal_padding"
                 android:maxLines="4"
-                app:setTextPreview="@{message.message.body}"
+                android:padding="@dimen/normal_padding"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toTopOf="@id/container_seekbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:setTextPreview="@{message.messageEntity.body}"
                 tools:text="@tools:sample/lorem[4]" />
 
             <LinearLayout
                 android:id="@+id/container_seekbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -130,8 +130,8 @@
                     android:id="@+id/seekbar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/small_margin"
                     android:layout_marginTop="@dimen/large_margin"
+                    android:layout_marginEnd="@dimen/small_margin"
                     android:layout_marginBottom="@dimen/large_margin"
                     android:layout_weight="1"
                     android:max="100"
@@ -149,8 +149,8 @@
                     style="@style/BodyTextView.White"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/normal_margin"
                     android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/normal_margin"
                     app:layout_constraintBottom_toBottomOf="@id/seekbar"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/seekbar"

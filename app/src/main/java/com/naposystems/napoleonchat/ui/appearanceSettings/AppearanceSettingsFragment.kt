@@ -39,6 +39,7 @@ import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
@@ -56,6 +57,9 @@ class AppearanceSettingsFragment : BaseFragment() {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: AppearanceSettingsViewModel by viewModels { viewModelFactory }
 
@@ -85,11 +89,6 @@ class AppearanceSettingsFragment : BaseFragment() {
     private val bitmapMaxWidth = 720
     private val bitmapMaxHeight = 1280
     private val imageCompression = 80
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -290,7 +289,7 @@ class AppearanceSettingsFragment : BaseFragment() {
             }
 
             override fun defaultOptionSelected(location: Int) {
-                Utils.generalDialog(
+                handlerDialog.generalDialog(
                     getString(R.string.text_select_default),
                     getString(R.string.text_message_restore_cover_photo),
                     true,
@@ -320,6 +319,21 @@ class AppearanceSettingsFragment : BaseFragment() {
                 viewModel.resetConversationBackgroundLiveData()
             }
         })
+
+        viewModel.colorScheme.observe(viewLifecycleOwner) {
+            binding.colorScheme = it
+            binding.executePendingBindings()
+        }
+
+        viewModel.userDisplayFormat.observe(viewLifecycleOwner) {
+            binding.userDisplayFormat = it
+            binding.executePendingBindings()
+        }
+
+        viewModel.timeFormat.observe(viewLifecycleOwner) {
+            binding.timeFormat = it
+            binding.executePendingBindings()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -361,7 +375,7 @@ class AppearanceSettingsFragment : BaseFragment() {
             compressedFile = FileManager.createFile(
                 context,
                 compressedFileName,
-                Constants.NapoleonCacheDirectories.CHAT_BACKGROUND.folder
+                Constants.CacheDirectories.CHAT_BACKGROUND.folder
             )
 
             val destinationUri = Uri.fromFile(compressedFile)

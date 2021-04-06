@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AccessPinFragmentBinding
-import com.naposystems.napoleonchat.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -24,9 +24,10 @@ import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
 import dagger.android.support.AndroidSupportInjection
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class AccessPinFragment : Fragment() {
+class AccessPinFragment : DaggerFragment() {
 
     companion object {
         fun newInstance() = AccessPinFragment()
@@ -55,11 +56,6 @@ class AccessPinFragment : Fragment() {
 
     private var observerCreateUser = false
     private var observerSubscription = false
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,7 +103,7 @@ class AccessPinFragment : Fragment() {
             }
         })
 
-        viewModel.userCreatedSuccessfully.observe(viewLifecycleOwner, Observer {
+        viewModel.userEntityCreatedSuccessfully.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 viewModel.createUser(it)
             }

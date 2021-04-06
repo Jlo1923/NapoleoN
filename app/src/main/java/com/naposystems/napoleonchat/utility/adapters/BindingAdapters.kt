@@ -20,6 +20,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textfield.TextInputEditText
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -27,7 +29,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.model.conversationCall.ConversationCall
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.GlideManager
@@ -126,26 +128,6 @@ fun JSONObject.toSessionDescription(type: SessionDescription.Type): SessionDescr
     return SessionDescription(type, data.getString("sdp"))
 }
 
-fun JSONObject.toConversationCallModel(): ConversationCall {
-    var channel = ""
-    var contactId = 0
-    var isVideoCall = false
-
-    if (has(Constants.CallKeys.CHANNEL)) {
-        channel = "presence-${getString(Constants.CallKeys.CHANNEL)}"
-    }
-
-    if (has(Constants.CallKeys.CONTACT_ID)) {
-        contactId = getInt(Constants.CallKeys.CONTACT_ID)
-    }
-
-    if (has(Constants.CallKeys.IS_VIDEO_CALL)) {
-        isVideoCall = getBoolean(Constants.CallKeys.IS_VIDEO_CALL)
-    }
-
-    return ConversationCall(channel, contactId, isVideoCall)
-}
-
 fun IceCandidate.toJSONObject(): JSONObject {
     val jsonObject = JSONObject()
     jsonObject.put("type", "candidate")
@@ -219,94 +201,56 @@ fun bindBackground(imageView: ImageView, imageUrl: String) {
 }
 
 @BindingAdapter("avatar")
-fun bindAvatar(imageView: ImageView, @Nullable contact: Contact?) {
+fun bindAvatar(imageView: ImageView, @Nullable contact: ContactEntity?) {
     val context = imageView.context
     if (contact != null && contact.id != 0) {
 
-        val defaultAvatar = context.resources.getDrawable(
-            R.drawable.ic_default_avatar,
-            context.theme
-        )
+        val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.ic_default_avatar)
 
-        val loadImage = when {
-            contact.imageUrlFake.isNotEmpty() -> {
-                Utils.getFileUri(
-                    context = context,
-                    fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
-                )
-            }
-            contact.imageUrl.isNotEmpty() -> {
-                contact.imageUrl
-            }
-            else -> {
-                ""
-            }
-        }
+        Glide.with(context)
+            .load(contact.imageUrlFake)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.NORMAL)
+                    .fitCenter()
+            ).error(defaultAvatar)
+            .circleCrop()
+            .into(imageView)
 
-        if (loadImage != "") {
-            Glide.with(context)
-                .load(loadImage)
-                .circleCrop()
-                .into(imageView)
-        } else {
-            imageView.setImageDrawable(defaultAvatar)
-        }
-
-        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
     } else {
-        val addContact = context.resources.getDrawable(
-            R.drawable.ic_person_add,
-            context.theme
-        )
-
+        val addContact = ContextCompat.getDrawable(context, R.drawable.ic_person_add)
         imageView.setImageDrawable(addContact)
         imageView.scaleType = ImageView.ScaleType.CENTER
     }
 }
 
 @BindingAdapter("avatarWithoutCircle")
-fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: Contact?) {
+fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: ContactEntity?) {
     if (contact != null) {
         val context = imageView.context
 
-        val defaultAvatar = context.resources.getDrawable(
-            R.drawable.ic_default_avatar,
-            context.theme
-        )
+        val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.ic_default_avatar)
 
-        @Suppress("IMPLICIT_CAST_TO_ANY")
-        val loadImage = when {
-            contact.imageUrlFake.isNotEmpty() -> {
-                Utils.getFileUri(
-                    context = context,
-                    fileName = contact.imageUrlFake,
-                    subFolder = Constants.NapoleonCacheDirectories.IMAGE_FAKE_CONTACT.folder
-                )
-            }
-            contact.imageUrl.isNotEmpty() -> {
-                contact.imageUrl
-            }
-            else -> {
-                defaultAvatar
-            }
-        }
-
-        Glide.with(imageView)
-            .load(loadImage)
+        Glide.with(context)
+            .load(contact.imageUrlFake)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.NORMAL)
+                    .fitCenter()
+            ).error(defaultAvatar)
             .into(imageView)
     }
 }
 
 @BindingAdapter("nickname")
-fun bindNickname(textView: TextView, @Nullable contact: Contact?) {
+fun bindNickname(textView: TextView, @Nullable contact: ContactEntity?) {
     textView.context.let { context ->
         textView.text = context.getString(R.string.label_nickname, contact?.getNickName())
     }
 }
 
 @BindingAdapter("name")
-fun bindName(textView: TextView, @Nullable contact: Contact?) {
+fun bindName(textView: TextView, @Nullable contact: ContactEntity?) {
     textView.text = contact?.getName()
 }
 

@@ -1,7 +1,8 @@
 package com.naposystems.napoleonchat.ui.contacts
 
 import androidx.lifecycle.*
-import com.naposystems.napoleonchat.entity.Contact
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -9,12 +10,12 @@ import javax.inject.Inject
 class ContactsViewModel @Inject constructor(private val repository: IContractContacts.Repository) :
     ViewModel(), IContractContacts.ViewModel {
 
-    private lateinit var _contacts: LiveData<MutableList<Contact>>
-    val contacts: LiveData<MutableList<Contact>>
+    private lateinit var _contacts: LiveData<MutableList<ContactEntity>>
+    val contacts: LiveData<MutableList<ContactEntity>>
         get() = _contacts
 
-    private val _contactsForSearch = MutableLiveData<List<Contact>>()
-    val contactsForSearch: LiveData<List<Contact>>
+    private val _contactsForSearch = MutableLiveData<List<ContactEntity>>()
+    val contactsForSearch: LiveData<List<ContactEntity>>
         get() = _contactsForSearch
 
     private val _webServiceErrors = MutableLiveData<List<String>>()
@@ -25,7 +26,7 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
     val contactsLoaded: LiveData<Boolean>
         get() = _contactsLoaded
 
-    var textBarSearch : String = ""
+    var textBarSearch: String = ""
 
     init {
         _contactsLoaded.value = false
@@ -48,11 +49,7 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
         viewModelScope.launch {
             try {
                 _contactsForSearch.value = _contacts.value!!.filter {
-                    if (it.nicknameFake.isEmpty()) {
-                        it.nickname.contains(query)
-                    } else {
-                        it.nicknameFake.contains(query)
-                    }
+                    Utils.validateNickname(it, query) || Utils.validateDisplayName(it, query)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)

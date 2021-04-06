@@ -23,9 +23,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationCameraFragmentBinding
-import com.naposystems.napoleonchat.entity.message.attachments.Attachment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.custom.cameraButton.CameraButton
 import com.naposystems.napoleonchat.ui.custom.customVerticalSeekbar.CustomVerticalSeekBar
 import com.naposystems.napoleonchat.utility.Constants
@@ -44,8 +45,9 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
+
 @SuppressLint("RestrictedApi")
-class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
+class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listener,
     CameraButton.CameraButtonListener {
 
     private lateinit var binding: ConversationCameraFragmentBinding
@@ -128,7 +130,6 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                 }
 
         disposable.add(disposableContactBlockOrDelete)
-
 
 //        flashMode = ImageCapture.FLASH_MODE_OFF
 
@@ -256,11 +257,14 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                         when (location) {
                             Constants.LocationImageSelectorBottomSheet.CONVERSATION.location -> {
                                 lifecycleScope.launch {
-                                    photoFileCompress =
-//                                        FileManager.compressImageFromFile(requireContext(), photoFile)
-                                        photoFile
 
-                                    val attachment = Attachment(
+                                    photoFileCompress =
+                                        FileManager.compressImageFromFile(
+                                            requireContext(),
+                                            photoFile
+                                        )
+
+                                    val attachment = AttachmentEntity(
                                         id = 0,
                                         messageId = 0,
                                         webId = "",
@@ -290,7 +294,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
                                     val uri = Utils.getFileUri(
                                         context = context,
                                         fileName = photoFile.name,
-                                        subFolder = Constants.NapoleonCacheDirectories.IMAGES.folder
+                                        subFolder = Constants.CacheDirectories.IMAGES.folder
                                     )
 
                                     with(cameraShareViewModel) {
@@ -378,7 +382,7 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
 
                 override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
                     if (!isBackPressed) {
-                        val attachment = Attachment(
+                        val attachment = AttachmentEntity(
                             id = 0,
                             messageId = 0,
                             webId = "",
@@ -466,8 +470,8 @@ class ConversationCameraFragment : Fragment(), CustomVerticalSeekBar.Listener,
         val timeStamp: String = System.currentTimeMillis().toString()
 
         val subFolder = when (extension) {
-            PHOTO_EXTENSION -> Constants.NapoleonCacheDirectories.IMAGES.folder
-            else -> Constants.NapoleonCacheDirectories.VIDEOS.folder
+            PHOTO_EXTENSION -> Constants.CacheDirectories.IMAGES.folder
+            else -> Constants.CacheDirectories.VIDEOS.folder
         }
 
         fileName = "${timeStamp}.$extension"

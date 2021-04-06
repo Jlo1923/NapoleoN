@@ -1,23 +1,23 @@
 package com.naposystems.napoleonchat.ui.previewMedia.adapter
 
 import android.os.Handler
-import android.view.Gravity
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.naposystems.napoleonchat.entity.message.MessageAndAttachment
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.utility.Constants
 import timber.log.Timber
 
 @BindingAdapter("previewImage")
-fun bindPreviewImage(imageView: ImageView, messageAndAttachment: MessageAndAttachment) {
+fun bindPreviewImage(imageView: ImageView, messageAndAttachmentRelation: MessageAttachmentRelation) {
     try {
-        if (messageAndAttachment.attachmentList.isNotEmpty()) {
+        if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
             imageView.visibility = View.VISIBLE
-            val firstAttachment = messageAndAttachment.attachmentList[0]
+            val firstAttachment = messageAndAttachmentRelation.attachmentEntityList[0]
 
             when (firstAttachment.type) {
                 Constants.AttachmentType.IMAGE.type, Constants.AttachmentType.LOCATION.type -> {
@@ -40,11 +40,14 @@ fun bindPreviewImage(imageView: ImageView, messageAndAttachment: MessageAndAttac
 
 @BindingAdapter("setTextPreview")
 fun bindSetTextPreview(textView: TextView, text: String = "") {
+
     textView.text = text
 
-    Handler().postDelayed({
+    Handler(Looper.getMainLooper()).postDelayed({
+        if (text.isEmpty()) textView.isVisible = false
+
         val count = textView.lineCount
-        if (count > 1) {
+        if (count > 3) {
             textView.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
 
             textView.setOnClickListener {
@@ -56,6 +59,5 @@ fun bindSetTextPreview(textView: TextView, text: String = "") {
             }
         }
     }, 200)
-
 
 }
