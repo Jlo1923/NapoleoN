@@ -7,18 +7,16 @@ import org.json.JSONObject
 
 interface SocketClient {
 
-    fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call)
-
-    fun setSocketCallOutAppListener(socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp)
+    fun setSocketEventListener(socketEventListenerCall: SocketEventListener)
 
     fun getStatusSocket(): ConnectionState
 
     fun getStatusGlobalChannel(): Boolean
 
-    fun getStatusPresenceChannel(channel: String): Boolean
-
     fun connectSocket(mustSubscribeToPresenceChannel: Boolean = false, callModel: CallModel? = null)
 
+    fun subscribeToPresenceChannel(callModel: CallModel)
+    
     fun disconnectSocket()
 
     fun unSubscribePresenceChannel(channelName: String)
@@ -28,7 +26,5 @@ interface SocketClient {
     fun emitClientCall(channel: String, jsonObject: JSONObject)
 
     fun emitClientCall(channel: String, eventType: Int)
-
-    fun subscribeToPresenceChannel(callModel: CallModel)
 
 }

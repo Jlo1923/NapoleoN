@@ -52,12 +52,9 @@ class SocketClientImp
 
     private lateinit var privateGeneralChannelName: String
 
-    private lateinit var socketEventListenerCall: SocketEventsListener.Call
-
-    private lateinit var socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp
+    private lateinit var socketEventListener: SocketEventListener
 
     companion object {
-        const val CONTACT_JOIN_TO_CALL = 1
         const val HANGUP_CALL = 2
         const val CONTACT_WANT_CHANGE_TO_VIDEO = 3
         const val CONTACT_ACCEPT_CHANGE_TO_VIDEO = 4
@@ -72,12 +69,8 @@ class SocketClientImp
     }
 
     //region Conexion
-    override fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call) {
-        this.socketEventListenerCall = socketEventsListenerCall
-    }
-
-    override fun setSocketCallOutAppListener(socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp) {
-        this.socketEventsListenerCallOutApp = socketEventsListenerCallOutApp
+    override fun setSocketEventListener(socketEventListener: SocketEventListener) {
+        this.socketEventListener = socketEventListener
     }
 
     override fun getStatusSocket(): ConnectionState {
@@ -85,7 +78,6 @@ class SocketClientImp
     }
 
     override fun getStatusGlobalChannel(): Boolean {
-
         return if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
             if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
                 pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed
@@ -95,19 +87,9 @@ class SocketClientImp
             Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
     }
 
-    override fun getStatusPresenceChannel(channel: String): Boolean {
-        return if (pusher.getPresenceChannel(channel) != null)
-            if (pusher.getPresenceChannel(channel).isSubscribed)
-                pusher.getPresenceChannel(channel).isSubscribed
-            else
-                Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
-        else
-            Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
-    }
-
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel?) {
 
-        Timber.d("LLAMADA PASO: EN CONNECT SOCKET")
+        Timber.d("LLAMADA PASO: EN CONNECT SOCKET mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
 
         userId = syncManager.getUserId()
 
@@ -120,7 +102,7 @@ class SocketClientImp
                 pusher.connection.state == ConnectionState.DISCONNECTING
             ) {
 
-                Timber.d("LLAMADA PASO: CONECTAR A SOCKET SI ESTA DESCONECTADO")
+                Timber.d("LLAMADA PASO: CONECTAR A SOCKET SI ESTA DESCONECTADO mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
 
                 pusher.connect(object : ConnectionEventListener {
 
@@ -134,16 +116,17 @@ class SocketClientImp
                                 Timber.d("LLAMADA PASO: CONEXION SUCCESS")
                                 callModel?.let { subscribeToPresenceChannel(it) }
                             }
-
                         }
-
                     }
 
                     override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+                        Timber.d("LLAMADA PASO: CONECTAR A SOCKET onError")
                         pusher.connect()
                     }
                 })
             } else if (pusher.connection.state == ConnectionState.CONNECTED) {
+
+                Timber.d("LLAMADA PASO: EN SOCKET CONECTADO  mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
 
                 if (NapoleonApplication.isVisible)
                     subscribeChannels()
@@ -157,155 +140,6 @@ class SocketClientImp
         }
     }
 
-    override fun disconnectSocket() {
-
-        try {
-
-            if (pusher.connection.state == ConnectionState.CONNECTED ||
-                pusher.connection.state == ConnectionState.CONNECTING
-            ) {
-
-                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null) {
-
-                    //Unbind Global
-
-                    pusher.getPrivateChannel(
-                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                    )
-                        .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
-                            SubscriptionEventListener {}
-                        )
-
-                    //Unsubscribe Channels
-
-                    pusher.unsubscribe(
-                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                    )
-
-                }
-
-                if (pusher.getPrivateChannel(privateGeneralChannelName) != null) {
-
-                    //Unbind General
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.DISCONNECT.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.NEW_MESSAGE.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.SEND_MESSAGES_DESTROY.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.BLOCK_OR_DELETE_FRIENDSHIP.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    //Unsubscribe Channels
-
-                    pusher.unsubscribe(privateGeneralChannelName)
-
-                }
-
-                //Disconnect Pusher
-                pusher.disconnect()
-
-            }
-        } catch (e: Exception) {
-            Timber.e("Pusher Paso IN 7.3: $e")
-        }
-    }
-
-    override fun unSubscribePresenceChannel(channelName: String) {
-        if (pusher.getPresenceChannel(channelName) != null) {
-            Timber.d("LLAMADA PASO: DESUSCRIBIR A CANAL CHANNELNAME $channelName")
-            NapoleonApplication.isCurrentOnCall = false
-            pusher.unsubscribe(channelName)
-        }
-    }
-
-    //TODO: Fusionar estos metodos
-    private fun emitClientConversation(messages: ValidateMessage) {
-        emitClientConversation(arrayListOf(messages))
-    }
-
-    override fun emitClientConversation(messages: List<ValidateMessage>) {
-
-        Timber.d("Pusher 6.1: Emitir")
-
-        try {
-
-            val validateMessage = ValidateMessageEventDTO(messages)
-
-            val adapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
-
-            val jsonObject = adapterValidate.toJson(validateMessage)
-
-            if (jsonObject.isNotEmpty()) {
-
-                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
-                    .trigger(
-                        Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
-                        jsonObject
-                    )
-            }
-
-
-        } catch (e: Exception) {
-
-            Timber.e("Pusher Paso IN 6.4: $e}")
-        }
-
-    }
-
-    override fun emitClientCall(channel: String, jsonObject: JSONObject) {
-
-        if (pusher.getPresenceChannel(channel) != null) {
-
-            pusher.getPresenceChannel(channel)
-                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, jsonObject.toString())
-
-            Timber.d("Emit to Call $jsonObject")
-
-        }
-
-    }
-
-    override fun emitClientCall(channel: String, eventType: Int) {
-
-        if (pusher.getPresenceChannel(channel) != null) {
-
-            pusher.getPresenceChannel(channel)
-                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, eventType.toString())
-
-            Timber.d("Emit to Call $eventType")
-        }
-    }
-    //endregion
-
-    //region Metodos de Suscripcion
     private fun subscribeChannels() {
 
         try {
@@ -436,42 +270,179 @@ class SocketClientImp
                         listenCallEvents(channelName)
 
                         if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
-
                             Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
                             if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL)
-                                socketEventListenerCall.itsSubscribedToPresenceChannelIncomingCall(
+                                socketEventListener.itsSubscribedToPresenceChannelIncomingCall(
                                     callModel
                                 )
 
                         } else {
-
                             Timber.d("LLAMADA PASO 3: Usuarios solo uno")
                             if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
-                                socketEventListenerCall.itsSubscribedToPresenceChannelOutgoingCall(
+                                socketEventListener.itsSubscribedToPresenceChannelOutgoingCall(
                                     callModel
                                 )
                         }
-
                     }
 
                     override fun onUsersInformationReceived(
                         channelName: String?,
                         users: MutableSet<User>?
-                    ) {
-                        Timber.d("onUsersInformationReceived, $channelName, $users")
-                    }
+                    ) = Unit
 
-                    override fun userSubscribed(channelName: String?, user: User?) {
-                        Timber.d("userSubscribed, $channelName, $user")
-                    }
+                    override fun userSubscribed(channelName: String?, user: User?) = Unit
 
-                    override fun userUnsubscribed(channelName: String?, user: User?) {
-                        Timber.d("userUnsubscribed, $channelName, $user")
-                    }
+                    override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                 })
         }
     }
 
+    override fun disconnectSocket() {
+
+        try {
+
+            if (pusher.connection.state == ConnectionState.CONNECTED ||
+                pusher.connection.state == ConnectionState.CONNECTING
+            ) {
+
+                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null) {
+
+                    //Unbind Global
+
+                    pusher.getPrivateChannel(
+                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                    )
+                        .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                            SubscriptionEventListener {}
+                        )
+
+                    //Unsubscribe Channels
+
+                    pusher.unsubscribe(
+                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                    )
+
+                }
+
+                if (pusher.getPrivateChannel(privateGeneralChannelName) != null) {
+
+                    //Unbind General
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.DISCONNECT.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.NEW_MESSAGE.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.SEND_MESSAGES_DESTROY.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.BLOCK_OR_DELETE_FRIENDSHIP.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    //Unsubscribe Channels
+
+                    pusher.unsubscribe(privateGeneralChannelName)
+
+                }
+
+                //Disconnect Pusher
+                pusher.disconnect()
+
+            }
+        } catch (e: Exception) {
+            Timber.e("Pusher Paso IN 7.3: $e")
+        }
+    }
+
+    override fun unSubscribePresenceChannel(channelName: String) {
+        if (pusher.getPresenceChannel(channelName) != null) {
+            Timber.d("LLAMADA PASO: DESUSCRIBIR A CANAL CHANNELNAME $channelName")
+            NapoleonApplication.isCurrentOnCall = false
+            pusher.unsubscribe(channelName)
+        }
+    }
+
+    //TODO: Fusionar estos metodos
+    override fun emitClientConversation(messages: List<ValidateMessage>) {
+
+        Timber.d("Pusher 6.1: Emitir")
+
+        try {
+
+            val validateMessage = ValidateMessageEventDTO(messages)
+
+            val adapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
+
+            val jsonObject = adapterValidate.toJson(validateMessage)
+
+            if (jsonObject.isNotEmpty()) {
+
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                        jsonObject
+                    )
+            }
+
+
+        } catch (e: Exception) {
+
+            Timber.e("Pusher Paso IN 6.4: $e}")
+        }
+
+    }
+
+    private fun emitClientConversation(messages: ValidateMessage) {
+        emitClientConversation(arrayListOf(messages))
+    }
+
+    override fun emitClientCall(channel: String, jsonObject: JSONObject) {
+
+        if (pusher.getPresenceChannel(channel) != null) {
+
+            pusher.getPresenceChannel(channel)
+                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, jsonObject.toString())
+
+            Timber.d("Emit to Call $jsonObject")
+
+        }
+
+    }
+
+    override fun emitClientCall(channel: String, eventType: Int) {
+
+        if (pusher.getPresenceChannel(channel) != null) {
+
+            pusher.getPresenceChannel(channel)
+                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, eventType.toString())
+
+            Timber.d("Emit to Call $eventType")
+        }
+    }
     //endregion
 
     // region Region Escuchadores de Eventos
@@ -850,7 +821,7 @@ class SocketClientImp
                     override fun onEvent(event: PusherEvent) {
                         NapoleonApplication.isShowingCallActivity = false
                         Timber.d("LLAMADA PASO REJECTED: LlAMADA RECHAZADA")
-                        socketEventListenerCall.contactRejectCall(event.channelName)
+                        socketEventListener.contactRejectCall(event.channelName)
                     }
 
                     override fun onAuthenticationFailure(
@@ -876,7 +847,7 @@ class SocketClientImp
                                 val jsonData = jsonObject.getJSONObject("data")
                                 if (jsonData.has("channel_private")) {
                                     val privateChannel = jsonData.getString("channel_private")
-                                    socketEventListenerCall.contactCancelCall(privateChannel)
+                                    socketEventListener.contactCancelCall(privateChannel)
                                 }
                             }
                             val intent = Intent(context, WebRTCService::class.java)
@@ -904,8 +875,8 @@ class SocketClientImp
                     object : PresenceChannelEventListener {
 
                         override fun onEvent(event: PusherEvent) {
-
                             try {
+
                                 val eventType = event.data.toIntOrNull()
 
                                 if (eventType != null) {
@@ -916,45 +887,50 @@ class SocketClientImp
 
                                         CONTACT_WANT_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_WANT_CHANGE_TO_VIDEO")
-                                            socketEventListenerCall.contactWantChangeToVideoCall(
+                                            socketEventListener.contactWantChangeToVideoCall(
                                                 event.channelName
                                             )
                                         }
                                         CONTACT_ACCEPT_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_ACCEPT_CHANGE_TO_VIDEO")
-                                            socketEventListenerCall.contactAcceptChangeToVideoCall(
+                                            socketEventListener.contactAcceptChangeToVideoCall(
                                                 event.channelName
                                             )
                                         }
                                         CONTACT_CANCEL_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_CANCEL_CHANGE_TO_VIDEO")
-                                            socketEventListenerCall.contactCancelChangeToVideoCall(
+                                            socketEventListener.contactCancelChangeToVideoCall(
                                                 event.channelName
                                             )
                                         }
                                         CONTACT_CANT_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_CANT_CHANGE_TO_VIDEO")
-                                            socketEventListenerCall.contactCantChangeToVideoCall(
+                                            socketEventListener.contactCantChangeToVideoCall(
                                                 event.channelName
                                             )
                                         }
                                         CONTACT_TURN_ON_CAMERA -> {
                                             Timber.d("LLAMADA PASO: CONTACT_TURN_ON_CAMERA")
-                                            socketEventListenerCall.contactTurnOnCamera(event.channelName)
+                                            socketEventListener.toggleContactCamera(
+                                                event.channelName,
+                                                isVisible = true
+                                            )
                                         }
-
 
                                         CONTACT_TURN_OFF_CAMERA -> {
                                             Timber.d("LLAMADA PASO: CONTACT_TURN_OFF_CAMERA")
-                                            socketEventListenerCall.contactTurnOffCamera(event.channelName)
+                                            socketEventListener.toggleContactCamera(
+                                                event.channelName,
+                                                isVisible = false
+                                            )
                                         }
-
 
                                         HANGUP_CALL -> {
                                             Timber.d("LLAMADA PASO: HANGUP_CALL")
-                                            socketEventListenerCall.contactHasHangup(event.channelName)
+                                            socketEventListener.contactHasHangup(event.channelName)
                                         }
                                     }
+
                                 } else {
 
                                     val jsonData = JSONObject(event.data)
@@ -967,7 +943,7 @@ class SocketClientImp
 
                                                 Timber.d("LLAMADA PASO: RECEPCION DE ICECANDIDATE RECIBIDO")
 
-                                                socketEventListenerCall.iceCandidateReceived(
+                                                socketEventListener.iceCandidateReceived(
                                                     event.channelName,
                                                     jsonData.toIceCandidate()
                                                 )
@@ -978,7 +954,7 @@ class SocketClientImp
 
                                                 Timber.d("LLAMADA PASO: OFERTA RECIBIDA")
 
-                                                socketEventListenerCall.offerReceived(
+                                                socketEventListener.offerReceived(
                                                     event.channelName,
                                                     jsonData.toSessionDescription(
                                                         SessionDescription.Type.OFFER
@@ -986,12 +962,11 @@ class SocketClientImp
                                                 )
                                             }
 
-
                                             ANSWER -> {
 
                                                 Timber.d("LLAMADA PASO: RESPUESTA RECIBIDA")
 
-                                                socketEventListenerCall.answerReceived(
+                                                socketEventListener.answerReceived(
                                                     event.channelName,
                                                     jsonData.toSessionDescription(
                                                         SessionDescription.Type.ANSWER
@@ -1005,34 +980,23 @@ class SocketClientImp
                             } catch (e: Exception) {
                                 Timber.e(e)
                             }
-
                         }
 
                         override fun onAuthenticationFailure(
                             message: String?,
                             e: java.lang.Exception?
-                        ) {
-                            Timber.d("onAuthenticationFailure, $message")
-                        }
+                        ) = Unit
 
-                        override fun onSubscriptionSucceeded(channelName: String?) {
-                            Timber.d("onSubscriptionSucceeded, $channelName")
-                        }
+                        override fun onSubscriptionSucceeded(channelName: String?) = Unit
 
                         override fun onUsersInformationReceived(
                             channelName: String?,
                             users: MutableSet<User>?
-                        ) {
-                            Timber.d("onUsersInformationReceived, $channelName, $users")
-                        }
+                        ) = Unit
 
-                        override fun userSubscribed(channelName: String?, user: User?) {
-                            Timber.d("userSubscribed, $channelName, $user")
-                        }
+                        override fun userSubscribed(channelName: String?, user: User?) = Unit
 
-                        override fun userUnsubscribed(channelName: String?, user: User?) {
-                            Timber.d("userUnsubscribed, $channelName, $user")
-                        }
+                        override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                     })
         } catch (e: Exception) {
             Timber.e(e)
