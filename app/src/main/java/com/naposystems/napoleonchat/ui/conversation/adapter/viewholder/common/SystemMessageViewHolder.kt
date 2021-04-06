@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.viewHolder
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.common
 
 import android.os.CountDownTimer
 import android.view.LayoutInflater

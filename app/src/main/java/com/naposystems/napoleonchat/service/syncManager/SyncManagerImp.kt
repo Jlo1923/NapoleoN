@@ -19,12 +19,14 @@ import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MESSAGE
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReceivedReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.squareup.moshi.JsonAdapter
@@ -226,60 +228,58 @@ class SyncManagerImp @Inject constructor(
                 messageString
             }
 
-
             Timber.d("**Paso 7.1: Desencriptar mensaje ${newMessageEventMessageResData}")
 
             try {
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
 
-                jsonAdapter.fromJson(newMessageEventMessageResData)
-                    ?.let { newMessageEventMessageRes ->
+                jsonAdapter.fromJson(newMessageEventMessageResData)?.let { newMessageEventRes ->
 
-                        if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
-                            getRemoteContact()
+                    if (newMessageEventRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                        getRemoteContact()
+                    }
+
+                    val databaseMessage =
+                        messageLocalDataSource.getMessageByWebId(
+                            newMessageEventRes.id,
+                            false
+                        )
+
+                    Timber.d("**Paso 7.2: Validar WebId ${newMessageEventRes.id}")
+
+
+                    if (databaseMessage == null) {
+
+                        val message =
+                            newMessageEventRes.toMessageEntity(Constants.IsMine.NO.value)
+
+                        Timber.d("**Paso 7.3: Mensaje no existe WebId ${newMessageEventRes.id}")
+
+                        val messageId =
+                            messageLocalDataSource.insertMessage(message)
+
+                        Timber.d("**Paso 7.4: Mensaje insertado $messageId")
+
+                        if (newMessageEventRes.quoted.isNotEmpty()) {
+                            Timber.d("**Paso 7.5.1: insertar Quote")
+                            insertQuote(
+                                newMessageEventRes.quoted,
+                                messageId.toInt()
+                            )
                         }
 
-                        val databaseMessage =
-                            messageLocalDataSource.getMessageByWebId(
-                                newMessageEventMessageRes.id,
-                                false
+                        val listAttachments =
+                            NewMessageEventAttachmentRes.toListConversationAttachment(
+                                messageId.toInt(),
+                                newMessageEventRes.attachments
                             )
-
-                        Timber.d("**Paso 7.2: Validar WebId ${newMessageEventMessageRes.id}")
-
-
-                        if (databaseMessage == null) {
-
-                            val message =
-                                newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
-
-                            Timber.d("**Paso 7.3: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
-
-                            val messageId =
-                                messageLocalDataSource.insertMessage(message)
-
-                            Timber.d("**Paso 7.4: Mensaje insertado $messageId")
-
-                            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
-                                Timber.d("**Paso 7.5.1: insertar Quote")
-                                insertQuote(
-                                    newMessageEventMessageRes.quoted,
-                                    messageId.toInt()
-                                )
-                            }
-
-                            val listAttachments =
-                                NewMessageEventAttachmentRes.toListConversationAttachment(
-                                    messageId.toInt(),
-                                    newMessageEventMessageRes.attachments
-                                )
-                            if (listAttachments.isNotEmpty()) {
-                                Timber.d("**Paso 7.5.2: insertar ${listAttachments.size} adjuntos")
-                                attachmentLocalDataSource.insertAttachments(listAttachments)
-                            }
+                        if (listAttachments.isNotEmpty()) {
+                            Timber.d("**Paso 7.5.2: insertar ${listAttachments.size} adjuntos")
+                            attachmentLocalDataSource.insertAttachments(listAttachments)
                         }
                     }
+                }
             } catch (e: java.lang.Exception) {
                 Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
             }
@@ -339,13 +339,16 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun notifyMessageReceived(messageId: String) {
+    override fun notifyMessageReceived(message: ValidateMessage) {
 
-        Timber.d("**Paso 9: Proceso consumir recibido del item $messageId")
+        Timber.d("**Paso 9: Proceso consumir recibido del item $message.id")
 
         GlobalScope.launch {
             try {
-                val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
+                //TOOD: debemos diferenciar si mensaje o attachment
+                val messageReceivedReqDTO = MessageReceivedReqDTO(
+                    messageId = message.id, userSender = null, type = MESSAGE, status = null
+                )
                 Timber.d("**Paso 9.1: Proceso consumir recibido del item $messageReceivedReqDTO")
                 napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
             } catch (e: Exception) {

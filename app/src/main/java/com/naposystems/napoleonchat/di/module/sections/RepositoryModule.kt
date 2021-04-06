@@ -69,6 +69,8 @@ import com.naposystems.napoleonchat.ui.contactProfile.IContractContactProfile
 import com.naposystems.napoleonchat.ui.contactUs.IContractContactUs
 import com.naposystems.napoleonchat.ui.contacts.IContractContacts
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.IContractMyMultiAttachmentMsg
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
 import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
 import com.naposystems.napoleonchat.ui.editAccessPin.IContractEditAccessPin
 import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
@@ -271,5 +273,10 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideMultipleAttachmentPreviewRepository(repository: MultipleAttachmentPreviewRepository):
             IContractMultipleAttachmentPreview.Repository
+
+    @Binds
+    abstract fun provideMyMultiAttachmentMsgRepository(
+        repository: MyMultiAttachmentMsgRepository
+    ): IContractMyMultiAttachmentMsg.Repository
 
 }

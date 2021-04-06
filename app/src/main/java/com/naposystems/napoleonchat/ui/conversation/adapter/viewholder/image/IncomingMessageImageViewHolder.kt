@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.viewHolder
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image
 
 import android.graphics.Bitmap
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithImageBinding
+import com.naposystems.napoleonchat.databinding.ConversationItemIncomingMessageWithImageBinding
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
@@ -19,18 +19,20 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
 
-class MyMessageImageViewHolder constructor(
-    private val binding: ConversationItemMyMessageWithImageBinding
+class IncomingMessageImageViewHolder constructor(
+    private val binding: ConversationItemIncomingMessageWithImageBinding
 ) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
-        super.parentContainerMessage = binding.containerMyMessage
+        super.parentContainerMessage = binding.containerIncomingMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
+        super.imageViewAttachment = binding.imageViewAttachment
         super.textViewMessage = binding.textViewMessage
+        super.imageButtonShow = binding.imageViewIconShow
     }
 
     override fun bind(
@@ -44,10 +46,10 @@ class MyMessageImageViewHolder constructor(
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
-        binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
+        binding.imageViewAttachment.visibility = View.VISIBLE
         binding.imageViewAttachment.clipToOutline = true
 
         bindImageAttachment(item)
@@ -97,14 +99,16 @@ class MyMessageImageViewHolder constructor(
     }
 
     companion object {
-        fun from(parent: ViewGroup): MyMessageImageViewHolder {
+        fun from(
+            parent: ViewGroup
+        ): IncomingMessageImageViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = ConversationItemMyMessageWithImageBinding.inflate(
+            val binding = ConversationItemIncomingMessageWithImageBinding.inflate(
                 layoutInflater,
                 parent,
                 false
             )
-            return MyMessageImageViewHolder(binding)
+            return IncomingMessageImageViewHolder(binding)
         }
     }
 }

@@ -1,16 +1,15 @@
-package com.naposystems.napoleonchat.ui.conversation.viewHolder
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.audio
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithGifNnBinding
+import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithAudioBinding
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
-class MyMessageGifNNViewHolder constructor(
-    private val binding: ConversationItemMyMessageWithGifNnBinding
+class MyMessageAudioViewHolder constructor(
+    private val binding: ConversationItemMyMessageWithAudioBinding
 ) :
     ConversationViewHolder(binding.root, binding.root.context) {
 
@@ -19,9 +18,9 @@ class MyMessageGifNNViewHolder constructor(
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
-//        super.containerQuote = binding.containerQuote
         super.textViewCountDown = binding.textViewCountDown
-//        super.quote = binding.quote
+        super.quote = binding.quote
+        super.audioPlayer = binding.audioPlayer
     }
 
     override fun bind(
@@ -32,25 +31,25 @@ class MyMessageGifNNViewHolder constructor(
         mediaPlayerManager: MediaPlayerManager?
     ) {
         super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
-        binding.itemPosition = adapterPosition
-        binding.clickListener = clickListener
         binding.conversation = item
-        binding.imageViewAttachment.visibility = View.GONE
+        binding.clickListener = clickListener
+        binding.isFirst = isFirst
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
+        binding.audioPlayer.enablePlayButton(true)
 
         binding.executePendingBindings()
     }
 
     companion object {
-        fun from(parent: ViewGroup): MyMessageGifNNViewHolder {
+        fun from(parent: ViewGroup): MyMessageAudioViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = ConversationItemMyMessageWithGifNnBinding.inflate(
+            val binding = ConversationItemMyMessageWithAudioBinding.inflate(
                 layoutInflater,
                 parent,
                 false
             )
-            return MyMessageGifNNViewHolder(binding)
+            return MyMessageAudioViewHolder(binding)
         }
     }
 }

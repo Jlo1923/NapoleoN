@@ -180,7 +180,9 @@ interface NapoleonApi {
     suspend fun sendMessagesRead(@Body messagesReadReqDTO: MessagesReadReqDTO): Response<List<String>>
 
     @POST(NOTIFY_MESSAGE_RECEIVED)
-    suspend fun notifyMessageReceived(@Body messageReceivedReqDTO: MessageReceivedReqDTO): Response<MessageReceivedResDTO>
+    suspend fun notifyMessageReceived(
+        @Body messageReceivedReqDTO: MessageReceivedReqDTO
+    ): Response<MessageReceivedResDTO>
 
     @GET(GET_RECOVERY_QUESTIONS)
     suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<RecoveryAccountUserTypeResDTO>
@@ -258,5 +260,8 @@ interface NapoleonApi {
     suspend fun readyForCall(@Body readyForCallReqDTO: ReadyForCallReqDTO): Response<ReadyForCallResDTO>
 
     @PUT(UPDATE_CONTACT_FAKE)
-    suspend fun updateContactFake(@Body contactFakeReqDTO: ContactFakeReqDTO,@Path("friendshipId") idContact: Int): Response<ContactFakeResDTO>
+    suspend fun updateContactFake(
+        @Body contactFakeReqDTO: ContactFakeReqDTO,
+        @Path("friendshipId") idContact: Int
+    ): Response<ContactFakeResDTO>
 }

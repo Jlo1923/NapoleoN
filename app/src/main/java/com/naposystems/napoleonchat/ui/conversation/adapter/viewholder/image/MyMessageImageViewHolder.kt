@@ -1,25 +1,27 @@
-package com.naposystems.napoleonchat.ui.conversation.viewHolder
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image
 
 import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithVideoBinding
+import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithImageBinding
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.BlurTransformation
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
 
-class MyMessageVideoViewHolder constructor(private val binding: ConversationItemMyMessageWithVideoBinding) :
-    ConversationViewHolder(binding.root, binding.root.context) {
-
-//    private var job: Job? = null
+class MyMessageImageViewHolder constructor(
+    private val binding: ConversationItemMyMessageWithImageBinding
+) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
         super.parentContainerMessage = binding.containerMyMessage
@@ -42,9 +44,11 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
         binding.itemPosition = adapterPosition
         binding.conversation = item
         binding.clickListener = clickListener
+        binding.imageViewAttachment.visibility = View.GONE
         binding.isFirst = isFirst
         binding.timeFormat = timeFormat
         binding.itemPosition = adapterPosition
+        binding.imageViewAttachment.clipToOutline = true
 
         bindImageAttachment(item)
 
@@ -58,10 +62,26 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
             val context = binding.imageViewAttachment.context
             messageAndAttachmentRelation.getFirstAttachment()?.let { attachment ->
 
+                binding.imageViewAttachment.visibility = View.VISIBLE
+
                 val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
 
                 transformationList.add(CenterCrop())
-                transformationList.add(BlurTransformation(context))
+
+                when (attachment.type) {
+                    Constants.AttachmentType.IMAGE.type,
+                    Constants.AttachmentType.VIDEO.type -> {
+                        transformationList.add(BlurTransformation(context))
+                    }
+                    Constants.AttachmentType.GIF.type -> {
+                        binding.imageViewIconShow.apply {
+                            setImageDrawable(context.getDrawable(R.drawable.ic_gif_black))
+                            setColorFilter(ContextCompat.getColor(context, R.color.white))
+                        }
+                        binding.containerBrandGiphy.visibility = View.VISIBLE
+                    }
+                }
+
                 transformationList.add(RoundedCorners(8))
 
                 Glide.with(binding.imageViewAttachment)
@@ -70,8 +90,6 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
                         *transformationList.toTypedArray()
                     )
                     .into(binding.imageViewAttachment)
-
-                binding.imageViewAttachment.visibility = View.VISIBLE
             }
         } catch (e: Exception) {
             Timber.e(e)
@@ -79,14 +97,14 @@ class MyMessageVideoViewHolder constructor(private val binding: ConversationItem
     }
 
     companion object {
-        fun from(parent: ViewGroup): MyMessageVideoViewHolder {
+        fun from(parent: ViewGroup): MyMessageImageViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = ConversationItemMyMessageWithVideoBinding.inflate(
+            val binding = ConversationItemMyMessageWithImageBinding.inflate(
                 layoutInflater,
                 parent,
                 false
             )
-            return MyMessageVideoViewHolder(binding)
+            return MyMessageImageViewHolder(binding)
         }
     }
 }

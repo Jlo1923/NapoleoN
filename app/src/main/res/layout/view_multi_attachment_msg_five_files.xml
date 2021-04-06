@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
+
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+        android:id="@+id/view_file_one"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_middle"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_middle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="#345678" />
+
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+        android:id="@+id/view_file_two"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_middle"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="#234567" />
+
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+        android:id="@+id/view_file_three"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_one"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
+        tools:background="#345678" />
+
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+        android:id="@+id/view_file_four"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_two"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_one"
+        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
+        tools:background="#345678" />
+
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+        android:id="@+id/view_file_five"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_two"
+        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
+        tools:background="#345678" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_horizontal_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.66" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

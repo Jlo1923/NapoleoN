@@ -12,9 +12,11 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MESSAGE
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.NotificationKeys.SILENCE
 import com.naposystems.napoleonchat.utility.Utils
 import com.pusher.client.connection.ConnectionState
 import com.squareup.moshi.JsonAdapter
@@ -107,9 +109,9 @@ class HandlerNotificationMessageImp
 
             Timber.d("**Paso 5: Cola superior a cero")
 
-            var itemDataNotification = queueDataNotifications.first()
+            val itemDataNotification = queueDataNotifications.first()
 
-            var itemNotification = queueNotifications.first()
+            val itemNotification = queueNotifications.first()
 
             Timber.d("**Paso 6: Proceso del item $itemDataNotification")
 
@@ -121,16 +123,16 @@ class HandlerNotificationMessageImp
 
             emitClientConversation(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
 
-            syncManager.notifyMessageReceived(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))
+            syncManager.notifyMessageReceived(
+                ValidateMessage(
+                    itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE_ID),
+                    status = 0, user = 0
+                )
+            )
 
-            if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE)
-                    .toBoolean()
-            ) {
-
+            if (itemDataNotification.getValue(SILENCE).toBoolean().not()) {
                 Timber.d("**Paso 10: No Silenciado")
-
                 processNotification(itemDataNotification, itemNotification)
-
             }
 
             Timber.d("NUEVISIMO NUEVA DATACOLA $queueDataNotifications")
@@ -192,7 +194,7 @@ class HandlerNotificationMessageImp
                         val messages = arrayListOf(
                             ValidateMessage(
                                 id = newMessageEventMessageRes.id,
-                                user = newMessageEventMessageRes.userAddressee,
+                                user = newMessageEventMessageRes.userAddressee.toLong(),
                                 status = Constants.MessageEventType.UNREAD.status
                             )
                         )

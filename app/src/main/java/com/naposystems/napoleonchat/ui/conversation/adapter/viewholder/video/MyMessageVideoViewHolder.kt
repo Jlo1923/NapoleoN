@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.viewHolder
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.video
 
 import android.graphics.Bitmap
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.naposystems.napoleonchat.databinding.ConversationItemIncomingMessageWithVideoBinding
+import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageWithVideoBinding
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
@@ -16,18 +16,19 @@ import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import timber.log.Timber
 
-class IncomingMessageVideoViewHolder constructor(private val binding: ConversationItemIncomingMessageWithVideoBinding) :
+class MyMessageVideoViewHolder constructor(private val binding: ConversationItemMyMessageWithVideoBinding) :
     ConversationViewHolder(binding.root, binding.root.context) {
 
+//    private var job: Job? = null
+
     init {
-        super.parentContainerMessage = binding.containerIncomingMessage
+        super.parentContainerMessage = binding.containerMyMessage
         super.progressBar = binding.progressBar
         super.progressBarIndeterminate = binding.progressBarIndeterminate
         super.imageButtonState = binding.imageButtonState
         super.textViewCountDown = binding.textViewCountDown
         super.quote = binding.quote
         super.textViewMessage = binding.textViewMessage
-        super.imageButtonPlay = binding.imageButtonPlay
     }
 
     override fun bind(
@@ -71,7 +72,6 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
                     .into(binding.imageViewAttachment)
 
                 binding.imageViewAttachment.visibility = View.VISIBLE
-
             }
         } catch (e: Exception) {
             Timber.e(e)
@@ -79,14 +79,14 @@ class IncomingMessageVideoViewHolder constructor(private val binding: Conversati
     }
 
     companion object {
-        fun from(parent: ViewGroup): IncomingMessageVideoViewHolder {
+        fun from(parent: ViewGroup): MyMessageVideoViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = ConversationItemIncomingMessageWithVideoBinding.inflate(
+            val binding = ConversationItemMyMessageWithVideoBinding.inflate(
                 layoutInflater,
                 parent,
                 false
             )
-            return IncomingMessageVideoViewHolder(binding)
+            return MyMessageVideoViewHolder(binding)
         }
     }
 }

@@ -536,7 +536,7 @@ class SocketClientImp @Inject constructor(
                                         val message =
                                             ValidateMessage(
                                                 id = newMessageDataEventRes.messageId,
-                                                user = newMessageDataEventRes.contactId,
+                                                user = newMessageDataEventRes.contactId.toLong(),
                                                 status = Constants.MessageEventType.UNREAD.status
                                             )
 
@@ -561,14 +561,14 @@ class SocketClientImp @Inject constructor(
                                                         NapoleonApplication.currentConversationContactId == 0
                                                     ) {
 
-                                                        syncManager.notifyMessageReceived(message.id)
+                                                        syncManager.notifyMessageReceived(message)
 
                                                         emitClientConversation(message)
 
                                                     }
                                                 } else if (NapoleonApplication.currentConversationContactId != newMessageEventMessageRes.userAddressee) {
 
-                                                    syncManager.notifyMessageReceived(message.id)
+                                                    syncManager.notifyMessageReceived(message)
 
                                                     emitClientConversation(message)
 
@@ -696,7 +696,7 @@ class SocketClientImp @Inject constructor(
                                 val dataEvent = jsonAdapter.fromJson(dataEventRes)
 
                                 val messages = dataEvent?.messages?.filter {
-                                    it.user == userId
+                                    it.user == userId.toLong()
                                 }?.filter {
                                     syncManager.existIdMessage(it.id)
                                 }

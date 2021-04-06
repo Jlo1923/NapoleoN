@@ -352,7 +352,7 @@ class ConversationRepository @Inject constructor(
             val messagesRead = messagesUnread.map {
                 ValidateMessage(
                     id = it.messageEntity.webId,
-                    user = contactId,
+                    user = contactId.toLong(),
                     status = Constants.MessageEventType.READ.status
                 )
             }

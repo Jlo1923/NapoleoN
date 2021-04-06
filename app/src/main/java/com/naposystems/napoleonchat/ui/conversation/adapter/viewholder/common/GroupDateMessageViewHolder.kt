@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.viewHolder
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.common
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

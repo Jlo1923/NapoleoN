@@ -61,6 +61,7 @@ import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
@@ -102,7 +103,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, InputPanelWidget.Listener {
+class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener,
+    InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -157,6 +159,8 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
+
+    private val myMultiAttachmentMsgViewModel: MyMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
 
     private val documentsMimeTypeAllowed = arrayOf(
         Constants.MimeType.PDF.type,
@@ -1727,7 +1731,8 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
         conversationAdapter = ConversationAdapter(
             this,
             mediaPlayerManager,
-            timeFormatShareViewModel.getValTimeFormat()
+            timeFormatShareViewModel.getValTimeFormat(),
+            myMultiAttachmentMsgViewModel
         )
 
         linearLayoutManager = LinearLayoutManager(requireContext())

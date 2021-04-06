@@ -3,13 +3,14 @@ package com.naposystems.napoleonchat.service.syncManager
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
+import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 
 interface SyncManager {
 
     //region New Notification
     fun insertMessage(messageString: String)
 
-    fun notifyMessageReceived(messageId: String)
+    fun notifyMessageReceived(message: ValidateMessage)
     //endregion
 
     //region Socket Service

@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.viewHolder
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.base
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
