@@ -68,6 +68,11 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         bindViewModel()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        finish()
+    }
+
     override fun onBackPressed() = viewModel.handleBackAction()
 
     private fun bindViewModel() {

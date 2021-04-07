@@ -51,8 +51,8 @@ class ViewAttachmentOptions @JvmOverloads constructor(
         val listElements = mutableListOf<AttachmentOptionItemView>()
         val elementAutoDestruction = AttachmentOptionItemView(item = AUTO_DESTRUCTION)
         val elementDelete = AttachmentOptionItemView(item = DELETE)
-        listElements.add(elementAutoDestruction)
         listElements.add(elementDelete)
+        listElements.add(elementAutoDestruction)
         groupieAdapter.update(listElements)
     }
 
@@ -75,7 +75,7 @@ class ViewAttachmentOptions @JvmOverloads constructor(
         listener?.onViewAttachmentOptionEvent(event)
 
     fun changeDrawableSelfDestructionOption(iconSelfDestruction: Int) {
-        val itemView = groupieAdapter.getItem(0) as AttachmentOptionItemView
+        val itemView = groupieAdapter.getItem(1) as AttachmentOptionItemView
         itemView.changeDrawableIcon(iconSelfDestruction)
     }
 

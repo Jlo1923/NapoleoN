@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.ui.previewmulti.events
 sealed class MultipleAttachmentPreviewAction {
 
     object Exit : MultipleAttachmentPreviewAction()
+    object ExitToConversation : MultipleAttachmentPreviewAction()
     object ShowAttachmentOptions : MultipleAttachmentPreviewAction()
     object ShowAttachmentOptionsWithoutAnim : MultipleAttachmentPreviewAction()
     object HideAttachmentOptions : MultipleAttachmentPreviewAction()

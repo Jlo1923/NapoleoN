@@ -1,7 +1,8 @@
 package com.naposystems.napoleonchat.ui.previewmulti
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -9,6 +10,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentPreviewBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.previewmulti.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewAction
@@ -16,11 +18,11 @@ import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPre
 import com.naposystems.napoleonchat.ui.previewmulti.fragments.dialog.MultipleAttachmentRemoveAttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.MultipleAttachmentPreviewListener
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.MultipleAttachmentRemoveListener
-import com.naposystems.napoleonchat.ui.previewmulti.views.ViewMultipleAttachmentTabView
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.ViewAttachmentOptionsListener
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.events.MultipleAttachmentRemoveEvent
 import com.naposystems.napoleonchat.ui.previewmulti.listeners.events.ViewAttachmentOptionEvent
 import com.naposystems.napoleonchat.ui.previewmulti.model.MultipleAttachmentRemoveItem
+import com.naposystems.napoleonchat.ui.previewmulti.views.ViewMultipleAttachmentTabView
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.utility.anims.animHideSlideDown
@@ -37,8 +39,9 @@ import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
+
 
 class MultipleAttachmentPreviewActivity
     : AppCompatActivity(),
@@ -209,6 +212,7 @@ class MultipleAttachmentPreviewActivity
     private fun handleActions(action: MultipleAttachmentPreviewAction) {
         when (action) {
             MultipleAttachmentPreviewAction.Exit -> exitPreview()
+            MultipleAttachmentPreviewAction.ExitToConversation -> exitToConversation()
             MultipleAttachmentPreviewAction.HideAttachmentOptions -> hideAnimAttachmentOptions()
             MultipleAttachmentPreviewAction.ShowAttachmentOptions -> showAnimAttachmentOptions()
             MultipleAttachmentPreviewAction.ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
@@ -217,6 +221,9 @@ class MultipleAttachmentPreviewActivity
             is MultipleAttachmentPreviewAction.SelectItemInTabLayout -> removeElementPager(action.indexItem)
             is MultipleAttachmentPreviewAction.ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
         }
+    }
+
+    private fun exitToConversation() {
     }
 
     private fun showSelfDestruction(selfDestruction: Int) {

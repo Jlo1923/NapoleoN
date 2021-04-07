@@ -149,7 +149,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                     }
                 }
             } catch (exception: Exception) {
-
+                actions.value = MultipleAttachmentPreviewAction.Exit
             }
         }
     }
@@ -176,6 +176,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                 })
             }
             context.startService(intent)
+            actions.value = MultipleAttachmentPreviewAction.ExitToConversation
         }
     }
 
