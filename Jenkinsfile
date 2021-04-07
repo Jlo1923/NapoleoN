@@ -39,6 +39,7 @@ node('master') {
                         [language: 'de-DE', text: "Bitte die Änderungen vom Jenkins Build ${env.BUILD_NUMBER} testen."]
                 ]
     }
+    sh("git add app/build.gradle")
     sh("git commit -m \"Increasing version to ${INCREASEDVERSION}\"")
     withCredentials([usernamePassword(credentialsId: '10525424-276e-4897-9921-abdb95d2735a', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
         sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android/ development")
