@@ -21,7 +21,7 @@ node('master') {
     sh("cat app/build.gradle")
     echo "${GIT_COMMIT_MSG}"
     stage("Building"){
-        echo "VersionName ${VERSION}"
+        echo "VersionName ${FINALVERSIONNAME}"
         echo "VersionCode ${VERSIONCODE}"
         sh(script:"chmod +x ./gradlew")
         sh(script:"./gradlew clean bundle")
