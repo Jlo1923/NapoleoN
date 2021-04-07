@@ -198,7 +198,8 @@ object Constants {
         DOWNLOAD_COMPLETE(6),
         DOWNLOAD_ERROR(7),
         DOWNLOAD_CANCEL(8),
-        UPLOAD_CANCEL(9)
+        UPLOAD_CANCEL(9),
+        READED(9),
     }
 
     enum class AttachmentType(val type: String) {
@@ -389,7 +390,7 @@ object Constants {
         CONVERSATION(5)
     }
 
-   enum class LocationSearchView(val location: Int) {
+    enum class LocationSearchView(val location: Int) {
         OTHER(0),
         LOCATION(1)
     }
@@ -425,12 +426,24 @@ object Constants {
         ERROR(5)
     }
 
+    enum class StatusMustBe(val status: Int) {
+        RECEIVED(1),
+        READED(2)
+    }
+
+    //Enumerable que describe el tipo de mensaje de texto
     enum class MessageType(val type: Int) {
         MESSAGE(1),
         MISSED_CALL(2),
         MISSED_VIDEO_CALL(3),
         NEW_CONTACT(4),
         MESSAGES_GROUP_DATE(5)
+    }
+
+    //Enumerable que describe el tipo de mensaje recibido por el estado
+    enum class MessageTypeByStatus(val type: Int) {
+        MESSAGE(0),
+        ATTACHMENT(1)
     }
 
     enum class MimeType(val type: String) {

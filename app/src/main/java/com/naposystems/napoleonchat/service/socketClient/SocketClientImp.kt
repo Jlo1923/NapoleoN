@@ -7,11 +7,16 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
+import com.naposystems.napoleonchat.model.extractIdsAttachments
+import com.naposystems.napoleonchat.model.extractIdsMessages
+import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedRESDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -199,12 +204,12 @@ class SocketClientImp
                             listenRejectedCall()
 
                             listenCancelCall()
-
+//
                             syncManager.getMyMessages(null)
-
-////                            syncManager.verifyMessagesReceived()
-////
-////                            syncManager.verifyMessagesRead()
+//
+//                            syncManager.verifyMessagesReceived()
+//
+//                            syncManager.verifyMessagesRead()
 
                         }
 
@@ -421,6 +426,33 @@ class SocketClientImp
 
     }
 
+    override fun emitClientConversation(messages: MessagesReqDTO) {
+
+        Timber.d("Pusher 6.1: Emitir")
+
+        try {
+
+            val adapterValidate = moshi.adapter(MessagesReqDTO::class.java)
+
+            val jsonObject = adapterValidate.toJson(messages)
+
+            if (jsonObject.isNotEmpty()) {
+
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                        jsonObject
+                    )
+            }
+
+
+        } catch (e: Exception) {
+
+            Timber.e("Pusher Paso IN 6.4: $e}")
+        }
+
+    }
+
     private fun emitClientConversation(messages: ValidateMessage) {
         emitClientConversation(arrayListOf(messages))
     }
@@ -492,6 +524,8 @@ class SocketClientImp
 
                             try {
 
+                                //TODO: Refactorizar este metodo para que pueda ser utilizado tanto por SocketClient como
+                                // por HandlerNotificationMessageImp
                                 event?.data?.let { dataEventRes ->
 
                                     val jsonAdapterData: JsonAdapter<NewMessageEventRes> =
@@ -501,16 +535,9 @@ class SocketClientImp
 
                                     dataEvent?.data?.let { newMessageDataEventRes ->
 
-                                        val message =
-                                            ValidateMessage(
-                                                id = newMessageDataEventRes.messageId,
-                                                user = newMessageDataEventRes.contactId,
-                                                status = Constants.MessageEventType.UNREAD.status
-                                            )
-
                                         syncManager.insertNewMessage(newMessageDataEventRes)
 
-                                        val data: String = if (BuildConfig.ENCRYPT_API) {
+                                        val messageString: String = if (BuildConfig.ENCRYPT_API) {
                                             cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
                                         } else {
                                             newMessageDataEventRes.message
@@ -519,26 +546,23 @@ class SocketClientImp
                                         val jsonAdapterMessage: JsonAdapter<NewMessageEventMessageRes> =
                                             moshi.adapter(NewMessageEventMessageRes::class.java)
 
-                                        jsonAdapterMessage.fromJson(data)
-                                            ?.let { newMessageEventMessageRes ->
+                                        jsonAdapterMessage.fromJson(messageString)
+                                            ?.let { messageModel ->
 
-                                                if (newMessageEventMessageRes.numberAttachments > 0) {
-                                                    if ((availableToReceived(
-                                                            newMessageEventMessageRes.attachments
-                                                        ) && NapoleonApplication.currentConversationContactId == newMessageEventMessageRes.userAddressee) ||
-                                                        NapoleonApplication.currentConversationContactId ==  0
-                                                    ) {
+                                                if (messageModel.numberAttachments == 0 &&
+                                                    NapoleonApplication.currentConversationContactId != messageModel.userAddressee
+                                                ) {
 
-                                                        syncManager.notifyMessageReceived(message.id)
+                                                    val listMessagesToReceived = listOf(
+                                                        messageModel
+                                                    ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
 
-                                                        emitClientConversation(message)
 
-                                                    }
-                                                } else if (NapoleonApplication.currentConversationContactId != newMessageEventMessageRes.userAddressee) {
+                                                    syncManager.notifyMessageReceived(
+                                                        listMessagesToReceived
+                                                    )
 
-                                                    syncManager.notifyMessageReceived(message.id)
-
-                                                    emitClientConversation(message)
+                                                    emitClientConversation(listMessagesToReceived)
 
                                                 }
                                             }
@@ -566,24 +590,38 @@ class SocketClientImp
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
-                        Timber.d("NotifyMessagesReceived: ${event?.data}")
-                        event?.data?.let {
 
-                            //TODO: Descomentarear cuando puntos verdes arreglado
-//                            val jsonAdapter: JsonAdapter<MessagesReceivedDTO> =
-//                                moshi.adapter(MessagesReceivedDTO::class.java)
-//
-//                            val dataEvent = jsonAdapter.fromJson(it)
-//
-//                            dataEvent?.let { messagesReceivedDTO ->
-//
-//                                Timber.d(messagesReceivedDTO.data.messageIds.toString())
-//
-//                                syncManager.updateMessagesStatus(
-//                                    messagesReceivedDTO.data.messageIds,
-//                                    Constants.MessageStatus.UNREAD.status
-//                                )
-//                            }
+                        Timber.d("NotifyMessagesReceived: ${event?.data}")
+
+                        event?.data?.let { messagesReceivedResDto ->
+
+                            val jsonAdapter: JsonAdapter<MessagesReceivedRESDTO> =
+                                moshi.adapter(MessagesReceivedRESDTO::class.java)
+
+                            val dataDataEvent = jsonAdapter.fromJson(messagesReceivedResDto)
+
+                            dataDataEvent?.data?.let { messagesResDTO ->
+
+                                syncManager.updateMessagesStatus(
+                                    messagesResDTO.extractIdsMessages(),
+                                    Constants.MessageStatus.UNREAD.status
+                                )
+
+                                val idsAttachments = messagesResDTO.extractIdsAttachments()
+
+                                if (idsAttachments.isNotEmpty()) {
+
+                                    val ids = idsAttachments.filter {
+                                        syncManager.existAttachmentById(it)
+                                    }
+
+                                    syncManager.updateAttachmentsStatus(
+                                        ids,
+                                        Constants.AttachmentStatus.DOWNLOADING.status
+                                    )
+
+                                }
+                            }
                         }
                     }
 

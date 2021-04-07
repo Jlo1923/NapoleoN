@@ -8,6 +8,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
@@ -119,11 +120,31 @@ class HandlerNotificationMessageImp
 
             if (itemDataNotification.containsKey(Constants.NotificationKeys.MESSAGE)) {
 
-                syncManager.insertMessage(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+                val messageString: String = if (BuildConfig.ENCRYPT_API) {
+                    cryptoMessage.decryptMessageBody(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+                } else {
+                    itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE)
+                }
 
-                emitClientConversation(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+                syncManager.insertMessage(messageString)
 
-                syncManager.notifyMessageReceived(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))
+                val jsonAdapterMessage: JsonAdapter<NewMessageEventMessageRes> =
+                    moshi.adapter(NewMessageEventMessageRes::class.java)
+
+                jsonAdapterMessage.fromJson(messageString)
+                    ?.let { messageModel ->
+
+                        val listMessagesToReceived = listOf(
+                            messageModel
+                        ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
+
+                        syncManager.notifyMessageReceived(
+                            listMessagesToReceived
+                        )
+
+                        socketClient.emitClientConversation(listMessagesToReceived)
+
+                    }
 
             } else {
                 syncManager.getMyMessages(null)

@@ -84,9 +84,7 @@ class MainActivityRepository @Inject constructor(
     }
 
     override fun disconnectSocket() {
-        if (NapoleonApplication.isCurrentOnCall.not()){
-            socketClient.disconnectSocket()
-        }
-        NapoleonApplication.isCurrentOnCall = false
+//            socketClient.disconnectSocket()
+
     }
 }

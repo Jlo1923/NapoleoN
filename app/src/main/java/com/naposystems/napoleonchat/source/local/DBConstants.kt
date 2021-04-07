@@ -83,6 +83,9 @@ object DBConstants {
         const val COLUMN_EXTENSION = "extension"
         const val COLUMN_DURATION = "duration"
         const val COLUMN_IS_COMPRESSED = "is_compressed"
+        const val COLUMN_SELF_DESTRUCTION_AT = "self_destruction_at"
+        const val COLUMN_TOTAL_SELF_DESTRUCTION_AT = "total_self_destruction_at"
+        const val COLUMN_UPDATED_AT = "updated_at"
     }
 
     object Quote {

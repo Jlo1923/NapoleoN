@@ -723,7 +723,7 @@ class ConversationRepository @Inject constructor(
     ) {
         if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
             val firstAttachment = messageAndAttachmentRelation.attachmentEntityList.first()
-            attachmentLocalDataSource.updateAttachmentState(firstAttachment.webId, state)
+            attachmentLocalDataSource.updateAttachmentStatus(firstAttachment.webId, state)
         }
     }
 

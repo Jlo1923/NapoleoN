@@ -642,12 +642,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPause() {
         super.onPause()
         viewModel.setLockTimeApp()
-        viewModel.disconnectSocket()
+//        viewModel.disconnectSocket()
     }
 
     override fun onDestroy() {
         disposable.clear()
-        viewModel.disconnectSocket()
+        NapoleonApplication.isCurrentOnCall = false
+//        viewModel.disconnectSocket()
         super.onDestroy()
     }
 

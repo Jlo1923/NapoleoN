@@ -29,6 +29,7 @@ import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeResDTO
 import com.naposystems.napoleonchat.source.remote.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.napoleonchat.source.remote.dto.language.UserLanguageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoResDTO
@@ -180,7 +181,7 @@ interface NapoleonApi {
     suspend fun sendMessagesRead(@Body messagesReadReqDTO: MessagesReadReqDTO): Response<List<String>>
 
     @POST(NOTIFY_MESSAGE_RECEIVED)
-    suspend fun notifyMessageReceived(@Body messageReceivedReqDTO: MessageReceivedReqDTO): Response<MessageReceivedResDTO>
+    suspend fun notifyMessageReceived(@Body messageReceivedReqDTO: MessagesReqDTO): Response<MessageReceivedResDTO>
 
     @GET(GET_RECOVERY_QUESTIONS)
     suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<RecoveryAccountUserTypeResDTO>

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.source.local.dao.AttachmentDao
 import com.naposystems.napoleonchat.source.local.dao.ContactDao
 import com.naposystems.napoleonchat.source.local.dao.MessageDao
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -13,7 +14,6 @@ import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,7 +24,8 @@ class MessageLocalDataSourceImp @Inject constructor(
     private val cryptoMessage: CryptoMessage,
     private val context: Context,
     private val contactDao: ContactDao,
-    private val messageDao: MessageDao
+    private val messageDao: MessageDao,
+    private val attachmentDao: AttachmentDao
 ) : MessageLocalDataSource {
 
     override suspend fun getMessageByWebId(
@@ -137,7 +138,7 @@ class MessageLocalDataSourceImp @Inject constructor(
     }
 
     override fun getQuoteId(quoteWebId: String): Int {
-        return messageDao.getQuoteId(quoteWebId)
+        return messageDao.getMessageIdByQuoteWebId(quoteWebId)
     }
 
     override fun getLocalMessagesByStatus(
@@ -211,7 +212,7 @@ class MessageLocalDataSourceImp @Inject constructor(
     }
 
     override suspend fun getLastMessageByContact(contactId: Int): MessageAttachmentRelation {
-        val messageAndAttachment = messageDao.getLastMessageByContact(contactId)
+        val messageAndAttachment = messageDao.getLastMessageByContactId(contactId)
 
         with(messageAndAttachment.messageEntity) {
             this.let {
@@ -250,25 +251,57 @@ class MessageLocalDataSourceImp @Inject constructor(
         return listMessages
     }
 
+    override suspend fun updateMessageStatusBeforeAttachment(attachmentsWebIds: List<String>) {
+
+        val listAttachments = mutableListOf<AttachmentEntity>()
+
+        attachmentsWebIds.forEach {
+            attachmentDao.getAttachmentByWebId(it)?.let {
+                listAttachments.add(it)
+            }
+        }
+
+        val listMessages: List<String> = listAttachments.map {
+            it.messageWebId
+        }.distinct().map {
+            messageDao.getMessageByWebId(it)
+        }.filter {
+            it?.attachmentEntityList?.size == it?.messageEntity?.numberAttachments
+        }.map {
+            it?.messageEntity?.webId.toString()
+        }
+
+        listMessages.let {
+            updateMessageStatus(it, Constants.MessageStatus.UNREAD.status)
+
+        }
+    }
+
     override suspend fun updateMessageStatus(messagesWebIds: List<String>, status: Int) {
         messagesWebIds.forEach { messageWebId ->
             val message = getMessageByWebId(messageWebId, false)
 
             message?.let { messageAndAttachment ->
                 if (messageAndAttachment.messageEntity.status != Constants.MessageStatus.READED.status) {
-                    val timeByMessage = messageDao.getSelfDestructTimeByMessage(messageWebId)
-                    val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+                    val timeByMessage = messageDao.getMessageSelfDestructTimeById(messageWebId)
+                    val currentTime =
+                        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
                     when (status) {
                         Constants.MessageStatus.READED.status -> {
                             val time =
                                 currentTime.plus(Utils.convertItemOfTimeInSeconds(timeByMessage))
-                            messageDao.updateMessageStatus(messageWebId, currentTime, time, status)
+                            messageDao.updateMessageStatus(
+                                messageWebId,
+                                currentTime,
+                                time,
+                                status
+                            )
                         }
                         else -> {
                             when (timeByMessage) {
                                 Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time,
                                 Constants.SelfDestructTime.EVERY_SEVEN_DAYS_ERROR.time -> {
-                                    val contactId = messageDao.getContactByMessage(messageWebId)
+                                    val contactId = messageDao.getContactIdByWebId(messageWebId)
                                     val messageAndAttachment =
                                         messageDao.getMessageByWebId(messageWebId)
                                     val timeContact =
@@ -276,7 +309,8 @@ class MessageLocalDataSourceImp @Inject constructor(
                                             contactId
                                         )
                                     val durationAttachment = TimeUnit.MILLISECONDS.toSeconds(
-                                        messageAndAttachment?.getFirstAttachment()?.duration ?: 0
+                                        messageAndAttachment?.getFirstAttachment()?.duration
+                                            ?: 0
                                     ).toInt()
                                     val selfAutoDestruction =
                                         Utils.compareDurationAttachmentWithSelfAutoDestructionInSeconds(
@@ -360,8 +394,8 @@ class MessageLocalDataSourceImp @Inject constructor(
         }
     }
 
-    override suspend fun getIdContactWithWebId(listWebId: List<String>): Int {
-        return messageDao.getIdContactWithWebId(listWebId[0])
+    override suspend fun getContactIdByWebId(listWebId: List<String>): Int {
+        return messageDao.getContactIdByWebId(listWebId[0])
     }
 
     override fun verifyMessagesToDelete() {
