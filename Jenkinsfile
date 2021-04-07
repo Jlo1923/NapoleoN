@@ -37,10 +37,10 @@ node('master') {
                         [language: 'de-DE', text: "Bitte die Änderungen vom Jenkins Build ${env.BUILD_NUMBER} testen."]
                 ]
     }
-    withCredentials([usernamePassword(credentialsId: 'bitbucketalejo', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+    withCredentials([usernamePassword(credentialsId: 'jenkinsbitbucket', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
         sh("git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android.git")
         sh("cd nuevo-napoleon-secret-chat-android")
-        sh("git checkout feature/calderon/jenkinsimplementation")
+        sh("git checkout development")
         sh("sed -i 's/versionCode ${VERSIONCODE}/versionCode ${INCREASEDVERSION}/g' app/build.gradle")
         sh("sed -i 's/${VERSION}/${FINALVERSIONNAME}/g' app/build.gradle")
         echo "${GIT_COMMIT_MSG}"
