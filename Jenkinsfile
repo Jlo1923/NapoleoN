@@ -36,7 +36,7 @@ node('master') {
                 artifacts: '**/*.apk, **/*.aab, app/build/**/mapping/**/*.txt, app/build/**/logs/**/*.txt, app/build/**/bundle'
     }
     stage('Upload to Play Store') {
-        androidApkUpload googleCredentialsId: 'Google-Play', filesPattern: '**/build/outputs/**/*.aab, **/build/outputs/**/*.apk', trackName: 'internal', releaseName: "${VERSION}", rolloutPercentage: '100', inAppUpdatePriority: '5',
+        androidApkUpload googleCredentialsId: 'Google-Play', filesPattern: '**/build/outputs/pruebaInterna/*.aab', trackName: 'internal', releaseName: "${VERSION}", rolloutPercentage: '100', inAppUpdatePriority: '5',
                 recentChangeList: [
                         [language: 'en-GB', text: "Please test the changes from Jenkins build ${env.BUILD_NUMBER}."],
                         [language: 'de-DE', text: "Bitte die Änderungen vom Jenkins Build ${env.BUILD_NUMBER} testen."]
@@ -45,7 +45,7 @@ node('master') {
 
     stage("Slack notification"){
         HORA = sh(script:"date +%T", returnStdout: true).trim();
-        slackSend (botUser: true, color: '#FFFF00', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha compilado satisfactoriamente el VersionName *${VERSION}* con código de version *${VERSIONCODE}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
+        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${VERSION}* con código de version *${VERSIONCODE}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
     }
     cleanWs()
 }
