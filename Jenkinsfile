@@ -43,9 +43,15 @@ node('master') {
                 ]
     }
 
+    sh("git checkout development")
+    sh("git commit -a -m Increasing version to ${INCREASEDVERSION}")
+    withCredentials([usernamePassword(credentialsId: '10525424-276e-4897-9921-abdb95d2735a', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+        sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android/ development")
+    }
+
     stage("Slack notification"){
         HORA = sh(script:"date +%T", returnStdout: true).trim();
-        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${VERSION}* con código de version *${VERSIONCODE}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
+        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *1.1.${INCREASEDVERSION}-${GIT_COMMIT_MSG}* con código de version *${VERSIONCODE}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
     }
     cleanWs()
 }
