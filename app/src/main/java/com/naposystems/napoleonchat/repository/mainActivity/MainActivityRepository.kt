@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
@@ -9,7 +10,6 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
@@ -17,7 +17,7 @@ class MainActivityRepository @Inject constructor(
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val socketClient: SocketClient
-) :    IContractMainActivity.Repository {
+) : IContractMainActivity.Repository {
 
     override suspend fun getUser(): UserEntity {
 //        val firebaseId = sharedPreferencesManager
@@ -53,7 +53,8 @@ class MainActivityRepository @Inject constructor(
 
     override fun setJsonNotification(json: String) {
         if (sharedPreferencesManager.getString(PREF_LAST_JSON_NOTIFICATION, "") != json
-            && sharedPreferencesManager.getString(PREF_JSON_NOTIFICATION, "") != json) {
+            && sharedPreferencesManager.getString(PREF_JSON_NOTIFICATION, "") != json
+        ) {
             sharedPreferencesManager.putString(
                 PREF_LAST_JSON_NOTIFICATION, json
             )
@@ -83,6 +84,9 @@ class MainActivityRepository @Inject constructor(
     }
 
     override fun disconnectSocket() {
-//        socketMessageService.disconnectSocket()
+        if (NapoleonApplication.isCurrentOnCall.not()){
+            socketClient.disconnectSocket()
+        }
+        NapoleonApplication.isCurrentOnCall = false
     }
 }

@@ -107,9 +107,9 @@ class HandlerNotificationMessageImp
 
             Timber.d("**Paso 5: Cola superior a cero")
 
-            var itemDataNotification = queueDataNotifications.first()
+            val itemDataNotification = queueDataNotifications.first()
 
-            var itemNotification = queueNotifications.first()
+            val itemNotification = queueNotifications.first()
 
             Timber.d("**Paso 6: Proceso del item $itemDataNotification")
 
@@ -117,23 +117,27 @@ class HandlerNotificationMessageImp
 
             queueNotifications.removeFirst()
 
-            syncManager.insertMessage(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+            if (itemDataNotification.containsKey(Constants.NotificationKeys.MESSAGE)) {
 
-            emitClientConversation(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+                syncManager.insertMessage(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
 
-            syncManager.notifyMessageReceived(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))
+                emitClientConversation(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
 
-            if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE)
-                    .toBoolean()
-            ) {
+                syncManager.notifyMessageReceived(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))
+
+            } else {
+                syncManager.getMyMessages(null)
+            }
+
+            if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE).toBoolean()) {
 
                 Timber.d("**Paso 10: No Silenciado")
 
                 processNotification(itemDataNotification, itemNotification)
 
             }
-
             Timber.d("NUEVISIMO NUEVA DATACOLA $queueDataNotifications")
+
         }
     }
 

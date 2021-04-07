@@ -226,8 +226,7 @@ class SyncManagerImp @Inject constructor(
                 messageString
             }
 
-
-            Timber.d("**Paso 7.1: Desencriptar mensaje ${newMessageEventMessageResData}")
+            Timber.d("**Paso 7.1: Desencriptar mensaje $newMessageEventMessageResData")
 
             try {
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =

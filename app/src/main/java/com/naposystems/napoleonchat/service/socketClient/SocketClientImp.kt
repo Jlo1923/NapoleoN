@@ -119,7 +119,7 @@ class SocketClientImp
                     }
 
                     override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
-                        Timber.d("LLAMADA PASO: CONECTAR A SOCKET onError")
+                        Timber.d("LLAMADA PASO: CONECTAR A SOCKET onError message: $message, code: $code, e: ${e?.localizedMessage}")
                         pusher.connect()
                     }
                 })
@@ -298,15 +298,19 @@ class SocketClientImp
 
     override fun disconnectSocket() {
 
+        Timber.e("SOCKET DISCONNECT")
+
         try {
 
             if (pusher.connection.state == ConnectionState.CONNECTED ||
                 pusher.connection.state == ConnectionState.CONNECTING
             ) {
 
+                Timber.e("UNSUBSCRIBE GLOBAL")
+
                 if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null) {
 
-                    //Unbind Global
+                    Timber.e("UNBIND GLOBAL")
 
                     pusher.getPrivateChannel(
                         Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
@@ -323,9 +327,11 @@ class SocketClientImp
 
                 }
 
+                Timber.e("UNSUBSCRIBE GENERAL")
+
                 if (pusher.getPrivateChannel(privateGeneralChannelName) != null) {
 
-                    //Unbind General
+                    Timber.e("UNBIND GENERAL")
 
                     pusher.getPrivateChannel(privateGeneralChannelName)
                         .unbind(Constants.SocketListenEvents.DISCONNECT.event,
@@ -520,7 +526,7 @@ class SocketClientImp
                                                     if ((availableToReceived(
                                                             newMessageEventMessageRes.attachments
                                                         ) && NapoleonApplication.currentConversationContactId == newMessageEventMessageRes.userAddressee) ||
-                                                        NapoleonApplication.currentConversationContactId == 0
+                                                        NapoleonApplication.currentConversationContactId ==  0
                                                     ) {
 
                                                         syncManager.notifyMessageReceived(message.id)
