@@ -36,7 +36,11 @@ node('master') {
                 artifacts: '**/*.apk, **/*.aab, app/build/**/mapping/**/*.txt, app/build/**/logs/**/*.txt, app/build/**/bundle'
     }
     stage('Upload to Play Store') {
-        androidApkUpload googleCredentialsId: 'Google-Play', apkFilesPattern: '**/build/outputs/**/*.aab, **/build/outputs/**/*.apk', trackName: 'internal', releaseName: "${VERSION}", rolloutPercentage: '100', inAppUpdatePriority: '5'
+        androidApkUpload googleCredentialsId: 'Google-Play', filesPattern: '**/build/outputs/**/*.aab, **/build/outputs/**/*.apk', trackName: 'internal', releaseName: "${VERSION}", rolloutPercentage: '100', inAppUpdatePriority: '5',
+                recentChangeList: [
+                        [language: 'en-GB', text: "Please test the changes from Jenkins build ${env.BUILD_NUMBER}."],
+                        [language: 'de-DE', text: "Bitte die Änderungen vom Jenkins Build ${env.BUILD_NUMBER} testen."]
+                ]
     }
 
     stage("Slack notification"){
