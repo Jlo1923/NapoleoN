@@ -50,5 +50,3 @@ node('master') {
     }
     cleanWs()
 }
-
-
