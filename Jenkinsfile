@@ -18,8 +18,6 @@ node('master') {
     FINALVERSIONNAME = "1.1.${INCREASEDVERSION}-${GIT_COMMIT_MSG}"
     sh("sed -i 's/versionCode ${VERSIONCODE}/versionCode ${INCREASEDVERSION}/g' app/build.gradle")
     sh("sed -i 's/${VERSION}/${FINALVERSIONNAME}/g' app/build.gradle")
-    sh("cat app/build.gradle")
-    echo "${GIT_COMMIT_MSG}"
     stage("Building"){
         echo "VersionName ${FINALVERSIONNAME}"
         echo "VersionCode ${VERSIONCODE}"
@@ -39,10 +37,16 @@ node('master') {
                         [language: 'de-DE', text: "Bitte die Änderungen vom Jenkins Build ${env.BUILD_NUMBER} testen."]
                 ]
     }
-    sh("git add app/build.gradle")
-    sh("git commit -m \"Increasing version to ${INCREASEDVERSION}\"")
-    withCredentials([usernamePassword(credentialsId: '10525424-276e-4897-9921-abdb95d2735a', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-        sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android/ development")
+    withCredentials([usernamePassword(credentialsId: 'bitbucketalejo', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+        sh("git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android.git")
+        sh("cd nuevo-napoleon-secret-chat-android")
+        sh("git checkout feature/calderon/jenkinsimplementation")
+        sh("sed -i 's/versionCode ${VERSIONCODE}/versionCode ${INCREASEDVERSION}/g' app/build.gradle")
+        sh("sed -i 's/${VERSION}/${FINALVERSIONNAME}/g' app/build.gradle")
+        echo "${GIT_COMMIT_MSG}"
+        sh("git add app/build.gradle")
+        sh("git commit -a -m \"Increasing version to ${INCREASEDVERSION}\"")
+        sh("git push")
     }
 
     stage("Slack notification"){
