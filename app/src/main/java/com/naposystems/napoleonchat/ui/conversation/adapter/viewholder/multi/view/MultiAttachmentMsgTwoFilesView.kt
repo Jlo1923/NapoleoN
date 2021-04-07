@@ -8,8 +8,6 @@ import com.naposystems.napoleonchat.databinding.ViewMultiAttachmentMsgTwoFilesBi
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
-import com.naposystems.napoleonchat.ui.previewmulti.listeners.ViewAttachmentOptionsListener
-import com.naposystems.napoleonchat.ui.previewmulti.listeners.events.ViewAttachmentOptionEvent
 
 class MultiAttachmentMsgTwoFilesView @JvmOverloads constructor(
     context: Context,

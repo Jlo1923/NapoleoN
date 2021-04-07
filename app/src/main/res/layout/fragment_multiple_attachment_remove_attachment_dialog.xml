@@ -8,7 +8,7 @@
     android:paddingTop="@dimen/large_padding"
     android:paddingEnd="@dimen/normal_padding"
     android:paddingBottom="@dimen/large_padding"
-    tools:context=".ui.previewmulti.fragments.dialog.MultipleAttachmentRemoveAttachmentDialogFragment">
+    tools:context=".ui.multipreview.fragments.dialog.MultipleAttachmentRemoveAttachmentDialogFragment">
 
     <TextView
         android:id="@+id/text_title"

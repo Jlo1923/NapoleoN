@@ -40,14 +40,31 @@ class MultipleAttachmentMediaStore @Inject constructor(
             projection, whereCondition, selectionArgs, sorter
         )?.use { cursorFolders ->
             if (cursorFolders.moveToFirst()) {
-                val folderIdColumnIndex = cursorFolders.getColumnIndexOrThrow(BUCKET_ID)
-                val folderNameColumnIndex = cursorFolders.getColumnIndexOrThrow(BUCKET_DISPLAY_NAME)
+                //val folderIdColumnIndex = cursorFolders.getColumnIndexOrThrow(BUCKET_ID)
+                val folderNameColumnIndex =
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                        cursorFolders.getColumnIndexOrThrow(BUCKET_DISPLAY_NAME)
+                    } else {
+                        -1
+                    }
                 val idColumnIndex = cursorFolders.getColumnIndexOrThrow(_ID)
                 val mediaTypeColumnIndex = cursorFolders.getColumnIndexOrThrow(MEDIA_TYPE)
 
                 do {
-                    val folderId = cursorFolders.getString(folderIdColumnIndex)
-                    val folderName = cursorFolders.getString(folderNameColumnIndex)
+
+                    val indexForData = cursorFolders.getColumnIndexOrThrow(DATA)
+                    val splitData = cursorFolders.getString(indexForData).split("/")
+                    val nameFromData = splitData[splitData.size - 2]
+
+                    val folderName = if (folderNameColumnIndex != -1) {
+                        cursorFolders.getString(folderNameColumnIndex)
+                    } else {
+                        nameFromData
+                    }
+
+                    val indexForParent = cursorFolders.getColumnIndexOrThrow(PARENT)
+                    val parent = cursorFolders.getString(indexForParent)
+
                     val fileId = cursorFolders.getInt(idColumnIndex)
                     val mediaType = cursorFolders.getInt(mediaTypeColumnIndex)
 
@@ -60,7 +77,8 @@ class MultipleAttachmentMediaStore @Inject constructor(
                                 fileId,
                                 folderName,
                                 quantity,
-                                mediaType
+                                mediaType,
+                                parent = parent
                             )
                         )
                     }
@@ -70,7 +88,10 @@ class MultipleAttachmentMediaStore @Inject constructor(
         return galleryFolders.toList()
     }
 
-    override fun getFilesByFolder(folderName: String, mapIds: Map<Int, Int>): List<MultipleAttachmentFileItem> {
+    override fun getFilesByFolder(
+        folderParent: String,
+        mapIds: Map<Int, Int>
+    ): List<MultipleAttachmentFileItem> {
         val galleryFiles = mutableListOf<MultipleAttachmentFileItem>()
 
         val projection = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
@@ -80,7 +101,7 @@ class MultipleAttachmentMediaStore @Inject constructor(
         }
 
         val whereCondition = whereForMediaStoreFiles
-        val selectionArgs = getSelectionArgsForFilesByFolderName(folderName)
+        val selectionArgs = getSelectionArgsForFilesByFolderName(folderParent)
         val sorter = sortForFiles
 
         context.contentResolver.query(

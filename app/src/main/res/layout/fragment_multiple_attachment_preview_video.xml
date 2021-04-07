@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.previewmulti.fragments.MultipleAttachmentPreviewVideoFragment">
+    tools:context=".ui.multipreview.fragments.MultipleAttachmentPreviewVideoFragment">
 
     <ImageButton
         android:id="@+id/image_button_play"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.naposystems.napoleonchat.ui.previewmulti.views.ViewPreviewVideoController
+    <com.naposystems.napoleonchat.ui.multipreview.views.ViewPreviewVideoController
         android:id="@+id/view_video_controller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

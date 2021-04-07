@@ -5,7 +5,6 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
-import com.naposystems.napoleonchat.ui.previewmulti.events.MultipleAttachmentPreviewAction
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
 import kotlinx.coroutines.launch
 import javax.inject.Inject

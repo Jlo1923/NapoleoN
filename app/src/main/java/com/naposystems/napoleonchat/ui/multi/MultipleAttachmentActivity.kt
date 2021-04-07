@@ -15,7 +15,7 @@ import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFolderItemView
-import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewActivity
+import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewActivity
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
@@ -132,7 +132,7 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     private fun defineListenerItemFolder() = groupieAdapter.setOnItemClickListener { item, _ ->
         if (item is MultipleAttachmentFolderItemView) {
-            viewModel.loadFilesFromFolder(item.item.folderName)
+            viewModel.loadFilesFromFolder(item.item)
             groupieAdapterFiles.clear()
         }
     }
@@ -202,7 +202,8 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         hideViews(progress, recyclerFolders)
     }
 
-    private fun handleError() {
-        Toast.makeText(viewBinding.root.context, "handleError", Toast.LENGTH_SHORT).show()
+    private fun handleError() = viewBinding.apply {
+        hideViews(progress, recyclerFolders, recyclerFiles)
+        Toast.makeText(root.context, "handleError", Toast.LENGTH_SHORT).show()
     }
 }

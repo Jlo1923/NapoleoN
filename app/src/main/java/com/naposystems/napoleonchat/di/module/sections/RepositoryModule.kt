@@ -85,8 +85,8 @@ import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyb
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
-import com.naposystems.napoleonchat.ui.previewmulti.contract.IContractMultipleAttachmentPreview
-import com.naposystems.napoleonchat.ui.previewmulti.repository.MultipleAttachmentPreviewRepository
+import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewRepository
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
