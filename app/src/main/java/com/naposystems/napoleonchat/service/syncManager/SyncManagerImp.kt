@@ -193,19 +193,14 @@ class SyncManagerImp @Inject constructor(
         Timber.d("**Paso 7: Proceso de Insercion del item $messageString")
 
         GlobalScope.launch() {
-            val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
-                cryptoMessage.decryptMessageBody(messageString)
-            } else {
-                messageString
-            }
 
-            Timber.d("**Paso 7.1: Desencriptar mensaje $newMessageEventMessageResData")
+            Timber.d("**Paso 7.1: Desencriptar mensaje $messageString")
 
             try {
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
 
-                jsonAdapter.fromJson(newMessageEventMessageResData)
+                jsonAdapter.fromJson(messageString)
                     ?.let { newMessageEventMessageRes ->
 
                         if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
@@ -253,7 +248,7 @@ class SyncManagerImp @Inject constructor(
                         }
                     }
             } catch (e: java.lang.Exception) {
-                Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
+                Timber.e("${e.localizedMessage} $messageString")
             }
 
         }

@@ -203,10 +203,10 @@ class SocketClientImp
 
                             listenCancelCall()
 
-//                            syncManager.getMyMessages(null)
-//
+                            syncManager.getMyMessages(null)
+
                             syncManager.verifyMessagesReceived()
-//
+
                             syncManager.verifyMessagesRead()
 
                         }
@@ -720,17 +720,17 @@ class SocketClientImp
                                 }
 
                                 //Seccion Actualizar MESSAGE READED
-//                                messages?.filter {
-//                                    it.status == Constants.MessageEventType.READ.status &&
-//                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
-//                                }?.map {
-//                                    it.id
-//                                }?.let {
-//                                    syncManager.updateMessagesStatus(
-//                                        it,
-//                                        Constants.MessageStatus.READED.status
-//                                    )
-//                                }
+                                messages?.filter {
+                                    it.status == Constants.MessageEventType.READ.status &&
+                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.updateMessagesStatus(
+                                        it,
+                                        Constants.MessageStatus.READED.status
+                                    )
+                                }
 
                                 //filtra los ATTACHMENTS
                                 val attachments = dataEvent?.messages?.filter {
@@ -753,17 +753,17 @@ class SocketClientImp
                                 }
 
                                 //Seccion Actualizar ATTACHMENT READED
-//                                attachments?.filter {
-//                                    it.status == Constants.MessageEventType.READ.status &&
-//                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
-//                                }?.map {
-//                                    it.id
-//                                }?.let {
-//                                    syncManager.validateMessageType(
-//                                        it,
-//                                        Constants.MessageStatus.READED.status
-//                                    )
-//                                }
+                                attachments?.filter {
+                                    it.status == Constants.MessageEventType.READ.status &&
+                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.validateMessageType(
+                                        it,
+                                        Constants.MessageStatus.READED.status
+                                    )
+                                }
 
                             }
                         } catch (e: Exception) {
