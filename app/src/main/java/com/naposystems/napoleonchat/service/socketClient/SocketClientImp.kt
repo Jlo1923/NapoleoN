@@ -14,10 +14,7 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedRESDTO
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesResDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.*
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -205,12 +202,12 @@ class SocketClientImp
                             listenRejectedCall()
 
                             listenCancelCall()
+
+//                            syncManager.getMyMessages(null)
 //
-                            syncManager.getMyMessages(null)
+                            syncManager.verifyMessagesReceived()
 //
-//                            syncManager.verifyMessagesReceived()
-//
-//                            syncManager.verifyMessagesRead()
+                            syncManager.verifyMessagesRead()
 
                         }
 
@@ -636,7 +633,6 @@ class SocketClientImp
     }
 
     private fun listenNotifyMessagesRead() {
-
         pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
                 object : PrivateChannelEventListener {
@@ -644,17 +640,15 @@ class SocketClientImp
                         Timber.d("NotifyMessageReaded: ${event?.data}")
 
                         event?.data?.let {
-                            val jsonAdapter: JsonAdapter<MessagesReadedDTO> =
-                                moshi.adapter(MessagesReadedDTO::class.java)
+                            val jsonAdapter: JsonAdapter<MessagesReadedRESDTO> =
+                                moshi.adapter(MessagesReadedRESDTO::class.java)
 
                             val dataEvent = jsonAdapter.fromJson(it)
 
                             dataEvent?.let { messagesReadedDTO ->
 
-                                Timber.d(messagesReadedDTO.data.messageIds.toString())
-
                                 syncManager.updateMessagesStatus(
-                                    messagesReadedDTO.data.messageIds,
+                                    messagesReadedDTO.data.messages.map { it.id },
                                     Constants.MessageStatus.READED.status
                                 )
                             }
@@ -707,7 +701,7 @@ class SocketClientImp
 
                                 //filtra los MESSAGES
                                 val messages = dataEvent?.messages?.filter {
-                                    it.userId == userId
+                                    it.user == userId
                                 }?.filter {
                                     syncManager.existMessageById(it.id)
                                 }
@@ -726,21 +720,21 @@ class SocketClientImp
                                 }
 
                                 //Seccion Actualizar MESSAGE READED
-                                messages?.filter {
-                                    it.status == Constants.MessageEventType.READ.status &&
-                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
-                                }?.map {
-                                    it.id
-                                }?.let {
-                                    syncManager.updateMessagesStatus(
-                                        it,
-                                        Constants.MessageStatus.READED.status
-                                    )
-                                }
+//                                messages?.filter {
+//                                    it.status == Constants.MessageEventType.READ.status &&
+//                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+//                                }?.map {
+//                                    it.id
+//                                }?.let {
+//                                    syncManager.updateMessagesStatus(
+//                                        it,
+//                                        Constants.MessageStatus.READED.status
+//                                    )
+//                                }
 
                                 //filtra los ATTACHMENTS
                                 val attachments = dataEvent?.messages?.filter {
-                                    it.userId == userId
+                                    it.user == userId
                                 }?.filter {
                                     syncManager.existAttachmentById(it.id)
                                 }
@@ -759,17 +753,17 @@ class SocketClientImp
                                 }
 
                                 //Seccion Actualizar ATTACHMENT READED
-                                attachments?.filter {
-                                    it.status == Constants.MessageEventType.READ.status &&
-                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
-                                }?.map {
-                                    it.id
-                                }?.let {
-                                    syncManager.validateMessageType(
-                                        it,
-                                        Constants.MessageStatus.READED.status
-                                    )
-                                }
+//                                attachments?.filter {
+//                                    it.status == Constants.MessageEventType.READ.status &&
+//                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+//                                }?.map {
+//                                    it.id
+//                                }?.let {
+//                                    syncManager.validateMessageType(
+//                                        it,
+//                                        Constants.MessageStatus.READED.status
+//                                    )
+//                                }
 
                             }
                         } catch (e: Exception) {

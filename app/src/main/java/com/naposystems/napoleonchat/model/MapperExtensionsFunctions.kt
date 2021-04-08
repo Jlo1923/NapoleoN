@@ -43,7 +43,7 @@ fun List<NewMessageEventMessageRes>.toMessagesReqDTO(mustStatus: Constants.Statu
         MessageDTO(
             id = it.id,
             type = Constants.MessageTypeByStatus.MESSAGE.type,
-            userId = it.userAddressee,
+            user = it.userAddressee,
             status = mustStatus.status
         )
     }.toMutableList()
@@ -81,7 +81,7 @@ fun mappingMessagesDto(
     return MessageDTO(
         id = attachment.id,
         type = Constants.MessageTypeByStatus.ATTACHMENT.type,
-        userId = message.userAddressee,
+        user = message.userAddressee,
         status = mustStatus.status
     )
 

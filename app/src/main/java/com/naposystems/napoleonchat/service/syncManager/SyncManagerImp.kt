@@ -20,7 +20,7 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.At
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessagesReadReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
@@ -125,26 +125,64 @@ class SyncManagerImp @Inject constructor(
 
     override fun verifyMessagesReceived() {
         GlobalScope.launch {
-            val response = napoleonApi.verifyMessagesReceived()
+            try {
+                val response = napoleonApi.verifyMessagesReceived()
 
-            if (response.isSuccessful) {
-                messageLocalDataSource.updateMessageStatus(
-                    response.body()!!,
-                    Constants.MessageStatus.UNREAD.status
-                )
+                if (response.isSuccessful) {
+
+                    response.body()?.messagesId.let {
+                        it?.let {
+                            messageLocalDataSource.updateMessageStatus(
+                                it,
+                                Constants.MessageStatus.UNREAD.status
+                            )
+                        }
+                    }
+
+                    response.body()?.attachmentsId.let {
+                        it?.let {
+                            attachmentLocalDataSource.updateAttachmentStatus(
+                                it,
+                                Constants.AttachmentStatus.DOWNLOADING.status
+                            )
+                        }
+                    }
+
+                }
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
             }
         }
     }
 
     override fun verifyMessagesRead() {
         GlobalScope.launch {
-            val response = napoleonApi.verifyMessagesRead()
+            try {
+                val response = napoleonApi.verifyMessagesRead()
 
-            if (response.isSuccessful) {
-                messageLocalDataSource.updateMessageStatus(
-                    response.body()!!,
-                    Constants.MessageStatus.READED.status
-                )
+                if (response.isSuccessful) {
+
+                    response.body()?.messagesId.let {
+                        it?.let {
+                            messageLocalDataSource.updateMessageStatus(
+                                it,
+                                Constants.MessageStatus.READED.status
+                            )
+                        }
+                    }
+
+                    response.body()?.attachmentsId.let {
+                        it?.let {
+                            attachmentLocalDataSource.updateAttachmentStatus(
+                                it,
+                                Constants.MessageStatus.READED.status
+                            )
+                        }
+                    }
+
+                }
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
             }
         }
     }
@@ -273,7 +311,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun notifyMessageReceived(messagesReqDTO : MessagesReqDTO) {
+    override fun notifyMessageReceived(messagesReqDTO: MessagesReqDTO) {
 
         Timber.d("**Paso 9: Proceso consumir recibido del item $messagesReqDTO")
 
@@ -344,7 +382,8 @@ class SyncManagerImp @Inject constructor(
 
     override fun existMessageById(id: String): Boolean = messageLocalDataSource.existMessage(id)
 
-    override fun existAttachmentById(id: String): Boolean = attachmentLocalDataSource.existAttachment(id)
+    override fun existAttachmentById(id: String): Boolean =
+        attachmentLocalDataSource.existAttachment(id)
 
     override fun validateMessageType(messagesWebIds: List<String>, state: Int) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -445,35 +484,48 @@ class SyncManagerImp @Inject constructor(
                     Constants.MessageStatus.UNREAD.status
                 )
 
-            val textMessagesUnread = messagesUnread.filter {
-                it.attachmentEntityList.isEmpty() ||
-                        it.messageEntity.messageType == Constants.MessageType.MISSED_CALL.type ||
-                        it.messageEntity.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
-            }
-
-            val locationMessagesUnread = messagesUnread.filter {
-                it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type
-            }
-
-            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
-            val locationMessagesUnreadIds =
-                locationMessagesUnread.map { it.messageEntity.webId }
-
-            val listIds = mutableListOf<String>()
-            listIds.addAll(textMessagesUnreadIds)
-            listIds.addAll(locationMessagesUnreadIds)
-
-            if (listIds.isNotEmpty()) {
-                try {
-                    val response = napoleonApi.sendMessagesRead(
-                        MessagesReadReqDTO(
-                            listIds
-                        )
+            val textMessagesUnread = messagesUnread
+                .filter {
+                    it.attachmentEntityList.isEmpty() ||
+                            it.messageEntity.messageType == Constants.MessageType.MISSED_CALL.type ||
+                            it.messageEntity.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
+                }.map {
+                    MessageDTO(
+                        id = it.messageEntity.webId,
+                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        user = it.messageEntity.contactId,
+                        status = Constants.StatusMustBe.READED.status
                     )
+                }
+
+            val locationMessagesUnread = messagesUnread
+                .filter {
+                    it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type
+                }.map {
+                    MessageDTO(
+                        id = it.messageEntity.webId,
+                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        user = it.messageEntity.contactId,
+                        status = Constants.StatusMustBe.READED.status
+                    )
+                }
+
+            val messagesRead = mutableListOf<MessageDTO>()
+
+            messagesRead.addAll(textMessagesUnread)
+
+            messagesRead.addAll(locationMessagesUnread)
+
+            if (messagesRead.isNotEmpty()) {
+                try {
+
+                    val messagesReqDTO = MessagesReqDTO(messagesRead)
+
+                    val response = napoleonApi.sendMessagesRead(messagesReqDTO)
 
                     if (response.isSuccessful) {
                         messageLocalDataSource.updateMessageStatus(
-                            listIds,
+                            messagesReqDTO.messages.map { it.id },
                             Constants.MessageStatus.READED.status
                         )
                     }

@@ -21,19 +21,25 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessage
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.*
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageErrorDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
 import com.squareup.moshi.Moshi
 import com.vincent.videocompressor.VideoCompressK
 import com.vincent.videocompressor.VideoCompressResult
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.yield
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -322,87 +328,95 @@ class ConversationRepository @Inject constructor(
 
         Timber.d("Envio en proceso Inicio $envioEnProceso")
 
-//        if (envioEnProceso) {
-//
-//            envioEnProceso = false
-//
-//            Timber.d("Envio en proceso dentro del IF $envioEnProceso")
-//
-//            val messagesUnread =
-//                messageLocalDataSource.getTextMessagesByStatus(
-//                    contactId,
-//                    Constants.MessageStatus.UNREAD.status
-//                )
-//
-//            val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
-//
-//            val locationMessagesUnread =
-//                messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
-//
-//            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
-//
-//            val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
-//
-//            val listIds = mutableListOf<String>()
-//
-//            listIds.addAll(textMessagesUnreadIds)
-//
-//            listIds.addAll(locationMessagesUnreadIds)
-//
-//            val messagesRead = messagesUnread.map {
-//                ValidateMessage(
-//                    id = it.messageEntity.webId,
-//                    user = contactId,
-//                    status = Constants.MessageEventType.READ.status
-//                )
-//            }
-//
-//            if (listIds.isNotEmpty()) {
-//
-//                try {
-//
-//                    Timber.d("SocketService: $socketClient")
-//
-////                    socketClient.emitClientConversation(messagesRead)
-//
-//                    val response = napoleonApi.sendMessagesRead(
-//                        MessagesReadReqDTO(
-//                            listIds
-//                        )
-//                    )
-//
-//                    if (response.isSuccessful) {
-//
-//                        envioEnProceso = true
-//
-//                        Timber.d("Envio en proceso Successful $envioEnProceso")
-//
-//                        messageLocalDataSource.updateMessageStatus(
-//                            listIds,
-//                            Constants.MessageStatus.READED.status
-//                        )
-//                    }
-//
-//                } catch (ex: Exception) {
-//
-//                    envioEnProceso = true
-//
-//                    Timber.d("Envio en proceso dentro del Catch $envioEnProceso")
-//
-//                    Timber.e(ex)
-//                } finally {
-//
-//                    envioEnProceso = true
-//
-//                    Timber.d("Envio en proceso dentro del Finally $envioEnProceso")
-//
-//                }
-//
-//            } else {
-//                envioEnProceso = true
-//            }
-//
-//        }
+        if (envioEnProceso) {
+
+            envioEnProceso = false
+
+            Timber.d("Envio en proceso dentro del IF $envioEnProceso")
+
+            val messagesUnread =
+                messageLocalDataSource.getTextMessagesByStatus(
+                    contactId,
+                    Constants.MessageStatus.UNREAD.status
+                )
+
+            val textMessagesUnread = messagesUnread
+                .filter {
+                    it.attachmentEntityList.isEmpty()
+                }
+                .map {
+                    it.messageEntity.webId
+                }
+
+            val locationMessagesUnread = messagesUnread
+                .filter {
+                    it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type
+                }
+                .map {
+                    it.messageEntity.webId
+                }
+
+            val listIds = mutableListOf<String>()
+
+            listIds.addAll(textMessagesUnread)
+
+            listIds.addAll(locationMessagesUnread)
+
+            val messagesRead = listIds.map {
+                MessageDTO(
+                    id = it,
+                    type = Constants.MessageTypeByStatus.MESSAGE.type,
+                    user = contactId,
+                    status = Constants.StatusMustBe.READED.status
+                )
+            }
+
+            if (listIds.isNotEmpty()) {
+
+                try {
+
+                    val messagesReqDTO = MessagesReqDTO(
+                        messages = messagesRead
+                    )
+
+                    Timber.d("SocketService: $socketClient")
+
+                    socketClient.emitClientConversation(messagesReqDTO)
+
+                    val response = napoleonApi.sendMessagesRead(messagesReqDTO)
+
+                    if (response.isSuccessful) {
+
+                        envioEnProceso = true
+
+                        Timber.d("Envio en proceso Successful $envioEnProceso")
+
+                        messageLocalDataSource.updateMessageStatus(
+                            listIds,
+                            Constants.MessageStatus.READED.status
+                        )
+                    }
+
+                } catch (ex: Exception) {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Catch $envioEnProceso")
+
+                    Timber.e(ex)
+                } finally {
+
+                    envioEnProceso = true
+
+                    Timber.d("Envio en proceso dentro del Finally $envioEnProceso")
+
+                }
+
+            } else {
+                envioEnProceso = true
+            }
+
+        }
 
     }
 
@@ -413,20 +427,31 @@ class ConversationRepository @Inject constructor(
                 Constants.MessageStatus.UNREAD.status
             )
 
-        val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
-        val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
+        val textMessagesUnread = messagesUnread.filter {
+            it.attachmentEntityList.isEmpty()
+        }.map {
+            it.messageEntity.webId
+        }.map {
+            MessageDTO(
+                user = contactId,
+                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                status = Constants.StatusMustBe.READED.status,
+                id = it
+            )
+        }
 
-        if (textMessagesUnreadIds.isNotEmpty()) {
+        if (textMessagesUnread.isNotEmpty()) {
             try {
-                val response = napoleonApi.sendMessagesRead(
-                    MessagesReadReqDTO(
-                        textMessagesUnreadIds
-                    )
+
+                val messagesReqDTO = MessagesReqDTO(
+                    messages = textMessagesUnread
                 )
+
+                val response = napoleonApi.sendMessagesRead(messagesReqDTO)
 
                 if (response.isSuccessful) {
                     messageLocalDataSource.updateMessageStatus(
-                        textMessagesUnreadIds,
+                        textMessagesUnread.map { it.id },
                         Constants.MessageStatus.READED.status
                     )
                 }
@@ -777,17 +802,27 @@ class ConversationRepository @Inject constructor(
 
     override suspend fun setMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation) {
         try {
+
             Timber.d("setMessageRead: ${messageAndAttachmentRelation.messageEntity.webId}")
-            val response = napoleonApi.sendMessagesRead(
-                MessagesReadReqDTO(
-                    arrayListOf(messageAndAttachmentRelation.messageEntity.webId)
+
+            val messagesReqDTO = MessagesReqDTO(
+                messages = listOf(
+                    MessageDTO(
+                        id = messageAndAttachmentRelation.messageEntity.webId,
+                        status = Constants.StatusMustBe.READED.status,
+                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        user = messageAndAttachmentRelation.messageEntity.contactId
+                    )
                 )
             )
+
+
+            val response = napoleonApi.sendMessagesRead(messagesReqDTO)
 
             if (response.isSuccessful) {
                 Timber.d("Success: ${response.body()}")
                 messageLocalDataSource.updateMessageStatus(
-                    response.body()!!,
+                    listOf(messageAndAttachmentRelation.messageEntity.webId),
                     Constants.MessageStatus.READED.status
                 )
             }
@@ -799,26 +834,35 @@ class ConversationRepository @Inject constructor(
     override suspend fun setMessageRead(messageId: Int, webId: String) {
         try {
 
-            val messageAndAttachment = messageLocalDataSource.getMessageById(messageId, false)
+            val messageAttachmentRelation = messageLocalDataSource.getMessageById(messageId, false)
+//
+//            val webIdMessage = if (webId.isNotEmpty()) {
+//                webId
+//            } else {
+//                messageAttachmentRelation?.messageEntity?.webId
+//            }
 
-            val webIdMessage = if (webId.isNotEmpty()) {
-                webId
-            } else {
-                messageAndAttachment?.messageEntity?.webId
-            }
+            if ((messageAttachmentRelation?.messageEntity?.isMine == Constants.IsMine.NO.value) || webId.isNotEmpty()) {
 
-            if ((messageAndAttachment?.messageEntity?.isMine == Constants.IsMine.NO.value) || webId.isNotEmpty()) {
-                webIdMessage?.let {
-                    val response = napoleonApi.sendMessagesRead(
-                        MessagesReadReqDTO(
-                            arrayListOf(webIdMessage)
+                messageAttachmentRelation?.let {
+
+                    val messagesReqDTO = MessagesReqDTO(
+                        messages = listOf(
+                            MessageDTO(
+                                id = messageAttachmentRelation.messageEntity.webId,
+                                status = Constants.StatusMustBe.READED.status,
+                                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                                user = messageAttachmentRelation.messageEntity.contactId
+                            )
                         )
                     )
+
+                    val response = napoleonApi.sendMessagesRead(messagesReqDTO)
 
                     if (response.isSuccessful) {
                         Timber.d("Success: ${response.body()}")
                         messageLocalDataSource.updateMessageStatus(
-                            response.body()!!,
+                            listOf(messageAttachmentRelation.messageEntity.webId),
                             Constants.MessageStatus.READED.status
                         )
                     }
