@@ -24,9 +24,10 @@ node('master') {
     FINALVERSIONNAME = "1.1.${INCREASEDVERSION}-${GIT_COMMIT_MSG}"
     sh("sed -i 's/versionCode ${VERSIONCODE}/versionCode ${INCREASEDVERSION}/g' app/build.gradle")
     sh("sed -i 's/${VERSION}/${FINALVERSIONNAME}/g' app/build.gradle")
+    sh("cat app/build.gradle")
     stage("Building"){
         echo "VersionName ${FINALVERSIONNAME}"
-        echo "VersionCode ${VERSIONCODE}"
+        echo "VersionCode ${INCREASEDVERSION}"
         sh(script:"chmod +x ./gradlew")
         sh(script:"./gradlew clean bundle")
         sh(script:"ls -la")
@@ -39,8 +40,8 @@ node('master') {
     stage('Upload to Play Store') {
         androidApkUpload googleCredentialsId: 'Google-Play', filesPattern: 'app/build/outputs/bundle/pruebaInterna/*.aab', trackName: 'internal', releaseName: "${FINALVERSIONNAME}", rolloutPercentage: '100', inAppUpdatePriority: '5',
                 recentChangeList: [
-                        [language: 'en-GB', text: "Please test the changes from Jenkins build ${env.BUILD_NUMBER}."],
-                        [language: 'de-DE', text: "Bitte die Änderungen vom Jenkins Build ${env.BUILD_NUMBER} testen."]
+                        [language: 'en-GB', text: "Version ${INCREASEDVERSION}."],
+                        [language: 'es-ES', text: "Version ${INCREASEDVERSION}."]
                 ]
     }
     withCredentials([usernamePassword(credentialsId: 'jenkinsbitbucket', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
@@ -49,6 +50,7 @@ node('master') {
         sh("git checkout development")
         sh("sed -i 's/versionCode ${VERSIONCODE}/versionCode ${INCREASEDVERSION}/g' app/build.gradle")
         sh("sed -i 's/${VERSION}/${FINALVERSIONNAME}/g' app/build.gradle")
+        sh("cat app/build.gradle")
         echo "${GIT_COMMIT_MSG}"
         sh("git add app/build.gradle")
         sh("git commit -a -m \"Increasing version to ${INCREASEDVERSION}\"")
