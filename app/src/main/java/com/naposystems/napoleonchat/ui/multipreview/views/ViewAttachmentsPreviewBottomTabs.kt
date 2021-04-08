@@ -40,4 +40,9 @@ class ViewAttachmentsPreviewBottomTabs @JvmOverloads constructor(
 
     fun getTextInEdit(): String = viewBinding.editTextMessage.text.toString()
 
+    fun selectTab(index: Int) = viewBinding.tabLayoutFiles.apply {
+        val tab = getTabAt(index)
+        selectTab(tab)
+    }
+
 }

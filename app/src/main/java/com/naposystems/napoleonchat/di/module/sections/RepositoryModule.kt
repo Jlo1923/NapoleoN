@@ -108,6 +108,7 @@ import com.naposystems.napoleonchat.ui.userDisplayFormat.IContractUserDisplayFor
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.IContractDefaultPreferences
 import dagger.Binds
 import dagger.Module
+import javax.inject.Singleton
 
 @Module
 abstract class RepositoryModule {

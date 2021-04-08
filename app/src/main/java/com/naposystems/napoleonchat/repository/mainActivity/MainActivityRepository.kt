@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
+import android.net.Uri
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
@@ -17,7 +18,9 @@ class MainActivityRepository @Inject constructor(
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val socketClient: SocketClient
-) :    IContractMainActivity.Repository {
+) : IContractMainActivity.Repository {
+
+    private var pendingListUri: MutableList<Uri> = emptyList<Uri>().toMutableList()
 
     override suspend fun getUser(): UserEntity {
 //        val firebaseId = sharedPreferencesManager
@@ -37,6 +40,7 @@ class MainActivityRepository @Inject constructor(
         sharedPreferencesManager.putInt(
             Constants.SharedPreferences.PREF_OUTPUT_CONTROL, state
         )
+
     }
 
     override fun getTimeRequestAccessPin(): Int {
@@ -53,7 +57,8 @@ class MainActivityRepository @Inject constructor(
 
     override fun setJsonNotification(json: String) {
         if (sharedPreferencesManager.getString(PREF_LAST_JSON_NOTIFICATION, "") != json
-            && sharedPreferencesManager.getString(PREF_JSON_NOTIFICATION, "") != json) {
+            && sharedPreferencesManager.getString(PREF_JSON_NOTIFICATION, "") != json
+        ) {
             sharedPreferencesManager.putString(
                 PREF_LAST_JSON_NOTIFICATION, json
             )
@@ -88,5 +93,16 @@ class MainActivityRepository @Inject constructor(
 
     override fun disconnectSocket() {
 //        socketMessageService.disconnectSocket()
+    }
+
+    fun addUriListToCache(listOf: List<Uri>) {
+        sharedPreferencesManager.puStringSet("test", listOf)
+    }
+
+    fun getPendingUris(): List<Uri> {
+        val urisString = sharedPreferencesManager.getStringSet("test")
+        val listString = urisString?.toList()
+        val listUris = listString?.map { Uri.parse(it) }
+        return listUris ?: emptyList()
     }
 }

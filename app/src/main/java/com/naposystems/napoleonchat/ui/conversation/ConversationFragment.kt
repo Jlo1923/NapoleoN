@@ -84,6 +84,7 @@ import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.extensions.getMimeType
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
@@ -719,6 +720,31 @@ class ConversationFragment
                 Timber.e(e)
             }
         })
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val uris = viewModel.getPendingUris()
+        if (uris.isEmpty().not()) {
+            viewModel.removePendingUris()
+            val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
+            val listElements = uris.map {
+                val mimeType = binding.root.context.contentResolver.getType(it)
+                MultipleAttachmentFileItem(
+                    id = 0,
+                    attachmentType = mimeType ?: "",
+                    contentUri = it,
+                    isSelected = false,
+                    selfDestruction = 0
+                )
+            }
+            intent.putExtras(Bundle().apply {
+                putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+                putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
+            })
+            startActivity(intent)
+        }
     }
 
     @InternalCoroutinesApi

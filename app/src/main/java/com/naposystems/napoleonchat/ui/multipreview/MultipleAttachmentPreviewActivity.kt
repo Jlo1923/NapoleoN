@@ -152,10 +152,7 @@ class MultipleAttachmentPreviewActivity
     private fun extractSelectedIndex() = intent.extras?.let { bundle ->
         if (bundle.containsKey(MULTI_SELECTED)) {
             val index = bundle.getInt(MULTI_SELECTED)
-            viewBinding.viewPreviewBottom.getTabLayout().apply {
-                val tab = getTabAt(index)
-                selectTab(tab)
-            }
+            viewBinding.viewPreviewBottom.selectTab(index)
         }
     }
 

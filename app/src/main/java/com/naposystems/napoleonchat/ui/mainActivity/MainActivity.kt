@@ -8,8 +8,10 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.TypedValue
 import android.view.Display
 import android.view.MenuItem
@@ -50,6 +52,7 @@ import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
+import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
@@ -59,7 +62,6 @@ import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
-
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -357,6 +359,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         hideOptionMenuForAndroidVersion()
 
         hideOptionMenuRecoveryAccount()
+
+        validateExtrasForShareFromOutside()
     }
 
     private fun openMenu() {
@@ -663,16 +667,50 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val currentTime = System.currentTimeMillis()
 
                         if (currentTime >= viewModel.getLockTimeApp()) {
-                            viewModel.setLockStatus(Constants.LockStatus.LOCK.state)
-                            navController.navigate(
-                                R.id.enterPinFragment,
-                                null,
-                                NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
-                            )
+                            navToEnterPin()
                         }
                     }
                 }
             }
         }
     }
+
+    private fun validateExtrasForShareFromOutside() = intent.apply {
+        when {
+            isActionSend() -> handleSingleSend()
+            isActionSendMultiple() -> handleMultipleSend()
+            else -> Unit // Handle other intents, such as being started from the home screen
+        }
+    }
+
+    private fun handleSingleSend() {
+        intent.apply {
+            if (isTypeVideoOrImage()) {
+                (getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
+                    viewModel.addUriListToCache(listOf(it))
+                    navToEnterPin()
+                }
+            }
+        }
+    }
+
+    private fun handleMultipleSend() {
+        intent.apply {
+            if (isTypeAnyOrVideoOrImage()) {
+                val urisList = getUriListFromExtra()
+                viewModel.addUriListToCache(urisList)
+                navToEnterPin()
+            }
+        }
+    }
+
+    private fun navToEnterPin() {
+        viewModel.setLockStatus(Constants.LockStatus.LOCK.state)
+        navController.navigate(
+            R.id.enterPinFragment,
+            null,
+            NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
+        )
+    }
+
 }
