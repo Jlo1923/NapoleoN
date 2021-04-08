@@ -102,7 +102,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, InputPanelWidget.Listener {
+class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener,
+    InputPanelWidget.Listener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -1093,6 +1094,8 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
         val disposableContactHasHangup = RxBus.listen(RxEvent.CallEnd::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+
+                Timber.d("LLAMADA PASO: DISPOSE CALL OYENDO DESDE LA CONVERSACION")
                 binding.textViewReturnCall.isVisible = false
                 binding.buttonCall.isEnabled = true
                 binding.buttonVideoCall.isEnabled = true
@@ -1392,7 +1395,7 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
-        NapoleonApplication.currentConversationContactId = 0
+        NapoleonApplication.currentConversationContactId = Constants.UserNotExist.USER_NO_EXIST.user
         resetConversationBackground()
         mediaPlayerManager.unregisterProximityListener()
         mediaPlayerManager.resetMediaPlayer()
@@ -1892,7 +1895,7 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener, 
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
-        NapoleonApplication.currentConversationContactId = 0
+        NapoleonApplication.currentConversationContactId =  Constants.UserNotExist.USER_NO_EXIST.user
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()

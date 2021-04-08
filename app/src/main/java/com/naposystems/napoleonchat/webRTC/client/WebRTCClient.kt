@@ -7,51 +7,75 @@ import org.webrtc.SurfaceViewRenderer
 interface WebRTCClient {
 
     var callModel: CallModel
+
     var isActiveCall: Boolean
 
+    var isHideVideo: Boolean
+
+    var contactCameraIsVisible: Boolean
+
+    var isMicOn: Boolean
+
+    var isBluetoothActive: Boolean
+
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
-    fun subscribeToCallChannel()
+
+    fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel)
+
+    fun subscribeToPresenceChannel()
+    fun unSubscribePresenceChannel()
+
     fun setOffer(offer: String?)
-    fun setTextViewCallDuration(textView: TextView)
-    fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
-    fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)
-    fun setSpeakerOn(isChecked: Boolean)
-    fun setMicOff()
-    fun setItsReturnCall(itsReturnCall: Boolean)
 
-    //TODO: Estas funciones se pueden cambiar a accesores de atributos
-    fun getMicIsOn(): Boolean
-    fun isSpeakerOn(): Boolean
-    fun isVideoMuted(): Boolean
-    fun isBluetoothActive(): Boolean
+    fun createAnswer()
 
-    fun contactTurnOffCamera(): Boolean
-    fun setIsOnCallActivity(isOnCallActivity: Boolean)
+    fun startWebRTCService(callModel: CallModel)
+
+    //Change to video Call
+    fun changeToVideoCall()
+    fun acceptChangeToVideoCall()
+    fun cancelChangeToVideoCall()
+
+    //Video
     fun initSurfaceRenders()
     fun startCaptureVideo()
+    fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
+    fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)
+    fun renderRemoteVideo()
 
-    //    fun emitJoinToCall()
-    fun stopRingAndVibrate()
-    fun emitHangUp()
-    fun changeToVideoCall()
-    fun cancelChangeToVideoCall()
-    fun muteVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
+    //Camera
+    fun hideVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
     fun switchCamera()
-    fun handleBluetooth(isEnabled: Boolean)
+
+    //Ringtone
     fun playRingtone()
     fun playRingBackTone()
-    fun acceptChangeToVideoCall()
+    fun stopRingAndVibrate()
+
+    //Sensor Proximity
     fun startProximitySensor()
     fun stopProximitySensor()
-    fun handleKeyDown(keyCode: Int): Boolean
-    fun disposeCall()
-    fun unSubscribeCallChannel()
 
-    //    fun subscribeToChannelFromBackground(channel: String)
-    //TODO: Revisar si se puede usar el metodo status connect o status channel
-    fun getPusherChannel(channel: String): Boolean
-    fun renderRemoteVideo()
-    fun createAnswer()
-    fun startWebRTCService(callModel: CallModel)
+    //Speaker
+    fun setSpeakerOn(isChecked: Boolean)
+    fun isSpeakerOn(): Boolean
+
+    //Microphone
+    fun setMicOff()
+
+    //Bluetooth
+    fun handleBluetooth(isEnabled: Boolean)
+
+    //KeyDown
+    fun handleKeyDown(keyCode: Int): Boolean
+
+    //UI
+    fun setTextViewCallDuration(textView: TextView)
+
+    fun setItsReturnCall(itsReturnCall: Boolean)
+
+    //Hang Up
+    fun emitHangUp()
+    fun disposeCall()
 
 }

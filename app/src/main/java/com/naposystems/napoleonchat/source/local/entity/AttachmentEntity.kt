@@ -41,7 +41,10 @@ data class AttachmentEntity(
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_STATUS) var status: Int,
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_EXTENSION) var extension: String = "",
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_DURATION) var duration: Long = 0,
-    @ColumnInfo(name = DBConstants.Attachment.COLUMN_IS_COMPRESSED) var isCompressed: Boolean = false
+    @ColumnInfo(name = DBConstants.Attachment.COLUMN_IS_COMPRESSED) var isCompressed: Boolean = false,
+    @ColumnInfo(name = DBConstants.Attachment.COLUMN_SELF_DESTRUCTION_AT) var selfDestructionAt: Int = -1,
+    @ColumnInfo(name = DBConstants.Attachment.COLUMN_TOTAL_SELF_DESTRUCTION_AT) var totalSelfDestructionAt: Int = 0,
+    @ColumnInfo(name = DBConstants.Attachment.COLUMN_UPDATED_AT) var updatedAt: Int = 0
 ) : Parcelable {
 
     fun deleteFile(context: Context) {

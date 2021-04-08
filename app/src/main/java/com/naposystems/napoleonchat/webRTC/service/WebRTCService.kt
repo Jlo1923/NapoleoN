@@ -51,7 +51,7 @@ class WebRTCService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
-        Timber.d("LLAMADA PASO 1: STARTWEBRTCSERVICE")
+        Timber.d("LLAMADA PASO 1: INICIANDO SERVICIO")
 
         var callModel = CallModel(
             channelName = "",
@@ -71,30 +71,37 @@ class WebRTCService : Service() {
 
         intent.action?.let { action ->
 
-            handlerMediaPlayerNotification.stopMedia()
+            handlerMediaPlayerNotification.stopRingtone()
 
             Timber.d("LLAMADA PASO: ACTION $action")
 
             when (action) {
                 ACTION_ANSWER_CALL -> {
+                    Timber.d("LLAMADA PASO: CONTESTANDO LLAMADA")
                     startConversationCallActivity(
                         action = ACTION_ANSWER_CALL,
                         callModel = callModel
                     )
                 }
                 ACTION_DENY_CALL -> {
+
+                    Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
                     repository.rejectCall(callModel)
+                    if (NapoleonApplication.isShowingCallActivity)
+                        RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                     stopForeground(true)
                     stopSelf()
                 }
                 ACTION_CALL_END -> {
+                    Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
                     stopForeground(true)
                     stopSelf()
                 }
                 ACTION_HANG_UP -> {
+                    Timber.d("LLAMADA PASO: COLGANDO LLAMADA")
+                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                     stopForeground(true)
                     stopSelf()
-                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                 }
                 else ->
                     Timber.e("Action no recognized")
@@ -106,7 +113,7 @@ class WebRTCService : Service() {
 
             showCallNotification(callModel)
 
-            if (NapoleonApplication.isVisible) {
+            if (NapoleonApplication.isVisible && NapoleonApplication.isShowingCallActivity.not()) {
 
                 Timber.d("LLAMADA PASO 3: MOSTRAR ACTIVITY CALL")
 
@@ -127,7 +134,7 @@ class WebRTCService : Service() {
 
             val notification = handlerNotification.createNotificationCallBuilder(callModel)
 
-            startForeground(HandlerNotificationImp.NOTIFICATION_RINGING, notification)
+            startForeground(HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE, notification)
 
         }
     }

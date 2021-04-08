@@ -12,14 +12,12 @@ interface IContractConversationCall {
 
     interface ViewModel {
         fun getContact(contactId: Int)
-        fun resetIsOnCallPref()
         fun sendMissedCall(callModel: CallModel)
         fun cancelCall(callModel: CallModel)
     }
 
     interface Repository {
         suspend fun getContactById(contactId: Int): ContactEntity?
-        fun resetIsOnCallPref()
         suspend fun sendMissedCall(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
         fun getUserDisplayFormat(): Int
         suspend fun cancelCall(cancelCallReqDTO: CancelCallReqDTO): Response<CancelCallResDTO>

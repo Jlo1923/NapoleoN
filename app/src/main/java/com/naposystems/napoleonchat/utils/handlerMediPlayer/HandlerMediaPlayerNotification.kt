@@ -10,6 +10,6 @@ interface HandlerMediaPlayerNotification {
 
     fun playBusyTone()
 
-    fun stopMedia()
+    fun stopRingtone()
 
 }

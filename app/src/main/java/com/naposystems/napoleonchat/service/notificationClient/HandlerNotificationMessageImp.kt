@@ -8,6 +8,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
@@ -107,9 +108,9 @@ class HandlerNotificationMessageImp
 
             Timber.d("**Paso 5: Cola superior a cero")
 
-            var itemDataNotification = queueDataNotifications.first()
+            val itemDataNotification = queueDataNotifications.first()
 
-            var itemNotification = queueNotifications.first()
+            val itemNotification = queueNotifications.first()
 
             Timber.d("**Paso 6: Proceso del item $itemDataNotification")
 
@@ -117,23 +118,47 @@ class HandlerNotificationMessageImp
 
             queueNotifications.removeFirst()
 
-            syncManager.insertMessage(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+            if (itemDataNotification.containsKey(Constants.NotificationKeys.MESSAGE)) {
 
-            emitClientConversation(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+                val messageString: String = if (BuildConfig.ENCRYPT_API) {
+                    cryptoMessage.decryptMessageBody(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+                } else {
+                    itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE)
+                }
 
-            syncManager.notifyMessageReceived(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))
+                syncManager.insertMessage(messageString)
 
-            if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE)
-                    .toBoolean()
-            ) {
+                val jsonAdapterMessage: JsonAdapter<NewMessageEventMessageRes> =
+                    moshi.adapter(NewMessageEventMessageRes::class.java)
+
+                jsonAdapterMessage.fromJson(messageString)
+                    ?.let { messageModel ->
+
+                        val listMessagesToReceived = listOf(
+                            messageModel
+                        ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
+
+                        syncManager.notifyMessageReceived(
+                            listMessagesToReceived
+                        )
+
+                        socketClient.emitClientConversation(listMessagesToReceived)
+
+                    }
+
+            } else {
+                syncManager.getMyMessages(null)
+            }
+
+            if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE).toBoolean()) {
 
                 Timber.d("**Paso 10: No Silenciado")
 
                 processNotification(itemDataNotification, itemNotification)
 
             }
-
             Timber.d("NUEVISIMO NUEVA DATACOLA $queueDataNotifications")
+
         }
     }
 
@@ -170,41 +195,4 @@ class HandlerNotificationMessageImp
         }
     }
 
-    private fun emitClientConversation(messageString: String) {
-
-        Timber.d("**Paso 8: Proceso de Emision del item $messageString")
-
-        GlobalScope.launch() {
-            val newMessageEventMessageResData: String =
-                if (BuildConfig.ENCRYPT_API)
-                    cryptoMessage.decryptMessageBody(messageString)
-                else
-                    messageString
-
-            Timber.d("Paso 8.1: Desencriptar mensaje $messageString")
-            try {
-                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
-                    moshi.adapter(NewMessageEventMessageRes::class.java)
-
-                jsonAdapter.fromJson(newMessageEventMessageResData)
-                    ?.let { newMessageEventMessageRes ->
-
-                        val messages = arrayListOf(
-                            ValidateMessage(
-                                id = newMessageEventMessageRes.id,
-                                user = newMessageEventMessageRes.userAddressee,
-                                status = Constants.MessageEventType.UNREAD.status
-                            )
-                        )
-
-                        Timber.d("**Paso 8.2: Emitir Recibido $messages")
-
-                        socketClient.emitClientConversation(messages)
-
-                    }
-            } catch (e: java.lang.Exception) {
-                Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
-            }
-        }
-    }
 }
